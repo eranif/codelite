@@ -25,7 +25,7 @@
 
 #ifndef FILEMAPPINGDLG_H
 #define FILEMAPPINGDLG_H
-#include "php_ui.h"
+#include "php_ui.hpp"
 
 class FileMappingDlg : public FileMappingDlgBase
 {

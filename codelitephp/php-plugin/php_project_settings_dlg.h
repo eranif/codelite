@@ -26,7 +26,7 @@
 #ifndef __php_project_settings_dlg__
 #define __php_project_settings_dlg__
 
-#include "php_ui.h"
+#include "php_ui.hpp"
 
 class PHPProjectSettingsDlg : public PHPProjectSettingsBase
 {

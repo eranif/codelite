@@ -25,7 +25,7 @@
 
 #ifndef EVALPANE_H
 #define EVALPANE_H
-#include "php_ui.h"
+#include "php_ui.hpp"
 #include "xdebugevent.h"
 
 class EvalPane : public EvalPaneBase

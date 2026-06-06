@@ -32,7 +32,7 @@
 #include "cl_command_event.h"
 #include "macros.h"
 #include "php_event.h"
-#include "php_ui.h"
+#include "php_ui.hpp"
 #include "xdebugevent.h"
 
 class PHPDebugPane : public PHPDebugPaneBase

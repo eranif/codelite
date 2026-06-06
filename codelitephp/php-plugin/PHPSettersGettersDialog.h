@@ -27,7 +27,7 @@
 #define PHPSETTERSGETTERSDIALOG_H
 
 #include "PHPSetterGetterEntry.h"
-#include "php_ui.h"
+#include "php_ui.hpp"
 
 class IManager;
 class IEditor;

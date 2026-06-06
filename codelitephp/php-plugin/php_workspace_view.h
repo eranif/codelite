@@ -30,7 +30,7 @@
 #include "cl_command_event.h"
 #include "php_event.h"
 #include "php_project.h"
-#include "php_ui.h"
+#include "php_ui.hpp"
 
 class IManager;
 class ItemData;

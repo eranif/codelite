@@ -26,7 +26,7 @@
 #ifndef __quick_outline_dlg__
 #define __quick_outline_dlg__
 
-#include "php_ui.h"
+#include "php_ui.hpp"
 class IEditor;
 class IManager;
 class PHPEntry;

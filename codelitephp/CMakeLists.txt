@@ -35,11 +35,27 @@ else(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 
 endif(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 
+wxcrafter_target(
+    PhpNewClass
+    "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin/new_class.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "new_class.cpp"
+    "new_class.hpp"
+    "new_class_php-plugin_bitmaps.cpp")
+
+wxcrafter_target(
+    PhpUi
+    "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin/php_ui.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "php_ui.cpp"
+    "php_ui.hpp"
+    "php_ui_php-plugin_bitmaps.cpp")
+
 file(GLOB SRCS "php-plugin/*.cpp" "php-plugin/*.c")
 file(GLOB LIBSRC "PHPParser/*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_PhpNewClass_OUTPUTS} ${WXCRAFTER_PhpUi_OUTPUTS})
 
 add_library(PHPParser STATIC ${LIBSRC})
 target_link_libraries(PHPParser PRIVATE libcodelite plugin)
@@ -103,6 +119,7 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_PhpNewClass_OUTPUTDIR}" "${WXCRAFTER_PhpUI_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} PHPParser libcodelite plugin)
 # Installation destination
 cl_install_plugin(${PLUGIN_NAME})

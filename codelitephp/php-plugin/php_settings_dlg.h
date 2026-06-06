@@ -26,7 +26,7 @@
 #ifndef __php_settings_dlg__
 #define __php_settings_dlg__
 
-#include "php_ui.h"
+#include "php_ui.hpp"
 
 class PHPSettingsDlg : public PHPSettingsBaseDlg
 {

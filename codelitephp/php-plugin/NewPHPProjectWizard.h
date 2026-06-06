@@ -27,7 +27,7 @@
 #define NEWPHPPROJECTWIZARD_H
 #include "php_project.h"
 #include "php_project_settings_data.h"
-#include "php_ui.h"
+#include "php_ui.hpp"
 
 class NewPHPProjectWizard : public NewPHPProjectWizardBase
 {

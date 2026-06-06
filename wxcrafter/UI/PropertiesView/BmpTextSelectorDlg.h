@@ -1,7 +1,7 @@
 #ifndef BMPTEXTSELECTORDLG_H
 #define BMPTEXTSELECTORDLG_H
 
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 #include <vector>
 

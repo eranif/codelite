@@ -125,14 +125,6 @@ endforeach()
 # (COMMON_GUI_SRCS). The split is based on whether the TU pulls GUI-only
 # symbols (MainFrame, GUICraftMainPanel, wxDialog subclasses, etc.).
 set(COMMON_GUI_ONLY_FILES
-    # generated wxFormBuilder GUI base classes
-    "src/gui.cpp"
-    "src/gui_wxcrafter_bitmaps.cpp"
-    "src/wxcrafter.cpp"
-    "src/wxcrafter_gui.cpp"
-    "src/wxcrafter_gui_wxcrafter_bitmaps.cpp"
-    "src/wxcrafter_wxcrafter_bitmaps.cpp"
-    # GUI dialogs / widgets defined in src/
     "src/AboutDlg.cpp"
     "src/BitmapSelectorDlg.cpp"
     "src/designer_panel.cpp"
@@ -205,7 +197,7 @@ if(WIN32)
 endif()
 
 # ----------------------------------------------------------------------------
-# Shared static libraries
+# Non GUI targets
 # ----------------------------------------------------------------------------
 # wxCrafterCommon: define-agnostic, headless-safe TUs. Compiled once, linked
 # into all three targets (wxcrafter, wxCrafterPlugin, wxcgen).
@@ -220,10 +212,82 @@ if(USE_PCH)
   target_precompile_headers(wxCrafterCommon REUSE_FROM PCH)
 endif()
 
+# Headless CLI code-generator (no DISPLAY required).
+add_executable(wxcgen ${MACRO_SENSITIVE_HEADLESS_SRCS}
+                      "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp")
+target_compile_definitions(
+  wxcgen PRIVATE INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+target_link_libraries(wxcgen PRIVATE wxCrafterCommon)
+
+macro(
+  wxcrafter_target
+  Name
+  Input
+  OutputDir
+  OutputCpp
+  OutputHpp
+  OutputBitmaps
+  # Extra output for models
+)
+
+  set(WXCRAFTER_${Name}_OUTPUTS
+    "${OutputDir}/${OutputCpp}"
+    "${OutputDir}/${OutputHpp}"
+    "${OutputDir}/${OutputBitmaps}")
+
+  set(ExtraMacroArgs ${ARGN}) # ARGN is not a variable
+  foreach(ExtraArgs ${ExtraMacroArgs})
+    list(APPEND WXCRAFTER_${Name}_OUTPUTS "${OutputDir}/${ExtraArgs}")
+  endforeach()
+  unset(ExtraMacroArgs)
+
+  add_custom_command(
+    OUTPUT ${WXCRAFTER_${Name}_OUTPUTS}
+    COMMAND $<TARGET_FILE:wxcgen> -o "${OutputDir}" "${Input}"
+    VERBATIM
+    DEPENDS ${Input} wxcgen
+    COMMENT "[WxCrafter][${Name}] Building code (wxcgen)")
+
+  set(WXCRAFTER_${Name}_OUTPUTDIR "${OutputDir}")
+endmacro()
+
+# ----------------------------------------------------------------------------
+# GUI targets
+# ----------------------------------------------------------------------------
+
 # wxCrafterCommonGui: define-agnostic but GUI-coupled TUs. Compiled once,
 # linked into wxcrafter and wxCrafterPlugin only — NOT into wxcgen.
-add_library(wxCrafterCommonGui STATIC ${COMMON_GUI_SRCS})
+
+wxcrafter_target(
+    WxCrafterGui
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/gui.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "gui.cpp"
+    "gui.hpp"
+    "gui_wxcrafter_bitmaps.cpp")
+
+wxcrafter_target(
+    WxCrafterWxCrafter
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/wxcrafter.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "wxcrafter.cpp"
+    "wxcrafter.hpp"
+    "wxcrafter_wxcrafter_bitmaps.cpp")
+
+wxcrafter_target(
+    WxCrafterWxCrafterGui
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/wxcrafter_gui.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "wxcrafter_gui.cpp"
+    "wxcrafter_gui.hpp"
+    "wxcrafter_gui_wxcrafter_bitmaps.cpp")
+
+add_library(wxCrafterCommonGui STATIC ${COMMON_GUI_SRCS}
+                                      ${WXCRAFTER_WxCrafterGui_OUTPUTS}
+                                      ${WXCRAFTER_WxCrafterWxCrafter_OUTPUTS}
+                                      ${WXCRAFTER_WxCrafterWxCrafterGui_OUTPUTS})
 set_target_properties(wxCrafterCommonGui PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(wxCrafterCommonGui PUBLIC "${WXCRAFTER_WxCrafterGui_OUTPUTDIR}")
 target_link_libraries(wxCrafterCommonGui PUBLIC libcodelite plugin)
 if(USE_PCH)
   target_precompile_headers(wxCrafterCommonGui REUSE_FROM PCH)
@@ -245,13 +309,6 @@ target_compile_definitions(
   wxcrafter PRIVATE STANDALONE_BUILD=1
                     INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui wxCrafterCommon)
-
-# Headless CLI code-generator (no DISPLAY required).
-add_executable(wxcgen "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp"
-                      ${WXCGEN_RES_FILES})
-target_compile_definitions(
-  wxcgen PRIVATE INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
-target_link_libraries(wxcgen PRIVATE wxCrafterCommon)
 
 if(WXC_APP)
   set_target_properties(wxCrafterPlugin PROPERTIES EXCLUDE_FROM_ALL ON)
@@ -480,37 +537,4 @@ if(WXC_APP AND MINGW)
     PATTERN ".svn" EXCLUDE
     PATTERN ".git" EXCLUDE)
 endif()
-
-macro(
-  wxcrafter_target
-  Name
-  Input
-  OutputDir
-  OutputCpp
-  OutputHpp
-  OutputBitmaps
-  # Extra output for models
-)
-
-  set(WXCRAFTER_${Name}_OUTPUTS
-    "${OutputDir}/${OutputCpp}"
-    "${OutputDir}/${OutputHpp}"
-    "${OutputDir}/${OutputBitmaps}")
-
-  set(ExtraMacroArgs ${ARGN}) # ARGN is not a variable
-  foreach(ExtraArgs ${ExtraMacroArgs})
-    list(APPEND WXCRAFTER_${Name}_OUTPUTS "${OutputDir}/${ExtraArgs}")
-  endforeach()
-  unset(ExtraMacroArgs)
-
-  add_custom_command(
-    OUTPUT ${WXCRAFTER_${Name}_OUTPUTS}
-    COMMAND $<TARGET_FILE:wxcgen> -o "${OutputDir}" "${Input}"
-    VERBATIM
-    DEPENDS ${Input} wxcgen
-    COMMENT "[WxCrafter][${Name}] Building code (wxcgen)")
-
-  set(WXCRAFTER_${Name}_OUTPUTDIR "${OutputDir}")
-endmacro()
-
 message(STATUS "wxCrafter - Done")

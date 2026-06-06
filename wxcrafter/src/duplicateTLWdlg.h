@@ -1,6 +1,6 @@
 #ifndef DUPLICATETLWDLG_H
 #define DUPLICATETLWDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class DuplicateTLWDlg : public DuplicateTLWBaseDlg
 {

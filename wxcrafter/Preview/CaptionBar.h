@@ -1,7 +1,7 @@
 #ifndef CAPTIONBAR_H
 #define CAPTIONBAR_H
 
-#include "gui.h"
+#include "gui.hpp"
 
 #include <wx/bitmap.h>
 

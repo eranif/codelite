@@ -1,7 +1,7 @@
 #ifndef __properties_sheet__
 #define __properties_sheet__
 
-#include "gui.h"
+#include "gui.hpp"
 #include "wxc_widget.h"
 
 class PropertiesListView;

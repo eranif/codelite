@@ -1,6 +1,6 @@
 #ifndef DELETECUSTOMCONTROLDLG_H
 #define DELETECUSTOMCONTROLDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class DeleteCustomControlDlg : public DeleteCustomControlDlgBaseClass
 {

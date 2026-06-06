@@ -6,7 +6,7 @@
 #include "UI/PropertiesView/styles_sheet_list_view.h"
 #include "clTreeCtrl.h"
 #include "cl_command_event.h"
-#include "gui.h"
+#include "gui.hpp"
 #include "wxc_edit_manager.h"
 #include "wxc_widget.h"
 

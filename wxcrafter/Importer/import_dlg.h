@@ -1,6 +1,6 @@
 #ifndef IMPORTDLG_H
 #define IMPORTDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class ImportDlg : public ImportDlgBaseClass
 {

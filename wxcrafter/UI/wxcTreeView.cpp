@@ -6,7 +6,7 @@
 #include "event_notifier.h"
 #include "workspace.h"
 #include "wxc_project_metadata.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 #include "wxgui_defs.h"
 #include "wxguicraft_main_view.h"
 

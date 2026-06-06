@@ -2,7 +2,7 @@
 #define DEFINECUSTOMCONTROLWIZARD_H
 
 #include "wxc_settings.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class DefineCustomControlWizard : public DefineCustomControlWizardBaseClass
 {

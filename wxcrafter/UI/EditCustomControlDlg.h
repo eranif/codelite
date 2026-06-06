@@ -1,6 +1,6 @@
 #ifndef EDITCUSTOMCONTROLDLG_H
 #define EDITCUSTOMCONTROLDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class EditCustomControlDlg : public EditCustomControlDlgBaseClass
 {

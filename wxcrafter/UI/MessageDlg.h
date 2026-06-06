@@ -1,7 +1,7 @@
 #ifndef MESSAGEDLG_H
 #define MESSAGEDLG_H
 
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class MessageDlg : public MessageDlgBaseClass
 {

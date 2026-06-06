@@ -1,6 +1,6 @@
 #ifndef SINGLEBITMAPANDTEXTDLG_H
 #define SINGLEBITMAPANDTEXTDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class SingleBitmapAndTextDlg : public SingleBitmapAndTextDlgBase
 {

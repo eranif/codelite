@@ -1,6 +1,6 @@
 #ifndef ABOUTDLG_H
 #define ABOUTDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class wxcAboutDlg : public wxcAboutDlgBaseClass
 {

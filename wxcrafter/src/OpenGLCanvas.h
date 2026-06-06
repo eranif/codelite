@@ -1,6 +1,6 @@
 #ifndef OPENGLCANVAS_H
 #define OPENGLCANVAS_H
-#include "wxcrafter_gui.h"
+#include "wxcrafter_gui.hpp"
 
 class OpenGLCanvas : public OpenGLCanvasBase
 {

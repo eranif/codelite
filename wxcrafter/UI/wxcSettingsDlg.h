@@ -1,6 +1,6 @@
 #ifndef WXCSETTINGSDLG_H
 #define WXCSETTINGSDLG_H
-#include "gui.h"
+#include "gui.hpp"
 
 class wxcSettingsDlg : public wxcSettingsDlgBase
 {

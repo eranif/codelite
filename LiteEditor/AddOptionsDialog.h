@@ -1,6 +1,6 @@
 #ifndef ADDOPTIONSDIALOG_H
 #define ADDOPTIONSDIALOG_H
-#include "AddOptionsDialogBase.h"
+#include "AddOptionsDialogBase.hpp"
 
 class AddOptionsDialog : public AddOptionsDialogBase
 {

@@ -26,7 +26,7 @@
 #define __workspacetab__
 
 #include "cl_command_event.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 #include <wx/panel.h>
 
 class clWorkspaceView;

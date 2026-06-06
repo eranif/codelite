@@ -26,7 +26,7 @@
 #ifndef CODECOMPLETIONPAGE_H
 #define CODECOMPLETIONPAGE_H
 
-#include "workspacesettingsbase.h" // Base class: CodeCompletionBasePage
+#include "workspacesettingsbase.hpp" // Base class: CodeCompletionBasePage
 
 class CodeCompletionPage : public CodeCompletionBasePage
 {

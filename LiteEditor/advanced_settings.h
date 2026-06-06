@@ -35,7 +35,7 @@
 #include "CompilerMainPage.h"
 #include "CompilersDetectorManager.h"
 #include "ICompilerLocator.h"
-#include "advance_settings_base.h"
+#include "advance_settings_base.hpp"
 #include "compiler.h"
 
 #include <map>

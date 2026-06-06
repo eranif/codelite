@@ -26,7 +26,7 @@
 #define __debuggersettingsdlg__
 
 #include "Debugger/debuggersettings.h"
-#include "debuggersettingsbasedlg.h"
+#include "debuggersettingsbasedlg.hpp"
 #include "filepicker.h"
 
 #include <vector>

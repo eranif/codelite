@@ -26,7 +26,7 @@
 #pragma once
 
 #include "OptionsConfigPage.hpp"
-#include "options_base_dlg2.h"
+#include "options_base_dlg2.hpp"
 
 /** Implementing OptionsBaseDlg2 */
 class PreferencesDialog : public OptionsBaseDlg2

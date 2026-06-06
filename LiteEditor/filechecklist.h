@@ -28,7 +28,7 @@
 
 #include <vector>
 #include <wx/filename.h>
-#include "filechecklistbase.h"
+#include "filechecklistbase.hpp"
 
 class FileCheckList : public FileCheckListBase
 {

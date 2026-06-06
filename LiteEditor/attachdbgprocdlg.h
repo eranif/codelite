@@ -25,7 +25,7 @@
 #ifndef __attachdbgprocdlg__
 #define __attachdbgprocdlg__
 
-#include "attachdbgprocbasedlg.h"
+#include "attachdbgprocbasedlg.hpp"
 
 class AttachDbgProcDlg : public AttachDbgProcBaseDlg
 {

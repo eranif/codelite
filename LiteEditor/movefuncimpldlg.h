@@ -25,7 +25,7 @@
 #ifndef __movefuncimpldlg__
 #define __movefuncimpldlg__
 
-#include "movefuncimplbasedlg.h"
+#include "movefuncimplbasedlg.hpp"
 
 /** Implementing MoveFuncImplBaseDlg */
 class MoveFuncImplDlg : public MoveFuncImplBaseDlg

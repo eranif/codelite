@@ -25,7 +25,7 @@
 #ifndef __configuration_manager_dlg__
 #define __configuration_manager_dlg__
 
-#include "ConfigManagerBaseDlg.h"
+#include "ConfigManagerBaseDlg.hpp"
 #include "configuration_mapping.h"
 #include "project_settings.h"
 

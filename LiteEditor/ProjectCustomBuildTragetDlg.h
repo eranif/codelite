@@ -25,7 +25,7 @@
 
 #ifndef PROJECTCUSTOMBUILDTRAGETDLG_H
 #define PROJECTCUSTOMBUILDTRAGETDLG_H
-#include "project_settings_base_dlg.h"
+#include "project_settings_base_dlg.hpp"
 
 class ProjectCustomBuildTragetDlg : public ProjectCustomBuildTragetDlgBase
 {

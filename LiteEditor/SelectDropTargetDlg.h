@@ -25,7 +25,7 @@
 
 #ifndef SELECTDROPTARGETDLG_H
 #define SELECTDROPTARGETDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 #include <map>
 

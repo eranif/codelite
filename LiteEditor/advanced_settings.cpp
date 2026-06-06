@@ -34,7 +34,6 @@
 #include "CompilersDetectorManager.h"
 #include "CompilersFoundDlg.h"
 #include "NewCompilerDlg.h"
-#include "advance_settings_base.h"
 #include "build_settings_config.h"
 #include "buildsettingstab.h"
 #include "editor_config.h"

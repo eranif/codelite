@@ -1,7 +1,7 @@
 #ifndef BUILDORDERDIALOG_H
 #define BUILDORDERDIALOG_H
 
-#include "buildorderbasepage.h"
+#include "buildorderbasepage.hpp"
 #include <wx/arrstr.h>
 
 class BuildOrderDialog : public BuildOrderDialogBase

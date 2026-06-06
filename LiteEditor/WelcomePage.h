@@ -26,7 +26,7 @@
 #pragma once
 
 #include "clThemedButton.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 #include <map>
 #include <wx/commandlinkbutton.h>

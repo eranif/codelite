@@ -27,7 +27,7 @@
 #define ADDFUNCTIONSIMPDLG_H
 
 #include "database/entry.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 #include <wx/arrstr.h>
 #include <wx/treebase.h>

@@ -25,7 +25,7 @@
 #ifndef __buildsettingstab__
 #define __buildsettingstab__
 
-#include "buildsettingstabbase.h"
+#include "buildsettingstabbase.hpp"
 
 /** Implementing BuildTabSettingsBase */
 class BuildTabSetting : public BuildTabSettingsBase

@@ -28,7 +28,7 @@
 
 #include "cl_command_event.h"
 #include "debugger.h"
-#include "debuggersettingsbasedlg.h"
+#include "debuggersettingsbasedlg.hpp"
 
 //++++++++++----------------------------------
 // Our custom model

@@ -25,7 +25,7 @@
 
 #ifndef FILESMODIFIEDDLG_H
 #define FILESMODIFIEDDLG_H
-#include "filechecklistbase.h"
+#include "filechecklistbase.hpp"
 
 class FilesModifiedDlg : public FilesModifiedDlgBase
 {

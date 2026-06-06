@@ -1,6 +1,6 @@
 #ifndef COPYCOMPILERSETTINGSDLG_H
 #define COPYCOMPILERSETTINGSDLG_H
-#include "project_settings_base_dlg.h"
+#include "project_settings_base_dlg.hpp"
 
 class CopyCompilerSettingsDlg : public CopyCompilerSettingsDlgBase
 {

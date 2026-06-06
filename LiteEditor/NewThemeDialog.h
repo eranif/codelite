@@ -25,7 +25,7 @@
 
 #ifndef NEWTHEMEDIALOG_H
 #define NEWTHEMEDIALOG_H
-#include "syntaxhighlightbasedlg.h"
+#include "syntaxhighlightbasedlg.hpp"
 #include "lexer_configuration.h"
 
 class NewThemeDialog : public NewThemeDialogBase

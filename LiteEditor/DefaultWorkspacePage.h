@@ -28,7 +28,7 @@
 
 #include "clColours.h"
 #include "cl_command_event.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class DefaultWorkspacePage : public DefaultWorkspacePageBase
 {

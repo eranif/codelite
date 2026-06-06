@@ -30,7 +30,7 @@
 #include "clToolBar.h"
 #include "cl_command_event.h"
 #include "imanager.h"
-#include "openwindowspanelbase.h"
+#include "openwindowspanelbase.hpp"
 
 #include <map>
 

@@ -25,7 +25,7 @@
 
 #ifndef OPENFOLDERDLG_H
 #define OPENFOLDERDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class OpenFolderDlg : public OpenFolderDlgBase
 {

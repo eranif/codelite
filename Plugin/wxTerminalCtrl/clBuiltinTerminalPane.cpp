@@ -448,9 +448,15 @@ void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)
     wxWindow* win = dynamic_cast<wxWindow*>(event.GetEventObject());
     CHECK_PTR_RET(win);
 
+    wxString new_title = event.GetTitle();
+    new_title.Trim().Trim(false);
+
+    if (new_title.empty()) {
+        new_title = _("Terminal");
+    }
     int index = m_book->FindPage(win);
     if (index != wxNOT_FOUND) {
-        m_book->SetPageText(index, event.GetTitle());
+        m_book->SetPageText(index, new_title);
     }
 }
 

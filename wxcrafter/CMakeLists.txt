@@ -263,7 +263,7 @@ endif()
 # wxCrafter as a CodeLite plugin (shared library) — uses GUI runtime shim
 add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_SRCS}
                                    "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_gui.cpp")
-target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommon wxCrafterCommonGui)
+target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommonGui wxCrafterCommon)
 
 # wxCrafter as a standalone GUI application — uses GUI runtime shim
 add_executable(wxcrafter ${MACRO_SENSITIVE_SRCS}

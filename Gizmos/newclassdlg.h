@@ -26,7 +26,7 @@
 #define __newclassdlg__
 
 #include "new_class_dlg_data.h"
-#include "newclassbasedlg.h"
+#include "newclassbasedlg.hpp"
 
 class IManager;
 

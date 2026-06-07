@@ -26,7 +26,7 @@
 #ifndef PLUGINWIZARD_H
 #define PLUGINWIZARD_H
 
-#include "gizmos_base.h"
+#include "gizmos_base.hpp"
 #include "newplugindata.h"
 
 class PluginWizard : public PluginWizardBase

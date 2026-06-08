@@ -26,8 +26,8 @@
 #ifndef __svn_sync_dialog__
 #define __svn_sync_dialog__
 
-#include "subversion2_ui.h"
-#include "wxcrafter.h"
+#include "subversion2_ui.hpp"
+#include "wxcrafter.hpp"
 
 class Subversion2;
 class SvnSyncDialog : public SvnSyncDialogBaseClass

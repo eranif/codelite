@@ -30,7 +30,7 @@
 #include "clFileSystemEvent.h"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
-#include "subversion2_ui.h"
+#include "subversion2_ui.hpp"
 #include "svn_console.h"
 #include "svncommand.h"
 #include "svninfo.h"

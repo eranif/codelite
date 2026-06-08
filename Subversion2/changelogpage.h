@@ -26,7 +26,7 @@
 #ifndef CHANGELOGPAGE_H
 #define CHANGELOGPAGE_H
 
-#include "subversion2_ui.h" // Base class: ChangeLogPageBase
+#include "subversion2_ui.hpp" // Base class: ChangeLogPageBase
 
 #include <map>
 #include <wx/regex.h>

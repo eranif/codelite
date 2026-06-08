@@ -26,7 +26,7 @@
 #ifndef SVNBLAMEFRAME_H
 #define SVNBLAMEFRAME_H
 
-#include "subversion2_ui.h"
+#include "subversion2_ui.hpp"
 
 #include <wx/filename.h>
 

@@ -26,7 +26,7 @@
 #ifndef __svn_select_local_repo_dlg__
 #define __svn_select_local_repo_dlg__
 
-#include "subversion2_ui.h"
+#include "subversion2_ui.hpp"
 
 class Subversion2;
 class SvnSelectLocalRepoDlg : public SvnSelectLocalRepoBase

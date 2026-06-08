@@ -30,7 +30,7 @@
 #include "cl_command_event.h"
 #include "macros.h"
 #include "svnsettingsdata.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class Subversion2;
 class IProcess;

@@ -26,7 +26,7 @@
 #ifndef COMPILERSFOUNDDLG_H
 #define COMPILERSFOUNDDLG_H
 
-#include "CompilersFoundDlgBase.h"
+#include "CompilersFoundDlgBase.hpp"
 #include "ICompilerLocator.h"
 
 class CompilersFoundDlg : public CompilersFoundDlgBase

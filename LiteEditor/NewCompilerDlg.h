@@ -25,7 +25,7 @@
 
 #ifndef NEWCOMPILERDLG_H
 #define NEWCOMPILERDLG_H
-#include "compiler_pages.h"
+#include "compiler_pages.hpp"
 
 class NewCompilerDlg : public NewCompilerDlgBase
 {

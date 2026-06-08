@@ -25,7 +25,7 @@
 #ifndef __breakpointdlg__
 #define __breakpointdlg__
 
-#include "breakpointdlgbase.h"
+#include "breakpointdlgbase.hpp"
 #include "breakpointsmgr.h"
 #include "cl_command_event.h"
 

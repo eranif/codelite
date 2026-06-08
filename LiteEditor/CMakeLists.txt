@@ -23,6 +23,214 @@ endif(USE_CLANG)
 # configure version file, this needs to be done before we set the SRCS variable
 configure_file(${CMAKE_CURRENT_LIST_DIR}/autoversion.h.in ${CMAKE_BINARY_DIR}/generated/autoversion.h)
 
+wxcrafter_target(
+    LiteEditorAccelTableBaseDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/AccelTableBaseDlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "AccelTableBaseDlg.cpp"
+    "AccelTableBaseDlg.hpp"
+    "AccelTableBaseDlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorAddOptionsDialogBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/AddOptionsDialogBase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "AddOptionsDialogBase.cpp"
+    "AddOptionsDialogBase.hpp"
+    "AddOptionsDialogBase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorAdvanceSettings
+    "${CMAKE_CURRENT_SOURCE_DIR}/advance_settings.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "advance_settings_base.cpp"
+    "advance_settings_base.hpp"
+    "advance_settings_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorAttachDbgProcBaseDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/AttachDbgProcBaseDlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "attachdbgprocbasedlg.cpp"
+    "attachdbgprocbasedlg.hpp"
+    "AttachDbgProcBaseDlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorBreakpointDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/breakpointdlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "breakpointdlgbase.cpp"
+    "breakpointdlgbase.hpp"
+    "breakpoint_dlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorBuildTabSettings
+    "${CMAKE_CURRENT_SOURCE_DIR}/BuildTabSettings.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "buildsettingstabbase.cpp"
+    "buildsettingstabbase.hpp"
+    "buildsettingstab_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorCompilerPage
+    "${CMAKE_CURRENT_SOURCE_DIR}/compiler_page.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "compiler_pages.cpp"
+    "compiler_pages.hpp"
+    "compiler_page_plugin_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorCompilersFoundDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/CompilersFoundDlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "CompilersFoundDlgBase.cpp"
+    "CompilersFoundDlgBase.hpp"
+    "CompilersFoundDlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorConfigManagerBaseDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/ConfigManagerBaseDlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "ConfigManagerBaseDlg.cpp"
+    "ConfigManagerBaseDlg.hpp"
+    "ConfigManagerBaseDlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorDbgCommandBaseDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/DbgCommandBaseDlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "DbgCommandBaseDlg.cpp"
+    "DbgCommandBaseDlg.hpp"
+    "DbgCommandBaseDlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorDebuggerSettings
+    "${CMAKE_CURRENT_SOURCE_DIR}/DebuggerSettings.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "debuggersettingsbasedlg.cpp"
+    "debuggersettingsbasedlg.hpp"
+    "DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorDependDlgPage
+    "${CMAKE_CURRENT_SOURCE_DIR}/depend_dlg_page.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "buildorderbasepage.cpp"
+    "buildorderbasepage.hpp"
+    "depend_dlg_page_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorFileCheckListBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/filechecklistbase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "filechecklistbase.cpp"
+    "filechecklistbase.hpp"
+    "filechecklistbase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorMoveFuncImplBaseDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/movefuncimplbasedlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "movefuncimplbasedlg.cpp"
+    "movefuncimplbasedlg.hpp"
+    "movefuncimplbasedlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorNewVirtualFolder
+    "${CMAKE_CURRENT_SOURCE_DIR}/new_virtual_folder.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "new_virtual_folder.cpp"
+    "new_virtual_folder.hpp"
+    "new_virtual_folder_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorNewWorkspaceDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/new_workspace_dlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "newworkspacebasedlg.cpp"
+    "newworkspacebasedlg.hpp"
+    "new_workspace_dlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorNewQuickWatch
+    "${CMAKE_CURRENT_SOURCE_DIR}/newquickwatch.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "newquickwatch.cpp"
+    "newquickwatch.hpp"
+    "newquickwatch_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorOpenWindowsPanelBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/OpenWindowsPanelBase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "openwindowspanelbase.cpp"
+    "openwindowspanelbase.hpp"
+    "OpenWindowsPanelBase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorOptionsDialogBase2
+    "${CMAKE_CURRENT_SOURCE_DIR}/optionsdialogbase2.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "options_base_dlg2.cpp"
+    "options_base_dlg2.hpp"
+    "optionsdialogbase2_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorPluginDlgBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/plugindlgbase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "plugindlgbase.cpp"
+    "plugindlgbase.hpp"
+    "plugindlgbase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorProjectSettings
+    "${CMAKE_CURRENT_SOURCE_DIR}/project_settings.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "project_settings_base_dlg.cpp"
+    "project_settings_base_dlg.hpp"
+    "project_settings_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorSyntaxHighlightBaseDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/SyntaxHighlightBaseDlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "syntaxhighlightbasedlg.cpp"
+    "syntaxhighlightbasedlg.hpp"
+    "syntaxhighlightbasedlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorTabGroupBaseDlgs
+    "${CMAKE_CURRENT_SOURCE_DIR}/tabgroupbasedlgs.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "tabgroupbasedlgs.cpp"
+    "tabgroupbasedlgs.hpp"
+    "tabgroupbasedlgs_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorThreadListPanelBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/ThreadListPanelBase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "ThreadListPanelBase.cpp"
+    "ThreadListPanelBase.hpp"
+    "ThreadListPanelBase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorWorkspaceSettingsBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/workspacesettingsbase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "workspacesettingsbase.cpp"
+    "workspacesettingsbase.hpp"
+    "workspacesettingsbase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorWxCrafter
+    "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "wxcrafter.cpp"
+    "wxcrafter.hpp"
+    "wxcrafter_liteeditor_bitmaps.cpp")
+
 file(GLOB SRCS "*.cpp")
 include_directories("${CMAKE_BINARY_DIR}/generated")
 
@@ -31,7 +239,34 @@ set(RES_FILE "")
 if(MINGW)
     set(RES_FILES "code_parser.rc")
 endif()
-add_executable(codelite ${SRCS} ${RES_FILES})
+add_executable(codelite ${SRCS} ${RES_FILES}
+    ${WXCRAFTER_LiteEditorAccelTableBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorAddOptionsDialogBase_OUTPUTS}
+    ${WXCRAFTER_LiteEditorAdvanceSettings_OUTPUTS}
+    ${WXCRAFTER_LiteEditorAttachDbgProcBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorBreakpointDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorBuildTabSettings_OUTPUTS}
+    ${WXCRAFTER_LiteEditorCompilerPage_OUTPUTS}
+    ${WXCRAFTER_LiteEditorCompilersFoundDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorConfigManagerBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorDbgCommandBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorDebuggerSettings_OUTPUTS}
+    ${WXCRAFTER_LiteEditorDependDlgPage_OUTPUTS}
+    ${WXCRAFTER_LiteEditorFileCheckListBase_OUTPUTS}
+    ${WXCRAFTER_LiteEditorMoveFuncImplBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorNewVirtualFolder_OUTPUTS}
+    ${WXCRAFTER_LiteEditorNewWorkspaceDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorNewQuickWatch_OUTPUTS}
+    ${WXCRAFTER_LiteEditorOpenWindowsPanelBase_OUTPUTS}
+    ${WXCRAFTER_LiteEditorOptionsDialogBase2_OUTPUTS}
+    ${WXCRAFTER_LiteEditorPluginDlgBase_OUTPUTS}
+    ${WXCRAFTER_LiteEditorProjectSettings_OUTPUTS}
+    ${WXCRAFTER_LiteEditorSyntaxHighlightBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorTabGroupBaseDlgs_OUTPUTS}
+    ${WXCRAFTER_LiteEditorThreadListPanelBase_OUTPUTS}
+    ${WXCRAFTER_LiteEditorWorkspaceSettingsBase_OUTPUTS}
+    ${WXCRAFTER_LiteEditorWxCrafter_OUTPUTS}
+)
 
 if(UNIX OR APPLE)
     set_target_properties(codelite PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -87,6 +322,8 @@ else()
         plugin
         ${ADDITIONAL_LIBRARIES})
 endif()
+
+target_include_directories(codelite PUBLIC "${WXCRAFTER_LiteEditorAccelTableBaseDlg_OUTPUTDIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
 
 if(USE_PCH)
     codelite_add_pch(plugin)

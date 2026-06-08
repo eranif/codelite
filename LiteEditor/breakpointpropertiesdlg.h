@@ -26,7 +26,7 @@
 #ifndef __breakptpropertiesdlg__
 #define __breakptpropertiesdlg__
 
-#include "breakpointdlgbase.h"
+#include "breakpointdlgbase.hpp"
 #include "debugger.h"
 
 /** Implementing BreakpointPropertiesDlg */

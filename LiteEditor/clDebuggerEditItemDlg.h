@@ -26,7 +26,7 @@
 #ifndef CLDEBUGGEREDITITEMDLG_H
 #define CLDEBUGGEREDITITEMDLG_H
 
-#include "newquickwatch.h"
+#include "newquickwatch.hpp"
 
 class clDebuggerEditItemDlg : public clDebuggerEditItemDlgBase
 {

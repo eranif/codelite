@@ -27,7 +27,7 @@
 #define COMPILERMAINPAGE_H
 
 #include "compiler.h"
-#include "compiler_pages.h"
+#include "compiler_pages.hpp"
 
 #include <wx/dataview.h>
 

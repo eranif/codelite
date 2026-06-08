@@ -1,6 +1,6 @@
 #ifndef EDITCMPTEMPLATEDIALOG_H
 #define EDITCMPTEMPLATEDIALOG_H
-#include "compiler_pages.h"
+#include "compiler_pages.hpp"
 
 class EditCmpTemplateDialog : public EditCmpTemplateDialogBase
 {

@@ -26,7 +26,7 @@
 #ifndef __tabgroupdlg__
 #define __tabgroupdlg__
 
-#include "tabgroupbasedlgs.h"
+#include "tabgroupbasedlgs.hpp"
 #include "sessionmanager.h"
 
 class LoadTabGroupDlg : public LoadTabGroupBaseDlg

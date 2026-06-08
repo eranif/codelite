@@ -28,7 +28,7 @@
 
 #include "debugger.h"
 #include "debuggerobserver.h"
-#include "debuggersettingsbasedlg.h"
+#include "debuggersettingsbasedlg.hpp"
 #include "manager.h"
 
 #include <map>

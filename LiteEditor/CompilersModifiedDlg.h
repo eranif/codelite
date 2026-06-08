@@ -26,7 +26,7 @@
 #ifndef COMPILERSMODIFIEDDLG_H
 #define COMPILERSMODIFIEDDLG_H
 
-#include "CompilersFoundDlgBase.h"
+#include "CompilersFoundDlgBase.hpp"
 #include "macros.h"
 
 #include <wx/propgrid/property.h>

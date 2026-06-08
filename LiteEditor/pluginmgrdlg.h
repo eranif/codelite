@@ -25,7 +25,7 @@
 #ifndef __pluginmgrdlg__
 #define __pluginmgrdlg__
 
-#include "plugindlgbase.h"
+#include "plugindlgbase.hpp"
 
 class PluginMgrDlg : public PluginMgrDlgBase
 {

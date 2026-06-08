@@ -1,6 +1,6 @@
 #ifndef NEWFILETEMPLATEDIALOG_H
 #define NEWFILETEMPLATEDIALOG_H
-#include "compiler_pages.h"
+#include "compiler_pages.hpp"
 
 class NewFileTemplateDialog : public NewFileTemplateDialogBase
 {

@@ -26,7 +26,7 @@
 #ifndef NEWVIRTUALFOLDERDLG_H
 #define NEWVIRTUALFOLDERDLG_H
 
-#include "new_virtual_folder.h"
+#include "new_virtual_folder.hpp"
 
 class NewVirtualFolderDlg : public NewVirtualFolderDlgBase
 {

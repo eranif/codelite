@@ -244,7 +244,7 @@ inline bool IsValidUrlChar(wxChar c)
         return true;
 
     // Reserved: ":" / "/" / "?" / "#" / "[" / "]" / "@"
-    //           "!" / "$" / "&" / "'" / "(" / ")" / "*"
+    //           "!" / "$" / "&" / "'" / "*"
     //           "+" / "," / ";" / "="
     switch (c) {
     case ':':
@@ -258,8 +258,6 @@ inline bool IsValidUrlChar(wxChar c)
     case '$':
     case '&':
     case '\'':
-    case '(':
-    case ')':
     case '*':
     case '+':
     case ',':

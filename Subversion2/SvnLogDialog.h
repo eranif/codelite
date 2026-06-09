@@ -25,7 +25,7 @@
 
 #ifndef SVNLOGDIALOG_H
 #define SVNLOGDIALOG_H
-#include "subversion2_ui.h"
+#include "subversion2_ui.hpp"
 
 class SvnLogDialog : public SvnLogDialogBase
 {

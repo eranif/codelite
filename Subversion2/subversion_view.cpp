@@ -42,7 +42,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "subversion2.h"
-#include "subversion2_ui.h"
+#include "subversion2_ui.hpp"
 #include "svn_checkout_dialog.h"
 #include "svn_command_handlers.h"
 #include "svn_console.h"

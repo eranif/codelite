@@ -127,8 +127,11 @@ private:
      * @param persistTabTitle If true, the initial tab title is persisted and the control will ignore any attempt to
      * change it using ANSI escape sequences.
      */
-    wxTerminalViewCtrl*
-    DoCreateTerminal(const wxString& shellCommand, const wxString& tabTitle, bool makeActive, bool persistTabTitle);
+    wxTerminalViewCtrl* DoCreateTerminal(const wxString& shellCommand,
+                                         const wxString& tabTitle,
+                                         bool makeActive,
+                                         bool persistTabTitle,
+                                         std::optional<wxString> workingDirectory);
 
     wxAuiToolBar* m_toolbar = nullptr;
     wxAuiNotebook* m_book = nullptr;

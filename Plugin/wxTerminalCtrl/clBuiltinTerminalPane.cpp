@@ -221,12 +221,13 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::GetActiveTerminal()
 wxTerminalViewCtrl* clBuiltinTerminalPane::DoCreateTerminal(const wxString& shellCommand,
                                                             const wxString& tabTitle,
                                                             bool makeActive,
-                                                            bool persistTabTitle)
+                                                            bool persistTabTitle,
+                                                            std::optional<wxString> workingDirectory)
 {
     // By default, inherit parent's env.
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
-    wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(m_book, shellCommand, env);
+    wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(m_book, shellCommand, env, workingDirectory);
     ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!");
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
 
@@ -340,7 +341,12 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
     wxString finalTabTitle = tabTitle.IsEmpty() ? cmd : tabTitle;
 
     // Create the terminal using the helper method
-    wxTerminalViewCtrl* ctrl = DoCreateTerminal(cmd, finalTabTitle, makeVisible, true);
+    std::optional<wxString> wd{std::nullopt};
+    if (!sshAccount.has_value() && !workingDirectory.empty()) {
+        wd = workingDirectory;
+    }
+
+    wxTerminalViewCtrl* ctrl = DoCreateTerminal(cmd, finalTabTitle, makeVisible, true, wd);
     if (!ctrl) {
         return nullptr;
     }
@@ -374,13 +380,6 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
             // Give SSH time to connect before sending cd command
             // The user will see the connection prompt in the terminal
         }
-    }
-
-    // If working directory is provided and we're not using SSH, change to it locally
-    if (!workingDirectory.IsEmpty() && !sshAccount.has_value()) {
-        wxString cdCommand;
-        cdCommand << "cd \"" << workingDirectory << "\"";
-        ctrl->SendCommand(cdCommand);
     }
 
     // If we have SSH and a working directory, send cd command for the remote system
@@ -446,7 +445,7 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     const wxString& cmd = cd->GetData();
 
     // Create the terminal using the helper method (tab title = shell command, makeActive = true)
-    DoCreateTerminal(cmd, cmd, true, false);
+    DoCreateTerminal(cmd, cmd, true, false, ::wxGetCwd());
 }
 
 void clBuiltinTerminalPane::OnPageChanged(wxBookCtrlEvent& event)

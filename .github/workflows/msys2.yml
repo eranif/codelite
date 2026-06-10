@@ -85,11 +85,31 @@ jobs:
         mingw32-make -j$(nproc) install
         #add $HOME/root/bin to PATH
 
-    # CodeLite
+    # CodeLite & wxCrafter
     - name: Checkout
       uses: actions/checkout@v6
       with:
         submodules: recursive
+
+    # wxCrafter
+    - name: build and create wxCrafter installer
+      shell: msys2 {0}
+      run: |
+        mkdir build-wxcrafter-release
+        cd build-wxcrafter-release
+        MSYS2_BASE=$(cygpath -u "${{runner.temp}}")/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -DWXC_APP=1 -Wno-dev -DBUILD_TESTING=0 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
+        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
+
+    # Upload installer
+    - name: artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: wxcrafter-installer-wx-${{matrix.wx-version}}${{matrix.arch.package-suffix}}
+        path: |
+          build-wxcrafter-release/installer/**.*
+
+    # CodeLite
 
     - name: Build, test and create CodeLite installer
       shell: msys2 {0}
@@ -116,21 +136,3 @@ jobs:
     - name: Show content of installation
       shell: bash
       run: ls -lR "/C/Program Files/Codelite"
-
-    # wxCrafter
-    - name: build and create wxCrafter installer
-      shell: msys2 {0}
-      run: |
-        mkdir build-wxcrafter-release
-        cd build-wxcrafter-release
-        MSYS2_BASE=$(cygpath -u "${{runner.temp}}")/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -DWXC_APP=1 -Wno-dev -DBUILD_TESTING=0 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
-        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
-
-    # Upload installer
-    - name: artifact
-      uses: actions/upload-artifact@v7
-      with:
-        name: wxcrafter-installer-wx-${{matrix.wx-version}}${{matrix.arch.package-suffix}}
-        path: |
-          build-wxcrafter-release/installer/**.*

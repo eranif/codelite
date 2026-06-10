@@ -27,7 +27,6 @@ Medium:
 - Implement `code_symbols` tool for AI.
 - AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
 - AI: Add a system-message that instruct the model to NEVER create a summary file
-- AI: Add "compact" or "summary" button to when the AI is losing it and needs a fresh start :)
 - Terminal: when changing a terminal theme, apply it to newly opened terminals only.
 - Terminal: remember, on per terminal type, the last theme used for it.
 - Extend the single agent and add sub-agents that will offload heavy tasks, such as code browsing and reading large files.

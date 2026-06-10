@@ -490,18 +490,30 @@ macro(
   Input
   OutputDir
   OutputCpp
-  OutputH
-  OutputBitmaps)
+  OutputHpp
+  OutputBitmaps
+  # Extra output for models
+)
+
+  set(WXCRAFTER_${Name}_OUTPUTS
+    "${OutputDir}/${OutputCpp}"
+    "${OutputDir}/${OutputHpp}"
+    "${OutputDir}/${OutputBitmaps}")
+
+  set(ExtraMacroArgs ${ARGN}) # ARGN is not a variable
+  foreach(ExtraArgs ${ExtraMacroArgs})
+    list(APPEND WXCRAFTER_${Name}_OUTPUTS "${OutputDir}/${ExtraArgs}")
+  endforeach()
+  unset(ExtraMacroArgs)
+
   add_custom_command(
-    OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH}
-           ${OutputDir}/${OutputBitmaps}
-    COMMAND $<TARGET_FILE:wxcgen> -o ${OutputDir} ${Input}
+    OUTPUT ${WXCRAFTER_${Name}_OUTPUTS}
+    COMMAND $<TARGET_FILE:wxcgen> -o "${OutputDir}" "${Input}"
     VERBATIM
     DEPENDS ${Input} wxcgen
     COMMENT "[WxCrafter][${Name}] Building code (wxcgen)")
 
-  set(WXCRAFTER_${Name}_OUTPUTS ${OutputCpp} ${OutputH} ${OutputBitmaps})
-  set(WXCRAFTER_${Name}_OUTPUTDIR ${OutputDir})
+  set(WXCRAFTER_${Name}_OUTPUTDIR "${OutputDir}")
 endmacro()
 
 message(STATUS "wxCrafter - Done")

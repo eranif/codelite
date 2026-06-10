@@ -445,7 +445,12 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     const wxString& cmd = cd->GetData();
 
     // Create the terminal using the helper method (tab title = shell command, makeActive = true)
-    DoCreateTerminal(cmd, cmd, true, false, ::wxGetCwd());
+    std::optional<wxString> wd{std::nullopt};
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (workspace && !workspace->IsRemote()) {
+        wd = workspace->GetDir();
+    }
+    DoCreateTerminal(cmd, cmd, true, false, wd);
 }
 
 void clBuiltinTerminalPane::OnPageChanged(wxBookCtrlEvent& event)

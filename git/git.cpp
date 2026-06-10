@@ -108,7 +108,9 @@ public:
               [[maybe_unused]] wxString& buffErr,
               [[maybe_unused]] std::string& raw_buff,
               [[maybe_unused]] std::string& raw_buff_err) override
-    { return false; }
+    {
+        return false;
+    }
 
     // Write to the process stdin
     // This version add LF to the buffer
@@ -2155,7 +2157,9 @@ void GitPlugin::ShowExternalDiff(const wxString& file, const wxString& tool)
 }
 
 void GitPlugin::OnStartGitkUI(wxUpdateUIEvent& e)
-{ e.Enable(!m_repositoryDirectory.IsEmpty() && !m_pathGITKExecutable.IsEmpty()); }
+{
+    e.Enable(!m_repositoryDirectory.IsEmpty() && !m_pathGITKExecutable.IsEmpty());
+}
 
 void GitPlugin::ApplyPatch(const wxString& filename, const wxString& extraFlags)
 {
@@ -3021,7 +3025,8 @@ wxString GitPlugin::FindRepositoryRoot(const wxString& starting_dir) const
     while (fp.GetDirCount()) {
         wxFileName gitdir(fp.GetPath(), wxEmptyString);
         gitdir.AppendDir(".git");
-        if (wxFileName::DirExists(gitdir.GetPath())) {
+        // git worktree is a file, so check for file or for folder named ".git"
+        if (wxFileName::DirExists(gitdir.GetPath()) || wxFileName::FileExists(gitdir.GetPath())) {
             wxString realfilepath = FileUtils::RealPath(gitdir.GetPath());
             if (realfilepath != gitdir.GetPath() && wxFileName::DirExists(realfilepath)) {
                 return realfilepath.BeforeLast('.');

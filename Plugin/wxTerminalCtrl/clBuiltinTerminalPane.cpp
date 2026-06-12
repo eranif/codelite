@@ -228,7 +228,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::DoCreateTerminal(const wxString& shel
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
     wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(m_book, shellCommand, env, workingDirectory);
-    ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!");
+    ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!`");
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
 
     // Add the page to the notebook
@@ -645,6 +645,7 @@ void clBuiltinTerminalPane::OnInitDone(wxCommandEvent& e)
             wxFileName fn{toml_file};
             auto theme = clBuiltinTerminalPane::FromTOML(fn);
             if (theme.has_value()) {
+                theme->isBlockCursor = true;
                 themes.insert({fn.GetName(), *theme});
             }
         }

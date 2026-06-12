@@ -3156,7 +3156,30 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
     }
 
     // And finally, generate the Bitmap resource file
-    wxcCodeGeneratorHelper::Get().CreateXRC();
+    auto requestDesignerRefresh = []() {
+        wxCommandEvent evt(wxEVT_REFRESH_DESIGNER);
+        EventNotifier::Get()->AddPendingEvent(evt);
+    };
+    auto bitmapGenerationStart = []() {
+        wxFrame* topFrame = EventNotifier::Get()->TopFrame();
+        if (topFrame) {
+            topFrame->SetStatusText("Generating bitmap code...");
+        }
+        wxBeginBusyCursor();
+    };
+    auto bitmapGenerationEnd = []() {
+        if (wxIsBusy()) {
+            wxEndBusyCursor();
+        }
+        wxFrame* topFrame = EventNotifier::Get()->TopFrame();
+        if (topFrame) {
+            topFrame->SetStatusText("Ready");
+        }
+    };
+
+    wxcCodeGeneratorHelper::Get()
+            .CreateXRC(requestDesignerRefresh, bitmapGenerationStart, bitmapGenerationEnd);
+
 }
 
 void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)

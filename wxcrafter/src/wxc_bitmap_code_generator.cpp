@@ -3,7 +3,6 @@
 #include "event_notifier.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_project_metadata.h"
-#include "wxc_runtime.h"
 #include "wxgui_helpers.h"
 #include "wxrc.h"
 
@@ -32,7 +31,9 @@ void wxcCodeGeneratorHelper::Clear()
     m_icons.Clear();
 }
 
-bool wxcCodeGeneratorHelper::CreateXRC()
+bool wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefresh,
+                                       std::function<void()> bitmapGenerationStart,
+                                       std::function<void()> bitmapGenerationEnd)
 {
     wxLogNull noLog;
 
@@ -95,8 +96,8 @@ bool wxcCodeGeneratorHelper::CreateXRC()
 
     bool isBitmapModifiedOutside = IsGenerateNeeded();
 
-    if (isBitmapModifiedOutside) {
-        wxc_runtime::RequestDesignerRefresh();
+    if (isBitmapModifiedOutside && requestDesignerRefresh) {
+        requestDesignerRefresh();
     }
 
     if (wxCrafter::IsTheSame(outputString, m_xrcFile) && m_destCPP.FileExists() && !isBitmapModifiedOutside) {
@@ -115,7 +116,9 @@ bool wxcCodeGeneratorHelper::CreateXRC()
     {
         wxString cppFile = m_destCPP.GetFullPath();
         wxLogNull nl;
-        wxc_runtime::BitmapGenStatusScope statusScope;
+        if (bitmapGenerationStart) {
+            bitmapGenerationStart();
+        }
 
         wxcXmlResourceCmp cmp;
         cmp.Run(m_xrcFile.GetFullPath(),                        // Input XRC file
@@ -126,6 +129,9 @@ bool wxcCodeGeneratorHelper::CreateXRC()
         wxCommandEvent eventEnd(wxEVT_BITMAP_CODE_GENERATION_DONE);
         eventEnd.SetString(cppFile);
         EventNotifier::Get()->AddPendingEvent(eventEnd);
+        if (bitmapGenerationEnd) {
+            bitmapGenerationEnd();
+        }
     }
 
     // m_bmpGenThread.AddMessage( req );

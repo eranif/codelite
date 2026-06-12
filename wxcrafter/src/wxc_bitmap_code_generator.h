@@ -3,6 +3,7 @@
 
 #include "macros.h"
 
+#include <functional>
 #include <wx/arrstr.h>
 #include <wx/event.h>
 #include <wx/filename.h>
@@ -44,7 +45,9 @@ public:
     void ClearIcons();
     wxString AddBitmap(const wxString& bitmapFile, const wxString& name = wxEmptyString);
     void AddWindowId(const wxString& winid);
-    bool CreateXRC();
+    bool CreateXRC(std::function<void()> requestDesignerRefresh,
+                   std::function<void()> bitmapGenerationStart,
+                   std::function<void()> bitmapGenerationEnd);
     wxString GenerateInitCode(TopLevelWinWrapper* tw) const;
     wxString GenerateExternCode() const;
     wxString GenerateWinIdEnum() const;

@@ -139,7 +139,7 @@ GenerateFromProject(const wxString& filename, const wxString& fileContent, const
         }
     }
 
-    wxcCodeGeneratorHelper::Get().CreateXRC();
+    wxcCodeGeneratorHelper::Get().CreateXRC(nullptr, nullptr, nullptr);
     return true;
 }
 

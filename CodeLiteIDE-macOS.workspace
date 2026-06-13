@@ -39,7 +39,7 @@
           "cd  .build-release && make -j12 clean"
         ]
       ],
-      "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;.*.xrc;*.cmake;*.rc;*.py;*.md;*.xrc",
+      "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;.*.xrc;*.cmake;*.rc;*.py;*.md;*.xrc;*.plist",
       "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
       "excludePaths": "codelite-cli;codelite-icons;codelite-icons-dark;codelite-icons-fresh-farm;codelite_echo;codelite_make;bitmaps;bitmaps-dark;bitmaps-light;.build-debug;.build-release;CallGraph",
       "debugger": "GNU gdb debugger"

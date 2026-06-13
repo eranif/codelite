@@ -1505,18 +1505,19 @@ CanInvokeToolResult Manager::PromptUserYesNoTrustQuestion(const wxString& text, 
     }
     res = fut->get();
     wxString response_text = wxString::FromUTF8(res);
-    response_text.Trim().Trim(false);
+    wxString response_text_lowercase = response_text.Lower();
+    response_text_lowercase.Trim().Trim(false);
 
-    if (response_text == "yes" || response_text == "y" || response_text == "ok") {
+    if (response_text_lowercase == "yes" || response_text_lowercase == "y" || response_text_lowercase == "ok") {
         return CanInvokeToolResult{
             .can_invoke = true,
         };
-    } else if (response_text == "no" || response_text == "n") {
+    } else if (response_text_lowercase == "no" || response_text_lowercase == "n") {
         return CanInvokeToolResult{
             .can_invoke = false,
             .reason = "Permission denied",
         };
-    } else if (response_text == "trust" || response_text == "t") {
+    } else if (response_text_lowercase == "trust" || response_text_lowercase == "t") {
         if (on_trust_cb) {
             EventNotifier::Get()->RunOnMain<void>(std::move(on_trust_cb));
         }

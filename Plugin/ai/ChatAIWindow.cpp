@@ -5,11 +5,13 @@
 #include "ColoursAndFontsManager.h"
 #include "MarkdownStyler.hpp"
 #include "ai/SopParser.hpp"
-#include "wx/dir.h"
+#include "clGetTextFromUserDialog.h"
+
 #if USE_SFTP
 #include "SFTPBrowserDlg.h"
 #include "clSFTPManager.hpp"
 #endif
+
 #include "ai/EndpointModelSelector.hpp"
 #include "ai/LLMManager.hpp"
 #include "ai/SopParamsDialog.hpp"
@@ -1184,7 +1186,14 @@ void ChatAIWindow::OnNo(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     HidePromptPanel();
-    DoSendQuestionResponse("no");
+    // Ask the user for more details.
+    wxString answer = "no";
+    clGetTextFromUserDialog dlg(
+        EventNotifier::Get()->TopFrame(), "CodeLite", _("No, and tell me what to do differently:"), wxEmptyString);
+    if (dlg.ShowModal() == wxID_OK) {
+        answer = _("No, ") + dlg.GetValue();
+    }
+    DoSendQuestionResponse(answer.ToStdString(wxConvUTF8));
 }
 
 void ChatAIWindow::OnTrust(wxCommandEvent& event)
@@ -1207,9 +1216,10 @@ void ChatAIWindow::ShowPromptPanel()
         return;
     }
     m_panelConfirmation->Show();
-    m_buttonYes->CallAfter(&wxButton::SetFocus);
     m_splitterPageTop->GetSizer()->Layout();
     SendSizeEvent();
+    m_buttonYes->SetDefault();
+    m_buttonYes->CallAfter(&wxButton::SetFocus);
 }
 
 void ChatAIWindow::HidePromptPanel()

@@ -315,7 +315,7 @@ bool LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor,
         if (changes.empty()) {
             // everything is up-to-date
             LOG_IF_TRACE { LSP_TRACE() << GetLogPrefix() << "No changes detected in file:" << filename << endl; }
-            return false;
+            return true;
         }
 
         LSP_DEBUG() << "Sending textDocument/didChange request" << endl;
@@ -368,14 +368,12 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
 
         // before sending the save request, send a change request
         LSP_DEBUG() << "Flushing changes before save" << endl;
-        bool need_semantic_tokens = SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
+        SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
         LSP::CompletionRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::DidSaveTextDocumentRequest(filename, fileContent));
         QueueMessage(req);
-        if (need_semantic_tokens) {
-            SendSemanticTokensRequest(editor);
-        }
+        SendSemanticTokensRequest(editor);
     }
 }
 
@@ -709,7 +707,9 @@ void LanguageServerProtocol::DrainOutputBuffer()
             // For now just log them, so they do not get treated as unknown messages.
             auto progress = LSP::Progress::FromJSON(json_item);
             LOG_IF_DEBUG
-            { LSP_DEBUG() << GetLogPrefix() << "Received $/progress: " << json_item.format(false) << endl; }
+            {
+                LSP_DEBUG() << GetLogPrefix() << "Received $/progress: " << json_item.format(false) << endl;
+            }
             if (progress) {
                 LSP::Manager::GetInstance().LogMessage(
                     GetName(), progress.value().GetMessage(), LSP::Manager::LogLevel::Info);
@@ -1051,16 +1051,24 @@ bool LanguageServerProtocol::CheckCapability(const LSP::ResponseMessage& res,
 bool LanguageServerProtocol::IsCapabilitySupported(const wxString& name) const { return m_providers.count(name) > 0; }
 
 bool LanguageServerProtocol::IsDocumentSymbolsSupported() const
-{ return IsCapabilitySupported("textDocument/documentSymbol"); }
+{
+    return IsCapabilitySupported("textDocument/documentSymbol");
+}
 
 bool LanguageServerProtocol::IsDeclarationSupported() const
-{ return IsCapabilitySupported("textDocument/declaration"); }
+{
+    return IsCapabilitySupported("textDocument/declaration");
+}
 
 bool LanguageServerProtocol::IsSemanticTokensSupported() const
-{ return IsCapabilitySupported("textDocument/semanticTokens/full"); }
+{
+    return IsCapabilitySupported("textDocument/semanticTokens/full");
+}
 
 void LanguageServerProtocol::SetStartedCallback(LSPOnConnectedCallback_t&& cb)
-{ m_onServerStartedCallback = std::move(cb); }
+{
+    m_onServerStartedCallback = std::move(cb);
+}
 
 //===------------------------------------------------------------------
 // LSPRequestMessageQueue

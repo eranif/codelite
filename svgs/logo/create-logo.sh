@@ -21,7 +21,9 @@ filename=codelite-logo
 mkdir -p logo/osx/icon.iconset
 OS_NAME=$(uname -s)
 
-file=${CL_HOME}/svgs/dark-theme/codelite-logo.svg
+file=${CL_HOME}/svgs/logo/codelite-logo.svg
+cp ${file} ${CL_HOME}/svgs/dark-theme/
+
 if [ "${OS_NAME}" != "Darwin" ]; then
     ## 16x16 version
     inkscape -w 16 -h 16 $file -o ${CL_HOME}/svgs/logo/16-${filename}.png
@@ -71,7 +73,7 @@ if [ "${OS_NAME}" == "Darwin" ]; then
     iconutil -c icns icon.iconset/
 fi
 
-if [[ "${OS_NAME}" == *"MSYS_NT"* ]]; then
+if [[ "${OS_NAME}" == *"MINGW64_NT"* ]]; then
     # create codelite-log.ico
     CL_HOME_NATIVE=$(cygpath -w ${CL_HOME})
     png2ico ${CL_HOME}/LiteEditor/codelite-logo.ico         \

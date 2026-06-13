@@ -347,6 +347,38 @@ if(MINGW)
     COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:wxcrafter>
             $<TARGET_FILE_DIR:wxcrafter>
     COMMAND_EXPAND_LISTS)
+
+  # Get DLL dependencies for additional libraries needed by wxcgen
+  msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/libssh.dll LIBSSH_DLLS)
+  msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/libc++.dll LIBCXX_DLLS)
+  msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/openssl.exe OPENSSL_DLLS)
+
+  # Combine all additional DLLs
+  list(APPEND WXCGEN_EXTRA_DLLS ${LIBSSH_DLLS} ${LIBCXX_DLLS} ${OPENSSL_DLLS})
+  list(APPEND WXCGEN_EXTRA_DLLS "${MSYS2_BASE}/${MSYSTEM}/bin/libsqlite3-0.dll")
+  list(REMOVE_DUPLICATES WXCGEN_EXTRA_DLLS)
+
+  # Copy dlls near the wxcgen executable
+  add_custom_command(
+    TARGET wxcgen
+    POST_BUILD
+    COMMAND cmake -E copy_if_different ${WXDLL} $<TARGET_FILE_DIR:wxcgen>
+    COMMAND_EXPAND_LISTS)
+  add_custom_command(
+    TARGET wxcgen
+    POST_BUILD
+    COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:wxcgen>
+            $<TARGET_FILE_DIR:wxcgen>
+    COMMAND_EXPAND_LISTS)
+
+  # Copy additional dependencies for wxcgen
+  foreach(DLL ${WXCGEN_EXTRA_DLLS})
+    add_custom_command(
+      TARGET wxcgen
+      POST_BUILD
+      COMMAND cmake -E copy_if_different "${DLL}" $<TARGET_FILE_DIR:wxcgen>
+      COMMAND_EXPAND_LISTS)
+  endforeach()
 endif(MINGW)
 
 if(NOT WXC_APP)

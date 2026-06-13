@@ -4,15 +4,15 @@
    width="512"
    height="512"
    version="1.1"
-   id="svg16"
-   sodipodi:docname="codelite-logo-brackets.svg"
+   id="svg13"
+   sodipodi:docname="codelite-logo.svg"
    inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
-     id="namedview16"
+     id="namedview13"
      pagecolor="#ffffff"
      bordercolor="#000000"
      borderopacity="0.25"
@@ -21,29 +21,30 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="3.4648438"
-     inkscape:cx="255.85569"
-     inkscape:cy="256"
+     inkscape:cx="302.32243"
+     inkscape:cy="271.58511"
      inkscape:window-width="3840"
      inkscape:window-height="2036"
      inkscape:window-x="-12"
      inkscape:window-y="-12"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg16" />
+     inkscape:current-layer="svg13" />
   <defs
-     id="defs12">
+     id="defs9">
     <linearGradient
        id="bg"
        x1="0"
        y1="0"
-       x2="1"
-       y2="1">
+       x2="0"
+       y2="1"
+       gradientUnits="objectBoundingBox">
       <stop
          offset="0%"
-         stop-color="#181E30"
+         stop-color="#4A5568"
          id="stop1" />
       <stop
          offset="100%"
-         stop-color="#0C1018"
+         stop-color="#2D3748"
          id="stop2" />
     </linearGradient>
     <radialGradient
@@ -62,30 +63,6 @@
          stop-opacity="0"
          id="stop4" />
     </radialGradient>
-    <!--
-      Gold gradient for the C stroke, in absolute coords so it maps
-      top-to-bottom across the actual C geometry.
-    -->
-    <linearGradient
-       id="gold"
-       gradientUnits="userSpaceOnUse"
-       x1="256"
-       y1="170"
-       x2="256"
-       y2="342">
-      <stop
-         offset="0%"
-         stop-color="#F5A800"
-         id="stop5" />
-      <stop
-         offset="50%"
-         stop-color="#D97800"
-         id="stop6" />
-      <stop
-         offset="100%"
-         stop-color="#A84800"
-         id="stop7" />
-    </linearGradient>
     <!-- Top-left sheen overlay on the C -->
     <linearGradient
        id="sheen"
@@ -93,17 +70,18 @@
        x1="156"
        y1="170"
        x2="340"
-       y2="342">
+       y2="342"
+       gradientTransform="matrix(1.0235988,0,0,0.91110271,7.761559,19.568848)">
       <stop
          offset="0%"
          stop-color="white"
          stop-opacity="0.22"
-         id="stop8" />
+         id="stop5" />
       <stop
          offset="50%"
          stop-color="white"
          stop-opacity="0"
-         id="stop9" />
+         id="stop6" />
     </linearGradient>
     <!-- Soft ambient glow behind the C -->
     <filter
@@ -116,26 +94,30 @@
          in="SourceGraphic"
          stdDeviation="14"
          result="blur"
-         id="feGaussianBlur9" />
+         id="feGaussianBlur6" />
       <feComposite
          in="SourceGraphic"
          in2="blur"
          operator="over"
-         id="feComposite9" />
+         id="feComposite6" />
     </filter>
     <!-- Drop shadow under the C -->
     <filter
        id="shadow"
-       x="-0.22529461"
-       y="-0.13551776"
-       width="1.4295231"
-       height="1.2710355">
-      <feDropShadow
+       x="-0.33416657"
+       y="-0.20163264"
+       width="1.6474669"
+       height="1.4227097">
+      <feOffset
+         in="SourceGraphic"
          dx="0"
-         dy="0"
-         stdDeviation="26"
-         flood-color="black"
-         flood-opacity="1" />
+         dy="7"
+         result="offset"
+         id="feOffset6" />
+      <feGaussianBlur
+         in="offset"
+         stdDeviation="10"
+         id="feGaussianBlur7" />
     </filter>
     <!-- Gloss bubble gradient: bright white center fading to transparent -->
     <radialGradient
@@ -147,17 +129,17 @@
          offset="0%"
          stop-color="white"
          stop-opacity="0.55"
-         id="stop10" />
+         id="stop7" />
       <stop
          offset="60%"
          stop-color="white"
          stop-opacity="0.15"
-         id="stop11" />
+         id="stop8" />
       <stop
          offset="100%"
          stop-color="white"
          stop-opacity="0"
-         id="stop12" />
+         id="stop9" />
     </radialGradient>
   </defs>
   <!-- Background -->
@@ -166,23 +148,10 @@
      height="512"
      rx="80"
      fill="url(#bg)"
-     id="rect12" />
-  <rect
-     width="512"
-     height="512"
-     rx="80"
-     fill="url(#bgGlow)"
-     id="rect13" />
-  <rect
-     x="1.5"
-     y="1.5"
-     width="509"
-     height="509"
-     rx="79"
-     fill="none"
-     stroke="rgba(255,255,255,0.06)"
-     stroke-width="1.5"
-     id="rect14" />
+     id="rect9"
+     style="fill:url(#bg)"
+     x="0"
+     y="0" />
   <!--
     { left curly brace — brought closer to centre vs previous version
     Tips at x=148, arm at x=100, bump apex at x=72
@@ -203,30 +172,26 @@
     stroke-linecap="butt" → clean flat terminal cuts, like a typeface C.
   -->
   <!-- Drop shadow layer -->
+  <!-- Main gold fill -->
+  <!-- Top-left sheen -->
   <path
-     d="M 338,170 A 100,150 0 1,0 338,342"
+     d="m 354,153 a 120,180 0 1 0 0,206"
      fill="none"
-     stroke="black"
-     stroke-width="82"
+     stroke="#000000"
+     stroke-width="98"
      stroke-linecap="butt"
      opacity="0.85"
      filter="url(#shadow)"
-     id="path14" />
-  <!-- Main gold fill -->
+     id="path11"
+     style="display:inline;opacity:0.5"
+     transform="matrix(1.0235988,0,0,0.91110271,7.761559,19.568848)" />
   <path
-     d="M 338,170 A 100,150 0 1,0 338,342"
+     d="m 370.11553,158.96756 a 122.83186,163.99849 0 1 0 0,187.68716"
      fill="none"
-     stroke="url(#gold)"
-     stroke-width="82"
+     stroke="#FFD700"
+     stroke-width="94.64"
      stroke-linecap="butt"
-     id="path15" />
-  <!-- Top-left sheen -->
-  <path
-     d="M 338,170 A 100,150 0 1,0 338,342"
-     fill="none"
-     stroke="url(#sheen)"
-     stroke-width="82"
-     stroke-linecap="butt"
-     id="path16" />
+     id="path12"
+     style="display:inline" />
   <!-- Gloss bubble: top-left corner of the icon -->
 </svg>

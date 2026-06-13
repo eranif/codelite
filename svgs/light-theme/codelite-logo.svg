@@ -1,463 +1,197 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
-   width="32"
-   height="32"
-   viewBox="0 0 31.999999 31.999999"
-   id="svg2"
+   viewBox="0 0 512 512"
+   width="512"
+   height="512"
    version="1.1"
-   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   id="svg13"
    sodipodi:docname="codelite-logo.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <title
-     id="title6123">CodeLite IDE Logo</title>
-  <defs
-     id="defs4">
-    <linearGradient
-       id="linearGradient2065"
-       inkscape:swatch="solid">
-      <stop
-         style="stop-color:#999999;stop-opacity:1;"
-         offset="0"
-         id="stop2063" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient1382"
-       inkscape:swatch="solid">
-      <stop
-         style="stop-color:#916f6f;stop-opacity:1;"
-         offset="0"
-         id="stop1380" />
-    </linearGradient>
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="5336.3229 : 295.21601 : 1"
-       inkscape:vp_y="0 : 1349.9368 : 0"
-       inkscape:vp_z="8654.6492 : 285.06658 : 1"
-       inkscape:persp3d-origin="5414.0284 : 141.52329 : 1"
-       id="perspective5760" />
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="247.759 : 337.28548 : 1"
-       inkscape:vp_y="0 : 1240.4163 : 0"
-       inkscape:vp_z="3820.7486 : 329.79721 : 1"
-       inkscape:persp3d-origin="774.88351 : 197.89961 : 1"
-       id="perspective5760-4" />
-    <filter
-       style="color-interpolation-filters:sRGB"
-       inkscape:label="Drop Shadow"
-       id="filter4154">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood4156" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite4158" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="1.5"
-         result="blur"
-         id="feGaussianBlur4160" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset4162" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="composite2"
-         id="feComposite4164" />
-    </filter>
-    <filter
-       style="color-interpolation-filters:sRGB"
-       inkscape:label="Drop Shadow"
-       id="filter4166">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood4168" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite4170" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="1.5"
-         result="blur"
-         id="feGaussianBlur4172" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset4174" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="composite2"
-         id="feComposite4176" />
-    </filter>
-    <filter
-       style="color-interpolation-filters:sRGB"
-       inkscape:label="Drop Shadow"
-       id="filter4178">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood4180" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite4182" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="1.5"
-         result="blur"
-         id="feGaussianBlur4184" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset4186" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="composite2"
-         id="feComposite4188" />
-    </filter>
-    <filter
-       style="color-interpolation-filters:sRGB"
-       inkscape:label="Drop Shadow"
-       id="filter5006"
-       x="-0.01959358"
-       y="-0.01959358"
-       width="1.0391872"
-       height="1.0391872">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood5008" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite5010" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="2"
-         result="blur"
-         id="feGaussianBlur5012" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset5014" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="composite2"
-         id="feComposite5016" />
-    </filter>
-    <filter
-       style="color-interpolation-filters:sRGB"
-       inkscape:label="Drop Shadow"
-       id="filter4916">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood4906" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite4908" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="5"
-         result="blur"
-         id="feGaussianBlur4910" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset4912" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="fbSourceGraphic"
-         id="feComposite4914" />
-      <feColorMatrix
-         result="fbSourceGraphicAlpha"
-         in="fbSourceGraphic"
-         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
-         id="feColorMatrix4918" />
-      <feFlood
-         id="feFlood4920"
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         in="fbSourceGraphic" />
-      <feComposite
-         in2="fbSourceGraphic"
-         id="feComposite4922"
-         in="flood"
-         operator="in"
-         result="composite1" />
-      <feGaussianBlur
-         id="feGaussianBlur4924"
-         in="composite1"
-         stdDeviation="5"
-         result="blur" />
-      <feOffset
-         id="feOffset4926"
-         dx="0"
-         dy="0"
-         result="offset" />
-      <feComposite
-         in2="offset"
-         id="feComposite4928"
-         in="fbSourceGraphic"
-         operator="over"
-         result="composite2" />
-    </filter>
-    <filter
-       style="color-interpolation-filters:sRGB;"
-       inkscape:label="Drop Shadow"
-       id="filter5808">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood5798" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite5800" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="1"
-         result="blur"
-         id="feGaussianBlur5802" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset5804" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="composite2"
-         id="feComposite5806" />
-    </filter>
-    <filter
-       style="color-interpolation-filters:sRGB"
-       inkscape:label="Drop Shadow"
-       id="filter5808-2">
-      <feFlood
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         id="feFlood5798-6" />
-      <feComposite
-         in="flood"
-         in2="SourceGraphic"
-         operator="in"
-         result="composite1"
-         id="feComposite5800-0" />
-      <feGaussianBlur
-         in="composite1"
-         stdDeviation="1"
-         result="blur"
-         id="feGaussianBlur5802-3" />
-      <feOffset
-         dx="0"
-         dy="0"
-         result="offset"
-         id="feOffset5804-3" />
-      <feComposite
-         in="SourceGraphic"
-         in2="offset"
-         operator="over"
-         result="composite2"
-         id="feComposite5806-1" />
-    </filter>
-    <filter
-       inkscape:label="Drop Shadow"
-       inkscape:menu="Image Effects"
-       inkscape:menu-tooltip="Sharpen edges and boundaries within the object, force=0.15"
-       style="color-interpolation-filters:sRGB;"
-       id="filter6190"
-       x="-0.3514204"
-       y="-0.27592814"
-       width="1.7028408"
-       height="1.5518563">
-      <feConvolveMatrix
-         order="3 3"
-         kernelMatrix="0 -0.15 0 -0.15 1.6 -0.15 0 -0.15 0"
-         divisor="1"
-         in="SourceGraphic"
-         targetX="1"
-         targetY="1"
-         id="feConvolveMatrix6188"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         result="fbSourceGraphicAlpha"
-         in="fbSourceGraphic"
-         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
-         id="feColorMatrix6372" />
-      <feFlood
-         id="feFlood6374"
-         flood-opacity="0.498039"
-         flood-color="rgb(0,0,0)"
-         result="flood"
-         in="fbSourceGraphic" />
-      <feComposite
-         in2="fbSourceGraphic"
-         id="feComposite6376"
-         in="flood"
-         operator="in"
-         result="composite1" />
-      <feGaussianBlur
-         id="feGaussianBlur6378"
-         in="composite1"
-         stdDeviation="3"
-         result="blur" />
-      <feOffset
-         id="feOffset6380"
-         dx="0"
-         dy="0"
-         result="offset" />
-      <feComposite
-         in2="offset"
-         id="feComposite6382"
-         in="fbSourceGraphic"
-         operator="over"
-         result="composite2" />
-    </filter>
-    <font
-       horiz-adv-x="1024"
-       id="font6192"
-       inkscape:label="font 1">
-      <font-face
-         units-per-em="1024"
-         id="font-face6194"
-         font-family="SVGFont 1" />
-      <missing-glyph
-         d="M0,0h1000v1024h-1000z"
-         id="missing-glyph6196" />
-    </font>
-  </defs>
+   xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
-     id="base"
+     id="namedview13"
      pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
      inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="3.78125"
-     inkscape:cy="19.5625"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     units="px"
-     inkscape:showpageshadow="false"
-     inkscape:window-width="2113"
-     inkscape:window-height="1272"
-     inkscape:window-x="584"
-     inkscape:window-y="53"
-     inkscape:window-maximized="0"
-     inkscape:pagecheckerboard="true"
-     showborder="true"
-     showguides="true"
-     inkscape:lockguides="false" />
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>CodeLite IDE Logo</dc:title>
-        <cc:license
-           rdf:resource="" />
-        <dc:creator>
-          <cc:Agent>
-            <dc:title>Eran Ifrah</dc:title>
-          </cc:Agent>
-        </dc:creator>
-        <dc:rights>
-          <cc:Agent>
-            <dc:title>(C) Eran Ifrah</dc:title>
-          </cc:Agent>
-        </dc:rights>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="BG"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-1020.3622)"
-     style="opacity:1">
-    <rect
-       style="fill:#a05a2c;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.969697;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;opacity:1"
-       id="rect5810"
-       width="31.030304"
-       height="31.030304"
-       x="0.48484802"
-       y="1020.847"
-       rx="2.909091"
-       ry="2.909091" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffcc00;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:1;stroke-dasharray:none;filter:url(#filter6190)"
-       x="3.7792511"
-       y="1048.8633"
-       id="text5910"><tspan
-         sodipodi:role="line"
-         id="tspan5908"
-         x="3.7792511"
-         y="1048.8633"
-         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Calibri;-inkscape-font-specification:'Calibri Bold Italic';fill:#ffcc00;stroke:none;stroke-width:1;stroke-miterlimit:1;stroke-dasharray:none" /></text>
-    <path
-       d="m 17.222108,1024.3622 c 5.002647,0 7.583921,3.1709 7.583921,3.1709 l -1.781765,3.1449 c 0,0 -2.352843,-2.4489 -5.619411,-2.4489 -4.340196,0 -6.898627,3.6606 -6.898627,7.9656 0,4.4082 2.62696,8.3007 6.921471,8.3007 3.563529,0 5.962057,-2.9387 5.962057,-2.9387 l 1.96451,3.0419 c 0,0 -2.832548,3.7636 -8.08647,3.7636 -6.281862,0 -10.622058,-5.2588 -10.622058,-12.0901 0.022845,-6.7541 4.522941,-11.9099 10.576372,-11.9099 z"
-       fill="#1d88e5"
-       stroke="#1d88e5"
-       stroke-width="0.424665"
-       stroke-miterlimit="10"
-       id="path29620"
-       style="fill:#ffcc00;fill-opacity:1;stroke:#ffcc00;stroke-opacity:1;stroke-width:2.5;stroke-miterlimit:10;stroke-dasharray:none" />
-  </g>
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="3.4648438"
+     inkscape:cx="302.32243"
+     inkscape:cy="271.58511"
+     inkscape:window-width="3840"
+     inkscape:window-height="2036"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg13" />
+  <defs
+     id="defs9">
+    <linearGradient
+       id="bg"
+       x1="0"
+       y1="0"
+       x2="0"
+       y2="1"
+       gradientUnits="objectBoundingBox">
+      <stop
+         offset="0%"
+         stop-color="#4A5568"
+         id="stop1" />
+      <stop
+         offset="100%"
+         stop-color="#2D3748"
+         id="stop2" />
+    </linearGradient>
+    <radialGradient
+       id="bgGlow"
+       cx="48%"
+       cy="48%"
+       r="50%">
+      <stop
+         offset="0%"
+         stop-color="#1B3060"
+         stop-opacity="0.55"
+         id="stop3" />
+      <stop
+         offset="100%"
+         stop-color="#1B3060"
+         stop-opacity="0"
+         id="stop4" />
+    </radialGradient>
+    <!-- Top-left sheen overlay on the C -->
+    <linearGradient
+       id="sheen"
+       gradientUnits="userSpaceOnUse"
+       x1="156"
+       y1="170"
+       x2="340"
+       y2="342"
+       gradientTransform="matrix(1.0235988,0,0,0.91110271,7.761559,19.568848)">
+      <stop
+         offset="0%"
+         stop-color="white"
+         stop-opacity="0.22"
+         id="stop5" />
+      <stop
+         offset="50%"
+         stop-color="white"
+         stop-opacity="0"
+         id="stop6" />
+    </linearGradient>
+    <!-- Soft ambient glow behind the C -->
+    <filter
+       id="cGlow"
+       x="-35%"
+       y="-25%"
+       width="170%"
+       height="150%">
+      <feGaussianBlur
+         in="SourceGraphic"
+         stdDeviation="14"
+         result="blur"
+         id="feGaussianBlur6" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="over"
+         id="feComposite6" />
+    </filter>
+    <!-- Drop shadow under the C -->
+    <filter
+       id="shadow"
+       x="-0.33416657"
+       y="-0.20163264"
+       width="1.6474669"
+       height="1.4227097">
+      <feOffset
+         in="SourceGraphic"
+         dx="0"
+         dy="7"
+         result="offset"
+         id="feOffset6" />
+      <feGaussianBlur
+         in="offset"
+         stdDeviation="10"
+         id="feGaussianBlur7" />
+    </filter>
+    <!-- Gloss bubble gradient: bright white center fading to transparent -->
+    <radialGradient
+       id="gloss"
+       cx="50%"
+       cy="40%"
+       r="50%">
+      <stop
+         offset="0%"
+         stop-color="white"
+         stop-opacity="0.55"
+         id="stop7" />
+      <stop
+         offset="60%"
+         stop-color="white"
+         stop-opacity="0.15"
+         id="stop8" />
+      <stop
+         offset="100%"
+         stop-color="white"
+         stop-opacity="0"
+         id="stop9" />
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <rect
+     width="512"
+     height="512"
+     rx="80"
+     fill="url(#bg)"
+     id="rect9"
+     style="fill:url(#bg)"
+     x="0"
+     y="0" />
+  <!--
+    { left curly brace — brought closer to centre vs previous version
+    Tips at x=148, arm at x=100, bump apex at x=72
+  -->
+  <!--
+    C — drawn as a thick arc stroke so every curve is naturally smooth.
+
+    Centre (256, 256).
+    Path ellipse: rx=100, ry=150 → slightly portrait (height > width), not oval.
+    Stroke-width=82 → outer ring edge = 141 from centre, inner = 59.
+    Opening angle: ±35° from the right horizontal.
+
+    cos35°=0.8192, sin35°=0.5736
+    Start (top gap edge): (256 + 100×0.8192,  256 − 150×0.5736) = (338, 170)
+    End   (btm gap edge): (338, 342)
+
+    large-arc=1, sweep=0 → goes CCW (left and around) from top to bottom.
+    stroke-linecap="butt" → clean flat terminal cuts, like a typeface C.
+  -->
+  <!-- Drop shadow layer -->
+  <!-- Main gold fill -->
+  <!-- Top-left sheen -->
+  <path
+     d="m 354,153 a 120,180 0 1 0 0,206"
+     fill="none"
+     stroke="#000000"
+     stroke-width="98"
+     stroke-linecap="butt"
+     opacity="0.85"
+     filter="url(#shadow)"
+     id="path11"
+     style="display:inline;opacity:0.5"
+     transform="matrix(1.0235988,0,0,0.91110271,7.761559,19.568848)" />
+  <path
+     d="m 370.11553,158.96756 a 122.83186,163.99849 0 1 0 0,187.68716"
+     fill="none"
+     stroke="#FFD700"
+     stroke-width="94.64"
+     stroke-linecap="butt"
+     id="path12"
+     style="display:inline" />
+  <!-- Gloss bubble: top-left corner of the icon -->
 </svg>

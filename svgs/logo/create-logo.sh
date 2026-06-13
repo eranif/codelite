@@ -23,6 +23,7 @@ OS_NAME=$(uname -s)
 
 file=${CL_HOME}/svgs/logo/codelite-logo.svg
 cp ${file} ${CL_HOME}/svgs/dark-theme/
+cp ${file} ${CL_HOME}/svgs/light-theme/
 
 if [ "${OS_NAME}" != "Darwin" ]; then
     ## 16x16 version

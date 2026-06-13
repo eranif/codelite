@@ -272,7 +272,7 @@ add_executable(wxcrafter ${MACRO_SENSITIVE_SRCS}
 target_compile_definitions(
   wxcrafter PRIVATE STANDALONE_BUILD=1
                     INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
-target_link_libraries(wxcrafter PRIVATE wxCrafterCommon wxCrafterCommonGui)
+target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui wxCrafterCommon)
 
 # Headless CLI code-generator (no DISPLAY required) — uses headless runtime
 # shim and a subset of the macro-sensitive sources (the GUI-only ones are

@@ -37,7 +37,7 @@
 #define __uisettingsdlg__
 
 #include "confcallgraph.h"
-#include "uisettings.h"
+#include "uisettings.hpp"
 
 #include <wx/string.h>
 #include <wx/wx.h>

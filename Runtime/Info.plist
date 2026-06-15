@@ -6,7 +6,7 @@
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>CFBundleExecutable</key>
-    <string>CodeLite</string>
+    <string>codelite</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>18.4.0</string>
     <key>CFBundleName</key>

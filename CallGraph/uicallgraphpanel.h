@@ -39,7 +39,7 @@
 #include "confcallgraph.h"
 #include "lineparser.h"
 #include "plugin.h"
-#include "uicallgraph.h" // Base class: uicallgraph
+#include "uicallgraph.hpp" // Base class: uicallgraph
 
 class uicallgraphpanel : public uicallgraph
 {

@@ -4,24 +4,30 @@
 
 CODELITE_BUILD_DIR=${CODELITE_HOME}/.build-release-weekly
 OSX_VER=macOS_$(sw_vers |grep ProductVersion|cut -d":" -f2|tr -d [:space:])
-package_file=codelite-${OSX_VER}-${arch}.app.tar.gz
+PACKAGE_FILE=codelite-${OSX_VER}-${arch}.app.tgz
 
 # Build and upload
 mkdir -p ${CODELITE_BUILD_DIR}
 cd ${CODELITE_BUILD_DIR}
 rm -fr codelite.app/
-rm -f ${package_file}
+rm -f ${PACKAGE_FILE}
 cmake -DCMAKE_BUILD_TYPE=Release .. -Wno-dev
 make -j${cpu_count} install
 
 # Sign the app
-echo "Signing the app (requires sudo access):"
-sudo codesign --deep -fs codelite-self-signed  codelite.app
+echo "Signing the app"
+${CODELITE_HOME}/weekly/macos-sign-app.sh --notarize ${CODELITE_BUILD_DIR}/codelite.app
 echo "Signing the app..done"
 
-upload_path="/var/www/html/downloads/codelite/${version}"
-ssh root@codelite.org "mkdir -p ${upload_path}"
-tar cvfz ${package_file} codelite.app/*
-scp ${package_file} root@codelite.org:${upload_path}
+INSTALLER=codelite.app.tgz
+
+UPLOAD_PATH="/var/www/html/downloads/codelite/${version}"
+ssh root@codelite.org "mkdir -p ${UPLOAD_PATH}"
+echo mv ${CODELITE_BUILD_DIR}/${INSTALLER} ${PACKAGE_FILE}
+mv ${CODELITE_BUILD_DIR}/${INSTALLER} ${PACKAGE_FILE}
+
+echo scp ${PACKAGE_FILE} root@codelite.org:${UPLOAD_PATH}
+scp ${PACKAGE_FILE} root@codelite.org:${UPLOAD_PATH}
+
 ssh root@codelite.org \
-    "cd ${upload_path} && sha256sum ${package_file} |cut -d' ' -f1 > ${package_file}.sha1 && cat ${package_file}.sha1"
+    "cd ${UPLOAD_PATH} && sha256sum ${PACKAGE_FILE} |cut -d' ' -f1 > ${PACKAGE_FILE}.sha1 && cat ${PACKAGE_FILE}.sha1"

@@ -43,7 +43,7 @@ done
 # Check if app path is provided
 if [ -z "$APP_PATH" ]; then
     echo "Error: App path argument is required"
-    echo "Usage: $0 [--notarize] /path/to/codelite.app"
+    echo "Usage: $0 [--notarize] /path/to/YourApp.app"
     exit 1
 fi
 
@@ -133,20 +133,15 @@ echo "=========================================="
 echo "✓ All operations completed successfully!"
 echo "=========================================="
 
-# Create DMG installer
+# Create DMG installer (must be after notarization to preserve ticket)
 echo ""
-echo "Creating DMG installer..."
+echo "Creating TGZ package..."
 
-DMG_FILE="$APP_NAME.dmg"
-
+TGZ_FILE="$APP_NAME.tgz"
 # Clean up any existing DMG
-[ -f "$DMG_FILE" ] && rm -f "$DMG_FILE"
+[ -f "$TGZ_FILE" ] && rm -f "$TGZ_FILE"
 
-# Create DMG with the app
-hdiutil create -volname "$(basename "$APP_NAME" .app)" -srcfolder "$APP_NAME" -ov -format UDZO "$DMG_FILE"
+echo tar -czf "$TGZ_FILE" "$APP_NAME/"
+tar -czf "$TGZ_FILE" "$APP_NAME/"
 
-# Get absolute path and print it
-DMG_PATH="$(pwd)/$DMG_FILE"
-echo ""
-echo "DMG installer created:"
-echo "$DMG_PATH"
+echo "$TGZ_FILE"

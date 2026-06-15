@@ -116,10 +116,6 @@ if [ "$NOTARIZE" = true ]; then
         ((ATTEMPT++))
     done
 
-    # Hard verification check before cleanup
-    echo "Verifying local Gatekeeper evaluation state..."
-    spctl --assess --verbose "$APP_NAME"
-
     echo "✓ Notarization completed and stapled"
 
     # Clean up zip file

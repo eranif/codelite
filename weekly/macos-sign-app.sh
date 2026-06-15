@@ -102,9 +102,23 @@ if [ "$NOTARIZE" = true ]; then
         --team-id "$APPLE_TEAM"      \
         --wait
 
-    # Staple the notarization ticket
+    # Pause to allow Apple's CloudKit sync to catch up
+    echo "Waiting 20 seconds for Apple CloudKit ticket propagation..."
+    sleep 20
+
+    # Staple the notarization ticket with a retry loop if sync is slow
     echo "Stapling notarization ticket to app..."
-    xcrun stapler staple "$APP_NAME"
+    MAX_ATTEMPTS=3
+    ATTEMPT=1
+    until xcrun stapler staple "$APP_NAME" || [ $ATTEMPT -eq $MAX_ATTEMPTS ]; do
+        echo "Staple failed. Retrying in 15 seconds (Attempt $ATTEMPT/$MAX_ATTEMPTS)..."
+        sleep 15
+        ((ATTEMPT++))
+    done
+
+    # Hard verification check before cleanup
+    echo "Verifying local Gatekeeper evaluation state..."
+    spctl --assess --verbose "$APP_NAME"
 
     echo "✓ Notarization completed and stapled"
 

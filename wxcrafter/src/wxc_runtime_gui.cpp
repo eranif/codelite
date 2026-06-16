@@ -25,26 +25,6 @@ int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& load
     return list->Add(loader.Bitmap(bmpName));
 }
 
-BitmapGenStatusScope::BitmapGenStatusScope()
-{
-    wxFrame* topFrame = EventNotifier::Get()->TopFrame();
-    if (topFrame) {
-        topFrame->SetStatusText("Generating bitmap code...");
-    }
-    wxBeginBusyCursor();
-}
-
-BitmapGenStatusScope::~BitmapGenStatusScope()
-{
-    if (wxIsBusy()) {
-        wxEndBusyCursor();
-    }
-    wxFrame* topFrame = EventNotifier::Get()->TopFrame();
-    if (topFrame) {
-        topFrame->SetStatusText("Ready");
-    }
-}
-
 void SetStatusMessage(const wxString& msg)
 {
     wxFrame* topFrame = EventNotifier::Get()->TopFrame();
@@ -62,12 +42,6 @@ bool IsActiveWizardPage(const wxcWidget* page)
         return false;
     }
     return GUICraftMainPanel::m_MainPanel->GetActiveWizardPage() == page;
-}
-
-void RequestDesignerRefresh()
-{
-    wxCommandEvent evt(wxEVT_REFRESH_DESIGNER);
-    EventNotifier::Get()->AddPendingEvent(evt);
 }
 
 bool IsDarkAppearance() { return wxSystemSettings::GetAppearance().IsDark(); }

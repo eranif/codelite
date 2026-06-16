@@ -33,20 +33,6 @@ wxImageList* CreateAllocatorImageList();
 // GUI: list->Add(loader.Bitmap(name)). Headless: returns -1; arguments unused.
 int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& loader, const wxString& bmpName);
 
-// RAII scope shown around bitmap-code generation.
-// GUI: ctor sets the top frame status text and pushes wxBusyCursor;
-//      dtor pops the cursor and restores the status text.
-// Headless: both are no-ops.
-class BitmapGenStatusScope
-{
-public:
-    BitmapGenStatusScope();
-    ~BitmapGenStatusScope();
-
-    BitmapGenStatusScope(const BitmapGenStatusScope&) = delete;
-    BitmapGenStatusScope& operator=(const BitmapGenStatusScope&) = delete;
-};
-
 // Set the application's status-bar message.
 // GUI: forwards to MainFrame::SetStatusMessage. Headless: no-op.
 // (This is the implementation behind wxCrafter::SetStatusMessage; that wrapper
@@ -58,10 +44,6 @@ void SetStatusMessage(const wxString& msg);
 // Headless: returns false — the designer preview path that uses this is
 //           never hit by the headless XRC_LIVE pipeline.
 bool IsActiveWizardPage(const wxcWidget* page);
-
-// Notify the GUI designer that bitmaps changed and the preview should refresh.
-// GUI: posts wxEVT_REFRESH_DESIGNER on EventNotifier. Headless: no-op.
-void RequestDesignerRefresh();
 
 // True iff the OS-level dark-mode appearance is active.
 // GUI: forwards to wxSystemSettings::GetAppearance().IsDark().

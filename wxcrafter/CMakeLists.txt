@@ -229,6 +229,11 @@ if(MINGW)
   set(RES_FILES "resources/wxcapp_resources.rc")
 endif()
 
+set(WXCGEN_RES_FILES "")
+if(WIN32)
+  set(WXCGEN_RES_FILES "resources/wxcgen_resources.rc")
+endif()
+
 # ----------------------------------------------------------------------------
 # Shared static libraries
 # ----------------------------------------------------------------------------
@@ -279,7 +284,8 @@ target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui wxCrafterCommon)
 # excluded; what remains is compiled with WXCGEN_BUILD=1).
 add_executable(wxcgen ${MACRO_SENSITIVE_HEADLESS_SRCS}
                       "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp"
-                      "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_headless.cpp")
+                      "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_headless.cpp"
+                      ${WXCGEN_RES_FILES})
 target_compile_definitions(
   wxcgen PRIVATE STANDALONE_BUILD=1
                  WXCGEN_BUILD=1

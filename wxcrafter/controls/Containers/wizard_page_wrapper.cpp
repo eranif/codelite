@@ -6,9 +6,13 @@
 #include "allocator_mgr.h"
 #include "wizard_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
-#include "wxc_runtime.h"
 #include "wxgui_defs.h"
 #include "xml/xmlutils.h"
+
+// HACK: Only display the active page
+/*static*/ std::function<bool(const wxcWidget*)> WizardPageWrapper::isActiveWizardPage = [](const wxcWidget*) {
+    return false;
+};
 
 WizardPageWrapper::WizardPageWrapper()
 {
@@ -60,7 +64,7 @@ void WizardPageWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
     if (type == XRC_DESIGNER) {
         // HACK: Only display the active page
-        if (!wxc_runtime::IsActiveWizardPage(this))
+        if (!isActiveWizardPage(this))
             return;
 
         text << XRCCommonAttributes() << XRCSize() << XRCStyle() << XRCBitmap();

@@ -15,12 +15,6 @@ int AddImageToAllocator(wxImageList* /*list*/, const wxCrafter::ResourceLoader& 
 
 void SetStatusMessage(const wxString& /*msg*/) {}
 
-bool IsActiveWizardPage(const wxcWidget* /*page*/)
-{
-    // Headless never enters the XRC_DESIGNER preview path that calls this.
-    return false;
-}
-
 bool IsDarkAppearance() { return false; }
 
 void LoadImages(const wxString&, std::map<wxString, wxBitmap>&, std::map<wxString, wxString>&) {}

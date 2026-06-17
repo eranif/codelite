@@ -6,11 +6,9 @@
 #include "main.h"
 #include "wxc_runtime.h"
 #include "wxgui_bitmaploader.h"
-#include "wxguicraft_main_view.h"
 
 #include <wx/frame.h>
 #include <wx/imaglist.h>
-#include <wx/utils.h>
 
 namespace wxc_runtime
 {
@@ -34,14 +32,6 @@ void SetStatusMessage(const wxString& msg)
     if (MainFrame* frame = dynamic_cast<MainFrame*>(topFrame)) {
         frame->SetStatusMessage(msg);
     }
-}
-
-bool IsActiveWizardPage(const wxcWidget* page)
-{
-    if (!GUICraftMainPanel::m_MainPanel) {
-        return false;
-    }
-    return GUICraftMainPanel::m_MainPanel->GetActiveWizardPage() == page;
 }
 
 bool IsDarkAppearance() { return wxSystemSettings::GetAppearance().IsDark(); }

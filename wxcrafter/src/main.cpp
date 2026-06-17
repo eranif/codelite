@@ -3,6 +3,7 @@
 #include "ColoursAndFontsManager.h"
 #include "bitmap_loader.h"
 #include "cl_aui_dock_art.h"
+#include "controls/Containers/wizard_page_wrapper.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -278,6 +279,14 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnSwitchToCodelite, this, wxID_BACKWARD);
     m_mainToolbar->Bind(wxEVT_UPDATE_UI, &MainFrame::OnSwitchToCodeliteUI, this, wxID_BACKWARD);
 #endif
+
+    WizardPageWrapper::isActiveWizardPage = [](const wxcWidget* page) {
+        if (!GUICraftMainPanel::m_MainPanel) {
+            return false;
+        }
+        return GUICraftMainPanel::m_MainPanel->GetActiveWizardPage() == page;
+    };
+
     m_mainToolbar->Realize();
 
     m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnNewProject, this, wxID_NEW);

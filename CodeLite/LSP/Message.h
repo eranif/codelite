@@ -20,7 +20,7 @@ public:
 public:
     Message() = default;
     ~Message() override = default;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     void FromJSON(const JSONItem& json) override;
 
     /**

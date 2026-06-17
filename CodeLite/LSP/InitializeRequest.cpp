@@ -8,76 +8,51 @@ LSP::InitializeRequest::InitializeRequest(bool withTokenTypes, const wxString& r
     m_rootUri = rootUri;
 }
 
-JSONItem LSP::InitializeRequest::ToJSON() const
+nlohmann::json LSP::InitializeRequest::ToJSON() const
 {
-    JSONItem json = Request::ToJSON();
+    auto json = Request::ToJSON();
 
     // add the 'params'
-    JSONItem params = JSONItem::createObject();
-    params.addProperty("processId", GetProcessId());
+    nlohmann::json params = nlohmann::json::object();
+    params["processId"] = GetProcessId();
     if (!GetRootUri().IsEmpty()) {
-        params.addProperty("rootUri", LSP::FileNameToURI(GetRootUri()));
+        params["rootUri"] = LSP::FileNameToURI(GetRootUri()).ToStdString(wxConvUTF8);
     }
 
     if (!m_initOptions.empty()) {
         // Parse the JSON string and set it as the 'initializationOptions
-        JSON initializationOptions(m_initOptions);
-        if (initializationOptions.isOk()) {
-            params.addProperty(wxString("initializationOptions"), std::move(initializationOptions));
+        auto initializationOptions =
+            nlohmann::ordered_json::parse(m_initOptions.mb_str(wxConvUTF8).data(), nullptr, false);
+        if (!initializationOptions.is_discarded()) {
+            params["initializationOptions"] = std::move(initializationOptions);
         }
     }
 
-    auto capabilities = params.AddObject("capabilities");
-    auto windowCapabilities = capabilities.AddObject("window");
-    windowCapabilities.addProperty("workDoneProgress", true);
+    auto& capabilities = params["capabilities"] = nlohmann::json::object();
+    capabilities["window"] = nlohmann::json{{"workDoneProgress", true}};
 
-    auto textDocumentCapabilities = capabilities.AddObject("textDocument");
-    auto docFormat =
-        textDocumentCapabilities.AddObject("completion").AddObject("completionItem").AddArray("documentationFormat");
-    docFormat.arrayAppend("plaintext");
-    auto hoverFormat = textDocumentCapabilities.AddObject("hover").AddArray("contentFormat");
-    hoverFormat.arrayAppend("markdown");
-    hoverFormat.arrayAppend("plaintext");
+    auto& textDocumentCapabilities = capabilities["textDocument"];
+    textDocumentCapabilities["completion"]["completionItem"]["documentationFormat"] = std::array{"plaintext"};
+    textDocumentCapabilities["hover"]["contentFormat"] = {"markdown", "plaintext"};
 
     if (m_withTokenTypes) {
-        auto sematicTokens = textDocumentCapabilities.AddObject("semanticTokens");
-        auto tokenTypes = sematicTokens.AddArray("tokenTypes");
-        tokenTypes.arrayAppend("type");
-        tokenTypes.arrayAppend("class");
-        tokenTypes.arrayAppend("enum");
-        tokenTypes.arrayAppend("interface");
-        tokenTypes.arrayAppend("struct");
-        tokenTypes.arrayAppend("typeParameter");
-        tokenTypes.arrayAppend("parameter");
-        tokenTypes.arrayAppend("variable");
-        tokenTypes.arrayAppend("property");
-        tokenTypes.arrayAppend("enumMember");
-        tokenTypes.arrayAppend("event");
-        tokenTypes.arrayAppend("function");
-        tokenTypes.arrayAppend("method");
-        tokenTypes.arrayAppend("macro");
-        tokenTypes.arrayAppend("keyword");
-        tokenTypes.arrayAppend("modifier");
-        tokenTypes.arrayAppend("comment");
-        tokenTypes.arrayAppend("string");
-        tokenTypes.arrayAppend("number");
-        tokenTypes.arrayAppend("regexp");
-        tokenTypes.arrayAppend("operator");
-
-        auto tokenModifiers = sematicTokens.AddArray("tokenModifiers");
-        tokenModifiers.arrayAppend("declaration");
-        tokenModifiers.arrayAppend("definition");
-        tokenModifiers.arrayAppend("readonly");
-        tokenModifiers.arrayAppend("static");
-        tokenModifiers.arrayAppend("deprecated");
-        tokenModifiers.arrayAppend("abstract");
-        tokenModifiers.arrayAppend("async");
-        tokenModifiers.arrayAppend("modification");
-        tokenModifiers.arrayAppend("documentation");
-        tokenModifiers.arrayAppend("defaultLibrary");
+        textDocumentCapabilities["semanticTokens"]["tokenTypes"] = {
+            "type",     "class",    "enum",       "interface", "struct",   "typeParameter", "parameter",
+            "variable", "property", "enumMember", "event",     "function", "method",        "macro",
+            "keyword",  "modifier", "comment",    "string",    "number",   "regexp",        "operator"};
+        textDocumentCapabilities["semanticTokens"]["tokenModifiers"] = {"declaration",
+                                                                        "definition",
+                                                                        "readonly",
+                                                                        "static",
+                                                                        "deprecated",
+                                                                        "abstract",
+                                                                        "async",
+                                                                        "modification",
+                                                                        "documentation",
+                                                                        "defaultLibrary"};
     }
 
-    json.addProperty("params", params);
+    json["params"] = std::move(params);
     return json;
 }
 

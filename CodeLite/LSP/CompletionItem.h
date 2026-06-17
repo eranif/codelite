@@ -65,7 +65,7 @@ public:
 public:
     CompletionItem() = default;
     ~CompletionItem() override = default;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     void FromJSON(const JSONItem& json) override;
     void SetDetail(const wxString& detail) { this->m_detail = detail; }
     void SetDocumentation(const MarkupContent& documentation) { this->m_documentation = documentation; }

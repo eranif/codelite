@@ -32,7 +32,7 @@ public:
     ResponseError() = default;
     ~ResponseError() override = default;
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     std::string ToString() const override;
     void SetErrorCode(int errorCode) { this->m_errorCode = errorCode; }
     void SetMessage(const wxString& message) { this->m_message = message; }

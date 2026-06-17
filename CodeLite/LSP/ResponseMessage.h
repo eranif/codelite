@@ -15,7 +15,7 @@ class WXDLLIMPEXP_CL ResponseMessage : public LSP::Message
 public:
     ResponseMessage(std::unique_ptr<JSON>&& json);
     ~ResponseMessage() override = default;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     void FromJSON(const JSONItem& json) override;
 
     std::string ToString() const override;

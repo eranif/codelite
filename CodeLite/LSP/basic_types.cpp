@@ -39,7 +39,7 @@ void TextDocumentIdentifier::FromJSON(const JSONItem& json)
     URI::FromString(json.namedObject("uri").toString(), &m_filename);
 }
 
-JSONItem TextDocumentIdentifier::ToJSON() const
+nlohmann::json TextDocumentIdentifier::ToJSON() const
 { return nlohmann::json{{"uri", GetPathAsURI().ToStdString(wxConvUTF8)}}; }
 
 //===----------------------------------------------------------------------------------
@@ -51,10 +51,10 @@ void VersionedTextDocumentIdentifier::FromJSON(const JSONItem& json)
     m_version = json.namedObject("version").toInt(m_version);
 }
 
-JSONItem VersionedTextDocumentIdentifier::ToJSON() const
+nlohmann::json VersionedTextDocumentIdentifier::ToJSON() const
 {
-    JSONItem json = TextDocumentIdentifier::ToJSON();
-    json.addProperty("version", m_version);
+    auto json = TextDocumentIdentifier::ToJSON();
+    json["version"] = m_version;
     return json;
 }
 
@@ -67,7 +67,7 @@ void Position::FromJSON(const JSONItem& json)
     m_character = json.namedObject("character").toInt(wxNOT_FOUND);
 }
 
-JSONItem Position::ToJSON() const { return nlohmann::json{{"line", m_line}, {"character", m_character}}; }
+nlohmann::json Position::ToJSON() const { return nlohmann::json{{"line", m_line}, {"character", m_character}}; }
 
 //===----------------------------------------------------------------------------------
 // TextDocumentItem
@@ -81,7 +81,7 @@ void TextDocumentItem::FromJSON(const JSONItem& json)
     m_text = json.namedObject("text").toString();
 }
 
-JSONItem TextDocumentItem::ToJSON() const
+nlohmann::json TextDocumentItem::ToJSON() const
 {
     return nlohmann::json{{"uri", GetPathAsURI().ToStdString(wxConvUTF8)},
                           {"languageId", GetLanguageId().ToStdString(wxConvUTF8)},
@@ -99,13 +99,13 @@ void TextDocumentContentChangeEvent::FromJSON(const JSONItem& json)
     }
 }
 
-JSONItem TextDocumentContentChangeEvent::ToJSON() const
+nlohmann::json TextDocumentContentChangeEvent::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
+    nlohmann::json json = {{"text", m_text.ToStdString(wxConvUTF8)}};
+
     if (m_range.IsOk()) {
-        json.addProperty("range", m_range.ToJSON());
+        json["range"] = m_range.ToJSON();
     }
-    json.addProperty("text", m_text);
     return json;
 }
 
@@ -115,13 +115,7 @@ void Range::FromJSON(const JSONItem& json)
     m_end.FromJSON(json["end"]);
 }
 
-JSONItem Range::ToJSON() const
-{
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("start", m_start.ToJSON());
-    json.addProperty("end", m_end.ToJSON());
-    return json;
-}
+nlohmann::json Range::ToJSON() const { return nlohmann::json{{"start", m_start.ToJSON()}, {"end", m_end.ToJSON()}}; }
 
 void Location::FromJSON(const JSONItem& json)
 {
@@ -131,14 +125,12 @@ void Location::FromJSON(const JSONItem& json)
     m_name = json["name"].toString();
 }
 
-JSONItem Location::ToJSON() const
+nlohmann::json Location::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("uri", GetPathAsURI());
-    json.addProperty("range", m_range.ToJSON());
-    json.addProperty("pattern", m_pattern);
-    json.addProperty("name", m_name);
-    return json;
+    return nlohmann::json{{"uri", GetPathAsURI().ToStdString(wxConvUTF8)},
+                          {"range", m_range.ToJSON()},
+                          {"pattern", m_pattern.ToStdString(wxConvUTF8)},
+                          {"name", m_name.ToStdString(wxConvUTF8)}};
 }
 
 void TextEdit::FromJSON(const JSONItem& json)
@@ -147,13 +139,8 @@ void TextEdit::FromJSON(const JSONItem& json)
     m_newText = json.namedObject("newText").toString();
 }
 
-JSONItem TextEdit::ToJSON() const
-{
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("newText", m_newText);
-    json.addProperty("range", m_range.ToJSON());
-    return json;
-}
+nlohmann::json TextEdit::ToJSON() const
+{ return nlohmann::json{{"newText", m_newText.ToStdString(wxConvUTF8)}, {"range", m_range.ToJSON()}}; }
 
 void ParameterInformation::FromJSON(const JSONItem& json)
 {
@@ -161,7 +148,7 @@ void ParameterInformation::FromJSON(const JSONItem& json)
     m_documentation = json.namedObject("documentation").toString();
 }
 
-JSONItem ParameterInformation::ToJSON() const
+nlohmann::json ParameterInformation::ToJSON() const
 {
     return nlohmann::json{
         {"label", m_label.ToStdString(wxConvUTF8)}, {"documentation", m_documentation.ToStdString(wxConvUTF8)}};
@@ -186,17 +173,16 @@ void SignatureInformation::FromJSON(const JSONItem& json)
     }
 }
 
-JSONItem SignatureInformation::ToJSON() const
+nlohmann::json SignatureInformation::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("label", m_label);
-    json.addProperty("documentation", m_documentation);
+    nlohmann::json json = {
+        {"label", m_label.ToStdString(wxConvUTF8)}, {"documentation", m_documentation.ToStdString(wxConvUTF8)}};
     if (!m_parameters.empty()) {
-        JSONItem params = JSONItem::createArray();
+        nlohmann::json params = nlohmann::json::array();
         for (const auto& paramInfo : m_parameters) {
-            params.arrayAppend(paramInfo.ToJSON());
+            params.push_back(paramInfo.ToJSON());
         }
-        json.addProperty("parameters", params);
+        json["parameters"] = std::move(params);
     }
     return json;
 }
@@ -217,17 +203,15 @@ void SignatureHelp::FromJSON(const JSONItem& json)
     m_activeParameter = json.namedObject("activeParameter").toInt(0);
 }
 
-JSONItem SignatureHelp::ToJSON() const
+nlohmann::json SignatureHelp::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    JSONItem signatures = JSONItem::createArray();
+    nlohmann::json signatures = nlohmann::json::array();
     for (const SignatureInformation& si : m_signatures) {
-        signatures.arrayAppend(si.ToJSON());
+        signatures.push_back(si.ToJSON());
     }
-    json.addProperty("signatures", signatures);
-    json.addProperty("activeSignature", m_activeSignature);
-    json.addProperty("activeParameter", m_activeParameter);
-    return json;
+    return nlohmann::json{{"signatures", std::move(signatures)},
+                          {"activeSignature", m_activeSignature},
+                          {"activeParameter", m_activeParameter}};
 }
 
 void MarkupContent::FromJSON(const JSONItem& json)
@@ -236,7 +220,7 @@ void MarkupContent::FromJSON(const JSONItem& json)
     m_value = json.namedObject("value").toString();
 }
 
-JSONItem MarkupContent::ToJSON() const
+nlohmann::json MarkupContent::ToJSON() const
 { return nlohmann::json{{"kind", m_kind.ToStdString(wxConvUTF8)}, {"value", m_value.ToStdString(wxConvUTF8)}}; }
 
 void Hover::FromJSON(const JSONItem& json)
@@ -245,13 +229,8 @@ void Hover::FromJSON(const JSONItem& json)
     m_range.FromJSON(json.namedObject("range"));
 }
 
-JSONItem Hover::ToJSON() const
-{
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("contents", m_contents.ToJSON());
-    json.addProperty("range", m_range.ToJSON());
-    return json;
-}
+nlohmann::json Hover::ToJSON() const
+{ return nlohmann::json{{"contents", m_contents.ToJSON()}, {"range", m_range.ToJSON()}}; }
 
 ///===------------------------------------------------------------------------
 /// Diagnostic
@@ -263,13 +242,11 @@ void Diagnostic::FromJSON(const JSONItem& json)
     m_severity = json.namedObject("severity").fromNumber(DiagnosticSeverity::Error);
 }
 
-JSONItem Diagnostic::ToJSON() const
+nlohmann::json Diagnostic::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("range", m_range.ToJSON());
-    json.addProperty("message", GetMessage());
-    json.addProperty("severity", (int)m_severity);
-    return json;
+    return nlohmann::json{{"range", m_range.ToJSON()},
+                          {"message", GetMessage().ToStdString(wxConvUTF8)},
+                          {"severity", static_cast<int>(m_severity)}};
 }
 
 TextDocumentContentChangeEvent& TextDocumentContentChangeEvent::SetText(const wxString& text)
@@ -305,10 +282,10 @@ void DocumentSymbol::FromJSON(const JSONItem& json)
     }
 }
 
-JSONItem DocumentSymbol::ToJSON() const
+nlohmann::json DocumentSymbol::ToJSON() const
 {
     wxASSERT_MSG(false, "DocumentSymbol::ToJSON(): is not implemented");
-    return JSONItem(nullptr);
+    return nullptr;
 }
 
 //===----------------------------------------------------------------------------------
@@ -334,14 +311,12 @@ void SymbolInformation::FromJSON(const JSONItem& json)
     }
 }
 
-JSONItem SymbolInformation::ToJSON() const
+nlohmann::json SymbolInformation::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("kind", (int)kind);
-    json.addProperty("containerName", containerName);
-    json.addProperty("location", location.ToJSON());
-    json.addProperty("name", name);
-    return json;
+    return nlohmann::json{{"kind", static_cast<int>(kind)},
+                          {"containerName", containerName.ToStdString(wxConvUTF8)},
+                          {"location", location.ToJSON()},
+                          {"name", name.ToStdString(wxConvUTF8)}};
 }
 
 SymbolInformation SymbolInformation::From(const CTags::SymbolInfo& ctags_symbol_info)
@@ -425,7 +400,7 @@ void Command::FromJSON(const JSONItem& json)
 }
 
 // unimplemented
-JSONItem Command::ToJSON() const { return {}; }
+nlohmann::json Command::ToJSON() const { return nullptr; }
 
 std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result)
 {

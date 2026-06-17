@@ -3,7 +3,7 @@
 namespace LSP
 {
 struct InitializedParams : public Params {
-    JSONItem ToJSON() const override { return nlohmann::json::object(); }
+    nlohmann::json ToJSON() const override { return nlohmann::json::object(); }
 
     void FromJSON(const JSONItem& json) override { wxUnusedVar(json); };
 };

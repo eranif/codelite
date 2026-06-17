@@ -3,7 +3,7 @@ project("CodeliteTest")
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
 
-file(GLOB UNIT_TESTS_SRC "*.cpp")
+file(GLOB_RECURSE UNIT_TESTS_SRC "*.cpp")
 add_executable(CodeliteTest ${UNIT_TESTS_SRC})
 
 target_link_libraries(CodeliteTest ${LINKER_OPTIONS} doctest libcodelite plugin)

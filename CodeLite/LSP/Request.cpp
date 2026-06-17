@@ -5,10 +5,10 @@ LSP::Request::Request()
 {
 }
 
-JSONItem LSP::Request::ToJSON() const
+nlohmann::json LSP::Request::ToJSON() const
 {
-    JSONItem json = MessageWithParams::ToJSON();
-    json.addProperty("id", GetId());
+    auto json = MessageWithParams::ToJSON();
+    json["id"] = GetId();
     return json;
 }
 

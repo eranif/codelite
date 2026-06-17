@@ -25,7 +25,7 @@ public:
     {
         return dynamic_cast<T*>(const_cast<Result*>(this));
     }
-    JSONItem ToJSON() const override { return JSONItem(nullptr); }
+    nlohmann::json ToJSON() const override { return nullptr; }
 };
 
 //===----------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ class WXDLLIMPEXP_CL ResultString : public Result
 public:
     ResultString(const wxString& text) {}
     virtual ~ResultString() = default;
-    void FromJSON(const JSONItem& json);
+    void FromJSON(const JSONItem& json) override;
     ResultString& SetText(const wxString& text)
     {
         this->m_text = text;
@@ -57,7 +57,7 @@ class WXDLLIMPEXP_CL ResultNumber : public Result
 public:
     ResultNumber(const wxString& text) {}
     virtual ~ResultNumber() = default;
-    void FromJSON(const JSONItem& json);
+    void FromJSON(const JSONItem& json) override;
     ResultNumber& SetNumber(int number)
     {
         this->m_number = number;
@@ -76,7 +76,7 @@ class WXDLLIMPEXP_CL ResultBoolean : public Result
 public:
     ResultBoolean(const wxString& text) {}
     virtual ~ResultBoolean() = default;
-    void FromJSON(const JSONItem& json);
+    void FromJSON(const JSONItem& json) override;
 
     ResultBoolean& SetValue(bool value)
     {

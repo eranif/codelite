@@ -1,6 +1,6 @@
 #include "CompletionItem.h"
 
-JSONItem LSP::CompletionItem::ToJSON() const { return JSONItem(nullptr); }
+nlohmann::json LSP::CompletionItem::ToJSON() const { return nullptr; }
 
 void LSP::CompletionItem::FromJSON(const JSONItem& json)
 {

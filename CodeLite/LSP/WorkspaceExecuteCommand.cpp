@@ -7,7 +7,7 @@ WorkspaceExecuteCommand::WorkspaceExecuteCommand(const wxString& filepath, const
 {
     SetMethod("workspace/executeCommand");
     m_params.reset(new ExecuteCommandParams(command.GetCommand(), command.GetArguments()));
-    LSP_DEBUG() << ToJSON().format(true) << endl;
+    LSP_DEBUG() << wxString::FromUTF8(ToJSON().dump(2)) << endl;
 }
 
 std::optional<LSPEvent> WorkspaceExecuteCommand::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)

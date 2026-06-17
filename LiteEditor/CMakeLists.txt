@@ -104,6 +104,14 @@ wxcrafter_target(
     "DbgCommandBaseDlg_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
+    LiteEditorDebuggerAsciiViewerBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/debuggerasciiviewerbase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "debuggerasciiviewerbase.cpp"
+    "debuggerasciiviewerbase.hpp"
+    "debuggerasciiviewerbase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
     LiteEditorDebuggerSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/DebuggerSettings.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -250,6 +258,7 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorCompilersFoundDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorConfigManagerBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorDbgCommandBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorDebuggerAsciiViewerBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorDebuggerSettings_OUTPUTS}
     ${WXCRAFTER_LiteEditorDependDlgPage_OUTPUTS}
     ${WXCRAFTER_LiteEditorFileCheckListBase_OUTPUTS}

@@ -39,12 +39,6 @@ int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& load
 // stays in wxgui_helpers.h so existing callers keep working.)
 void SetStatusMessage(const wxString& msg);
 
-// True iff `page` is the wizard page currently selected in the GUI designer.
-// GUI: forwards to GUICraftMainPanel::m_MainPanel->GetActiveWizardPage().
-// Headless: returns false — the designer preview path that uses this is
-//           never hit by the headless XRC_LIVE pipeline.
-bool IsActiveWizardPage(const wxcWidget* page);
-
 // True iff the OS-level dark-mode appearance is active.
 // GUI: forwards to wxSystemSettings::GetAppearance().IsDark().
 // Headless: returns false (codegen falls back to the light-theme branch).

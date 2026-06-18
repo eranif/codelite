@@ -546,7 +546,7 @@ class WXDLLIMPEXP_CL Command : public Serializable
 
 public:
     void FromJSON(const JSONItem& json) override;
-    nlohmann::json ToJSON() const;
+    nlohmann::json ToJSON() const override;
 
     Command() = default;
     ~Command() override = default;

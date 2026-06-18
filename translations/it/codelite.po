@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: CodeLite - IT - 18.06.2026\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-15 09:37+0000\n"
-"PO-Revision-Date: 2026-06-18 07:04+0100\n"
+"PO-Revision-Date: 2026-06-18 09:38+0100\n"
 "Last-Translator: bovirus (bovirus@gmail.-com)\n"
 "Language-Team: bovirus (bovirus@gmail.com)\n"
 "Language: it_IT\n"
@@ -6165,6 +6165,7 @@ msgid ""
 msgstr ""
 "Ciò ripristinerà le autorizzazioni dello strumento al loro stato predefinito, richiedendo conferma prima di ogni invocazione.\n"
 "Vuoi continuare?"
+
 #: LiteEditor/importfilesdialog_new.cpp:31
 #: LiteEditor/importfilesdialog_new.h:71
 msgid "Import Files"

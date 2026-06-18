@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: CodeLite - IT - 18.06.2026\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-15 09:37+0000\n"
-"PO-Revision-Date: 2026-06-18 09:38+0100\n"
+"PO-Revision-Date: 2026-06-18 10:31+0100\n"
 "Last-Translator: bovirus (bovirus@gmail.-com)\n"
 "Language-Team: bovirus (bovirus@gmail.com)\n"
 "Language: it_IT\n"
@@ -9430,6 +9430,7 @@ msgid ""
 msgstr ""
 "Premi 'Maiusc'+'INVIO' per inviare.\n"
 "Digita '/' per vedere l'elenco dei comandi"
+
 #: Plugin/ai/ChatAIWindow.cpp:149
 msgid "Load Chat"
 msgstr "Carica chat"
@@ -9502,6 +9503,7 @@ msgid ""
 msgstr ""
 "Il riavvio del client comporterà la perdita di tutti i dati della sessione attuale.\n"
 "Vuoi continuare?"
+
 #: Plugin/ai/ChatAIWindow.cpp:587
 msgid "LLM client successfully restarted"
 msgstr "Il client LLM è stato riavviato correttamente"
@@ -9513,6 +9515,7 @@ msgid ""
 msgstr ""
 "Procedere con questa operazione comporterà la perdita del contesto della chat attuale. Prima di continuare puoi scegliere di salvarlo.\n"
 "Vuoi procedere con la cancellazione del contesto?"
+
 #: Plugin/ai/ChatAIWindow.cpp:625
 #: build-release/LiteEditor/filechecklistbase.cpp:144
 msgid "Remember my answer"
@@ -9655,6 +9658,7 @@ msgid ""
 msgstr ""
 "Aggiunti correttamente al contesto i seguenti file:\n"
 "\n"
+
 #: Plugin/ai/NewLLMEndpointWizard.cpp:73
 msgid "Invalid URL"
 msgstr "URL non valido"
@@ -9726,6 +9730,7 @@ msgid ""
 msgstr ""
 "' esiste già.\n"
 "Vuoi sovrscriverlo?"
+
 #: Plugin/ai/Tools.cpp:88
 msgid "The file '"
 msgstr "Il file '"
@@ -9803,6 +9808,7 @@ msgid ""
 msgstr ""
 "Il modello vuole eseguire il seguente comando shell:\n"
 "```bash\n"
+
 #: Plugin/ai/Tools.cpp:813
 msgid "# Command\n"
 msgstr "# Comando\n"
@@ -9832,6 +9838,7 @@ msgid ""
 msgstr ""
 "Output comando:\n"
 "```bash\n"
+
 #: Plugin/ai/Tools.cpp:943
 msgid ""
 "Command Output:\n"
@@ -9839,6 +9846,7 @@ msgid ""
 msgstr ""
 "Output comando:\n"
 "```bash\n"
+
 #: Plugin/ai/ToolsUtils.hpp:20
 msgid " can not be run on the main thread"
 msgstr " non può essere eseguito nel thread principale"
@@ -18204,6 +18212,7 @@ msgid ""
 msgstr ""
 "\n"
 "Vuoi continuare?"
+
 #: git/git.cpp:183
 msgid "Simple GIT plugin"
 msgstr "Plug-in GIT semplice"

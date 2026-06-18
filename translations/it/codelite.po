@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: CodeLite - IT - 19.03.2026\n"
+"Project-Id-Version: CodeLite - IT - 18.06.2026\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-15 09:37+0000\n"
-"PO-Revision-Date: 2026-03-19 19:44+0100\n"
+"PO-Revision-Date: 2026-06-18 07:04+0100\n"
 "Last-Translator: bovirus (bovirus@gmail.-com)\n"
 "Language-Team: bovirus (bovirus@gmail.com)\n"
 "Language: it_IT\n"
@@ -597,7 +597,7 @@ msgstr "Impossibile avviare il processo figlio"
 
 #: CodeLite/AsyncProcess/asyncprocess.cpp:347
 msgid "streaming callback must not be null"
-msgstr ""
+msgstr "la richiamata dello streaming non deve essere nulla"
 
 #: CodeLite/AsyncProcess/clCommandProcessor.cpp:21
 msgid "Executing: "
@@ -610,23 +610,23 @@ msgstr "Impossibile eseguire il comando: %s"
 
 #: CodeLite/CTags.cpp:128
 msgid "Failed to resolve file extension for file: "
-msgstr ""
+msgstr "Impossibile risolvere l'estensione file per il file: "
 
 #: CodeLite/CTags.cpp:133 CodeLite/CTags.cpp:156
 msgid "Failed to write temporary file: "
-msgstr ""
+msgstr "Impossibile scrivere il file temporaneo: "
 
 #: CodeLite/CTags.cpp:134 CodeLite/CTags.cpp:156
 msgid " to disk"
-msgstr ""
+msgstr " nel disco"
 
 #: CodeLite/CTags.cpp:147
 msgid " from disk"
-msgstr ""
+msgstr " dal disco"
 
 #: CodeLite/CTags.cpp:147
 msgid "Failed to read file content: "
-msgstr ""
+msgstr "Impossibile leggere il contenuto del file: "
 
 #: CodeLite/LSP/RenameRequest.cpp:55
 #, c-format
@@ -1702,7 +1702,7 @@ msgstr "Aiuto"
 #: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:63
 #, c-format
 msgid "Delete '%s'"
-msgstr ""
+msgstr "Elimina '%s'"
 
 #: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:76
 msgid "Are you sure you want to scan for dap servers? (this will override your current settings)"
@@ -5747,7 +5747,7 @@ msgstr "Riquadro output"
 
 #: LiteEditor/frame.cpp:1205
 msgid "Toggle Terminal View"
-msgstr ""
+msgstr "Abilita/disabilita visualizzazione terminale"
 
 #: LiteEditor/frame.cpp:1206
 msgid "Workspace Pane"
@@ -6163,7 +6163,8 @@ msgid ""
 "This will reset the tool permissions to their default state, requiring confirmation before each invocation.\n"
 "Continue?"
 msgstr ""
-
+"Ciò ripristinerà le autorizzazioni dello strumento al loro stato predefinito, richiedendo conferma prima di ogni invocazione.\n"
+"Vuoi continuare?"
 #: LiteEditor/importfilesdialog_new.cpp:31
 #: LiteEditor/importfilesdialog_new.h:71
 msgid "Import Files"
@@ -8169,11 +8170,11 @@ msgstr "Ripristina prompt ai valori predefiniti"
 
 #: Plugin/CustomControls/CustomControls.hpp:70
 msgid "Text Generation"
-msgstr ""
+msgstr "Generazione testo"
 
 #: Plugin/CustomControls/CustomControls.hpp:108
 msgid "Prompt Editor"
-msgstr ""
+msgstr "Editor prompt"
 
 #: Plugin/CustomControls/PromptEditorDlg.cpp:27
 #: Plugin/CustomControls/PromptEditorDlg.cpp:159
@@ -9099,7 +9100,7 @@ msgstr "Visualizzazione finestra di dialogo Vista struttura"
 
 #: Plugin/LSP/LSPManager.cpp:239
 msgid "Could not find symbols for the current editor"
-msgstr ""
+msgstr "Impossibile trovare i simboli per l'editor attuale"
 
 #: Plugin/LSP/LSPManager.cpp:407
 msgid "Requesting document symbols from LSP server..."
@@ -9335,7 +9336,7 @@ msgstr "La mia rubrica"
 
 #: Plugin/SelectFileTypesDialogBase.hpp:58
 msgid "Select language:"
-msgstr ""
+msgstr "Seleziona lingua:"
 
 #: Plugin/SwitchToWorkspaceBase.cpp:42
 msgid "Workspace file:"
@@ -9415,25 +9416,26 @@ msgstr "Aggiungi un file di intestazione mancante"
 
 #: Plugin/ai/ChatAIWindow.cpp:54
 msgid "Configure MCP Tools"
-msgstr ""
+msgstr "Configura strumenti MCP"
 
 #: Plugin/ai/ChatAIWindow.cpp:62
 msgid "Enable All Tools"
-msgstr ""
+msgstr "Abilita tutti gli strumenti"
 
 #: Plugin/ai/ChatAIWindow.cpp:147
 msgid ""
 "Hit Shift+ENTER to submit.\n"
 "Type / to see list of commands"
 msgstr ""
-
+"Premi 'Maiusc'+'INVIO' per inviare.\n"
+"Digita '/' per vedere l'elenco dei comandi"
 #: Plugin/ai/ChatAIWindow.cpp:149
 msgid "Load Chat"
-msgstr ""
+msgstr "Carica chat"
 
 #: Plugin/ai/ChatAIWindow.cpp:150
 msgid "Save Chat"
-msgstr ""
+msgstr "Salva chat"
 
 #: Plugin/ai/ChatAIWindow.cpp:158
 msgid "Submit"
@@ -9441,19 +9443,19 @@ msgstr "Invia"
 
 #: Plugin/ai/ChatAIWindow.cpp:161
 msgid "Restart the client"
-msgstr "Riavviare il client"
+msgstr "Riavvia il client"
 
 #: Plugin/ai/ChatAIWindow.cpp:168
 msgid "Enable auto scrolling"
-msgstr "Abilita lo scorrimento automatico"
+msgstr "Abilita scorrimento automatico"
 
 #: Plugin/ai/ChatAIWindow.cpp:174
 msgid "Clear the chat history"
-msgstr "Cancella la cronologia della chat"
+msgstr "Cancella la cronologia chat"
 
 #: Plugin/ai/ChatAIWindow.cpp:312
 msgid "Configure MCP Tools..."
-msgstr ""
+msgstr "Configura strumenti MCP..."
 
 #: Plugin/ai/ChatAIWindow.cpp:316
 msgid "Enable MCP Tools"
@@ -9486,18 +9488,19 @@ msgstr "Aggancia finestra chat"
 
 #: Plugin/ai/ChatAIWindow.cpp:387 Plugin/ai/UI.hpp:199
 msgid "Manage Chat History"
-msgstr ""
+msgstr "Gestisci cronologia chat"
 
 #: Plugin/ai/ChatAIWindow.cpp:445
 msgid "Please choose an endpoint/model."
-msgstr "Scegli un punto fine/modello."
+msgstr "Scegli punto fine/modello."
 
 #: Plugin/ai/ChatAIWindow.cpp:575
 msgid ""
 "Restarting the client will result in the loss of all the current session data.\n"
 "Do you wish to continue?"
 msgstr ""
-
+"Il riavvio del client comporterà la perdita di tutti i dati della sessione attuale.\n"
+"Vuoi continuare?"
 #: Plugin/ai/ChatAIWindow.cpp:587
 msgid "LLM client successfully restarted"
 msgstr "Il client LLM è stato riavviato correttamente"
@@ -9507,7 +9510,8 @@ msgid ""
 "Proceeding with this operation will result in the loss of the current chat context. You may choose to save it before continuing.\n"
 "Do you wish to proceed with clearing the context?"
 msgstr ""
-
+"Procedere con questa operazione comporterà la perdita del contesto della chat attuale. Prima di continuare puoi scegliere di salvarlo.\n"
+"Vuoi procedere con la cancellazione del contesto?"
 #: Plugin/ai/ChatAIWindow.cpp:625
 #: build-release/LiteEditor/filechecklistbase.cpp:144
 msgid "Remember my answer"
@@ -9528,39 +9532,39 @@ msgstr "Costo totale: $"
 
 #: Plugin/ai/ChatAIWindow.cpp:749
 msgid ", Total context size: "
-msgstr ""
+msgstr ", dimensione totale contesto: "
 
 #: Plugin/ai/ChatAIWindow.cpp:749
 msgid "Used tokens: "
-msgstr ""
+msgstr "Token usati: "
 
 #: Plugin/ai/ChatAIWindow.cpp:979
 msgid "There are no stored sessions to load for endpoint: "
-msgstr ""
+msgstr "Non ci sono sessioni archiviate da caricare per il punto finale: "
 
 #: Plugin/ai/ChatAIWindow.cpp:987
 msgid "Choose a chat to load"
-msgstr ""
+msgstr "Scegli una chat da caricare"
 
 #: Plugin/ai/ChatAIWindow.cpp:1019
 msgid "Enter chat name:"
-msgstr ""
+msgstr "Inserisci il nome chat:"
 
 #: Plugin/ai/ChatAIWindow.cpp:1048
 msgid "Context Window Used: "
-msgstr ""
+msgstr "Finestra contesto usata: "
 
 #: Plugin/ai/ChatAIWindow.cpp:1110 Plugin/ai/ChatAIWindow.cpp:1123
 msgid "Choose Context Files"
-msgstr ""
+msgstr "Scegli file contesto"
 
 #: Plugin/ai/ChatAIWindow.cpp:1192
 msgid "No, and tell me what to do differently:"
-msgstr ""
+msgstr "No, e dimmi cosa fare diversamente:"
 
 #: Plugin/ai/ChatAIWindow.cpp:1194
 msgid "No, "
-msgstr ""
+msgstr "No, "
 
 #: Plugin/ai/ChatAIWindow.hpp:28
 msgid "Chat AI"
@@ -9580,7 +9584,7 @@ msgstr "Scegli l'endpoint da usare"
 
 #: Plugin/ai/LLMManager.cpp:288
 msgid "AI Options"
-msgstr ""
+msgstr "Opzioni IA"
 
 #: Plugin/ai/LLMManager.cpp:312
 msgid "AI-Powered Options"
@@ -9588,19 +9592,19 @@ msgstr "Opzioni basate su IA"
 
 #: Plugin/ai/LLMManager.cpp:782
 msgid "The model wants to run the tool: `"
-msgstr ""
+msgstr "Il modello vuole eseguire lo strumento: `"
 
 #: Plugin/ai/LLMManager.cpp:782
 msgid "`\n"
-msgstr ""
+msgstr "`\n"
 
 #: Plugin/ai/LLMManager.cpp:786
 msgid "' for future sessions?"
-msgstr ""
+msgstr "' per sessioni future?"
 
 #: Plugin/ai/LLMManager.cpp:786
 msgid "Would you like to persist trust for the tool '"
-msgstr ""
+msgstr "Vorresti mantenere la fiducia nello strumento?"
 
 #: Plugin/ai/LLMManager.cpp:851
 msgid ""
@@ -9612,7 +9616,7 @@ msgstr ""
 
 #: Plugin/ai/LLMManager.cpp:872
 msgid "Failed to reload AI configuration:\n"
-msgstr ""
+msgstr "Impossibile ricaricare la configurazione IA:\n"
 
 #: Plugin/ai/LLMManager.cpp:1345 Plugin/ai/LLMManager.cpp:1366
 msgid "Failed to create configuration file:\n"
@@ -9620,11 +9624,11 @@ msgstr "Impossibile creare il file di configurazione:\n"
 
 #: Plugin/ai/LLMManager.cpp:1446 git/git.cpp:3085
 msgid "Thinking..."
-msgstr "Pensiero..."
+msgstr "Sto pensando..."
 
 #: Plugin/ai/LLMManager.cpp:1652
 msgid "Unable to gather enough context to generate docstring"
-msgstr ""
+msgstr "Impossibile raccogliere contesto sufficiente per generare docstring"
 
 #: Plugin/ai/LLMManager.cpp:1656
 msgid "Generating DocString..."
@@ -9641,14 +9645,15 @@ msgstr "Genera un commento basato sull'intelligenza artificiale per la funzione 
 #: Plugin/ai/LLMManager.cpp:1700
 #, c-format
 msgid "Define the level of trust for: '%s'"
-msgstr ""
+msgstr "Definisci il livello di attendibilità per: '%s'"
 
 #: Plugin/ai/LLMManager.cpp:1823
 msgid ""
 "Successfully added the following files to the context:\n"
 "\n"
 msgstr ""
-
+"Aggiunti correttamente al contesto i seguenti file:\n"
+"\n"
 #: Plugin/ai/NewLLMEndpointWizard.cpp:73
 msgid "Invalid URL"
 msgstr "URL non valido"
@@ -9683,45 +9688,46 @@ msgstr ""
 
 #: Plugin/ai/SopParamsDialog.cpp:9
 msgid "Enter SOP Parameters ("
-msgstr ""
+msgstr "Inserisci i parametri SOP ("
 
 #: Plugin/ai/ToolTrustLevelDlg.cpp:60
 msgid "Persisting an entire tool is not allowed"
-msgstr ""
+msgstr "Non è consentito rendere persistente un intero strumento"
 
 #: Plugin/ai/Tools.cpp:53
 msgid "Creating new directory:"
-msgstr ""
+msgstr "Creazione nuova cartella:"
 
 #: Plugin/ai/Tools.cpp:53
 msgid "The model wants to create the directory:"
-msgstr ""
+msgstr "Il modello vuole creare la cartella:"
 
 #: Plugin/ai/Tools.cpp:57
 msgid "Creating new file:"
-msgstr ""
+msgstr "Creazione nuovo file:"
 
 #: Plugin/ai/Tools.cpp:57
 msgid "The model wants to create the file:"
-msgstr ""
+msgstr "Il modello vuole creare il file:"
 
 #: Plugin/ai/Tools.cpp:61
 msgid "Appending file:"
-msgstr ""
+msgstr "Accodamento file:"
 
 #: Plugin/ai/Tools.cpp:61
 msgid "The model wants to append to the file:"
-msgstr ""
+msgstr "Il modello vuole aggiungere al file:"
 
 #: Plugin/ai/Tools.cpp:88
 msgid ""
 "' already exists.\n"
 "Override it?"
 msgstr ""
-
+"' esiste già.\n"
+"Vuoi sovrscriverlo?"
 #: Plugin/ai/Tools.cpp:88
 msgid "The file '"
-msgstr ""
+msgstr "Il file '"
 
 #: Plugin/ai/Tools.cpp:91
 msgid " already exists"
@@ -9733,102 +9739,105 @@ msgstr "Il file: "
 
 #: Plugin/ai/Tools.cpp:202
 msgid "Reading file:"
-msgstr ""
+msgstr "Lettura file:"
 
 #: Plugin/ai/Tools.cpp:202
 msgid "The model wants to read the file:"
-msgstr ""
+msgstr "Il modello vuole leggere il file:"
 
 #: Plugin/ai/Tools.cpp:283
 msgid "Reading file metadata:"
-msgstr ""
+msgstr "Lettura metadati file:"
 
 #: Plugin/ai/Tools.cpp:283
 msgid "The model wants to read metadata for the file:"
-msgstr ""
+msgstr "Il modello vuole leggere i metadati per il file:"
 
 #: Plugin/ai/Tools.cpp:654
 msgid " files. "
-msgstr ""
+msgstr " file. "
 
 #: Plugin/ai/Tools.cpp:654
 msgid " matches across "
-msgstr ""
+msgstr " corrispondenze attraverso "
 
 #: Plugin/ai/Tools.cpp:658
 msgid " results were truncated"
-msgstr ""
+msgstr " risultati sono stati troncati"
 
 #: Plugin/ai/Tools.cpp:695
 msgid "` is trusted for path: `"
-msgstr ""
+msgstr "` è attendibile per il percorso: `"
 
 #: Plugin/ai/Tools.cpp:699 Plugin/ai/Tools.cpp:707
 msgid "Will apply the following patch:"
-msgstr ""
+msgstr "Verrà applicata la seguente patch:"
 
 #: Plugin/ai/Tools.cpp:713 Plugin/ai/ToolsUtils.cpp:42
 #, c-format
 msgid "Specific path: %s"
-msgstr ""
+msgstr "Percorso specifico: %s"
 
 #: Plugin/ai/Tools.cpp:714 Plugin/ai/ToolsUtils.cpp:43
 #, c-format
 msgid "Entire directory: %s/*"
-msgstr ""
+msgstr "Intera cartella: %s/*"
 
 #: Plugin/ai/Tools.cpp:715 Plugin/ai/Tools.cpp:841 Plugin/ai/ToolsUtils.cpp:44
 msgid "Entire tool"
-msgstr ""
+msgstr "Intero strumento"
 
 #: Plugin/ai/Tools.cpp:802
 msgid "` is trusted for the command: `"
-msgstr ""
+msgstr "` è attendibile per il comando: `"
 
 #: Plugin/ai/Tools.cpp:811
 msgid "# Working directory\n"
-msgstr ""
+msgstr "# Cartella di lavoro\n"
 
 #: Plugin/ai/Tools.cpp:811
 msgid ""
 "The model wants to run the following shell command:\n"
 "```bash\n"
 msgstr ""
-
+"Il modello vuole eseguire il seguente comando shell:\n"
+"```bash\n"
 #: Plugin/ai/Tools.cpp:813
 msgid "# Command\n"
-msgstr ""
+msgstr "# Comando\n"
 
 #: Plugin/ai/Tools.cpp:820
 #, c-format
 msgid "Exact command: %s"
-msgstr ""
+msgstr "Comando esatto: %s"
 
 #: Plugin/ai/Tools.cpp:839
 #, c-format
 msgid "Tools: %s"
-msgstr ""
+msgstr "Strumenti: %s"
 
 #: Plugin/ai/Tools.cpp:899 Plugin/ai/Tools.cpp:930
 msgid "The output for the command: `"
-msgstr ""
+msgstr "L'output del comando: `"
 
 #: Plugin/ai/Tools.cpp:899 Plugin/ai/Tools.cpp:930
 msgid "` is too large."
-msgstr ""
+msgstr "` è troppo grande."
 
 #: Plugin/ai/Tools.cpp:909
 msgid ""
 "Command output:\n"
 "```bash\n"
 msgstr ""
-
+"Output comando:\n"
+"```bash\n"
 #: Plugin/ai/Tools.cpp:943
 msgid ""
 "Command Output:\n"
 "```bash\n"
 msgstr ""
-
+"Output comando:\n"
+"```bash\n"
 #: Plugin/ai/ToolsUtils.hpp:20
 msgid " can not be run on the main thread"
 msgstr " non può essere eseguito nel thread principale"
@@ -9839,7 +9848,7 @@ msgstr "Strumento "
 
 #: Plugin/ai/UI.cpp:126
 msgid "Allow this action?"
-msgstr ""
+msgstr "Vuoi consentire questa azione?"
 
 #: Plugin/ai/UI.cpp:148
 msgid "Trust"
@@ -9863,7 +9872,7 @@ msgstr "OpenAI"
 
 #: Plugin/ai/UI.cpp:300
 msgid "MoonshotAI"
-msgstr ""
+msgstr "MoonshotAI"
 
 #: Plugin/ai/UI.cpp:301
 msgid "Ollama (Cloud)"
@@ -9903,7 +9912,7 @@ msgstr ""
 
 #: Plugin/ai/UI.cpp:413
 msgid "Max Tokens (KB):"
-msgstr ""
+msgstr "Token massimi (KB):"
 
 #: Plugin/ai/UI.cpp:427
 msgid ""
@@ -9943,31 +9952,31 @@ msgstr "Prompt"
 
 #: Plugin/ai/UI.cpp:847
 msgid "Mesage"
-msgstr ""
+msgstr "Messagio"
 
 #: Plugin/ai/UI.cpp:861
 msgid "Persist"
-msgstr ""
+msgstr "Persistente"
 
 #: Plugin/ai/UI.hpp:110
 msgid "ChatAI"
-msgstr ""
+msgstr "ChatAI"
 
 #: Plugin/ai/UI.hpp:162
 msgid "New LLM Endpoint"
-msgstr ""
+msgstr "Nuovo punto finale LLM"
 
 #: Plugin/ai/UI.hpp:234
 msgid "New Local MCP"
-msgstr ""
+msgstr "Nuova MCP locale"
 
 #: Plugin/ai/UI.hpp:277
 msgid "New SSE MCP Server"
-msgstr ""
+msgstr "Nuovo server MCP SEE"
 
 #: Plugin/ai/UI.hpp:320
 msgid "Choose an option"
-msgstr ""
+msgstr "Scegli un'opzione"
 
 #: Plugin/async_executable_cmd.cpp:90
 msgid "Current working directory: "
@@ -10753,7 +10762,7 @@ msgstr "Si espande alla data attuale"
 
 #: Plugin/macrosdlg.cpp:97
 msgid "Expands to current year"
-msgstr ""
+msgstr "Espandi all'anno attuale"
 
 #: Plugin/macrosdlg.cpp:99
 msgid "Expands to CodeLite's startup directory on (e.g. on Unix it expands to ~/.codelite/)"
@@ -11149,7 +11158,7 @@ msgstr "Aggiungi account"
 
 #: Plugin/sftp_ui.h:198
 msgid "Remote File Explorer"
-msgstr ""
+msgstr "Esplora file remoto"
 
 #: Plugin/sftp_ui.h:263
 msgid "Run tool on remote host"
@@ -11218,23 +11227,23 @@ msgstr "File area di lavoro danneggiato"
 
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:155
 msgid "Choose shell interpreter"
-msgstr ""
+msgstr "Scegli interprete shell"
 
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:161
 msgid "Re-scan for terminals"
-msgstr ""
+msgstr "Esegui nuovamente scansione terminali"
 
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:176
 msgid "Choose terminal theme"
-msgstr ""
+msgstr "Scegli tema terminale"
 
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:182
 msgid "Terminal Settings"
-msgstr ""
+msgstr "Impostazioni terminale"
 
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:794
 msgid "Enable Safe Drawing"
-msgstr ""
+msgstr "Abilita disegno sicuro"
 
 #: Plugin/wxTerminalCtrl/wxTerminalCtrl.cpp:88
 msgid "Unable to find "
@@ -11459,7 +11468,7 @@ msgstr "File remoto: "
 
 #: Remoty/RemotyWorkspaceView.cpp:39
 msgid "Editor codelite-remote.json"
-msgstr ""
+msgstr "Editor codelite-remote.json"
 
 #: Remoty/RemotyWorkspaceView.cpp:149
 #: build-release/LiteEditor/ConfigManagerBaseDlg.cpp:59
@@ -11469,7 +11478,7 @@ msgstr "Configurazione"
 
 #: Remoty/RemotyWorkspaceView.cpp:153
 msgid "Workspace settings..."
-msgstr "Impostazioni dell'area di lavoro..."
+msgstr "Impostazioni area di lavoro..."
 
 #: Remoty/RemotyWorkspaceView.cpp:154
 msgid "Edit codelite-remote.json..."
@@ -12038,7 +12047,7 @@ msgstr "Scegli punto fin&e attivo..."
 
 #: Runtime/rc/menu.xrc:716
 msgid "&Tools"
-msgstr ""
+msgstr "S&trumenti"
 
 #: Runtime/rc/menu.xrc:719
 msgid "Add New Local MCP Server..."
@@ -12050,7 +12059,7 @@ msgstr "Aggiungi nuovo server MCP SSE..."
 
 #: Runtime/rc/menu.xrc:726
 msgid "Reset All Tools Permissions"
-msgstr ""
+msgstr "Ripristina tutti i permessi degli strumenti"
 
 #: Runtime/rc/menu.xrc:731
 msgid "Open &Settings File..."
@@ -12058,7 +12067,7 @@ msgstr "Apri file &impostazioni..."
 
 #: Runtime/rc/menu.xrc:734
 msgid "Open &Global Settings File..."
-msgstr ""
+msgstr "Apri file impostazioni &globali..."
 
 #: Runtime/rc/menu.xrc:739
 msgid "Settin&gs"
@@ -12126,15 +12135,15 @@ msgstr "Rendi di sola lettura"
 
 #: Runtime/rc/menu.xrc:837
 msgid "Copy Path"
-msgstr ""
+msgstr "Copia percorso"
 
 #: Runtime/rc/menu.xrc:840
 msgid "More Copy Options"
-msgstr ""
+msgstr "Altre opzioni copia"
 
 #: Runtime/rc/menu.xrc:845
 msgid "Copy Directory Path to Clipboard"
-msgstr ""
+msgstr "Copia percorso cartella negli Appunti"
 
 #: Runtime/rc/menu.xrc:861
 msgid "Swap Header/Implementation file\tF12"
@@ -12267,7 +12276,7 @@ msgstr "Genera docstring per l'ambito attuale"
 
 #: Runtime/rc/menu.xrc:1217
 msgid "Add Selected Markdown Files to Context"
-msgstr ""
+msgstr "Aggiungi file markdown selezionati al contesto"
 
 #: Rust/RustPlugin.cpp:64 Rust/RustPlugin.cpp:74
 msgid "Rust plugin for CodeLite IDE"
@@ -13321,7 +13330,7 @@ msgstr "Opzioni di formattazione del codice sorgente"
 
 #: build-release/CodeLiteDiff/CodeLiteDiff_UI.cpp:47
 msgid "Left FIle:"
-msgstr ""
+msgstr "File sinistro:"
 
 #: build-release/CodeLiteDiff/CodeLiteDiff_UI.cpp:61
 msgid "Right File:"
@@ -16382,15 +16391,15 @@ msgstr "Impostazioni Vim"
 
 #: build-release/codelitephp/new_class.cpp:56
 msgid "class"
-msgstr ""
+msgstr "classe"
 
 #: build-release/codelitephp/new_class.cpp:57
 msgid "interface"
-msgstr ""
+msgstr "interfaccia"
 
 #: build-release/codelitephp/new_class.cpp:58
 msgid "trait"
-msgstr ""
+msgstr "tratto"
 
 #: build-release/codelitephp/new_class.cpp:60
 msgid "Choose the object type"
@@ -18181,18 +18190,19 @@ msgstr "Puoi modificarlo dalla barra dei menu: Plugin > Git > Impostazioni plugi
 
 #: git/GitView.cpp:724
 msgid "Delete File"
-msgstr ""
+msgstr "Elimina file"
 
 #: git/GitView.cpp:802
 msgid "This operation will delete the following files:"
-msgstr ""
+msgstr "Questa operazione eliminerà i seguenti file:"
 
 #: git/GitView.cpp:806
 msgid ""
 "\n"
 "Continue?"
 msgstr ""
-
+"\n"
+"Vuoi continuare?"
 #: git/git.cpp:183
 msgid "Simple GIT plugin"
 msgstr "Plug-in GIT semplice"
@@ -19026,7 +19036,7 @@ msgstr "Supporto per estensioni caricabili non disponibile"
 
 #: submodules/wxTerminalEmulator/terminal_view.cpp:1381
 msgid "Clear buffer"
-msgstr ""
+msgstr "Svuota buffer"
 
 #: wxcrafter/Importer/import_dlg.cpp:18
 msgid "Choose a wxFormBuilder project to import"
@@ -19120,7 +19130,7 @@ msgstr "Inserisci un nome file"
 
 #: wxcrafter/UI/NewFormWizard.cpp:179
 msgid "Please enter a class name"
-msgstr "Inserisci il nome di una classe"
+msgstr "Inserisci il nome classe"
 
 #: wxcrafter/UI/NewFormWizard.cpp:186
 msgid "Please select a virtual folder for the generated code"

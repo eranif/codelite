@@ -13,7 +13,15 @@ if(USE_PCH AND NOT MINGW)
 endif()
 
 wxcrafter_target(
-    SnipWiz
+    SnipWizSettings
+    "${CMAKE_CURRENT_SOURCE_DIR}/SnippetSettings.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "SnippetSettings.cpp"
+    "SnippetSettings.hpp"
+    "SnippetSettings_snipwiz_bitmaps.cpp")
+
+wxcrafter_target(
+    SnipWizTemplate
     "${CMAKE_CURRENT_SOURCE_DIR}/templateclassbasedlg.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
     "templateclassbasedlg.cpp"
@@ -23,7 +31,7 @@ wxcrafter_target(
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_SnipWiz_OUTPUTS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_SnipWizSettings_OUTPUTS} ${WXCRAFTER_SnipWizTemplate_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -35,6 +43,6 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_SnipWiz_OUTPUTDIR}")
+target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_SnipWizSettings_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 cl_install_plugin(${PLUGIN_NAME})

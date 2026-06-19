@@ -39,11 +39,6 @@ int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& load
 // stays in wxgui_helpers.h so existing callers keep working.)
 void SetStatusMessage(const wxString& msg);
 
-// True iff the OS-level dark-mode appearance is active.
-// GUI: forwards to wxSystemSettings::GetAppearance().IsDark().
-// Headless: returns false (codegen falls back to the light-theme branch).
-bool IsDarkAppearance();
-
 /**
  * @brief Loads bitmap images and text files from a skin ZIP archive into the provided maps.
  *

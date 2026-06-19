@@ -15,8 +15,6 @@ int AddImageToAllocator(wxImageList* /*list*/, const wxCrafter::ResourceLoader& 
 
 void SetStatusMessage(const wxString& /*msg*/) {}
 
-bool IsDarkAppearance() { return false; }
-
 void LoadImages(const wxString&, std::map<wxString, wxBitmap>&, std::map<wxString, wxString>&) {}
 
 } // namespace wxc_runtime

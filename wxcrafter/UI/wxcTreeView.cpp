@@ -8,7 +8,6 @@
 #include "wxc_project_metadata.h"
 #include "wxcrafter.h"
 #include "wxgui_defs.h"
-#include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 
 const wxEventType wxEVT_SHOW_WXCRAFTER_DESIGNER = wxNewEventType();
@@ -18,9 +17,22 @@ EVT_TOOL(ID_OPEN_WXGUI_PROJECT, wxcTreeView::OnOpen)
 EVT_UPDATE_UI(ID_OPEN_WXGUI_PROJECT, wxcTreeView::OnOpenUI)
 END_EVENT_TABLE()
 
+namespace
+{
+
+wxBorder GetControlBorder()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+}
+}
+
 wxcTreeView::wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin)
     : wxcTreeViewBaseClass(
-          parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCrafter::GetControlBorder() | wxTAB_TRAVERSAL)
+          parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, GetControlBorder() | wxTAB_TRAVERSAL)
     , m_loadingProject(false)
 {
     m_treeControls->SetImageList(Allocator::Instance()->GetImageList());

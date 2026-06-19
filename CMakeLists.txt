@@ -1304,6 +1304,3 @@ endif()
 
 unset(DEBUG_BUILD CACHE)
 unset(BUILD_TESTING CACHE)
-
-file(CREATE_LINK "${CMAKE_BINARY_DIR}/compile_commands.json"
-     "${CMAKE_SOURCE_DIR}/compile_commands.json" SYMBOLIC)

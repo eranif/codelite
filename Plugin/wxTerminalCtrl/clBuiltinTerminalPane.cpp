@@ -795,8 +795,8 @@ void clBuiltinTerminalPane::OnSettingsMenu(wxCommandEvent& event)
 
     wxMenu menu;
     wxMenuItem* safeDrawingItem = menu.AppendCheckItem(wxID_ANY, _("Enable Safe Drawing"));
-    safeDrawingItem->Check(m_safeDrawingEnabled);
-
+    safeDrawingItem->Check(m_safeDrawingEnabled || wxTerminalViewCtrl::IsOpenGLEnabled());
+    safeDrawingItem->Enable(!wxTerminalViewCtrl::IsOpenGLEnabled());
     menu.Bind(
         wxEVT_MENU,
         [this](wxCommandEvent& e) {
@@ -815,14 +815,6 @@ void clBuiltinTerminalPane::OnSettingsMenu(wxCommandEvent& event)
                     terminal->Refresh();
                 }
             }
-        },
-        safeDrawingItem->GetId());
-
-    menu.Bind(
-        wxEVT_UPDATE_UI,
-        [this](wxUpdateUIEvent& e) {
-            e.Check(m_safeDrawingEnabled || wxTerminalViewCtrl::IsOpenGLEnabled());
-            e.Enable(!wxTerminalViewCtrl::IsOpenGLEnabled());
         },
         safeDrawingItem->GetId());
 

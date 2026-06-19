@@ -1592,6 +1592,8 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
         EnvSetter compiler_env{&env_list};
         auto arr = StringUtils::BuildCommandArrayFromString(execLine);
         wxString terminal_title = arr.empty() ? wxString{} : arr[0];
+        clDEBUG() << "Running program  :" << execLine << endl;
+        clDEBUG() << "Working directory:" << wd << endl;
         auto terminal =
             clGetManager()->GetTerminalManager()->OpenNewDefaultTerminalTab(wd, std::nullopt, terminal_title);
         CHECK_PTR_RET(terminal);

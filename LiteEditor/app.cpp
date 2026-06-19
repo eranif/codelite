@@ -667,7 +667,7 @@ bool CodeLiteApp::OnInit()
 
 #ifdef __WXMSW__
     if (FreeConsole()) {
-        clSYSTEM() << "Successfully detached from console" << endl;
+        clDEBUG() << "Successfully detached from console" << endl;
     }
 #endif
 

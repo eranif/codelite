@@ -13,8 +13,6 @@ int AddImageToAllocator(wxImageList* /*list*/, const wxCrafter::ResourceLoader& 
     return -1;
 }
 
-void SetStatusMessage(const wxString& /*msg*/) {}
-
 void LoadImages(const wxString&, std::map<wxString, wxBitmap>&, std::map<wxString, wxString>&) {}
 
 } // namespace wxc_runtime

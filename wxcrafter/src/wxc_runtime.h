@@ -33,12 +33,6 @@ wxImageList* CreateAllocatorImageList();
 // GUI: list->Add(loader.Bitmap(name)). Headless: returns -1; arguments unused.
 int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& loader, const wxString& bmpName);
 
-// Set the application's status-bar message.
-// GUI: forwards to MainFrame::SetStatusMessage. Headless: no-op.
-// (This is the implementation behind wxCrafter::SetStatusMessage; that wrapper
-// stays in wxgui_helpers.h so existing callers keep working.)
-void SetStatusMessage(const wxString& msg);
-
 /**
  * @brief Loads bitmap images and text files from a skin ZIP archive into the provided maps.
  *

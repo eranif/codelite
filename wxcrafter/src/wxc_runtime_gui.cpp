@@ -23,17 +23,6 @@ int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& load
     return list->Add(loader.Bitmap(bmpName));
 }
 
-void SetStatusMessage(const wxString& msg)
-{
-    wxFrame* topFrame = EventNotifier::Get()->TopFrame();
-    if (!topFrame) {
-        return;
-    }
-    if (MainFrame* frame = dynamic_cast<MainFrame*>(topFrame)) {
-        frame->SetStatusMessage(msg);
-    }
-}
-
 void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps, std::map<wxString, wxString>& files)
 {
     wxString zipFile;

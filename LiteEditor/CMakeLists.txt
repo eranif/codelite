@@ -573,7 +573,7 @@ if(NOT APPLE)
     if(USE_CLANG AND MINGW)
         install(FILES ${CLANG_BINARY} DESTINATION ${PLUGINS_DIR})
     endif(USE_CLANG AND MINGW)
-else() # !APPLE
+else() # APPLE
     install(
         TARGETS codelite
         DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS

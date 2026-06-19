@@ -235,6 +235,9 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::DoCreateTerminal(const wxString& shel
     m_book->AddPage(ctrl, tabTitle, makeActive);
 
     // Apply safe drawing setting to the new terminal
+    if (ctrl->IsOpenGLEnabled()) {
+        m_safeDrawingEnabled = true;
+    }
     ctrl->EnableSafeDrawing(m_safeDrawingEnabled);
     m_book->SetPageToolTip(m_book->GetPageCount() - 1, tabTitle);
 
@@ -812,6 +815,14 @@ void clBuiltinTerminalPane::OnSettingsMenu(wxCommandEvent& event)
                     terminal->Refresh();
                 }
             }
+        },
+        safeDrawingItem->GetId());
+
+    menu.Bind(
+        wxEVT_UPDATE_UI,
+        [this](wxUpdateUIEvent& e) {
+            e.Check(m_safeDrawingEnabled || wxTerminalViewCtrl::IsOpenGLEnabled());
+            e.Enable(!wxTerminalViewCtrl::IsOpenGLEnabled());
         },
         safeDrawingItem->GetId());
 

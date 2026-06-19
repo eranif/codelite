@@ -134,12 +134,7 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
 
     set(WX_DYLIB ${_WX_LIBS_DIR}/lib${_WX_LIB_NAME}.dylib)
     message(STATUS "wxWidgets lib is: ${WX_DYLIB}")
-
-    file(GLOB WXLIBS ${_WX_LIBS_DIR}/lib${_WX_LIB_NAME}*.dylib)
-    foreach(WXLIB ${WXLIBS})
-      file(COPY ${WXLIB}
-           DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
-    endforeach()
+    # wxWidgets libraries are copied by run_install_name_tool.py based on actual binary dependencies
     # Copy Terminal.app launcher script
     file(
       COPY ${CL_SRC_ROOT}/Runtime/osx-terminal.sh

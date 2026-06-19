@@ -4,7 +4,11 @@ project("CodeliteTest")
 include("${wxWidgets_USE_FILE}")
 
 file(GLOB_RECURSE UNIT_TESTS_SRC "*.cpp")
-add_executable(CodeliteTest ${UNIT_TESTS_SRC})
+set(CODELITETEST_RES_FILES "")
+if(WIN32)
+  set(CODELITETEST_RES_FILES "resources.rc")
+endif()
+add_executable(CodeliteTest ${UNIT_TESTS_SRC} ${CODELITETEST_RES_FILES})
 
 target_link_libraries(CodeliteTest ${LINKER_OPTIONS} doctest libcodelite plugin)
 

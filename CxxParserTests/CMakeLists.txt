@@ -10,8 +10,15 @@ endif()
 
 file(GLOB SRCS "*.cpp")
 
+# Embed the standard wxWidgets manifest on Windows so the test executable gets
+# the same visual styles / DPI awareness setup as other wx-based tools.
+set(CXXLOCALVARIABLES_RES_FILES "")
+if(WIN32)
+    set(CXXLOCALVARIABLES_RES_FILES "resources.rc")
+endif()
+
 # Define the output
-add_executable(CxxLocalVariables ${SRCS})
+add_executable(CxxLocalVariables ${SRCS} ${CXXLOCALVARIABLES_RES_FILES})
 
 if(USE_PCH)
     target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)

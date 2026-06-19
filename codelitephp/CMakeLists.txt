@@ -68,7 +68,11 @@ endif()
 include(CTest)
 if(BUILD_TESTING)
     file(GLOB UNIT_TESTS_SRC "PHPParserUnitTests/*.cpp")
-    add_executable(PHPUnitTests ${UNIT_TESTS_SRC})
+    set(PHPUNITTESTS_RES_FILES "")
+    if(WIN32)
+        set(PHPUNITTESTS_RES_FILES "PHPParserUnitTests/resources.rc")
+    endif()
+    add_executable(PHPUnitTests ${UNIT_TESTS_SRC} ${PHPUNITTESTS_RES_FILES})
 
     target_link_libraries(
         PHPUnitTests

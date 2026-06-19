@@ -51,7 +51,7 @@ jobs:
       run: |
         mkdir wxWidgets/build-release
         cd wxWidgets/build-release
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DwxBUILD_DEBUG_LEVEL=0  -DwxBUILD_MONOLITHIC=1 -DwxUSE_SYS_LIBS=OFF -DwxUSE_LUNASVG=OFF  ${{ matrix.wx-options }}
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DwxBUILD_DEBUG_LEVEL=0  -DwxBUILD_MONOLITHIC=1 -DwxUSE_SYS_LIBS=OFF -DwxUSE_LUNASVG=OFF
         make -j$(sysctl -n hw.physicalcpu)
         sudo make install
 

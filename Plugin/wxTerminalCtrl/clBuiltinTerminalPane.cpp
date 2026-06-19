@@ -188,7 +188,7 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &clBuiltinTerminalPane::OnSettingsMenu, this, wxID_PREFERENCES);
 
     GetSizer()->Fit(this);
-    m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
+    m_book->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clBuiltinTerminalPane::OnInitDone, this);
@@ -201,7 +201,7 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
-    m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
+    m_book->Unbind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
     clConfig::Get().Write("terminal/last_used_terminal", m_terminal_types->GetStringSelection());

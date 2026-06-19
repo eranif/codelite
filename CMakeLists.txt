@@ -1183,6 +1183,7 @@ if(MINGW)
     libssh.dll
     libsqlite3-0.dll
     libhunspell-1.7-0.dll
+    libglew32.dll
     libunwind.dll)
 
   list(

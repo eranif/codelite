@@ -28,10 +28,21 @@ wxcrafter_target(
     "newclassbasedlg.hpp"
     "newclasswizard_gizmos_bitmaps.cpp")
 
+wxcrafter_target(
+    GizmosNewWxProject
+    "${CMAKE_CURRENT_SOURCE_DIR}/newwxprojectbasedlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "newwxprojectbasedlg.cpp"
+    "newwxprojectbasedlg.hpp"
+    "newwxprojectbasedlg_gizmos_bitmaps.cpp")
+
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_GizmosGizmos_OUTPUTS} ${WXCRAFTER_GizmosNewClassWizard_OUTPUTS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS}
+    ${WXCRAFTER_GizmosGizmos_OUTPUTS}
+    ${WXCRAFTER_GizmosNewClassWizard_OUTPUTS}
+    ${WXCRAFTER_GizmosNewWxProject_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)

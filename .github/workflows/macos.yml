@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         wx-version: ['v3.2.8']
-        wx-options: ['--enable-stl', '--disable-stl']
+        wx-options: ['-DwxUSE_STL=0', '-DwxUSE_STL=1']
 
     steps:
 
@@ -51,7 +51,7 @@ jobs:
       run: |
         mkdir wxWidgets/build-release
         cd wxWidgets/build-release
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DwxBUILD_DEBUG_LEVEL=0  -DwxBUILD_MONOLITHIC=1 -DwxUSE_SYS_LIBS=OFF -DwxUSE_LUNASVG=OFF
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DwxBUILD_DEBUG_LEVEL=0  -DwxBUILD_MONOLITHIC=1 -DwxUSE_SYS_LIBS=OFF -DwxUSE_LUNASVG=OFF ${{ matrix.wx-options }}
         make -j$(sysctl -n hw.physicalcpu)
         sudo make install
 

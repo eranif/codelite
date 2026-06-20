@@ -40,6 +40,7 @@
 #include "SideBar.hpp"
 #include "WorkspaceImporter/WSImporter.h"
 #include "app.h"
+#include "assistant/Process.hpp"
 #include "attachdbgprocdlg.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
@@ -1594,11 +1595,25 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
         wxString terminal_title = arr.empty() ? wxString{} : arr[0];
         clDEBUG() << "Running program  :" << execLine << endl;
         clDEBUG() << "Working directory:" << wd << endl;
+#ifdef __WXMSW__
+        wxString terminalApp = clStandardPaths::Get().GetBinaryFullPath("wxterminal");
+        wd = (wd.empty() || !wxDirExists(wd)) ? ::wxGetCwd() : wd;
+
+        // Build the command
+        wxString full_command =
+            wxString::Format(R"("%s" --working-directory="%s" --command="%s" --title="%s" --appearance="dark")",
+                             terminalApp,
+                             wd,
+                             execLine,
+                             execLine);
+        ::wxExecute(full_command);
+#else
         auto terminal =
             clGetManager()->GetTerminalManager()->OpenNewDefaultTerminalTab(wd, std::nullopt, terminal_title);
         CHECK_PTR_RET(terminal);
         terminal->SendCommand(execLine);
         terminal->CallAfter(&wxWindow::SetFocus);
+#endif
     }
 }
 

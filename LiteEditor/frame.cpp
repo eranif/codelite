@@ -5117,12 +5117,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 
 void clMainFrame::SetAUIManagerFlags()
 {
-    // Set the manager flags
-    unsigned int auiMgrFlags = wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE;
-#if defined(__WXMAC__) || defined(__WXGTK__)
-    auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
-#endif
-    m_mgr.SetFlags(auiMgrFlags);
+    m_mgr.SetFlags(wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_HINT_FADE | wxAUI_MGR_LIVE_RESIZE);
 }
 
 void clMainFrame::UpdateAUI()

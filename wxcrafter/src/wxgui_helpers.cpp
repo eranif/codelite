@@ -129,15 +129,6 @@ wxFontWeight StringToFontWeight(const wxString& str)
 }
 } // namespace
 
-wxBorder wxCrafter::GetControlBorder()
-{
-#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
-    return wxc_runtime::IsDarkAppearance() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
-#else
-    return wxBORDER_DEFAULT;
-#endif
-}
-
 wxSize wxCrafter::DecodeSize(const wxString& strSize)
 {
     // Strip any braces

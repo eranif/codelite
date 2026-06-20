@@ -34,8 +34,6 @@ void SetStatusMessage(const wxString& msg)
     }
 }
 
-bool IsDarkAppearance() { return wxSystemSettings::GetAppearance().IsDark(); }
-
 void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps, std::map<wxString, wxString>& files)
 {
     wxString zipFile;

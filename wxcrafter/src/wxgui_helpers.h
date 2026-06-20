@@ -36,7 +36,6 @@ enum TOOL_TYPE {
     TOOL_TYPE_AUILABEL         // AuiToolbar only
 };
 
-wxBorder GetControlBorder();
 wxSize DecodeSize(const wxString& strSize);
 wxString EncodeSize(const wxSize& size);
 wxString GetSizeAsDlgUnits(const wxSize& size, const wxString& parent);

@@ -2,11 +2,19 @@
 
 #include "EventsEditorDlg.h"
 #include "event_notifier.h"
-#include "wxgui_helpers.h"
 
 namespace
 {
 wxString PLACE_HOLDER = "";
+
+wxBorder GetControlBorder()
+{
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+}
 }
 
 wxDECLARE_EVENT(wxEVT_EVENTS_PROPERTIES_UPDATED, wxCommandEvent);
@@ -17,7 +25,7 @@ EventsTableListView::EventsTableListView(wxWindow* parent)
           wxID_ANY,
           wxDefaultPosition,
           wxDefaultSize,
-          wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION | wxCrafter::GetControlBorder())
+          wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION | GetControlBorder())
     , m_eventsDb(NULL)
 {
     Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsTableListView::OnPropertyChanged), NULL, this);

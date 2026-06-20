@@ -7,7 +7,6 @@
 #include "workspace.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
-#include "wxc_runtime.h"
 #include "xml/xmlutils.h"
 
 #include <wx/app.h>
@@ -983,13 +982,6 @@ wxString wxCrafter::GetUserDataDir()
         once = false;
     }
     return dir.GetPath();
-}
-
-void wxCrafter::SetStatusMessage(const wxString& msg)
-{
-    // Forwards to the per-target runtime shim — keeps wxgui_helpers.cpp free
-    // of MainFrame symbols so it can compile into the headless wxcgen target.
-    wxc_runtime::SetStatusMessage(msg);
 }
 
 wxString wxCrafter::GetConfigFile()

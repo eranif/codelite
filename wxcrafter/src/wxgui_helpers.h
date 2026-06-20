@@ -127,11 +127,6 @@ wxString GetUserDataDir();
 wxString GetConfigFile();
 
 /**
- * @brief set status bar message at column 0
- */
-void SetStatusMessage(const wxString& msg);
-
-/**
  * @brief print wx29 preprocessor start condition
  * @return
  */

@@ -67,6 +67,20 @@
 #include "Keyboard/clKeyboardManager.h"
 #endif
 
+namespace
+{
+void SetStatusMessage(const wxString& msg)
+{
+    wxFrame* topFrame = EventNotifier::Get()->TopFrame();
+    if (!topFrame) {
+        return;
+    }
+    if (MainFrame* frame = dynamic_cast<MainFrame*>(topFrame)) {
+        frame->SetStatusMessage(msg);
+    }
+}
+}
+
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new wxCrafterPlugin(manager, false); }
 
@@ -685,7 +699,7 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
 
     wxString msg;
     msg << _("wxCrafter: code generation completed successfully!");
-    wxCrafter::SetStatusMessage(msg);
+    SetStatusMessage(msg);
 }
 
 wxMenu* wxCrafterPlugin::DoCreateFolderMenu()

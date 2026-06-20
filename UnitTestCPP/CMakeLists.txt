@@ -13,14 +13,6 @@ if(USE_PCH AND NOT MINGW)
 endif()
 
 wxcrafter_target(
-    UnitTestCPP_unittestreport
-    "${CMAKE_CURRENT_SOURCE_DIR}/unittestreport.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
-    "unittestreport.cpp"
-    "unittestreport.hpp"
-    "unittestreport_unittestcpp_bitmaps.cpp")
-
-wxcrafter_target(
     UnitTestCPP_NewClassTestBase
     "${CMAKE_CURRENT_SOURCE_DIR}/NewClassTestBase.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -28,10 +20,29 @@ wxcrafter_target(
     "testclassbasedlg.hpp"
     "NewClassTestBase_unittestcpp_bitmaps.cpp")
 
+wxcrafter_target(
+    UnitTestCPP_NewUnitTestBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/newunittestbasedlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "newunittestbasedlg.cpp"
+    "newunittestbasedlg.hpp"
+    "newunittestbasedlg_unittestcpp_bitmaps.cpp")
+
+wxcrafter_target(
+    UnitTestCPP_unittestreport
+    "${CMAKE_CURRENT_SOURCE_DIR}/unittestreport.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "unittestreport.cpp"
+    "unittestreport.hpp"
+    "unittestreport_unittestcpp_bitmaps.cpp")
+
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_UnitTestCPP_unittestreport_OUTPUTS} ${WXCRAFTER_UnitTestCPP_NewClassTestBase_OUTPUTS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS}
+    ${WXCRAFTER_UnitTestCPP_NewClassTestBase_OUTPUTS}
+    ${WXCRAFTER_UnitTestCPP_NewUnitTestBase_OUTPUTS}
+    ${WXCRAFTER_UnitTestCPP_unittestreport_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)

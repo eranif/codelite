@@ -1093,10 +1093,12 @@ private:
     void OnTimer(wxTimerEvent& event);
     void OnEditorConfigChanged(wxCommandEvent& event);
     void OnColoursAndFontsUpdated(clCommandEvent& event);
-    void OnModifiedExternally(clFileSystemEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
     void DoBraceMatching();
     void DoClearBraceHighlight();
+
+    void OnFileModifiedExternally(clFileSystemEvent& event);
+    void OnFileDeleted(clFileSystemEvent& event);
 
     wxFileName m_fileName;
     wxString m_project;

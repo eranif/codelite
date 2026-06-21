@@ -25,7 +25,6 @@ TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
 {
     DoBuildToolbar();
     m_fileWatcher = std::make_unique<clLocalFileSystemWatcher>();
-    m_fileWatcher->SetOwner(this);
     Bind(wxEVT_FILE_MODIFIED, &TailPanel::OnFileModified, this);
 
     wxCommandEvent dummy;
@@ -162,7 +161,7 @@ void TailPanel::DoOpen(const wxString& filename)
     }
 
     // Stop the current watcher
-    m_fileWatcher->SetFile(m_file.GetFullPath());
+    m_fileWatcher->SetFile(m_file.GetFullPath(), this);
     m_fileWatcher->Start();
     m_staticTextFileName->SetLabel(m_file.GetFullPath());
     SetFrameTitle();

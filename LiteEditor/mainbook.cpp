@@ -30,6 +30,7 @@
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
 #include "aui/clAuiFlatTabArt.hpp"
+#include "clFileSystemWatcher.h"
 #include "clIdleEventThrottler.hpp"
 #include "clImageViewer.h"
 #include "clWorkspaceManager.h"
@@ -229,10 +230,15 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &MainBook::OnEditorSaved, this);
     EventNotifier::Get()->Bind(wxEVT_SESSION_LOADED, &MainBook::OnSessionLoaded, this);
     Bind(wxEVT_IDLE, &MainBook::OnIdle, this);
+    clLocalFileSystemWatcher::Get().Start();
+    clINFO() << "File System Watcher Started" << endl;
 }
 
 MainBook::~MainBook()
 {
+    clLocalFileSystemWatcher::Get().Clear();
+    clINFO() << "File System Watcher Stopped" << endl;
+
     wxDELETE(m_filesModifiedDlg);
     m_book->Unbind(wxEVT_BOOK_PAGE_CLOSING, &MainBook::OnPageClosing, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CLOSED, &MainBook::OnPageClosed, this);

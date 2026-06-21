@@ -43,6 +43,7 @@
 #include "buildtabsettingsdata.h"
 #include "cc_box_tip_window.h"
 #include "clEditorStateLocker.h"
+#include "clFileSystemWatcher.h"
 #include "clIdleEventThrottler.hpp"
 #include "clPrintout.h"
 #include "clResizableTooltip.h"
@@ -498,12 +499,12 @@ clEditor::clEditor(wxWindow* parent)
     Bind(wxEVT_SET_FOCUS, &clEditor::OnFocus, this);
     Bind(wxEVT_STC_DOUBLECLICK, &clEditor::OnLeftDClick, this);
     Bind(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, &clEditor::OnRemoveMatchInidicator, this);
-
+    Bind(wxEVT_FILE_MODIFIED, &clEditor::OnFileModifiedExternally, this);
+    Bind(wxEVT_FILE_DELETED, &clEditor::OnFileDeleted, this);
     Bind(wxEVT_STC_ZOOM, &clEditor::OnZoom, this);
     UpdateOptions();
     PreferencesChanged();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_MODIFIED_EXTERNALLY, &clEditor::OnModifiedExternally, this);
     m_commandsProcessor.SetParent(this);
 
     SetDropTarget(new clEditorDropTarget(this));
@@ -571,7 +572,6 @@ clEditor::~clEditor()
     wxDELETE(m_richTooltip);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditor::OnActiveEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_MODIFIED_EXTERNALLY, &clEditor::OnModifiedExternally, this);
 
     EventNotifier::Get()->Disconnect(
         wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(clEditor::OnHighlightWordChecked), NULL, this);
@@ -1729,7 +1729,14 @@ bool clEditor::SaveFileAs(const wxString& newname, const wxString& savePath)
         clMessageBox(_("Failed to save file"), _("Error"), wxOK | wxICON_ERROR);
         return false;
     }
+
+    // Remove the old path
+    clLocalFileSystemWatcher::Get().RemoveFile(m_fileName.GetFullPath());
+
     m_fileName = name;
+
+    // Re-add with the new path
+    clLocalFileSystemWatcher::Get().AddFile(m_fileName.GetFullPath(), this);
 
     // update the tab title (again) since we really want to trigger an update to the file tooltip
     clMainFrame::Get()->GetMainBook()->SetPageTitle(this, m_fileName, false);
@@ -1748,6 +1755,9 @@ bool clEditor::SaveFileAs(const wxString& newname, const wxString& savePath)
 // an internal function that does the actual file writing to disk
 bool clEditor::SaveToFile(const wxFileName& fileName)
 {
+    // Disable the watching for this file to avoid false events
+    clWatchedFileDisabler watch_disabler{fileName.GetFullPath(), this};
+
     {
         // Notify about file being saved
         clCommandEvent beforeSaveEvent(wxEVT_BEFORE_EDITOR_SAVE);
@@ -3121,6 +3131,8 @@ void clEditor::SetEditorText(const wxString& text)
 void clEditor::CreateRemote(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account)
 {
     SetFileName(local_path);
+    // TODO: implement a remote file system watcher
+
     SetProject(wxEmptyString);
     SetSyntaxHighlight(false);
     // mark this file as remote by setting a remote data
@@ -3132,6 +3144,8 @@ void clEditor::Create(const wxString& project, const wxFileName& fileName)
 {
     // set the file name
     SetFileName(fileName);
+    clLocalFileSystemWatcher::Get().AddFile(fileName.GetFullPath(), this);
+
     // set the project name
     SetProject(project);
     // let the editor choose the syntax highlight to use according to file extension
@@ -6219,12 +6233,12 @@ void clEditor::ClearModifiedLines()
     m_clearModifiedLines = true;
 }
 
-void clEditor::OnModifiedExternally(clFileSystemEvent& event)
+void clEditor::OnFileDeleted(clFileSystemEvent& event) { event.Skip(); }
+
+void clEditor::OnFileModifiedExternally(clFileSystemEvent& event)
 {
     event.Skip();
-    if (event.GetFileName().empty() || (GetRemotePathOrLocal() == event.GetFileName())) {
-        ReloadFromDisk(true); // keep file history
-    }
+    ReloadFromDisk(true); // keep file history
 }
 
 void clEditor::OnActiveEditorChanged(wxCommandEvent& event)

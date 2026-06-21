@@ -1,5 +1,6 @@
 #include "clFileSystemWatcher.h"
 
+#include "file_logger.h"
 #include "fileutils.h"
 
 #include <set>
@@ -8,7 +9,7 @@ wxDEFINE_EVENT(wxEVT_FILE_MODIFIED, clFileSystemEvent);
 wxDEFINE_EVENT(wxEVT_FILE_NOT_FOUND, clFileSystemEvent);
 
 // In milliseconds
-#define FILE_CHECK_INTERVAL 250
+constexpr int FILE_CHECK_INTERVAL = 250;
 
 clLocalFileSystemWatcher::clLocalFileSystemWatcher()
 {
@@ -22,16 +23,19 @@ clLocalFileSystemWatcher::~clLocalFileSystemWatcher()
     Unbind(wxEVT_TIMER, &clLocalFileSystemWatcher::OnTimer, this, m_timer.GetId());
 }
 
-void clLocalFileSystemWatcher::SetFile(const wxString& filename)
+void clLocalFileSystemWatcher::SetFile(clWatchedFile&& file)
 {
+    if (!file.IsOk()) {
+        return;
+    }
     m_files.clear();
-    AddFile(filename);
+    AddFile(std::move(file));
 }
 
 void clLocalFileSystemWatcher::Start()
 {
     Stop();
-    m_timer.Start(FILE_CHECK_INTERVAL, true);
+    m_timer.StartOnce(FILE_CHECK_INTERVAL);
 }
 
 void clLocalFileSystemWatcher::Stop()
@@ -51,35 +55,33 @@ void clLocalFileSystemWatcher::OnTimer(wxTimerEvent& event)
 {
     std::set<wxString> nonExistingFiles;
     for (auto& [_, f] : m_files) {
-        const wxFileName& fn = f.filename;
+        const wxFileName fn = f.m_filename;
         const wxString fullpath = fn.GetFullPath();
         if (!fn.Exists()) {
 
             // fire file not found event
-            if (GetOwner()) {
-                clFileSystemEvent evt(wxEVT_FILE_NOT_FOUND);
-                evt.SetPath(fullpath);
-                GetOwner()->AddPendingEvent(evt);
-            }
+            clFileSystemEvent evt(wxEVT_FILE_NOT_FOUND);
+            evt.SetPath(fullpath);
+            f.m_owner->AddPendingEvent(evt);
 
             // add the missing file to a set
             nonExistingFiles.insert(fullpath);
+
         } else {
-            auto old_modified_time = f.lastModified;
-            auto old_size = f.file_size;
+            auto old_modified_time = f.m_lastModified;
+            auto old_size = f.m_fileSize;
             auto curr_modified_time = FileUtils::GetFileModificationTime(fn);
             auto file_size = FileUtils::GetFileSize(fn);
 
             if (old_modified_time != curr_modified_time || old_size != file_size) {
                 // Fire a modified event
-                if (GetOwner()) {
-                    clFileSystemEvent evt(wxEVT_FILE_MODIFIED);
-                    evt.SetPath(fullpath);
-                    GetOwner()->AddPendingEvent(evt);
-                }
+
+                clFileSystemEvent evt(wxEVT_FILE_MODIFIED);
+                evt.SetPath(fullpath);
+                f.m_owner->AddPendingEvent(evt);
             }
-            f.file_size = file_size;
-            f.lastModified = curr_modified_time;
+            f.m_fileSize = file_size;
+            f.m_lastModified = curr_modified_time;
         }
     }
 
@@ -87,27 +89,35 @@ void clLocalFileSystemWatcher::OnTimer(wxTimerEvent& event)
     for (const wxString& fn : nonExistingFiles) {
         m_files.erase(fn);
     }
-    m_timer.Start(FILE_CHECK_INTERVAL, true);
+    m_timer.StartOnce(FILE_CHECK_INTERVAL);
 }
 
-void clLocalFileSystemWatcher::RemoveFile(const wxFileName& filename)
+void clLocalFileSystemWatcher::RemoveFile(const wxString& filename)
 {
-    if (m_files.contains(filename.GetFullPath())) {
-        m_files.erase(filename.GetFullPath());
+    if (m_files.contains(filename)) {
+        clDEBUG() << "Removing file:" << filename << "from watched list" << endl;
+        m_files.erase(filename);
     }
 }
 
 bool clLocalFileSystemWatcher::IsRunning() const { return m_timer.IsRunning(); }
 
-void clLocalFileSystemWatcher::AddFile(const wxString& filename)
+void clLocalFileSystemWatcher::AddFile(clWatchedFile&& file)
 {
-    if (!wxFileName::FileExists(filename)) {
+    if (!file.IsOk()) {
         return;
     }
 
-    clWatchedFile f;
-    f.filename = filename;
-    f.lastModified = FileUtils::GetFileModificationTime(filename);
-    f.file_size = FileUtils::GetFileSize(filename);
-    m_files.insert(std::make_pair(filename, f));
+    clDEBUG() << "Add file:" << file.m_filename << "to the watched list" << endl;
+
+    file.m_fileSize = FileUtils::GetFileSize(file.m_filename);
+    file.m_lastModified = FileUtils::GetFileModificationTime(file.m_filename);
+    m_files.erase(file.m_filename);
+    m_files.insert(std::make_pair(file.m_filename, std::move(file)));
+}
+
+clLocalFileSystemWatcher& clLocalFileSystemWatcher::Get()
+{
+    static clLocalFileSystemWatcher watcher;
+    return watcher;
 }

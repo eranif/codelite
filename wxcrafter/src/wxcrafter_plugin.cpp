@@ -2,7 +2,7 @@
 
 #include "AboutDlg.h"
 #include "ColoursAndFontsManager.h"
-#include "Importer/import_from_wxFB.h"
+#include "Importer/importer_from_wxFB.h"
 #include "Importer/import_from_wxSmith.h"
 #include "Importer/import_from_xrc.h"
 #include "MyComboBoxXmlHandler.h"
@@ -1174,7 +1174,7 @@ void wxCrafterPlugin::OnAbout(wxCommandEvent& e)
 void wxCrafterPlugin::DoImportFB(const wxString& filename)
 {
     ImportDlg::ImportFileData data;
-    ImportFromwxFB import(wxCrafter::TopFrame());
+    ImportFromwxFB::Importer import(wxCrafter::TopFrame());
     if (import.ImportProject(data, filename)) {
         DoLoadAfterImport(data);
     }

@@ -118,7 +118,6 @@ set(MACRO_SENSITIVE_FILES
     "UI/NewFormWizard.cpp"
     "UI/wxcSettingsDlg.cpp"
     "Importer/import_dlg.cpp"
-    "Importer/import_from_wxFB.cpp"
     "Importer/import_from_wxSmith.cpp"
     "Importer/import_from_xrc.cpp")
 
@@ -181,7 +180,8 @@ set(COMMON_GUI_ONLY_FILES
     "src/wxc_aui_manager.cpp"
     "src/wxc_aui_tool_stickiness.cpp"
     "src/wxc_edit_manager.cpp"
-    "src/wxcLicenseGPL2.cpp")
+    "src/wxcLicenseGPL2.cpp"
+	"Importer/importer_from_wxFB.cpp")
 
 # Start with everything except the macro-sensitive files (they're handled
 # separately per target).

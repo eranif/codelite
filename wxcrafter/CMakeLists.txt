@@ -118,8 +118,7 @@ set(MACRO_SENSITIVE_FILES
     "UI/NewFormWizard.cpp"
     "UI/wxcSettingsDlg.cpp"
     "Importer/import_dlg.cpp"
-    "Importer/import_from_wxSmith.cpp"
-    "Importer/import_from_xrc.cpp")
+    "Importer/import_from_wxSmith.cpp")
 
 # Of the macro-sensitive files, these are GUI-only (define MainFrame,
 # GUICraftMainPanel, plugin glue, GUI dialogs) and must NOT be linked into
@@ -181,7 +180,8 @@ set(COMMON_GUI_ONLY_FILES
     "src/wxc_aui_tool_stickiness.cpp"
     "src/wxc_edit_manager.cpp"
     "src/wxcLicenseGPL2.cpp"
-	"Importer/importer_from_wxFB.cpp")
+    "Importer/importer_from_wxFB.cpp"
+    "Importer/importer_from_xrc.cpp")
 
 # Start with everything except the macro-sensitive files (they're handled
 # separately per target).

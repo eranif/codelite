@@ -247,8 +247,7 @@ void ToolBarItemWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("dropdown"));
     if (propertynode) {
         SetPropertyString(PROP_KIND, ITEM_DROPDOWN);
-        ImportFromXrc imp(NULL);
-        imp.ProcessNamedNode(propertynode, this, "wxMenu"); // This should load any contained dropdown menu
+        ImportFromXrc::ProcessNamedNode(propertynode, this, "wxMenu"); // This should load any contained dropdown menu
 
         UpdateRegisteredEventsIfNeeded();
     }

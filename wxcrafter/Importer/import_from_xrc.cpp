@@ -13,70 +13,125 @@
 #include <wx/window.h>
 #include <wx/xml/xml.h>
 
-ImportFromXrc::ImportFromXrc(wxWindow* parent)
-    : m_Parent(parent)
+namespace ImportFromXrc
 {
-}
-
-bool ImportFromXrc::ImportProject(ImportDlg::ImportFileData& data) const
+namespace
 {
-#ifdef WXCGEN_BUILD
-    wxUnusedVar(data);
-    return false;
-#else
-    ImportDlg dlg(ImportDlg::IPD_XRC, m_Parent);
-    if (dlg.ShowModal() != wxID_OK) {
-        return false;
-    }
-
-    wxString filepath = dlg.GetFilepath();
-
-    if (filepath.empty() || !wxFileExists(filepath)) {
-        return false;
-    }
-
-    wxXmlDocument doc(filepath);
-    if (!doc.IsOk()) {
-        wxMessageBox(_("Failed to load the file to import"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
-        return false;
-    }
-
-    wxcWidget::List_t toplevels;
-    if (ParseFile(doc, toplevels) && !toplevels.empty()) {
-        wxcProjectMetadata::Get().Serialize(toplevels, wxFileName(dlg.GetOutputFilepath()));
-        data = dlg.GetData();
-        return true;
-    }
-    return false;
-#endif
-}
-
-bool ImportFromXrc::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const
+void GetSizeritemContents(const wxXmlNode* node, wxcWidget* wrapper)
 {
-    wxXmlNode* toplevelnode = doc.GetRoot()->GetChildren();
-    while (toplevelnode) {
-        wxString tag = toplevelnode->GetName();
-        if (tag != wxT("object")) {
-            wxMessageBox(_("This doesn't seem to be a valid XRC file. Aborting."),
-                         wxT("CodeLite"),
-                         wxICON_ERROR | wxOK,
-                         m_Parent);
-            return false;
+    wrapper->ClearSizerAll(); // otherwise the default ones will remain
+
+    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("flag"));
+    if (propertynode) {
+        wxString flags = propertynode->GetNodeContent();
+        // We must cope with wxC's American misspellings...
+        flags.Replace("wxALIGN_CENTRE", "wxALIGN_CENTER");
+
+        // if left|right|top|bottom add wxALL. Duplication does no harm here
+        if (flags.Contains("wxLEFT") && flags.Contains("wxRIGHT") && flags.Contains("wxTOP") &&
+            flags.Contains("wxBOTTOM")) {
+            flags << "|wxALL";
         }
 
-        bool alreadyParented(false);
-        wxcWidget* wrapper = ParseNode(toplevelnode, NULL, alreadyParented);
-        if (wrapper) {
-            toplevels.push_back(wrapper);
-        }
+        wxArrayString flagsarray = wxCrafter::Split(flags, "|");
 
-        toplevelnode = toplevelnode->GetNext();
+        // Eran: If flagsarray contains 'wxALL' - make sure all the other four stars are also there...
+        if (flagsarray.Index("wxALL") != wxNOT_FOUND) {
+            flagsarray.Add("wxLEFT");
+            flagsarray.Add("wxRIGHT");
+            flagsarray.Add("wxTOP");
+            flagsarray.Add("wxBOTTOM");
+            flagsarray = wxCrafter::MakeUnique(flagsarray);
+        }
+        for (size_t n = 0; n < flagsarray.GetCount(); ++n) {
+            wrapper->EnableSizerFlag(flagsarray.Item(n), true);
+        }
     }
 
-    return true;
+    propertynode = XmlUtils::FindFirstByTagName(node, wxT("option")); // 'option' is XRC's term for proportion :/
+    if (propertynode) {
+        wxString proportion = propertynode->GetNodeContent();
+        wrapper->SizerItem().SetProportion(wxCrafter::ToNumber(proportion, 0));
+    }
+
+    propertynode = XmlUtils::FindFirstByTagName(node, wxT("border"));
+    if (propertynode) {
+        wxString border = propertynode->GetNodeContent();
+        wrapper->SizerItem().SetBorder(wxCrafter::ToNumber(border, 0));
+    }
+
+    propertynode = XmlUtils::FindFirstByTagName(node, wxT("cellpos"));
+    if (propertynode) {
+        wxString cellpos = propertynode->GetNodeContent();
+        if (!cellpos.empty()) {
+            wrapper->SetGbPos(cellpos);
+        }
+    }
+
+    propertynode = XmlUtils::FindFirstByTagName(node, wxT("cellspan"));
+    if (propertynode) {
+        wxString cellspan = propertynode->GetNodeContent();
+        if (!cellspan.empty()) {
+            wrapper->SetGbSpan(cellspan);
+        }
+    }
+
+    propertynode = XmlUtils::FindFirstByTagName(node, wxT("minsize"));
+    if (propertynode) {
+        wxString minsize = propertynode->GetNodeContent();
+        PropertyBase* prop = wrapper->GetProperty(PROP_MINSIZE);
+        if (prop) {
+            prop->SetValue(minsize);
+        }
+    }
 }
 
-wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyParented) const
+void GetBookitemContents(const wxXmlNode* node, NotebookPageWrapper* wrapper, int& depth)
+{
+    wxString classname = XmlUtils::ReadString(node, wxT("class"));
+
+    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("selected"));
+    if (propertynode) {
+        wxString selected = propertynode->GetNodeContent();
+        if (selected == "1") {
+            wrapper->SetSelected(true);
+        }
+    }
+
+    propertynode = XmlUtils::FindFirstByTagName(node, wxT("label"));
+    if (propertynode) {
+        wxString label = propertynode->GetNodeContent();
+        PropertyBase* prop = wrapper->GetProperty(PROP_LABEL);
+        if (prop) {
+            prop->SetValue(label);
+        }
+    }
+
+    if (classname != "choicebookpage") { // which don't have bitmaps
+        propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
+        if (propertynode) {
+            ImportFromXrc::ProcessBitmapProperty(propertynode, wrapper, "PROP_BITMAP_PATH", "wxART_OTHER");
+        }
+    }
+
+    if (classname == "treebookpage") {
+        propertynode = XmlUtils::FindFirstByTagName(node, wxT("depth"));
+        if (propertynode) {
+            depth = wxCrafter::ToNumber(propertynode->GetNodeContent(), 0);
+        }
+    }
+}
+
+void ProcessButtonNode(const wxXmlNode* node, wxcWidget* wrapper)
+{
+    // First deal with any sizer stuff (flag, option...) in here; wxFB does this, XRCed and wxSmith don't
+    GetSizeritemContents(node, wrapper);
+
+    DoProcessButtonNode(node, wrapper); // Shared with ImportFromwxSmith
+}
+}
+
+wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyParented)
 {
     wxcWidget* wrapper = NULL;
 
@@ -247,116 +302,11 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
     return wrapper;
 }
 
-void ImportFromXrc::GetSizeritemContents(const wxXmlNode* node, wxcWidget* wrapper) const
-{
-    wrapper->ClearSizerAll(); // otherwise the default ones will remain
-
-    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("flag"));
-    if (propertynode) {
-        wxString flags = propertynode->GetNodeContent();
-        // We must cope with wxC's American misspellings...
-        flags.Replace("wxALIGN_CENTRE", "wxALIGN_CENTER");
-
-        // if left|right|top|bottom add wxALL. Duplication does no harm here
-        if (flags.Contains("wxLEFT") && flags.Contains("wxRIGHT") && flags.Contains("wxTOP") &&
-            flags.Contains("wxBOTTOM")) {
-            flags << "|wxALL";
-        }
-
-        wxArrayString flagsarray = wxCrafter::Split(flags, "|");
-
-        // Eran: If flagsarray contains 'wxALL' - make sure all the other four stars are also there...
-        if (flagsarray.Index("wxALL") != wxNOT_FOUND) {
-            flagsarray.Add("wxLEFT");
-            flagsarray.Add("wxRIGHT");
-            flagsarray.Add("wxTOP");
-            flagsarray.Add("wxBOTTOM");
-            flagsarray = wxCrafter::MakeUnique(flagsarray);
-        }
-        for (size_t n = 0; n < flagsarray.GetCount(); ++n) {
-            wrapper->EnableSizerFlag(flagsarray.Item(n), true);
-        }
-    }
-
-    propertynode = XmlUtils::FindFirstByTagName(node, wxT("option")); // 'option' is XRC's term for proportion :/
-    if (propertynode) {
-        wxString proportion = propertynode->GetNodeContent();
-        wrapper->SizerItem().SetProportion(wxCrafter::ToNumber(proportion, 0));
-    }
-
-    propertynode = XmlUtils::FindFirstByTagName(node, wxT("border"));
-    if (propertynode) {
-        wxString border = propertynode->GetNodeContent();
-        wrapper->SizerItem().SetBorder(wxCrafter::ToNumber(border, 0));
-    }
-
-    propertynode = XmlUtils::FindFirstByTagName(node, wxT("cellpos"));
-    if (propertynode) {
-        wxString cellpos = propertynode->GetNodeContent();
-        if (!cellpos.empty()) {
-            wrapper->SetGbPos(cellpos);
-        }
-    }
-
-    propertynode = XmlUtils::FindFirstByTagName(node, wxT("cellspan"));
-    if (propertynode) {
-        wxString cellspan = propertynode->GetNodeContent();
-        if (!cellspan.empty()) {
-            wrapper->SetGbSpan(cellspan);
-        }
-    }
-
-    propertynode = XmlUtils::FindFirstByTagName(node, wxT("minsize"));
-    if (propertynode) {
-        wxString minsize = propertynode->GetNodeContent();
-        PropertyBase* prop = wrapper->GetProperty(PROP_MINSIZE);
-        if (prop) {
-            prop->SetValue(minsize);
-        }
-    }
-}
-
-void ImportFromXrc::GetBookitemContents(const wxXmlNode* node, NotebookPageWrapper* wrapper, int& depth) const
-{
-    wxString classname = XmlUtils::ReadString(node, wxT("class"));
-
-    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("selected"));
-    if (propertynode) {
-        wxString selected = propertynode->GetNodeContent();
-        if (selected == "1") {
-            wrapper->SetSelected(true);
-        }
-    }
-
-    propertynode = XmlUtils::FindFirstByTagName(node, wxT("label"));
-    if (propertynode) {
-        wxString label = propertynode->GetNodeContent();
-        PropertyBase* prop = wrapper->GetProperty(PROP_LABEL);
-        if (prop) {
-            prop->SetValue(label);
-        }
-    }
-
-    if (classname != "choicebookpage") { // which don't have bitmaps
-        propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
-        if (propertynode) {
-            ImportFromXrc::ProcessBitmapProperty(propertynode, wrapper, "PROP_BITMAP_PATH", "wxART_OTHER");
-        }
-    }
-
-    if (classname == "treebookpage") {
-        propertynode = XmlUtils::FindFirstByTagName(node, wxT("depth"));
-        if (propertynode) {
-            depth = wxCrafter::ToNumber(propertynode->GetNodeContent(), 0);
-        }
-    }
-}
-
-// static  NB This is also used to import from wxSmith
-void ImportFromXrc::ProcessBitmapProperty(const wxXmlNode* node,
-                                          wxcWidget* wrapper,
-                                          const wxString& property /*= PROP_BITMAP_PATH*/,
-                                          const wxString& client_hint /*=""*/)
+// NB This is also used to import from wxSmith
+void ProcessBitmapProperty(const wxXmlNode* node,
+                           wxcWidget* wrapper,
+                           const wxString& property /*= PROP_BITMAP_PATH*/,
+                           const wxString& client_hint /*=""*/)
 {
     // Node may be e.g. <bitmap stock_id="wxART_GO_DOWN" stock_client="wxART_BUTTON">some.png</bitmap>
     // (the some.png is optional here, but is used as a fallback if stock_id fails. wxC doesn't use this atm, so ignore
@@ -377,15 +327,8 @@ void ImportFromXrc::ProcessBitmapProperty(const wxXmlNode* node,
     }
 }
 
-void ImportFromXrc::ProcessButtonNode(const wxXmlNode* node, wxcWidget* wrapper) const
-{
-    // First deal with any sizer stuff (flag, option...) in here; wxFB does this, XRCed and wxSmith don't
-    GetSizeritemContents(node, wrapper);
 
-    DoProcessButtonNode(node, wrapper); // Shared with ImportFromwxSmith
-}
-
-void ImportFromXrc::DoProcessButtonNode(const wxXmlNode* node, wxcWidget* wrapper)
+void DoProcessButtonNode(const wxXmlNode* node, wxcWidget* wrapper)
 {
     // Deduce a sensible ID. There isn't an id field in the xrc, so work it out from the name or label
     wxString name = wrapper->GetName().MakeLower();
@@ -411,7 +354,7 @@ void ImportFromXrc::DoProcessButtonNode(const wxXmlNode* node, wxcWidget* wrappe
     }
 }
 
-void ImportFromXrc::ProcessNamedNode(wxXmlNode* node, wxcWidget* parentwrapper, const wxString& name) const
+void ProcessNamedNode(wxXmlNode* node, wxcWidget* parentwrapper, const wxString& name)
 {
     // This is for processing the child menu of an auitoolbar dropdownitem (but might be useful elsewhere in the future)
     // The original node was <dropdown>, not <object>, so normal parsing would ignore any children
@@ -424,3 +367,5 @@ void ImportFromXrc::ProcessNamedNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         }
     }
 }
+
+} // namespace ImportFromXrc

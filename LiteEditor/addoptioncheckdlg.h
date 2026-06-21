@@ -26,7 +26,7 @@
 #ifndef __addoptioncheckdlg__
 #define __addoptioncheckdlg__
 
-#include "addoptioncheckdlgbase.h"
+#include "AddOptionCheckDlgBase.hpp"
 #include "compiler.h"
 
 class AddOptionCheckDlg : public AddOptionCheckDialogBase

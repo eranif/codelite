@@ -26,7 +26,7 @@
 #ifndef DEBUGCOREDUMP_H
 #define DEBUGCOREDUMP_H
 
-#include "debugcoredumpbase.h" // Base class: DebugCoreDumpBase
+#include "debugcoredumpbase.hpp" // Base class: DebugCoreDumpBase
 
 class DebugCoreDumpDlg : public DebugCoreDumpDlgBase {
 

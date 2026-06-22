@@ -60,10 +60,13 @@ void clLocalFileSystemWatcher::OnTimer(wxTimerEvent& event)
         if (!fn.Exists()) {
 
             // fire file not found event
-            clFileSystemEvent evt(wxEVT_FILE_NOT_FOUND);
-            evt.SetPath(fullpath);
-            f.m_owner->AddPendingEvent(evt);
-
+            if (f.m_owner != nullptr) {
+                clFileSystemEvent evt(wxEVT_FILE_NOT_FOUND);
+                evt.SetPath(fullpath);
+                f.m_owner->AddPendingEvent(evt);
+            } else {
+                clERROR() << "(NotFound) null find handler for file:" << fullpath << endl;
+            }
             // add the missing file to a set
             nonExistingFiles.insert(fullpath);
 
@@ -75,10 +78,13 @@ void clLocalFileSystemWatcher::OnTimer(wxTimerEvent& event)
 
             if (old_modified_time != curr_modified_time || old_size != file_size) {
                 // Fire a modified event
-
-                clFileSystemEvent evt(wxEVT_FILE_MODIFIED);
-                evt.SetPath(fullpath);
-                f.m_owner->AddPendingEvent(evt);
+                if (f.m_owner != nullptr) {
+                    clFileSystemEvent evt(wxEVT_FILE_MODIFIED);
+                    evt.SetPath(fullpath);
+                    f.m_owner->AddPendingEvent(evt);
+                } else {
+                    clERROR() << "(Modified) null find handler for file:" << fullpath << endl;
+                }
             }
             f.m_fileSize = file_size;
             f.m_lastModified = curr_modified_time;

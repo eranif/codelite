@@ -1730,13 +1730,11 @@ bool clEditor::SaveFileAs(const wxString& newname, const wxString& savePath)
         return false;
     }
 
-    // Remove the old path
-    clLocalFileSystemWatcher::Get().RemoveFile(m_fileName.GetFullPath());
+    // Replace the watcher with the new path
+    m_watcher = std::make_unique<clWatchedFileLocker>(name.GetFullPath(), this);
 
+    // Update the file's path
     m_fileName = name;
-
-    // Re-add with the new path
-    clLocalFileSystemWatcher::Get().AddFile(m_fileName.GetFullPath(), this);
 
     // update the tab title (again) since we really want to trigger an update to the file tooltip
     clMainFrame::Get()->GetMainBook()->SetPageTitle(this, m_fileName, false);
@@ -3144,13 +3142,15 @@ void clEditor::Create(const wxString& project, const wxFileName& fileName)
 {
     // set the file name
     SetFileName(fileName);
-    clLocalFileSystemWatcher::Get().AddFile(fileName.GetFullPath(), this);
+    m_watcher = std::make_unique<clWatchedFileLocker>(fileName.GetFullPath(), this);
 
     // set the project name
     SetProject(project);
+
     // let the editor choose the syntax highlight to use according to file extension
     // and set the editor properties to default
     SetSyntaxHighlight(false); // Don't call 'UpdateColors' it is called in 'OpenFile'
+
     // reload the file from disk
     OpenFile();
 }

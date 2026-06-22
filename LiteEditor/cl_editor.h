@@ -31,6 +31,7 @@
 #include "browse_record.h"
 #include "buildtabsettingsdata.h"
 #include "clEditorStateLocker.h"
+#include "clFileSystemWatcher.h"
 #include "clIdleEventThrottler.hpp"
 #include "cl_calltip.h"
 #include "cl_unredo.h"
@@ -1172,4 +1173,5 @@ private:
     BuildTabSettingsData m_buildOptions;
     bool m_hasBraceHighlight = false;
     clIdleEventThrottler m_event_throttler{250};
+    std::unique_ptr<clWatchedFileLocker> m_watcher{nullptr};
 };

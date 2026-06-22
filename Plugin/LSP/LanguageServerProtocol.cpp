@@ -391,6 +391,7 @@ LSP::Range GetFileRange(wxStyledTextCtrl* ctrl)
 
 void LanguageServerProtocol::SendCodeActionRequest(IEditor* editor, const std::vector<LSP::Diagnostic>& diags)
 {
+    LSP_DEBUG() << "Sending Code Action for file:" << GetEditorFilePath(editor) << endl;
     if (ShouldHandleFile(editor)) {
         wxString filename = GetEditorFilePath(editor);
         LSP::CodeActionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(

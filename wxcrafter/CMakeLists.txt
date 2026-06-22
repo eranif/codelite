@@ -80,22 +80,22 @@ file(
 # ----------------------------------------------------------------------------
 # Source bucketing
 # ----------------------------------------------------------------------------
-# We have three target flavors that differ only in two preprocessor symbols:
+# We have three target flavors that differ in one preprocessor symbol:
 #
-#   target            STANDALONE_BUILD   WXCGEN_BUILD
-#   ----------------- ----------------   ------------
-#   wxCrafterPlugin   undefined          undefined
-#   wxcrafter (exe)   1                  undefined
-#   wxcgen (exe)      1                  1
+#   target            STANDALONE_BUILD
+#   ----------------- ----------------
+#   wxCrafterPlugin   undefined
+#   wxcrafter (exe)   1
+#   wxcgen (exe)      1
 #
-# Most TUs don't reference either macro; their object files are bit-identical
+# Most TUs don't reference the macro; their object files are bit-identical
 # across all flavors and can be compiled once, into a shared static library.
-# Only a handful of TUs actually #if on the macros and must be compiled per
+# Only a handful of TUs actually #if on the macro and must be compiled per
 # flavor.
 #
 # Bucket the files into:
-#   MACRO_SENSITIVE_SRCS — TUs whose object code depends on the defines above.
-#                          Compiled per target with the right defines.
+#   MACRO_SENSITIVE_SRCS — TUs whose object code depends on the define above.
+#                          Compiled per target with the right define.
 #   GUI_ONLY_SRCS        — TUs that pull GUI-only symbols (MainFrame, etc.).
 #                          NOT linked into wxcgen.
 #   COMMON_GUI_SRCS      — define-agnostic but GUI-coupled. Compiled into
@@ -107,8 +107,7 @@ file(
 # don't belong in any common library.
 list(FILTER ALL_SRCS EXCLUDE REGEX ".*/src/wxc_runtime_(gui|headless)\\.cpp$")
 
-# The 11 .cpp files that #if on STANDALONE_BUILD or WXCGEN_BUILD (verified by
-# `grep -l "STANDALONE_BUILD\|WXCGEN_BUILD" **/*.cpp`).
+# The 11 .cpp files that #if on STANDALONE_BUILD (verified by `grep -l "STANDALONE_BUILD" **/*.cpp`).
 set(MACRO_SENSITIVE_FILES
     "src/main.cpp"
     "src/allocator_mgr.cpp"
@@ -117,8 +116,7 @@ set(MACRO_SENSITIVE_FILES
     "src/wxgui_helpers.cpp"
     "UI/NewFormWizard.cpp"
     "UI/wxcSettingsDlg.cpp"
-    "Importer/import_dlg.cpp"
-    "Importer/import_from_wxSmith.cpp")
+    "Importer/import_dlg.cpp")
 
 # Of the macro-sensitive files, these are GUI-only (define MainFrame,
 # GUICraftMainPanel, plugin glue, GUI dialogs) and must NOT be linked into
@@ -131,7 +129,7 @@ set(MACRO_SENSITIVE_GUI_ONLY_FILES
     "UI/wxcSettingsDlg.cpp"
     "Importer/import_dlg.cpp")
 
-# The macro-sensitive files that wxcgen does compile (with WXCGEN_BUILD=1).
+# The macro-sensitive files that wxcgen does compile.
 set(MACRO_SENSITIVE_HEADLESS_FILES ${MACRO_SENSITIVE_FILES})
 foreach(f ${MACRO_SENSITIVE_GUI_ONLY_FILES})
   list(REMOVE_ITEM MACRO_SENSITIVE_HEADLESS_FILES "${f}")
@@ -280,15 +278,13 @@ target_compile_definitions(
 target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui wxCrafterCommon)
 
 # Headless CLI code-generator (no DISPLAY required) — uses headless runtime
-# shim and a subset of the macro-sensitive sources (the GUI-only ones are
-# excluded; what remains is compiled with WXCGEN_BUILD=1).
+# shim and a subset of the macro-sensitive sources (the GUI-only ones are excluded).
 add_executable(wxcgen ${MACRO_SENSITIVE_HEADLESS_SRCS}
                       "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp"
                       "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_headless.cpp"
                       ${WXCGEN_RES_FILES})
 target_compile_definitions(
   wxcgen PRIVATE STANDALONE_BUILD=1
-                 WXCGEN_BUILD=1
                  INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 target_link_libraries(wxcgen PRIVATE wxCrafterCommon)
 

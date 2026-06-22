@@ -24,13 +24,6 @@ Importer::Importer(wxWindow* parent)
 
 bool Importer::ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile) const
 {
-#ifdef WXCGEN_BUILD
-    // Headless wxcgen never invokes the import flow — stubbed out so that
-    // ImportDlg (a wxDialog subclass) does not need to be linked.
-    wxUnusedVar(data);
-    wxUnusedVar(sourceFile);
-    return false;
-#else
     ImportDlg dlg(ImportDlg::IPD_FB, m_Parent, sourceFile);
 
     if (dlg.ShowModal() != wxID_OK) {
@@ -55,7 +48,6 @@ bool Importer::ImportProject(ImportDlg::ImportFileData& data, const wxString& so
         return true;
     }
     return false;
-#endif
 }
 
 bool Importer::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const

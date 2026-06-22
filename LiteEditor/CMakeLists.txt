@@ -32,6 +32,14 @@ wxcrafter_target(
     "AccelTableBaseDlg_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
+    LiteEditorAddOptionCheckDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/AddOptionCheckDlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "AddOptionCheckDlgBase.cpp"
+    "AddOptionCheckDlgBase.hpp"
+    "AddOptionCheckDlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
     LiteEditorAddOptionsDialogBase
     "${CMAKE_CURRENT_SOURCE_DIR}/AddOptionsDialogBase.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -54,6 +62,14 @@ wxcrafter_target(
     "attachdbgprocbasedlg.cpp"
     "attachdbgprocbasedlg.hpp"
     "AttachDbgProcBaseDlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorBatchBuildBaseDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/BatchBuildBaseDlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "BatchBuildBaseDlg.cpp"
+    "BatchBuildBaseDlg.hpp"
+    "BatchBuildBaseDlg_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
     LiteEditorBreakpointDlg
@@ -102,6 +118,14 @@ wxcrafter_target(
     "DbgCommandBaseDlg.cpp"
     "DbgCommandBaseDlg.hpp"
     "DbgCommandBaseDlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorDebugCoreDumpBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/debugcoredump.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "debugcoredumpbase.cpp"
+    "debugcoredumpbase.hpp"
+    "debugcoredump_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
     LiteEditorDebuggerAsciiViewerBase
@@ -249,15 +273,18 @@ if(MINGW)
 endif()
 add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorAccelTableBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorAddOptionCheckDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorAddOptionsDialogBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorAdvanceSettings_OUTPUTS}
     ${WXCRAFTER_LiteEditorAttachDbgProcBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorBatchBuildBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorBreakpointDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorBuildTabSettings_OUTPUTS}
     ${WXCRAFTER_LiteEditorCompilerPage_OUTPUTS}
     ${WXCRAFTER_LiteEditorCompilersFoundDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorConfigManagerBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorDbgCommandBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorDebugCoreDumpBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorDebuggerAsciiViewerBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorDebuggerSettings_OUTPUTS}
     ${WXCRAFTER_LiteEditorDependDlgPage_OUTPUTS}

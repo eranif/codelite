@@ -1,5 +1,5 @@
-#ifndef IMPORTFROMSMITH_H
-#define IMPORTFROMSMITH_H
+#ifndef IMPORTERFROMSMITH_H
+#define IMPORTERFROMSMITH_H
 
 #include "import_dlg.h"
 #include "wxc_widget.h"
@@ -9,14 +9,17 @@
 class wxWindow;
 class NotebookPageWrapper;
 
-class ImportFromwxSmith
+namespace ImportFromwxSmith
+{
+
+class Importer
 {
     static std::map<wxString, wxString> sm_eventMap;
     wxWindow* m_Parent = nullptr;
 
 public:
-    ImportFromwxSmith(wxWindow* parent);
-    ~ImportFromwxSmith() = default;
+    Importer(wxWindow* parent);
+    ~Importer() = default;
 
     bool ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile = "") const;
 
@@ -27,5 +30,6 @@ protected:
     void GetGridBagSizerData(const wxXmlNode* node, wxcWidget* wrapper) const;
     void GetBookitemContents(const wxXmlNode* node, NotebookPageWrapper* wrapper, int& depth) const;
 };
+} // namespace ImportFromwxSmith
 
-#endif // IMPORTFROMSMITH_H
+#endif // IMPORTERFROMSMITH_H

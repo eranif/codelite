@@ -3,7 +3,7 @@
 #include "AboutDlg.h"
 #include "ColoursAndFontsManager.h"
 #include "Importer/importer_from_wxFB.h"
-#include "Importer/import_from_wxSmith.h"
+#include "Importer/importer_from_wxSmith.h"
 #include "Importer/importer_from_xrc.h"
 #include "MyComboBoxXmlHandler.h"
 #include "MyRearrangeListXmlHandler.h"
@@ -1128,7 +1128,7 @@ void wxCrafterPlugin::OnImportXRC(wxCommandEvent& e)
 void wxCrafterPlugin::OnImportwxSmith(wxCommandEvent& e)
 {
     ImportDlg::ImportFileData data;
-    ImportFromwxSmith import(wxCrafter::TopFrame());
+    ImportFromwxSmith::Importer import(wxCrafter::TopFrame());
     if (import.ImportProject(data)) {
         DoLoadAfterImport(data);
     }
@@ -1296,7 +1296,7 @@ void wxCrafterPlugin::DoLoadWxcProject(const wxFileName& filename)
 void wxCrafterPlugin::OnImportwxSmithProject(wxCommandEvent& event)
 {
     ImportDlg::ImportFileData data;
-    ImportFromwxSmith import(wxCrafter::TopFrame());
+    ImportFromwxSmith::Importer import(wxCrafter::TopFrame());
     if (import.ImportProject(data, m_selectedFile.GetFullPath())) {
         DoLoadAfterImport(data);
     }

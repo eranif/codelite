@@ -4,7 +4,7 @@
 #include "ColoursAndFontsManager.h"
 #include "Importer/importer_from_wxFB.h"
 #include "Importer/import_from_wxSmith.h"
-#include "Importer/import_from_xrc.h"
+#include "Importer/importer_from_xrc.h"
 #include "MyComboBoxXmlHandler.h"
 #include "MyRearrangeListXmlHandler.h"
 #include "UI/DefineCustomControlWizard.h"
@@ -1119,7 +1119,7 @@ void wxCrafterPlugin::OnImportwxFBProject(wxCommandEvent& e)
 void wxCrafterPlugin::OnImportXRC(wxCommandEvent& e)
 {
     ImportDlg::ImportFileData data;
-    ImportFromXrc import(wxCrafter::TopFrame());
+    ImportFromXrc::Importer import(wxCrafter::TopFrame());
     if (import.ImportProject(data)) {
         DoLoadAfterImport(data);
     }

@@ -1,7 +1,5 @@
 #include "ActivityIndicatorWrapper.h"
 
-#include "allocator_mgr.h"
-
 ActivityIndicatorWrapper::ActivityIndicatorWrapper()
     : wxcWidget(ID_WXACTIVITYINDICATOR)
 {

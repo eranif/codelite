@@ -4,7 +4,6 @@
 #include "Properties/choice_property.h"
 #include "Properties/color_property.h"
 #include "Properties/multi_strings_property.h"
-#include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_helpers.h"
 

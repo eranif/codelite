@@ -25,14 +25,6 @@ class ResourceLoader;
 namespace wxc_runtime
 {
 
-// Allocate the wxImageList used by Allocator for the widget tree.
-// GUI: returns `new wxImageList(16, 16, true)`. Headless: returns nullptr.
-wxImageList* CreateAllocatorImageList();
-
-// Add a bitmap to the allocator's image list and return the new image id.
-// GUI: list->Add(loader.Bitmap(name)). Headless: returns -1; arguments unused.
-int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& loader, const wxString& bmpName);
-
 /**
  * @brief Loads bitmap images and text files from a skin ZIP archive into the provided maps.
  *

@@ -2,7 +2,6 @@
 
 #include "Properties/category_property.h"
 #include "Properties/int_property.h"
-#include "allocator_mgr.h"
 
 RibbonToolBarWrapper::RibbonToolBarWrapper()
     : wxcWidget(ID_WXRIBBONTOOLBAR)

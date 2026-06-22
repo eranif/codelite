@@ -1,10 +1,5 @@
 #include "tree_book_wrapper.h"
 
-#include "allocator_mgr.h"
-#include "wxgui_defs.h"
-
-#include <wx/treebook.h>
-
 TreeBookWrapper::TreeBookWrapper()
     : NotebookBaseWrapper(ID_WXTREEBOOK)
 {

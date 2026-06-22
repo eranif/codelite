@@ -1,6 +1,5 @@
 #include "splitter_window_page.h"
 
-#include "allocator_mgr.h"
 #include "splitter_window_wrapper.h"
 
 SplitterWindowPage::SplitterWindowPage()

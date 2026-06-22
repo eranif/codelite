@@ -1,7 +1,6 @@
 #ifndef MENUWRAPPER_H
 #define MENUWRAPPER_H
 
-#include "allocator_mgr.h"
 #include "wxc_widget.h"
 
 class MenuWrapper : public wxcWidget

@@ -13,16 +13,6 @@
 namespace wxc_runtime
 {
 
-wxImageList* CreateAllocatorImageList() { return new wxImageList(16, 16, true); }
-
-int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& loader, const wxString& bmpName)
-{
-    if (!list) {
-        return -1;
-    }
-    return list->Add(loader.Bitmap(bmpName));
-}
-
 void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps, std::map<wxString, wxString>& files)
 {
     wxString zipFile;

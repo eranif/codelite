@@ -1,7 +1,5 @@
 #include "popup_window_wrapper.h"
 
-#include "allocator_mgr.h"
-
 PopupWindowWrapper::PopupWindowWrapper()
     : TopLevelWinWrapper(ID_WXPOPUPWINDOW)
 {

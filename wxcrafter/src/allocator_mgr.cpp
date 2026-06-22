@@ -111,7 +111,6 @@
 #include "tree_list_ctrl_wrapper.h"
 #include "web_view_wrapper.h"
 #include "wizard_wrapper.h"
-#include "wxc_runtime.h"
 #include "wxc_widget.h"
 #include "wxcrafter_plugin.h"
 #include "wxgui_bitmaploader.h"
@@ -119,7 +118,6 @@
 #include <wx/menu.h>
 
 Allocator* Allocator::ms_instance = 0;
-EventsDatabase Allocator::m_commonEvents;
 
 //-------------------------------------------------------------
 const FLAGS_t __ONE__ = 1;
@@ -171,11 +169,25 @@ FLAGS_t MT_INSERT_INTO_SIZER = __ONE__ << 37;      // Top
 
 #define MENU_SEPARATOR() menu->AppendSeparator();
 
-Allocator::Allocator()
-    : m_imageList(wxc_runtime::CreateAllocatorImageList())
+namespace
 {
-    // Add the tree control images (no-op under headless wxcgen)
-    wxc_runtime::AddImageToAllocator(m_imageList, m_bmpLoader, wxT("wxgui")); // 0
+wxImageList* CreateAllocatorImageList() { return new wxImageList(16, 16, true); }
+
+int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& loader, const wxString& bmpName)
+{
+    if (!list) {
+        return -1;
+    }
+    return list->Add(loader.Bitmap(bmpName));
+}
+
+}
+
+Allocator::Allocator()
+    : m_imageList(CreateAllocatorImageList())
+{
+    // Add the tree control images
+    AddImageToAllocator(m_imageList, m_bmpLoader, wxT("wxgui"));
 
     Register(new BoxSizerWrapper(), "wxboxsizer_v");
     Register(new FlexGridSizerWrapper(), "wxflexgridsizer");
@@ -399,16 +411,6 @@ void Allocator::Release()
 {
     delete ms_instance;
     ms_instance = nullptr;
-    m_commonEvents.Clear();
-}
-
-wxcWidget* Allocator::Create(int id)
-{
-    Map_t::iterator iter = m_objs.find(id);
-    if (iter == m_objs.end())
-        return NULL;
-
-    return iter->second->Clone();
 }
 
 void Allocator::Register(wxcWidget* obj, const wxString& bmpname, int id)
@@ -417,8 +419,7 @@ void Allocator::Register(wxcWidget* obj, const wxString& bmpname, int id)
     if (objId == -1) {
         objId = obj->GetType();
     }
-    m_objs[objId] = obj;
-    m_imageIds[objId] = wxc_runtime::AddImageToAllocator(m_imageList, m_bmpLoader, bmpname);
+    m_imageIds[objId] = AddImageToAllocator(m_imageList, m_bmpLoader, bmpname);
 }
 
 int Allocator::GetImageId(int controlId) const
@@ -427,19 +428,6 @@ int Allocator::GetImageId(int controlId) const
     if (iter == m_imageIds.end())
         return -1;
     return iter->second;
-}
-
-wxcWidget* Allocator::CreateWrapperFromJSON(const JSONItem& json)
-{
-    wxcWidget* wrapper = NULL;
-
-    int type = json.namedObject(wxT("m_type")).toInt();
-    wrapper = Create(type);
-    if (!wrapper)
-        return NULL;
-
-    wrapper->UnSerialize(json);
-    return wrapper;
 }
 
 wxMenu* Allocator::CreateSizerTypeMenu() const
@@ -534,8 +522,6 @@ wxMenu* Allocator::CreateContainersMenu() const
 
     return menu;
 }
-
-void Allocator::Initialize() { m_commonEvents.FillCommonEvents(); }
 
 void Allocator::PrepareMenu(wxMenu& menu, wxcWidget* item)
 {
@@ -1616,199 +1602,3 @@ void Allocator::DoLinkAll()
     // TYPE_STATUSBAR
     DoLink(TYPE_STATUSABR, TYPE_SIZER, INSERT_MAIN_SIZER);
 }
-
-// static
-int Allocator::StringToId(const wxString& classname)
-{
-    // ADD_NEW_CONTROL
-
-    // First the truncated wxFB top-level names :/
-    if (classname == wxT("Frame"))
-        return ID_WXFRAME;
-    if (classname == wxT("Dialog"))
-        return ID_WXDIALOG;
-    if (classname == wxT("Panel"))
-        return ID_WXPANEL_TOPLEVEL;
-    if (classname == wxT("Wizard"))
-        return ID_WXWIZARD;
-    if (classname == wxT("WizardPageSimple"))
-        return ID_WXWIZARDPAGE;
-
-    if (classname == wxT("wxButton"))
-        return ID_WXBUTTON;
-    if (classname == wxT("wxBoxSizer"))
-        return ID_WXBOXSIZER;
-    if (classname == wxT("wxFrame"))
-        return ID_WXFRAME;
-    if (classname == wxT("wxFlexGridSizer"))
-        return ID_WXFLEXGRIDSIZER;
-    if (classname == wxT("wxBitmapButton"))
-        return ID_WXBITMAPBUTTON;
-    if (classname == wxT("wxStaticText"))
-        return ID_WXSTATICTEXT;
-    if (classname == wxT("wxTextCtrl"))
-        return ID_WXTEXTCTRL;
-    if (classname == wxT("wxPanel"))
-        return ID_WXPANEL;
-    if (classname == wxT("wxStaticBitmap"))
-        return ID_WXSTATICBITMAP;
-    if (classname == wxT("wxComboBox"))
-        return ID_WXCOMBOBOX;
-    if (classname == wxT("wxChoice"))
-        return ID_WXCHOICE;
-    if (classname == wxT("wxListBox"))
-        return ID_WXLISTBOX;
-    if (classname == wxT("wxListCtrl"))
-        return ID_WXLISTCTRL;
-    if (classname == wxT("listcol"))
-        return ID_WXLISTCTRL_COL;
-    if (classname == wxT("wxCheckBox"))
-        return ID_WXCHECKBOX;
-    if (classname == wxT("wxRadioBox"))
-        return ID_WXRADIOBOX;
-    if (classname == wxT("wxRadioButton"))
-        return ID_WXRADIOBUTTON;
-    if (classname == wxT("wxStaticLine"))
-        return ID_WXSTATICLINE;
-    if (classname == wxT("wxSlider"))
-        return ID_WXSLIDER;
-    if (classname == wxT("wxGauge"))
-        return ID_WXGAUGE;
-    if (classname == wxT("wxDialog"))
-        return ID_WXDIALOG;
-    if (classname == wxT("wxTreeCtrl"))
-        return ID_WXTREECTRL;
-    if (classname == wxT("wxHtmlWindow"))
-        return ID_WXHTMLWIN;
-    if (classname == wxT("wxRichTextCtrl"))
-        return ID_WXRICHTEXT;
-    if (classname == wxT("wxCheckListBox"))
-        return ID_WXCHECKLISTBOX;
-    if (classname == wxT("wxGrid"))
-        return ID_WXGRID;
-    if (classname == wxT("wxToggleButton"))
-        return ID_WXTOGGLEBUTTON;
-    if (classname == wxT("wxBitmapToggleButton"))
-        return ID_WXBITMAPTOGGLEBUTTON;
-    if (classname == wxT("wxSearchCtrl"))
-        return ID_WXSEARCHCTRL;
-    if (classname == wxT("wxColourPickerCtrl"))
-        return ID_WXCOLORPICKER;
-    if (classname == wxT("wxFontPickerCtrl"))
-        return ID_WXFONTPICKER;
-    if (classname == wxT("wxFilePickerCtrl"))
-        return ID_WXFILEPICKER;
-    if (classname == wxT("wxDirPickerCtrl"))
-        return ID_WXDIRPICKER;
-    if (classname == wxT("wxDatePickerCtrl"))
-        return ID_WXDATEPICKER;
-    if (classname == wxT("wxCalendarCtrl"))
-        return ID_WXCALEDARCTRL;
-    if (classname == wxT("wxScrollBar"))
-        return ID_WXSCROLLBAR;
-    if (classname == wxT("wxSpinCtrl"))
-        return ID_WXSPINCTRL;
-    if (classname == wxT("wxSpinButton"))
-        return ID_WXSPINBUTTON;
-    if (classname == wxT("wxHyperlinkCtrl"))
-        return ID_WXHYPERLINK;
-    if (classname == wxT("wxGenericDirCtrl"))
-        return ID_WXGENERICDIRCTRL;
-    if (classname == wxT("wxScrolledWindow"))
-        return ID_WXSCROLLEDWIN;
-    if (classname == wxT("wxNotebook"))
-        return ID_WXNOTEBOOK;
-    if (classname == wxT("wxToolbook"))
-        return ID_WXTOOLBOOK;
-    if (classname == wxT("wxListbook"))
-        return ID_WXLISTBOOK;
-    if (classname == wxT("wxChoicebook"))
-        return ID_WXCHOICEBOOK;
-    if (classname == wxT("wxTreebook"))
-        return ID_WXTREEBOOK;
-    if (classname == wxT("notebookpage"))
-        return ID_WXPANEL_NOTEBOOK_PAGE;
-    if (classname == wxT("choicebookpage"))
-        return ID_WXPANEL_NOTEBOOK_PAGE;
-    if (classname == wxT("listbookpage"))
-        return ID_WXPANEL_NOTEBOOK_PAGE;
-    if (classname == wxT("treebookpage"))
-        return ID_WXPANEL_NOTEBOOK_PAGE; // Not ID_WXTREEBOOK_SUB_PAGE, which is only used from the AddSubpage menuitem
-    if (classname == wxT("wxSplitterWindow"))
-        return ID_WXSPLITTERWINDOW;
-    if (classname == wxT("splitteritem"))
-        return ID_WXSPLITTERWINDOW_PAGE; // XRCed doesn't use this, but wxFB calls it 'splitteritem'
-    if (classname == wxT("wxStaticBoxSizer"))
-        return ID_WXSTATICBOXSIZER;
-    if (classname == wxT("wxWizard"))
-        return ID_WXWIZARD;
-    if (classname == wxT("wxWizardPage"))
-        return ID_WXWIZARDPAGE;
-    if (classname == wxT("wxWizardPageSimple"))
-        return ID_WXWIZARDPAGE;
-    if (classname == wxT("wxGridSizer"))
-        return ID_WXGRIDSIZER;
-    if (classname == wxT("wxGridBagSizer"))
-        return ID_WXGRIDBAGSIZER;
-    if (classname == wxT("spacer"))
-        return ID_WXSPACER;
-    if (classname == wxT("wxSpacer"))
-        return ID_WXSPACER; // XRC actually uses "spacer", but keep this duplicate for completeness
-    if (classname == wxT("wxStdDialogButtonSizer"))
-        return ID_WXSTDDLGBUTTONSIZER;
-    if (classname == wxT("stdbutton"))
-        return ID_WXSTDBUTTON;
-    if (classname == wxT("wxAuiNotebook"))
-        return ID_WXAUINOTEBOOK;
-    if (classname == wxT("wxMenuBar"))
-        return ID_WXMENUBAR;
-    if (classname == wxT("wxMenu"))
-        return ID_WXMENU;
-    if (classname == wxT("wxMenuItem"))
-        return ID_WXMENUITEM;
-    if (classname == wxT("submenu"))
-        return ID_WXSUBMENU;
-    if (classname == wxT("wxToolBar"))
-        return ID_WXTOOLBAR;
-    if (classname == wxT("tool"))
-        return ID_WXTOOLBARITEM;
-    if (classname == wxT("toolSeparator"))
-        return ID_WXTOOLBARITEM;
-    if (classname == wxT("space"))
-        return ID_WXTOOLBARITEM;
-    if (classname == wxT("separator"))
-        return ID_WXMENUITEM; // but in XRC could actually be a toolbar separator
-    if (classname == wxT("wxAuiToolBar"))
-        return ID_WXAUITOOLBAR;
-    if (classname == wxT("label"))
-        return ID_WXAUITOOLBARLABEL;
-    if (classname == wxT("wxStatusBar"))
-        return ID_WXSTATUSBAR;
-    if (classname == wxT("unknown"))
-        return ID_WXCUSTOMCONTROL; // XRC
-    if (classname == wxT("CustomControl"))
-        return ID_WXCUSTOMCONTROL; // wxFB
-    if (classname == wxT("Custom"))
-        return ID_WXCUSTOMCONTROL; // wxSmith
-    if (classname == wxT("wxDataViewListCtrl"))
-        return ID_WXDATAVIEWLISTCTRL;
-    if (classname == wxT("wxDataViewColumn"))
-        return ID_WXDATAVIEWCOL;
-    if (classname == wxT("wxPopupWindow"))
-        return ID_WXPOPUPWINDOW;
-    if (classname == wxT("wxSimplebook"))
-        return ID_WXSIMPLEBOOK;
-    if (classname == wxT("wxScintilla"))
-        return ID_WXSTC; // wxFB (sometimes?)
-    if (classname == wxT("wxTreeListCtrl"))
-        return ID_WXTREELISTCTRL;
-    if (classname == wxT("wxAnimationCtrl"))
-        return ID_WXANIMATIONCTRL;
-    if (classname == wxT("wxSimpleHtmlListBox"))
-        return ID_WXSIMPLEHTMLLISTBOX;
-    if (classname == wxT("wxActivityIndicator"))
-        return ID_WXACTIVITYINDICATOR;
-    if (classname == wxT("wxTimePickerCtrl"))
-        return ID_WXTIMEPICKERCTRL;
-    return wxNOT_FOUND;
-};

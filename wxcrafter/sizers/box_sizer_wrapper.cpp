@@ -1,7 +1,6 @@
 #include "box_sizer_wrapper.h"
 
 #include "Properties/choice_property.h"
-#include "allocator_mgr.h"
 #include "wxgui_defs.h"
 #include "xml/xmlutils.h"
 

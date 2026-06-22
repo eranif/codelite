@@ -1,7 +1,5 @@
 #include "data_view_list_ctrl_wrapper.h"
 
-#include "allocator_mgr.h"
-
 #include <wx/dataview.h>
 
 DataViewListCtrlWrapper::DataViewListCtrlWrapper()

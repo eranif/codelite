@@ -10,7 +10,6 @@
 #include "StringUtils.h"
 #include "UI/PropertiesView/properties_sheet.h"
 #include "UI/ToolBoxPanel.h"
-#include "allocator_mgr.h"
 #include "cl_command_event.h"
 #include "controls/Containers/notebook_base_wrapper.h"
 #include "controls/Containers/notebook_page_wrapper.h"
@@ -709,7 +708,7 @@ void GUICraftMainPanel::OnPropertyChanged(wxCommandEvent& e)
             if (toolType == wxCrafter::TOOL_TYPE_DROPDOWN && auiItem->PropertyString(PROP_DROPDOWN_MENU) == "1") {
                 // We're a dropdown item, and the user wants to construct its menu inside wxC
                 if (auiItem->GetChildren().empty()) {
-                    wxcWidget* menu = Allocator::Instance()->Create(ID_WXMENU);
+                    wxcWidget* menu = wxcWidget::Create(ID_WXMENU);
                     menu->SetParent(auiItem);
                     DoInsertControl(
                         menu, auiItem, Allocator::INSERT_CHILD, Allocator::Instance()->GetImageId(ID_WXMENU));
@@ -757,7 +756,7 @@ void GUICraftMainPanel::OnNewControl(wxCommandEvent& e)
 
     } else if (data && data->m_wxcWidget) {
         // Non toplevel window
-        wxcWidget* control = Allocator::Instance()->Create(e.GetId());
+        wxcWidget* control = wxcWidget::Create(e.GetId());
         CHECK_POINTER(control);
 
         int insertType;
@@ -1195,7 +1194,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
 
     wxTreeItemId dummy;
     for (int i = 0; i < nCount; i++) {
-        wxcWidget* wrapper = Allocator::Instance()->CreateWrapperFromJSON(windows.arrayItem(i));
+        wxcWidget* wrapper = wxcWidget::CreateFromJSON(windows.arrayItem(i));
         DoBuildTree(dummy, wrapper, m_treeControls->GetRootItem());
     }
 
@@ -1606,8 +1605,8 @@ void GUICraftMainPanel::OnMenuItemClicked(wxCommandEvent& e)
         return;
     }
 
-    if (Allocator::GetCommonEvents().Exists(e.GetId())) {
-        ConnectDetails eventDetails = Allocator::GetCommonEvents().Item(e.GetId());
+    if (wxcWidget::GetCommonEvents().Exists(e.GetId())) {
+        ConnectDetails eventDetails = wxcWidget::GetCommonEvents().Item(e.GetId());
         itemData->m_wxcWidget->AddEvent(eventDetails);
 
     } else if (itemData->m_wxcWidget->GetControlEvents().Exists(e.GetId())) {
@@ -1625,8 +1624,8 @@ void GUICraftMainPanel::OnMenuItemUI(wxUpdateUIEvent& e)
     CHECK_POINTER(itemData);
     CHECK_POINTER(itemData->m_wxcWidget);
 
-    if (Allocator::GetCommonEvents().Exists(e.GetId())) {
-        ConnectDetails eventDetails = Allocator::GetCommonEvents().Item(e.GetId());
+    if (wxcWidget::GetCommonEvents().Exists(e.GetId())) {
+        ConnectDetails eventDetails = wxcWidget::GetCommonEvents().Item(e.GetId());
         e.Check(itemData->m_wxcWidget->HasEvent(eventDetails.GetEventName()));
 
     } else if (itemData->m_wxcWidget->GetControlEvents().Exists(e.GetId())) {
@@ -2921,8 +2920,7 @@ void GUICraftMainPanel::AddCustomControl(int controlId)
     CHECK_POINTER(data->m_wxcWidget);
 
     // Allocate the new control
-    CustomControlWrapper* control =
-        dynamic_cast<CustomControlWrapper*>(Allocator::Instance()->Create(ID_WXCUSTOMCONTROL));
+    CustomControlWrapper* control = dynamic_cast<CustomControlWrapper*>(wxcWidget::Create(ID_WXCUSTOMCONTROL));
     CHECK_POINTER(control);
     control->SetTemplInfoName(templateInfo.GetClassName());
 
@@ -2984,7 +2982,7 @@ void GUICraftMainPanel::DoChangeOrInsertIntoSizer(int id)
     }
 
     wxString label;
-    wxcWidget* newWidget = Allocator::Instance()->Create(widgetType);
+    wxcWidget* newWidget = wxcWidget::Create(widgetType);
 
     if (id < ID_CHANGE_SIZER_LAST) { // Changing the sizer type
         wxcWidget::ReplaceWidget(data->m_wxcWidget, newWidget);

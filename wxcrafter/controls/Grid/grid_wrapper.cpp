@@ -4,7 +4,6 @@
 #include "Properties/category_property.h"
 #include "Properties/choice_property.h"
 #include "Properties/int_property.h"
-#include "allocator_mgr.h"
 #include "grid_column_wrapper.h"
 #include "grid_row_wrapper.h"
 #include "wxgui_defs.h"
@@ -277,7 +276,7 @@ void GridWrapper::UnSerialize(const JSONItem& json)
 
             for (size_t i = 0; i < colsArr.GetCount(); ++i) {
                 // The old way of creating rows - create new children and add them here
-                wxcWidget* col = Allocator::Instance()->Create(ID_WXGRIDCOL);
+                wxcWidget* col = wxcWidget::Create(ID_WXGRIDCOL);
                 col->SetName(colsArr.Item(i));
                 AddChild(col);
             }
@@ -288,7 +287,7 @@ void GridWrapper::UnSerialize(const JSONItem& json)
 
             for (size_t i = 0; i < rowsArr.GetCount(); ++i) {
                 // The old way of creating rows - create new children and add them here
-                wxcWidget* row = Allocator::Instance()->Create(ID_WXGRIDROW);
+                wxcWidget* row = wxcWidget::Create(ID_WXGRIDROW);
                 row->SetName(rowsArr.Item(i));
                 AddChild(row);
             }
@@ -312,7 +311,7 @@ void GridWrapper::UnSerialize(const JSONItem& json)
     int nChildren = children.arraySize();
     for (int i = 0; i < nChildren; i++) {
         JSONItem child = children.arrayItem(i);
-        wxcWidget* wrapper = Allocator::Instance()->CreateWrapperFromJSON(child);
+        wxcWidget* wrapper = wxcWidget::CreateFromJSON(child);
         if (wrapper) {
             AddChild(wrapper);
         }

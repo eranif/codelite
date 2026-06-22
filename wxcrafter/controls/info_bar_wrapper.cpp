@@ -1,7 +1,5 @@
 #include "info_bar_wrapper.h"
 
-#include "allocator_mgr.h"
-
 InfoBarWrapper::InfoBarWrapper()
     : wxcWidget(ID_WXINFOBAR)
 {

@@ -1,10 +1,7 @@
 #include "import_from_xrc.h"
 
-#include "allocator_mgr.h"
 #include "controls/Containers/notebook_base_wrapper.h"
 #include "controls/Containers/notebook_page_wrapper.h"
-#include "import_dlg.h"
-#include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "xml/xmlutils.h"
 
@@ -206,7 +203,7 @@ wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyPar
         }
     }
 
-    int Id = Allocator::StringToId(classname);
+    int Id = wxcWidget::StringToId(classname);
     if (Id == wxNOT_FOUND) {
         wxLogWarning(wxString::Format(_("Can't import unknown class %s from XRC"), classname));
         return NULL;
@@ -248,7 +245,7 @@ wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyPar
         Id = ID_WXPANEL_NOTEBOOK_PAGE;
     }
 
-    wrapper = Allocator::Instance()->Create(Id);
+    wrapper = wxcWidget::Create(Id);
     wxCHECK_MSG(wrapper, NULL, wxT("Failed to create a wrapper"));
 
     wrapper->LoadPropertiesFromXRC(node);

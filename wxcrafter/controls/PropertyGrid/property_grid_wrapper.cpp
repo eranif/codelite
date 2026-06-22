@@ -7,7 +7,6 @@
 #include "Properties/font_property.h"
 #include "Properties/multi_strings_property.h"
 #include "Properties/string_property.h"
-#include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 
 #define PROP_PG_BOOL_VALUE "Bool Value"

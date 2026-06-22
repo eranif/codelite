@@ -1,7 +1,5 @@
 #include "panel_wrapper.h"
 
-#include "allocator_mgr.h"
-
 PanelWrapper::PanelWrapper()
     : wxcWidget(ID_WXPANEL)
 {

@@ -1,6 +1,5 @@
 #include "date_picker_ctrl.h"
 
-#include "allocator_mgr.h"
 #include "wxgui_defs.h"
 
 #include <wx/datectrl.h>

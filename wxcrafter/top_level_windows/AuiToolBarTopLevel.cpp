@@ -4,7 +4,7 @@
 #include "Properties/string_property.h"
 #include "Properties/virtual_folder_property.h"
 #include "Properties/winid_property.h"
-#include "allocator_mgr.h"
+
 #include "xy_pair.h"
 
 #include <wx/aui/auibar.h>

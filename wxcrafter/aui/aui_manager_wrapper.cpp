@@ -5,7 +5,6 @@
 #include "Properties/color_property.h"
 #include "Properties/int_property.h"
 #include "Properties/string_property.h"
-#include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 
 #include <wx/aui/framemanager.h>

@@ -1,5 +1,9 @@
 #include "wxc_widget.h"
-
+#include "ActivityIndicatorWrapper.h"
+#include "AnimationCtrlWrapper.h"
+#include "AuiToolBarTopLevel.h"
+#include "BitmapComboxWrapper.h"
+#include "EventsEditorDlg.h"
 #include "Importer/import_from_wxFB.h"
 #include "Properties/bool_property.h"
 #include "Properties/category_property.h"
@@ -9,13 +13,116 @@
 #include "Properties/multi_strings_property.h"
 #include "Properties/string_property.h"
 #include "Properties/winid_property.h"
-#include "allocator_mgr.h"
+#include "RearrangeListWrapper.h"
+#include "SimpleHtmlListBoxWrapper.h"
+#include "TimePickerCtrlWrapper.h"
+#include "aui_manager_wrapper.h"
+#include "aui_notebook_wrapper.h"
+#include "banner_window_wrapper.h"
+#include "bitmap_button_wrapper.h"
+#include "bitmap_wrapper.h"
+#include "bitmaptogglebuttonwrapper.h"
+#include "box_sizer_wrapper.h"
+#include "button_wrapper.h"
+#include "calendar_ctrl_wrapper.h"
+#include "check_box_wrapper.h"
+#include "check_list_box_wrapper.h"
+#include "choice_book_wrapper.h"
+#include "choice_wrapper.h"
+#include "colour_picker_wrapper.h"
+#include "combobox_wrapper.h"
+#include "command_link_button_wrapper.h"
+#include "controls/Containers/collapsible_pane_wrapper.h"
 #include "controls/Containers/notebook_base_wrapper.h"
 #include "controls/Containers/notebook_page_wrapper.h"
+#include "controls/Containers/notebook_wrapper.h"
+#include "controls/Containers/panel_wrapper.h"
+#include "controls/Containers/scrolled_window_wrapper.h"
+#include "controls/Containers/tool_book_wrapper.h"
+#include "controls/Containers/tree_book_wrapper.h"
+#include "controls/Containers/wizard_page_wrapper.h"
 #include "controls/Containers/wx_collapsible_pane_pane_wrapper.h"
+#include "controls/Grid/grid_column_wrapper.h"
+#include "controls/Grid/grid_row_wrapper.h"
+#include "controls/Grid/grid_wrapper.h"
+#include "controls/PropertyGrid/property_grid_manager_wrapper.h"
+#include "controls/PropertyGrid/property_grid_wrapper.h"
+#include "controls/RibbonBar/ribbon_bar_wrapper.h"
+#include "controls/RibbonBar/ribbon_button.h"
+#include "controls/RibbonBar/ribbon_button_bar_wrapper.h"
+#include "controls/RibbonBar/ribbon_gallery_item_wrapper.h"
+#include "controls/RibbonBar/ribbon_gallery_wrapper.h"
+#include "controls/RibbonBar/ribbon_page_wrapper.h"
+#include "controls/RibbonBar/ribbon_panel_wrapper.h"
+#include "controls/RibbonBar/ribbon_tool_bar_wrapper.h"
+#include "controls/RibbonBar/ribbon_tool_separator.h"
+#include "controls/menu_toolbar/menu_bar_wrapper.h"
+#include "controls/menu_toolbar/menu_item_wrapper.h"
+#include "controls/menu_toolbar/menu_wrapper.h"
+#include "controls/menu_toolbar/status_bar_wrapper.h"
+#include "controls/menu_toolbar/tool_bar_item_wrapper.h"
+#include "controls/menu_toolbar/toolbar_base_wrapper.h"
 #include "custom_control_wrapper.h"
+#include "data_view_list_ctrl_column.h"
+#include "data_view_list_ctrl_wrapper.h"
+#include "data_view_tree_ctrl_wrapper.h"
+#include "data_view_tree_list_ctrl_wrapper.h"
+#include "date_picker_ctrl.h"
+#include "dialog_wrapper.h"
+#include "dir_picker_ctrl_wrapper.h"
+#include "file_picker_ctrl_wrapper.h"
+#include "flexgridsizer_wrapper.h"
+#include "font_picker_ctrl_wrapper.h"
+#include "frame_wrapper.h"
+#include "gauge_wrapper.h"
+#include "generic_dir_ctrl_wrapper.h"
+#include "gl_canvas_wrapper.h"
+#include "globals.h"
+#include "grid_bag_sizer_wrapper.h"
+#include "grid_sizer_wrapper.h"
+#include "html_window_wrapper.h"
+#include "hyper_link_ctrl_wrapper.h"
+#include "image_list_wrapper.h"
+#include "info_bar_button_wrapper.h"
+#include "info_bar_wrapper.h"
+#include "list_book_wrapper.h"
+#include "list_box_wrapper.h"
+#include "list_ctrl_column_wrapper.h"
+#include "list_ctrl_wrapper.h"
+#include "media_ctrl_wrapper.h"
+#include "panel_wrapper_top_level.h"
+#include "popup_window_wrapper.h"
+#include "radio_box_wrapper.h"
+#include "radio_button_wrapper.h"
+#include "rich_text_ctrl_wrapper.h"
+#include "scroll_bar_wrapper.h"
+#include "search_ctrl_wrapper.h"
+#include "simple_book_wrapper.h"
+#include "slider_wrapper.h"
+#include "spacer_wrapper.h"
+#include "spin_button_wrapper.h"
+#include "spin_ctrl_wrapper.h"
+#include "splitter_window_page.h"
+#include "splitter_window_wrapper.h"
+#include "static_bitmap_wrapper.h"
+#include "static_box_sizer_wrapper.h"
+#include "static_line_wrapper.h"
+#include "static_text_wrapper.h"
+#include "std_button_wrapper.h"
+#include "std_dialog_button_sizer_wrapper.h"
+#include "styled_text_ctrl_wrapper.h"
+#include "task_bar_icon_wrapper.h"
+#include "text_ctrl_wrapper.h"
+#include "timer_wrapper.h"
+#include "toggle_button_wrapper.h"
+#include "tree_ctrl_wrapper.h"
+#include "tree_list_ctrl_column_wrapper.h"
+#include "tree_list_ctrl_wrapper.h"
+#include "web_view_wrapper.h"
+#include "wizard_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_settings.h"
+#include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xml/xmlutils.h"
@@ -728,7 +835,7 @@ void wxcWidget::UnSerialize(const JSONItem& json)
     int nChildren = children.arraySize();
     for (int i = 0; i < nChildren; i++) {
         JSONItem child = children.arrayItem(i);
-        wxcWidget* wrapper = Allocator::Instance()->CreateWrapperFromJSON(child);
+        wxcWidget* wrapper = wxcWidget::CreateFromJSON(child);
         if (wrapper) {
             AddChild(wrapper);
         }
@@ -1120,7 +1227,7 @@ void wxcWidget::ImportEventsFromXRC(const wxString& events)
         wxString eventtype = ImportFromwxFB::GetEventtypeFromHandlerstub(
             eventname); // The 'FB' isn't a mistake; it's stored there for convenience
         if (!eventtype.empty()) {
-            EventsDatabase& edb = Allocator::GetCommonEvents();
+            EventsDatabase& edb = GetCommonEvents();
             if (edb.Exists(wxXmlResource::GetXRCID(eventtype))) {
                 ConnectDetails eventDetails = edb.Item(wxXmlResource::GetXRCID(eventtype));
                 eventDetails.SetFunctionNameAndSignature(eventDetails.GetEventClass() + "Handler");
@@ -1141,7 +1248,7 @@ void wxcWidget::ImportEventFromwxSmith(const wxString& eventname, const wxString
 {
     if (!eventname.empty()) {
         wxString eventtype = ImportFromwxFB::GetEventtypeFromHandlerstub(eventname);
-        EventsDatabase& edb = Allocator::GetCommonEvents();
+        EventsDatabase& edb = GetCommonEvents();
         if (edb.Exists(wxXmlResource::GetXRCID(eventtype))) {
             ConnectDetails eventDetails = edb.Item(wxXmlResource::GetXRCID(eventtype));
             eventDetails.SetFunctionNameAndSignature(handlerstub);
@@ -1161,7 +1268,7 @@ void wxcWidget::ImportEventFromFB(const wxString& eventname, const wxString& han
 {
     if (!eventname.empty()) {
         wxString eventtype = ImportFromwxFB::GetEventtypeFromHandlerstub(eventname);
-        EventsDatabase& edb = Allocator::GetCommonEvents();
+        EventsDatabase& edb = GetCommonEvents();
         if (edb.Exists(wxXmlResource::GetXRCID(eventtype))) {
             ConnectDetails eventDetails = edb.Item(wxXmlResource::GetXRCID(eventtype));
             eventDetails.SetFunctionNameAndSignature(handlerstub);
@@ -1545,9 +1652,7 @@ void wxcWidget::RegisterEvent(const wxString& eventName,
                               const wxString& handlerName /*=""*/,
                               const wxString& functionNameAndSig /*=""*/,
                               bool noBody /*=false*/)
-{
-    m_controlEvents.Add(eventName, className, description, functionNameAndSig, noBody);
-}
+{ m_controlEvents.Add(eventName, className, description, functionNameAndSig, noBody); }
 
 wxString wxcWidget::XRCPrefix(const wxString& class_name) const
 {
@@ -2641,3 +2746,369 @@ void wxcWidget::DoGenerateGetters(wxString& decl) const
 }
 
 wxString wxcSizerItem::GetBorderScaled() const { return wxString() << "WXC_FROM_DIP(" << GetBorder() << ")"; }
+
+namespace
+{
+
+template <typename T>
+std::unique_ptr<wxcWidget> Make()
+{ return std::make_unique<T>(); }
+
+template <typename T>
+std::pair<const int, std::unique_ptr<wxcWidget>(*)()> Entry()
+{ return {T{}.GetType(), &Make<T>}; }
+
+} // namespace
+
+/* static */ wxcWidget* wxcWidget::Create(int id)
+{
+    static const std::unordered_map<int, std::unique_ptr<wxcWidget>(*)()> factory{
+        Entry<BoxSizerWrapper>(),
+        Entry<FlexGridSizerWrapper>(),
+        Entry<FrameWrapper>(),
+        Entry<ButtonWrapper>(),
+        Entry<BitmapButtonWrapper>(),
+        Entry<StaticTextWrapper>(),
+        Entry<TextCtrlWrapper>(),
+        Entry<PanelWrapperTopLevel>(),
+        Entry<PanelWrapper>(),
+        Entry<StaticBitmapWrapper>(),
+        Entry<ComboBoxWrapper>(),
+        Entry<ChoiceWrapper>(),
+        Entry<ListBoxWrapper>(),
+        Entry<ListCtrlWrapper>(),
+        Entry<ListCtrlColumnWrapper>(),
+        Entry<CheckBoxWrapper>(),
+        Entry<RadioBoxWrapper>(),
+        Entry<RadioButtonWrapper>(),
+        Entry<StaticLineWrapper>(),
+        Entry<SliderWrapper>(),
+        Entry<GaugeWrapper>(),
+        Entry<DialogWrapper>(),
+        Entry<TreeCtrlWrapper>(),
+        Entry<HtmlWindowWrapper>(),
+        Entry<RichTextCtrlWrapper>(),
+        Entry<CheckListBoxWrapper>(),
+        Entry<GridWrapper>(),
+        Entry<ToggleButtonWrapper>(),
+        Entry<SearchCtrlWrapper>(),
+        Entry<ColourPickerWrapper>(),
+        Entry<FontPickerCtrlWrapper>(),
+        Entry<FilePickerCtrlWrapper>(),
+        Entry<DirPickerCtrlWrapper>(),
+        Entry<DatePickerCtrl>(),
+        Entry<CalendarCtrlWrapper>(),
+        Entry<ScrollBarWrapper>(),
+        Entry<SpinCtrlWrapper>(),
+        Entry<SpinButtonWrapper>(),
+        Entry<HyperLinkCtrlWrapper>(),
+        Entry<GenericDirCtrlWrapper>(),
+        Entry<ScrolledWindowWrapper>(),
+        Entry<NotebookWrapper>(),
+        Entry<NotebookPageWrapper>(),
+        {ID_WXTREEBOOK_SUB_PAGE, &Make<NotebookPageWrapper>},
+        Entry<ToolBookWrapper>(),
+        Entry<ListBookWrapper>(),
+        Entry<ChoiceBookWrapper>(),
+        Entry<TreeBookWrapper>(),
+        Entry<SplitterWindowWrapper>(),
+        Entry<SplitterWindowPage>(),
+        Entry<StaticBoxSizerWrapper>(),
+        Entry<WizardWrapper>(),
+        Entry<WizardPageWrapper>(),
+        Entry<GridSizerWrapper>(),
+        Entry<GridBagSizerWrapper>(),
+        Entry<SpacerWrapper>(),
+        Entry<AuiNotebookWrapper>(),
+        Entry<MenuBarWrapper>(),
+        Entry<MenuWrapper>(),
+        Entry<SubMenuWrapper>(),
+        Entry<MenuItemWrapper>(),
+        Entry<ToolbarWrapper>(),
+        Entry<ToolBarItemWrapper>(),
+        Entry<ToolBarItemSpaceWrapper>(),
+        Entry<AuiToolBarItemNonStretchSpaceWrapper>(),
+        Entry<AuiToolBarItemSpaceWrapper>(),
+        Entry<AuiToolBarLabelWrapper>(),
+        Entry<StatusBarWrapper>(),
+        Entry<AuiToolbarWrapper>(),
+        Entry<CustomControlWrapper>(),
+        Entry<StyledTextCtrlWrapper>(),
+        Entry<StdDialogButtonSizerWrapper>(),
+        Entry<StdButtonWrapper>(),
+        Entry<DataViewListCtrlWrapper>(),
+        Entry<DataViewListCtrlColumn>(),
+        Entry<DataViewTreeCtrlWrapper>(),
+        Entry<DataViewTreeListCtrlWrapper>(),
+        Entry<BannerWindowWrapper>(),
+        Entry<CommandLinkButtonWrapper>(),
+        Entry<CollapsiblePaneWrapper>(),
+        Entry<wxCollapsiblePanePaneWrapper>(),
+        Entry<InfoBarWrapper>(),
+        Entry<InfoBarButtonWrapper>(),
+        Entry<WebViewWrapper>(),
+        Entry<AuiManagerWrapper>(),
+        Entry<BitmapWrapper>(),
+        Entry<ImageListWrapper>(),
+        Entry<TimerWrapper>(),
+        Entry<PopupWindowWrapper>(),
+        Entry<PropertyGridManagerWrapper>(),
+        Entry<PropertyGridWrapper>(),
+        {ID_WXPGPROPERTY_SUB, &Make<PropertyGridWrapper>},
+        Entry<RibbonBarWrapper>(),
+        Entry<RibbonPageWrapper>(),
+        Entry<RibbonPanelWrapper>(),
+        Entry<RibbonButtonBarWrapper>(),
+        Entry<RibbonButton>(),
+        Entry<RibbonButtonHybrid>(),
+        Entry<RibbonButtonDropdown>(),
+        Entry<RibbonButtonToggle>(),
+        Entry<RibbonToolBarWrapper>(),
+        Entry<RibbonTool>(),
+        Entry<RibbonToolHybrid>(),
+        Entry<RibbonToolDropdown>(),
+        Entry<RibbonToolToggle>(),
+        Entry<RibbonGalleryWrapper>(),
+        Entry<RibbonGalleryItemWrapper>(),
+        Entry<RibbonToolSeparator>(),
+        Entry<ToolBarItemSeparatorWrapper>(),
+        Entry<GLCanvasWrapper>(),
+        Entry<GridColumnWrapper>(),
+        Entry<GridRowWrapper>(),
+        Entry<MediaCtrlWrapper>(),
+        Entry<TreeListCtrlWrapper>(),
+        Entry<TreeListCtrlColumnWrapper>(),
+        Entry<SimpleBookWrapper>(),
+        Entry<TaskBarIconWrapper>(),
+        Entry<BitmapToggleButtonWrapper>(),
+        Entry<AuiToolBarTopLevelWrapper>(),
+        Entry<AnimationCtrlWrapper>(),
+        Entry<BitmapComboxWrapper>(),
+        Entry<RearrangeListWrapper>(),
+        Entry<SimpleHtmlListBoxWrapper>(),
+        Entry<ActivityIndicatorWrapper>(),
+        Entry<TimePickerCtrlWrapper>(),
+    };
+
+    if (auto it = factory.find(id); it != factory.end()) {
+        return it->second().release();
+    }
+    return nullptr;
+}
+
+
+/* static */ wxcWidget* wxcWidget::CreateFromJSON(const JSONItem& json)
+{
+    const int type = json.namedObject(wxT("m_type")).toInt();
+    auto wrapper = Create(type);
+    if (!wrapper) {
+        return nullptr;
+    }
+    wrapper->UnSerialize(json);
+    return wrapper;
+}
+
+/* static */ int wxcWidget::StringToId(const wxString& classname)
+{
+    // ADD_NEW_CONTROL
+
+    // First the truncated wxFB top-level names :/
+    if (classname == wxT("Frame"))
+        return ID_WXFRAME;
+    if (classname == wxT("Dialog"))
+        return ID_WXDIALOG;
+    if (classname == wxT("Panel"))
+        return ID_WXPANEL_TOPLEVEL;
+    if (classname == wxT("Wizard"))
+        return ID_WXWIZARD;
+    if (classname == wxT("WizardPageSimple"))
+        return ID_WXWIZARDPAGE;
+
+    if (classname == wxT("wxButton"))
+        return ID_WXBUTTON;
+    if (classname == wxT("wxBoxSizer"))
+        return ID_WXBOXSIZER;
+    if (classname == wxT("wxFrame"))
+        return ID_WXFRAME;
+    if (classname == wxT("wxFlexGridSizer"))
+        return ID_WXFLEXGRIDSIZER;
+    if (classname == wxT("wxBitmapButton"))
+        return ID_WXBITMAPBUTTON;
+    if (classname == wxT("wxStaticText"))
+        return ID_WXSTATICTEXT;
+    if (classname == wxT("wxTextCtrl"))
+        return ID_WXTEXTCTRL;
+    if (classname == wxT("wxPanel"))
+        return ID_WXPANEL;
+    if (classname == wxT("wxStaticBitmap"))
+        return ID_WXSTATICBITMAP;
+    if (classname == wxT("wxComboBox"))
+        return ID_WXCOMBOBOX;
+    if (classname == wxT("wxChoice"))
+        return ID_WXCHOICE;
+    if (classname == wxT("wxListBox"))
+        return ID_WXLISTBOX;
+    if (classname == wxT("wxListCtrl"))
+        return ID_WXLISTCTRL;
+    if (classname == wxT("listcol"))
+        return ID_WXLISTCTRL_COL;
+    if (classname == wxT("wxCheckBox"))
+        return ID_WXCHECKBOX;
+    if (classname == wxT("wxRadioBox"))
+        return ID_WXRADIOBOX;
+    if (classname == wxT("wxRadioButton"))
+        return ID_WXRADIOBUTTON;
+    if (classname == wxT("wxStaticLine"))
+        return ID_WXSTATICLINE;
+    if (classname == wxT("wxSlider"))
+        return ID_WXSLIDER;
+    if (classname == wxT("wxGauge"))
+        return ID_WXGAUGE;
+    if (classname == wxT("wxDialog"))
+        return ID_WXDIALOG;
+    if (classname == wxT("wxTreeCtrl"))
+        return ID_WXTREECTRL;
+    if (classname == wxT("wxHtmlWindow"))
+        return ID_WXHTMLWIN;
+    if (classname == wxT("wxRichTextCtrl"))
+        return ID_WXRICHTEXT;
+    if (classname == wxT("wxCheckListBox"))
+        return ID_WXCHECKLISTBOX;
+    if (classname == wxT("wxGrid"))
+        return ID_WXGRID;
+    if (classname == wxT("wxToggleButton"))
+        return ID_WXTOGGLEBUTTON;
+    if (classname == wxT("wxBitmapToggleButton"))
+        return ID_WXBITMAPTOGGLEBUTTON;
+    if (classname == wxT("wxSearchCtrl"))
+        return ID_WXSEARCHCTRL;
+    if (classname == wxT("wxColourPickerCtrl"))
+        return ID_WXCOLORPICKER;
+    if (classname == wxT("wxFontPickerCtrl"))
+        return ID_WXFONTPICKER;
+    if (classname == wxT("wxFilePickerCtrl"))
+        return ID_WXFILEPICKER;
+    if (classname == wxT("wxDirPickerCtrl"))
+        return ID_WXDIRPICKER;
+    if (classname == wxT("wxDatePickerCtrl"))
+        return ID_WXDATEPICKER;
+    if (classname == wxT("wxCalendarCtrl"))
+        return ID_WXCALEDARCTRL;
+    if (classname == wxT("wxScrollBar"))
+        return ID_WXSCROLLBAR;
+    if (classname == wxT("wxSpinCtrl"))
+        return ID_WXSPINCTRL;
+    if (classname == wxT("wxSpinButton"))
+        return ID_WXSPINBUTTON;
+    if (classname == wxT("wxHyperlinkCtrl"))
+        return ID_WXHYPERLINK;
+    if (classname == wxT("wxGenericDirCtrl"))
+        return ID_WXGENERICDIRCTRL;
+    if (classname == wxT("wxScrolledWindow"))
+        return ID_WXSCROLLEDWIN;
+    if (classname == wxT("wxNotebook"))
+        return ID_WXNOTEBOOK;
+    if (classname == wxT("wxToolbook"))
+        return ID_WXTOOLBOOK;
+    if (classname == wxT("wxListbook"))
+        return ID_WXLISTBOOK;
+    if (classname == wxT("wxChoicebook"))
+        return ID_WXCHOICEBOOK;
+    if (classname == wxT("wxTreebook"))
+        return ID_WXTREEBOOK;
+    if (classname == wxT("notebookpage"))
+        return ID_WXPANEL_NOTEBOOK_PAGE;
+    if (classname == wxT("choicebookpage"))
+        return ID_WXPANEL_NOTEBOOK_PAGE;
+    if (classname == wxT("listbookpage"))
+        return ID_WXPANEL_NOTEBOOK_PAGE;
+    if (classname == wxT("treebookpage"))
+        return ID_WXPANEL_NOTEBOOK_PAGE; // Not ID_WXTREEBOOK_SUB_PAGE, which is only used from the AddSubpage menuitem
+    if (classname == wxT("wxSplitterWindow"))
+        return ID_WXSPLITTERWINDOW;
+    if (classname == wxT("splitteritem"))
+        return ID_WXSPLITTERWINDOW_PAGE; // XRCed doesn't use this, but wxFB calls it 'splitteritem'
+    if (classname == wxT("wxStaticBoxSizer"))
+        return ID_WXSTATICBOXSIZER;
+    if (classname == wxT("wxWizard"))
+        return ID_WXWIZARD;
+    if (classname == wxT("wxWizardPage"))
+        return ID_WXWIZARDPAGE;
+    if (classname == wxT("wxWizardPageSimple"))
+        return ID_WXWIZARDPAGE;
+    if (classname == wxT("wxGridSizer"))
+        return ID_WXGRIDSIZER;
+    if (classname == wxT("wxGridBagSizer"))
+        return ID_WXGRIDBAGSIZER;
+    if (classname == wxT("spacer"))
+        return ID_WXSPACER;
+    if (classname == wxT("wxSpacer"))
+        return ID_WXSPACER; // XRC actually uses "spacer", but keep this duplicate for completeness
+    if (classname == wxT("wxStdDialogButtonSizer"))
+        return ID_WXSTDDLGBUTTONSIZER;
+    if (classname == wxT("stdbutton"))
+        return ID_WXSTDBUTTON;
+    if (classname == wxT("wxAuiNotebook"))
+        return ID_WXAUINOTEBOOK;
+    if (classname == wxT("wxMenuBar"))
+        return ID_WXMENUBAR;
+    if (classname == wxT("wxMenu"))
+        return ID_WXMENU;
+    if (classname == wxT("wxMenuItem"))
+        return ID_WXMENUITEM;
+    if (classname == wxT("submenu"))
+        return ID_WXSUBMENU;
+    if (classname == wxT("wxToolBar"))
+        return ID_WXTOOLBAR;
+    if (classname == wxT("tool"))
+        return ID_WXTOOLBARITEM;
+    if (classname == wxT("toolSeparator"))
+        return ID_WXTOOLBARITEM;
+    if (classname == wxT("space"))
+        return ID_WXTOOLBARITEM;
+    if (classname == wxT("separator"))
+        return ID_WXMENUITEM; // but in XRC could actually be a toolbar separator
+    if (classname == wxT("wxAuiToolBar"))
+        return ID_WXAUITOOLBAR;
+    if (classname == wxT("label"))
+        return ID_WXAUITOOLBARLABEL;
+    if (classname == wxT("wxStatusBar"))
+        return ID_WXSTATUSBAR;
+    if (classname == wxT("unknown"))
+        return ID_WXCUSTOMCONTROL; // XRC
+    if (classname == wxT("CustomControl"))
+        return ID_WXCUSTOMCONTROL; // wxFB
+    if (classname == wxT("Custom"))
+        return ID_WXCUSTOMCONTROL; // wxSmith
+    if (classname == wxT("wxDataViewListCtrl"))
+        return ID_WXDATAVIEWLISTCTRL;
+    if (classname == wxT("wxDataViewColumn"))
+        return ID_WXDATAVIEWCOL;
+    if (classname == wxT("wxPopupWindow"))
+        return ID_WXPOPUPWINDOW;
+    if (classname == wxT("wxSimplebook"))
+        return ID_WXSIMPLEBOOK;
+    if (classname == wxT("wxScintilla"))
+        return ID_WXSTC; // wxFB (sometimes?)
+    if (classname == wxT("wxTreeListCtrl"))
+        return ID_WXTREELISTCTRL;
+    if (classname == wxT("wxAnimationCtrl"))
+        return ID_WXANIMATIONCTRL;
+    if (classname == wxT("wxSimpleHtmlListBox"))
+        return ID_WXSIMPLEHTMLLISTBOX;
+    if (classname == wxT("wxActivityIndicator"))
+        return ID_WXACTIVITYINDICATOR;
+    if (classname == wxT("wxTimePickerCtrl"))
+        return ID_WXTIMEPICKERCTRL;
+    return wxNOT_FOUND;
+}
+
+/* static */ EventsDatabase& wxcWidget::GetCommonEvents()
+{
+    static EventsDatabase commonEvents;
+    if (commonEvents.GetEvents().IsEmpty())
+    {
+        commonEvents.FillCommonEvents();
+    }
+    return commonEvents;
+}

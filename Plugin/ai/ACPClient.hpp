@@ -3,12 +3,11 @@
 #include "AsyncProcess/ChildProcess.h"
 #include "ai/ACPEvent.hpp"
 #include "ai/ACPTypes.hpp"
-#include "assistant/attributes.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
 #include <atomic>
-#include <mutex>
+#include <functional>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -23,19 +22,18 @@ namespace llm::acp
  *
  * Lifecycle:
  *   1. Construct and set an event sink: SetEventSink(handler).
- *   2. Call Start(argv) — spawns the agent process.
- *   3. Call Initialize() — version / capability negotiation.
- *   4. Call NewSession() or LoadSession().
- *   5. Call Prompt() one or more times.
- *   6. Call Stop() to terminate cleanly.
+ *   2. Bind to wxEVT_ACP_* events on the sink (or on *this).
+ *   3. Call Start(argv) — spawns the agent process.
+ *   4. Call Initialize() — fires wxEVT_ACP_INITIALIZED on success.
+ *   5. Call NewSession() or LoadSession() — fires wxEVT_ACP_SESSION_READY.
+ *   6. Call Prompt() one or more times.
+ *   7. Call Stop() to terminate cleanly.
+ *
+ * All methods are non-blocking. Results arrive as wxEVT_ACP_* events
+ * delivered on the main thread via AddPendingEvent.
  *
  * ACPClient subclasses wxEvtHandler so it can receive ChildProcess I/O
- * events.  Protocol events (wxEVT_ACP_*) are fired on the sink set via
- * SetEventSink().  If no sink is set the events are fired on *this so the
- * owner can also Bind() directly to the ACPClient instance.
- *
- * Blocking calls (Initialize, NewSession, LoadSession) must NOT be called
- * from within an ACP event handler — doing so will deadlock.
+ * events and can serve as its own event sink when none is set.
  */
 class WXDLLIMPEXP_SDK ACPClient : public wxEvtHandler
 {
@@ -54,7 +52,7 @@ public:
     // -------------------------------------------------------
 
     /// Set the wxEvtHandler that will receive wxEVT_ACP_* events.
-    /// If not set (or set to nullptr) events are fired on *this.
+    /// If not set (or nullptr) events are fired on *this.
     void SetEventSink(wxEvtHandler* sink) { m_sink = sink; }
 
     // -------------------------------------------------------
@@ -72,24 +70,33 @@ public:
     bool IsRunning() const;
 
     // -------------------------------------------------------
-    // Protocol methods
+    // Protocol methods (all async — results arrive as events)
     // -------------------------------------------------------
 
-    /// Send `initialize` and wait for the response (blocking, up to 30 s).
-    /// Returns std::nullopt on error or timeout.
-    std::optional<InitializeResult> Initialize(const InitializeParams& params = MakeDefaultClientInfo());
+    /// Send `initialize`. Fires wxEVT_ACP_INITIALIZED on success,
+    /// wxEVT_ACP_ERROR on failure.
+    void Initialize(const InitializeParams& params = MakeDefaultClientInfo());
 
-    /// Send `session/new` and wait for the response (blocking, up to 30 s).
-    std::optional<SessionNewResult> NewSession(const SessionNewParams& params);
+    /// Send `session/new`. Fires wxEVT_ACP_SESSION_READY on success,
+    /// wxEVT_ACP_ERROR on failure.
+    void NewSession(const SessionNewParams& params);
 
-    /// Send `session/load` and wait for the response (blocking, up to 60 s).
-    /// Returns std::nullopt on error or if the agent does not support loadSession.
-    std::optional<json> LoadSession(const SessionLoadParams& params);
+    /// Send `session/load`. Fires wxEVT_ACP_SESSION_READY on success,
+    /// wxEVT_ACP_ERROR on failure.
+    /// No-ops if the agent did not advertise loadSession capability.
+    void LoadSession(const SessionLoadParams& params);
 
     /// Send `session/prompt` asynchronously.
-    /// Fires wxEVT_ACP_OUTPUT for each streaming chunk, wxEVT_ACP_PROMPT_DONE on completion.
+    /// Fires wxEVT_ACP_OUTPUT for each streaming chunk,
+    /// wxEVT_ACP_PROMPT_DONE on completion, wxEVT_ACP_ERROR on failure.
     /// Returns the JSON-RPC id assigned to the request.
     int Prompt(const SessionPromptParams& params);
+
+    /// Send `session/list` to discover existing sessions.
+    /// Fires wxEVT_ACP_SESSION_LIST on success, wxEVT_ACP_ERROR on failure.
+    /// No-ops if the agent did not advertise sessionCapabilities.list.
+    /// Pass a cursor from a prior result to fetch the next page.
+    void ListSessions(const SessionListParams& params = {});
 
     /// Send `session/cancel` notification (no response expected).
     void Cancel(const wxString& session_id);
@@ -109,7 +116,7 @@ private:
     static InitializeParams MakeDefaultClientInfo();
 
     // -------------------------------------------------------
-    // ChildProcess event handlers
+    // ChildProcess event handlers (main thread)
     // -------------------------------------------------------
 
     void OnProcessOutput(clProcessEvent& event);
@@ -130,7 +137,7 @@ private:
     void FailAllPending();
 
     // -------------------------------------------------------
-    // Pending RPC book-keeping
+    // Pending RPC book-keeping (main-thread only — no mutex needed)
     // -------------------------------------------------------
 
     using ResponseCallback = std::function<void(const json&)>;
@@ -144,12 +151,11 @@ private:
     ChildProcess* m_process{nullptr};
     wxEvtHandler* m_sink{nullptr};
 
-    // Line-buffer for incoming stdio data (accessed only on main thread)
+    // Line-buffer for incoming stdio data (main thread only)
     std::string m_readBuffer;
 
-    // Pending synchronous RPC requests
-    mutable std::mutex m_pendingMutex;
-    std::unordered_map<int, ResponseCallback> m_pending GUARDED_BY(m_pendingMutex);
+    // Pending RPC callbacks (main thread only — no locking required)
+    std::unordered_map<int, ResponseCallback> m_pending;
 
     // Cached result of Initialize
     std::optional<InitializeResult> m_initResult;

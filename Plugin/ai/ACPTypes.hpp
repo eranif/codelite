@@ -58,11 +58,16 @@ struct AgentAuthCapabilities {
     bool logout{false};
 };
 
+struct AgentSessionCapabilities {
+    bool list{false};
+};
+
 struct AgentCapabilities {
     bool loadSession{false};
     AgentPromptCapabilities promptCapabilities;
     AgentMcpCapabilities mcpCapabilities;
     AgentAuthCapabilities auth;
+    AgentSessionCapabilities sessionCapabilities;
 };
 
 // ============================================================
@@ -398,6 +403,28 @@ struct RequestPermissionResult {
 };
 
 // ============================================================
+// session/list
+// ============================================================
+
+struct SessionInfo {
+    wxString sessionId;
+    wxString cwd;
+    std::optional<wxString> title;
+    std::optional<wxString> updatedAt; // ISO 8601
+    std::vector<wxString> additionalDirectories;
+};
+
+struct SessionListParams {
+    std::optional<wxString> cwd;    // filter by working directory
+    std::optional<wxString> cursor; // opaque pagination token
+};
+
+struct SessionListResult {
+    std::vector<SessionInfo> sessions;
+    std::optional<wxString> nextCursor; // absent when no further pages
+};
+
+// ============================================================
 // JSON-RPC 2.0 envelope helpers (internal — use std::string)
 // ============================================================
 
@@ -430,10 +457,12 @@ json SerializeSessionNewParams(const SessionNewParams& p);
 json SerializeSessionLoadParams(const SessionLoadParams& p);
 json SerializeSessionPromptParams(const SessionPromptParams& p);
 json SerializeSessionCancelParams(const SessionCancelParams& p);
+json SerializeSessionListParams(const SessionListParams& p);
 json SerializeRequestPermissionResult(int id, const RequestPermissionResult& r);
 
 std::optional<InitializeResult> ParseInitializeResult(const json& j);
 std::optional<SessionNewResult> ParseSessionNewResult(const json& j);
+std::optional<SessionListResult> ParseSessionListResult(const json& j);
 std::optional<SessionUpdateParams> ParseSessionUpdate(const json& j);
 std::optional<SessionPromptResult> ParseSessionPromptResult(const json& j);
 std::optional<RequestPermissionParams> ParseRequestPermissionParams(const json& j);

@@ -68,40 +68,47 @@ All code lives in the `llm::acp` namespace except `clACPEvent` which is in the g
 // ACPClient is a wxEvtHandler subclass — bind directly to it
 ACPClient client;
 
-// Register for protocol events
-client.Bind(wxEVT_ACP_OUTPUT,           &MyClass::OnOutput,      this);
-client.Bind(wxEVT_ACP_PROMPT_DONE,      &MyClass::OnPromptDone,  this);
-client.Bind(wxEVT_ACP_TOOL_CALL,        &MyClass::OnToolCall,    this);
-client.Bind(wxEVT_ACP_TOOL_CALL_UPDATE, &MyClass::OnToolUpdate,  this);
-client.Bind(wxEVT_ACP_USAGE,            &MyClass::OnUsage,       this);
-client.Bind(wxEVT_ACP_PLAN,             &MyClass::OnPlan,        this);
-client.Bind(wxEVT_ACP_PERMISSION,       &MyClass::OnPermission,  this);
-client.Bind(wxEVT_ACP_ERROR,            &MyClass::OnError,       this);
-client.Bind(wxEVT_ACP_TERMINATED,       &MyClass::OnTerminated,  this);
+// All wxEVT_ACP_* events are delivered on the main thread via AddPendingEvent.
+client.Bind(wxEVT_ACP_INITIALIZED,     &MyClass::OnInitialized,  this);
+client.Bind(wxEVT_ACP_SESSION_READY,   &MyClass::OnSessionReady, this);
+client.Bind(wxEVT_ACP_OUTPUT,          &MyClass::OnOutput,       this);
+client.Bind(wxEVT_ACP_PROMPT_DONE,     &MyClass::OnPromptDone,   this);
+client.Bind(wxEVT_ACP_TOOL_CALL,       &MyClass::OnToolCall,     this);
+client.Bind(wxEVT_ACP_TOOL_CALL_UPDATE,&MyClass::OnToolUpdate,   this);
+client.Bind(wxEVT_ACP_USAGE,           &MyClass::OnUsage,        this);
+client.Bind(wxEVT_ACP_PLAN,            &MyClass::OnPlan,         this);
+client.Bind(wxEVT_ACP_PERMISSION,      &MyClass::OnPermission,   this);
+client.Bind(wxEVT_ACP_ERROR,           &MyClass::OnError,        this);
+client.Bind(wxEVT_ACP_TERMINATED,      &MyClass::OnTerminated,   this);
 
 // Or redirect all events to a different handler:
 // client.SetEventSink(someOtherHandler);
 
-// Spawn agent
+// Spawn agent process
 wxArrayString argv;
 argv.Add("/path/to/agent");
 argv.Add("--stdio");
 client.Start(argv);
 
-// Negotiate protocol version and capabilities (blocking, up to 30 s)
-auto init = client.Initialize();
+// Kick off version negotiation — result arrives as wxEVT_ACP_INITIALIZED
+client.Initialize();
 
-// Create a session (blocking, up to 30 s)
-auto session = client.NewSession({ .cwd = "/home/user/project", .mcpServers = {} });
+// In OnInitialized: create a session — result arrives as wxEVT_ACP_SESSION_READY
+void MyClass::OnInitialized(clACPEvent& event) {
+    client.NewSession({ .cwd = "/home/user/project", .mcpServers = {} });
+}
 
-// Send a prompt (async — events fire as updates arrive)
-client.Prompt({
-    .sessionId = session->sessionId,
-    .prompt    = { llm::acp::ContentBlockText{ "Explain this file" } },
-});
+// In OnSessionReady: start prompting
+void MyClass::OnSessionReady(clACPEvent& event) {
+    m_sessionId = event.GetSessionId();
+    client.Prompt({
+        .sessionId = m_sessionId,
+        .prompt    = { llm::acp::ContentBlockText{ "Explain this file" } },
+    });
+}
 
 // Cancel mid-turn if needed
-client.Cancel(session->sessionId);
+client.Cancel(m_sessionId);
 
 // Shut down
 client.Stop();
@@ -110,6 +117,66 @@ client.Stop();
 ---
 
 ## Events Reference
+
+### `wxEVT_ACP_SESSION_LIST`
+
+Fires when a `session/list` round-trip completes. `SessionListResult` contains one page of `SessionInfo` entries and an optional cursor for the next page.
+
+```cpp
+void OnSessionList(clACPEvent& event) {
+    const auto& result = *event.GetSessionListResult();
+
+    for (const auto& info : result.sessions) {
+        // info.sessionId  — use with LoadSession()
+        // info.cwd        — working directory
+        // info.title      — optional human-readable label
+        // info.updatedAt  — optional ISO 8601 timestamp
+        wxLogMessage("%s  %s", info.sessionId, info.title.value_or("(untitled)"));
+    }
+
+    // Fetch the next page if one exists
+    if (result.nextCursor) {
+        client.ListSessions({ .cursor = result.nextCursor });
+    }
+}
+```
+
+To load a session the user picks:
+
+```cpp
+client.LoadSession({
+    .sessionId = chosenInfo.sessionId,
+    .cwd       = chosenInfo.cwd,
+    .mcpServers = {},
+});
+// wxEVT_ACP_SESSION_READY fires when ready
+```
+
+### `wxEVT_ACP_INITIALIZED`
+
+Fires when the `initialize` round-trip completes successfully. Use this event to call `NewSession` or `LoadSession`.
+
+```cpp
+void OnInitialized(clACPEvent& event) {
+    const auto& r = *event.GetInitializeResult();
+    // r.agentCapabilities, r.agentInfo, r.authMethods
+    client.NewSession({ .cwd = "/home/user/project", .mcpServers = {} });
+}
+```
+
+### `wxEVT_ACP_SESSION_READY`
+
+Fires when `session/new` or `session/load` completes. Use `GetSessionId()` to obtain the session identifier needed for every subsequent call.
+
+```cpp
+void OnSessionReady(clACPEvent& event) {
+    m_sessionId = event.GetSessionId();
+    client.Prompt({
+        .sessionId = m_sessionId,
+        .prompt    = { llm::acp::ContentBlockText{ "Hello" } },
+    });
+}
+```
 
 ### `wxEVT_ACP_OUTPUT`
 
@@ -294,22 +361,23 @@ void OnTerminated(clACPEvent& event) {
 | `Stop()` | Terminate the child process and fail all pending requests. |
 | `IsRunning()` | Returns `true` while the child process is alive. |
 
-### Protocol methods
+### Protocol methods (all non-blocking)
 
-| Method | Blocking | Description |
-|--------|----------|-------------|
-| `Initialize(params)` | Yes (30 s) | Version negotiation. Call once after `Start`. |
-| `NewSession(params)` | Yes (30 s) | Create a fresh conversation session. |
-| `LoadSession(params)` | Yes (60 s) | Restore a prior session (requires `agentCapabilities.loadSession`). History is streamed back as `wxEVT_ACP_OUTPUT` events before the call returns. |
-| `Prompt(params)` | No | Send a user turn. Returns the JSON-RPC id. |
-| `Cancel(sessionId)` | No | Send `session/cancel`. Turn ends with `StopReason::cancelled`. |
-| `ResolvePermission(rpcId, result)` | No | Respond to a `wxEVT_ACP_PERMISSION` event. |
+| Method | Success event | Failure event | Description |
+|--------|---------------|---------------|-------------|
+| `Initialize(params)` | `wxEVT_ACP_INITIALIZED` | `wxEVT_ACP_ERROR` | Version / capability negotiation. Call once after `Start`. |
+| `NewSession(params)` | `wxEVT_ACP_SESSION_READY` | `wxEVT_ACP_ERROR` | Create a fresh conversation session. |
+| `LoadSession(params)` | `wxEVT_ACP_SESSION_READY` | `wxEVT_ACP_ERROR` | Restore a prior session. History replays as `wxEVT_ACP_OUTPUT` before the ready event fires. Requires `agentCapabilities.loadSession`. |
+| `Prompt(params)` | `wxEVT_ACP_PROMPT_DONE` | `wxEVT_ACP_ERROR` | Send a user turn. Returns the JSON-RPC id. Intermediate chunks arrive as `wxEVT_ACP_OUTPUT`. |
+| `ListSessions(params)` | `wxEVT_ACP_SESSION_LIST` | `wxEVT_ACP_ERROR` | Discover existing sessions. Pass `params.cursor` from a prior result to fetch the next page. Requires `agentCapabilities.sessionCapabilities.list`. |
+| `Cancel(sessionId)` | — | — | Send `session/cancel`. Turn ends with `StopReason::cancelled` via `wxEVT_ACP_PROMPT_DONE`. |
+| `ResolvePermission(rpcId, result)` | — | — | Respond to a `wxEVT_ACP_PERMISSION` event. |
 
 ---
 
 ## Thread Safety
 
-`ACPClient` inherits `wxEvtHandler`. All ChildProcess I/O events (and therefore all `wxEVT_ACP_*` firings) arrive on the **main thread** via `AddPendingEvent`. The blocking methods (`Initialize`, `NewSession`, `LoadSession`) use a condition variable internally and must **not** be called from within a `wxEVT_ACP_*` handler, or a deadlock will result. Call them from the worker thread that owns the session setup logic.
+`ACPClient` is a **main-thread-only** object. All methods must be called from the main thread. All `wxEVT_ACP_*` events are delivered on the main thread via `AddPendingEvent`, so event handlers may call any `ACPClient` method freely — there are no blocking operations and no risk of deadlock.
 
 ---
 

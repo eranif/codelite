@@ -2,10 +2,6 @@
 
 #include "AsyncProcess/processreaderthread.h"
 
-#include <chrono>
-#include <condition_variable>
-#include <mutex>
-
 namespace llm::acp
 {
 
@@ -187,6 +183,16 @@ json SerializeSessionPromptParams(const SessionPromptParams& p)
 
 json SerializeSessionCancelParams(const SessionCancelParams& p) { return json{{"sessionId", WX(p.sessionId)}}; }
 
+json SerializeSessionListParams(const SessionListParams& p)
+{
+    json params = json::object();
+    if (p.cwd)
+        params["cwd"] = WX(*p.cwd);
+    if (p.cursor)
+        params["cursor"] = WX(*p.cursor);
+    return params;
+}
+
 json SerializeRequestPermissionResult(int id, const RequestPermissionResult& r)
 {
     json outcome = std::visit(
@@ -231,6 +237,10 @@ std::optional<InitializeResult> ParseInitializeResult(const json& j)
         if (ac.contains("auth") && ac["auth"].contains("logout")) {
             r.agentCapabilities.auth.logout = true;
         }
+        if (ac.contains("sessionCapabilities")) {
+            const auto& sc = ac["sessionCapabilities"];
+            r.agentCapabilities.sessionCapabilities.list = sc.value("list", false);
+        }
     }
 
     if (j.contains("agentInfo")) {
@@ -263,6 +273,34 @@ std::optional<SessionNewResult> ParseSessionNewResult(const json& j)
     if (!j.contains("sessionId"))
         return std::nullopt;
     return SessionNewResult{.sessionId = JStr(j, "sessionId")};
+}
+
+std::optional<SessionListResult> ParseSessionListResult(const json& j)
+{
+    if (!j.contains("sessions") || !j["sessions"].is_array())
+        return std::nullopt;
+
+    SessionListResult r;
+    for (const auto& s : j["sessions"]) {
+        SessionInfo info;
+        info.sessionId = JStr(s, "sessionId");
+        info.cwd = JStr(s, "cwd");
+        if (s.contains("title") && s["title"].is_string())
+            info.title = JStr(s, "title");
+        if (s.contains("updatedAt") && s["updatedAt"].is_string())
+            info.updatedAt = JStr(s, "updatedAt");
+        if (s.contains("additionalDirectories") && s["additionalDirectories"].is_array()) {
+            for (const auto& d : s["additionalDirectories"]) {
+                if (d.is_string())
+                    info.additionalDirectories.push_back(wxString::FromUTF8(d.get<std::string>()));
+            }
+        }
+        r.sessions.push_back(std::move(info));
+    }
+    if (j.contains("nextCursor") && j["nextCursor"].is_string())
+        r.nextCursor = JStr(j, "nextCursor");
+
+    return r;
 }
 
 namespace
@@ -518,17 +556,14 @@ void ACPClient::Send(const json& msg)
 
 void ACPClient::RegisterPending(int id, ResponseCallback cb)
 {
-    std::scoped_lock lk{m_pendingMutex};
     m_pending.emplace(id, std::move(cb));
 }
 
 void ACPClient::FailAllPending()
 {
+    // Swap out first so callbacks cannot re-enter and modify m_pending.
     std::unordered_map<int, ResponseCallback> pending;
-    {
-        std::scoped_lock lk{m_pendingMutex};
-        pending.swap(m_pending);
-    }
+    pending.swap(m_pending);
     for (auto& [id, cb] : pending) {
         cb(json{{"error", {{"code", -32000}, {"message", "ACPClient stopped"}}}});
     }
@@ -538,92 +573,77 @@ void ACPClient::FailAllPending()
 // Protocol methods
 // -------------------------------------------------------
 
-std::optional<InitializeResult> ACPClient::Initialize(const InitializeParams& params)
+void ACPClient::Initialize(const InitializeParams& params)
 {
     const int id = NextId();
-
-    json result_holder;
-    std::mutex mtx;
-    std::condition_variable cv;
-    bool done{false};
-
-    RegisterPending(id, [&](const json& response) {
-        std::scoped_lock lk{mtx};
-        result_holder = response;
-        done = true;
-        cv.notify_all();
-    });
-
-    Send(MakeRequest(id, "initialize", SerializeInitializeParams(params)));
-
-    std::unique_lock lk{mtx};
-    cv.wait_for(lk, std::chrono::seconds(30), [&] { return done; });
-
-    if (!done || result_holder.contains("error"))
-        return std::nullopt;
-
-    auto parsed = ParseInitializeResult(result_holder);
-    if (parsed) {
+    RegisterPending(id, [this](const json& response) {
+        if (response.contains("error")) {
+            clACPEvent e(wxEVT_ACP_ERROR);
+            e.SetErrorMessage(wxString::FromUTF8(response["error"].value("message", "initialize failed")));
+            FireEvent(e);
+            return;
+        }
+        auto parsed = ParseInitializeResult(response);
+        if (!parsed) {
+            clACPEvent e(wxEVT_ACP_ERROR);
+            e.SetErrorMessage("initialize: failed to parse agent response");
+            FireEvent(e);
+            return;
+        }
         m_initResult = parsed;
-    }
-    return parsed;
+        clACPEvent e(wxEVT_ACP_INITIALIZED);
+        e.SetInitializeResult(*parsed);
+        FireEvent(e);
+    });
+    Send(MakeRequest(id, "initialize", SerializeInitializeParams(params)));
 }
 
-std::optional<SessionNewResult> ACPClient::NewSession(const SessionNewParams& params)
+void ACPClient::NewSession(const SessionNewParams& params)
 {
     const int id = NextId();
-
-    json result_holder;
-    std::mutex mtx;
-    std::condition_variable cv;
-    bool done{false};
-
-    RegisterPending(id, [&](const json& response) {
-        std::scoped_lock lk{mtx};
-        result_holder = response;
-        done = true;
-        cv.notify_all();
+    RegisterPending(id, [this](const json& response) {
+        if (response.contains("error")) {
+            clACPEvent e(wxEVT_ACP_ERROR);
+            e.SetErrorMessage(wxString::FromUTF8(response["error"].value("message", "session/new failed")));
+            FireEvent(e);
+            return;
+        }
+        auto parsed = ParseSessionNewResult(response);
+        if (!parsed) {
+            clACPEvent e(wxEVT_ACP_ERROR);
+            e.SetErrorMessage("session/new: failed to parse agent response");
+            FireEvent(e);
+            return;
+        }
+        clACPEvent e(wxEVT_ACP_SESSION_READY);
+        e.SetSessionId(parsed->sessionId);
+        FireEvent(e);
     });
-
     Send(MakeRequest(id, "session/new", SerializeSessionNewParams(params)));
-
-    std::unique_lock lk{mtx};
-    cv.wait_for(lk, std::chrono::seconds(30), [&] { return done; });
-
-    if (!done || result_holder.contains("error"))
-        return std::nullopt;
-
-    return ParseSessionNewResult(result_holder);
 }
 
-std::optional<json> ACPClient::LoadSession(const SessionLoadParams& params)
+void ACPClient::LoadSession(const SessionLoadParams& params)
 {
-    if (m_initResult && !m_initResult->agentCapabilities.loadSession)
-        return std::nullopt;
-
+    if (m_initResult && !m_initResult->agentCapabilities.loadSession) {
+        clACPEvent e(wxEVT_ACP_ERROR);
+        e.SetErrorMessage("session/load: agent does not support loadSession");
+        FireEvent(e);
+        return;
+    }
     const int id = NextId();
-
-    json result_holder;
-    std::mutex mtx;
-    std::condition_variable cv;
-    bool done{false};
-
-    RegisterPending(id, [&](const json& response) {
-        std::scoped_lock lk{mtx};
-        result_holder = response;
-        done = true;
-        cv.notify_all();
+    RegisterPending(id, [this, sessionId = params.sessionId](const json& response) {
+        if (response.contains("error")) {
+            clACPEvent e(wxEVT_ACP_ERROR);
+            e.SetErrorMessage(wxString::FromUTF8(response["error"].value("message", "session/load failed")));
+            FireEvent(e);
+            return;
+        }
+        // session/load returns null on success; history was replayed via notifications.
+        clACPEvent e(wxEVT_ACP_SESSION_READY);
+        e.SetSessionId(sessionId);
+        FireEvent(e);
     });
-
     Send(MakeRequest(id, "session/load", SerializeSessionLoadParams(params)));
-
-    std::unique_lock lk{mtx};
-    cv.wait_for(lk, std::chrono::seconds(60), [&] { return done; });
-
-    if (!done || result_holder.contains("error"))
-        return std::nullopt;
-
-    return result_holder;
 }
 
 int ACPClient::Prompt(const SessionPromptParams& params)
@@ -647,6 +667,36 @@ int ACPClient::Prompt(const SessionPromptParams& params)
 
     Send(MakeRequest(id, "session/prompt", SerializeSessionPromptParams(params)));
     return id;
+}
+
+void ACPClient::ListSessions(const SessionListParams& params)
+{
+    if (m_initResult && !m_initResult->agentCapabilities.sessionCapabilities.list) {
+        clACPEvent e(wxEVT_ACP_ERROR);
+        e.SetErrorMessage("session/list: agent does not support session listing");
+        FireEvent(e);
+        return;
+    }
+    const int id = NextId();
+    RegisterPending(id, [this](const json& response) {
+        if (response.contains("error")) {
+            clACPEvent e(wxEVT_ACP_ERROR);
+            e.SetErrorMessage(wxString::FromUTF8(response["error"].value("message", "session/list failed")));
+            FireEvent(e);
+            return;
+        }
+        auto parsed = ParseSessionListResult(response);
+        if (!parsed) {
+            clACPEvent e(wxEVT_ACP_ERROR);
+            e.SetErrorMessage("session/list: failed to parse agent response");
+            FireEvent(e);
+            return;
+        }
+        clACPEvent e(wxEVT_ACP_SESSION_LIST);
+        e.SetSessionListResult(*parsed);
+        FireEvent(e);
+    });
+    Send(MakeRequest(id, "session/list", SerializeSessionListParams(params)));
 }
 
 void ACPClient::Cancel(const wxString& session_id)
@@ -715,15 +765,13 @@ void ACPClient::DispatchMessage(const json& msg)
 
 void ACPClient::DispatchResponse(int id, const json& result)
 {
-    ResponseCallback cb;
-    {
-        std::scoped_lock lk{m_pendingMutex};
-        auto it = m_pending.find(id);
-        if (it == m_pending.end())
-            return;
-        cb = std::move(it->second);
-        m_pending.erase(it);
-    }
+    auto it = m_pending.find(id);
+    if (it == m_pending.end())
+        return;
+    // Move out before calling so the map is consistent if the callback
+    // indirectly triggers another dispatch.
+    ResponseCallback cb = std::move(it->second);
+    m_pending.erase(it);
     cb(result);
 }
 

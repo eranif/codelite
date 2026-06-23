@@ -1,4 +1,4 @@
-#include "import_from_wxSmith.h"
+#include "importer_from_wxSmith.h"
 
 #include "allocator_mgr.h"
 #include "controls/Containers/notebook_base_wrapper.h"
@@ -14,20 +14,18 @@
 #include <wx/window.h>
 #include <wx/xml/xml.h>
 
-std::map<wxString, wxString> ImportFromwxSmith::sm_eventMap;
+namespace ImportFromwxSmith
+{
 
-ImportFromwxSmith::ImportFromwxSmith(wxWindow* parent)
+std::map<wxString, wxString> Importer::sm_eventMap;
+
+Importer::Importer(wxWindow* parent)
     : m_Parent(parent)
 {
 }
 
-bool ImportFromwxSmith::ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile) const
+bool Importer::ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile) const
 {
-#ifdef WXCGEN_BUILD
-    wxUnusedVar(data);
-    wxUnusedVar(sourceFile);
-    return false;
-#else
     ImportDlg dlg(ImportDlg::IPD_Smith, m_Parent, sourceFile);
 
     if (dlg.ShowModal() != wxID_OK) {
@@ -52,10 +50,9 @@ bool ImportFromwxSmith::ImportProject(ImportDlg::ImportFileData& data, const wxS
         return true;
     }
     return false;
-#endif
 }
 
-bool ImportFromwxSmith::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const
+bool Importer::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const
 {
     // <?xml version="1.0" encoding="utf-8" ?>
     // <wxsmith>
@@ -83,7 +80,7 @@ bool ImportFromwxSmith::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& topleve
     return true;
 }
 
-wxcWidget* ImportFromwxSmith::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyParented) const
+wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyParented) const
 {
     wxcWidget* wrapper = NULL;
     wxXmlNode* sizeritemnode = node;
@@ -211,7 +208,7 @@ wxcWidget* ImportFromwxSmith::ParseNode(wxXmlNode* node, wxcWidget* parentwrappe
     return wrapper;
 }
 
-void ImportFromwxSmith::GetSizeritemContents(const wxXmlNode* node, wxcWidget* wrapper) const
+void Importer::GetSizeritemContents(const wxXmlNode* node, wxcWidget* wrapper) const
 {
     wrapper->ClearSizerAll(); // otherwise the default ones will remain
 
@@ -268,7 +265,7 @@ void ImportFromwxSmith::GetSizeritemContents(const wxXmlNode* node, wxcWidget* w
     GetGridBagSizerData(node, wrapper);
 }
 
-void ImportFromwxSmith::GetGridBagSizerData(const wxXmlNode* node, wxcWidget* wrapper) const
+void Importer::GetGridBagSizerData(const wxXmlNode* node, wxcWidget* wrapper) const
 {
     wxString row, column, rowspan("1"), colspan("1"); // wxSmith, like wxFB, holds these individually; wxC needs pairs
     bool hasPos(false), hasSpan(false);
@@ -303,7 +300,7 @@ void ImportFromwxSmith::GetGridBagSizerData(const wxXmlNode* node, wxcWidget* wr
     }
 }
 
-void ImportFromwxSmith::GetBookitemContents(const wxXmlNode* node, NotebookPageWrapper* wrapper, int& depth) const
+void Importer::GetBookitemContents(const wxXmlNode* node, NotebookPageWrapper* wrapper, int& depth) const
 {
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
 
@@ -338,3 +335,5 @@ void ImportFromwxSmith::GetBookitemContents(const wxXmlNode* node, NotebookPageW
         }
     }
 }
+
+} // namespace ImportFromwxSmith

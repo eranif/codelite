@@ -55,7 +55,7 @@ jobs:
 
     # WxWidgets
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         repository: wxWidgets/wxWidgets
         ref: ${{matrix.wx-version}}
@@ -72,7 +72,7 @@ jobs:
 
     # wx-config-msys2
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         repository: eranif/wx-config-msys2
         path: wx-config-msys2
@@ -88,7 +88,7 @@ jobs:
 
     # CodeLite & wxCrafter
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         submodules: recursive
 

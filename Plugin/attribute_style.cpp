@@ -79,6 +79,7 @@ void StyleProperty::FromAttributes(wxFont* font) const
     CHECK_PTR_RET(font);
     if (HasFontInfoDesc()) {
         font->SetNativeFontInfo(GetFontInfoDesc());
+        return;
     }
     font->SetUnderlined(GetUnderlined());
     font->SetWeight(IsBold() ? wxFONTWEIGHT_HEAVY : wxFONTWEIGHT_NORMAL);

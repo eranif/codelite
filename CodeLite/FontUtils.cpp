@@ -22,33 +22,21 @@ const std::unordered_set<wxString> words = {"SemiBold", "Semibold", "Extended", 
 
 std::unordered_map<wxString, wxString> fixed_fonts_cache;
 
-const wxString& GetFontInfo(const wxFont& font) { return GetFontInfo(font.GetNativeFontInfoDesc()); }
+wxString GetFontInfo(const wxFont& font) { return font.GetNativeFontInfoDesc(); }
 
-const wxString& GetFontInfo(const wxString& font_desc)
+wxString GetFontInfo(const wxString& font_desc)
 {
-    // check the cache first
-    if (fixed_fonts_cache.count(font_desc) != 0) {
-        return fixed_fonts_cache[font_desc];
-    }
-
-    wxString desc = font_desc;
-#ifdef __WXMSW__
-    // on MSW, we need to manipulate the info by removing
-    // "Semi Bold" (on all its variants) from the font's info
-    for (const wxString& word : words) {
-        desc.Replace(word, wxEmptyString);
-    }
-
-    // replace all double spaces with a single one
-    while (desc.Replace("  ", " "))
-        ;
-    desc.Trim();
-#endif
-
-    // update the cache
-    fixed_fonts_cache.insert({font_desc, desc});
-    // return the cached entry
-    return fixed_fonts_cache[font_desc];
+    return font_desc;
+//    // check the cache first
+//    if (fixed_fonts_cache.count(font_desc) != 0) {
+//        return fixed_fonts_cache[font_desc];
+//    }
+//    wxString desc = font_desc;
+//
+//    // update the cache
+//    fixed_fonts_cache.insert({font_desc, desc});
+//    // return the cached entry
+//    return fixed_fonts_cache[font_desc];
 }
 
 wxFont GetDefaultMonospacedFont()

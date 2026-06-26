@@ -7,8 +7,9 @@
 
 namespace FontUtils
 {
-WXDLLIMPEXP_CL const wxString& GetFontInfo(const wxFont& font);
-WXDLLIMPEXP_CL const wxString& GetFontInfo(const wxString& font_desc);
+WXDLLIMPEXP_CL wxString GetFontInfo(const wxFont& font);
+WXDLLIMPEXP_CL wxString GetFontInfo(const wxString& font_desc);
 WXDLLIMPEXP_CL wxFont GetDefaultMonospacedFont();
 } // namespace FontUtils
+
 #endif // FONTUTILS_HPP

@@ -213,6 +213,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     } else {
         clSYSTEM() << "Could not found default font!" << endl;
     }
+    ctrl->SetFont(defaultFont);
     for (const auto& sp : GetLexerProperties()) {
         // handle special cases
         switch (sp.GetId()) {

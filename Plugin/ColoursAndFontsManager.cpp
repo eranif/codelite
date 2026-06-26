@@ -1114,7 +1114,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     m_allLexers.push_back(lexer);
 
     if (m_globalFont.IsOk()) {
-        const wxString font_desc = FontUtils::GetFontInfo(m_globalFont);
+        const wxString font_desc = m_globalFont.GetNativeFontInfoDesc();
         auto& props = lexer->GetLexerProperties();
         for (auto& prop : props) {
             prop.SetFontInfoDesc(font_desc);

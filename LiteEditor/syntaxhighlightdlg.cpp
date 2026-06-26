@@ -788,7 +788,7 @@ bool SyntaxHighlightDlg::IsRestartRequired() const { return m_promptForRestart; 
 
 void SyntaxHighlightDlg::DoFontChanged(StyleProperty& sp, const wxFont& font)
 {
-    sp.SetFontInfoDesc(FontUtils::GetFontInfo(font));
+    sp.SetFontInfoDesc(font.GetNativeFontInfoDesc());
     sp.SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
     sp.SetItalic(font.GetStyle() == wxFONTSTYLE_ITALIC);
 }

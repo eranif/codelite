@@ -3,7 +3,6 @@
 #include "Properties/bitmap_picker_property.h"
 #include "Properties/category_property.h"
 #include "Properties/choice_property.h"
-#include "allocator_mgr.h"
 #include "controls/menu_toolbar/menu_bar_wrapper.h"
 #include "controls/menu_toolbar/status_bar_wrapper.h"
 #include "controls/menu_toolbar/toolbar_base_wrapper.h"

@@ -2,7 +2,6 @@
 #define TOOLBARBASEWRAPPER_H
 
 #include "AuiToolbarWrapperBase.h"
-#include "allocator_mgr.h"
 #include "wxc_widget.h" // Base class: WrapperBase
 
 /// Base class for wxToolBar and wxAuiToolBar

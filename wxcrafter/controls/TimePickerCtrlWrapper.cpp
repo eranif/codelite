@@ -1,7 +1,5 @@
 #include "TimePickerCtrlWrapper.h"
 
-#include "allocator_mgr.h"
-
 TimePickerCtrlWrapper::TimePickerCtrlWrapper()
     : wxcWidget(ID_WXTIMEPICKERCTRL)
 {

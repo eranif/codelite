@@ -98,7 +98,7 @@ void wxcTreeView::AddForm(const NewFormDetails& fd)
     // Top level window
     int imgId = Allocator::Instance()->GetImageId(fd.formType);
 
-    wxcWidget* toplevel = Allocator::Instance()->Create(fd.formType);
+    wxcWidget* toplevel = wxcWidget::Create(fd.formType);
     toplevel->SetName(fd.className);
     toplevel->SetFilename(fd.filename);
     toplevel->SetVirtualFolder(fd.virtualFolder);

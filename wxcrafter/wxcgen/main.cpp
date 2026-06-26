@@ -3,7 +3,6 @@
 // directly through the widget model, bypassing GUICraftMainPanel entirely.
 
 #include "JSON.h"
-#include "allocator_mgr.h"
 #include "editor_config.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -70,7 +69,7 @@ GenerateFromProject(const wxString& filename, const wxString& fileContent, const
     std::vector<std::unique_ptr<wxcWidget>> wrappers;
     wrappers.reserve(nCount);
     for (int i = 0; i < nCount; i++) {
-        wxcWidget* w = Allocator::Instance()->CreateWrapperFromJSON(windows.arrayItem(i));
+        wxcWidget* w = wxcWidget::CreateFromJSON(windows.arrayItem(i));
         if (w) {
             wrappers.emplace_back(w);
         }
@@ -217,11 +216,6 @@ int wxcgenApp::OnRun()
 #endif
     EditorConfigST::Get()->Init("", "2.0.2");
     EditorConfigST::Get()->Load();
-
-    // Initialise the widget registry. The headless runtime shim
-    // (wxc_runtime_headless.cpp) skips wxImageList allocation so this is safe
-    // without a display.
-    Allocator::Instance();
 
     int rc = 0;
     for (size_t i = 0; i < parser.GetParamCount(); i++) {

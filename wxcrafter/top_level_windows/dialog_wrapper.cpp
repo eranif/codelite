@@ -2,7 +2,6 @@
 
 #include "Properties/bitmap_picker_property.h"
 #include "Properties/category_property.h"
-#include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_helpers.h"
 #include "xml/xmlutils.h"

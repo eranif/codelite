@@ -3,7 +3,6 @@
 #include "Properties/category_property.h"
 #include "Properties/string_property.h"
 #include "Properties/winid_property.h"
-#include "allocator_mgr.h"
 #include "wxgui_defs.h"
 
 InfoBarButtonWrapper::InfoBarButtonWrapper()

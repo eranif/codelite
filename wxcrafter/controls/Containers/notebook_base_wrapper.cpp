@@ -1,6 +1,5 @@
 #include "notebook_base_wrapper.h"
 
-#include "allocator_mgr.h"
 #include "notebook_page_wrapper.h"
 #include "wxc_notebook_code_helper.h"
 #include "wxgui_defs.h"

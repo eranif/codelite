@@ -1,6 +1,5 @@
 #include "list_book_wrapper.h"
 
-#include "allocator_mgr.h"
 #include "wxgui_defs.h"
 
 #include <wx/listbook.h>

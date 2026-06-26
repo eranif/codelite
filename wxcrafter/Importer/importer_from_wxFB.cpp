@@ -167,7 +167,7 @@ wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& 
         classname = XmlUtils::ReadString(node, wxT("class"));
     }
 
-    int Id = Allocator::StringToId(classname);
+    int Id = wxcWidget::StringToId(classname);
     if (Id == wxNOT_FOUND) {
         wxLogWarning(wxString::Format(_("Can't import unknown class %s from wxFB"), classname));
         return NULL;
@@ -185,7 +185,7 @@ wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& 
         Id = ID_WXPANEL_NOTEBOOK_PAGE;
     }
 
-    wrapper = Allocator::Instance()->Create(Id);
+    wrapper = wxcWidget::Create(Id);
     wxCHECK_MSG(wrapper, NULL, wxT("Failed to create a wrapper"));
 
     wrapper->LoadPropertiesFromwxFB(node);

@@ -1,6 +1,5 @@
 #include "RearrangeListWrapper.h"
 
-#include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 
 RearrangeListWrapper::RearrangeListWrapper()

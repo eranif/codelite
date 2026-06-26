@@ -1,7 +1,6 @@
 #include "simple_book_wrapper.h"
 
 #include "Properties/choice_property.h"
-#include "allocator_mgr.h"
 #include "wxgui_defs.h"
 
 SimpleBookWrapper::SimpleBookWrapper()

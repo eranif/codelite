@@ -1,7 +1,5 @@
 #include "data_view_tree_ctrl_wrapper.h"
 
-#include "allocator_mgr.h"
-
 #include <wx/dataview.h>
 
 DataViewTreeCtrlWrapper::DataViewTreeCtrlWrapper()

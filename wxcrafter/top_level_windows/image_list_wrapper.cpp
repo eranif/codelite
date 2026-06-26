@@ -5,7 +5,6 @@
 #include "Properties/int_property.h"
 #include "Properties/string_property.h"
 #include "Properties/virtual_folder_property.h"
-#include "allocator_mgr.h"
 
 ImageListWrapper::ImageListWrapper()
     : TopLevelWinWrapper(ID_WXIMAGELIST)

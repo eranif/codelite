@@ -123,6 +123,7 @@ set(MACRO_SENSITIVE_FILES
 # the headless wxcgen executable.
 set(MACRO_SENSITIVE_GUI_ONLY_FILES
     "src/main.cpp"
+	"src/allocator_mgr.cpp"
     "src/wxcrafter_plugin.cpp"
     "src/wxguicraft_main_view.cpp"
     "UI/NewFormWizard.cpp"

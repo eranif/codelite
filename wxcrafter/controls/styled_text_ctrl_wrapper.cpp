@@ -5,7 +5,6 @@
 #include "Properties/choice_property.h"
 #include "Properties/font_property.h"
 #include "Properties/multi_strings_property.h"
-#include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 
 #include <wx/stc/stc.h>

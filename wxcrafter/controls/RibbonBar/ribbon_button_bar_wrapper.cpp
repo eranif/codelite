@@ -1,7 +1,5 @@
 #include "ribbon_button_bar_wrapper.h"
 
-#include "allocator_mgr.h"
-
 RibbonButtonBarWrapper::RibbonButtonBarWrapper()
     : wxcWidget(ID_WXRIBBONBUTTONBAR)
 {

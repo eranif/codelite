@@ -3,7 +3,6 @@
 #include "Properties/bitmap_picker_property.h"
 #include "Properties/bool_property.h"
 #include "Properties/string_property.h"
-#include "allocator_mgr.h"
 #include "choice_book_wrapper.h"
 #include "clDirChanger.hpp"
 #include "notebook_base_wrapper.h"

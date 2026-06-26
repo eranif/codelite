@@ -3,7 +3,6 @@
 #include "Properties/category_property.h"
 #include "Properties/file_ficker_property.h"
 #include "Properties/string_property.h"
-#include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_defs.h"

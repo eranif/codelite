@@ -5,7 +5,6 @@
 #include "Properties/choice_property.h"
 #include "Properties/multi_strings_property.h"
 #include "Properties/string_property.h"
-#include "allocator_mgr.h"
 #include "wxgui_defs.h"
 #include "xml/xmlutils.h"
 

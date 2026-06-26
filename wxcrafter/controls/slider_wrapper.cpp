@@ -1,7 +1,6 @@
 #include "slider_wrapper.h"
 
 #include "Properties/string_property.h"
-#include "allocator_mgr.h"
 #include "xml/xmlutils.h"
 
 #include <wx/slider.h>

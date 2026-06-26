@@ -1,7 +1,5 @@
 #include "ribbon_gallery_wrapper.h"
 
-#include "allocator_mgr.h"
-
 RibbonGalleryWrapper::RibbonGalleryWrapper()
     : wxcWidget(ID_WXRIBBONGALLERY)
 {

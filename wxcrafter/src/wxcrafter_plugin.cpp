@@ -103,7 +103,6 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     , m_mainFrame(NULL)
     , m_serverMode(serverMode)
 {
-    Allocator::Initialize();
     Allocator::Instance()->SetPlugin(this);
 
 #if !STANDALONE_BUILD

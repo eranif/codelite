@@ -1,6 +1,5 @@
 #include "tree_ctrl_wrapper.h"
 
-#include "allocator_mgr.h"
 #include "wxgui_defs.h"
 
 #include <wx/treectrl.h>

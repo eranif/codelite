@@ -1,6 +1,5 @@
 #include "std_dialog_button_sizer_wrapper.h"
 
-#include "allocator_mgr.h"
 #include "xml/xmlutils.h"
 
 StdDialogButtonSizerWrapper::StdDialogButtonSizerWrapper()
@@ -63,7 +62,7 @@ void StdDialogButtonSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
                 if (attr == buttonname) {
                     value = child->GetNodeContent();
                     if (value == "1") {
-                        wxcWidget* sbwrapper = Allocator::Instance()->Create(ID_WXSTDBUTTON);
+                        wxcWidget* sbwrapper = wxcWidget::Create(ID_WXSTDBUTTON);
                         wxCHECK_RET(sbwrapper, wxT("Failed to create a stdbtnwrapper"));
                         // We've created a button; afaict there're no styles/properties to add to it. Just set its ID
                         sbwrapper->SetId(id);

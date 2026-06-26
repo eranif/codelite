@@ -2,7 +2,6 @@
 
 #include "Properties/category_property.h"
 #include "Properties/choice_property.h"
-#include "allocator_mgr.h"
 #include "ribbon_page_wrapper.h"
 
 #include <wx/ribbon/bar.h>

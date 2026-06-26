@@ -61,7 +61,7 @@ void EventsEditorPane::DoInitialize()
 
     if (m_control) {
         m_controlEventsTable->Construct(this, m_control, m_control->GetControlEvents());
-        m_inheritedEventsTable->Construct(this, m_control, Allocator::GetCommonEvents());
+        m_inheritedEventsTable->Construct(this, m_control, wxcWidget::GetCommonEvents());
     }
 }
 

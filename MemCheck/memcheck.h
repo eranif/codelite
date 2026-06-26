@@ -36,7 +36,7 @@
 #include "AsyncProcess/TerminalEmulator.h"
 #include "clTabTogglerHelper.h"
 #include "imemcheckprocessor.h"
-#include "memcheckui.h"
+#include "memcheckui.hpp"
 #include "plugin.h"
 
 class MemCheckOutputView;

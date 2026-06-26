@@ -18,7 +18,6 @@
 #include "memcheckoutputview.h"
 #include "memchecksettings.h"
 #include "memchecksettingsdialog.h"
-#include "memcheckui.h"
 #include "valgrindprocessor.h"
 #include "workspace.h"
 

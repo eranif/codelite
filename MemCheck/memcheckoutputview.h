@@ -35,7 +35,7 @@
 
 #include "memcheckerror.h"
 #include "memcheck.h"
-#include "memcheckui.h"
+#include "memcheckui.hpp"
 
 #include <wx/valnum.h>
 
@@ -46,6 +46,7 @@ public:
     ~MemCheckOutputView() override;
 
 protected:
+    void OnValueChanged(wxDataViewEvent& event) override;
     void OnClearOutputUpdateUI(wxUpdateUIEvent& event) override;
     void OnClearOutput(wxCommandEvent& event) override;
     void OnStop(wxCommandEvent& event) override;

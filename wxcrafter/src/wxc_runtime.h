@@ -36,12 +36,10 @@ namespace wxc_runtime
  * @param skin const wxString& The skin name used to build the ZIP archive name.
  * @param bitmaps std::map<wxString, wxBitmap>& Output map that receives bitmap entries keyed by
  *        the file base name without extension.
- * @param files std::map<wxString, wxString>& Output map that receives non-PNG file contents keyed
- *        by the full file name.
  *
  * @return void
  */
-void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps, std::map<wxString, wxString>& files);
+void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps);
 } // namespace wxc_runtime
 
 #endif // WXC_RUNTIME_H

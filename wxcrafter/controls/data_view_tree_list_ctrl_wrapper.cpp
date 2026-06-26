@@ -3,8 +3,9 @@
 #include "Properties/bool_property.h"
 #include "Properties/category_property.h"
 #include "Properties/string_property.h"
+#include "controls/tree_list_model_template_cpp.h"
+#include "controls/tree_list_model_template_hpp.h"
 #include "wxc_project_metadata.h"
-#include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
 
 #include <wx/dataview.h>
@@ -163,9 +164,8 @@ void DataViewTreeListCtrlWrapper::GenerateAdditionalFiles(wxStringMap_t& extraFi
         return;
     }
 
-    wxCrafter::ResourceLoader rl;
-    wxString modelCpp = rl.File("my_tree_list_model.cpp");
-    wxString modelHpp = rl.File("my_tree_list_model.hpp");
+    wxString modelCpp = tree_list_model_cpp;
+    wxString modelHpp = tree_list_model_hpp;
 
     wxString blockGuard = modelName;
     blockGuard << "_GUARD__" << wxcProjectMetadata::Get().GetHeaderFileExt();

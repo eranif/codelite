@@ -6,6 +6,6 @@
 namespace wxc_runtime
 {
 
-void LoadImages(const wxString&, std::map<wxString, wxBitmap>&, std::map<wxString, wxString>&) {}
+void LoadImages(const wxString&, std::map<wxString, wxBitmap>&) {}
 
 } // namespace wxc_runtime

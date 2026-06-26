@@ -1,24 +1,16 @@
 #include "wxgui_bitmaploader.h"
 
-#include "Zip/clZipReader.h"
 #include "wxc_project_metadata.h"
 #include "wxc_runtime.h"
 
-#include <unordered_map>
 #include <wx/filename.h>
-#include <wx/stdpaths.h>
-
-#ifdef __WXMSW__
-#include "cl_defs.h"
-#endif
 
 std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_bitmaps;
-std::map<wxString, wxString> wxCrafter::ResourceLoader::m_files;
 
 wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 {
     if (m_bitmaps.empty()) {
-        wxc_runtime::LoadImages(skin, m_bitmaps, m_files);
+        wxc_runtime::LoadImages(skin, m_bitmaps);
     }
 }
 
@@ -58,13 +50,4 @@ wxFileName wxCrafter::ResourceLoader::GetPlaceHolder16ImagePath() const
         }
     }
     return wxFileName();
-}
-
-wxString wxCrafter::ResourceLoader::File(const wxString& name) const
-{
-    std::map<wxString, wxString>::const_iterator iter = m_files.find(name);
-    if (iter == m_files.end()) {
-        return wxT("");
-    }
-    return iter->second;
 }

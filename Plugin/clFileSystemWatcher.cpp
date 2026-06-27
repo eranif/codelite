@@ -60,6 +60,11 @@ void clFileSystemWatcher::HandleLocalFiles()
 {
     std::set<wxString> nonExistingFiles;
     for (auto& [_, f] : m_files) {
+        if (f.IsRemote()) {
+            // Skip remote files.
+            continue;
+        }
+
         const wxFileName fn = f.m_filename;
         const wxString fullpath = fn.GetFullPath();
         if (!fn.Exists()) {
@@ -175,8 +180,10 @@ void clFileSystemWatcher::HandleRemoteFiles()
 void clFileSystemWatcher::OnTimer(wxTimerEvent& event)
 {
     wxUnusedVar(event);
-    HandleLocalFiles();
-    HandleRemoteFiles();
+    if (!m_files.empty()) {
+        HandleLocalFiles();
+        HandleRemoteFiles();
+    }
     m_timer.StartOnce(FILE_CHECK_INTERVAL);
 }
 
@@ -209,8 +216,9 @@ void clFileSystemWatcher::AddFile(clWatchedFile&& file)
         m_files.erase(file.m_filename);
         m_files.insert(std::make_pair(file.m_filename, std::move(file)));
     } else {
-        // Remote file
 #if USE_SFTP
+        clDEBUG() << "Adding remote file:" << file.m_filename << ". Account:" << file.m_remoteAccount << endl;
+        // Remote file, read the file initial attributes and add it.
         clSFTPManager::Get().GetFileAttributes(
             file.m_filename,
             file.m_remoteAccount,
@@ -219,6 +227,7 @@ void clFileSystemWatcher::AddFile(clWatchedFile&& file)
                     clWARNING() << result.error_message() << endl;
                     return;
                 }
+
                 file.m_fileSize = result.value().attr->GetSize();
                 file.m_lastModified = result.value().attr->GetLastModified();
                 m_files.erase(file.m_filename);

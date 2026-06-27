@@ -10,13 +10,6 @@
 constexpr int MAX_REMOTE_FILE_RETRIES = 3;
 
 struct WXDLLIMPEXP_SDK clWatchedFile {
-    wxString m_filename;
-    wxEvtHandler* m_owner{nullptr};
-    time_t m_lastModified{0};
-    size_t m_fileSize{0};
-    wxString m_remoteAccount;
-    int m_consecutiveFailures{0};
-
     clWatchedFile(const wxString& filepath, wxEvtHandler* owner)
         : m_filename{filepath}
         , m_owner{owner}
@@ -48,6 +41,13 @@ struct WXDLLIMPEXP_SDK clWatchedFile {
     }
 
     inline bool IsRemote() const { return !m_remoteAccount.empty(); }
+
+    wxString m_filename;
+    wxEvtHandler* m_owner{nullptr};
+    time_t m_lastModified{0};
+    size_t m_fileSize{0};
+    wxString m_remoteAccount;
+    int m_consecutiveFailures{0};
 };
 
 using WatchedFilesMap = std::map<wxString, clWatchedFile>;
@@ -147,6 +147,22 @@ struct WXDLLIMPEXP_SDK clWatchedFileLocker {
     {
         m_watcher = watcher == nullptr ? &clFileSystemWatcher::Get() : watcher;
         clWatchedFile watchedFile{m_filepath, handler};
+        if (!watchedFile.IsOk()) {
+            m_filepath.clear();
+            m_watcher = nullptr;
+            return;
+        }
+        m_watcher->AddFile(std::move(watchedFile));
+    }
+
+    clWatchedFileLocker(const wxString& remoteFilePath,
+                        const wxString& sshAccount,
+                        wxEvtHandler* handler,
+                        clFileSystemWatcher* watcher = nullptr)
+        : m_filepath{remoteFilePath}
+    {
+        m_watcher = watcher == nullptr ? &clFileSystemWatcher::Get() : watcher;
+        clWatchedFile watchedFile{m_filepath, handler, sshAccount};
         if (!watchedFile.IsOk()) {
             m_filepath.clear();
             m_watcher = nullptr;

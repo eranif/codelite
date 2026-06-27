@@ -3129,7 +3129,10 @@ void clEditor::SetEditorText(const wxString& text)
 void clEditor::CreateRemote(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account)
 {
     SetFileName(local_path);
-    // TODO: implement a remote file system watcher
+
+#if USE_SFTP
+    m_watcher = std::make_unique<clWatchedFileLocker>(remote_path, ssh_account, this);
+#endif
 
     SetProject(wxEmptyString);
     SetSyntaxHighlight(false);

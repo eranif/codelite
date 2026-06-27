@@ -462,7 +462,9 @@ void clSFTPManager::OnFileSaved(clCommandEvent& event)
 }
 
 bool clSFTPManager::AwaitSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName)
-{ return DoSyncSaveFile(localPath, remotePath, accountName, false); }
+{
+    return DoSyncSaveFile(localPath, remotePath, accountName, false);
+}
 
 bool clSFTPManager::AwaitWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName)
 {
@@ -728,7 +730,7 @@ bool clSFTPManager::IsFileExists(const wxString& fullpath, const wxString& accou
     auto func = [conn, fullpath, &promise]() {
         try {
             auto d = conn->Stat(fullpath);
-            promise.set_value(d->IsFile());
+            promise.set_value(d->IsFile() || d->IsSymlink());
         } catch (const clException& e) {
             clDEBUG() << "IsFileExists() error." << e.What();
             promise.set_value(false);
@@ -739,7 +741,9 @@ bool clSFTPManager::IsFileExists(const wxString& fullpath, const wxString& accou
 }
 
 bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
-{ return IsFileExists(fullpath, accountInfo.GetAccountName()); }
+{
+    return IsFileExists(fullpath, accountInfo.GetAccountName());
+}
 
 bool clSFTPManager::IsDirExists(const wxString& fullpath, const wxString& accountName)
 {
@@ -763,7 +767,9 @@ bool clSFTPManager::IsDirExists(const wxString& fullpath, const wxString& accoun
 }
 
 bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
-{ return IsDirExists(fullpath, accountInfo.GetAccountName()); }
+{
+    return IsDirExists(fullpath, accountInfo.GetAccountName());
+}
 
 wxFileName clSFTPManager::Download(const wxString& path, const wxString& accountName, const wxString& localFileName)
 {
@@ -856,7 +862,9 @@ void clSFTPManager::StartWorkerThread()
 }
 
 void clSFTPManager::OnSaveCompleted(clCommandEvent& e)
-{ clGetManager()->SetStatusMessage("SFTP: " + e.GetFileName() + _(" saved"), 3); }
+{
+    clGetManager()->SetStatusMessage("SFTP: " + e.GetFileName() + _(" saved"), 3);
+}
 
 void clSFTPManager::OnSaveError(clCommandEvent& e)
 {
@@ -897,10 +905,14 @@ size_t clSFTPManager::GetAllConnectionsPtr(std::vector<clSFTP::Ptr_t>& connectio
 }
 
 void clSFTPManager::AsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink)
-{ DoAsyncReadFile(remotePath, accountName, sink); }
+{
+    DoAsyncReadFile(remotePath, accountName, sink);
+}
 
 bool clSFTPManager::AwaitReadFile(const wxString& remotePath, const wxString& accountName, wxMemoryBuffer* content)
-{ return DoSyncReadFile(remotePath, accountName, content); }
+{
+    return DoSyncReadFile(remotePath, accountName, content);
+}
 
 #define QUEUE_ERROR_EVENT(msg)                                \
     {                                                         \
@@ -1059,5 +1071,54 @@ void clSFTPManager::AsyncExecute(
         ssh_channel_free(channel);
     };
     m_q.push_back(std::move(exec_func));
+}
+
+wxString clSFTPManager::GetSessionError(SSHSession_t session)
+{
+    if (session == nullptr) {
+        return {};
+    }
+
+    auto err = ssh_get_error(session);
+    if (err == nullptr) {
+        return {};
+    }
+
+    return wxString::Format("%s", err);
+}
+
+void clSFTPManager::GetFileAttributes(const wxString& remotePath,
+                                      const wxString& accountName,
+                                      std::function<void(clStatusOr<Attribute>)> OnAttributes)
+{
+    clDEBUG() << "Getting attributes for file:" << remotePath << "for account:" << accountName << endl;
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    if (!conn) {
+        OnAttributes(StatusInvalidArgument(wxString::Format("Could not find connection for %s", accountName)));
+        return;
+    }
+
+    auto func = [remotePath, conn = std::move(conn), OnAttributes = std::move(OnAttributes)]() {
+        try {
+            auto stats = conn->Stat(remotePath);
+            if (!stats->IsFile() && !stats->IsSymlink()) {
+                // Not found
+                clPostToMain(OnAttributes, StatusNotFound(wxString::Format("No such file. %s", remotePath)));
+                return;
+            }
+
+            auto attr = Attribute{
+                .path = remotePath,
+                .attr = stats,
+            };
+
+            clPostToMain(OnAttributes, std::move(attr));
+        } catch (const clException& e) {
+            auto err = StatusNetworkError(
+                wxString::Format("Failed to get file attributes for file %s. %s", remotePath, e.What()));
+            clPostToMain(OnAttributes, std::move(err));
+        }
+    };
+    m_q.push_back(std::move(func));
 }
 #endif

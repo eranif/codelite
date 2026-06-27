@@ -29,59 +29,6 @@ class SFTPClientData;
 using ReadOutput_t = std::tuple<std::string, std::string, int>;
 class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
 {
-protected:
-    struct saved_file {
-        wxString local_path;
-        wxString remote_path;
-        wxString account_name;
-    };
-
-protected:
-    std::unordered_map<wxString, std::pair<SSHAccountInfo, clSFTP::Ptr_t>> m_connections;
-    wxTimer* m_timer = nullptr;
-    bool m_eventsConnected = true;
-    std::thread* m_worker_thread = nullptr;
-    SyncQueue<std::function<void()>> m_q;
-    std::atomic_bool m_shutdown;
-    wxString m_lastError;
-    std::unordered_map<wxString, saved_file> m_downloadedFileToAccount;
-
-protected:
-    std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
-    clSFTP::Ptr_t GetConnectionPtr(const wxString& account) const;
-    size_t GetAllConnectionsPtr(std::vector<clSFTP::Ptr_t>& connections) const;
-    clSFTP::Ptr_t GetConnectionPtrAddIfMissing(const wxString& account);
-
-protected:
-    void OnGoingDown(clCommandEvent& event);
-    void OnFileSaved(clCommandEvent& event);
-    SFTPClientData* GetSFTPClientData(IEditor* editor);
-    void OnTimer(wxTimerEvent& event);
-    bool DoSyncDownload(const wxString& remotePath, const wxString& localPath, const wxString& accountName);
-    /**
-     * @brief read file from the remote target. Once the file is read, an event is fired
-     */
-    void DoAsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink);
-    bool DoSyncReadFile(const wxString& remotePath, const wxString& accountName, wxMemoryBuffer* content);
-    void StartWorkerThread();
-    void StopWorkerThread();
-    void OnSaveCompleted(clCommandEvent& e);
-    void OnSaveError(clCommandEvent& e);
-    void DoAsyncSaveFile(const wxString& localPath,
-                         const wxString& remotePath,
-                         const wxString& accountName,
-                         bool delete_local,
-                         wxEvtHandler* sink);
-    bool DoSyncSaveFile(const wxString& localPath,
-                        const wxString& remotePath,
-                        const wxString& accountName,
-                        bool delete_local);
-
-    bool DoSyncSaveFileWithConn(clSFTP::Ptr_t conn,
-                                const wxString& localPath,
-                                const wxString& remotePath,
-                                bool delete_local);
-
 public:
     clSFTPManager();
     virtual ~clSFTPManager();
@@ -99,14 +46,14 @@ public:
     bool IsRemoteFile(const wxString& filepath, wxString* account, wxString* remote_path) const;
 
     /**
-     * @brief add new connection to the manager. if a connection for this account already exists and 'replace' is set to
-     * true, replace it
+     * @brief add new connection to the manager. if a connection for this account already exists and
+     * 'replace' is set to true, replace it
      */
     bool AddConnection(const SSHAccountInfo& account, bool replace = false);
 
     /**
-     * @brief add new connection to the manager. if a connection for this account already exists and 'replace' is set to
-     * true, replace it
+     * @brief add new connection to the manager. if a connection for this account already exists and
+     * 'replace' is set to true, replace it
      */
     bool AddConnection(const wxString& account_name, bool replace = false);
 
@@ -119,7 +66,8 @@ public:
     IEditor* OpenFile(const wxString& path, const SSHAccountInfo& accountInfo);
 
     /**
-     * @brief download file, but do not open it in a an editor. Optionally, allow the user set the local file name
+     * @brief download file, but do not open it in a an editor. Optionally, allow the user set the
+     * local file name
      * @return return the *local* file path
      */
     wxFileName
@@ -186,7 +134,8 @@ public:
     bool AwaitWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName);
 
     /**
-     * @brief write file content. this function is sync. This function uses the caller SFTP connection
+     * @brief write file content. this function is sync. This function uses the caller SFTP
+     * connection
      * @param content of the file
      * @param remotePath file path on the remote machine
      * @param accountName the account name to use
@@ -223,6 +172,27 @@ public:
      * @return
      */
     clStatusOr<SFTPAttribute::List_t> List(const wxString& path, const SSHAccountInfo& accountInfo);
+
+    /**
+     * Retrieves attributes for a specified remote file.
+     *
+     * This method queues an asynchronous request to fetch SFTP file attributes.
+     * The actual operation is performed on a background worker thread to avoid
+     * blocking the main application.
+     *
+     * @param remotePath The full path to the file on the remote server.
+     * @param accountName The name of the account to be used for the SFTP connection.
+     * @param OnAttributes A callback function invoked upon completion, receiving a
+     *                     clStatusOr containing either the SFTPAttribute pointer
+     *                     or an error status.
+     */
+    struct Attribute {
+        wxString path;
+        SFTPAttribute::Ptr_t attr;
+    };
+    void GetFileAttributes(const wxString& remotePath,
+                           const wxString& accountName,
+                           std::function<void(clStatusOr<Attribute>)> OnAttributes);
 
     /**
      * @brief create new file with a given path
@@ -299,7 +269,9 @@ public:
                               std::span<const wxString> commands,
                               const wxString& wd,
                               clEnvList_t* env = nullptr)
-    { return AwaitExecute(accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env); }
+    {
+        return AwaitExecute(accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env);
+    }
 
     /**
      * @brief execute a remote command
@@ -319,7 +291,60 @@ public:
                       std::span<const wxString> commands,
                       const wxString& wd,
                       clEnvList_t* env = nullptr)
-    { return AsyncExecute(sink, accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env); }
+    {
+        return AsyncExecute(sink, accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env);
+    }
+
+protected:
+    struct saved_file {
+        wxString local_path;
+        wxString remote_path;
+        wxString account_name;
+    };
+
+    void OnGoingDown(clCommandEvent& event);
+    void OnFileSaved(clCommandEvent& event);
+    SFTPClientData* GetSFTPClientData(IEditor* editor);
+    void OnTimer(wxTimerEvent& event);
+    bool DoSyncDownload(const wxString& remotePath, const wxString& localPath, const wxString& accountName);
+    /**
+     * @brief read file from the remote target. Once the file is read, an event is fired
+     */
+    void DoAsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink);
+    bool DoSyncReadFile(const wxString& remotePath, const wxString& accountName, wxMemoryBuffer* content);
+    void StartWorkerThread();
+    void StopWorkerThread();
+    void OnSaveCompleted(clCommandEvent& e);
+    void OnSaveError(clCommandEvent& e);
+    void DoAsyncSaveFile(const wxString& localPath,
+                         const wxString& remotePath,
+                         const wxString& accountName,
+                         bool delete_local,
+                         wxEvtHandler* sink);
+    bool DoSyncSaveFile(const wxString& localPath,
+                        const wxString& remotePath,
+                        const wxString& accountName,
+                        bool delete_local);
+
+    bool DoSyncSaveFileWithConn(clSFTP::Ptr_t conn,
+                                const wxString& localPath,
+                                const wxString& remotePath,
+                                bool delete_local);
+
+    static wxString GetSessionError(SSHSession_t session);
+
+    std::unordered_map<wxString, std::pair<SSHAccountInfo, clSFTP::Ptr_t>> m_connections;
+    wxTimer* m_timer = nullptr;
+    bool m_eventsConnected = true;
+    std::thread* m_worker_thread = nullptr;
+    SyncQueue<std::function<void()>> m_q;
+    std::atomic_bool m_shutdown;
+    wxString m_lastError;
+    std::unordered_map<wxString, saved_file> m_downloadedFileToAccount;
+    std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
+    clSFTP::Ptr_t GetConnectionPtr(const wxString& account) const;
+    size_t GetAllConnectionsPtr(std::vector<clSFTP::Ptr_t>& connections) const;
+    clSFTP::Ptr_t GetConnectionPtrAddIfMissing(const wxString& account);
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);

@@ -15,7 +15,7 @@ class TailFrame;
 class Tail;
 class TailPanel : public TailPanelBase
 {
-    std::unique_ptr<clLocalFileSystemWatcher> m_fileWatcher;
+    std::unique_ptr<clFileSystemWatcher> m_fileWatcher;
     wxFileName m_file;
     size_t m_lastPos;
     clEditEventsHandler::Ptr_t m_editEvents;

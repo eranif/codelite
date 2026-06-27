@@ -410,7 +410,8 @@ SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path)
         }
         target = ctarget;
     }
-    SFTPAttribute::Ptr_t pattr(new SFTPAttribute(attr));
+
+    auto pattr = std::make_shared<SFTPAttribute>(attr);
     if (attr->type == SSH_FILEXFER_TYPE_SYMLINK) {
         pattr->SetSymlinkPath(target);
     }

@@ -28,6 +28,7 @@
 
 #include <functional>
 #include <future>
+#include <type_traits>
 #include <unordered_map>
 #include <wx/event.h>
 #include <wx/eventfilter.h>
@@ -94,8 +95,8 @@ public:
     void NotifyWorkspaceReloadEndEvent(const wxString& workspaceFile);
 
     /**
-     * @brief Executes the provided callback on the main (GUI) thread and returns its result.
-     *
+     * @brief Executes the provided callback on the main (GUI) thread and blocks until it completes.
+     * For zero-arg callables. Use RunOnMain(cb, args...) to pass arguments.
      */
     template <typename T>
     T RunOnMain(std::function<T()> callback)
@@ -123,6 +124,53 @@ public:
         return f.get();
     }
 
+    /**
+     * @brief Executes callback(args...) on the main thread and blocks until it completes.
+     */
+    template <typename Callback, typename... Args>
+    auto RunOnMain(Callback&& cb, Args&&... args) -> decltype(cb(std::forward<Args>(args)...))
+    {
+        using T = decltype(cb(std::forward<Args>(args)...));
+        auto promise_ptr = std::make_shared<std::promise<T>>();
+        auto f = promise_ptr->get_future();
+        if (wxThread::IsMain()) {
+            if constexpr (std::is_void_v<T>) {
+                cb(std::forward<Args>(args)...);
+                promise_ptr->set_value();
+            } else {
+                promise_ptr->set_value(cb(std::forward<Args>(args)...));
+            }
+        } else {
+            auto wrapped =
+                [promise_ptr, cb = std::forward<Callback>(cb), ... args = std::forward<Args>(args)]() mutable {
+                    if constexpr (std::is_void_v<T>) {
+                        cb(std::move(args)...);
+                        promise_ptr->set_value();
+                    } else {
+                        promise_ptr->set_value(cb(std::move(args)...));
+                    }
+                };
+            CallAfter(std::move(wrapped));
+        }
+        return f.get();
+    }
+
+    /**
+     * @brief Posts callback(args...) to the main thread without blocking.
+     */
+    template <typename Callback, typename... Args>
+    void PostToMain(Callback&& cb, Args&&... args)
+    {
+        if (wxThread::IsMain()) {
+            cb(std::forward<Args>(args)...);
+        } else {
+            auto wrapped = [cb = std::forward<Callback>(cb), ... args = std::forward<Args>(args)]() mutable {
+                cb(std::move(args)...);
+            };
+            CallAfter(std::move(wrapped));
+        }
+    }
+
     EventFilterCallbackToken AddEventTypeFilter(wxEventType type, EventFilterCallback callback);
     void RemoveEventTypeFilter(wxEventType type, EventFilterCallbackToken token);
 
@@ -135,4 +183,34 @@ private:
     std::unordered_map<wxEventType, std::vector<EventFilterCallbackContainer>> m_eventFilterCallbacks;
 };
 
+/**
+ * @brief Executes callback(args...) on the main (GUI) thread and blocks until it completes.
+ * Returns the callback's return value. Safe to call from any thread.
+ *
+ * Example:
+ * @code
+ *   auto result = clRunOnMain(myCallback, arg1, std::move(arg2));
+ * @endcode
+ */
+template <typename Callback, typename... Args>
+auto clRunOnMain(Callback&& cb, Args&&... args) -> decltype(cb(std::forward<Args>(args)...))
+{
+    return EventNotifier::Get()->RunOnMain(std::forward<Callback>(cb), std::forward<Args>(args)...);
+}
+
+/**
+ * @brief Posts callback(args...) to the main (GUI) thread without blocking (fire-and-forget).
+ * If already on the main thread, the callback is invoked immediately.
+ * Safe to call from any thread.
+ *
+ * Example:
+ * @code
+ *   clPostToMain(onComplete, std::move(result));
+ * @endcode
+ */
+template <typename Callback, typename... Args>
+void clPostToMain(Callback&& cb, Args&&... args)
+{
+    EventNotifier::Get()->PostToMain(std::forward<Callback>(cb), std::forward<Args>(args)...);
+}
 #endif // EVENTNOTIFIER_H

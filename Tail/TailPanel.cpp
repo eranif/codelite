@@ -24,7 +24,7 @@ TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     , m_frame(NULL)
 {
     DoBuildToolbar();
-    m_fileWatcher = std::make_unique<clLocalFileSystemWatcher>();
+    m_fileWatcher = std::make_unique<clFileSystemWatcher>();
     Bind(wxEVT_FILE_MODIFIED, &TailPanel::OnFileModified, this);
 
     wxCommandEvent dummy;

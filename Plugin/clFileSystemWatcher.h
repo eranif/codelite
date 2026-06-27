@@ -7,11 +7,12 @@
 #include <wx/filename.h>
 #include <wx/timer.h>
 
-struct WXDLLIMPEXP_CL clWatchedFile {
+struct WXDLLIMPEXP_SDK clWatchedFile {
     wxString m_filename;
     wxEvtHandler* m_owner{nullptr};
     time_t m_lastModified{0};
     size_t m_fileSize{0};
+    wxString m_remoteAccount;
 
     clWatchedFile(const wxString& filepath, wxEvtHandler* owner)
         : m_filename{filepath}
@@ -19,28 +20,36 @@ struct WXDLLIMPEXP_CL clWatchedFile {
     {
     }
 
+    clWatchedFile(const wxString& filepath, wxEvtHandler* owner, const wxString& remoteAccount)
+        : m_filename{filepath}
+        , m_owner{owner}
+        , m_remoteAccount{remoteAccount}
+    {
+    }
+
     ~clWatchedFile() = default;
     clWatchedFile() = delete;
 
     inline bool IsOk() const { return m_owner != nullptr && wxFileExists(m_filename); }
+    inline bool IsRemote() const { return !m_remoteAccount.empty(); }
 };
 
 using WatchedFilesMap = std::map<wxString, clWatchedFile>;
 
-class WXDLLIMPEXP_CL clLocalFileSystemWatcher : public wxEvtHandler
+class WXDLLIMPEXP_SDK clFileSystemWatcher : public wxEvtHandler
 {
 public:
     /**
      * @brief Construct a new file-system watcher (timer-based).
      */
-    clLocalFileSystemWatcher();
+    clFileSystemWatcher();
 
     /**
      * @brief Destructor. Automatically stops the watcher and unbinds the timer event.
      */
-    ~clLocalFileSystemWatcher() override;
+    ~clFileSystemWatcher() override;
 
-    static clLocalFileSystemWatcher& Get();
+    static clFileSystemWatcher& Get();
 
     /**
      * @brief Set a single file to watch. Clears any previously watched files.
@@ -95,19 +104,22 @@ public:
 
 protected:
     void OnTimer(wxTimerEvent& event);
+    void HandleLocalFiles();
+    void HandleRemoteFiles();
 
 private:
     WatchedFilesMap m_files;
+    WatchedFilesMap m_remoteFiles;
     wxTimer m_timer;
 };
 
-struct WXDLLIMPEXP_CL clWatchedFileLocker {
+struct WXDLLIMPEXP_SDK clWatchedFileLocker {
     wxString m_filepath;
-    clLocalFileSystemWatcher* m_watcher{nullptr};
-    clWatchedFileLocker(const wxString& filepath, wxEvtHandler* handler, clLocalFileSystemWatcher* watcher = nullptr)
+    clFileSystemWatcher* m_watcher{nullptr};
+    clWatchedFileLocker(const wxString& filepath, wxEvtHandler* handler, clFileSystemWatcher* watcher = nullptr)
         : m_filepath{filepath}
     {
-        m_watcher = watcher == nullptr ? &clLocalFileSystemWatcher::Get() : watcher;
+        m_watcher = watcher == nullptr ? &clFileSystemWatcher::Get() : watcher;
         clWatchedFile watchedFile{m_filepath, handler};
         if (!watchedFile.IsOk()) {
             m_filepath.clear();
@@ -125,16 +137,16 @@ struct WXDLLIMPEXP_CL clWatchedFileLocker {
     }
 };
 
-struct WXDLLIMPEXP_CL clWatchedFileDisabler {
+struct WXDLLIMPEXP_SDK clWatchedFileDisabler {
     wxString m_filepath;
-    clLocalFileSystemWatcher* m_watcher{nullptr};
+    clFileSystemWatcher* m_watcher{nullptr};
     wxEvtHandler* m_handler{nullptr};
     bool m_add{false};
-    clWatchedFileDisabler(const wxString& filepath, wxEvtHandler* handler, clLocalFileSystemWatcher* watcher = nullptr)
+    clWatchedFileDisabler(const wxString& filepath, wxEvtHandler* handler, clFileSystemWatcher* watcher = nullptr)
         : m_filepath{filepath}
         , m_handler{handler}
     {
-        m_watcher = watcher == nullptr ? &clLocalFileSystemWatcher::Get() : watcher;
+        m_watcher = watcher == nullptr ? &clFileSystemWatcher::Get() : watcher;
         clWatchedFile watchedFile{m_filepath, m_handler};
         if (!watchedFile.IsOk() || !m_watcher->Contains(m_filepath)) {
             return;
@@ -152,5 +164,5 @@ struct WXDLLIMPEXP_CL clWatchedFileDisabler {
     }
 };
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_MODIFIED, clFileSystemEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_NOT_FOUND, clFileSystemEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FILE_MODIFIED, clFileSystemEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FILE_NOT_FOUND, clFileSystemEvent);

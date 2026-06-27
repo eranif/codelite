@@ -43,6 +43,7 @@ class WXDLLIMPEXP_CL SFTPAttribute : public wxClientData
     wxString m_name;
     size_t m_flags;
     size_t m_size;
+    size_t m_lastModified;
     SFTPAttribute_t m_attributes = nullptr;
     size_t m_permissions = 0;
     wxString m_symlinkPath; // incase this file represents a symlink, this member will hold the target path
@@ -80,16 +81,13 @@ public:
     wxString GetTypeAsString() const;
     const wxString& GetName() const { return m_name; }
 
+    size_t GetLastModified() const { return m_lastModified; }
     bool IsFolder() const { return m_flags & TYPE_FOLDER; }
-
     bool IsFile() const { return m_flags & TYPE_REGULAR_FILE; }
-
     bool IsSymlink() const { return m_flags & TYPE_SYMBLINK; }
-
     bool IsSpecial() const { return m_flags & TYPE_SPECIAL; }
     void SetPermissions(size_t permissions) { this->m_permissions = permissions; }
     size_t GetPermissions() const { return m_permissions; }
-
     void SetSymlinkPath(const wxString& symlinkPath) { this->m_symlinkPath = symlinkPath; }
     const wxString& GetSymlinkPath() const { return m_symlinkPath; }
 

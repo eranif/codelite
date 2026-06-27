@@ -65,6 +65,7 @@ void SFTPAttribute::DoConstruct()
     m_name = m_attributes->name;
     m_size = m_attributes->size;
     m_permissions = m_attributes->permissions;
+    m_lastModified = m_attributes->mtime;
     m_flags = 0;
 
     switch (m_attributes->type) {

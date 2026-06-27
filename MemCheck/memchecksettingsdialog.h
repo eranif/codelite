@@ -33,7 +33,7 @@
 #ifndef _MEMCHECKSETTINGSDIALOG_H_
 #define _MEMCHECKSETTINGSDIALOG_H_
 
-#include "memcheckui.h"
+#include "memcheckui.hpp"
 
 class MemCheckSettingsDialog : public MemCheckSettingsDialogBase
 {

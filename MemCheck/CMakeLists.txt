@@ -15,15 +15,26 @@ if(UNIX AND NOT APPLE)
         add_definitions(-Winvalid-pch)
     endif(USE_PCH)
 
+    wxcrafter_target(
+        MemCheck
+    "${CMAKE_CURRENT_SOURCE_DIR}/memcheckui.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "memcheckui.cpp"
+    "memcheckui.hpp"
+    "memcheckdvcerrorsmodel.cpp"
+    "memcheckdvcerrorsmodel.hpp"
+    "memcheckui_bitmaps.cpp")
+
     file(GLOB SRCS "*.cpp")
 
     # Define the output
-    add_library(${PLUGIN_NAME} SHARED ${SRCS})
+    add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_MemCheck_OUTPUTS})
 
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
     # Remove the "lib" prefix from the plugin name
     set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+    target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_MemCheck_OUTPUTDIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} -L"${CL_LIBPATH}" libcodelite plugin)
 
     # Make sure that the plugin will not start build before 'plugin.so' is ready

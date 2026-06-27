@@ -53,6 +53,7 @@ void clFileSystemWatcher::Clear()
 {
     Stop();
     m_files.clear();
+    m_inFlightChecks.clear();
 }
 
 void clFileSystemWatcher::HandleLocalFiles()
@@ -104,19 +105,35 @@ void clFileSystemWatcher::HandleLocalFiles()
 void clFileSystemWatcher::HandleRemoteFiles()
 {
 #if USE_SFTP
-    while (!m_remoteFiles.empty()) {
+    // Collect all remote files, remove them from the general file list and trigger an async
+    // "GetFileAttributes" on each of them. The file is re-added once the "GetFileAttributes"
+    // callback returns. This ensures that on slow network, a file is always checked once and
+    // we do not queue more requests until the active request is done.
+    WatchedFilesMap m;
+    for (const auto& f : m_files) {
         // since operations are SLOW on remote, we remove the files from the
         // monitored files map, this will make sure that we won't check the same
         // file twice.
-        auto it = m_remoteFiles.begin();
-        auto file = it->second;
-        m_remoteFiles.erase(it);
+        if (f.second.IsRemote()) {
+            m.insert(f);
+        }
+    }
 
+    // Remove the remote files from the general files list
+    for (auto [name, file] : m) {
+        m_files.erase(name);
+        m_inFlightChecks.insert(std::make_pair(name, file));
         clSFTPManager::Get().GetFileAttributes(
             file.m_filename,
             file.m_remoteAccount,
             [file = std::move(file), this](clStatusOr<clSFTPManager::Attribute> result) mutable {
+                if (!m_inFlightChecks.contains(file.m_filename)) {
+                    // File was removed between the time we called GetFileAttributes and until we got the response.
+                    return;
+                }
+
                 // Main thread here
+                m_inFlightChecks.erase(file.m_filename);
                 if (!result.ok()) {
                     if (StatusIsNotFound(result.status())) {
                         clFileSystemEvent evt{wxEVT_FILE_NOT_FOUND};
@@ -124,6 +141,10 @@ void clFileSystemWatcher::HandleRemoteFiles()
                         file.m_owner->AddPendingEvent(evt);
                     } else {
                         clWARNING() << result.error_message() << endl;
+                        file.m_consecutiveFailures++;
+                        if (file.m_consecutiveFailures < MAX_REMOTE_FILE_RETRIES) {
+                            m_files.insert(std::make_pair(file.m_filename, std::move(file)));
+                        }
                     }
                     return;
                 }
@@ -142,9 +163,10 @@ void clFileSystemWatcher::HandleRemoteFiles()
 
                 file.m_fileSize = file_size;
                 file.m_lastModified = curr_modified_time;
+                file.m_consecutiveFailures = 0;
                 // Re-add the file
-                m_remoteFiles.erase(file.m_filename);
-                m_remoteFiles.insert(std::make_pair(file.m_filename, std::move(file)));
+                m_files.erase(file.m_filename);
+                m_files.insert(std::make_pair(file.m_filename, std::move(file)));
             });
     }
 #endif
@@ -163,6 +185,10 @@ void clFileSystemWatcher::RemoveFile(const wxString& filename)
     if (m_files.contains(filename)) {
         clDEBUG() << "Removing file:" << filename << "from watched list" << endl;
         m_files.erase(filename);
+    }
+    if (m_inFlightChecks.contains(filename)) {
+        clDEBUG() << "Removing file:" << filename << "from in-flight watched list" << endl;
+        m_inFlightChecks.erase(filename);
     }
 }
 

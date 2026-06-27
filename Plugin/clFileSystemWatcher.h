@@ -7,12 +7,15 @@
 #include <wx/filename.h>
 #include <wx/timer.h>
 
+constexpr int MAX_REMOTE_FILE_RETRIES = 3;
+
 struct WXDLLIMPEXP_SDK clWatchedFile {
     wxString m_filename;
     wxEvtHandler* m_owner{nullptr};
     time_t m_lastModified{0};
     size_t m_fileSize{0};
     wxString m_remoteAccount;
+    int m_consecutiveFailures{0};
 
     clWatchedFile(const wxString& filepath, wxEvtHandler* owner)
         : m_filename{filepath}
@@ -30,7 +33,20 @@ struct WXDLLIMPEXP_SDK clWatchedFile {
     ~clWatchedFile() = default;
     clWatchedFile() = delete;
 
-    inline bool IsOk() const { return m_owner != nullptr && wxFileExists(m_filename); }
+    bool IsOk() const
+    {
+        if (m_owner == nullptr) {
+            // Must provide an owner
+            return false;
+        }
+
+        if (m_remoteAccount.empty() && !wxFileExists(m_filename)) {
+            // Local file does not exist.
+            return false;
+        }
+        return true;
+    }
+
     inline bool IsRemote() const { return !m_remoteAccount.empty(); }
 };
 
@@ -73,12 +89,22 @@ public:
         return AddFile(std::move(w));
     }
 
+    void AddFile(const wxString& filepath, const wxString& accountName, wxEvtHandler* handler)
+    {
+        clWatchedFile w{filepath, handler};
+        w.m_remoteAccount = accountName;
+        return AddFile(std::move(w));
+    }
+
     /**
      * @brief remove file from the watch list
      */
     void RemoveFile(const wxString& filename);
 
-    inline bool Contains(const wxString& filepath) const { return m_files.contains(filepath); }
+    inline bool Contains(const wxString& filepath) const
+    {
+        return m_files.contains(filepath) || m_inFlightChecks.contains(filepath);
+    }
 
     /**
      * @brief start to watching list of files.
@@ -109,7 +135,7 @@ protected:
 
 private:
     WatchedFilesMap m_files;
-    WatchedFilesMap m_remoteFiles;
+    WatchedFilesMap m_inFlightChecks; // When SFTP is not used, this is always empty
     wxTimer m_timer;
 };
 

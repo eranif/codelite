@@ -121,7 +121,7 @@ void UIHangDetector::WatchdogLoop()
     // 3. Main Watchdog loop: just sends the heartbeat
     while (m_running.load()) {
         // Send heartbeat to main thread
-        EventNotifier::Get()->RunOnMain<int>([this]() {
+        EventNotifier::Get()->RunOnMain([this]() {
             m_lastHeartbeat.store(GetCurrentTimeMs());
             return 0;
         });

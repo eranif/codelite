@@ -28,7 +28,7 @@
 
 #include "bitmap_loader.h"
 #include "project.h"
-#include "reconcileprojectbase.h"
+#include "reconcileprojectbase.hpp"
 #include <deque>
 #include <vector>
 

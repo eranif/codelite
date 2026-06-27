@@ -26,7 +26,7 @@
 #ifndef IMPORTFILESDIALOGNEW_H
 #define IMPORTFILESDIALOGNEW_H
 
-#include "importfilesdialog_new.h"
+#include "importfilesdialog_new.hpp"
 #include <wx/dir.h>
 #include <map>
 #include "macros.h"

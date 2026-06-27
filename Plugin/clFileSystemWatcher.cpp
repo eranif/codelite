@@ -128,7 +128,7 @@ void clFileSystemWatcher::HandleRemoteFiles()
     for (auto [name, file] : m) {
         m_files.erase(name);
         m_inFlightChecks.insert(std::make_pair(name, file));
-        clSFTPManager::Get().GetFileAttributes(
+        clSFTPManager::Get().StatFile(
             file.m_filename,
             file.m_remoteAccount,
             [file = std::move(file), this](clStatusOr<clSFTPManager::Attribute> result) mutable {
@@ -219,7 +219,7 @@ void clFileSystemWatcher::AddFile(clWatchedFile&& file)
 #if USE_SFTP
         clDEBUG() << "Adding remote file:" << file.m_filename << ". Account:" << file.m_remoteAccount << endl;
         // Remote file, read the file initial attributes and add it.
-        clSFTPManager::Get().GetFileAttributes(
+        clSFTPManager::Get().StatFile(
             file.m_filename,
             file.m_remoteAccount,
             [file = std::move(file), this](clStatusOr<clSFTPManager::Attribute> result) mutable {

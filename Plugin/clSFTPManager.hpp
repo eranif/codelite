@@ -190,9 +190,9 @@ public:
         wxString path;
         SFTPAttribute::Ptr_t attr;
     };
-    void GetFileAttributes(const wxString& remotePath,
-                           const wxString& accountName,
-                           std::function<void(clStatusOr<Attribute>)> OnAttributes);
+    void StatFile(const wxString& remotePath,
+                  const wxString& accountName,
+                  std::function<void(clStatusOr<Attribute>)> OnAttributes);
 
     /**
      * @brief create new file with a given path

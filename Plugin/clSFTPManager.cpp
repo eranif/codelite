@@ -1087,9 +1087,9 @@ wxString clSFTPManager::GetSessionError(SSHSession_t session)
     return wxString::Format("%s", err);
 }
 
-void clSFTPManager::GetFileAttributes(const wxString& remotePath,
-                                      const wxString& accountName,
-                                      std::function<void(clStatusOr<Attribute>)> OnAttributes)
+void clSFTPManager::StatFile(const wxString& remotePath,
+                             const wxString& accountName,
+                             std::function<void(clStatusOr<Attribute>)> OnAttributes)
 {
     clDEBUG() << "Getting attributes for file:" << remotePath << "for account:" << accountName << endl;
     auto conn = GetConnectionPtrAddIfMissing(accountName);

@@ -12,14 +12,12 @@ class ResourceLoader
 {
 protected:
     static std::map<wxString, wxBitmap> m_bitmaps;
-    static std::map<wxString, wxString> m_files;
 
 public:
     ResourceLoader(const wxString& skin = wxT("wxgui"));
     virtual ~ResourceLoader() = default;
 
     const wxBitmap& Bitmap(const wxString& name) const;
-    wxString File(const wxString& name) const;
     /**
      * @brief return the path to a temporary image place holder
      */

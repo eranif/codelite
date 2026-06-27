@@ -5,15 +5,11 @@
 #include "event_notifier.h"
 #include "main.h"
 #include "wxc_runtime.h"
-#include "wxgui_bitmaploader.h"
-
-#include <wx/frame.h>
-#include <wx/imaglist.h>
 
 namespace wxc_runtime
 {
 
-void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps, std::map<wxString, wxString>& files)
+void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps)
 {
     wxString zipFile;
 #ifdef __WXMSW__
@@ -47,9 +43,6 @@ void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps, std
                 if (bmp.IsOk()) {
                     bitmaps[name] = bmp;
                 }
-            } else {
-                wxString fileContent((const char*)d.buffer, d.len);
-                files.insert({fn.GetFullName(), fileContent});
             }
             // release the memory
             free(d.buffer);

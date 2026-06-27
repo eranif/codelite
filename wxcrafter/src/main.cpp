@@ -287,6 +287,14 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
         return GUICraftMainPanel::m_MainPanel->GetActiveWizardPage() == page;
     };
 
+    wxcWidget::placeHolderImageFullPathGetter = []() {
+        wxCrafter::ResourceLoader rl;
+        return rl.GetPlaceHolderImagePath().GetFullPath();
+    };
+    wxcWidget::placeHolder16ImageFullPathGetter = []() {
+        wxCrafter::ResourceLoader rl;
+        return rl.GetPlaceHolder16ImagePath().GetFullPath();
+    };
     m_mainToolbar->Realize();
 
     m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnNewProject, this, wxID_NEW);

@@ -41,8 +41,9 @@ ButtonWrapper::ButtonWrapper()
     Add<StringProperty>(
         PROP_MARGINS, "2,2", _("Sets x/y margins between the bitmap and the button label (wx2.9.X and later)"));
 
-    // wxCrafter::ResourceLoader bl;
-    // m_properties.Item(PROP_BITMAP_PATH)->SetValue( bl.GetPlaceHolder16ImagePath().GetFullPath() );
+    // if (wxcWidget::placeHolder16ImageFullPathGetter) {
+    //     m_properties.Item(PROP_BITMAP_PATH)->SetValue(wxcWidget::placeHolder16ImageFullPathGetter());
+    // }
 
     SetName(GenerateName());
 }

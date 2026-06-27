@@ -2,7 +2,6 @@
 
 #include "Properties/bitmap_picker_property.h"
 #include "wxc_bitmap_code_generator.h"
-#include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 
@@ -12,8 +11,9 @@ RibbonGalleryItemWrapper::RibbonGalleryItemWrapper()
     SetPropertyString(_("Common Settings"), "wxRibbonGalleryItem");
     Add<BitmapPickerProperty>(PROP_BITMAP_PATH, "", _("Select the bitmap file"));
 
-    wxCrafter::ResourceLoader bl;
-    m_properties.Item(PROP_BITMAP_PATH)->SetValue(bl.GetPlaceHolderImagePath().GetFullPath());
+    if (wxcWidget::placeHolderImageFullPathGetter) {
+        m_properties.Item(PROP_BITMAP_PATH)->SetValue(wxcWidget::placeHolderImageFullPathGetter());
+    }
 
     m_namePattern = "galleryItem";
     SetName(GenerateName());

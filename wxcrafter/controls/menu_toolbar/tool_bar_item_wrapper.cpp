@@ -11,7 +11,6 @@
 #include "Properties/string_property.h"
 #include "Properties/winid_property.h"
 #include "wxc_bitmap_code_generator.h"
-#include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
 #include "xml/xmlutils.h"
 
@@ -31,7 +30,6 @@ ToolBarItemWrapper::ToolBarItemWrapper(int type)
     m_sizerFlags.Clear();
     m_properties.Clear();
 
-    wxCrafter::ResourceLoader bmps;
     Add<CategoryProperty>(_("Common Settings"), "wxToolBarItem");
     Add<WinIdProperty>();
     Add<StringProperty>(PROP_NAME, "", _("C++ variable name"));
@@ -41,7 +39,10 @@ ToolBarItemWrapper::ToolBarItemWrapper(int type)
     Add<MultiStringsProperty>(
         PROP_TOOLTIP, _("Tooltip"), wxT("\\n"), _("Short help string. This will appear as the tool's tooltip"));
     Add<StringProperty>(PROP_HELP, "", _("Long help string. This will be displayed in the statusbar"));
-    Add<BitmapPickerProperty>(PROP_BITMAP_PATH, bmps.GetPlaceHolder16ImagePath().GetFullPath(), _("Bitmap"));
+    Add<BitmapPickerProperty>(
+        PROP_BITMAP_PATH,
+        wxcWidget::placeHolder16ImageFullPathGetter ? wxcWidget::placeHolder16ImageFullPathGetter() : "",
+        _("Bitmap"));
     Add<FilePickerProperty>(PROP_DISABLED_BITMAP_PATH, "", _("Disabled bitmap"));
     Add<ChoiceProperty>(PROP_KIND, wxCrafter::GetToolTypes(true), 0, _("The tool kind"));
     Add<BoolProperty>(PROP_DROPDOWN_MENU, true, _("Use wxCrafter to construct the menu called by the dropdown"));
@@ -505,7 +506,6 @@ AuiToolBarLabelWrapper::AuiToolBarLabelWrapper(int type)
     m_sizerFlags.Clear();
     m_properties.Clear();
 
-    wxCrafter::ResourceLoader bmps;
     Add<CategoryProperty>(_("wxAuiToolBar Label"));
     Add<WinIdProperty>();
     Add<StringProperty>(PROP_NAME, "", _("C++ variable name"));

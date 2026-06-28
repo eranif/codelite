@@ -657,7 +657,7 @@ void clBuiltinTerminalPane::OnInitDone(wxCommandEvent& e)
             wxMutexLocker locker(m_themes_mutex);
             m_themes.swap(themes);
         }
-        EventNotifier::Get()->RunOnMain<void>([this]() { ThemesUpdated(); });
+        EventNotifier::Get()->RunOnMain([this]() { ThemesUpdated(); });
     }).detach();
 }
 

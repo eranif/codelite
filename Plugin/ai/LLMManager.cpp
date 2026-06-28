@@ -206,7 +206,7 @@ void CompletionHandler::RunSuccessCallback()
     if (!m_successCallback) {
         return;
     }
-    EventNotifier::Get()->RunOnMain<void>(m_successCallback);
+    EventNotifier::Get()->RunOnMain(m_successCallback);
 }
 
 void CompletionHandler::RunErrorCallback()
@@ -214,7 +214,7 @@ void CompletionHandler::RunErrorCallback()
     if (!m_errorCallback) {
         return;
     }
-    EventNotifier::Get()->RunOnMain<void>(m_errorCallback);
+    EventNotifier::Get()->RunOnMain(m_errorCallback);
 }
 
 // ==---------------------
@@ -1519,7 +1519,7 @@ CanInvokeToolResult Manager::PromptUserYesNoTrustQuestion(const wxString& text, 
         };
     } else if (response_text_lowercase == "trust" || response_text_lowercase == "t") {
         if (on_trust_cb) {
-            EventNotifier::Get()->RunOnMain<void>(std::move(on_trust_cb));
+            EventNotifier::Get()->RunOnMain(std::move(on_trust_cb));
         }
         return CanInvokeToolResult{
             .can_invoke = true,
@@ -1567,7 +1567,7 @@ Manager::PromptFuture Manager::PromptUser(const wxString& msg, IconType icon)
         chat_win->PushPromise(response_promise);
         return std::make_shared<std::future<std::string>>(std::move(fut));
     };
-    return EventNotifier::Get()->RunOnMain<Manager::PromptFuture>(std::move(cb));
+    return EventNotifier::Get()->RunOnMain(std::move(cb));
 }
 
 void Manager::PrintMessage(const wxString& msg, IconType icon)
@@ -1590,7 +1590,7 @@ void Manager::PrintMessage(const wxString& msg, IconType icon)
         }
         chat_win->AppendText(message_to_add);
     };
-    EventNotifier::Get()->RunOnMain<void>(std::move(cb));
+    EventNotifier::Get()->RunOnMain(std::move(cb));
 }
 
 std::shared_ptr<std::atomic_bool> Manager::NewTerminationFlag()

@@ -170,11 +170,11 @@ FunctionResult FileSystemWrite(const assistant::json& args)
     };
 
     if (action == "create_dir") {
-        return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(fs_new_dir));
+        return EventNotifier::Get()->RunOnMain(std::move(fs_new_dir));
     } else if (action == "create_file") {
-        return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(fs_create_file));
+        return EventNotifier::Get()->RunOnMain(std::move(fs_create_file));
     } else if (action == "append_file") {
-        return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(fs_append_file));
+        return EventNotifier::Get()->RunOnMain(std::move(fs_append_file));
     } else {
         return Err("Invalid value for 'action'. Expected one of: create_file, create_dir, append_file");
     }
@@ -266,7 +266,7 @@ FunctionResult ReadFileContent(const assistant::json& args)
         llm.PrintMessage(logmsg, IconType::kSuccess);
         return Ok(partial_content);
     };
-    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+    return EventNotifier::Get()->RunOnMain(std::move(cb));
 }
 
 /// Will be invoked by the library before calling to the "ReadFileMetadata"
@@ -318,7 +318,7 @@ FunctionResult ReadFileMetadata(const assistant::json& args)
         llm.PrintMessage(logmsg, IconType::kSuccess);
         return Ok(wxString::FromUTF8(md.dump()));
     };
-    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+    return EventNotifier::Get()->RunOnMain(std::move(cb));
 }
 
 FunctionResult OpenFileInEditor(const assistant::json& args)
@@ -350,14 +350,14 @@ FunctionResult OpenFileInEditor(const assistant::json& args)
         msg << "File '" << file << "' has been successfully loaded into an editor.";
         return Ok(msg);
     };
-    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+    return EventNotifier::Get()->RunOnMain(std::move(cb));
 }
 
 FunctionResult GetCompilerOutput([[maybe_unused]] const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
     auto cb = [=]() -> FunctionResult { return Ok(clGetManager()->GetBuildOutput()); };
-    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+    return EventNotifier::Get()->RunOnMain(std::move(cb));
 }
 
 FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args)
@@ -406,7 +406,7 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
         }
         return Ok(partial_content);
     };
-    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+    return EventNotifier::Get()->RunOnMain(std::move(cb));
 }
 
 FunctionResult GetCurrentEditorPath([[maybe_unused]] const assistant::json& args)
@@ -419,7 +419,7 @@ FunctionResult GetCurrentEditorPath([[maybe_unused]] const assistant::json& args
         }
         return Ok(active_editor->GetRemotePathOrLocal());
     };
-    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+    return EventNotifier::Get()->RunOnMain(std::move(cb));
 }
 
 FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
@@ -489,7 +489,7 @@ FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
             return Ok(wxEmptyString);
         }
     };
-    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+    return EventNotifier::Get()->RunOnMain(std::move(cb));
 }
 
 FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
@@ -738,7 +738,7 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
     wxString patch = wxString::FromUTF8(patch_content);
 
     // ApplyPatchLoose must be called from the main thread only (it manipulates GUI).
-    return EventNotifier::Get()->RunOnMain<FunctionResult>([file_path, patch]() -> FunctionResult {
+    return EventNotifier::Get()->RunOnMain([file_path, patch]() -> FunctionResult {
         wxString file = wxString::FromUTF8(file_path);
         auto result = PatchApplier::ApplyPatchLoose(file, patch, true);
         if (!result.success) {
@@ -954,7 +954,7 @@ FunctionResult GetOS([[maybe_unused]] const assistant::json& args)
         return workspace && workspace->IsRemote();
     };
 
-    auto is_remote = EventNotifier::Get()->RunOnMain<bool>(std::move(is_remote_workspace_cb));
+    auto is_remote = EventNotifier::Get()->RunOnMain(std::move(is_remote_workspace_cb));
     if (is_remote) {
         // Remote workspaces are always accessed over SSH, which means the target host runs Linux.
         return Ok("Linux");
@@ -985,7 +985,7 @@ FunctionResult GetWorkingDirectory([[maybe_unused]] const assistant::json& args)
         return workspace->GetDir();
     };
 
-    auto workspace_path = EventNotifier::Get()->RunOnMain<std::optional<wxString>>(std::move(workspace_path_cb));
+    auto workspace_path = EventNotifier::Get()->RunOnMain(std::move(workspace_path_cb));
     return Ok(workspace_path.value_or(wxGetCwd()));
 }
 

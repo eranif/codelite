@@ -33,7 +33,8 @@ void wxcCodeGeneratorHelper::Clear()
 
 bool wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefresh,
                                        std::function<void()> bitmapGenerationStart,
-                                       std::function<void()> bitmapGenerationEnd)
+                                       std::function<void()> bitmapGenerationEnd,
+                                       std::function<void(const wxFileName&)> onFileSaved)
 {
     wxLogNull noLog;
 
@@ -125,7 +126,9 @@ bool wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefr
                 cppFile,                                        // Output file (our CPP file)
                 wxcProjectMetadata::Get().GetBitmapFunction()); // The function name to generate
 
-        wxCrafter::NotifyFileSaved(cppFile);
+        if (onFileSaved) {
+            onFileSaved(cppFile);
+        }
         wxCommandEvent eventEnd(wxEVT_BITMAP_CODE_GENERATION_DONE);
         eventEnd.SetString(cppFile);
         EventNotifier::Get()->AddPendingEvent(eventEnd);

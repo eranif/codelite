@@ -80,6 +80,10 @@ void FormatString(wxString& content, const wxFileName& filename)
         content = event.GetFormattedString();
     }
 }
+void NotifyFileSaved(const wxFileName& fn)
+{
+    EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath());
+}
 #endif
 
 void SetStatusMessage(const wxString& msg)
@@ -974,7 +978,9 @@ void wxCrafterPlugin::DoUpdateDerivedClassEventHandlers()
 #endif
         // Write the resulting string
         DoWriteFileContent(m_generatedClassInfo.derivedHeader, headerContent, headerEditor);
-        wxCrafter::NotifyFileSaved(m_generatedClassInfo.derivedHeader);
+#if !STANDALONE_BUILD
+        NotifyFileSaved(m_generatedClassInfo.derivedHeader);
+#endif
     }
 
     // Insert the functions definitions at the end of the file buffer
@@ -991,7 +997,9 @@ void wxCrafterPlugin::DoUpdateDerivedClassEventHandlers()
 #endif
 
     DoWriteFileContent(m_generatedClassInfo.derivedSource, sourceContent, sourceEditor);
-    wxCrafter::NotifyFileSaved(m_generatedClassInfo.derivedSource);
+#if !STANDALONE_BUILD
+    NotifyFileSaved(m_generatedClassInfo.derivedSource);
+#endif
 }
 
 bool wxCrafterPlugin::DoReadFileContentAndPrompt(const wxFileName& fn, wxString& content, IEditor** editor)

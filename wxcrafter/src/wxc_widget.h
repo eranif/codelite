@@ -290,6 +290,12 @@ public:
 
     static SizerFlagsValueSet_t s_sizerFlagsValue;
 
+    /**
+     * @brief return the path to a temporary image place holder
+     */
+    static std::function<wxString()> placeHolderImageFullPathGetter;
+    static std::function<wxString()> placeHolder16ImageFullPathGetter;
+
 protected:
     wxcWidget* m_parent;
     List_t m_children;

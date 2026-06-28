@@ -122,7 +122,6 @@
 #include "wizard_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_settings.h"
-#include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xml/xmlutils.h"
@@ -134,6 +133,13 @@ size_t wxcWidget::s_objCounter = 0;
 wxcWidget::SizerFlagsValueSet_t wxcWidget::s_sizerFlagsValue;
 CustomControlTemplateMap_t wxcWidget::ms_customControlsUsed;
 int wxcWidget::m_copyCounter = 0;
+
+/**
+ * @brief return the path to a temporary image place holder
+ */
+std::function<wxString()> wxcWidget::placeHolderImageFullPathGetter;
+std::function<wxString()> wxcWidget::placeHolder16ImageFullPathGetter;
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

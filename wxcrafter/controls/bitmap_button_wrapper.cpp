@@ -5,7 +5,6 @@
 #include "Properties/bitmap_picker_property.h"
 #include "Properties/bool_property.h"
 #include "wxc_bitmap_code_generator.h"
-#include "wxgui_bitmaploader.h"
 #include "xml/xmlutils.h"
 
 #include <wx/anybutton.h>
@@ -28,8 +27,9 @@ BitmapButtonWrapper::BitmapButtonWrapper()
     Add<BitmapPickerProperty>(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file"));
     Add<BoolProperty>(PROP_DEFAULT_BUTTON, false, _("Make this button the default button"));
 
-    wxCrafter::ResourceLoader bl;
-    m_properties.Item(PROP_BITMAP_PATH)->SetValue(bl.GetPlaceHolder16ImagePath().GetFullPath());
+    if (wxcWidget::placeHolder16ImageFullPathGetter) {
+        m_properties.Item(PROP_BITMAP_PATH)->SetValue(wxcWidget::placeHolder16ImageFullPathGetter());
+    }
 
     SetName(GenerateName());
 }

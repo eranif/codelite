@@ -4,7 +4,6 @@
 #include "Properties/choice_property.h"
 #include "Properties/string_property.h"
 #include "wxc_bitmap_code_generator.h"
-#include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
 
 RibbonButtonBase::RibbonButtonBase(int type)
@@ -32,12 +31,15 @@ RibbonButtonBase::RibbonButtonBase(int type)
     Add<StringProperty>(PROP_HELP, "Help String", _("Help string"));
     Add<ChoiceProperty>(PROP_KIND, kind, selection, _("The button type"));
 
-    wxCrafter::ResourceLoader bl;
     if (m_isButtonBar) {
-        m_properties.Item(PROP_BITMAP_PATH)->SetValue(bl.GetPlaceHolderImagePath().GetFullPath());
+        if (wxcWidget::placeHolderImageFullPathGetter) {
+            m_properties.Item(PROP_BITMAP_PATH)->SetValue(wxcWidget::placeHolderImageFullPathGetter());
+        }
 
     } else {
-        m_properties.Item(PROP_BITMAP_PATH)->SetValue(bl.GetPlaceHolder16ImagePath().GetFullPath());
+        if (wxcWidget::placeHolder16ImageFullPathGetter) {
+            m_properties.Item(PROP_BITMAP_PATH)->SetValue(wxcWidget::placeHolder16ImageFullPathGetter());
+        }
     }
 
     if (m_isButtonBar) {

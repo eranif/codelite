@@ -764,7 +764,6 @@ void wxCrafterPlugin::OnNewForm(wxCommandEvent& e)
 
 void wxCrafterPlugin::DoGenerateCode(const NewFormDetails& fd)
 {
-    wxCrafter::ResourceLoader rl;
     wxString errMsg;
 
     wxFileName wxcpFile = wxFileName(fd.wxcpFile);

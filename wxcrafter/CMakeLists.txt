@@ -103,10 +103,6 @@ file(
 #   COMMON_SRCS          — define-agnostic AND headless-safe. Compiled into
 #                          wxCrafterCommon (linked by all three targets).
 
-# wxc_runtime_gui.cpp / wxc_runtime_headless.cpp are picked per target — they
-# don't belong in any common library.
-list(FILTER ALL_SRCS EXCLUDE REGEX ".*/src/wxc_runtime_(gui|headless)\\.cpp$")
-
 # The 11 .cpp files that #if on STANDALONE_BUILD (verified by `grep -l "STANDALONE_BUILD" **/*.cpp`).
 set(MACRO_SENSITIVE_FILES
     "src/main.cpp"
@@ -179,6 +175,7 @@ set(COMMON_GUI_ONLY_FILES
     "src/wxc_aui_tool_stickiness.cpp"
     "src/wxc_edit_manager.cpp"
     "src/wxcLicenseGPL2.cpp"
+    "src/wxgui_bitmaploader.cpp"
     "Importer/importer_from_wxFB.cpp"
     "Importer/importer_from_xrc.cpp")
 
@@ -264,25 +261,21 @@ endif()
 # Each target compiles the macro-sensitive sources itself (with the right
 # defines) and links the common static libs above.
 
-# wxCrafter as a CodeLite plugin (shared library) — uses GUI runtime shim
-add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_SRCS}
-                                   "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_gui.cpp")
+# wxCrafter as a CodeLite plugin (shared library)
+add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_SRCS})
 target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommonGui wxCrafterCommon)
 
-# wxCrafter as a standalone GUI application — uses GUI runtime shim
-add_executable(wxcrafter ${MACRO_SENSITIVE_SRCS}
-                         "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_gui.cpp"
-                         ${RES_FILES})
+# wxCrafter as a standalone GUI application
+add_executable(wxcrafter ${MACRO_SENSITIVE_SRCS} ${RES_FILES})
 target_compile_definitions(
   wxcrafter PRIVATE STANDALONE_BUILD=1
                     INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui wxCrafterCommon)
 
-# Headless CLI code-generator (no DISPLAY required) — uses headless runtime
-# shim and a subset of the macro-sensitive sources (the GUI-only ones are excluded).
+# Headless CLI code-generator (no DISPLAY required) — uses
+# a subset of the macro-sensitive sources (the GUI-only ones are excluded).
 add_executable(wxcgen ${MACRO_SENSITIVE_HEADLESS_SRCS}
                       "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp"
-                      "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_headless.cpp"
                       ${WXCGEN_RES_FILES})
 target_compile_definitions(
   wxcgen PRIVATE STANDALONE_BUILD=1

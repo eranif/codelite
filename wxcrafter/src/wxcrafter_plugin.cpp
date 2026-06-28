@@ -69,6 +69,19 @@
 
 namespace
 {
+#if !STANDALONE_BUILD
+void FormatString(wxString& content, const wxFileName& filename)
+{
+    clSourceFormatEvent event{wxEVT_FORMAT_STRING};
+    event.SetFileName(filename.GetFullPath());
+    event.SetInputString(content);
+    EventNotifier::Get()->ProcessEvent(event);
+    if (!event.GetFormattedString().IsEmpty()) {
+        content = event.GetFormattedString();
+    }
+}
+#endif
+
 void SetStatusMessage(const wxString& msg)
 {
     wxFrame* topFrame = EventNotifier::Get()->TopFrame();
@@ -953,11 +966,12 @@ void wxCrafterPlugin::DoUpdateDerivedClassEventHandlers()
 
     // Insert the functions declarations
     if (TagsManagerST::Get()->InsertFunctionDecl(m_generatedClassInfo.classname, decl, headerContent, 1)) {
+#if !STANDALONE_BUILD
         if (wxcSettings::Get().HasFlag(wxcSettings::FORMAT_INHERITED_FILES)) {
             // Format the string
-            wxCrafter::FormatString(headerContent, m_generatedClassInfo.derivedHeader);
+            FormatString(headerContent, m_generatedClassInfo.derivedHeader);
         }
-
+#endif
         // Write the resulting string
         DoWriteFileContent(m_generatedClassInfo.derivedHeader, headerContent, headerEditor);
         wxCrafter::NotifyFileSaved(m_generatedClassInfo.derivedHeader);
@@ -969,10 +983,12 @@ void wxCrafterPlugin::DoUpdateDerivedClassEventHandlers()
     }
     sourceContent << impl;
 
+#if !STANDALONE_BUILD
     // Format the source file
     if (wxcSettings::Get().HasFlag(wxcSettings::FORMAT_INHERITED_FILES)) {
-        wxCrafter::FormatString(headerContent, m_generatedClassInfo.derivedSource);
+        FormatString(headerContent, m_generatedClassInfo.derivedSource);
     }
+#endif
 
     DoWriteFileContent(m_generatedClassInfo.derivedSource, sourceContent, sourceEditor);
     wxCrafter::NotifyFileSaved(m_generatedClassInfo.derivedSource);

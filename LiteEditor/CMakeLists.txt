@@ -160,6 +160,16 @@ wxcrafter_target(
     "filechecklistbase_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
+    LiteEditorImportFileDialog
+    "${CMAKE_CURRENT_SOURCE_DIR}/importfilesdialog.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "importfilesdialog_new.cpp"
+    "importfilesdialog_new.hpp"
+    "foldermodel.cpp"
+    "foldermodel.hpp"
+    "importfilesdialog_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
     LiteEditorMoveFuncImplBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/movefuncimplbasedlg.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -222,6 +232,18 @@ wxcrafter_target(
     "project_settings_base_dlg.cpp"
     "project_settings_base_dlg.hpp"
     "project_settings_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorReconcileProject
+    "${CMAKE_CURRENT_SOURCE_DIR}/reconcileproject.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "reconcileprojectbase.cpp"
+    "reconcileprojectbase.hpp"
+    "assignedfilesmodel.cpp"
+    "assignedfilesmodel.hpp"
+    "stalefilesmodel.cpp"
+    "stalefilesmodel.hpp"
+    "reconcileproject_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
     LiteEditorSyntaxHighlightBaseDlg
@@ -289,6 +311,7 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorDebuggerSettings_OUTPUTS}
     ${WXCRAFTER_LiteEditorDependDlgPage_OUTPUTS}
     ${WXCRAFTER_LiteEditorFileCheckListBase_OUTPUTS}
+    ${WXCRAFTER_LiteEditorImportFileDialog_OUTPUTS}
     ${WXCRAFTER_LiteEditorMoveFuncImplBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorNewVirtualFolder_OUTPUTS}
     ${WXCRAFTER_LiteEditorNewWorkspaceDlg_OUTPUTS}
@@ -297,6 +320,7 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorOptionsDialogBase2_OUTPUTS}
     ${WXCRAFTER_LiteEditorPluginDlgBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorProjectSettings_OUTPUTS}
+    ${WXCRAFTER_LiteEditorReconcileProject_OUTPUTS}
     ${WXCRAFTER_LiteEditorSyntaxHighlightBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorTabGroupBaseDlgs_OUTPUTS}
     ${WXCRAFTER_LiteEditorThreadListPanelBase_OUTPUTS}

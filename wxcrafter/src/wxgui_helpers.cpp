@@ -1315,19 +1315,6 @@ void wxCrafter::GetProjectFiles(const wxString& projectName, wxStringSet_t& file
     }
 }
 
-void wxCrafter::FormatString(wxString& content, const wxFileName& filename)
-{
-#if !STANDALONE_BUILD
-    clSourceFormatEvent event{wxEVT_FORMAT_STRING};
-    event.SetFileName(filename.GetFullPath());
-    event.SetInputString(content);
-    EventNotifier::Get()->ProcessEvent(event);
-    if (!event.GetFormattedString().IsEmpty()) {
-        content = event.GetFormattedString();
-    }
-#endif
-}
-
 void wxCrafter::FormatFile(const wxFileName& filename)
 {
 #if !STANDALONE_BUILD

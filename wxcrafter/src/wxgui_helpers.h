@@ -218,11 +218,6 @@ void WrapInIfBlock(const wxString& condname, wxString& codeblock);
 void GetProjectFiles(const wxString& projectName, wxStringSet_t& files);
 
 /**
- * @brief format source code string
- */
-void FormatString(wxString& content, const wxFileName& filename);
-
-/**
  * @brief format
  * @param content
  * @param filename

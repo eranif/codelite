@@ -1,10 +1,10 @@
 {
  "metadata": {
-  "m_generatedFilesDir": "../ExternalTools/",
+  "m_generatedFilesDir": ".",
   "m_objCounter": 35,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC403FInitBitmapResources",
-  "m_bitmapsFile": "external_tools_formbuilder_bitmaps.cpp",
+  "m_bitmapsFile": "external_tools_bitmaps.cpp",
   "m_GenerateCodeTypes": 2679309,
   "m_outputFileName": "external_tools",
   "m_firstWindowId": 1000,

@@ -25,7 +25,7 @@
 
 #ifndef EXTERNALTOOLSMANAGER_H
 #define EXTERNALTOOLSMANAGER_H
-#include "external_tools.h"
+#include "external_tools.hpp"
 
 class ExternalToolsManager : public ExternalToolsManagerBase
 {

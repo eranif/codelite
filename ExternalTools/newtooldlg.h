@@ -26,7 +26,7 @@
 #ifndef __newtooldlg__
 #define __newtooldlg__
 
-#include "NewToolBase.h"
+#include "NewToolBase.hpp"
 #include "externaltooldlg.h"
 #include "imanager.h"
 

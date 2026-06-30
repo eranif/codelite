@@ -6,6 +6,8 @@
 #include <doctest.h>
 #include <wx/init.h>
 #include <wx/string.h>
+#include <wx/utils.h>
+#include <wx/filefn.h>
 
 #ifdef __WXMSW__
 #define SYMBOLS_DB_PATH "%TEMP%"
@@ -846,11 +848,17 @@ int main(int argc, char** argv)
     }
 #else
     {
-        wxFileName symbolsDBPath(SYMBOLS_DB_PATH, "phpsymbols.db");
+        // Use a unique database file name per process to avoid conflicts during parallel testing
+        wxString dbname;
+        dbname << "phpsymbols_" << ::wxGetProcessId() << ".db";
+        wxFileName symbolsDBPath(SYMBOLS_DB_PATH, dbname);
         symbolsDBPath.Normalize();
-        lookup.Open(symbolsDBPath.GetPath());
+        lookup.Open(symbolsDBPath);
         lookup.ClearAll();
         errorCount = doctest::Context(argc, argv).run(); // Run all tests
+        lookup.Close();
+        // Clean up the temporary database file
+        ::wxRemoveFile(symbolsDBPath.GetFullPath());
     }
 #endif
     wxUninitialize();

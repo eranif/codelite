@@ -23,11 +23,6 @@
 #include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
 
-#if !STANDALONE_BUILD
-#include "codelite_events.h"
-#include "event_notifier.h"
-#endif
-
 namespace
 {
 // Map a wxSystemFont id onto a stand-in wxFontFamily so we can build a wxFont
@@ -1273,15 +1268,6 @@ wxShowEffect wxCrafter::ShowEffectFromString(const wxString& effect)
     return wxSHOW_EFFECT_NONE;
 }
 
-void wxCrafter::NotifyFileSaved(const wxFileName& fn)
-{
-#if !STANDALONE_BUILD
-    EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath());
-#else
-    wxUnusedVar(fn);
-#endif
-}
-
 void wxCrafter::WrapInIfBlock(const wxString& condname, wxString& codeblock)
 {
     if (condname.IsEmpty())
@@ -1313,15 +1299,6 @@ void wxCrafter::GetProjectFiles(const wxString& projectName, wxStringSet_t& file
     for (const auto& p : filesMap) {
         files.insert(p.first);
     }
-}
-
-void wxCrafter::FormatFile(const wxFileName& filename)
-{
-#if !STANDALONE_BUILD
-    clSourceFormatEvent event(wxEVT_FORMAT_FILE);
-    event.SetFileName(filename.GetFullPath());
-    EventNotifier::Get()->ProcessEvent(event);
-#endif
 }
 
 static wxWindow* sTopFrame = NULL;
@@ -1390,7 +1367,8 @@ void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
                                      const wxString& baseHeader,
                                      const wxArrayString& headersIn,
                                      const wxStringMap_t& additionalFiles,
-                                     const wxString& autoGenComment)
+                                     const wxString& autoGenComment,
+                                     std::function<void(const wxFileName&)> onFileSaved)
 {
     if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !baseCpp.IsEmpty()) {
         wxFileName projectFile(wxcProjectMetadata::Get().GetProjectFile());
@@ -1461,8 +1439,9 @@ void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
 
         if (wxCrafter::IsTheSame(headerOut, headerFile) == false) {
             wxCrafter::WriteFile(headerFile, headerOut, true);
-            wxCrafter::FormatFile(headerFile);
-            wxCrafter::NotifyFileSaved(headerFile);
+            if (onFileSaved) {
+                onFileSaved(headerFile);
+            }
         }
 
         wxString cppPrefix;
@@ -1477,8 +1456,9 @@ void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
         cppOut.Prepend(cppPrefix);
         if (wxCrafter::IsTheSame(cppOut, sourceFile) == false) {
             wxCrafter::WriteFile(sourceFile, cppOut, true);
-            wxCrafter::FormatFile(sourceFile);
-            wxCrafter::NotifyFileSaved(sourceFile);
+            if (onFileSaved) {
+                onFileSaved(sourceFile);
+            }
         }
     }
 
@@ -1489,8 +1469,9 @@ void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
             wxCrafter::MakeAbsToProject(af);
             if (wxCrafter::IsTheSame(p.second, af) == false) {
                 wxCrafter::WriteFile(af, p.second, true);
-                wxCrafter::FormatFile(af);
-                wxCrafter::NotifyFileSaved(af);
+                if (onFileSaved) {
+                    onFileSaved(af);
+                }
             }
         }
     }

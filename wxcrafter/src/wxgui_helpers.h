@@ -200,12 +200,6 @@ wxString MakeWxSizeStr(const wxString& size);
 wxShowEffect ShowEffectFromString(const wxString& effect);
 
 /**
- * @brief notify CodeLite about file save
- * @param fn the file that was saved/generated
- */
-void NotifyFileSaved(const wxFileName& fn);
-
-/**
  * @brief wrap block of code with #if <...> #endif
  * @param condname
  * @param codeblock
@@ -216,13 +210,6 @@ void WrapInIfBlock(const wxString& condname, wxString& codeblock);
  * @brief return the workspace files as set
  */
 void GetProjectFiles(const wxString& projectName, wxStringSet_t& files);
-
-/**
- * @brief format
- * @param content
- * @param filename
- */
-void FormatFile(const wxFileName& filename);
 
 /**
  * @brief return the top frame
@@ -266,12 +253,14 @@ wxString FormatBmpTextOptions(const BmpTextList& vec);
  * @param headers       #include lines to inject into the header
  * @param additionalFiles  Extra per-class files (keyed by filename)
  * @param autoGenComment  Auto-generated file banner to prepend
+ * @param onFileSaved Callback called each time a file is written
  */
 void WriteGeneratedOutput(const wxString& baseCpp,
                           const wxString& baseHeader,
                           const wxArrayString& headers,
                           const wxStringMap_t& additionalFiles,
-                          const wxString& autoGenComment);
+                          const wxString& autoGenComment,
+                          std::function<void(const wxFileName&)> onFileSaved);
 } // namespace wxCrafter
 
 #endif // _WXGUI_HELPERS_H_

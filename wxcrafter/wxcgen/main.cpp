@@ -108,7 +108,7 @@ GenerateFromProject(const wxString& filename, const wxString& fileContent, const
                    << "// Do not modify this file by hand!\n"
                    << "//////////////////////////////////////////////////////////////////////\n\n";
 
-    wxCrafter::WriteGeneratedOutput(baseCpp, baseHeader, headers, additionalFiles, autoGenComment);
+    wxCrafter::WriteGeneratedOutput(baseCpp, baseHeader, headers, additionalFiles, autoGenComment, nullptr);
 
     // Write XRC output
     if (wxcProjectMetadata::Get().GetGenerateXRC()) {
@@ -138,7 +138,7 @@ GenerateFromProject(const wxString& filename, const wxString& fileContent, const
         }
     }
 
-    wxcCodeGeneratorHelper::Get().CreateXRC(nullptr, nullptr, nullptr);
+    wxcCodeGeneratorHelper::Get().CreateXRC(nullptr, nullptr, nullptr, nullptr);
     return true;
 }
 

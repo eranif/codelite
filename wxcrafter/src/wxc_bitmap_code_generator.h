@@ -47,7 +47,8 @@ public:
     void AddWindowId(const wxString& winid);
     bool CreateXRC(std::function<void()> requestDesignerRefresh,
                    std::function<void()> bitmapGenerationStart,
-                   std::function<void()> bitmapGenerationEnd);
+                   std::function<void()> bitmapGenerationEnd,
+                   std::function<void(const wxFileName&)> onFileSaved);
     wxString GenerateInitCode(TopLevelWinWrapper* tw) const;
     wxString GenerateExternCode() const;
     wxString GenerateWinIdEnum() const;

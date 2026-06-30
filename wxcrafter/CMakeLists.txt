@@ -86,7 +86,7 @@ file(
 #   ----------------- ----------------
 #   wxCrafterPlugin   undefined
 #   wxcrafter (exe)   1
-#   wxcgen (exe)      1
+#   wxcgen (exe)      unused
 #
 # Most TUs don't reference the macro; their object files are bit-identical
 # across all flavors and can be compiled once, into a shared static library.
@@ -94,7 +94,7 @@ file(
 # flavor.
 #
 # Bucket the files into:
-#   MACRO_SENSITIVE_SRCS — TUs whose object code depends on the define above.
+#   MACRO_SENSITIVE_GUI_ONLY_SRCS — TUs whose object code depends on the define above.
 #                          Compiled per target with the right define.
 #   GUI_ONLY_SRCS        — TUs that pull GUI-only symbols (MainFrame, etc.).
 #                          NOT linked into wxcgen.
@@ -103,47 +103,22 @@ file(
 #   COMMON_SRCS          — define-agnostic AND headless-safe. Compiled into
 #                          wxCrafterCommon (linked by all three targets).
 
-# The 11 .cpp files that #if on STANDALONE_BUILD (verified by `grep -l "STANDALONE_BUILD" **/*.cpp`).
-set(MACRO_SENSITIVE_FILES
+# The 7 .cpp files that #if on STANDALONE_BUILD (verified by `grep -l "STANDALONE_BUILD" **/*.cpp`).
+# these are GUI-only (define MainFrame, GUICraftMainPanel, plugin glue, GUI dialogs)
+# and must NOT be linked into the headless wxcgen executable.
+set(MACRO_SENSITIVE_GUI_ONLY_FILES
     "src/main.cpp"
     "src/allocator_mgr.cpp"
     "src/wxcrafter_plugin.cpp"
     "src/wxguicraft_main_view.cpp"
-    "src/wxgui_helpers.cpp"
     "UI/NewFormWizard.cpp"
     "UI/wxcSettingsDlg.cpp"
     "Importer/import_dlg.cpp")
-
-# Of the macro-sensitive files, these are GUI-only (define MainFrame,
-# GUICraftMainPanel, plugin glue, GUI dialogs) and must NOT be linked into
-# the headless wxcgen executable.
-set(MACRO_SENSITIVE_GUI_ONLY_FILES
-    "src/main.cpp"
-	"src/allocator_mgr.cpp"
-    "src/wxcrafter_plugin.cpp"
-    "src/wxguicraft_main_view.cpp"
-    "UI/NewFormWizard.cpp"
-    "UI/wxcSettingsDlg.cpp"
-    "Importer/import_dlg.cpp")
-
-# The macro-sensitive files that wxcgen does compile.
-set(MACRO_SENSITIVE_HEADLESS_FILES ${MACRO_SENSITIVE_FILES})
-foreach(f ${MACRO_SENSITIVE_GUI_ONLY_FILES})
-  list(REMOVE_ITEM MACRO_SENSITIVE_HEADLESS_FILES "${f}")
-endforeach()
 
 # Build absolute-path source lists.
-set(MACRO_SENSITIVE_SRCS)
-foreach(f ${MACRO_SENSITIVE_FILES})
-  list(APPEND MACRO_SENSITIVE_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
-endforeach()
 set(MACRO_SENSITIVE_GUI_ONLY_SRCS)
 foreach(f ${MACRO_SENSITIVE_GUI_ONLY_FILES})
   list(APPEND MACRO_SENSITIVE_GUI_ONLY_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
-endforeach()
-set(MACRO_SENSITIVE_HEADLESS_SRCS)
-foreach(f ${MACRO_SENSITIVE_HEADLESS_FILES})
-  list(APPEND MACRO_SENSITIVE_HEADLESS_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
 endforeach()
 
 # Define-agnostic files split into headless-safe (COMMON_SRCS) and GUI-only
@@ -182,7 +157,7 @@ set(COMMON_GUI_ONLY_FILES
 # Start with everything except the macro-sensitive files (they're handled
 # separately per target).
 set(COMMON_SRCS ${ALL_SRCS})
-list(REMOVE_ITEM COMMON_SRCS ${MACRO_SENSITIVE_SRCS})
+list(REMOVE_ITEM COMMON_SRCS ${MACRO_SENSITIVE_GUI_ONLY_SRCS})
 
 # COMMON_GUI_SRCS: take from COMMON_SRCS the explicitly-listed src/ GUI files
 # plus the wholesale GUI-only directories (UI/, UI/PropertiesView/, Preview/,
@@ -202,13 +177,11 @@ endforeach()
 
 list(LENGTH COMMON_SRCS _n_common)
 list(LENGTH COMMON_GUI_SRCS _n_common_gui)
-list(LENGTH MACRO_SENSITIVE_SRCS _n_sens)
-list(LENGTH MACRO_SENSITIVE_HEADLESS_SRCS _n_sens_headless)
+list(LENGTH MACRO_SENSITIVE_GUI_ONLY_SRCS _n_sens)
 message(STATUS "wxCrafter source bucketing:")
 message(STATUS "  wxCrafterCommon    (compiled once, all targets):    ${_n_common} files")
 message(STATUS "  wxCrafterCommonGui (compiled once, GUI targets):    ${_n_common_gui} files")
 message(STATUS "  macro-sensitive    (compiled per-target, all):      ${_n_sens} files")
-message(STATUS "  macro-sensitive    (compiled per-target, headless): ${_n_sens_headless} files")
 
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
@@ -262,24 +235,21 @@ endif()
 # defines) and links the common static libs above.
 
 # wxCrafter as a CodeLite plugin (shared library)
-add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_SRCS})
+add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_GUI_ONLY_SRCS})
 target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommonGui wxCrafterCommon)
 
 # wxCrafter as a standalone GUI application
-add_executable(wxcrafter ${MACRO_SENSITIVE_SRCS} ${RES_FILES})
+add_executable(wxcrafter ${MACRO_SENSITIVE_GUI_ONLY_SRCS} ${RES_FILES})
 target_compile_definitions(
   wxcrafter PRIVATE STANDALONE_BUILD=1
                     INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui wxCrafterCommon)
 
-# Headless CLI code-generator (no DISPLAY required) — uses
-# a subset of the macro-sensitive sources (the GUI-only ones are excluded).
-add_executable(wxcgen ${MACRO_SENSITIVE_HEADLESS_SRCS}
-                      "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp"
+# Headless CLI code-generator (no DISPLAY required).
+add_executable(wxcgen "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp"
                       ${WXCGEN_RES_FILES})
 target_compile_definitions(
-  wxcgen PRIVATE STANDALONE_BUILD=1
-                 INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+  wxcgen PRIVATE INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 target_link_libraries(wxcgen PRIVATE wxCrafterCommon)
 
 if(WXC_APP)

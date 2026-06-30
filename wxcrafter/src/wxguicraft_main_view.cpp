@@ -144,6 +144,16 @@ const wxEventType wxEVT_WXC_PROJECT_LOADED = wxNewEventType();
 const wxEventType wxEVT_WXC_SELECT_TREE_TLW = wxNewEventType();
 const wxEventType wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED = wxNewEventType();
 
+namespace
+{
+#if !STANDALONE_BUILD
+void NotifyFileSaved(const wxFileName& fn)
+{
+    EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath());
+}
+#endif
+}
+
 GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clTreeCtrl* treeView)
     : GUICraftMainPanelBase(parent)
     , m_clipboardItem(NULL)
@@ -3127,7 +3137,15 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
     GenerateCppOutput(baseCpp, baseHeader, headers, additionalFiles);
 
     wxcProjectMetadata::Get().SetAdditionalFiles(additionalFiles);
-    wxCrafter::WriteGeneratedOutput(baseCpp, baseHeader, headers, additionalFiles, autoGenComment);
+    wxCrafter::WriteGeneratedOutput(
+        baseCpp, baseHeader, headers, additionalFiles, autoGenComment, [](const wxFileName& filename) {
+#if !STANDALONE_BUILD
+            clSourceFormatEvent event(wxEVT_FORMAT_FILE);
+            event.SetFileName(filename.GetFullPath());
+            EventNotifier::Get()->ProcessEvent(event);
+            NotifyFileSaved(filename);
+#endif
+        });
 
     // Export the XRC output if required
     if (wxcProjectMetadata::Get().GetGenerateXRC()) {
@@ -3148,7 +3166,9 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
                 wxFileName fnXrcFilePath(xrcFilePath);
                 wxCrafter::MakeAbsToProject(fnXrcFilePath);
                 wxCrafter::WriteFile(fnXrcFilePath.GetFullPath(), out.GetString(), true);
-                wxCrafter::NotifyFileSaved(fnXrcFilePath);
+#if !STANDALONE_BUILD
+                NotifyFileSaved(fnXrcFilePath);
+#endif
             }
         }
     }
@@ -3175,8 +3195,16 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
         }
     };
 
-    wxcCodeGeneratorHelper::Get()
-            .CreateXRC(requestDesignerRefresh, bitmapGenerationStart, bitmapGenerationEnd);
+    wxcCodeGeneratorHelper::Get().CreateXRC(requestDesignerRefresh,
+                                            bitmapGenerationStart,
+                                            bitmapGenerationEnd,
+#if STANDALONE_BUILD
+                                            nullptr
+#else
+                                            &NotifyFileSaved
+#endif
+    );
+
 
 }
 

@@ -152,6 +152,7 @@ set(COMMON_GUI_ONLY_FILES
     "src/wxcLicenseGPL2.cpp"
     "src/wxgui_bitmaploader.cpp"
     "Importer/importer_from_wxFB.cpp"
+    "Importer/importer_from_wxSmith.cpp"
     "Importer/importer_from_xrc.cpp")
 
 # Start with everything except the macro-sensitive files (they're handled
@@ -214,7 +215,7 @@ set_target_properties(wxCrafterCommon PROPERTIES POSITION_INDEPENDENT_CODE ON)
 # include directories (JSON.h, plugin.h, wxsqlite3, etc.). Static libs don't
 # actually link against other libs at archive time, but CMake will propagate
 # include dirs and compile features.
-target_link_libraries(wxCrafterCommon PUBLIC libcodelite plugin wxsqlite3)
+target_link_libraries(wxCrafterCommon PUBLIC libcodelite plugin)
 if(USE_PCH)
   target_precompile_headers(wxCrafterCommon REUSE_FROM PCH)
 endif()
@@ -223,7 +224,7 @@ endif()
 # linked into wxcrafter and wxCrafterPlugin only — NOT into wxcgen.
 add_library(wxCrafterCommonGui STATIC ${COMMON_GUI_SRCS})
 set_target_properties(wxCrafterCommonGui PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(wxCrafterCommonGui PUBLIC libcodelite plugin wxsqlite3)
+target_link_libraries(wxCrafterCommonGui PUBLIC libcodelite plugin)
 if(USE_PCH)
   target_precompile_headers(wxCrafterCommonGui REUSE_FROM PCH)
 endif()
@@ -271,17 +272,15 @@ endif()
 set_target_properties(wxCrafterPlugin PROPERTIES OUTPUT_NAME "wxCrafter" PREFIX "")
 
 if(NOT OFFICIAL_CL_BUILD)
-  target_link_libraries(wxCrafterPlugin PRIVATE ${LINKER_OPTIONS} wxsqlite3
+  target_link_libraries(wxCrafterPlugin PRIVATE ${LINKER_OPTIONS}
                         ${SQLite3_LIBRARIES} libcodelite plugin)
 else(OFFICIAL_CL_BUILD)
   target_link_libraries(wxCrafterPlugin PRIVATE ${LINKER_OPTIONS})
 endif(NOT OFFICIAL_CL_BUILD)
 
-target_link_libraries(wxcrafter PRIVATE ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin
-                      $<IF:$<BOOL:${MINGW}>,-mwindows,-lutil>)
+target_link_libraries(wxcrafter PRIVATE ${LINKER_OPTIONS} $<IF:$<BOOL:${MINGW}>,-mwindows,-lutil>)
 
-target_link_libraries(wxcgen PRIVATE ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin
-                      $<IF:$<BOOL:${MINGW}>,-mconsole,-lutil>)
+target_link_libraries(wxcgen PRIVATE ${LINKER_OPTIONS} $<IF:$<BOOL:${MINGW}>,-mconsole,-lutil>)
 
 if(UNIX AND NOT APPLE)
   set_target_properties(wxcrafter PROPERTIES SKIP_BUILD_RPATH FALSE

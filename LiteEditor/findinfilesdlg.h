@@ -25,7 +25,7 @@
 #ifndef FIND_IN_FILES_DLG_H
 #define FIND_IN_FILES_DLG_H
 
-#include "findinfiles_dlg.h"
+#include "findinfiles_dlg.hpp"
 #include "macros.h"
 #include "search_thread.h"
 #include "sessionmanager.h"

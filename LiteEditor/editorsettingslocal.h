@@ -26,7 +26,7 @@
 #ifndef __editorsettingslocal__
 #define __editorsettingslocal__
 
-#include "editorsettingslocalbase.h"
+#include "editorsettingslocalbase.hpp"
 #include "globals.h"
 #include "localworkspace.h"
 #include "optionsconfig.h"

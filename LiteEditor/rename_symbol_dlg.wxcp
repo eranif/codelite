@@ -1,12 +1,12 @@
 {
  "metadata": {
-  "m_generatedFilesDir": "../LiteEditor/",
+  "m_generatedFilesDir": ".",
   "m_objCounter": 55,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCF5E0InitBitmapResources",
-  "m_bitmapsFile": "rename_symbool_dlg_formbuilder_bitmaps.cpp",
+  "m_bitmapsFile": "rename_symbol_dlg_liteeditor_bitmaps.cpp",
   "m_GenerateCodeTypes": 1997052121,
-  "m_outputFileName": "rename_symbool_dlg",
+  "m_outputFileName": "rename_symbol_dlg",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
   "m_templateClasses": []

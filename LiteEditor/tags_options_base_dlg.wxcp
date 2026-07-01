@@ -1,10 +1,10 @@
 {
 	"metadata":	{
-		"m_generatedFilesDir":	"../LiteEditor/",
+		"m_generatedFilesDir":	".",
 		"m_objCounter":	134,
 		"m_includeFiles":	["tags_options_data.h"],
 		"m_bitmapFunction":	"wxC6B32InitBitmapResources",
-		"m_bitmapsFile":	"tags_options_base_dlg_formbuilder_bitmaps.cpp",
+		"m_bitmapsFile":	"tags_options_base_dlg_liteeditor_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1968609497,
 		"m_outputFileName":	"tags_options_base_dlg",
 		"m_firstWindowId":	1000,

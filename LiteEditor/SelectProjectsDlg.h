@@ -25,7 +25,7 @@
 
 #ifndef SELECTPROJECTSDLG_H
 #define SELECTPROJECTSDLG_H
-#include "rename_symbool_dlg.h"
+#include "rename_symbol_dlg.hpp"
 
 class SelectProjectsDlg : public SelectProjectsDlgBase
 {

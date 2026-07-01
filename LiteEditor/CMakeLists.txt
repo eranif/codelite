@@ -152,12 +152,28 @@ wxcrafter_target(
     "depend_dlg_page_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
+    LiteEditorEditorSettingsLocal
+    "${CMAKE_CURRENT_SOURCE_DIR}/editorsettingslocalbase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "editorsettingslocalbase.cpp"
+    "editorsettingslocalbase.hpp"
+    "editorsettingslocalbase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
     LiteEditorFileCheckListBase
     "${CMAKE_CURRENT_SOURCE_DIR}/filechecklistbase.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
     "filechecklistbase.cpp"
     "filechecklistbase.hpp"
     "filechecklistbase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorFindInFilesDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/findinfiles_dlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "findinfiles_dlg.cpp"
+    "findinfiles_dlg.hpp"
+    "findinfiles_dlg_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
     LiteEditorImportFileDialog
@@ -176,6 +192,14 @@ wxcrafter_target(
     "movefuncimplbasedlg.cpp"
     "movefuncimplbasedlg.hpp"
     "movefuncimplbasedlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorNewItemBaseDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/new_item_dlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "new_item_base_dlg.cpp"
+    "new_item_base_dlg.hpp"
+    "new_item_dlg_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
     LiteEditorNewVirtualFolder
@@ -234,6 +258,14 @@ wxcrafter_target(
     "project_settings_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
+    LiteEditorQuickDebug
+    "${CMAKE_CURRENT_SOURCE_DIR}/quickdebug.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "quickdebugbase.cpp"
+    "quickdebugbase.hpp"
+    "quickdebug_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
     LiteEditorReconcileProject
     "${CMAKE_CURRENT_SOURCE_DIR}/reconcileproject.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -244,6 +276,22 @@ wxcrafter_target(
     "stalefilesmodel.cpp"
     "stalefilesmodel.hpp"
     "reconcileproject_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorRenameSymbolDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/rename_symbol_dlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "rename_symbol_dlg.cpp"
+    "rename_symbol_dlg.hpp"
+    "rename_symbol_dlg_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorSettersGetters
+    "${CMAKE_CURRENT_SOURCE_DIR}/setters_getters.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "setters_getters.cpp"
+    "setters_getters.hpp"
+    "setters_getters_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
     LiteEditorSyntaxHighlightBaseDlg
@@ -260,6 +308,14 @@ wxcrafter_target(
     "tabgroupbasedlgs.cpp"
     "tabgroupbasedlgs.hpp"
     "tabgroupbasedlgs_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    LiteEditorTagsOptionsBaseDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/tags_options_base_dlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "tags_options_base_dlg.cpp"
+    "tags_options_base_dlg.hpp"
+    "tags_options_base_dlg_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
     LiteEditorThreadListPanelBase
@@ -310,19 +366,26 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorDebuggerAsciiViewerBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorDebuggerSettings_OUTPUTS}
     ${WXCRAFTER_LiteEditorDependDlgPage_OUTPUTS}
+    ${WXCRAFTER_LiteEditorEditorSettingsLocal_OUTPUTS}
     ${WXCRAFTER_LiteEditorFileCheckListBase_OUTPUTS}
+    ${WXCRAFTER_LiteEditorFindInFilesDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorImportFileDialog_OUTPUTS}
     ${WXCRAFTER_LiteEditorMoveFuncImplBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorNewItemBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorNewVirtualFolder_OUTPUTS}
     ${WXCRAFTER_LiteEditorNewWorkspaceDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorNewQuickWatch_OUTPUTS}
     ${WXCRAFTER_LiteEditorOpenWindowsPanelBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorOptionsDialogBase2_OUTPUTS}
     ${WXCRAFTER_LiteEditorPluginDlgBase_OUTPUTS}
+    ${WXCRAFTER_LiteEditorQuickDebug_OUTPUTS}
     ${WXCRAFTER_LiteEditorProjectSettings_OUTPUTS}
     ${WXCRAFTER_LiteEditorReconcileProject_OUTPUTS}
+    ${WXCRAFTER_LiteEditorRenameSymbolDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorSettersGetters_OUTPUTS}
     ${WXCRAFTER_LiteEditorSyntaxHighlightBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorTabGroupBaseDlgs_OUTPUTS}
+    ${WXCRAFTER_LiteEditorTagsOptionsBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorThreadListPanelBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorWorkspaceSettingsBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorWxCrafter_OUTPUTS}

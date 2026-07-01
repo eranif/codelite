@@ -1,6 +1,6 @@
 #ifndef FINDINFILESLOCATIONSDLG_H
 #define FINDINFILESLOCATIONSDLG_H
-#include "findinfiles_dlg.h"
+#include "findinfiles_dlg.hpp"
 
 class FindInFilesLocationsDlg : public FindInFilesLocationsDlgBase
 {

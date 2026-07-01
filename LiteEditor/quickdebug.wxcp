@@ -1,10 +1,10 @@
 {
 	"metadata":	{
-		"m_generatedFilesDir":	"../LiteEditor/",
+		"m_generatedFilesDir":	".",
 		"m_objCounter":	96,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafterSFKMcrInitBitmapResources",
-		"m_bitmapsFile":	"quickdebug_formbuilder_bitmaps.cpp",
+		"m_bitmapsFile":	"quickdebug_liteeditor_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
 		"m_outputFileName":	"quickdebugbase",
 		"m_firstWindowId":	1000,

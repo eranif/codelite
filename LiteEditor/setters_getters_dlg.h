@@ -27,7 +27,7 @@
 
 #include "ctags_manager.h"
 #include "manager.h"
-#include "setters_getters.h"
+#include "setters_getters.hpp"
 
 //----------------------------------------------------
 

@@ -26,7 +26,7 @@
 #define __renamesymboldlg__
 
 #include "Cxx/cpptoken.h"
-#include "rename_symbool_dlg.h"
+#include "rename_symbol_dlg.hpp"
 
 #include <list>
 #include <vector>

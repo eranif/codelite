@@ -26,7 +26,7 @@
 #ifndef __new_item_dlg__
 #define __new_item_dlg__
 
-#include "new_item_base_dlg.h"
+#include "new_item_base_dlg.hpp"
 #include <wx/filename.h>
 
 ///////////////////////////////////////////////////////////////////////////

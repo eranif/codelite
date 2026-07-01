@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "debuggersettings.h"
 
-#include "macromanager.h"
+#include "StringUtils.h"
 
 void DebuggerCmdData::DeSerialize(Archive& arch)
 {
@@ -119,7 +119,7 @@ wxString DebuggerPreDefinedTypes::GetPreDefinedTypeForTypename(const wxString& e
             // Create variable object for this variable
             // and display the content
             wxString expression = dcd.GetCommand();
-            expression = MacroManager::Instance()->Replace(expression, wxT("variable"), name, true);
+            expression = StringUtils::ReplaceVariable(expression, wxT("variable"), name, true);
             return expression;
         }
     }

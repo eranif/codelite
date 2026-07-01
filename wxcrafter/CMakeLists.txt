@@ -212,10 +212,10 @@ endif()
 add_library(wxCrafterCommon STATIC ${COMMON_SRCS})
 set_target_properties(wxCrafterCommon PROPERTIES POSITION_INDEPENDENT_CODE ON)
 # Link the CodeLite internal libs so the static lib picks up their INTERFACE
-# include directories (JSON.h, plugin.h, wxsqlite3, etc.). Static libs don't
+# include directories (JSON.h, etc.). Static libs don't
 # actually link against other libs at archive time, but CMake will propagate
 # include dirs and compile features.
-target_link_libraries(wxCrafterCommon PUBLIC libcodelite plugin)
+target_link_libraries(wxCrafterCommon PUBLIC libcodelite)
 if(USE_PCH)
   target_precompile_headers(wxCrafterCommon REUSE_FROM PCH)
 endif()

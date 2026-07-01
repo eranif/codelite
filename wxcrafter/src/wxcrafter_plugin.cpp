@@ -86,6 +86,20 @@ void NotifyFileSaved(const wxFileName& fn)
 }
 #endif
 
+wxStringSet_t GetProjectFiles(const wxString& projectName)
+{
+    ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
+    if (!p) {
+        return {};
+    }
+    const Project::FilesMap_t& filesMap = p->GetFiles();
+    wxStringSet_t files;
+    files.reserve(filesMap.size());
+    for (const auto& [filename, _] : filesMap) {
+        files.insert(filename);
+    }
+}
+
 void SetStatusMessage(const wxString& msg)
 {
     wxFrame* topFrame = EventNotifier::Get()->TopFrame();
@@ -813,8 +827,7 @@ void wxCrafterPlugin::DoGenerateCode(const NewFormDetails& fd)
         vdFullPath << projectName;
 
         // Check if already got a file with this name in the project
-        wxStringSet_t files;
-        wxCrafter::GetProjectFiles(project->GetName(), files);
+        wxStringSet_t files = GetProjectFiles(project->GetName());
 
         if (!files.count(wxcpFile.GetFullPath())) {
 
@@ -1348,13 +1361,12 @@ void wxCrafterPlugin::OnReGenerateForProject(wxCommandEvent& e)
 {
     wxArrayString wxcpFiles;
     if (clGetManager()->GetWorkspace() && clGetManager()->GetWorkspace()->IsOpen()) {
-        wxStringSet_t all_files;
         wxArrayString projects;
         ProjectPtr activeProject = clGetManager()->GetSelectedProject();
         if (!activeProject) {
             return;
         }
-        wxCrafter::GetProjectFiles(activeProject->GetName(), all_files);
+        wxStringSet_t all_files = GetProjectFiles(activeProject->GetName());
 
         // Filter out and keep only wxcp files
         for (const wxString& file : all_files) {

@@ -2,13 +2,11 @@
 
 #include "JSON.h"
 #include "macros.h"
-#include "map"
-#include "project.h"
-#include "workspace.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
 #include "xml/xmlutils.h"
 
+#include <map>
 #include <wx/app.h>
 #include <wx/arrstr.h>
 #include <wx/ffile.h>
@@ -1286,19 +1284,6 @@ void wxCrafter::WrapInIfBlock(const wxString& condname, wxString& codeblock)
     bottomBlock << "#endif // " << condname << "\n";
 
     codeblock.Prepend(topBlock).Append(bottomBlock);
-}
-
-void wxCrafter::GetProjectFiles(const wxString& projectName, wxStringSet_t& files)
-{
-    ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
-    if (!p) {
-        return;
-    }
-    const Project::FilesMap_t& filesMap = p->GetFiles();
-    files.reserve(filesMap.size());
-    for (const auto& p : filesMap) {
-        files.insert(p.first);
-    }
 }
 
 static wxWindow* sTopFrame = NULL;

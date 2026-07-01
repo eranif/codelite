@@ -3,7 +3,6 @@
 // directly through the widget model, bypassing GUICraftMainPanel entirely.
 
 #include "JSON.h"
-#include "editor_config.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "top_level_win_wrapper.h"
@@ -22,6 +21,7 @@
 #include <wx/sstream.h>
 #include <wx/stdpaths.h>
 #include <wx/string.h>
+#include <wx/wxcrtvararg.h>
 #include <wx/xml/xml.h>
 
 static const wxCmdLineEntryDesc s_cmdDesc[] = {
@@ -200,22 +200,12 @@ int wxcgenApp::OnRun()
     }
 
     // Ensure the user data dir exists before anything tries to write into
-    // it (FileLogger / EditorConfig both expect it).
+    // it (FileLogger expect it).
     wxFileName user_data_dir{wxStandardPaths::Get().GetUserDataDir(), wxEmptyString};
     user_data_dir.AppendDir("wxcrafter");
     user_data_dir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
     FileLogger::OpenLog("wxcgen.log", FileLogger::System);
-
-#ifdef __WXGTK__
-    wxString installPrefix = INSTALL_PREFIX;
-    wxStandardPaths::Get().SetInstallPrefix(installPrefix);
-    EditorConfigST::Get()->SetInstallDir(wxString() << INSTALL_PREFIX << "/share/wxcrafter");
-#elif defined(__WXMSW__)
-    EditorConfigST::Get()->SetInstallDir(wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath());
-#endif
-    EditorConfigST::Get()->Init("", "2.0.2");
-    EditorConfigST::Get()->Load();
 
     int rc = 0;
     for (size_t i = 0; i < parser.GetParamCount(); i++) {

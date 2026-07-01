@@ -1,6 +1,6 @@
 #ifndef IMPORTTHEMESDIALOG_H
 #define IMPORTTHEMESDIALOG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class ImportThemesDialog : public ImportThemesDialogBase
 {

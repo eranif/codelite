@@ -5,11 +5,16 @@ project(codelite-generate-themes)
 include(${wxWidgets_USE_FILE})
 
 # prepare list of files
+
+wxcrafter_target(
+    CodeLiteGenerateThemes
+    "${CMAKE_CURRENT_SOURCE_DIR}/codelite-generate-themes/wxcrafter.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "wxcrafter.cpp"
+    "wxcrafter.hpp"
+    "wxcrafter_codelite-generate-themes_bitmaps.cpp")
+
 file(GLOB SRCS "codelite-generate-themes/*.cpp")
-
-include_directories("${CL_SRC_ROOT}/Plugin/ThemeImporters")
-
-add_compile_definitions(wxDEBUG_LEVEL=0)
 
 set(CGT_RES_FILE "")
 if(MINGW)
@@ -18,8 +23,9 @@ if(MINGW)
 endif()
 
 # Define the output
-add_executable(codelite-generate-themes ${SRCS} ${CGT_RES_FILE})
-
+add_executable(codelite-generate-themes ${SRCS} ${CGT_RES_FILE} ${WXCRAFTER_CodeLiteGenerateThemes_OUTPUTS})
+target_compile_definitions(codelite-generate-themes PUBLIC wxDEBUG_LEVEL=0)
+target_include_directories(codelite-generate-themes PUBLIC "${CL_SRC_ROOT}/Plugin/ThemeImporters" "${WXCRAFTER_CodeLiteGenerateThemes_OUTPUTDIR}")
 target_link_libraries(codelite-generate-themes libcodelite plugin ${LINKER_OPTIONS})
 
 install(TARGETS codelite-generate-themes DESTINATION ${CL_INSTALL_BIN})

@@ -26,7 +26,7 @@
 #ifndef __externaltooldlg__
 #define __externaltooldlg__
 
-#include "external_tools.h"
+#include "external_tools.hpp"
 #include "externaltoolsdata.h"
 
 #include <vector>

@@ -848,17 +848,11 @@ int main(int argc, char** argv)
     }
 #else
     {
-        // Use a unique database file name per process to avoid conflicts during parallel testing
-        wxString dbname;
-        dbname << "phpsymbols_" << ::wxGetProcessId() << ".db";
-        wxFileName symbolsDBPath(SYMBOLS_DB_PATH, dbname);
-        symbolsDBPath.Normalize();
-        lookup.Open(symbolsDBPath);
+        // Use an in-memory SQLite database to avoid conflicts during parallel testing and run faster
+        lookup.Open(":memory:");
         lookup.ClearAll();
         errorCount = doctest::Context(argc, argv).run(); // Run all tests
         lookup.Close();
-        // Clean up the temporary database file
-        ::wxRemoveFile(symbolsDBPath.GetFullPath());
     }
 #endif
     wxUninitialize();

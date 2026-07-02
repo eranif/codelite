@@ -30,9 +30,12 @@ jobs:
 
     steps:
     - uses: msys2/setup-msys2@v2
+      id: msys2
       with:
         msystem: ${{matrix.arch.msystem}}
         update: true
+        location: ${{ matrix.arch.runs-on == 'windows-11-arm' && 'C:\' || '' }}
+        cache: ${{ matrix.arch.runs-on != 'windows-11-arm' }}
         install: >-
           bison
           flex
@@ -98,7 +101,7 @@ jobs:
       run: |
         mkdir build-wxcrafter-release
         cd build-wxcrafter-release
-        MSYS2_BASE=$(cygpath -u "${{runner.temp}}")/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -DWXC_APP=1 -Wno-dev -DBUILD_TESTING=0 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        MSYS2_BASE=$(cygpath -u "${{steps.msys2.outputs.msys2-location}}") PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -DWXC_APP=1 -Wno-dev -DBUILD_TESTING=0 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
 
@@ -117,7 +120,7 @@ jobs:
       run: |
         mkdir build-release
         cd build-release
-        MSYS2_BASE=$(cygpath -u "${{runner.temp}}")/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev -DBUILD_TESTING=1 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        MSYS2_BASE=$(cygpath -u "${{steps.msys2.outputs.msys2-location}}") PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev -DBUILD_TESTING=1 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
         ctest --output-on-failure

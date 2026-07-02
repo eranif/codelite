@@ -69,7 +69,6 @@
 #include "imanager.h"
 #include "lexer_configuration.h"
 #include "localworkspace.h"
-#include "macromanager.h"
 #include "manager.h"
 #include "menumanager.h"
 #include "new_quick_watch_dlg.h"
@@ -3987,7 +3986,7 @@ void clEditor::OnDbgCustomWatch(wxCommandEvent& event)
 
         // Replace $(Variable) with the actual string
         wxString command = iter->second;
-        command = MacroManager::Instance()->Replace(command, wxT("variable"), word, true);
+        command = StringUtils::ReplaceVariable(command, wxT("variable"), word, true);
 
         clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(command);
         clMainFrame::Get()->GetDebuggerPane()->SelectTab(wxGetTranslation(DebuggerPane::WATCHES));

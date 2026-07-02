@@ -37,6 +37,7 @@
 #include "Keyboard/clKeyboardManager.h"
 #include "NewProjectDialog.h"
 #include "Scripting/CodeLiteLUA.hpp"
+#include "StringUtils.h"
 #include "SideBar.hpp"
 #include "WorkspaceImporter/WSImporter.h"
 #include "app.h"
@@ -2446,7 +2447,7 @@ void Manager::UpdateTypeResolved(const wxString& expr, const wxString& type_name
             if (cmd.GetName() == expression_type) {
                 // prepare the string to be evaluated
                 command = cmd.GetCommand();
-                command = MacroManager::Instance()->Replace(command, wxT("variable"), expr, true);
+                command = StringUtils::ReplaceVariable(command, wxT("variable"), expr, true);
 
                 dbg_command = cmd.GetDbgCommand();
 

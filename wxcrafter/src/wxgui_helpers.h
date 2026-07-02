@@ -207,11 +207,6 @@ wxShowEffect ShowEffectFromString(const wxString& effect);
 void WrapInIfBlock(const wxString& condname, wxString& codeblock);
 
 /**
- * @brief return the workspace files as set
- */
-void GetProjectFiles(const wxString& projectName, wxStringSet_t& files);
-
-/**
  * @brief return the top frame
  */
 wxWindow* TopFrame();

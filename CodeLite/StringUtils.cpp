@@ -3,6 +3,7 @@
 #include "macros.h"
 
 #include <vector>
+#include <wx/regex.h>
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
 
@@ -982,6 +983,50 @@ wxString StringUtils::BuildCommandFromArray(std::span<const wxString> commands)
     }
     if (!result.empty()) {
         result.RemoveLast();
+    }
+    return result;
+}
+
+wxString StringUtils::ReplaceVariable(const wxString& inString,
+                                      const wxString& variableName,
+                                      const wxString& replaceWith,
+                                      bool bIgnoreCase)
+{
+    size_t flags = wxRE_DEFAULT;
+    if (bIgnoreCase) {
+        flags |= wxRE_ICASE;
+    }
+
+    wxString strRe1;
+    wxString strRe2;
+    wxString strRe3;
+    wxString strRe4;
+
+    strRe1 << "\\$\\((" << variableName << ")\\)";
+    strRe2 << "\\$\\{(" << variableName << ")\\}";
+    strRe3 << "\\$(" << variableName << ")";
+    strRe4 << "%(" << variableName << ")%";
+
+    wxRegEx reOne(strRe1, flags);   // $(variable)
+    wxRegEx reTwo(strRe2, flags);   // ${variable}
+    wxRegEx reThree(strRe3, flags); // $variable
+    wxRegEx reFour(strRe4, flags);  // %variable%
+
+    wxString result = inString;
+    if (reOne.Matches(result)) {
+        reOne.ReplaceAll(&result, replaceWith);
+    }
+
+    if (reTwo.Matches(result)) {
+        reTwo.ReplaceAll(&result, replaceWith);
+    }
+
+    if (reThree.Matches(result)) {
+        reThree.ReplaceAll(&result, replaceWith);
+    }
+
+    if (reFour.Matches(result)) {
+        reFour.ReplaceAll(&result, replaceWith);
     }
     return result;
 }

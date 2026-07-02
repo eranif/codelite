@@ -309,5 +309,19 @@ public:
      * @note This function is recursive when the input already has surrounding quotes.
      */
     static wxString EscapeAndWrapWithDoubleQuotes(const wxString& input);
+
+    /**
+     * @brief search for variableName and replace all its occurrence with 'replaceWith'
+     * This function supports the following formats:
+     * $variableName
+     * ${variableName}
+     * $(variableName)
+     * %variableName%
+     */
+    static wxString ReplaceVariable(const wxString& inString,
+                                    const wxString& variableName,
+                                    const wxString& replaceWith,
+                                    bool bIgnoreCase = false);
 };
+
 inline wxString BoolToString(bool b) { return b ? wxT("yes") : wxT("no"); }

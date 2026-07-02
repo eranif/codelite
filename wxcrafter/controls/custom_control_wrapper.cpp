@@ -1,8 +1,8 @@
 #include "custom_control_wrapper.h"
 
 #include "Properties/category_property.h"
+#include "StringUtils.h"
 #include "file_logger.h"
-#include "macromanager.h"
 #include "wxc_settings.h"
 #include "xml/xmlutils.h"
 
@@ -50,9 +50,9 @@ wxString CustomControlWrapper::CppCtorCode() const
     }
 
     // Replace $name with the actual control c++ name
-    cppCode = MacroManager::Instance()->Replace(cppCode, wxT("name"), GetName(), true);
-    cppCode = MacroManager::Instance()->Replace(cppCode, wxT("parent"), GetWindowParent(), true);
-    cppCode = MacroManager::Instance()->Replace(cppCode, wxT("id"), GetId(), true);
+    cppCode = StringUtils::ReplaceVariable(cppCode, wxT("name"), GetName(), true);
+    cppCode = StringUtils::ReplaceVariable(cppCode, wxT("parent"), GetWindowParent(), true);
+    cppCode = StringUtils::ReplaceVariable(cppCode, wxT("id"), GetId(), true);
     return cppCode;
 }
 

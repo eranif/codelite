@@ -1,9 +1,9 @@
 #include "wxc_widget.h"
+
 #include "ActivityIndicatorWrapper.h"
 #include "AnimationCtrlWrapper.h"
 #include "AuiToolBarTopLevel.h"
 #include "BitmapComboxWrapper.h"
-#include "EventsEditorDlg.h"
 #include "Importer/import_from_wxFB.h"
 #include "Properties/bool_property.h"
 #include "Properties/category_property.h"
@@ -77,7 +77,6 @@
 #include "gauge_wrapper.h"
 #include "generic_dir_ctrl_wrapper.h"
 #include "gl_canvas_wrapper.h"
-#include "globals.h"
 #include "grid_bag_sizer_wrapper.h"
 #include "grid_sizer_wrapper.h"
 #include "html_window_wrapper.h"

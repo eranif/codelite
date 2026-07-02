@@ -1,6 +1,6 @@
 #ifndef DIFFSELECTFOLDERSDLG_H
 #define DIFFSELECTFOLDERSDLG_H
-#include "DiffUI.h"
+#include "DiffUI.hpp"
 
 class DiffSelectFoldersDlg : public DiffSelectFoldersBaseDlg
 {

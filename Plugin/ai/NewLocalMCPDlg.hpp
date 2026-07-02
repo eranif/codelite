@@ -1,8 +1,8 @@
 #ifndef NEWLOCALMCPDLG_HPP
 #define NEWLOCALMCPDLG_HPP
 
-#include "UI.hpp"
 #include "ai/LLMManager.hpp"
+#include "ai_UI.hpp"
 #include "codelite_exports.h"
 
 #include <map>

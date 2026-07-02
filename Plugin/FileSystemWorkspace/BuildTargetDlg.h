@@ -1,7 +1,7 @@
 #pragma once
 
 #include "clEditorEditEventsHandler.h"
-#include "clFileSystemWorkspaceDlgBase.h"
+#include "clFileSystemWorkspaceDlgBase.hpp"
 
 class BuildTargetDlg : public BuildTargetDlgBase
 {

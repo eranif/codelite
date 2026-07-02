@@ -8,6 +8,62 @@ project(plugin)
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
 
+wxcrafter_target(
+    PluginAi
+    "${CMAKE_CURRENT_SOURCE_DIR}/ai/ai_UI.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "ai_UI.cpp"
+    "ai_UI.hpp"
+    "UI_assistance_ai_bitmaps.cpp")
+
+wxcrafter_target(
+    PluginCustomControls
+    "${CMAKE_CURRENT_SOURCE_DIR}/CustomControls/CustomControls.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "CustomControls.cpp"
+    "CustomControls.hpp"
+    "CustomControls_customcontrols_bitmaps.cpp")
+
+wxcrafter_target(
+    PluginDebugger
+    "${CMAKE_CURRENT_SOURCE_DIR}/Debugger/memoryviewbase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "memoryviewbase.cpp"
+    "memoryviewbase.hpp"
+    "memoryviewbase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
+    PluginDiff
+    "${CMAKE_CURRENT_SOURCE_DIR}/Diff/DiffUI.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "DiffUI.cpp"
+    "DiffUI.hpp"
+    "DiffUI_plugin_bitmaps.cpp")
+
+wxcrafter_target(
+    PluginFileSystemWorkspace
+    "${CMAKE_CURRENT_SOURCE_DIR}/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "clFileSystemWorkspaceDlgBase.cpp"
+    "clFileSystemWorkspaceDlgBase.hpp"
+    "clFileSystemWorkspaceDlgBase_plugin_bitmaps.cpp")
+
+wxcrafter_target(
+    PluginKeyboard
+    "${CMAKE_CURRENT_SOURCE_DIR}/Keyboard/NewKeyShortcutBaseDlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "NewKeyShortcutBaseDlg.cpp"
+    "NewKeyShortcutBaseDlg.hpp"
+    "NewKeyShortcutBaseDlg_plugin_bitmaps.cpp")
+
+wxcrafter_target(
+    PluginLSP
+    "${CMAKE_CURRENT_SOURCE_DIR}/LSP/lsp_UI.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "lsp_UI.cpp"
+    "lsp_UI.hpp"
+    "UI_languageserver_bitmaps.cpp")
+
 if(MINGW)
   file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp")
   list(FILTER SRCS EXCLUDE REGEX ".*/macos/.*")
@@ -22,13 +78,28 @@ else()
   list(FILTER SRCS EXCLUDE REGEX ".*/macos/.*")
 endif()
 
-add_library(plugin SHARED ${SRCS})
+add_library(plugin SHARED ${SRCS}
+    ${WXCRAFTER_PluginAi_OUTPUTS}
+    ${WXCRAFTER_PluginCustomControls_OUTPUTS}
+    ${WXCRAFTER_PluginDebugger_OUTPUTS}
+    ${WXCRAFTER_PluginDiff_OUTPUTS}
+    ${WXCRAFTER_PluginFileSystemWorkspace_OUTPUTS}
+    ${WXCRAFTER_PluginKeyboard_OUTPUTS}
+    ${WXCRAFTER_PluginLSP_OUTPUTS}
+)
 
 # Include paths
 target_include_directories(
   plugin
   PUBLIC "${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces"
          "${CL_SRC_ROOT}/Plugin/aui"
+          "${WXCRAFTER_PluginAi_OUTPUTDIR}"
+          "${WXCRAFTER_PluginCustomControls_OUTPUTDIR}"
+          "${WXCRAFTER_PluginDebugger_OUTPUTDIR}"
+          "${WXCRAFTER_PluginDiff_OUTPUTDIR}"
+          "${WXCRAFTER_PluginFileSystemWorkspace_OUTPUTDIR}"
+          "${WXCRAFTER_PluginKeyboard_OUTPUTDIR}"
+          "${WXCRAFTER_PluginLSP_OUTPUTDIR}"
   PRIVATE "${CL_SRC_ROOT}/submodules/yaml-cpp/include"
           "${CL_SRC_ROOT}/ThemeImporters" "${CL_SRC_ROOT}/wxTerminalCtrl")
 

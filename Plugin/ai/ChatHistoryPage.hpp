@@ -1,7 +1,7 @@
 #pragma once
 
-#include "UI.hpp"
 #include "ai/HistoryManager.hpp"
+#include "ai_UI.hpp"
 #include "codelite_exports.h"
 
 #include <map>

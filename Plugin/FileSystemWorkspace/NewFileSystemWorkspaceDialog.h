@@ -1,7 +1,7 @@
 #ifndef NEWFILESYSTEMWORKSPACEDIALOG_H
 #define NEWFILESYSTEMWORKSPACEDIALOG_H
 
-#include "clFileSystemWorkspaceDlgBase.h"
+#include "clFileSystemWorkspaceDlgBase.hpp"
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK NewFileSystemWorkspaceDialog : public NewFileSystemWorkspaceDialogBase

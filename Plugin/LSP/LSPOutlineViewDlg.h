@@ -2,8 +2,8 @@
 #define LSPOUTLINEVIEWDLG_H
 
 #include "LSP/basic_types.h"
-#include "UI.h"
 #include "codelite_exports.h"
+#include "lsp_UI.hpp"
 
 #include <vector>
 

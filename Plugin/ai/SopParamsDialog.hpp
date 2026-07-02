@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ai/SopParser.hpp"
-#include "ai/UI.hpp"
+#include "ai_UI.hpp"
 #include "codelite_exports.h"
 
 #include <vector>

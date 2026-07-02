@@ -1,7 +1,7 @@
 #ifndef CLFSWNEWCONFIGDLG_H
 #define CLFSWNEWCONFIGDLG_H
 
-#include "clFileSystemWorkspaceDlgBase.h"
+#include "clFileSystemWorkspaceDlgBase.hpp"
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK clFSWNewConfigDlg : public clFSWNewConfigDlgBase

@@ -1,6 +1,3 @@
-add_subdirectory(wxCrafterCommon)
-add_subdirectory(wxcgen)
-
 if(NOT CL_SRC_ROOT)
   message(FATAL_ERROR "Missing CL_SRC_ROOT")
 endif()

@@ -1,7 +1,7 @@
 #ifndef DIFFFOLDERSFRAME_H
 #define DIFFFOLDERSFRAME_H
 
-#include "DiffUI.h"
+#include "DiffUI.hpp"
 #include "bitmap_loader.h"
 #include "clFilesCollector.h"
 #include "codelite_exports.h"

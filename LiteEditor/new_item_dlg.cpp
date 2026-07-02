@@ -25,7 +25,6 @@
 
 #include "globals.h"
 #include "macros.h"
-#include "new_item_base_dlg.h"
 #include "new_item_dlg.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"

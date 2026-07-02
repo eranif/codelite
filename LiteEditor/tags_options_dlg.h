@@ -28,7 +28,7 @@
 
 #include "clEditorEditEventsHandler.h"
 #include "serialized_object.h"
-#include "tags_options_base_dlg.h"
+#include "tags_options_base_dlg.hpp"
 #include "tags_options_data.h"
 
 #include <wx/filename.h>

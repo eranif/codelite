@@ -26,7 +26,7 @@
 #ifndef __quickdebugdlg__
 #define __quickdebugdlg__
 
-#include "quickdebugbase.h"
+#include "quickdebugbase.hpp"
 #include "quickdebuginfo.h"
 
 class QuickDebugDlg : public QuickDebugBase

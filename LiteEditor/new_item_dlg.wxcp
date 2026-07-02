@@ -1,10 +1,10 @@
 {
 	"metadata":	{
-		"m_generatedFilesDir":	"../LiteEditor/",
+		"m_generatedFilesDir":	".",
 		"m_objCounter":	6,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC6B33InitBitmapResources",
-		"m_bitmapsFile":	"new_item_dlg_formbuilder_bitmaps.cpp",
+		"m_bitmapsFile":	"new_item_dlg_liteeditor_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
 		"m_outputFileName":	"new_item_base_dlg",
 		"m_firstWindowId":	10000,

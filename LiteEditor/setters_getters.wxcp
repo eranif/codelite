@@ -1,10 +1,10 @@
 {
  "metadata": {
-  "m_generatedFilesDir": "../LiteEditor/",
+  "m_generatedFilesDir": ".",
   "m_objCounter": 22,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC8861InitBitmapResources",
-  "m_bitmapsFile": "setters_getters_formbuilder_bitmaps.cpp",
+  "m_bitmapsFile": "setters_getters_liteeditor_bitmaps.cpp",
   "m_GenerateCodeTypes": 1986042073,
   "m_outputFileName": "setters_getters",
   "m_firstWindowId": 1000,

@@ -8,7 +8,6 @@
 #include "clDirChanger.hpp"
 #include "drawingutils.h"
 #include "event_notifier.h"
-#include "gui.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"

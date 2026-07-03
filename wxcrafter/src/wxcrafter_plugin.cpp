@@ -21,7 +21,7 @@
 #include "event_notifier.h"
 #include "functions_parser.h"
 #include "globals.h"
-#include "gui.h"
+#include "gui.hpp"
 #include "myxh_auimgr.h"
 #include "myxh_auitoolb.h"
 #include "myxh_cmdlinkbtn.h"

@@ -1,6 +1,6 @@
 #ifndef NEWCUSTOMEVENTDLG_H
 #define NEWCUSTOMEVENTDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class NewCustomEventDlg : public NewCustomEventBaseDlg
 {

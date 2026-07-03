@@ -1,7 +1,7 @@
 #ifndef TOOLBOXPANEL_H
 #define TOOLBOXPANEL_H
 
-#include "wxcrafter_gui.h"
+#include "wxcrafter_gui.hpp"
 
 class GUICraftMainPanel;
 class ToolBoxPanel : public ToolBoxPanelBaseClass

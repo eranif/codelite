@@ -1,6 +1,6 @@
 #ifndef BITMAPSELECTORDLG_H
 #define BITMAPSELECTORDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class BitmapSelectorDlg : public BitmapSelectorDlgBase
 {

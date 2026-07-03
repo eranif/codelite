@@ -3,7 +3,7 @@
 
 // main wxWidgets header file
 #include "UI/wxcTreeView.h"
-#include "gui.h"
+#include "gui.hpp"
 #include "wxguicraft_main_view.h"
 
 #include <wx/cmdline.h>

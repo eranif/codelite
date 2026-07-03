@@ -2,7 +2,7 @@
 #define EVENTSEDITORDLG_H
 
 #include "events_database.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class wxcWidget;
 class wxCrafterPlugin;

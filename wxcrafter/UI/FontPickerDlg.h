@@ -1,6 +1,6 @@
 #ifndef FONTPICKERDLG_H
 #define FONTPICKERDLG_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 class FontPickerDlg : public FontPickerDlgBaseClass
 {

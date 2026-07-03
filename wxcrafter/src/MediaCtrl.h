@@ -1,6 +1,6 @@
 #ifndef MEDIACTRL_H
 #define MEDIACTRL_H
-#include "wxcrafter_gui.h"
+#include "wxcrafter_gui.hpp"
 
 class MediaCtrl : public MediaCtrlBase
 {

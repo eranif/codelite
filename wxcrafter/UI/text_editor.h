@@ -1,6 +1,6 @@
 #ifndef TEXTEDITOR_H
 #define TEXTEDITOR_H
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 extern const wxEventType wxEVT_CMD_TEXT_EDITOR;
 

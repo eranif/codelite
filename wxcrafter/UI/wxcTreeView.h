@@ -2,7 +2,7 @@
 #define __wxcTreeView__
 
 #include "NewFormWizard.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 #include <wx/defs.h>
 #ifdef __WINDOWS__          // __WINDOWS__ defined by wx/defs.h

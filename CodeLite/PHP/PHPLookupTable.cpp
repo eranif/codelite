@@ -205,14 +205,16 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindScope(const wxString& fullname)
 void PHPLookupTable::Open(const wxFileName& dbfile)
 {
     try {
+        if (dbfile.GetFullPath() != ":memory:") {
+            if (dbfile.Exists()) {
+                // Check for its integrity. If the database is corrupted,
+                // it will be deleted
+                EnsureIntegrity(dbfile);
+            }
 
-        if (dbfile.Exists()) {
-            // Check for its integrity. If the database is corrupted,
-            // it will be deleted
-            EnsureIntegrity(dbfile);
+            wxFileName::Mkdir(dbfile.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         }
 
-        wxFileName::Mkdir(dbfile.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         m_db.Open(dbfile.GetFullPath());
         m_db.SetBusyTimeout(10); // Don't lock when we cant access to the database
         m_filename = dbfile;
@@ -225,6 +227,10 @@ void PHPLookupTable::Open(const wxFileName& dbfile)
 
 void PHPLookupTable::Open(const wxString& workspacePath)
 {
+    if (workspacePath == ":memory:") {
+        Open(wxFileName(workspacePath));
+        return;
+    }
     wxFileName fnDBFile(workspacePath, "phpsymbols.db");
 
     // ensure that the database directory exists

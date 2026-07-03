@@ -6,6 +6,8 @@
 #include <doctest.h>
 #include <wx/init.h>
 #include <wx/string.h>
+#include <wx/utils.h>
+#include <wx/filefn.h>
 
 #ifdef __WXMSW__
 #define SYMBOLS_DB_PATH "%TEMP%"
@@ -846,11 +848,11 @@ int main(int argc, char** argv)
     }
 #else
     {
-        wxFileName symbolsDBPath(SYMBOLS_DB_PATH, "phpsymbols.db");
-        symbolsDBPath.Normalize();
-        lookup.Open(symbolsDBPath.GetPath());
+        // Use an in-memory SQLite database to avoid conflicts during parallel testing and run faster
+        lookup.Open(":memory:");
         lookup.ClearAll();
         errorCount = doctest::Context(argc, argv).run(); // Run all tests
+        lookup.Close();
     }
 #endif
     wxUninitialize();

@@ -98,6 +98,7 @@ wxStringSet_t GetProjectFiles(const wxString& projectName)
     for (const auto& [filename, _] : filesMap) {
         files.insert(filename);
     }
+    return files;
 }
 
 void SetStatusMessage(const wxString& msg)

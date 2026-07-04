@@ -71,7 +71,11 @@ std::vector<std::pair<wxString, wxString>> LocateDefaultTerminals()
         clDEBUG() << "Found WSL:" << wsl_command << endl;
 
         // List the available distros we got.
-        std::vector<wxString> command = {wsl.value(), "-l"};
+        std::vector<wxString> command = {
+            wsl.value(),
+            "-l",
+            "-q",
+        };
         wxString list_output;
 
         clEnvList_t env;

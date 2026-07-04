@@ -3221,7 +3221,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"../bitmaps/16-cog.png"
+											"m_path":	"svn-icons/16-cog.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
@@ -4134,7 +4134,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"../bitmaps/16-diff.png"
+											"m_path":	"svn-icons/16-diff.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
@@ -4649,7 +4649,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"../bitmaps/16-lock.png"
+											"m_path":	"svn-icons/16-lock.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
@@ -5337,7 +5337,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"../bitmaps/16-connected.png"
+											"m_path":	"svn-icons/16-connected.png"
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",

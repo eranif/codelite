@@ -10,19 +10,24 @@
 
 #include "wxrc.h"
 
+#include "fileextmanager.h"
 #include "wxc_project_metadata.h"
 
 #include <wx/arrimpl.cpp>
+#include <wx/ffile.h>
+#include <wx/filename.h>
+#include <wx/mimetype.h>
+#include <wx/wfstream.h>
 
 WX_DEFINE_OBJARRAY(ArrayOfXRCWidgetData)
 WX_DEFINE_OBJARRAY(ArrayOfXRCWndClassData)
 
-int wxcXmlResourceCmp::Run(const wxString& inXrcFile, const wxString& outputCppFile, const wxString& functionName)
+clStatus wxcXmlResourceCmp::Run(const wxString& inXrcFile, const wxString& outputCppFile, const wxString& functionName)
 {
     m_outputCppFile = outputCppFile;
     m_xrcFile = inXrcFile;
     m_functionName = functionName;
-    m_retCode = 0;
+    m_retCode = clStatus{};
     m_outputPath = wxFileName(m_outputCppFile).GetPath();
     CompileRes();
     return m_retCode;
@@ -30,14 +35,18 @@ int wxcXmlResourceCmp::Run(const wxString& inXrcFile, const wxString& outputCppF
 
 void wxcXmlResourceCmp::CompileRes()
 {
-    wxArrayString files = PrepareTempFiles();
+    auto files = PrepareTempFiles();
+    if (!files.ok()) {
+        m_retCode = files.status();
+        return;
+    }
 
     wxRemoveFile(m_outputCppFile);
 
-    if (!m_retCode) {
-        MakePackageCPP(files);
+    if (m_retCode.ok()) {
+        MakePackageCPP(files.value());
     }
-    DeleteTempFiles(files);
+    DeleteTempFiles(files.value());
 }
 
 wxString wxcXmlResourceCmp::GetInternalFileName(const wxString& name, const wxArrayString& flist)
@@ -61,19 +70,22 @@ wxString wxcXmlResourceCmp::GetInternalFileName(const wxString& name, const wxAr
     return s;
 }
 
-wxArrayString wxcXmlResourceCmp::PrepareTempFiles()
+clStatusOr<wxArrayString> wxcXmlResourceCmp::PrepareTempFiles()
 {
     wxArrayString flist;
     wxXmlDocument doc;
 
     if (!doc.Load(m_xrcFile)) {
-        m_retCode = 1;
+        m_retCode = StatusParseError(m_xrcFile);
         return wxArrayString();
     }
 
     wxString name, ext, path;
     wxFileName::SplitPath(m_xrcFile, &path, &name, &ext);
-    FindFilesInXML(doc.GetRoot(), flist, path);
+    const auto ret = FindFilesInXML(doc.GetRoot(), flist, path);
+    if (!ret.ok()) {
+        return ret;
+    }
     wxString internalName = GetInternalFileName(m_xrcFile, flist);
 
     doc.Save(m_outputPath + wxFILE_SEP_PATH + internalName);
@@ -117,13 +129,13 @@ static bool NodeContainsFilename(wxXmlNode* node)
 }
 
 // find all files mentioned in structure, e.g. <bitmap>filename</bitmap>
-void wxcXmlResourceCmp::FindFilesInXML(wxXmlNode* node, wxArrayString& flist, const wxString& inputPath)
+clStatus wxcXmlResourceCmp::FindFilesInXML(wxXmlNode* node, wxArrayString& flist, const wxString& inputPath)
 {
     // Is 'node' XML node element?
     if (node == NULL)
-        return;
+        return {};
     if (node->GetType() != wxXML_ELEMENT_NODE)
-        return;
+        return {};
 
     bool containsFilename = NodeContainsFilename(node);
 
@@ -142,17 +154,24 @@ void wxcXmlResourceCmp::FindFilesInXML(wxXmlNode* node, wxArrayString& flist, co
             if (flist.Index(filename) == wxNOT_FOUND)
                 flist.Add(filename);
 
+            if (!wxFileName::FileExists(fullname)) {
+                return StatusNotFound(fullname);
+            }
+
             wxFileInputStream sin(fullname);
             wxFileOutputStream sout(m_outputPath + wxFILE_SEP_PATH + filename);
             sin.Read(sout); // copy the stream
         }
 
         // subnodes:
-        if (n->GetType() == wxXML_ELEMENT_NODE)
-            FindFilesInXML(n, flist, inputPath);
-
+        if (n->GetType() == wxXML_ELEMENT_NODE) {
+            if (const auto ret = FindFilesInXML(n, flist, inputPath); !ret.ok()) {
+                return ret;
+            }
+        }
         n = n->GetNext();
     }
+    return {};
 }
 
 void wxcXmlResourceCmp::DeleteTempFiles(const wxArrayString& flist)
@@ -161,13 +180,16 @@ void wxcXmlResourceCmp::DeleteTempFiles(const wxArrayString& flist)
         wxRemoveFile(m_outputPath + wxFILE_SEP_PATH + flist[i]);
 }
 
-static wxString FileToCppArray(wxString filename, int num)
+static clStatusOr<wxString> FileToCppArray(const wxString& filename, int num)
 {
     wxString output;
     wxString tmp;
     wxString snum;
     wxFFile file(filename, wxT("rb"));
-    wxFileOffset offset = file.Length();
+    if (!wxFileName::FileExists(filename)) {
+        return StatusNotFound(filename);
+    }
+    const wxFileOffset offset = file.Length();
     wxASSERT_MSG(offset >= 0, wxT("Invalid file length"));
 
     const size_t lng = wx_truncate_cast(size_t, offset);
@@ -181,9 +203,23 @@ static wxString FileToCppArray(wxString filename, int num)
 
     unsigned char* buffer = new unsigned char[lng];
     file.Read(buffer, lng);
-
+    const bool isBinaryType = FileExtManager::IsBinaryType(filename);
     for (size_t i = 0, linelng = 0; i < lng; i++) {
-        tmp.Printf(wxT("%i"), buffer[i]);
+        if (isBinaryType || !std::isprint(buffer[i])) {
+            tmp.Printf(wxT("%i"), buffer[i]);
+        } else if (buffer[i] == '\\') {
+            tmp = R"('\\')";
+        } else if (buffer[i] == '\'') {
+            tmp = R"('\'')";
+        } else if (buffer[i] == '\n') {
+            tmp = R"('\n')";
+        } else if (buffer[i] == '\r') {
+            tmp = R"('\r')";
+        } else if (buffer[i] == '\t') {
+            tmp = R"('\t')";
+        } else {
+            tmp.Printf("'%c'", buffer[i]);
+        }
         if (i != 0)
             output << wxT(',');
         if (linelng > 70) {
@@ -231,8 +267,15 @@ void wxcXmlResourceCmp::MakePackageCPP(const wxArrayString& flist)
                "#endif\n"
                "\n");
 
-    for (i = 0; i < flist.GetCount(); i++)
-        file.Write(FileToCppArray(m_outputPath + wxFILE_SEP_PATH + flist[i], i));
+    for (i = 0; i < flist.GetCount(); i++) {
+        const auto content = FileToCppArray(m_outputPath + wxFILE_SEP_PATH + flist[i], i);
+        if (content.ok()) {
+            file.Write(content.value());
+        } else {
+            m_retCode = content.status();
+            return;
+        }
+    }
 
     file.Write(""
                "void " +
@@ -287,7 +330,7 @@ ExtractedStrings wxcXmlResourceCmp::FindStrings()
 
     wxXmlDocument doc;
     if (!doc.Load(m_xrcFile)) {
-        m_retCode = 1;
+        m_retCode = StatusParseError(m_xrcFile);
         return arr;
     }
     a2 = FindStrings(m_xrcFile, doc.GetRoot());

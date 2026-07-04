@@ -192,7 +192,7 @@ if(MINGW)
 endif()
 
 set(WXCGEN_RES_FILES "")
-if(WIN32)
+if(MINGW)
   set(WXCGEN_RES_FILES "resources/wxcgen_resources.rc")
 endif()
 
@@ -213,7 +213,7 @@ if(USE_PCH)
 endif()
 
 # Headless CLI code-generator (no DISPLAY required).
-add_executable(wxcgen ${MACRO_SENSITIVE_HEADLESS_SRCS}
+add_executable(wxcgen ${MACRO_SENSITIVE_HEADLESS_SRCS} "${WXCGEN_RES_FILES}"
                       "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp")
 target_compile_definitions(
   wxcgen PRIVATE INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")

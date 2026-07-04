@@ -11,14 +11,15 @@
 - Open `MSYS` terminal, and type:
 
 ```bash
-pacman -S mingw-w64-clang-x86_64-zlib     \
-          mingw-w64-clang-x86_64-libssh   \
+pacman -S mingw-w64-clang-x86_64-zlib \
+          mingw-w64-clang-x86_64-libssh \
           mingw-w64-clang-x86_64-hunspell \
-          mingw-w64-clang-x86_64-openssl  \
-          mingw-w64-clang-x86_64-sqlite3  \
+          mingw-w64-clang-x86_64-openssl \
+          mingw-w64-clang-x86_64-sqlite3 \
           mingw-w64-clang-x86_64-libmariadbclient \
           mingw-w64-clang-x86_64-postgresql \
           mingw-w64-clang-x86_64-ctags \
+          mingw-w64-clang-x86_64-glew \
           flex bison patch
 ```
 
@@ -48,22 +49,6 @@ cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN="$HOME/root" -Wno-dev
 mingw32-make -j$(nproc) install
 ```
-
-**Building CodeLite in Debug mode**
-
-```bash
-git clone https://github.com/eranif/codelite.git
-cd codelite
-git submodule update --init --recursive
-mkdir .build-debug
-cd $_
-cmake .. -DCMAKE_BUILD_TYPE=Debug -G"MinGW Makefiles" -DWXWIN="$HOME/root" -Wno-dev
-mingw32-make -j$(nproc) install
-```
-
-!!! Note
-    CMake will attempt to use the **Debug** version of wxWidgets. If that version is unavailable, it will default to the **Release** version.
-    As a result, CodeLite will be built in **Debug** mode while linking against a **Release** version of wxWidgets.
 
 - To run the new CodeLite:
 

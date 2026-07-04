@@ -12,7 +12,6 @@ This page provides instructions for how to setup a functional working environmen
 ```bash
 pacman -Sy git                                  \
            openssh                              \
-           mingw-w64-clang-x86_64-gdb           \
            mingw-w64-clang-x86_64-toolchain     \
            mingw-w64-clang-x86_64-python3       \
            mingw-w64-clang-x86_64-cmake         \

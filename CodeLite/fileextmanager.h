@@ -114,6 +114,8 @@ public:
     static FileType GetType(const wxString& filename, FileExtManager::FileType defaultType = FileExtManager::TypeOther);
     static void Init();
 
+    static bool IsBinaryType(const wxString& filename);
+
     static bool IsSymlinkFolder(const wxString& filename);
     static bool IsSymlinkFolder(const wxFileName& filename) { return IsSymlinkFolder(filename.GetFullPath()); }
 

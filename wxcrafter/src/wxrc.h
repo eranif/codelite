@@ -1,14 +1,11 @@
 #ifndef WXRC_H
 #define WXRC_H
 
-#include <wx/cmdline.h>
+#include "clResult.hpp"
+
 #include <wx/ffile.h>
-#include <wx/filename.h>
 #include <wx/hashset.h>
-#include <wx/mimetype.h>
-#include <wx/utils.h>
 #include <wx/vector.h>
-#include <wx/wfstream.h>
 #include <wx/xml/xml.h>
 
 WX_DECLARE_HASH_SET(wxString, ::wxStringHash, ::wxStringEqual, StringSet);
@@ -155,18 +152,18 @@ class wxcXmlResourceCmp
     wxString m_outputCppFile;
     wxString m_functionName;
     wxString m_xrcFile;
-    int m_retCode;
+    clStatus m_retCode;
     wxString m_outputPath;
 
 public:
     // don't use builtin cmd line parsing:
     bool OnInit() { return true; }
-    int Run(const wxString& inXrcFile, const wxString& outputCppFile, const wxString& functionName);
+    clStatus Run(const wxString& inXrcFile, const wxString& outputCppFile, const wxString& functionName);
 
 private:
     void CompileRes();
-    wxArrayString PrepareTempFiles();
-    void FindFilesInXML(wxXmlNode* node, wxArrayString& flist, const wxString& inputPath);
+    clStatusOr<wxArrayString> PrepareTempFiles();
+    clStatus FindFilesInXML(wxXmlNode* node, wxArrayString& flist, const wxString& inputPath);
 
     wxString GetInternalFileName(const wxString& name, const wxArrayString& flist);
     void DeleteTempFiles(const wxArrayString& flist);

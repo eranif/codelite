@@ -21,7 +21,7 @@ enum class StatusCode {
     kTimeout,
 };
 
-class clStatus
+class [[nodiscard]] clStatus
 {
 public:
     clStatus(StatusCode code)
@@ -180,7 +180,7 @@ inline clStatus StatusExpandError(const wxString& msg = wxEmptyString)
 /// clStatusOr: a value or clStatus
 ///--------------------------------------
 template <typename Value>
-class clStatusOr
+class [[nodiscard]] clStatusOr
 {
 public:
     wxString error_message() const { return m_status.message(); }

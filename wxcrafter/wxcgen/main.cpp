@@ -138,7 +138,11 @@ GenerateFromProject(const wxString& filename, const wxString& fileContent, const
         }
     }
 
-    wxcCodeGeneratorHelper::Get().CreateXRC(nullptr, nullptr, nullptr, nullptr);
+    const auto ret = wxcCodeGeneratorHelper::Get().CreateXRC(nullptr, nullptr, nullptr, nullptr);
+    if (!ret.ok()) {
+        wxPrintf("%s\n", ret.message());
+        return false;
+    }
     return true;
 }
 

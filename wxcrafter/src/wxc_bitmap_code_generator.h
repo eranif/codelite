@@ -1,6 +1,7 @@
 #ifndef WXCBITMAPCODEGENERATOR_H
 #define WXCBITMAPCODEGENERATOR_H
 
+#include "clResult.hpp"
 #include "macros.h"
 
 #include <functional>
@@ -45,10 +46,10 @@ public:
     void ClearIcons();
     wxString AddBitmap(const wxString& bitmapFile, const wxString& name = wxEmptyString);
     void AddWindowId(const wxString& winid);
-    bool CreateXRC(std::function<void()> requestDesignerRefresh,
-                   std::function<void()> bitmapGenerationStart,
-                   std::function<void()> bitmapGenerationEnd,
-                   std::function<void(const wxFileName&)> onFileSaved);
+    clStatus CreateXRC(std::function<void()> requestDesignerRefresh,
+                       std::function<void()> bitmapGenerationStart,
+                       std::function<void()> bitmapGenerationEnd,
+                       std::function<void(const wxFileName&)> onFileSaved);
     wxString GenerateInitCode(TopLevelWinWrapper* tw) const;
     wxString GenerateExternCode() const;
     wxString GenerateWinIdEnum() const;

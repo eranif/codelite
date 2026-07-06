@@ -342,6 +342,13 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
     return iter->second;
 }
 
+/* static */ bool FileExtManager::IsBinaryType(const wxString& filename)
+{
+    FileType ft = GetType(filename);
+    return ft == TypeOther || ft == TypeArchive || ft == TypeBmp || ft == TypeDll || ft == TypeExe || ft == TypeTar ||
+           ft == TypeZip;
+}
+
 bool FileExtManager::IsCxxFile(const wxString& filename)
 {
 

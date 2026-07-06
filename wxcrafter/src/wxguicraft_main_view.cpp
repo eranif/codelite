@@ -3195,17 +3195,18 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
         }
     };
 
-    wxcCodeGeneratorHelper::Get().CreateXRC(requestDesignerRefresh,
-                                            bitmapGenerationStart,
-                                            bitmapGenerationEnd,
+    const auto ret = wxcCodeGeneratorHelper::Get().CreateXRC(requestDesignerRefresh,
+                                                             bitmapGenerationStart,
+                                                             bitmapGenerationEnd,
 #if STANDALONE_BUILD
-                                            nullptr
+                                                             nullptr
 #else
-                                            &NotifyFileSaved
+                                                             &NotifyFileSaved
 #endif
     );
-
-
+    if (!ret.ok()) {
+        ::wxMessageBox(ret.message(), "wxCrafter", wxOK | wxCENTER | wxICON_ERROR, wxCrafter::TopFrame());
+    }
 }
 
 void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)

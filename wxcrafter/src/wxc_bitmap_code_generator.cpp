@@ -31,10 +31,10 @@ void wxcCodeGeneratorHelper::Clear()
     m_icons.Clear();
 }
 
-bool wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefresh,
-                                       std::function<void()> bitmapGenerationStart,
-                                       std::function<void()> bitmapGenerationEnd,
-                                       std::function<void(const wxFileName&)> onFileSaved)
+clStatus wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefresh,
+                                           std::function<void()> bitmapGenerationStart,
+                                           std::function<void()> bitmapGenerationEnd,
+                                           std::function<void(const wxFileName&)> onFileSaved)
 {
     wxLogNull noLog;
 
@@ -86,7 +86,7 @@ bool wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefr
     wxStringOutputStream outStream(&outputString);
 
     if (!doc.Save(outStream)) {
-        return false;
+        return StatusIOError();
     }
 
     // Check to see if we already got
@@ -107,11 +107,11 @@ bool wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefr
         wxCommandEvent eventEnd(wxEVT_BITMAP_CODE_GENERATION_DONE);
         eventEnd.SetString(m_destCPP.GetFullPath());
         EventNotifier::Get()->AddPendingEvent(eventEnd);
-        return true;
+        return {};
     }
 
     if (!doc.Save(m_xrcFile.GetFullPath())) {
-        return false;
+        return StatusIOError(m_xrcFile.GetFullPath());
     }
 
     {
@@ -122,9 +122,9 @@ bool wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefr
         }
 
         wxcXmlResourceCmp cmp;
-        cmp.Run(m_xrcFile.GetFullPath(),                        // Input XRC file
-                cppFile,                                        // Output file (our CPP file)
-                wxcProjectMetadata::Get().GetBitmapFunction()); // The function name to generate
+        const auto retCode = cmp.Run(m_xrcFile.GetFullPath(),                        // Input XRC file
+                                     cppFile,                                        // Output file (our CPP file)
+                                     wxcProjectMetadata::Get().GetBitmapFunction()); // The function name to generate
 
         if (onFileSaved) {
             onFileSaved(cppFile);
@@ -135,10 +135,13 @@ bool wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefr
         if (bitmapGenerationEnd) {
             bitmapGenerationEnd();
         }
+        if (!retCode.ok()) {
+            return retCode;
+        }
     }
 
     // m_bmpGenThread.AddMessage( req );
-    return true;
+    return {};
 }
 
 wxString wxcCodeGeneratorHelper::GenerateInitCode(TopLevelWinWrapper* tw) const

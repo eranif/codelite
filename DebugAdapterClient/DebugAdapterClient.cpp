@@ -1081,7 +1081,7 @@ bool DebugAdapterClient::StartSocketDap()
 
     if (m_session.debug_over_ssh) {
         // launch ssh process
-        auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
+        auto env_list = BuildEnvFromString(dap_server.GetEnvironment());
         m_dap_server.reset(new DapProcess(
             ::CreateAsyncProcess(this,
                                  command,
@@ -1092,7 +1092,7 @@ bool DebugAdapterClient::StartSocketDap()
     } else {
         // launch local process
         EnvSetter env; // apply CodeLite env variables
-        auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
+        auto env_list = ResolveEnvList(dap_server.GetEnvironment());
         m_dap_server.reset(new DapProcess(::CreateAsyncProcess(
             this,
             command,
@@ -1115,7 +1115,7 @@ dap::Transport* DebugAdapterClient::StartStdioDap()
 
     if (m_session.debug_over_ssh) {
         // launch ssh process
-        auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
+        auto env_list = BuildEnvFromString(dap_server.GetEnvironment());
         m_dap_server.reset(new DapProcess(
             ::CreateAsyncProcess(this,
                                  command,
@@ -1126,7 +1126,7 @@ dap::Transport* DebugAdapterClient::StartStdioDap()
     } else {
         // launch local process
         EnvSetter env; // apply CodeLite env variables
-        auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
+        auto env_list = ResolveEnvList(dap_server.GetEnvironment());
         m_dap_server.reset(new DapProcess(::CreateAsyncProcess(
             this,
             command,
@@ -1388,18 +1388,18 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
 
 clEnvList_t DebugAdapterClient::PrepareEnvForFileSystemWorkspace(const DapEntry& dap_server, bool resolve_vars)
 {
-    clEnvList_t envlist = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
+    clEnvList_t envlist = BuildEnvFromString(dap_server.GetEnvironment());
     if (clFileSystemWorkspace::Get().IsOpen()) {
         auto conf = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
         if (conf) {
-            auto workspace_env = StringUtils::BuildEnvFromString(conf->GetEnvironment());
+            auto workspace_env = BuildEnvFromString(conf->GetEnvironment());
             envlist.insert(envlist.end(), workspace_env.begin(), workspace_env.end());
         }
     }
 
     if (resolve_vars) {
         EnvSetter setter; // apply global variables
-        envlist = StringUtils::ResolveEnvList(envlist);
+        envlist = ResolveEnvList(envlist);
     }
     return envlist;
 }

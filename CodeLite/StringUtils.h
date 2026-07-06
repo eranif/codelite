@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "clEnvironment.hpp"
 #include "codelite_exports.h"
 
 #include <algorithm>
@@ -205,17 +204,6 @@ public:
      * @brief free argv created by StringUtils::BuildArgv method
      */
     static void FreeArgv(char** argv, int argc);
-
-    /**
-     * @brief given environment string in form of: `a=b;c=d` construct a clEnvList_t
-     */
-    static clEnvList_t BuildEnvFromString(const wxString& envstr);
-
-    /**
-     * @brief using the current environment variables, resolve the list
-     */
-    static clEnvList_t ResolveEnvList(const clEnvList_t& env_list);
-    static clEnvList_t ResolveEnvList(const wxString& envstr);
 
     /**
      * @brief accept command as input string and break it into array of commands

@@ -7,71 +7,6 @@
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
 
-namespace
-{
-bool is_env_variable(const wxString& str, wxString* env_name)
-{
-    if (str.empty() || str[0] != '$') {
-        return false;
-    }
-    env_name->reserve(str.length());
-
-    // start from 1 to skip the prefix $
-    for (size_t i = 1; i < str.length(); ++i) {
-        wxChar ch = str[i];
-        if (ch == '(' || ch == ')' || ch == '{' || ch == '}')
-            continue;
-        env_name->Append(ch);
-    }
-    return true;
-}
-
-/**
- * @brief expand an environment variable. use `env_map` to resolve any variables
- * accepting value in the form of (one example):
- * $PATH;C:\bin;$(LD_LIBRARY_PATH);${PYTHONPATH}
- */
-wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& env_map)
-{
-    // split the value into its parts
-    wxArrayString parts = wxStringTokenize(value, wxPATH_SEP, wxTOKEN_STRTOK);
-    wxString resolved;
-    for (const wxString& part : parts) {
-        wxString env_name;
-        if (is_env_variable(part, &env_name)) {
-            // try the environment variables first
-            if (env_map.find(env_name) != env_map.end()) {
-                resolved << env_map.find(env_name)->second;
-            }
-        } else {
-            // literal
-            resolved << part;
-        }
-        resolved << wxPATH_SEP;
-    }
-    if (!resolved.empty()) {
-        resolved.RemoveLast();
-    }
-    return resolved;
-}
-
-clEnvList_t split_env_string(const wxString& env_str)
-{
-    clEnvList_t result;
-    wxArrayString lines = ::wxStringTokenize(env_str, "\r\n", wxTOKEN_STRTOK);
-    for (wxString& line : lines) {
-        wxString key = line.BeforeFirst('=');
-        wxString value = line.AfterFirst('=');
-        if (key.empty()) {
-            continue;
-        }
-        result.push_back({key, value});
-    }
-    return result;
-}
-
-} // namespace
-
 std::vector<std::string> StringUtils::ToStdStrings(const wxArrayString& strs)
 {
     std::vector<std::string> res;
@@ -824,35 +759,6 @@ std::vector<std::vector<wxString>> StringUtils::SplitShellCommand(const wxString
     flush_command(current_command);
 
     return result;
-}
-
-clEnvList_t StringUtils::BuildEnvFromString(const wxString& envstr) { return split_env_string(envstr); }
-
-clEnvList_t StringUtils::ResolveEnvList(const clEnvList_t& env_list)
-{
-    wxEnvVariableHashMap current_env;
-    ::wxGetEnvMap(&current_env);
-
-    for (auto [env_var_name, env_var_value] : env_list) {
-        env_var_value = expand_env_variable(env_var_value, current_env);
-        current_env.erase(env_var_name);
-        current_env.insert({env_var_name, env_var_value});
-    }
-
-    clEnvList_t result;
-    result.reserve(current_env.size());
-
-    // convert the hash map into list and return it
-    for (const auto& [env_var_name, env_var_value] : current_env) {
-        result.push_back({env_var_name, env_var_value});
-    }
-    return result;
-}
-
-clEnvList_t StringUtils::ResolveEnvList(const wxString& envstr)
-{
-    auto source_list = BuildEnvFromString(envstr);
-    return ResolveEnvList(source_list);
 }
 
 wxArrayString StringUtils::BuildCommandArrayFromString(const wxString& command)

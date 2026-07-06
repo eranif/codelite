@@ -5,6 +5,7 @@
 #include "StdToWX.h"
 #include "StringUtils.h"
 #include "clResult.hpp"
+#include "clEnvironment.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "ssh/cl_sftp.h"

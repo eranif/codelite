@@ -618,7 +618,7 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     // get the workspace environment variables
     wxString workspace_env = clCxxWorkspaceST::Get()->GetEnvironmentVariables();
     {
-        auto arr = StringUtils::BuildEnvFromString(workspace_env);
+        auto arr = BuildEnvFromString(workspace_env);
         for (auto& p : arr) {
             wxString key = p.first;
             wxString value = p.second;
@@ -632,7 +632,7 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     // and finally, this configuration environment variables
     wxString config_env = GetEnvvars();
     {
-        auto arr = StringUtils::BuildEnvFromString(config_env);
+        auto arr = BuildEnvFromString(config_env);
         for (auto& p : arr) {
             wxString key = p.first;
             wxString value = p.second;

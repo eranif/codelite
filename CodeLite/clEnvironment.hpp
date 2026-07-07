@@ -23,4 +23,15 @@ private:
     std::vector<std::pair<wxString, wxAny>> m_old_env;
 };
 
+/**
+ * @brief given environment string in form of: `a=b;c=d` construct a clEnvList_t
+ */
+WXDLLIMPEXP_CL clEnvList_t BuildEnvFromString(const wxString& env_str);
+
+/**
+ * @brief using the current environment variables, resolve the list
+ */
+WXDLLIMPEXP_CL clEnvList_t ResolveEnvList(const clEnvList_t& env_list);
+WXDLLIMPEXP_CL clEnvList_t ResolveEnvList(const wxString& envstr);
+
 #endif // CLENVIRONMENT_HPP

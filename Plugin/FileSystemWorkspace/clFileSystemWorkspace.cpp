@@ -1155,7 +1155,7 @@ clEnvList_t clFileSystemWorkspace::GetEnvironment() const
     auto config = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
     if (config) {
         const wxString& envstr = config->GetEnvironment();
-        env_list = StringUtils::BuildEnvFromString(envstr);
+        env_list = BuildEnvFromString(envstr);
     }
     return env_list;
 }

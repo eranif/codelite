@@ -28,10 +28,7 @@
 #include "build_settings_config.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
-#include "compiler_command_line_parser.h"
 #include "ctags_manager.h"
-#include "environmentconfig.h"
-#include "envvarlist.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -39,17 +36,12 @@
 #include "localworkspace.h"
 #include "macromanager.h"
 #include "macros.h"
-#include "plugin.h"
 #include "project.h"
 #include "xml/xmlutils.h"
 
-#include <wx/app.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
-#include <wx/regex.h>
 #include <wx/sstream.h>
-#include <wx/stc/stc.h>
-#include <wx/thread.h>
 #include <wx/tokenzr.h>
 
 clCxxWorkspace::clCxxWorkspace()
@@ -1604,7 +1596,7 @@ clEnvList_t clCxxWorkspace::GetEnvironment() const
             return env_list;
         }
         const wxString& envstr = build_config->GetEnvvars();
-        env_list = StringUtils::BuildEnvFromString(envstr);
+        env_list = BuildEnvFromString(envstr);
     }
     return env_list;
 }

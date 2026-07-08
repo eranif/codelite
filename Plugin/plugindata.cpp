@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "plugindata.h"
 
+#include "json_utils.h"
+
 PluginInfo::PluginInfo()
     : m_flags(kNone)
 {

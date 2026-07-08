@@ -2,6 +2,7 @@
 
 #include "clToolBar.h"
 #include "globals.h"
+#include "json_utils.h"
 #include "php_configuration_data.h"
 #include "php_utils.h"
 #include "php_workspace.h"

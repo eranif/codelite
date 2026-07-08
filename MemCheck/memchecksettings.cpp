@@ -7,6 +7,8 @@
 
 #include "memchecksettings.h"
 
+#include "json_utils.h"
+
 ValgrindSettings::ValgrindSettings()
     : clConfigItem(CONFIG_ITEM_NAME_VALGRIND)
     , m_binary(VALGRIND_BINARY)

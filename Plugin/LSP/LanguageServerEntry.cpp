@@ -2,6 +2,7 @@
 
 #include "JSON.h"
 #include "StringUtils.h"
+#include "json_utils.h"
 
 LanguageServerEntry::LanguageServerEntry()
     : m_connectionString("stdio")

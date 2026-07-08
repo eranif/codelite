@@ -29,6 +29,7 @@
 #include "clWildMatch.hpp"
 #include "file_logger.h"
 #include "fileutils.h"
+#include "json_utils.h"
 #include "macros.h"
 
 #include <set>

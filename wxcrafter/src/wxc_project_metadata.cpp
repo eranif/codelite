@@ -1,5 +1,7 @@
 #include "wxc_project_metadata.h"
 
+#include "json_utils.h"
+
 #include <wx/ffile.h>
 #include <wx/filename.h>
 

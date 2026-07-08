@@ -1,5 +1,6 @@
 #include "wxc_settings.h"
 
+#include "json_utils.h"
 #include "wxgui_helpers.h"
 
 #include <wx/filename.h>

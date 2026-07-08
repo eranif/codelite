@@ -1,5 +1,6 @@
 #include "SourceFormatterBase.hpp"
 
+#include "json_utils.h"
 #include "macros.h"
 
 wxDEFINE_EVENT(wxEVT_FORMAT_COMPELTED, clSourceFormatEvent);

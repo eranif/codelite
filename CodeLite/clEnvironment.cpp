@@ -6,7 +6,6 @@
 #include "xml/xmlutils.h"
 
 #include <unordered_set>
-#include <wx/any.h>
 #include <wx/filename.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
@@ -142,15 +141,12 @@ clEnvironment::clEnvironment(const clEnvList_t* envlist)
 
 clEnvironment::~clEnvironment()
 {
-    for (const auto& p : m_old_env) {
-        if (p.second.IsNull()) {
-            // remove this environment
-            ::wxUnsetEnv(p.first);
+    for (const auto& [key, value] : m_old_env) {
+        if (value) {
+            ::wxSetEnv(key, *value);
         } else {
-            wxString strvalue;
-            if (p.second.GetAs(&strvalue)) {
-                ::wxSetEnv(p.first, strvalue);
-            }
+            // remove this environment
+            ::wxUnsetEnv(key);
         }
     }
 }
@@ -169,9 +165,9 @@ void clEnvironment::ApplyFromList(const clEnvList_t* envlist)
         if (succeeded) {
             wxString old_value;
             if (wxGetEnv(varname, &old_value)) {
-                m_old_env.push_back({varname, old_value});
+                m_old_env.emplace_back(varname, old_value);
             } else {
-                m_old_env.push_back({varname, wxAny{}});
+                m_old_env.emplace_back(varname, std::nullopt);
             }
         }
     }

@@ -3,8 +3,8 @@
 
 #include "codelite_exports.h"
 
+#include <optional>
 #include <vector>
-#include <wx/any.h>
 #include <wx/string.h>
 
 using clEnvList_t = std::vector<std::pair<wxString, wxString>>;
@@ -20,7 +20,7 @@ public:
 
 private:
     const clEnvList_t* m_env = nullptr;
-    std::vector<std::pair<wxString, wxAny>> m_old_env;
+    std::vector<std::pair<wxString, std::optional<wxString>>> m_old_env;
 };
 
 /**

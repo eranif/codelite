@@ -32,6 +32,7 @@ public:
     ~clStatus() = default;
 
     bool ok() const { return m_code == StatusCode::kSuccess; }
+    void IgnoreError() {}
 
     wxString message() const
     {

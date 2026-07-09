@@ -155,7 +155,7 @@ void clFileSystemWatcher::HandleRemoteFiles()
                 }
 
                 // Change if the file was modified.
-                auto old_modified_time = file.m_lastModified;
+                size_t old_modified_time = file.m_lastModified;
                 auto old_size = file.m_fileSize;
                 auto curr_modified_time = result.value().attr->GetLastModified();
                 auto file_size = result.value().attr->GetSize();

@@ -33,7 +33,7 @@
 ChatAI::ChatAI()
 {
     m_dock_chat = clConfig::Get().Read(CHAT_AI_DOCKED, m_dock_chat);
-    llm::Manager::GetInstance().GetConfig().Load();
+    llm::Manager::GetInstance().GetConfig().Load().IgnoreError();
 
     if (m_dock_chat) {
         m_chatWindow = new ChatAIWindow(clGetManager()->BookGet(PaneId::BOTTOM_BAR));

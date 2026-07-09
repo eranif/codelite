@@ -1282,7 +1282,7 @@ void Manager::HandleGlobalConfigFileUpdated()
     CallAfter([this]() {
         // Reload configuration
         wxBusyCursor bc{};
-        GetConfig().Load();
+        GetConfig().Load().IgnoreError();
 
         clLLMEvent event_config_updates{wxEVT_LLM_GLOBAL_CONFIG_UPDATED};
         event_config_updates.SetEventObject(this);

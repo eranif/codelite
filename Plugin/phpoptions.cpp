@@ -4,7 +4,7 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "fileutils.h"
-#include "globals.h"
+#include "json_utils.h"
 
 #include <wx/filename.h>
 

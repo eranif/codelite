@@ -27,7 +27,6 @@
 #define ZJSONNODE_H
 
 #include "codelite_exports.h"
-#include "json_utils.h"
 #include "macros.h"
 
 #include <assistant/common/json.hpp>

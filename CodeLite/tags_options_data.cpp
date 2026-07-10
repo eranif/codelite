@@ -28,9 +28,7 @@
 
 #include "cl_config.h"
 #include "ctags_manager.h"
-
-#include <wx/ffile.h>
-#include <wx/tokenzr.h>
+#include "json_utils.h"
 
 wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
 

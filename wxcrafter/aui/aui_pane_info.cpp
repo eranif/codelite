@@ -1,6 +1,7 @@
 #include "aui_pane_info.h"
 
 #include "JSON.h"
+#include "json_utils.h"
 #include "wxgui_helpers.h"
 
 #include <wx/propgrid/propgrid.h>

@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "StringUtils.h"
 #include "macros.h"
 
 #include <assistant/common/json.hpp> // <nlohmann/json.hpp>

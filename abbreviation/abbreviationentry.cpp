@@ -25,6 +25,8 @@
 
 #include "abbreviationentry.h"
 
+#include "json_utils.h"
+
 void AbbreviationEntry::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_entries"), m_entries);

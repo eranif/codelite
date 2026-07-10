@@ -1,4 +1,5 @@
 #include "JSON.h"
+#include "json_utils.h"
 
 #include <doctest.h>
 

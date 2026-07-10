@@ -28,7 +28,7 @@
 #include "bitmap_loader.h"
 #include "cl_command_event.h"
 #include "debugger.h"
-#include "listctrlpanelbase.h"
+#include "listctrlpanelbase.hpp"
 
 /** Implementing ListCtrlPanelBase */
 class DebuggerCallstackView : public ListCtrlPanelBase

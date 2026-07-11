@@ -1,5 +1,5 @@
 # set the plugin name here
-set(PLUGIN_NAME "LanguageServer")
+set(PLUGIN_NAME "PHPRefactoring")
 
 # Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
 project(${PLUGIN_NAME})
@@ -7,18 +7,23 @@ project(${PLUGIN_NAME})
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
 
-# Include paths
-include_directories("${CL_SRC_ROOT}/LanguageServer")
-
 if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
 endif()
 
-file(GLOB SRCS "*.cpp" "detectors/*.cpp")
+wxcrafter_target(
+    PHPRefactoring
+    "${CMAKE_CURRENT_SOURCE_DIR}/phprefactoringdlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "phprefactoringdlgbase.cpp"
+    "phprefactoringdlgbase.hpp"
+    "phprefactoringdlg_phprefactoring_bitmaps.cpp")
+
+file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_PHPRefactoring_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -30,27 +35,11 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_PHPRefactoring_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 
 # Use CodeLite's macro: CL_INSTALL_PLUGIN which handles both OSX and Linux installation
 cl_install_plugin(${PLUGIN_NAME})
 
-set(EXE_PERM
-    OWNER_EXECUTE
-    OWNER_WRITE
-    OWNER_READ
-    GROUP_EXECUTE
-    GROUP_READ
-    WORLD_EXECUTE
-    WORLD_READ)
-if(APPLE)
-    install(
-        FILES ${CL_SRC_ROOT}/LanguageServer/codelite-lsp/codelite-lsp-helper
-        DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/
-        PERMISSIONS ${EXE_PERM})
-endif()
-
-if(MINGW)
-    # install clangd
-    msys_install_clang64_tool(clangd.exe ${CL_INSTALL_BIN})
-endif()
+# install the phprefactor.phar
+cl_install_file_shared(${CMAKE_CURRENT_SOURCE_DIR}/phprefactor.phar)

@@ -210,6 +210,14 @@ wxcrafter_target(
     "movefuncimplbasedlg_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
+    LiteEditorNewConfigurationDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/new_configuration_dlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "new_configuration_dlg_base.cpp"
+    "new_configuration_dlg_base.hpp"
+    "new_configuration_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
     LiteEditorNewItemBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/new_item_dlg.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -389,6 +397,7 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorImportFileDialog_OUTPUTS}
     ${WXCRAFTER_LiteEditorListCtrlPanelBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorMoveFuncImplBaseDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorNewConfigurationDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorNewItemBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorNewVirtualFolder_OUTPUTS}
     ${WXCRAFTER_LiteEditorNewWorkspaceDlg_OUTPUTS}

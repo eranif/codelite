@@ -176,6 +176,14 @@ wxcrafter_target(
     "findinfiles_dlg_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
+    LiteEditorFreeTextDialog
+    "${CMAKE_CURRENT_SOURCE_DIR}/free_text_dialog.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "free_text_dialog_base.cpp"
+    "free_text_dialog_base.hpp"
+    "free_text_dialog_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
     LiteEditorImportFileDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/importfilesdialog.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -377,6 +385,7 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorEditorSettingsLocal_OUTPUTS}
     ${WXCRAFTER_LiteEditorFileCheckListBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorFindInFilesDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorFreeTextDialog_OUTPUTS}
     ${WXCRAFTER_LiteEditorImportFileDialog_OUTPUTS}
     ${WXCRAFTER_LiteEditorListCtrlPanelBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorMoveFuncImplBaseDlg_OUTPUTS}

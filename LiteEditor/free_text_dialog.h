@@ -25,22 +25,12 @@
 
 #pragma once
 
-#include "clThemedSTC.hpp"
-
-#include <wx/button.h>
-#include <wx/statline.h>
-#include <wx/wx.h>
+#include "free_text_dialog_base.hpp"
 
 ///////////////////////////////////////////////////////////////////////////
 
-class FreeTextDialog : public wxDialog
+class FreeTextDialog : public FreeTextDialogBase
 {
-protected:
-    clThemedSTC* m_text = nullptr;
-    wxStaticLine* m_staticline9 = nullptr;
-    wxButton* m_buttonOK = nullptr;
-    wxButton* m_buttonCancel = nullptr;
-
 public:
     FreeTextDialog(wxWindow* parent, const wxString& value = wxEmptyString, int id = wxID_ANY,
                    const wxString& title = _("Edit"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize(481, 299),

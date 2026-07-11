@@ -1,5 +1,5 @@
 # set the plugin name here
-set(PLUGIN_NAME "PHPRefactoring")
+set(PLUGIN_NAME "EOSWiki")
 
 # Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
 project(${PLUGIN_NAME})
@@ -13,17 +13,17 @@ if(USE_PCH AND NOT MINGW)
 endif()
 
 wxcrafter_target(
-    PHPRefactoring
-    "${CMAKE_CURRENT_SOURCE_DIR}/phprefactoringdlg.wxcp"
+    EOSWiki
+    "${CMAKE_CURRENT_SOURCE_DIR}/eosUI.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
-    "phprefactoringdlgbase.cpp"
-    "phprefactoringdlgbase.hpp"
-    "phprefactoringdlg_phprefactoring_bitmaps.cpp")
+    "eosUI.cpp"
+    "eosUI.hpp"
+    "eosUI_eoswiki_bitmaps.cpp")
 
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_PHPRefactoring_OUTPUTS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_EOSWiki_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -35,11 +35,11 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_PHPRefactoring_OUTPUTDIR}")
+target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_EOSWiki_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 
 # Use CodeLite's macro: CL_INSTALL_PLUGIN which handles both OSX and Linux installation
 cl_install_plugin(${PLUGIN_NAME})
 
-# install the phprefactor.phar
-cl_install_file_shared(${CL_SRC_ROOT}/PHPRefactoring/phprefactor.phar)
+# Install the resources
+cl_install_file_shared(${CMAKE_CURRENT_SOURCE_DIR}/resources/eoswiki.zip)

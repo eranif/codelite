@@ -5932,7 +5932,7 @@
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
-					"m_path":	"../codelite-icons/db-explorer/16/database.png"
+					"m_path":	"../../codelite-icons/db-explorer/16/database.png"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (32x32)  :",

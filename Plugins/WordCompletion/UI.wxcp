@@ -549,7 +549,7 @@
       }, {
        "type": "filePicker",
        "m_label": "Bitmap File:",
-       "m_path": "../codelite-icons/cc/16/word.png"
+       "m_path": "../../codelite-icons/cc/16/word.png"
       }],
      "m_events": [],
      "m_children": []

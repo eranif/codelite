@@ -2,14 +2,14 @@ project(gdbparser)
 
 # Bison files
 bison_target(
-    GdbResultParserYacc "${CMAKE_SOURCE_DIR}/gdbparser/gdb_result.y" "${CMAKE_CURRENT_BINARY_DIR}/gdb_result_parser.cpp"
+    GdbResultParserYacc "${CMAKE_CURRENT_SOURCE_DIR}/gdb_result.y" "${CMAKE_CURRENT_BINARY_DIR}/gdb_result_parser.cpp"
     DEFINES_FILE "${CMAKE_CURRENT_BINARY_DIR}/gdb_result_parser.h"
     COMPILE_FLAGS "-p gdb_result_ --no-lines")
 
 set(BisonSrcs "${BISON_GdbResultParserYacc_OUTPUTS}")
 
 # Flex files
-flex_target(GdbResultFlex "${CMAKE_SOURCE_DIR}/gdbparser/gdb_result.l" "${CMAKE_CURRENT_BINARY_DIR}/gdbresult.cpp"
+flex_target(GdbResultFlex "${CMAKE_CURRENT_SOURCE_DIR}/gdb_result.l" "${CMAKE_CURRENT_BINARY_DIR}/gdbresult.cpp"
             COMPILE_FLAGS "-Pgdb_result_ --noline --yylineno --batch")
 
 add_flex_bison_dependency(GdbResultFlex GdbResultParserYacc)
@@ -24,7 +24,7 @@ if(UNIX OR APPLE)
 endif()
 
 # Include paths
-target_include_directories(libgdbparser PUBLIC "${CL_SRC_ROOT}/gdbparser" "${CMAKE_CURRENT_BINARY_DIR}")
+target_include_directories(libgdbparser PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 
 include(CTest)
 if(BUILD_TESTING)

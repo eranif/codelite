@@ -1,5 +1,5 @@
 # set the plugin name here
-set(PLUGIN_NAME "EOSWiki")
+set(PLUGIN_NAME "LanguageServer")
 
 # Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
 project(${PLUGIN_NAME})
@@ -7,23 +7,18 @@ project(${PLUGIN_NAME})
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
 
+# Include paths
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+
 if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
 endif()
 
-wxcrafter_target(
-    EOSWiki
-    "${CMAKE_CURRENT_SOURCE_DIR}/eosUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
-    "eosUI.cpp"
-    "eosUI.hpp"
-    "eosUI_eoswiki_bitmaps.cpp")
-
-file(GLOB SRCS "*.cpp")
+file(GLOB SRCS "*.cpp" "detectors/*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_EOSWiki_OUTPUTS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -35,11 +30,27 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_EOSWiki_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 
 # Use CodeLite's macro: CL_INSTALL_PLUGIN which handles both OSX and Linux installation
 cl_install_plugin(${PLUGIN_NAME})
 
-# Install the resources
-cl_install_file_shared(${CL_SRC_ROOT}/EOSWiki/resources/eoswiki.zip)
+set(EXE_PERM
+    OWNER_EXECUTE
+    OWNER_WRITE
+    OWNER_READ
+    GROUP_EXECUTE
+    GROUP_READ
+    WORLD_EXECUTE
+    WORLD_READ)
+if(APPLE)
+    install(
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/codelite-lsp/codelite-lsp-helper
+        DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/
+        PERMISSIONS ${EXE_PERM})
+endif()
+
+if(MINGW)
+    # install clangd
+    msys_install_clang64_tool(clangd.exe ${CL_INSTALL_BIN})
+endif()

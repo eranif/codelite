@@ -31,7 +31,7 @@ else()
     include("${wxWidgets_USE_FILE}")
 
     # Include paths
-    include_directories("${CL_SRC_ROOT}/SpellChecker" "${HUNSPELL_H}")
+    include_directories("${CMAKE_CURRENT_SOURCE_DIR}" "${HUNSPELL_H}")
 
     if(USE_PCH AND NOT MINGW)
         add_definitions(-include "${CL_PCH_FILE}")
@@ -68,7 +68,7 @@ else()
     cl_install_plugin(${PLUGIN_NAME})
 
     install(
-        DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/dics
         DESTINATION ${CL_RESOURCES_DIR}
         USE_SOURCE_PERMISSIONS
         PATTERN ".svn" EXCLUDE

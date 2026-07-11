@@ -723,7 +723,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"../bitmaps/16-ok.png"
+							"m_path":	"../../bitmaps/16-ok.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -742,7 +742,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"../bitmaps/16-error.png"
+							"m_path":	"../../bitmaps/16-error.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -761,7 +761,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"../bitmaps/16-info.png"
+							"m_path":	"../../bitmaps/16-info.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -780,7 +780,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"../bitmaps/16-remote-folder.png"
+							"m_path":	"../../bitmaps/16-remote-folder.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -799,7 +799,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"../bitmaps/16-connected.png"
+							"m_path":	"../../bitmaps/16-connected.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -818,7 +818,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"../bitmaps/16-disconnected.png"
+							"m_path":	"../../bitmaps/16-disconnected.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]

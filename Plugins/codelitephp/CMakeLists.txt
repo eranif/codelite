@@ -20,8 +20,8 @@ else(NOT CL_SRC_ROOT)
 endif(NOT CL_SRC_ROOT)
 
 # Include paths
-include_directories("${CL_SRC_ROOT}/codelitephp/PHPParser" "${CL_SRC_ROOT}/codelitephp/php-plugin"
-                    "${CL_SRC_ROOT}/codelitephp/PHPParserUnitTests")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/PHPParser" "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/PHPParserUnitTests")
 
 if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     # Debug build of codelite

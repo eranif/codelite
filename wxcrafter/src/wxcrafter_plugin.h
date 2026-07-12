@@ -47,7 +47,9 @@ protected:
      * by this function
      */
     bool DoShowDesigner(bool createIfNotExist = true);
+#if !STANDALONE_BUILD
     bool DoCreateVirtualFolder(const wxString& vdFullPath);
+#endif
     void DoSelectWorkspaceTab();
     void DoLoadAfterImport(ImportDlg::ImportFileData& data);
     void DoImportFB(const wxString& filename = "");

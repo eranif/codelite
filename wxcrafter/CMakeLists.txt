@@ -112,8 +112,7 @@ set(MACRO_SENSITIVE_GUI_ONLY_FILES
     "src/wxcrafter_plugin.cpp"
     "src/wxguicraft_main_view.cpp"
     "UI/NewFormWizard.cpp"
-    "UI/wxcSettingsDlg.cpp"
-    "Importer/import_dlg.cpp")
+    "UI/wxcSettingsDlg.cpp")
 
 # Build absolute-path source lists.
 set(MACRO_SENSITIVE_GUI_ONLY_SRCS)
@@ -143,6 +142,7 @@ set(COMMON_GUI_ONLY_FILES
     "src/wxc_edit_manager.cpp"
     "src/wxcLicenseGPL2.cpp"
     "src/wxgui_bitmaploader.cpp"
+    "Importer/import_dlg.cpp"
     "Importer/importer_from_wxFB.cpp"
     "Importer/importer_from_wxSmith.cpp"
     "Importer/importer_from_xrc.cpp")

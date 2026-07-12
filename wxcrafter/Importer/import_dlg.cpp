@@ -9,10 +9,10 @@
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 
-ImportDlg::ImportDlg(IPD_ProjectType type, wxWindow* parent, const wxString& sourceFile)
+ImportDlg::ImportDlg(IPD_ProjectType type, wxWindow* parent, const wxString& sourceFile, bool showAddToProject)
     : ImportDlgBaseClass(parent)
     , m_Type(type)
-    , m_modified(false)
+    , m_showAddToProject(showAddToProject)
 {
     if (m_Type == IPD_FB) {
         SetLabel(_("Choose a wxFormBuilder project to import"));
@@ -25,9 +25,14 @@ ImportDlg::ImportDlg(IPD_ProjectType type, wxWindow* parent, const wxString& sou
     m_filepathText->ChangeValue(sourceFile);
     m_textName->ChangeValue(fn.GetFullPath());
 
-#if STANDALONE_BUILD
-    m_checkBoxAddToProject->SetValue(false);
-#endif
+    if (!m_showAddToProject)
+    {
+        m_checkBoxAddToProject->SetValue(false);
+        m_checkBoxAddToProject->Hide();
+        m_staticText148->Hide();
+        m_textCtrl1VirtualFolder->Hide();
+        m_buttonBrowseVD->Hide();
+    }
     SetName("ImportDlg");
     WindowAttrManager::Load(this);
 }
@@ -100,12 +105,6 @@ ImportDlg::ImportFileData ImportDlg::GetData() const
     d.wxcpFilename = m_textName->GetValue();
     d.virtualFolder = m_textCtrl1VirtualFolder->GetValue();
     return d;
-}
-void ImportDlg::OnAddToProjectUI(wxUpdateUIEvent& event)
-{
-#if STANDALONE_BUILD
-    event.Enable(false);
-#endif
 }
 
 void ImportDlg::OnFileImportTextUpdated(wxCommandEvent& event)

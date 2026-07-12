@@ -879,6 +879,7 @@ bool wxCrafterPlugin::DoShowDesigner(bool createIfNotExist)
     return false;
 }
 
+#if !STANDALONE_BUILD
 bool wxCrafterPlugin::DoCreateVirtualFolder(const wxString& vdFullPath)
 {
     CHECK_POINTER_RET_FALSE(m_mgr);
@@ -886,6 +887,7 @@ bool wxCrafterPlugin::DoCreateVirtualFolder(const wxString& vdFullPath)
     wxString parent = vdFullPath.BeforeLast(':');
     return m_mgr->CreateVirtualDirectory(parent, name);
 }
+#endif
 
 void wxCrafterPlugin::OnOpenFile(clCommandEvent& e)
 {
@@ -1129,6 +1131,7 @@ void wxCrafterPlugin::OnSaveProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcEditMana
 
 void wxCrafterPlugin::DoLoadAfterImport(ImportDlg::ImportFileData& data)
 {
+#if !STANDALONE_BUILD
     if (m_mgr && data.addToProject && !data.virtualFolder.IsEmpty()) {
         wxArrayString filesToAdd;
         filesToAdd.Add(data.wxcpFilename.GetFullPath());
@@ -1136,7 +1139,7 @@ void wxCrafterPlugin::DoLoadAfterImport(ImportDlg::ImportFileData& data)
             m_mgr->AddFilesToVirtualFolder(data.virtualFolder, filesToAdd);
         }
     }
-
+#endif
     if (data.loadWhenDone) {
         m_treeView->LoadProject(data.wxcpFilename);
     }
@@ -1156,7 +1159,13 @@ void wxCrafterPlugin::OnImportXRC(wxCommandEvent& e)
 {
     ImportDlg::ImportFileData data;
     ImportFromXrc::Importer import(wxCrafter::TopFrame());
-    if (import.ImportProject(data)) {
+#if STANDALONE_BUILD
+    const bool showAddToProject = false;
+#else
+    const bool showAddToProject = true;
+#endif
+    if (import.ImportProject(data, showAddToProject))
+    {
         DoLoadAfterImport(data);
     }
 }
@@ -1165,7 +1174,13 @@ void wxCrafterPlugin::OnImportwxSmith(wxCommandEvent& e)
 {
     ImportDlg::ImportFileData data;
     ImportFromwxSmith::Importer import(wxCrafter::TopFrame());
-    if (import.ImportProject(data)) {
+#if STANDALONE_BUILD
+    const bool showAddToProject = false;
+#else
+    const bool showAddToProject = true;
+#endif
+
+    if (import.ImportProject(data, "", showAddToProject)) {
         DoLoadAfterImport(data);
     }
 }
@@ -1211,7 +1226,13 @@ void wxCrafterPlugin::DoImportFB(const wxString& filename)
 {
     ImportDlg::ImportFileData data;
     ImportFromwxFB::Importer import(wxCrafter::TopFrame());
-    if (import.ImportProject(data, filename)) {
+#if STANDALONE_BUILD
+    const bool showAddToProject = false;
+#else
+    const bool showAddToProject = true;
+#endif
+
+    if (import.ImportProject(data, filename, showAddToProject)) {
         DoLoadAfterImport(data);
     }
 }
@@ -1333,7 +1354,13 @@ void wxCrafterPlugin::OnImportwxSmithProject(wxCommandEvent& event)
 {
     ImportDlg::ImportFileData data;
     ImportFromwxSmith::Importer import(wxCrafter::TopFrame());
-    if (import.ImportProject(data, m_selectedFile.GetFullPath())) {
+#if STANDALONE_BUILD
+    const bool showAddToProject = false;
+#else
+    const bool showAddToProject = true;
+#endif
+
+    if (import.ImportProject(data, m_selectedFile.GetFullPath(), showAddToProject)) {
         DoLoadAfterImport(data);
     }
 }

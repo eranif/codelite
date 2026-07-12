@@ -15,7 +15,7 @@ public:
     Importer(wxWindow* parent);
     ~Importer() = default;
 
-    bool ImportProject(ImportDlg::ImportFileData& data) const;
+    bool ImportProject(ImportDlg::ImportFileData& data, bool showAddToProject) const;
 
 protected:
     bool ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const;

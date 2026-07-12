@@ -17,17 +17,17 @@ public:
 
 protected:
     IPD_ProjectType m_Type;
-    bool m_modified;
+    bool m_modified = false;
+    bool m_showAddToProject = false;
 
 protected:
     void OnDestFilePathUpdated(wxCommandEvent& event) override;
     void OnFileImportTextUpdated(wxCommandEvent& event) override;
-    void OnAddToProjectUI(wxUpdateUIEvent& event) override;
     void OnAddFileToProjectUI(wxUpdateUIEvent& event) override;
     void OnBrowseForVirtualFolder(wxCommandEvent& event) override;
 
 public:
-    ImportDlg(IPD_ProjectType type, wxWindow* parent = NULL, const wxString& sourceFile = "");
+    ImportDlg(IPD_ProjectType type, wxWindow* parent, const wxString& sourceFile, bool showAddToProject);
     ~ImportDlg() override = default;
 
     wxString GetFilepath() const { return m_filepathText->GetValue(); }

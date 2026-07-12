@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Colour codes (only emitted when stdout is a terminal).
+if [ -t 1 ]; then
+  _CLR_RESET='\033[0m'
+  _CLR_YELLOW='\033[1;33m'
+  _CLR_RED='\033[1;31m'
+  _CLR_GREEN='\033[1;32m'
+else
+  _CLR_RESET=''
+  _CLR_YELLOW=''
+  _CLR_RED=''
+  _CLR_GREEN=''
+fi
+
+function WARN() {
+  echo -e "${_CLR_YELLOW}[WARN]${_CLR_RESET} $*" >&2
+}
+
+function ERROR() {
+  echo -e "${_CLR_RED}[ERROR]${_CLR_RESET} $*" >&2
+}
+
+function INFO() {
+  echo -e "${_CLR_GREEN}[INFO]${_CLR_RESET} $*"
+}
+
+if [[ "${MSYSTEM}" == "clang64" ]]; then
+  MSYS_ARCH="clang-x86_64"
+else
+  MSYS_ARCH="clang-aarch64"
+fi

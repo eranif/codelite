@@ -22,24 +22,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  5 2007)
-// http://www.wxformbuilder.org/
-//
-// PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
-
-#ifdef WX_PRECOMP
-
-#include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif //__BORLANDC__
-
-#else
-#include <wx/wx.h>
-#endif // WX_PRECOMP
 
 #include "edit_workspace_conf_dlg.h"
 #include "macros.h"
@@ -49,31 +31,9 @@
 
 EditWorkspaceConfDlg::EditWorkspaceConfDlg(wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size,
                                            int style)
-    : wxDialog(parent, id, title, pos, size, style)
+    : EditWorkspaceConfDlgBase(parent, id, title, pos, size, style)
 {
     this->SetSizeHints(wxDefaultSize, wxDefaultSize);
-
-    wxBoxSizer* mainSizer;
-    mainSizer = new wxBoxSizer(wxHORIZONTAL);
-
-    m_wspConfList = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0);
-    mainSizer->Add(m_wspConfList, 1, wxALL | wxEXPAND, 5);
-
-    wxBoxSizer* btnSizer;
-    btnSizer = new wxBoxSizer(wxVERTICAL);
-
-    m_buttonRename = new wxButton(this, wxID_ANY, _("&Rename"), wxDefaultPosition, wxDefaultSize, 0);
-    btnSizer->Add(m_buttonRename, 0, wxALL, 5);
-
-    m_buttonDelete = new wxButton(this, wxID_ANY, _("&Delete"), wxDefaultPosition, wxDefaultSize, 0);
-    btnSizer->Add(m_buttonDelete, 0, wxALL, 5);
-
-    m_buttonClose = new wxButton(this, wxID_CANCEL, _("&Close"), wxDefaultPosition, wxDefaultSize, 0);
-    btnSizer->Add(m_buttonClose, 0, wxALL, 5);
-
-    mainSizer->Add(btnSizer, 0, wxEXPAND, 5);
-
-    this->SetSizer(mainSizer);
     this->Layout();
 
     CustomInit();

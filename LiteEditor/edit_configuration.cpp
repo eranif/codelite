@@ -22,26 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  5 2007)
-// http://www.wxformbuilder.org/
-//
-// PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
-
-#ifdef WX_PRECOMP
-
-#include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif //__BORLANDC__
-
-#else
-#include <wx/wx.h>
-#endif // WX_PRECOMP
 
 #include "edit_configuration.h"
+
 #include "macros.h"
 #include "manager.h"
 #include "project_settings.h"
@@ -50,20 +33,10 @@
 
 EditConfigurationDialog::EditConfigurationDialog(wxWindow* parent, const wxString& projectName, int id, wxString title,
                                                  wxPoint pos, wxSize size, int style)
-    : wxDialog(parent, id, title, pos, size, style)
+    : EditConfigurationDialogBase(parent, id, title, pos, size, style)
     , m_projectName(projectName)
 {
     this->SetSizeHints(wxDefaultSize, wxDefaultSize);
-
-    wxBoxSizer* bSizer15;
-    bSizer15 = new wxBoxSizer(wxVERTICAL);
-
-    m_panel6 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    wxBoxSizer* bSizer17;
-    bSizer17 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_configurationsList = new wxListBox(m_panel6, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0);
-    bSizer17->Add(m_configurationsList, 1, wxALL | wxEXPAND, 5);
 
     ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(m_projectName);
     if(settings) {
@@ -77,36 +50,7 @@ EditConfigurationDialog::EditConfigurationDialog(wxWindow* parent, const wxStrin
     if(m_configurationsList->GetCount() > 0)
         m_configurationsList->SetSelection(0);
 
-    wxBoxSizer* bSizer18;
-    bSizer18 = new wxBoxSizer(wxVERTICAL);
-
-    m_buttonDelete = new wxButton(m_panel6, wxID_ANY, _("&Delete"), wxDefaultPosition, wxDefaultSize, 0);
-    bSizer18->Add(m_buttonDelete, 0, wxALL, 5);
-
-    m_buttonRename = new wxButton(m_panel6, wxID_ANY, _("&Rename"), wxDefaultPosition, wxDefaultSize, 0);
-    bSizer18->Add(m_buttonRename, 0, wxALL, 5);
-    bSizer17->Add(bSizer18, 0, wxEXPAND, 5);
-
-    m_panel6->SetSizer(bSizer17);
-    m_panel6->Layout();
-    bSizer17->Fit(m_panel6);
-    bSizer15->Add(m_panel6, 1, wxALL | wxEXPAND, 5);
-
-    m_staticline9 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL);
-    bSizer15->Add(m_staticline9, 0, wxEXPAND | wxALL, 5);
-
-    wxBoxSizer* bSizer16;
-    bSizer16 = new wxBoxSizer(wxHORIZONTAL);
-
-    m_buttonClose = new wxButton(this, wxID_OK, _("Close"), wxDefaultPosition, wxDefaultSize, 0);
-    bSizer16->Add(m_buttonClose, 0, wxALL, 5);
-
-    bSizer15->Add(bSizer16, 0, wxALIGN_CENTER, 5);
-
-    this->SetSizer(bSizer15);
-    GetSizer()->Fit(this);
     Layout();
-    CentreOnParent();
     ConnectListBoxDClick(m_configurationsList, EditConfigurationDialog::OnItemDclick);
     ConnectButton(m_buttonClose, EditConfigurationDialog::OnButtonClose);
     ConnectButton(m_buttonRename, EditConfigurationDialog::OnButtonRename);

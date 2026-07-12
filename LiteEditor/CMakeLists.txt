@@ -504,7 +504,7 @@ set(EXE_PERM
 
 if(NOT APPLE)
     install(
-        FILES ${CL_SRC_ROOT}/codelite_open_helper.py
+        FILES ${CL_SRC_ROOT}/scripts/codelite_open_helper.py
         DESTINATION ${CL_INSTALL_BIN}
         PERMISSIONS ${EXE_PERM})
 endif()

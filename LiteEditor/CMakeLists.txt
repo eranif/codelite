@@ -152,6 +152,14 @@ wxcrafter_target(
     "depend_dlg_page_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
+    LiteEditorEditConfiguration
+    "${CMAKE_CURRENT_SOURCE_DIR}/edit_configuration.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "edit_configuration_base.cpp"
+    "edit_configuration_base.hpp"
+    "edit_configuration_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
     LiteEditorEditorSettingsLocal
     "${CMAKE_CURRENT_SOURCE_DIR}/editorsettingslocalbase.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -390,6 +398,7 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorDebuggerAsciiViewerBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorDebuggerSettings_OUTPUTS}
     ${WXCRAFTER_LiteEditorDependDlgPage_OUTPUTS}
+    ${WXCRAFTER_LiteEditorEditConfiguration_OUTPUTS}
     ${WXCRAFTER_LiteEditorEditorSettingsLocal_OUTPUTS}
     ${WXCRAFTER_LiteEditorFileCheckListBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorFindInFilesDlg_OUTPUTS}

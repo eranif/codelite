@@ -189,10 +189,11 @@ function build_CodeLite_Linux() {
     [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ]; then
     INFO "Configuring CodeLite"
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 \
-       -DWITH_WX_CONFIG=${wx_config}
+      -DWITH_WX_CONFIG=${wx_config}
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
+
   make -j$(nproc) #VERBOSE=1
   INFO "CodeLite built successfully"
   cd ${ROOT_DIR}
@@ -219,7 +220,7 @@ function build_CodeLite_macOS() {
   cd ${CodeLite_build_dir}
   # Configure if the build tree has not been generated yet, or if
   # CMakeLists.txt is newer than the generated cache.
-  if [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] ||
+  if [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] || [ ! -d "${CodeLite_build_dir}/codelite.app" ] ||
     [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ] ||
     ! grep -q "^CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOS_DEPLOYMENT_TARGET}$" "${CodeLite_build_dir}/CMakeCache.txt"; then
     INFO "Configuring CodeLite"

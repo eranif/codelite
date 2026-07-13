@@ -2,7 +2,6 @@
 
 ROOT_DIR=$(dirname $(readlink -f $0))
 BUILD_DIR=${ROOT_DIR}/.build-release
-MACOS_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET:-13.0}
 OS_NAME="$(uname -s)"
 
 . ${ROOT_DIR}/scripts/functions.rc
@@ -131,7 +130,6 @@ function build_wx_widgets_macOS() {
   mkdir .build-release
   cd .build-release
   cmake .. -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET} \
     -DwxBUILD_DEBUG_LEVEL=0 \
     -DwxBUILD_MONOLITHIC=1 \
     -DwxBUILD_SAMPLES=OFF \

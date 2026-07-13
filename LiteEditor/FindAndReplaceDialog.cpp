@@ -124,12 +124,9 @@ FindAndReplaceDialog::FindAndReplaceDialog(wxWindow* parent, wxWindowID id)
 {
     Hide();
     SetIcons(wxArtProvider::GetIconBundle(wxART_FIND, wxART_FRAME_ICON));
-    m_toolbar->SetMiniToolBar(true);
 
     auto bitmaps = clGetManager()->GetStdIcons();
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-
-#define TB_ADD_BITMAP(name) images->Add(bitmaps->GetBundle(name).GetBitmap(wxSize(24, 24)), name)
+#define TB_ADD_BITMAP(name) bitmaps->GetBundle(name).GetBitmap(wxSize(24, 24))
 
     m_toolbar->AddTool(
         XRCID("case-sensitive"), _("Case Sensitive"), TB_ADD_BITMAP("case-sensitive"), wxEmptyString, wxITEM_CHECK);
@@ -140,7 +137,6 @@ FindAndReplaceDialog::FindAndReplaceDialog(wxWindow* parent, wxWindowID id)
         XRCID("highlight-matches"), _("Highlight matches"), TB_ADD_BITMAP("marker"), wxEmptyString, wxITEM_CHECK);
     m_toolbar->AddTool(
         XRCID("replace-in-selection"), _("In Selection"), TB_ADD_BITMAP("text_selection"), wxEmptyString, wxITEM_CHECK);
-    m_toolbar->AddStretchableSpace();
     m_message = new wxStaticText(m_toolbar, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
     m_toolbar->AddControl(m_message);
 #undef TB_ADD_BITMAP
@@ -214,8 +210,6 @@ FindAndReplaceDialog::FindAndReplaceDialog(wxWindow* parent, wxWindowID id)
     // Update the search flags
     m_searchFlags = clConfig::Get().Read("FindBar/SearchFlags", 0);
     m_highlightMatches = clConfig::Get().Read("FindBar/HighlightOccurences", false);
-
-    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 
 #ifdef __WXMSW__
     auto set_font_cb = [this]() {

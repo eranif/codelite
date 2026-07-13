@@ -193,7 +193,7 @@ function build_CodeLite_Linux() {
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
-  make -j$(nproc) VERBOSE=1
+  make -j$(nproc) #VERBOSE=1
   INFO "CodeLite built successfully"
   cd ${ROOT_DIR}
 
@@ -336,11 +336,7 @@ function package() {
   elif [[ "${OS_NAME}" == "Linux" ]]; then
     INFO "Creating Linux package"
     cd ${BUILD_DIR}
-    if [ ! -f "CodeLite" ]; then
-      ERROR "CodeLite executable not found in ${BUILD_DIR}"
-      exit 1
-    fi
-    INFO "Linux package ready at ${BUILD_DIR}/CodeLite"
+    make -j$(nproc) package
   fi
 }
 

@@ -7001,13 +7001,7 @@
 											"m_label":	"Value:",
 											"m_value":	false
 										}],
-									"m_events":	[{
-											"m_eventName":	"wxEVT_UPDATE_UI",
-											"m_eventClass":	"wxUpdateUIEvent",
-											"m_functionNameAndSignature":	"OnAddToProjectUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event",
-											"m_noBody":	false
-										}],
+									"m_events":	[],
 									"m_children":	[]
 								}, {
 									"m_type":	4454,

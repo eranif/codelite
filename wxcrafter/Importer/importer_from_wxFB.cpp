@@ -22,9 +22,9 @@ Importer::Importer(wxWindow* parent)
 {
 }
 
-bool Importer::ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile) const
+bool Importer::ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile, bool showAddToProject) const
 {
-    ImportDlg dlg(ImportDlg::IPD_FB, m_Parent, sourceFile);
+    ImportDlg dlg(ImportDlg::IPD_FB, m_Parent, sourceFile, showAddToProject);
 
     if (dlg.ShowModal() != wxID_OK) {
         return false;

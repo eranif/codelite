@@ -321,8 +321,8 @@ function package() {
   elif [[ "${OS_NAME}" == "Darwin" ]]; then
     cd ${BUILD_DIR}
 
-    if [ ! -d "CodeLite.app" ]; then
-      ERROR "CodeLite.app not found in ${BUILD_DIR}"
+    if [ ! -d "codelite.app" ]; then
+      ERROR "codelite.app not found in ${BUILD_DIR}"
       exit 1
     fi
 
@@ -332,7 +332,7 @@ function package() {
     fi
 
     rm -f *.zip
-    ../macos-sign-app.sh --notarize --password $CODELITE_PASSWORD codelite.app
+    ${ROOT_DIR}/scripts/weekly/macos-sign-app.sh --notarize --password $CODELITE_PASSWORD codelite.app
   elif [[ "${OS_NAME}" == "Linux" ]]; then
     INFO "Creating Linux package"
     cd ${BUILD_DIR}

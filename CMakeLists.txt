@@ -237,7 +237,11 @@ endif()
 # Appstream metadata
 set(METAINFO_FILE
     "${CMAKE_SOURCE_DIR}/Runtime/org.codelite.codelite.metainfo.xml")
-install(FILES ${METAINFO_FILE} DESTINATION share/metainfo)
+if(APPLE)
+  install(FILES ${METAINFO_FILE} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/share/metainfo)
+else()
+  install(FILES ${METAINFO_FILE} DESTINATION share/metainfo)
+endif()
 
 if(WITH_WXPATH)
   set(ENV{PATH} ${WITH_WXPATH}:$ENV{PATH})

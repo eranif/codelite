@@ -210,7 +210,11 @@ void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account,
 
 #if USE_SFTP
     // upload codelite-remote script and start it once its uploaded
+#ifdef __WXMAC__
+    wxString localCodeLiteRemoteScript = clStandardPaths::Get().GetDataDir() + "/codelite-remote";
+#else
     wxString localCodeLiteRemoteScript = clStandardPaths::Get().GetBinFolder() + "/codelite-remote";
+#endif
     clDEBUG() << "Uploading codelite-remote file:" << endl;
     clDEBUG() << localCodeLiteRemoteScript << "->" << scriptPath << endl;
     if (!clSFTPManager::Get().AwaitSaveFile(localCodeLiteRemoteScript, scriptPath, account.GetAccountName())) {

@@ -118,6 +118,8 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
       ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config/cppcheck)
     file(MAKE_DIRECTORY
          ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/dics)
+    file(MAKE_DIRECTORY
+         ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/share/metainfo)
 
     file(COPY ${CL_SRC_ROOT}/svgs/logo/osx/icon.icns
          DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/Resources)
@@ -140,10 +142,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
       COPY ${CL_SRC_ROOT}/Runtime/osx-terminal.sh
       DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
       FILE_PERMISSIONS ${EXE_PERM})
-
-    # codelite-clang-format
-    file(COPY ${CL_SRC_ROOT}/tools/macOS/clang-format
-         DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
 
     # folders
     install(

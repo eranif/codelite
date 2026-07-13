@@ -64,10 +64,17 @@ macro(codelite_install_script _script_)
       GROUP_READ
       WORLD_EXECUTE
       WORLD_READ)
-  install(
-    FILES ${_script_}
-    DESTINATION ${CL_INSTALL_BIN}
-    PERMISSIONS ${EXE_PERM})
+  if(APPLE)
+    install(
+      FILES ${_script_}
+      DESTINATION ${CL_RESOURCES_DIR}
+      PERMISSIONS ${EXE_PERM})
+  else()
+    install(
+      FILES ${_script_}
+      DESTINATION ${CL_INSTALL_BIN}
+      PERMISSIONS ${EXE_PERM})
+  endif()
 endmacro()
 
 # ------------------------------------

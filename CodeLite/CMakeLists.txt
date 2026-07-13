@@ -5,13 +5,6 @@ project(libcodelite)
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
 
-if(UNIX AND NOT APPLE)
-  set(CMAKE_SKIP_BUILD_RPATH TRUE)
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-  list(PREPEND CMAKE_INSTALL_RPATH "${PLUGINS_DIR}")
-endif(UNIX AND NOT APPLE)
-
 # Flex files
 flex_target(
   CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/CxxScanner.l"

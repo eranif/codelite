@@ -108,13 +108,7 @@ function build_wx_widgets_Linux() {
   git submodule update --init --depth 1
   mkdir .build-release
   cd .build-release
-  cmake .. -DCMAKE_BUILD_TYPE=Release \
-    -DwxBUILD_DEBUG_LEVEL=0 \
-    -DwxBUILD_MONOLITHIC=1 \
-    -DwxBUILD_SAMPLES=OFF \
-    -DwxUSE_SYS_LIBS=OFF \
-    -DwxUSE_LUNASVG=OFF \
-    -DCMAKE_INSTALL_PREFIX=${BUILD_DIR}/wxWidgets-install
+  ../configure --disable-debug_flag --with-gtk=3 --enable-stl --prefix=${wx_install_dir}
   make -j$(nproc) install
   export PATH="${wx_install_dir}/bin":$PATH
   cd ${ROOT_DIR}
@@ -195,11 +189,11 @@ function build_CodeLite_Linux() {
     [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ]; then
     INFO "Configuring CodeLite"
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 \
-      -DwxWidgets_CONFIG_EXECUTABLE=${wx_config}
+       -DWITH_WX_CONFIG=${wx_config}
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
-  make -j$(nproc)
+  make -j$(nproc) VERBOSE=1
   INFO "CodeLite built successfully"
   cd ${ROOT_DIR}
 

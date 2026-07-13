@@ -540,6 +540,7 @@ if(MINGW)
   endif()
 
 else()
+  set(wxWidgets_DIR "${CMAKE_BINARY_DIR}/.build-release/wxWidgets-install/lib/cmake/wxWidgets")
   find_package(
     wxWidgets
     COMPONENTS adv
@@ -966,7 +967,11 @@ if(UNIX AND NOT APPLE)
   set(CMAKE_SKIP_BUILD_RPATH TRUE)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-  list(PREPEND CMAKE_INSTALL_RPATH "${PLUGINS_DIR}")
+  list(
+    PREPEND
+    CMAKE_INSTALL_RPATH
+    "${CMAKE_BINARY_DIR}/lib:${CMAKE_BINARY_DIR}/wxWidgets-install/lib:${PLUGINS_DIR}"
+  )
 endif(UNIX AND NOT APPLE)
 
 if(WITH_PCH)

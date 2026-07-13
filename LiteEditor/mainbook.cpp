@@ -1315,7 +1315,7 @@ bool MainBook::DoSelectPage(wxWindow* win)
     } else {
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
         event.SetString(FileUtils::RealPath(editor->GetFileName().GetFullPath()));
-        EventNotifier::Get()->AddPendingEvent(event);
+        EventNotifier::Get()->ProcessEvent(event);
     }
     return true;
 }
@@ -1684,11 +1684,10 @@ void MainBook::ShowNavigationDialog()
         return;
     }
 
-    NotebookNavigationDlg* dlg = new NotebookNavigationDlg(EventNotifier::Get()->TopFrame(), m_book);
-    if (dlg->ShowModal() == wxID_OK && dlg->GetSelection() != wxNOT_FOUND) {
-        m_book->SetSelection(dlg->GetSelection());
+    NotebookNavigationDlg dlg(EventNotifier::Get()->TopFrame(), m_book);
+    if (dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) {
+        m_book->SetSelection(dlg.GetSelection());
     }
-    wxDELETE(dlg);
 }
 
 void MainBook::MovePage(bool movePageRight)

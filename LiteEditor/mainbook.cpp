@@ -1315,7 +1315,11 @@ bool MainBook::DoSelectPage(wxWindow* win)
     } else {
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
         event.SetString(FileUtils::RealPath(editor->GetFileName().GetFullPath()));
+#ifdef __WXGTK__
         EventNotifier::Get()->ProcessEvent(event);
+#else
+        EventNotifier::Get()->AddPendingEvent(event);
+#endif
     }
     return true;
 }

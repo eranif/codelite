@@ -229,14 +229,14 @@ function build_CodeLite_macOS() {
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
-  make -j$(sysctl -n hw.physicalcpu)
+  make -j$(sysctl -n hw.physicalcpu) install
   INFO "CodeLite built successfully"
   cd ${ROOT_DIR}
 
   INFO ""
   INFO "To run CodeLite:"
   INFO "=============="
-  INFO "open ${BUILD_DIR}/CodeLite.app"
+  INFO "open ${BUILD_DIR}/codelite.app"
   INFO ""
 }
 

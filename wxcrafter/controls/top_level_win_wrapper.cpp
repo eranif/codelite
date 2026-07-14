@@ -331,17 +331,25 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
     wxFileName derivedClassFileHPP(filename);
 
     derivedClassFileCPP.SetExt("cpp");
-    derivedClassFileHPP.SetExt(wxcProjectMetadata::Get().GetHeaderFileExt());
+    derivedClassFileHPP.SetExt("h");
+
+    const wxFileName wxcpFile = wxcProjectMetadata::Get().GetProjectFileName();
 
     // Fix the paths if needed
     // i.e. if the derived classes are relative, make them use the same
     // path as the base classes file
     if (derivedClassFileCPP.IsRelative()) {
-        derivedClassFileCPP.MakeAbsolute(headerFile.GetPath());
+        derivedClassFileCPP.MakeAbsolute(wxcpFile.GetPath());
     }
 
     if (derivedClassFileHPP.IsRelative()) {
-        derivedClassFileHPP.MakeAbsolute(headerFile.GetPath());
+        derivedClassFileHPP.MakeAbsolute(wxcpFile.GetPath());
+    }
+    
+    // By default we want to generate hpp files. However, if a "h" file exists
+    // keep it.
+    if (!derivedClassFileHPP.FileExists()) {
+        derivedClassFileHPP.SetExt("hpp");
     }
 
     wxString dCpp, dH, dBlockGuard;

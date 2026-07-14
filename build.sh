@@ -100,6 +100,7 @@ function build_wx_widgets_Linux() {
   fi
 
   INFO "Building wxWidgets"
+  rm -fr ${BUILD_DIR}/wxWidgets
   mkdir -p ${BUILD_DIR}
   cd $_
   git clone --depth 1 https://github.com/wxWidgets/wxWidgets.git
@@ -122,6 +123,7 @@ function build_wx_widgets_macOS() {
   fi
 
   INFO "Building wxWidgets"
+  rm -fr ${BUILD_DIR}/wxWidgets
   mkdir -p ${BUILD_DIR}
   cd $_
   git clone --depth 1 https://github.com/wxWidgets/wxWidgets.git

@@ -1,12 +1,11 @@
 #include "menu_bar.h"
 
-#include "allocator_mgr.h"
 #include "event_notifier.h"
+#include "wxc_widget.h"
 
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
-#include <wx/msgdlg.h>
 #include <wx/settings.h>
 
 #define MARGIN_X 5

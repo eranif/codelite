@@ -1,10 +1,10 @@
 #include "NewFormWizard.h"
 
 #include "VirtualDirectorySelectorDlg.h"
-#include "allocator_mgr.h"
 #include "project.h"
 #include "workspace.h"
 #include "wxc_project_metadata.h"
+#include "wxc_widget.h"
 
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>

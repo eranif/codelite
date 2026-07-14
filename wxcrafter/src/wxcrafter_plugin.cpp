@@ -132,8 +132,6 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     , m_mainFrame(NULL)
     , m_serverMode(serverMode)
 {
-    Allocator::Instance()->SetPlugin(this);
-
 #if !STANDALONE_BUILD
     /// Initialize wxPG only in plugin mode
     wxPGInitResourceModule();

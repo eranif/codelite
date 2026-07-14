@@ -2,7 +2,7 @@
 	"metadata":	{
 		"m_generatedFilesDir":	".",
 		"m_objCounter":	701,
-		"m_includeFiles":	["\"allocator_mgr.h\""],
+		"m_includeFiles":	["\"wxc_widget.h\""],
 		"m_bitmapFunction":	"wxCE1C8InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_gui_wxcrafter_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,

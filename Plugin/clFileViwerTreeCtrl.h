@@ -26,12 +26,13 @@
 #ifndef CLFILEVIWERTREECTRL_H
 #define CLFILEVIWERTREECTRL_H
 
-#include "clThemedTreeCtrl.h"
 #include "codelite_exports.h"
 
 #include <memory>
+#include <unordered_map>
+#include <vector>
+#include <wx/dataview.h>
 #include <wx/filename.h>
-#include <wx/treectrl.h>
 
 /**
  * @class clTreeNodeIndex
@@ -39,14 +40,14 @@
  */
 class WXDLLIMPEXP_SDK clTreeNodeIndex
 {
-    std::unordered_map<wxString, wxTreeItemId> m_children;
+    std::unordered_map<wxString, wxDataViewItem> m_children;
 
 public:
     clTreeNodeIndex() = default;
     virtual ~clTreeNodeIndex() = default;
 
-    wxTreeItemId Find(const wxString& path);
-    void Add(const wxString& path, const wxTreeItemId& item);
+    wxDataViewItem Find(const wxString& path);
+    void Add(const wxString& path, const wxDataViewItem& item);
     void Delete(const wxString& name);
 
     /**
@@ -56,7 +57,7 @@ public:
 };
 
 // Item data class
-class WXDLLIMPEXP_SDK clTreeCtrlData : public wxTreeItemData
+class WXDLLIMPEXP_SDK clTreeCtrlData : public wxClientData
 {
 public:
     enum eKind {
@@ -75,7 +76,7 @@ public:
     clTreeCtrlData(eKind kind)
         : m_kind(kind)
     {
-        if (IsFolder()) {
+        if (IsFolder() || IsRoot()) {
             m_index = std::make_unique<clTreeNodeIndex>();
         }
     }
@@ -122,17 +123,69 @@ public:
     bool IsFolder() const { return m_kind == kFolder; }
     bool IsFile() const { return m_kind == kFile; }
     bool IsDummy() const { return m_kind == kDummy; }
+    bool IsRoot() const { return m_kind == kRoot; }
 };
 
-class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public clThemedTreeCtrl
+class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
 {
+    // Client data for the (invisible) root item, which has no wxDataViewItem of its own.
+    // Holds the index used for locating top level folders.
+    clTreeCtrlData m_rootData{ clTreeCtrlData::kRoot };
+
+    bool ShouldComeBefore(clTreeCtrlData* a, clTreeCtrlData* b) const;
+    wxDataViewItem InsertSorted(const wxDataViewItem& parent,
+                                const wxString& text,
+                                int icon,
+                                int expandedIcon,
+                                bool isContainer,
+                                wxClientData* data);
+
 public:
     clFileViewerTreeCtrl(wxWindow* parent,
                          wxWindowID id = wxID_ANY,
                          const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxDefaultSize,
-                         long style = wxTR_DEFAULT_STYLE | wxTR_MULTIPLE | wxTR_HIDE_ROOT | wxBORDER_STATIC);
+                         long style = wxDV_MULTIPLE | wxDV_ROW_LINES | wxDV_NO_HEADER | wxBORDER_STATIC);
     virtual ~clFileViewerTreeCtrl() = default;
+
+    /**
+     * @brief the (invisible) root item. Top level folders are direct children of this item
+     */
+    wxDataViewItem GetRootItem() const { return wxDataViewItem(); }
+
+    /**
+     * @brief return the client data associated with an item. If item is the (invisible) root item,
+     * return the synthetic root data instead (used for the top-level folders index)
+     */
+    clTreeCtrlData* GetItemData(const wxDataViewItem& item) const
+    {
+        return item.IsOk() ? static_cast<clTreeCtrlData*>(wxDataViewTreeCtrl::GetItemData(item))
+                           : const_cast<clTreeCtrlData*>(&m_rootData);
+    }
+
+    bool ItemHasChildren(const wxDataViewItem& item) const { return GetChildCount(item) > 0; }
+
+    /**
+     * @brief associate bitmap vector with this tree, used as the source for icon indices
+     */
+    void SetBitmaps(std::vector<wxBitmap>* bitmaps);
+
+    /**
+     * @brief append a new file item, keeping the folders/hidden/case-insensitive sort order
+     */
+    wxDataViewItem InsertFileSorted(const wxDataViewItem& parent, const wxString& text, int icon, wxClientData* data)
+    {
+        return InsertSorted(parent, text, icon, wxWithImages::NO_IMAGE, false, data);
+    }
+
+    /**
+     * @brief append a new folder item, keeping the folders/hidden/case-insensitive sort order
+     */
+    wxDataViewItem InsertFolderSorted(
+        const wxDataViewItem& parent, const wxString& text, int icon, int expandedIcon, wxClientData* data)
+    {
+        return InsertSorted(parent, text, icon, expandedIcon, true, data);
+    }
 };
 
 #endif // CLFILEVIWERTREECTRL_H

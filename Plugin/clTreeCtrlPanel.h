@@ -134,27 +134,27 @@ public:
 
 protected:
     void ToggleView();
-    void RefreshNonTopLevelFolder(const wxTreeItemId& item);
+    void RefreshNonTopLevelFolder(const wxDataViewItem& item);
     virtual void OnLinkEditor(wxCommandEvent& event);
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
     void OnFilesCreated(clFileSystemEvent& event);
 
-    void UpdateItemDeleted(const wxTreeItemId& item);
-    void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items) const;
+    void UpdateItemDeleted(const wxDataViewItem& item);
+    void GetTopLevelFolders(wxArrayString& paths, wxDataViewItemArray& items) const;
 
     /**
      * @brief ensure that item is selected (single selection)
      */
-    void SelectItem(const wxTreeItemId& item);
+    void SelectItem(const wxDataViewItem& item);
     /**
      * @brief return list of selected files and folders. In addition return the
      * tree ctrl items. You can always assume that the folders and the folderItems are of the same
      * size. Same for the file arrays
      */
     void GetSelections(wxArrayString& folders,
-                       wxArrayTreeItemIds& folderItems,
+                       wxDataViewItemArray& folderItems,
                        wxArrayString& files,
-                       wxArrayTreeItemIds& fileItems);
+                       wxDataViewItemArray& fileItems);
 
     // void version of the expandToFile, so it can be called with CallAfter
     void ExpandToFileVoid(const wxFileName& fn);
@@ -164,9 +164,9 @@ protected:
     virtual void OnActiveEditorChanged(wxCommandEvent& event);
     virtual void OnFindInFilesShowing(clFindInFilesEvent& event);
     virtual void OnInitDone(wxCommandEvent& event);
-    virtual void OnContextMenu(wxTreeEvent& event);
-    virtual void OnItemActivated(wxTreeEvent& event);
-    virtual void OnItemExpanding(wxTreeEvent& event);
+    virtual void OnContextMenu(wxDataViewEvent& event);
+    virtual void OnItemActivated(wxDataViewEvent& event);
+    virtual void OnItemExpanding(wxDataViewEvent& event);
     virtual void OnCloseFolder(wxCommandEvent& event);
     virtual void OnNewFolder(wxCommandEvent& event);
     virtual void OnNewFile(wxCommandEvent& event);
@@ -182,15 +182,15 @@ protected:
     virtual void OnRefresh(wxCommandEvent& event);
     void OnOpenFolder(wxCommandEvent& event);
     // Helpers
-    void DoExpandItem(const wxTreeItemId& parent, bool expand);
-    void DoRenameItem(const wxTreeItemId& item, const wxString& oldname, const wxString& newname);
+    void DoExpandItem(const wxDataViewItem& parent, bool expand);
+    void DoRenameItem(const wxDataViewItem& item, const wxString& oldname, const wxString& newname);
 
-    bool IsTopLevelFolder(const wxTreeItemId& item);
+    bool IsTopLevelFolder(const wxDataViewItem& item);
 
-    clTreeCtrlData* GetItemData(const wxTreeItemId& item) const;
-    wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
-    wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);
-    void DoCloseFolder(const wxTreeItemId& item);
+    clTreeCtrlData* GetItemData(const wxDataViewItem& item) const;
+    wxDataViewItem DoAddFolder(const wxDataViewItem& parent, const wxString& path);
+    wxDataViewItem DoAddFile(const wxDataViewItem& parent, const wxString& path);
+    void DoCloseFolder(const wxDataViewItem& item);
 
     clConfig* m_config = nullptr;
     wxString m_viewName;

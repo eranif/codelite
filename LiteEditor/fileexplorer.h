@@ -31,7 +31,6 @@
 
 #include <wx/panel.h>
 
-class wxTreeCtrl;
 class clTreeCtrlPanel;
 
 class FileExplorer : public wxPanel
@@ -50,7 +49,7 @@ public:
     virtual ~FileExplorer();
     const wxString& GetCaption() const { return m_caption; }
     TreeItemInfo GetItemInfo() { return m_view->GetSelectedItemInfo(); }
-    clTreeCtrl* GetTree() { return m_view->GetTreeCtrl(); }
+    clFileViewerTreeCtrl* GetTree() { return m_view->GetTreeCtrl(); }
     void OpenFolder(const wxString& path);
 };
 

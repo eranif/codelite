@@ -337,11 +337,11 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
     // i.e. if the derived classes are relative, make them use the same
     // path as the base classes file
     if (derivedClassFileCPP.IsRelative()) {
-        derivedClassFileCPP.SetPath(headerFile.GetPath());
+        derivedClassFileCPP.MakeAbsolute(headerFile.GetPath());
     }
 
     if (derivedClassFileHPP.IsRelative()) {
-        derivedClassFileHPP.SetPath(headerFile.GetPath());
+        derivedClassFileHPP.MakeAbsolute(headerFile.GetPath());
     }
 
     wxString dCpp, dH, dBlockGuard;

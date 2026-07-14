@@ -1,50 +1,79 @@
 #include "clFileViwerTreeCtrl.h"
 
-namespace
-{
-size_t GetItemScore(clTreeCtrlData* item)
-{
-    size_t score = 0;
-    if (item->IsFolder() || item->IsDummy()) {
-        score += 100;
-    }
-
-    if (!item->GetName().empty()) {
-        auto ch = item->GetName()[0];
-        if (ch == '_' || ch == '.') {
-            // Hidden file
-            score += 10;
-        }
-    }
-    return score;
-}
-} // namespace
-
 clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clThemedTreeCtrl(parent, id, pos, size, (style & ~wxTR_FULL_ROW_HIGHLIGHT))
+    : wxDataViewTreeCtrl(parent, id, pos, size, style)
 {
-    std::function<bool(const wxTreeItemId&, const wxTreeItemId&)> SortFunc = [&](const wxTreeItemId& itemA,
-                                                                                 const wxTreeItemId& itemB) {
-        clTreeCtrlData* a = static_cast<clTreeCtrlData*>(GetItemData(itemA));
-        clTreeCtrlData* b = static_cast<clTreeCtrlData*>(GetItemData(itemB));
-
-        size_t score1 = GetItemScore(a);
-        size_t score2 = GetItemScore(b);
-
-        if (score1 > score2) {
-            return true;
-        } else if (score2 > score1) {
-            return false;
-        } else {
-            // same score
-            return (a->GetName().CmpNoCase(b->GetName()) < 0);
-        }
-    };
-    SetSortFunction(SortFunc);
 }
 
-wxTreeItemId clTreeNodeIndex::Find(const wxString& path)
+void clFileViewerTreeCtrl::SetBitmaps(std::vector<wxBitmap>* bitmaps)
+{
+    wxWithImages::Images images;
+    if (bitmaps) {
+        images.reserve(bitmaps->size());
+        for (const auto& bmp : *bitmaps) {
+            images.push_back(wxBitmapBundle::FromBitmap(bmp));
+        }
+    }
+    SetImages(images);
+}
+
+bool clFileViewerTreeCtrl::ShouldComeBefore(clTreeCtrlData* a, clTreeCtrlData* b) const
+{
+    auto GetItemScore = [](clTreeCtrlData* item) -> size_t {
+        size_t score = 0;
+        if (item->IsFolder() || item->IsDummy()) {
+            score += 100;
+        }
+
+        if (!item->GetName().empty()) {
+            auto ch = item->GetName()[0];
+            if (ch == '_' || ch == '.') {
+                // Hidden file
+                score += 10;
+            }
+        }
+        return score;
+    };
+
+    size_t scoreA = GetItemScore(a);
+    size_t scoreB = GetItemScore(b);
+    if (scoreA != scoreB) {
+        return scoreA > scoreB;
+    }
+    return a->GetName().CmpNoCase(b->GetName()) < 0;
+}
+
+wxDataViewItem clFileViewerTreeCtrl::InsertSorted(
+    const wxDataViewItem& parent, const wxString& text, int icon, int expandedIcon, bool isContainer,
+    wxClientData* data)
+{
+    clTreeCtrlData* newData = static_cast<clTreeCtrlData*>(data);
+    int count = GetChildCount(parent);
+
+    // Despite its name, wxDataViewTreeStore::InsertItem(parent, "previous", ...) inserts the new
+    // item immediately BEFORE "previous" in the child list. Find the first existing child that
+    // should come after the new item and use it as that anchor.
+    wxDataViewItem nextItem;
+    for (int i = 0; i < count; ++i) {
+        wxDataViewItem child = GetNthChild(parent, i);
+        clTreeCtrlData* childData = GetItemData(child);
+        if (childData && ShouldComeBefore(newData, childData)) {
+            nextItem = child;
+            break;
+        }
+    }
+
+    if (!nextItem.IsOk()) {
+        // the new item goes at the end (this also covers the "no children yet" case)
+        return isContainer ? AppendContainer(parent, text, icon, expandedIcon, data)
+                           : AppendItem(parent, text, icon, data);
+    }
+    return isContainer ? InsertContainer(parent, nextItem, text, icon, expandedIcon, data)
+                       : InsertItem(parent, nextItem, text, icon, data);
+}
+
+wxDataViewItem clTreeNodeIndex::Find(const wxString& path)
 {
 #ifdef __WXMSW__
     wxString lcpath = path.Lower();
@@ -56,10 +85,10 @@ wxTreeItemId clTreeNodeIndex::Find(const wxString& path)
         return m_children.find(path)->second;
     }
 #endif
-    return wxTreeItemId();
+    return wxDataViewItem();
 }
 
-void clTreeNodeIndex::Add(const wxString& path, const wxTreeItemId& item)
+void clTreeNodeIndex::Add(const wxString& path, const wxDataViewItem& item)
 {
     m_children.insert({
 #ifdef __WXMSW__

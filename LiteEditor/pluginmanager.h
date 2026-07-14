@@ -94,7 +94,7 @@ public:
     wxMenuBar* GetMenuBar() override;
     IConfigTool* GetConfigTool() override;
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type) override;
-    clTreeCtrl* GetFileExplorerTree() override;
+    clFileViewerTreeCtrl* GetFileExplorerTree() override;
     clTreeCtrl* GetWorkspaceTree() override;
     MainNotebook* GetMainNotebook() override;
     IEditor* OpenFile(const wxString& fileName,

@@ -76,7 +76,7 @@ public:
     clTreeCtrlData(eKind kind)
         : m_kind(kind)
     {
-        if (IsFolder() || IsRoot()) {
+        if (IsFolder()) {
             m_index = std::make_unique<clTreeNodeIndex>();
         }
     }

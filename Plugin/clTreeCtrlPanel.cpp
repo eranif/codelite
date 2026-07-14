@@ -3,7 +3,6 @@
 #include "clAuiToolBarArt.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clFileSystemEvent.h"
-#include "clToolBar.h"
 #include "clTreeCtrlPanelDefaultPage.h"
 #include "clWorkspaceView.h"
 #include "cl_config.h"
@@ -308,10 +307,7 @@ void clTreeCtrlPanel::DoExpandItem(const wxDataViewItem& parent, bool expand)
     }
 }
 
-clTreeCtrlData* clTreeCtrlPanel::GetItemData(const wxDataViewItem& item) const
-{
-    return m_treeCtrl->GetItemData(item);
-}
+clTreeCtrlData* clTreeCtrlPanel::GetItemData(const wxDataViewItem& item) const { return m_treeCtrl->GetItemData(item); }
 
 void clTreeCtrlPanel::AddFolder(const wxString& path)
 {

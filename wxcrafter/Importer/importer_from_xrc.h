@@ -1,14 +1,14 @@
 #ifndef IMPORTERFROMXRC_H
 #define IMPORTERFROMXRC_H
 
-#include "import_dlg.h"
+#include "UI/import_dlg.h"
 #include "wxc_widget.h"
 
 class wxWindow;
 
 namespace ImportFromXrc
 {
-	
+
 class Importer
 {
 public:

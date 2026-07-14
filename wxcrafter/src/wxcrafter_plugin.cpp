@@ -1,18 +1,19 @@
 #include "wxcrafter_plugin.h"
 
-#include "AboutDlg.h"
 #include "ColoursAndFontsManager.h"
 #include "Importer/importer_from_wxFB.h"
 #include "Importer/importer_from_wxSmith.h"
 #include "Importer/importer_from_xrc.h"
 #include "MyComboBoxXmlHandler.h"
 #include "MyRearrangeListXmlHandler.h"
+#include "UI/AboutDlg.h"
 #include "UI/DefineCustomControlWizard.h"
 #include "UI/DeleteCustomControlDlg.h"
 #include "UI/EditCustomControlDlg.h"
 #include "UI/NewFormWizard.h"
 #include "UI/wxcSettingsDlg.h"
 #include "UI/wxcTreeView.h"
+#include "UI/wxguicraft_main_view.h"
 #include "allocator_mgr.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
@@ -56,7 +57,6 @@
 #include "wxgui_bitmaploader.h"
 #include "wxgui_globals.h"
 #include "wxgui_helpers.h"
-#include "wxguicraft_main_view.h"
 
 #include <wx/ffile.h>
 #include <wx/msgdlg.h>
@@ -80,10 +80,7 @@ void FormatString(wxString& content, const wxFileName& filename)
         content = event.GetFormattedString();
     }
 }
-void NotifyFileSaved(const wxFileName& fn)
-{
-    EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath());
-}
+void NotifyFileSaved(const wxFileName& fn) { EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath()); }
 #endif
 
 wxStringSet_t GetProjectFiles(const wxString& projectName)
@@ -111,7 +108,7 @@ void SetStatusMessage(const wxString& msg)
         frame->SetStatusMessage(msg);
     }
 }
-}
+} // namespace
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new wxCrafterPlugin(manager, false); }
@@ -1164,8 +1161,7 @@ void wxCrafterPlugin::OnImportXRC(wxCommandEvent& e)
 #else
     const bool showAddToProject = true;
 #endif
-    if (import.ImportProject(data, showAddToProject))
-    {
+    if (import.ImportProject(data, showAddToProject)) {
         DoLoadAfterImport(data);
     }
 }

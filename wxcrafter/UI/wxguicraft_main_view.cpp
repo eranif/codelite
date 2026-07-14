@@ -1,4 +1,4 @@
-#include "wxguicraft_main_view.h"
+#include "UI/wxguicraft_main_view.h"
 
 #include "AuiToolBarTopLevel.h"
 #include "Preview/menu_bar.h"
@@ -54,7 +54,6 @@
 #endif
 
 GUICraftMainPanel* GUICraftMainPanel::m_MainPanel = NULL;
-
 
 static bool bManualSelection = false;
 
@@ -147,12 +146,9 @@ const wxEventType wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED = wxNewEventType();
 namespace
 {
 #if !STANDALONE_BUILD
-void NotifyFileSaved(const wxFileName& fn)
-{
-    EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath());
-}
+void NotifyFileSaved(const wxFileName& fn) { EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath()); }
 #endif
-}
+} // namespace
 
 GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clTreeCtrl* treeView)
     : GUICraftMainPanelBase(parent)
@@ -3110,8 +3106,7 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
         return;
     }
 
-    if (saveMode == SaveMode::SaveBeforeGeneration)
-    {
+    if (saveMode == SaveMode::SaveBeforeGeneration) {
         // save the project when generating code even if its not modified
         wxCommandEvent dummy;
         OnSaveProject(dummy);

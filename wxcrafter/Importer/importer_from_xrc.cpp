@@ -1,6 +1,6 @@
 #include "importer_from_xrc.h"
 
-#include "import_dlg.h"
+#include "UI/import_dlg.h"
 #include "import_from_xrc.h"
 #include "wxc_project_metadata.h"
 

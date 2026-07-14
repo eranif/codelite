@@ -3,8 +3,8 @@
 
 // main wxWidgets header file
 #include "UI/wxcTreeView.h"
+#include "UI/wxguicraft_main_view.h"
 #include "gui.hpp"
-#include "wxguicraft_main_view.h"
 
 #include <wx/cmdline.h>
 #include <wx/fdrepdlg.h>

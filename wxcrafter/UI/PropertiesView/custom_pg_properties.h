@@ -1,8 +1,8 @@
 #ifndef CUSTOM_PG_PROPS_H
 #define CUSTOM_PG_PROPS_H
 
-#include "BitmapSelectorDlg.h"
-#include "BmpTextSelectorDlg.h"
+#include "UI/BitmapSelectorDlg.h"
+#include "UI/BmpTextSelectorDlg.h"
 #include "UI/FontPickerDlg.h"
 #include "VirtualDirectorySelectorDlg.h"
 #include "enter_strings_dlg.h"

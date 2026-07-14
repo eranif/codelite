@@ -1,10 +1,10 @@
 #include "sizer_flags_list_view.h"
 
+#include "UI/wxguicraft_main_view.h"
 #include "event_notifier.h"
 #include "wxc_widget.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
-#include "wxguicraft_main_view.h"
 
 SizerFlagsListView::SizerFlagsListView()
     : m_wxcWidget(NULL)

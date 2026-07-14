@@ -4,10 +4,10 @@
 #include "AnimationCtrlWrapper.h"
 #include "AuiToolBarTopLevel.h"
 #include "BitmapComboxWrapper.h"
-#include "EventsEditorDlg.h"
 #include "RearrangeListWrapper.h"
 #include "SimpleHtmlListBoxWrapper.h"
 #include "TimePickerCtrlWrapper.h"
+#include "UI/EventsEditorDlg.h"
 #include "aui_manager_wrapper.h"
 #include "aui_notebook_wrapper.h"
 #include "banner_window_wrapper.h"
@@ -181,7 +181,7 @@ int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& load
     return list->Add(loader.Bitmap(bmpName));
 }
 
-}
+} // namespace
 
 Allocator::Allocator()
     : m_imageList(CreateAllocatorImageList())

@@ -1,7 +1,7 @@
 #ifndef IMPORTERFROMSMITH_H
 #define IMPORTERFROMSMITH_H
 
-#include "import_dlg.h"
+#include "UI/import_dlg.h"
 #include "wxc_widget.h"
 
 #include <map>

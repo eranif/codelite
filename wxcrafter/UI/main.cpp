@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "ColoursAndFontsManager.h"
+#include "UI/wxguicraft_main_view.h"
 #include "bitmap_loader.h"
 #include "cl_aui_dock_art.h"
 #include "controls/Containers/wizard_page_wrapper.h"
@@ -15,7 +16,6 @@
 #include "wxc_project_metadata.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
-#include "wxguicraft_main_view.h"
 
 #include <wx/ffile.h>
 #include <wx/filedlg.h>

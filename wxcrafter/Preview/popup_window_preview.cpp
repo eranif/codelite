@@ -1,10 +1,10 @@
 #include "popup_window_preview.h"
 
+#include "UI/wxguicraft_main_view.h"
 #include "clDirChanger.hpp"
 #include "event_notifier.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
-#include "wxguicraft_main_view.h"
 
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>

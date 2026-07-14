@@ -1,6 +1,7 @@
 #include "wxcTreeView.h"
 
 #include "EventsEditorDlg.h"
+#include "UI/wxguicraft_main_view.h"
 #include "allocator_mgr.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -8,7 +9,6 @@
 #include "wxc_project_metadata.h"
 #include "wxcrafter.hpp"
 #include "wxgui_defs.h"
-#include "wxguicraft_main_view.h"
 
 const wxEventType wxEVT_SHOW_WXCRAFTER_DESIGNER = wxNewEventType();
 
@@ -28,11 +28,10 @@ wxBorder GetControlBorder()
     return wxBORDER_DEFAULT;
 #endif
 }
-}
+} // namespace
 
 wxcTreeView::wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin)
-    : wxcTreeViewBaseClass(
-          parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, GetControlBorder() | wxTAB_TRAVERSAL)
+    : wxcTreeViewBaseClass(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, GetControlBorder() | wxTAB_TRAVERSAL)
     , m_loadingProject(false)
 {
     m_treeControls->SetImageList(Allocator::Instance()->GetImageList());

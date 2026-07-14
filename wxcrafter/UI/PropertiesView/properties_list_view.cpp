@@ -1,13 +1,13 @@
 #include "properties_list_view.h"
 
 #include "Properties/int_property.h"
+#include "UI/wxguicraft_main_view.h"
 #include "custom_pg_properties.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "wxc_project_metadata.h"
 #include "wxc_widget.h"
 #include "wxgui_helpers.h"
-#include "wxguicraft_main_view.h"
 
 #include <unordered_set>
 #include <wx/msgdlg.h>

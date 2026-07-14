@@ -1,8 +1,8 @@
 #include "custom_pg_properties.h"
 
 #include "Properties/color_property.h"
+#include "UI/wxguicraft_main_view.h"
 #include "event_notifier.h"
-#include "wxguicraft_main_view.h"
 
 bool wxPG_Colour::OnEvent(wxPropertyGrid* propgrid, wxWindow* primary, wxEvent& event)
 {

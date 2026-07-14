@@ -1,10 +1,10 @@
 #ifndef __wxcrafter_plugin__
 #define __wxcrafter_plugin__
 
-#include "Importer/import_dlg.h"
 #include "UI/NewFormWizard.h"
+#include "UI/import_dlg.h"
+#include "UI/main.h"
 #include "cl_command_event.h" // clDebugEvent
-#include "main.h"
 #include "plugin.h"
 
 class EventsEditorPane;

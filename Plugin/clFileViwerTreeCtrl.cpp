@@ -4,6 +4,16 @@ clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxDataViewTreeCtrl(parent, id, pos, size, style)
 {
+    // wxDataViewTreeCtrl::Create() sets up its only column as wxDATAVIEW_CELL_EDITABLE.
+    // On macOS this makes clicking an already-selected row arm a rename-vs-reselect
+    // disambiguation delay (the Finder "click again to rename" gesture), which shows up
+    // as a multi-hundred-ms stall when clicking within an existing multi-selection.
+    // We don't support inline rename here, so force the cell back to non-editable.
+    if (wxDataViewColumn* col = GetColumn(0)) {
+        if (wxDataViewRenderer* renderer = col->GetRenderer()) {
+            renderer->SetMode(wxDATAVIEW_CELL_INERT);
+        }
+    }
 }
 
 void clFileViewerTreeCtrl::SetBitmaps(std::vector<wxBitmap>* bitmaps)

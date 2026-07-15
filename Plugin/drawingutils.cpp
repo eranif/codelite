@@ -485,7 +485,14 @@ wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
     if (!bmp.IsOk()) {
         return wxNullBitmap;
     }
-    return bmp.ConvertToDisabled(bDarkBG ? 0 : 255);
+
+    wxBitmap disabledBitmap;
+    disabledBitmap = bmp.ConvertToDisabled(bDarkBG ? 0 : 255);
+#ifdef __WXMSW__
+    if (wxTheApp->GetTopWindow())
+        disabledBitmap.SetScaleFactor(wxTheApp->GetTopWindow()->GetDPIScaleFactor());
+#endif
+    return disabledBitmap;
 }
 
 #define DROPDOWN_ARROW_SIZE 20

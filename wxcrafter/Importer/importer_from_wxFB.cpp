@@ -1,7 +1,6 @@
 #include "importer_from_wxFB.h"
 
 #include "UI/import_dlg.h"
-#include "allocator_mgr.h"
 #include "controls/Containers/notebook_base_wrapper.h"
 #include "controls/Containers/notebook_page_wrapper.h"
 #include "import_from_wxFB.h"

@@ -1,7 +1,6 @@
 #include "EventsEditorDlg.h"
 
 #include "UI/wxguicraft_main_view.h"
-#include "allocator_mgr.h"
 #include "event_notifier.h"
 #include "wxc_widget.h"
 #include "wxcrafter_plugin.h"

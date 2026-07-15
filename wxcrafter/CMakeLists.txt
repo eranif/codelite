@@ -104,7 +104,7 @@ file(
 # GUICraftMainPanel, plugin glue, GUI dialogs) and must NOT be linked into the
 # headless wxcgen executable.
 set(MACRO_SENSITIVE_GUI_ONLY_FILES
-    "UI/main.cpp" "src/allocator_mgr.cpp" "src/wxcrafter_plugin.cpp"
+    "UI/main.cpp" "src/wxcrafter_plugin.cpp"
     "UI/wxguicraft_main_view.cpp" "UI/NewFormWizard.cpp"
     "UI/wxcSettingsDlg.cpp")
 
@@ -125,6 +125,7 @@ set(COMMON_GUI_ONLY_FILES
     "UI/import_dlg.cpp"
     "UI/MediaCtrl.cpp"
     "UI/OpenGLCanvas.cpp"
+    "src/allocator_mgr.cpp"
     "src/designer_panel.cpp"
     "src/enter_strings_dlg.cpp"
     "src/file_picker_ctrl.cpp"

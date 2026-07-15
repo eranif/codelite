@@ -10,6 +10,7 @@
 #include "StringUtils.h"
 #include "UI/PropertiesView/properties_sheet.h"
 #include "UI/ToolBoxPanel.h"
+#include "allocator_mgr.h"
 #include "cl_command_event.h"
 #include "controls/Containers/notebook_base_wrapper.h"
 #include "controls/Containers/notebook_page_wrapper.h"
@@ -57,12 +58,41 @@ GUICraftMainPanel* GUICraftMainPanel::m_MainPanel = NULL;
 
 static bool bManualSelection = false;
 
+enum {
+    ID_CHANGE_SIZER_TYPE = 3000,
+    ID_CHANGE_SIZER_FIRST,
+    ID_CHANGE_SIZER_BOXSIZER = ID_CHANGE_SIZER_FIRST,
+    ID_CHANGE_SIZER_STATICBOXSIZER,
+    ID_CHANGE_SIZER_FLEXGRIDSIZER,
+    ID_CHANGE_SIZER_GRIDSIZER,
+    ID_CHANGE_SIZER_GRIDBAGSIZER,
+    ID_CHANGE_SIZER_LAST
+};
+
+enum {
+    ID_INSERT_INTO_SIZER_TYPE = 3100,
+    ID_INSERT_INTO_SIZER_FIRST,
+    ID_INSERT_INTO_SIZER_BOXSIZER = ID_INSERT_INTO_SIZER_FIRST,
+    ID_INSERT_INTO_SIZER_STATICBOXSIZER,
+    ID_INSERT_INTO_SIZER_FLEXGRIDSIZER,
+    ID_INSERT_INTO_SIZER_GRIDSIZER,
+    ID_INSERT_INTO_SIZER_GRIDBAGSIZER,
+    ID_INSERT_INTO_SIZER_LAST
+};
+
 #define MENU_ENTRY(id, label, bmpname)              \
     menuItem = new wxMenuItem(&menu, id, label);    \
     menuItem->SetBitmap(bmpLoader.Bitmap(bmpname)); \
     menu.Append(menuItem);
 
 #define MENU_SEPARATOR() menu.AppendSeparator();
+
+#define MENU_ENTRY_PTR(id, label, bmpname)          \
+    menuItem = new wxMenuItem(menu, id, label);     \
+    menuItem->SetBitmap(bmpLoader.Bitmap(bmpname)); \
+    menu->Append(menuItem);
+
+#define MENU_SEPARATOR_PTR() menu->AppendSeparator();
 
 BEGIN_EVENT_TABLE(GUICraftMainPanel, GUICraftMainPanelBase)
 
@@ -148,6 +178,561 @@ namespace
 #if !STANDALONE_BUILD
 void NotifyFileSaved(const wxFileName& fn) { EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath()); }
 #endif
+
+//-------------------------------------------------------------
+const FLAGS_t __ONE__ = 1;
+
+constexpr FLAGS_t MT_TOP_LEVEL = __ONE__ << 1;               // Submenu
+constexpr FLAGS_t MT_SIZERS = __ONE__ << 2;                  // Submenu
+constexpr FLAGS_t MT_CONTROLS = __ONE__ << 3;                // Submenu
+constexpr FLAGS_t MT_CONTAINERS = __ONE__ << 4;              // Submenu
+constexpr FLAGS_t MT_NOTEBOOK_PAGES = __ONE__ << 5;          // Top
+constexpr FLAGS_t MT_SPLITTERWIN_PAGES = __ONE__ << 6;       // Top
+constexpr FLAGS_t MT_LIST_CTRL_COLUMNS = __ONE__ << 7;       // Top
+constexpr FLAGS_t MT_PROJECT = __ONE__ << 8;                 // Top
+constexpr FLAGS_t MT_COMMON_MENU = __ONE__ << 9;             // Top
+constexpr FLAGS_t MT_EVENTS = __ONE__ << 10;                 // Top
+constexpr FLAGS_t MT_PREVIEW_CODE = __ONE__ << 11;           // Top
+constexpr FLAGS_t MT_EDIT = __ONE__ << 12;                   // Top
+constexpr FLAGS_t MT_WIZARDPAGE = __ONE__ << 13;             // Top
+constexpr FLAGS_t MT_MENUBAR = __ONE__ << 14;                // Top
+constexpr FLAGS_t MT_MENU = __ONE__ << 15;                   // Top
+constexpr FLAGS_t MT_CONTROL_EVENTS = __ONE__ << 16;         // Top
+constexpr FLAGS_t MT_TOOLBAR = __ONE__ << 17;                // Top
+constexpr FLAGS_t MT_DV_LIST_CTRL_COL = __ONE__ << 18;       // Top
+constexpr FLAGS_t MT_COLLPANE = __ONE__ << 19;               // Top
+constexpr FLAGS_t MT_INFOBAR = __ONE__ << 20;                // Top
+constexpr FLAGS_t MT_IMGLIST = __ONE__ << 21;                // Top
+constexpr FLAGS_t MT_TIMER = __ONE__ << 22;                  // Top
+constexpr FLAGS_t MT_AUIMGR = __ONE__ << 23;                 // Top
+constexpr FLAGS_t MT_PASTE = __ONE__ << 24;                  // Top
+constexpr FLAGS_t MT_PG_PROPERTY = __ONE__ << 25;            // Top
+constexpr FLAGS_t MT_PG_MANAGER = __ONE__ << 26;             // Top
+constexpr FLAGS_t MT_RIBBON = __ONE__ << 27;                 // Top
+constexpr FLAGS_t MT_RIBBON_PAGE = __ONE__ << 28;            // Top
+constexpr FLAGS_t MT_RIBBON_BUTTON_BAR = __ONE__ << 29;      // Top
+constexpr FLAGS_t MT_RIBBON_PANEL = __ONE__ << 30;           // Top
+constexpr FLAGS_t MT_RIBBON_TOOL_BAR = __ONE__ << 31;        // Top
+constexpr FLAGS_t MT_RIBBON_GALLERY = __ONE__ << 32;         // Top
+constexpr FLAGS_t MT_SIZERS_TYPE = __ONE__ << 33;            // Top
+constexpr FLAGS_t MT_GRID = __ONE__ << 34;                   // Top
+constexpr FLAGS_t MT_TREE_LIST_CTRL_COLUMNS = __ONE__ << 35; // Top
+constexpr FLAGS_t MT_TASKBARICON = __ONE__ << 36;            // Top
+constexpr FLAGS_t MT_INSERT_INTO_SIZER = __ONE__ << 37;      // Top
+
+FLAGS_t DoGetValidMenus(const wxcWidget* item)
+{
+    // ADD_NEW_CONTROL
+    if (!item) {
+        return MT_PROJECT | MT_TOP_LEVEL | MT_PASTE;
+    }
+    FLAGS_t menuflags = 0;
+    switch (item->GetType()) {
+    case ID_WXRIBBONGALLERYITME:
+        return MT_COMMON_MENU | MT_EDIT;
+    case ID_WXRIBBONGALLERY:
+        return MT_RIBBON_GALLERY | MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXRIBBONBUTTONBAR:
+        return MT_RIBBON_BUTTON_BAR | MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXRIBBONTOOLBAR:
+        return MT_RIBBON_TOOL_BAR | MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXRIBBONPANEL:
+        return MT_SIZERS | MT_RIBBON_PANEL | MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXRIBBONPAGE:
+        return MT_RIBBON_PAGE | MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXRIBBONBAR:
+        return MT_RIBBON | MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXINFOBAR:
+        return MT_INFOBAR | MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXIMAGELIST:
+        return MT_IMGLIST | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXCOLLAPSIBLEPANE:
+        return MT_COLLPANE | MT_EVENTS | MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    case ID_WXCOLLAPSIBLEPANE_PANE:
+        return MT_SIZERS | MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXAUITOOLBARTOPLEVEL:
+    case ID_WXAUITOOLBAR:
+    case ID_WXTOOLBAR:
+        return MT_EVENTS | MT_COMMON_MENU | MT_EDIT | MT_TOOLBAR;
+    case ID_WXMENUITEM:
+    case ID_WXTOOLBARITEM:
+        return MT_CONTROL_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXTOOLBARITEM_SEPARATOR:
+    case ID_WXTOOLBARITEM_STRETCHSPACE:
+    case ID_WXAUITOOLBARLABEL:
+    case ID_WXAUITOOLBARITEM_SPACE:
+    case ID_WXAUITOOLBARITEM_STRETCHSPACE:
+        return MT_COMMON_MENU | MT_EDIT;
+    case ID_WXMENUBAR:
+        return MT_COMMON_MENU | MT_MENUBAR | MT_EDIT;
+    case ID_WXMENU:
+    case ID_WXSUBMENU:
+        return MT_COMMON_MENU | MT_MENU | MT_EDIT;
+    case ID_WXWIZARD:
+        return MT_WIZARDPAGE | MT_EVENTS | MT_COMMON_MENU | MT_PREVIEW_CODE | MT_EDIT;
+    case ID_WXFRAME:
+    case ID_WXDIALOG:
+        menuflags |= MT_TASKBARICON;
+        [[fallthrough]];
+    case ID_WXPANEL_TOPLEVEL:
+    case ID_WXPOPUPWINDOW:
+        if (!item->HasMainSizer() && !item->IsAuiManaged()) {
+            menuflags |= MT_SIZERS | MT_AUIMGR;
+        }
+        menuflags |= MT_TIMER | MT_EVENTS | MT_COMMON_MENU | MT_EDIT | MT_PREVIEW_CODE;
+        return menuflags;
+    case ID_WXSPACER:
+        return MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    case ID_WXBOXSIZER:
+    case ID_WXFLEXGRIDSIZER:
+    case ID_WXSTATICBOXSIZER:
+    case ID_WXGRIDSIZER:
+    case ID_WXGRIDBAGSIZER:
+        return MT_SIZERS_TYPE | MT_SIZERS | MT_CONTROLS | MT_CONTAINERS | MT_COMMON_MENU | MT_EDIT |
+               MT_INSERT_INTO_SIZER;
+    case ID_WXPROPERTYGRIDMANAGER:
+        return MT_EVENTS | MT_PG_MANAGER | MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    case ID_WXPGPROPERTY:
+        return MT_PG_PROPERTY | MT_COMMON_MENU | MT_EDIT;
+    case ID_WXTREELISTCTRL:
+        return MT_EVENTS | MT_TREE_LIST_CTRL_COLUMNS | MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    case ID_WXLISTCTRL:
+        return MT_EVENTS | MT_LIST_CTRL_COLUMNS | MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    case ID_WXDATAVIEWLISTCTRL:
+    case ID_WXDATAVIEWTREELISTCTRL:
+        return MT_EVENTS | MT_DV_LIST_CTRL_COL | MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    case ID_WXNOTEBOOK:
+    case ID_WXLISTBOOK:
+    case ID_WXCHOICEBOOK:
+    case ID_WXTOOLBOOK:
+    case ID_WXTREEBOOK:
+    case ID_WXAUINOTEBOOK:
+    case ID_WXSIMPLEBOOK:
+        return MT_NOTEBOOK_PAGES | MT_EVENTS | MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    case ID_WXSPLITTERWINDOW:
+        return MT_EVENTS | MT_SPLITTERWIN_PAGES | MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    case ID_WXPANEL:
+    case ID_WXSCROLLEDWIN:
+        menuflags |= MT_INSERT_INTO_SIZER;
+        [[fallthrough]];
+    case ID_WXPANEL_NOTEBOOK_PAGE:
+    case ID_WXSPLITTERWINDOW_PAGE:
+    case ID_WXWIZARDPAGE:
+        menuflags |= MT_SIZERS | MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+        {
+            // wxTreebook pages are allowed to have notebook pages as their direct children
+            const NotebookPageWrapper* page = dynamic_cast<const NotebookPageWrapper*>(item);
+            if (page && page->IsTreebookPage()) {
+                menuflags |= MT_NOTEBOOK_PAGES;
+            }
+        }
+        return menuflags;
+    case ID_WXRIBBONTOOLSEPARATOR:
+        return MT_COMMON_MENU | MT_EDIT;
+    case ID_WXGRIDCOL:
+    case ID_WXGRIDROW:
+        return MT_COMMON_MENU | MT_EDIT;
+    case ID_WXGRID:
+        return MT_GRID | MT_EVENTS | MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    case ID_WXAUIMANAGER:
+        return MT_EVENTS | MT_COMMON_MENU | MT_EDIT;
+    default:
+        return MT_EVENTS | MT_COMMON_MENU | MT_EDIT | MT_INSERT_INTO_SIZER;
+    }
+}
+
+wxMenu* CreateContainersMenu()
+{
+    wxMenu* menu = new wxMenu;
+    wxCrafter::ResourceLoader bmpLoader;
+    wxMenuItem* menuItem = nullptr;
+
+    MENU_ENTRY_PTR(ID_WXPANEL, wxT("wxPanel"), wxT("wxpanel"));
+    MENU_ENTRY_PTR(ID_WXSCROLLEDWIN, wxT("wxScrolledWindow"), wxT("wxscrolledwindow"));
+    MENU_ENTRY_PTR(ID_WXSPLITTERWINDOW, wxT("wxSplitterWindow"), wxT("wxsplitterwindow"));
+    MENU_ENTRY_PTR(ID_WXWIZARDPAGE, wxT("wxWizardSimplePage"), wxT("wxwizardpage"));
+    MENU_SEPARATOR_PTR();
+    MENU_ENTRY_PTR(ID_WXGLCANVAS, wxT("wxGLCanvas"), wxT("wxglcanvas"));
+    MENU_SEPARATOR_PTR();
+    MENU_ENTRY_PTR(ID_WXCOLLAPSIBLEPANE, "wxCollapsiblePane", "wxcollapsiblepane");
+    MENU_ENTRY_PTR(ID_WXCOLLAPSIBLEPANE_PANE, "wxCollapsiblePane Window", "wxpanel");
+
+    MENU_SEPARATOR_PTR();
+    MENU_ENTRY_PTR(ID_WXNOTEBOOK, wxT("wxNotebook"), wxT("wxnotebook"));
+    MENU_ENTRY_PTR(ID_WXTOOLBOOK, wxT("wxToolbook"), wxT("wxtoolbook"));
+    MENU_ENTRY_PTR(ID_WXLISTBOOK, wxT("wxListbook"), wxT("wxlistbook"));
+    MENU_ENTRY_PTR(ID_WXCHOICEBOOK, wxT("wxChoicebook"), wxT("wxchoicebook"));
+    MENU_ENTRY_PTR(ID_WXTREEBOOK, wxT("wxTreebook"), wxT("wxtreebook"));
+    MENU_ENTRY_PTR(ID_WXAUINOTEBOOK, wxT("wxAuiNotebook"), wxT("wxauinotebook"));
+    MENU_ENTRY_PTR(ID_WXSIMPLEBOOK, wxT("wxSimplebook"), wxT("wxsimplebook"));
+    // ADD_NEW_CONTROL
+
+    return menu;
+}
+
+wxMenu* CreateControlsMenu()
+{
+    wxCrafter::ResourceLoader bmpLoader;
+
+    wxMenu* menu = new wxMenu;
+    wxMenuItem* menuItem = nullptr;
+
+    MENU_ENTRY_PTR(ID_WXBUTTON, wxT("wxButton"), wxT("wxbutton"));
+    MENU_ENTRY_PTR(ID_WXBITMAPBUTTON, wxT("wxBitmapButton"), wxT("wxbitmapbutton"));
+    MENU_ENTRY_PTR(ID_WXTOGGLEBUTTON, wxT("wxToggleButton"), wxT("wxtogglebutton"));
+    MENU_ENTRY_PTR(ID_WXBITMAPTOGGLEBUTTON, wxT("wxBitmapToggleButton"), wxT("wxbitmaptogglebutton"));
+    MENU_ENTRY_PTR(ID_WXSPINCTRL, wxT("wxSpinCtrl"), wxT("wxspinctrl"));
+    MENU_ENTRY_PTR(ID_WXSPINBUTTON, wxT("wxSpinButton"), wxT("wxspinbutton"));
+    MENU_ENTRY_PTR(ID_WXHYPERLINK, wxT("wxHyperlinkCtrl"), wxT("wxhyperlink"));
+    MENU_ENTRY_PTR(ID_WXCOMMANDLINKBUTTON, wxT("wxCommandLinkButton"), wxT("wxcommandlinkbutton"));
+
+    MENU_SEPARATOR_PTR();
+
+    MENU_ENTRY_PTR(ID_WXCHECKBOX, wxT("wxCheckBox"), wxT("wxcheckbox"));
+    MENU_ENTRY_PTR(ID_WXRADIOBOX, wxT("wxRadioBox"), wxT("wxradiobox"));
+    MENU_ENTRY_PTR(ID_WXRADIOBUTTON, wxT("wxRadioButton"), wxT("wxradiobutton"));
+    MENU_SEPARATOR_PTR();
+
+    MENU_ENTRY_PTR(ID_WXSTATICTEXT, wxT("wxStaticText"), wxT("wxstatictext"));
+    MENU_ENTRY_PTR(ID_WXSTATICLINE, wxT("wxStaticLine"), wxT("wxstaticline"));
+    MENU_ENTRY_PTR(ID_WXTEXTCTRL, wxT("wxTextCtrl"), wxT("wxtextctrl"));
+    MENU_ENTRY_PTR(ID_WXRICHTEXT, wxT("wxRichTextCtrl"), wxT("wxrichtextctrl"));
+    MENU_ENTRY_PTR(ID_WXSTC, wxT("wxStyledTextCtrl"), wxT("stc"));
+    MENU_SEPARATOR_PTR();
+
+    MENU_ENTRY_PTR(ID_WXSTATICBITMAP, wxT("wxStaticBitmap"), wxT("wxbitmap"));
+    MENU_SEPARATOR_PTR();
+
+    MENU_ENTRY_PTR(ID_WXCOMBOBOX, wxT("wxComboBox"), wxT("wxcombobox"));
+    MENU_ENTRY_PTR(ID_WXCHOICE, wxT("wxChoice"), wxT("wxchoice"));
+    MENU_ENTRY_PTR(ID_WXBITMAPCOMBOBOX, wxT("wxBitmapComboBox"), wxT("wxbitmapcombobox"));
+    MENU_SEPARATOR_PTR();
+
+    MENU_ENTRY_PTR(ID_WXLISTBOX, wxT("wxListBox"), wxT("wxlistbox"));
+    MENU_ENTRY_PTR(ID_WXSIMPLEHTMLLISTBOX, wxT("wxSimpleHtmlListBox"), wxT("wxhtmllistbox"));
+    MENU_ENTRY_PTR(ID_WXCHECKLISTBOX, wxT("wxCheckListBox"), wxT("wxchecklistbox"));
+    MENU_ENTRY_PTR(ID_WXREARRANGELIST, wxT("wxRearrangeList"), wxT("wxrearrangelist"));
+    MENU_ENTRY_PTR(ID_WXLISTCTRL, wxT("wxListCtrl"), wxT("wxlistctrl"));
+    MENU_ENTRY_PTR(ID_WXTREELISTCTRL, wxT("wxTreeListCtrl"), wxT("wxtreelistctrl"));
+    MENU_ENTRY_PTR(ID_WXTREECTRL, wxT("wxTreeCtrl"), wxT("wxtreectrl"));
+    MENU_ENTRY_PTR(ID_WXGRID, wxT("wxGrid"), wxT("wxgrid"));
+    MENU_ENTRY_PTR(ID_WXDATAVIEWLISTCTRL, wxT("wxDataViewListCtrl"), "wxdataviewlistctrl");
+    MENU_ENTRY_PTR(ID_WXDATAVIEWTREECTRL, wxT("wxDataViewTreeCtrl"), "wxdataviewtreectrl");
+    MENU_ENTRY_PTR(ID_WXDATAVIEWTREELISTCTRL, wxT("wxDataViewCtrl (with tree-list custom model)"), "wxdataviewctrl");
+    MENU_SEPARATOR_PTR();
+
+    MENU_ENTRY_PTR(ID_WXSLIDER, wxT("wxSlider"), wxT("wxslider"));
+    MENU_ENTRY_PTR(ID_WXSCROLLBAR, wxT("wxScrollBar"), wxT("wxscrollbar"));
+    MENU_ENTRY_PTR(ID_WXGAUGE, wxT("wxGauge"), wxT("wxgauge"));
+    MENU_SEPARATOR_PTR();
+
+    MENU_ENTRY_PTR(ID_WXHTMLWIN, wxT("wxHtmlWindow"), wxT("wxhtmlwindow"));
+    MENU_ENTRY_PTR(ID_WXWEBVIEW, "wxWebView", "wxwebview");
+    MENU_ENTRY_PTR(ID_WXBANNERWINDOW, wxT("wxBannerWindow"), wxT("wxbannerwindow"));
+    MENU_ENTRY_PTR(ID_WXINFOBAR, "wxInfoBar", "wxinfobar");
+    MENU_ENTRY_PTR(ID_WXMEDIACTRL, "wxMediaCtrl", "wxmediactrl-16");
+    MENU_ENTRY_PTR(ID_WXANIMATIONCTRL, "wxAnimationCtrl", "wxanimationctrl");
+    MENU_ENTRY_PTR(ID_WXACTIVITYINDICATOR, "wxActivityIndicator", "wxactivityindicator");
+    MENU_ENTRY_PTR(ID_WXTIMEPICKERCTRL, "wxTimePickerCtrl", "wxtimepickerctrl");
+    MENU_SEPARATOR_PTR();
+
+    MENU_ENTRY_PTR(ID_WXSEARCHCTRL, wxT("wxSearchCtrl"), wxT("wxsearchctrl"));
+    MENU_ENTRY_PTR(ID_WXCOLORPICKER, wxT("wxColourPickerCtrl"), wxT("wxcolourpicker"));
+    MENU_ENTRY_PTR(ID_WXFONTPICKER, wxT("wxFontPickerCtrl"), wxT("wxfontpickerctrl"));
+    MENU_ENTRY_PTR(ID_WXFILEPICKER, wxT("wxFilePickerCtrl"), wxT("wxfilepickerctrl"));
+    MENU_ENTRY_PTR(ID_WXDIRPICKER, wxT("wxDirPickerCtrl"), wxT("wxdirpickerctrl"));
+    MENU_ENTRY_PTR(ID_WXDATEPICKER, wxT("wxDatePickerCtrl"), wxT("wxdatepickerctrl"));
+    MENU_ENTRY_PTR(ID_WXCALEDARCTRL, wxT("wxCalendarCtrl"), wxT("wxcalendarctrl"));
+    MENU_ENTRY_PTR(ID_WXGENERICDIRCTRL, wxT("wxGenericDirCtrl"), wxT("wxgenericdirctrl"));
+    // ADD_NEW_CONTROL
+    return menu;
+}
+
+wxMenu* CreateInsertIntoSizerMenu()
+{
+    wxMenu* menu = new wxMenu;
+    wxMenuItem* menuItem = nullptr;
+    wxCrafter::ResourceLoader bmpLoader;
+    MENU_ENTRY_PTR(ID_INSERT_INTO_SIZER_BOXSIZER, "wxBoxSizer", "wxboxsizer_v");
+    MENU_ENTRY_PTR(ID_INSERT_INTO_SIZER_STATICBOXSIZER, "wxStaticBoxSizer", "wxstaticboxsizer");
+    MENU_ENTRY_PTR(ID_INSERT_INTO_SIZER_FLEXGRIDSIZER, "wxFlexGridSizer", "wxflexgridsizer");
+    MENU_ENTRY_PTR(ID_INSERT_INTO_SIZER_GRIDSIZER, "wxGridSizer", "wxgridsizer");
+    MENU_ENTRY_PTR(ID_INSERT_INTO_SIZER_GRIDBAGSIZER, "wxGridBagSizer", "wxgridbagsizer");
+    return menu;
+}
+
+wxMenu* CreateSizerTypeMenu()
+{
+    wxMenu* menu = new wxMenu;
+    wxMenuItem* menuItem = nullptr;
+    wxCrafter::ResourceLoader bmpLoader;
+    MENU_ENTRY_PTR(ID_CHANGE_SIZER_BOXSIZER, "wxBoxSizer", "wxboxsizer_v");
+    MENU_ENTRY_PTR(ID_CHANGE_SIZER_STATICBOXSIZER, "wxStaticBoxSizer", "wxstaticboxsizer");
+    MENU_ENTRY_PTR(ID_CHANGE_SIZER_FLEXGRIDSIZER, "wxFlexGridSizer", "wxflexgridsizer");
+    MENU_ENTRY_PTR(ID_CHANGE_SIZER_GRIDSIZER, "wxGridSizer", "wxgridsizer");
+    MENU_ENTRY_PTR(ID_CHANGE_SIZER_GRIDBAGSIZER, "wxGridBagSizer", "wxgridbagsizer");
+    return menu;
+}
+
+wxMenu* CreateSizersMenu()
+{
+    wxMenu* menu = new wxMenu;
+    wxMenuItem* menuItem = nullptr;
+    wxCrafter::ResourceLoader bmpLoader;
+    MENU_ENTRY_PTR(ID_WXBOXSIZER, wxT("wxBoxSizer"), wxT("wxboxsizer_v"));
+    MENU_ENTRY_PTR(ID_WXSTATICBOXSIZER, wxT("wxStaticBoxSizer"), wxT("wxstaticboxsizer"));
+    MENU_ENTRY_PTR(ID_WXFLEXGRIDSIZER, wxT("wxFlexGridSizer"), wxT("wxflexgridsizer"));
+    MENU_ENTRY_PTR(ID_WXGRIDSIZER, wxT("wxGridSizer"), wxT("wxgridsizer"));
+    MENU_ENTRY_PTR(ID_WXGRIDBAGSIZER, wxT("wxGridBagSizer"), wxT("wxgridbagsizer"));
+    MENU_SEPARATOR_PTR();
+    MENU_ENTRY_PTR(ID_WXSTDDLGBUTTONSIZER, wxT("wxStdDialogButtonSizer"), wxT("stddlgbuttonsizer"));
+    MENU_ENTRY_PTR(ID_WXSTDBUTTON, _("Standard wxButton"), wxT("wxbutton"));
+    MENU_SEPARATOR_PTR();
+    MENU_ENTRY_PTR(ID_WXSPACER, _("Spacer"), wxT("spacer"));
+    // ADD_NEW_CONTROL
+    return menu;
+}
+
+wxMenu* CreateTopLevelMenu()
+{
+    wxMenu* menu = new wxMenu;
+    wxMenuItem* menuItem = nullptr;
+    wxCrafter::ResourceLoader bmpLoader;
+
+    MENU_ENTRY_PTR(ID_WXFRAME, _("New wxFrame"), wxT("wxframe"));
+    MENU_ENTRY_PTR(ID_WXDIALOG, _("New wxDialog"), wxT("wxdialog"));
+    MENU_ENTRY_PTR(ID_WXWIZARD, _("New wxWizard"), wxT("wxwizard"));
+    MENU_ENTRY_PTR(ID_WXPANEL_TOPLEVEL, _("New wxPanel"), wxT("wxpanel"));
+    MENU_ENTRY_PTR(ID_WXAUITOOLBARTOPLEVEL, _("wxAuiToolBar"), wxT("wxauitoolbar"));
+    MENU_SEPARATOR_PTR();
+    MENU_ENTRY_PTR(ID_WXIMAGELIST, _("New wxImageList"), wxT("wximglist"));
+    MENU_ENTRY_PTR(ID_WXPOPUPWINDOW, _("New wxPopupWindow"), wxT("wxpopupwindow"));
+
+    // ADD_NEW_CONTROL
+    return menu;
+}
+
+void PrepareMenu(wxMenu& menu, const wxcWidget* item)
+{
+    // ADD_NEW_CONTROL
+    bool isChildOfTreeBook = false;
+    if (item) {
+        const wxcWidget* parent = item->GetParent();
+        while (parent) {
+            if (parent->GetType() == ID_WXTREEBOOK) {
+                isChildOfTreeBook = true;
+                break;
+            }
+            parent = parent->GetParent();
+        }
+    }
+
+    const FLAGS_t flags = DoGetValidMenus(item);
+    if (flags & MT_PG_MANAGER) {
+        menu.Append(ID_WXPGPROPERTY, _("Add wxPGProperty"));
+    }
+    if (flags & MT_PG_PROPERTY) {
+        menu.Append(ID_WXPGPROPERTY_SUB, _("Add wxPGProperty Child"));
+    }
+    if (flags & MT_INFOBAR) {
+        menu.Append(ID_WXINFOBARBUTTON, _("Add Button"));
+    }
+
+    if (flags & MT_IMGLIST) {
+        menu.Append(ID_WXBITMAP, _("Add Bitmap"));
+    }
+
+    if (flags & MT_GRID) {
+        menu.Append(ID_WXGRIDCOL, _("Add Column"));
+        menu.Append(ID_WXGRIDROW, _("Add Row"));
+    }
+
+    if (flags & MT_COLLPANE) {
+        menu.Append(ID_WXCOLLAPSIBLEPANE_PANE, _("Add Pane"));
+    }
+
+    if (flags & MT_TOOLBAR) {
+        menu.Append(ID_WXTOOLBARITEM, _("Add Tool"));
+        menu.Append(wxID_ANY, _("Add Control"), CreateControlsMenu());
+        if (item->GetType() == ID_WXAUITOOLBAR || item->GetType() == ID_WXAUITOOLBARTOPLEVEL) {
+            menu.Append(ID_WXAUITOOLBARLABEL, _("Add Label"));
+            menu.Append(ID_WXAUITOOLBARITEM_SPACE, _("Add Spacer"));
+            menu.Append(ID_WXAUITOOLBARITEM_STRETCHSPACE, _("Add Stretch Spacer"));
+        } else {
+            menu.Append(ID_WXTOOLBARITEM_STRETCHSPACE, _("Add Stretch Spacer"));
+        }
+
+        menu.Append(ID_WXTOOLBARITEM_SEPARATOR, _("Add Separator"));
+    }
+
+    if (flags & MT_MENUBAR) {
+        menu.Append(ID_WXMENU, _("Add wxMenu"));
+    }
+
+    if (flags & MT_MENU) {
+        menu.Append(ID_WXMENUITEM, _("Add Menu Item"));
+        menu.Append(ID_WXSUBMENU, _("Add Sub Menu"));
+    }
+
+    if (flags & MT_TOP_LEVEL) {
+#if STANDALONE_BUILD
+        menu.Append(wxID_NEW, _("New Project..."));
+#endif
+        menu.Append(ID_FORM_TYPE, _("Add Form"), CreateTopLevelMenu());
+    }
+
+    if (flags & MT_WIZARDPAGE) {
+        menu.Append(ID_WXWIZARDPAGE, _("Add Page"));
+    }
+
+    if (flags & MT_SIZERS) {
+        menu.Append(wxID_ANY, _("Add Sizer"), CreateSizersMenu());
+    }
+
+    if (flags & MT_INSERT_INTO_SIZER) {
+        menu.Append(wxID_ANY, _("Insert into new Sizer"), CreateInsertIntoSizerMenu());
+    }
+
+    if (flags & MT_SIZERS_TYPE) {
+        menu.Append(wxID_ANY, _("Change wxSizer Type"), CreateSizerTypeMenu());
+        menu.AppendSeparator();
+    }
+
+    if (flags & MT_AUIMGR) {
+        menu.Append(ID_WXAUIMANAGER, _("Add wxAuiManager"));
+    }
+
+    if (flags & MT_CONTAINERS) {
+        menu.Append(wxID_ANY, _("Add Container"), CreateContainersMenu());
+    }
+
+    if (flags & MT_CONTROLS) {
+        menu.Append(wxID_ANY, _("Add Control"), CreateControlsMenu());
+    }
+
+    if (flags & MT_RIBBON) {
+        menu.Append(ID_WXRIBBONPAGE, _("Add wxRibbonPage"));
+    }
+
+    if (flags & MT_RIBBON_PAGE) {
+        menu.Append(ID_WXRIBBONPANEL, _("Add wxRibbonPanel"));
+    }
+
+    if (flags & MT_RIBBON_PANEL) {
+        menu.Append(ID_WXRIBBONBUTTONBAR, _("Add wxRibbonButtonBar"));
+        menu.Append(ID_WXRIBBONTOOLBAR, _("Add wxRibbonToolBar"));
+        menu.Append(ID_WXRIBBONGALLERY, _("Add wxRibbonGallery"));
+    }
+
+    if (flags & MT_RIBBON_BUTTON_BAR) {
+        menu.Append(ID_WXRIBBONBUTTON, _("Add Button"));
+        menu.Append(ID_WXRIBBONDROPDOWNBUTTON, _("Add Dropdown Button"));
+        menu.Append(ID_WXRIBBONHYBRIDBUTTON, _("Add Hybrid Button"));
+        menu.Append(ID_WXRIBBONTOGGLEBUTTON, _("Add Toggle Button"));
+    }
+
+    if (flags & MT_RIBBON_TOOL_BAR) {
+        menu.Append(ID_WXRIBBONTOOL, _("Add Tool"));
+        menu.Append(ID_WXRIBBONDROPDOWNTOOL, _("Add Dropdown Tool"));
+        menu.Append(ID_WXRIBBONHYBRIDTOOL, _("Add Hybrid Tool"));
+        menu.Append(ID_WXRIBBONTOGGLETOOL, _("Add Toggle Tool"));
+    }
+    if (flags & MT_RIBBON_GALLERY) {
+        menu.Append(ID_WXRIBBONGALLERYITME, _("Add Gallery Item"));
+    }
+
+    if (flags & MT_NOTEBOOK_PAGES) {
+        menu.Append(ID_WXPANEL_NOTEBOOK_PAGE, _("Add Notebook Page"));
+        if (isChildOfTreeBook) {
+            menu.Append(ID_WXTREEBOOK_SUB_PAGE, _("Add Sub Page"));
+        }
+    }
+
+    if (flags & MT_SPLITTERWIN_PAGES) {
+        menu.Append(ID_WXSPLITTERWINDOW_PAGE, _("Add Panel"), _("Add Panel"));
+    }
+
+    if (flags & MT_DV_LIST_CTRL_COL) {
+        menu.Append(ID_WXDATAVIEWCOL, _("Add Column"));
+    }
+
+    if (flags & MT_LIST_CTRL_COLUMNS) {
+        menu.Append(ID_WXLISTCTRL_COL, _("Add List Column"));
+    }
+
+    if (flags & MT_TREE_LIST_CTRL_COLUMNS) {
+        menu.Append(ID_WXTREELISTCTRLCOL, _("Add Column"));
+    }
+
+    if (flags & MT_EVENTS) {
+        // the events pane is now always visible
+    }
+
+    if (flags & MT_CONTROL_EVENTS) {
+        // the events pane is now always visible
+    }
+
+    if (flags & MT_PROJECT) {
+        if (menu.GetMenuItemCount() != 0) {
+            menu.AppendSeparator();
+        }
+        menu.Append(ID_SAVE_WXGUI_PROJECT, _("Save"));
+    }
+
+    if (flags & MT_PREVIEW_CODE) {
+        if (menu.GetMenuItemCount() != 0) {
+            menu.AppendSeparator();
+        }
+        menu.Append(ID_GENERATE_CODE, _("Generate code..."));
+    }
+
+    if (flags & MT_TIMER) {
+        if (menu.GetMenuItemCount() != 0) {
+            menu.AppendSeparator();
+        }
+        menu.Append(ID_WXTIMER, _("Add wxTimer"));
+    }
+
+    if (flags & MT_TASKBARICON) {
+        if (menu.GetMenuItemCount() != 0) {
+            menu.AppendSeparator();
+        }
+        menu.Append(ID_WXTASKBARICON, _("Add wxTaskBarIcon"));
+    }
+
+    if (flags & MT_EDIT) {
+        if (menu.GetMenuItemCount() != 0) {
+            menu.AppendSeparator();
+        }
+        menu.Append(ID_RENAME, _("Rename..."));
+        menu.AppendSeparator();
+        menu.Append(ID_COPY, _("Copy"));
+        menu.Append(ID_CUT, _("Cut"));
+        menu.Append(ID_PASTE, _("Paste"));
+        menu.Append(ID_DUPLICATE, _("Duplicate"));
+    }
+
+    if (flags & MT_PASTE) {
+        menu.Append(ID_PASTE, _("Paste"));
+    }
+    // Last, add the common menu
+    if (flags & MT_COMMON_MENU) {
+        if (menu.GetMenuItemCount() != 0) {
+            menu.AppendSeparator();
+        }
+        menu.Append(ID_MOVE_NODE_UP, _("Move Up"));
+        menu.Append(ID_MOVE_NODE_DOWN, _("Move Down"));
+        menu.Append(ID_MOVE_NODE_INTO_SIZER, _("Move Left into Higher Sizer"));
+        menu.Append(ID_MOVE_NODE_INTO_SIBLING, _("Move Right into Sibling Sizer"));
+        menu.AppendSeparator();
+        menu.Append(ID_DELETE_NODE, _("Delete"));
+    }
+
+    if (item && item->GetType() == ID_WXSTDDLGBUTTONSIZER) {
+        menu.PrependSeparator();
+        menu.Prepend(ID_WXSTDBUTTON, _("Add Button"));
+    }
+}
 } // namespace
 
 GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clTreeCtrl* treeView)
@@ -461,7 +1046,7 @@ void GUICraftMainPanel::OnMenu(wxTreeEvent& event)
 {
     wxMenu menu;
     GUICraftItemData* data = GetSelItemData();
-    Allocator::Instance()->PrepareMenu(menu, data ? data->m_wxcWidget : NULL);
+    PrepareMenu(menu, data ? data->m_wxcWidget : nullptr);
     PopupMenu(&menu);
 }
 
@@ -474,7 +1059,7 @@ void GUICraftMainPanel::OnShowContextMenu(wxCommandEvent& e)
         title = data->m_wxcWidget->GetName();
     }
     wxMenu menu(title.IsEmpty() ? "" : title);
-    Allocator::Instance()->PrepareMenu(menu, data ? data->m_wxcWidget : NULL);
+    PrepareMenu(menu, data ? data->m_wxcWidget : nullptr);
     PopupMenu(&menu);
 }
 

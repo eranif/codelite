@@ -1,7 +1,7 @@
 #include "tool_bar.h"
 
-#include "allocator_mgr.h"
 #include "event_notifier.h"
+#include "wxc_widget.h"
 
 extern const wxEventType wxEVT_PREVIEW_BAR_SELECTED;
 

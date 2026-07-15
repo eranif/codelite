@@ -3,7 +3,6 @@
 #include "UI/CaptionBar.h"
 #include "UI/wxcTreeView.h"
 #include "UI/wxguicraft_main_view.h"
-#include "allocator_mgr.h"
 #include "event_notifier.h"
 
 #include <wx/settings.h>

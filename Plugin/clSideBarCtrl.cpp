@@ -92,7 +92,7 @@ SideBarToolBar::SideBarToolBar(wxWindow* parent, wxWindowID id, const wxPoint& p
 //---------------------------------
 
 SideBarToolBarContainer::SideBarToolBarContainer(wxWindow* parent, int orientation, long tb_style)
-    : wxControl(parent, wxID_ANY)
+    : wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
 {
     SetSizer(new wxBoxSizer(orientation));
     m_toolbar = new SideBarToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);

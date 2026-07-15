@@ -5,15 +5,56 @@ clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     : wxDataViewTreeCtrl(parent, id, pos, size, style)
 {
     // wxDataViewTreeCtrl::Create() sets up its only column as wxDATAVIEW_CELL_EDITABLE.
-    // On macOS this makes clicking an already-selected row arm a rename-vs-reselect
-    // disambiguation delay (the Finder "click again to rename" gesture), which shows up
-    // as a multi-hundred-ms stall when clicking within an existing multi-selection.
     // We don't support inline rename here, so force the cell back to non-editable.
     if (wxDataViewColumn* col = GetColumn(0)) {
         if (wxDataViewRenderer* renderer = col->GetRenderer()) {
             renderer->SetMode(wxDATAVIEW_CELL_INERT);
         }
     }
+
+    // On macOS, clicking a row that is already part of a multi-selection is
+    // ambiguous to the native NSOutlineView (is this the start of a drag of the
+    // whole selection, or a plain click to collapse the selection to this row?).
+    // It waits out the OS click/drag disambiguation delay before resolving this,
+    // which shows up as a multi-hundred-ms stall. We don't support dragging items
+    // out of this tree, so pre-empt the native handling for this specific case:
+    // detect it ourselves and consume the event before it reaches the native control.
+    Bind(wxEVT_LEFT_DOWN, &clFileViewerTreeCtrl::OnLeftDown, this);
+}
+
+void clFileViewerTreeCtrl::OnLeftDown(wxMouseEvent& event)
+{
+    if (event.CmdDown() || event.ShiftDown() || event.AltDown()) {
+        // let modifier-driven range/toggle selection go through the native control
+        event.Skip();
+        return;
+    }
+
+    wxDataViewItem item;
+    wxDataViewColumn* column = nullptr;
+    HitTest(event.GetPosition(), item, column);
+    if (!item.IsOk()) {
+        event.Skip();
+        return;
+    }
+
+    if (!IsSelected(item) || GetSelectedItemsCount() <= 1) {
+        // nothing ambiguous here - let the native control handle it normally
+        event.Skip();
+        return;
+    }
+
+    // The clicked item is already part of a larger selection: collapse the
+    // selection to just this item ourselves, and consume the event so it never
+    // reaches the native control's own (slow, in this scenario) click handling.
+    UnselectAll();
+    Select(item);
+    SetCurrentItem(item);
+
+    wxDataViewEvent selectionEvent(wxEVT_DATAVIEW_SELECTION_CHANGED, this, item);
+    ProcessWindowEvent(selectionEvent);
+
+    SetFocus();
 }
 
 void clFileViewerTreeCtrl::SetBitmaps(std::vector<wxBitmap>* bitmaps)

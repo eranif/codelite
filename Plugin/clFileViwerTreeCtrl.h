@@ -139,6 +139,7 @@ class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
                                 int expandedIcon,
                                 bool isContainer,
                                 wxClientData* data);
+    void OnLeftDown(wxMouseEvent& event);
 
 public:
     clFileViewerTreeCtrl(wxWindow* parent,

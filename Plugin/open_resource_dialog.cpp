@@ -148,9 +148,9 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     }
 
     if (filter_results) {
-        // Trigger list filtering
-        wxTimerEvent dummy_event{*m_timer};
-        OnTimer(dummy_event);
+        // This will start the timer
+        wxCommandEvent dummEvent;
+        OnText(dummEvent);
     }
 
     bool showFiles = clConfig::Get().Read("OpenResourceDialog/ShowFiles", true);
@@ -182,8 +182,8 @@ void OpenResourceDialog::OnText(wxCommandEvent& event)
     m_timer->Start(200, true);
 
     wxString filter = m_textCtrlResourceName->GetValue();
-    filter.Trim().Trim(false);
-    m_needRefresh = true;
+    if (!filter.Trim().Trim(false).empty())
+        m_needRefresh = true;
 }
 
 void OpenResourceDialog::OnUsePartialMatching(wxCommandEvent& event)
@@ -506,6 +506,8 @@ void OpenResourceDialog::GetLineAndColumnFromFilter(const wxString& filter,
 }
 
 OpenResourceDialogItemData* OpenResourceDialog::GetItemData(const wxDataViewItem& item) const
-{ return reinterpret_cast<OpenResourceDialogItemData*>(m_dataview->GetItemData(item)); }
+{
+    return reinterpret_cast<OpenResourceDialogItemData*>(m_dataview->GetItemData(item));
+}
 
 void OpenResourceDialog::OnSelectAllText() { m_textCtrlResourceName->SelectAll(); }

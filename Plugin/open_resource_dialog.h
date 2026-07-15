@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __open_resource_dialog__
-#define __open_resource_dialog__
+#pragma once
 
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
@@ -90,8 +89,8 @@ class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
 {
     IManager* m_manager;
     std::unordered_multimap<wxString, wxString> m_files;
-    std::unordered_map<LSP::eSymbolKind, int> m_fileTypeHash;
-    wxTimer* m_timer;
+    std::unordered_map<LSP::eSymbolKind, wxBitmap> m_fileTypeHash;
+    wxTimer m_timer;
     bool m_needRefresh;
     wxArrayString m_filters;
     wxArrayString m_userFilters;
@@ -116,8 +115,8 @@ protected:
                       const wxString& fullname,
                       bool boldFont,
                       OpenResourceDialogItemData* clientData,
-                      int imgid);
-    int DoGetTagImg(const LSP::SymbolInformation& symbol);
+                      const wxBitmap& imgid);
+    const wxBitmap& DoGetTagImg(const LSP::SymbolInformation& symbol);
     OpenResourceDialogItemData* GetItemData(const wxDataViewItem& item) const;
     void OnSelectAllText();
 
@@ -129,9 +128,6 @@ protected:
     void OnOK(wxCommandEvent& event);
     void OnOKUI(wxUpdateUIEvent& event);
     void OnTimer(wxTimerEvent& event);
-
-    DECLARE_EVENT_TABLE()
-
     void GetLineAndColumnFromFilter(const wxString& filter, wxString& modFilter, long& lineNumber, long& column);
 
 public:
@@ -151,4 +147,3 @@ public:
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_OPEN_RESOURCE_FILE_SELECTED, clCommandEvent);
-#endif // __open_resource_dialog__

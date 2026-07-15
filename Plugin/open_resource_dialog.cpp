@@ -24,14 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "open_resource_dialog.h"
 
-#include "ColoursAndFontsManager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "LSP/LSPManager.hpp"
 #include "bitmap_loader.h"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
-#include "ctags_manager.h"
-#include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -40,8 +37,6 @@
 #include "imanager.h"
 #include "macros.h"
 #include "project.h"
-#include "window_locker.h"
-#include "windowattrmanager.h"
 #include "workspace.h"
 
 #include <algorithm>
@@ -52,10 +47,6 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
-BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
-EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
-END_EVENT_TABLE()
-
 wxDEFINE_EVENT(wxEVT_OPEN_RESOURCE_FILE_SELECTED, clCommandEvent);
 
 OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, const wxString& initialSelection)
@@ -64,29 +55,26 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     , m_needRefresh(false)
     , m_lineNumber(wxNOT_FOUND)
 {
-    m_dataview->SetSortFunction(nullptr);
-    m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if (lexer) {
-        m_dataview->SetDefaultFont(lexer->GetFontForStyle(0, m_dataview));
-    }
     EventNotifier::Get()->Bind(wxEVT_LSP_WORKSPACE_SYMBOLS, &OpenResourceDialog::OnWorkspaceSymbols, this);
 
-    // initialize the file-type hash
-    m_fileTypeHash[LSP::kSK_Class] = BitmapLoader::kClass;
-    m_fileTypeHash[LSP::kSK_Struct] = BitmapLoader::kStruct;
-    m_fileTypeHash[LSP::kSK_Namespace] = BitmapLoader::kNamespace;
-    m_fileTypeHash[LSP::kSK_Variable] = BitmapLoader::kMemberPublic;
-    m_fileTypeHash[LSP::kSK_TypeParameter] = BitmapLoader::kTypedef;
-    m_fileTypeHash[LSP::kSK_Property] = BitmapLoader::kMemberPublic;
-    m_fileTypeHash[LSP::kSK_Function] = BitmapLoader::kFunctionPublic;
-    m_fileTypeHash[LSP::kSK_Method] = BitmapLoader::kFunctionPublic;
-    m_fileTypeHash[LSP::kSK_Constructor] = BitmapLoader::kFunctionPublic;
-    m_fileTypeHash[LSP::kSK_TypeParameter] = BitmapLoader::kMacro;
-    m_fileTypeHash[LSP::kSK_Enum] = BitmapLoader::kEnum;
-    m_fileTypeHash[LSP::kSK_EnumMember] = BitmapLoader::kEnumerator;
+    auto* images = clGetManager()->GetStdIcons();
 
-    m_timer = new wxTimer(this, XRCID("OR_TIMER"));
+    // initialize the file-type hash
+    m_fileTypeHash[LSP::kSK_Class] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kClass, false);
+    m_fileTypeHash[LSP::kSK_Struct] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kStruct, false);
+    m_fileTypeHash[LSP::kSK_Namespace] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kNamespace, false);
+    m_fileTypeHash[LSP::kSK_Variable] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kMemberPublic, false);
+    m_fileTypeHash[LSP::kSK_TypeParameter] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kTypedef, false);
+    m_fileTypeHash[LSP::kSK_Property] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kMemberPublic, false);
+    m_fileTypeHash[LSP::kSK_Function] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kFunctionPublic, false);
+    m_fileTypeHash[LSP::kSK_Method] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kFunctionPublic, false);
+    m_fileTypeHash[LSP::kSK_Constructor] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kFunctionPublic, false);
+    m_fileTypeHash[LSP::kSK_TypeParameter] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kMacro, false);
+    m_fileTypeHash[LSP::kSK_Enum] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kEnum, false);
+    m_fileTypeHash[LSP::kSK_EnumMember] = images->GetMimeBitmaps().GetBitmap(BitmapLoader::kEnumerator, false);
+
+    m_timer.SetOwner(this);
+    Bind(wxEVT_TIMER, &OpenResourceDialog::OnTimer, this, m_timer.GetId());
 
     m_textCtrlResourceName->SetFocus();
     SetLabel(_("Open resource..."));
@@ -164,9 +152,8 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
 
 OpenResourceDialog::~OpenResourceDialog()
 {
-    m_timer->Stop();
-    wxDELETE(m_timer);
-
+    m_timer.Stop();
+    Unbind(wxEVT_TIMER, &OpenResourceDialog::OnTimer, this, m_timer.GetId());
     EventNotifier::Get()->Unbind(wxEVT_LSP_WORKSPACE_SYMBOLS, &OpenResourceDialog::OnWorkspaceSymbols, this);
 
     // Store current values
@@ -178,8 +165,9 @@ OpenResourceDialog::~OpenResourceDialog()
 void OpenResourceDialog::OnText(wxCommandEvent& event)
 {
     event.Skip();
-    m_timer->Stop();
-    m_timer->Start(200, true);
+    if (m_timer.IsRunning())
+        m_timer.Stop();
+    m_timer.Start(200, true);
 
     wxString filter = m_textCtrlResourceName->GetValue();
     if (!filter.Trim().Trim(false).empty())
@@ -249,6 +237,9 @@ void OpenResourceDialog::DoPopulateTags(const std::vector<LSP::SymbolInformation
         return;
     }
 
+    constexpr size_t kMaxSymbols = 200;
+    wxWindowUpdateLocker locker{m_dataview};
+    size_t itemsAdded{0};
     for (const LSP::SymbolInformation& symbol : symbols) {
         if (!MatchesFilter(symbol.GetName())) {
             continue;
@@ -264,18 +255,9 @@ void OpenResourceDialog::DoPopulateTags(const std::vector<LSP::SymbolInformation
                                                     symbol.GetName(),
                                                     symbol.GetContainerName()),
                      DoGetTagImg(symbol));
-    }
-
-    wxString filter = (m_userFilters.GetCount() == 1) ? m_userFilters.Item(0) : "";
-    if (!filter.IsEmpty()) {
-        wxDataViewItem matchedItem =
-            m_dataview->FindNext(wxDataViewItem(nullptr),
-                                 filter,
-                                 0,
-                                 wxDV_SEARCH_ICASE | wxDV_SEARCH_METHOD_EXACT | wxDV_SEARCH_INCLUDE_CURRENT_ITEM);
-        if (matchedItem.IsOk()) {
-            DoSelectItem(matchedItem);
-        }
+        itemsAdded++;
+        if (itemsAdded >= kMaxSymbols)
+            break;
     }
 }
 
@@ -298,12 +280,11 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
             }
 
             wxFileName fn(iter->second);
-            int imgId = clGetManager()->GetStdIcons()->GetMimeImageId(fn.GetFullName());
             DoAppendLine(fn.GetFullName(),
                          iter->second,
                          false,
                          new OpenResourceDialogItemData(iter->second, -1, "", fn.GetFullName(), ""),
-                         imgId);
+                         clGetManager()->GetStdIcons()->GetBitmapForFile(fn.GetFullName(), false));
             ++counter;
         }
     }
@@ -311,11 +292,11 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 
 void OpenResourceDialog::Clear()
 {
-    // list control does not own the client data, we need to free it ourselves
-    m_dataview->DeleteAllItems([](wxUIntPtr ptr) {
-        OpenResourceDialogItemData* cd = reinterpret_cast<OpenResourceDialogItemData*>(ptr);
-        wxDELETE(cd);
-    });
+    for (auto row = 0; row < m_dataview->GetItemCount(); ++row) {
+        auto* ptr = GetItemData(m_dataview->RowToItem(row));
+        wxDELETE(ptr);
+    }
+    m_dataview->DeleteAllItems();
     m_userFilters.Clear();
 }
 
@@ -344,7 +325,7 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
 void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();
-    if (m_dataview->IsEmpty()) {
+    if (m_dataview->GetItemCount() == 0) {
         return;
     }
 
@@ -359,24 +340,32 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
     bool page_up = (key_code == WXK_PAGEUP) || (control_down && (ch == 'U'));
 
     event.Skip(false);
-    if (GetDataview()->GetSelectedItemsCount() == 0) {
+    if (m_dataview->GetSelectedItemsCount() != 1) {
         // Just select the first entry
-        DoSelectItem(GetDataview()->RowToItem(0));
+        DoSelectItem(m_dataview->RowToItem(0));
         event.Skip();
-    } else {
-        if (line_down) {
-            GetDataview()->LineDown();
-        } else if (line_up) {
-            GetDataview()->LineUp();
-        } else if (page_down) {
-            GetDataview()->PageDown();
-        } else if (page_up) {
-            GetDataview()->PageUp();
-        } else {
-            event.Skip();
-        }
+        return;
     }
-    m_textCtrlResourceName->CallAfter(&clThemedTextCtrl::SetFocus);
+
+    if (line_down || line_up || page_down || page_up) {
+        int row = m_dataview->GetSelectedRow();
+        if (line_down) {
+            row++;
+        } else if (line_up) {
+            row--;
+        } else if (page_down) {
+            row += 10;
+        } else if (page_up) {
+            row -= 10;
+        }
+
+        row = std::clamp(row, 0, static_cast<int>(m_dataview->GetItemCount()));
+        m_dataview->SelectRow(row);
+        m_dataview->EnsureVisible(m_dataview->RowToItem(row));
+        m_textCtrlResourceName->CallAfter(&wxDataViewListCtrl::SetFocus);
+        return;
+    }
+    event.Skip();
 }
 
 void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
@@ -393,13 +382,20 @@ void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
     GetDataview()->Refresh();
 }
 
-void OpenResourceDialog::DoAppendLine(
-    const wxString& name, const wxString& fullname, bool boldFont, OpenResourceDialogItemData* clientData, int imgid)
+void OpenResourceDialog::DoAppendLine(const wxString& name,
+                                      const wxString& fullname,
+                                      bool boldFont,
+                                      OpenResourceDialogItemData* clientData,
+                                      const wxBitmap& imgid)
 {
     wxString prefix;
     clientData->m_impl = boldFont;
     wxVector<wxVariant> cols;
-    cols.push_back(::MakeBitmapIndexText(prefix + name, imgid));
+
+    wxDataViewIconText icontext(prefix + name, imgid);
+    wxVariant iconTextVariant;
+    iconTextVariant << icontext;
+    cols.push_back(iconTextVariant);
     cols.push_back(clientData->m_impl ? wxString(wxT("\u274C")) : wxString());
     cols.push_back(fullname);
     m_dataview->AppendItem(cols, (wxUIntPtr)clientData);
@@ -420,13 +416,13 @@ void OpenResourceDialog::OnTimer([[maybe_unused]] wxTimerEvent& event)
     }
 }
 
-int OpenResourceDialog::DoGetTagImg(const LSP::SymbolInformation& symbol)
+const wxBitmap& OpenResourceDialog::DoGetTagImg(const LSP::SymbolInformation& symbol)
 {
-    int imgId = BitmapLoader::kMemberPublic; // The default
     if (m_fileTypeHash.count(symbol.GetKind())) {
-        imgId = m_fileTypeHash[symbol.GetKind()];
+        return m_fileTypeHash[symbol.GetKind()];
     }
-    return clGetManager()->GetStdIcons()->GetImageIndex(imgId);
+    // The default
+    return clGetManager()->GetStdIcons()->GetMimeBitmaps().GetBitmap(BitmapLoader::kMemberPublic, false);
 }
 
 bool OpenResourceDialog::MatchesFilter(const wxString& name)

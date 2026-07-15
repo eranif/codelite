@@ -1,8 +1,8 @@
 #include "wxc_edit_manager.h"
 
+#include "UI/wxguicraft_main_view.h"
 #include "event_notifier.h"
 #include "wxc_project_metadata.h"
-#include "wxguicraft_main_view.h"
 
 #include <wx/app.h>
 

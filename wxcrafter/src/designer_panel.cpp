@@ -4,13 +4,13 @@
 #include "Preview/menu_bar.h"
 #include "Preview/tool_bar.h"
 #include "UI/wxcTreeView.h"
+#include "UI/wxguicraft_main_view.h"
 #include "allocator_mgr.h"
 #include "clDirChanger.hpp"
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
-#include "wxguicraft_main_view.h"
 
 #include <wx/app.h>
 #include <wx/bookctrl.h>

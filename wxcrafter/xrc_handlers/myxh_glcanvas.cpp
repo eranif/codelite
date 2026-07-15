@@ -1,6 +1,6 @@
 #include <wx/wxprec.h>
 
-#include "OpenGLCanvas.h"
+#include "UI/OpenGLCanvas.h"
 
 #ifdef __BORLANDC__
 #pragma hdrstop

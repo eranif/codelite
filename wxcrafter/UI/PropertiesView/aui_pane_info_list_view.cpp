@@ -1,8 +1,8 @@
 #include "aui_pane_info_list_view.h"
 
+#include "UI/wxguicraft_main_view.h"
 #include "event_notifier.h"
 #include "wxgui_defs.h"
-#include "wxguicraft_main_view.h"
 
 AuiPaneInfoListView::AuiPaneInfoListView()
     : m_wxcWidget(NULL)

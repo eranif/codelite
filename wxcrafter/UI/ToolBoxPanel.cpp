@@ -1,7 +1,7 @@
 #include "ToolBoxPanel.h"
 
+#include "UI/wxguicraft_main_view.h"
 #include "allocator_mgr.h"
-#include "wxguicraft_main_view.h"
 
 ToolBoxPanel::ToolBoxPanel(wxWindow* parent, GUICraftMainPanel* mainView)
     : ToolBoxPanelBaseClass(parent)

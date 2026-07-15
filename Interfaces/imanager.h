@@ -46,6 +46,7 @@
 #include <wx/aui/framemanager.h>
 
 class clTreeCtrl;
+class clFileViewerTreeCtrl;
 class clEditorBar;
 class clWorkspaceView;
 class TagsManager;
@@ -310,7 +311,7 @@ public:
      * @brief returns a pointer to wxTreeCtrl by type
      * @sa TreeType
      */
-    virtual clTreeCtrl* GetFileExplorerTree() = 0;
+    virtual clFileViewerTreeCtrl* GetFileExplorerTree() = 0;
     virtual clTreeCtrl* GetWorkspaceTree() = 0;
 
     /**

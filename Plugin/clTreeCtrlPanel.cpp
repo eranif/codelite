@@ -66,6 +66,11 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 
+#ifdef __WXMSW__
+    // Adjust Tree Control Alternate Row Color On Windows
+    GetTreeCtrl()->SetAlternateRowColour(GetTreeCtrl()->GetBackgroundColour().ChangeLightness(103));
+#endif
+
     auto images = clGetManager()->GetStdIcons();
     clAuiToolBarArt::AddTool(
         m_toolbar, XRCID("link_editor"), _("Link Editor"), images->LoadBitmap("link_editor"), "", wxITEM_CHECK);

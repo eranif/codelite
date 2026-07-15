@@ -1117,7 +1117,7 @@ void clTreeCtrlPanel::RefreshNonTopLevelFolder(const wxDataViewItem& item)
 
     // Re-expand the item
     if (expandItem) {
-        CallAfter(&clTreeCtrlPanel::DoExpandItem, item, true);
+        CallAfter([this, item]() { DoExpandItem(item, true, false); });
     }
 }
 

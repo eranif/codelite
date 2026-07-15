@@ -56,11 +56,11 @@ OpenResourceDialogBase::OpenResourceDialogBase(
     mainSizer->Add(m_dataview, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dataview->AppendIconTextColumn(
-        _("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+        _("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(250), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_dataview->AppendTextColumn(
-        _("Impl"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+        _("Impl"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(20), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_dataview->AppendTextColumn(
-        _("Full Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+        _("Full Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(250), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer19 = new wxBoxSizer(wxHORIZONTAL);
 
     mainSizer->Add(boxSizer19, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));

@@ -395,7 +395,9 @@ void OpenResourceDialog::DoAppendLine(const wxString& name,
     clientData->m_impl = boldFont;
     wxVector<wxVariant> cols;
 
-    wxDataViewIconText icontext(prefix + name, imgid);
+    const wxBitmap& placeholder = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
+    const wxBitmap& bmp = imgid.IsOk() ? imgid : placeholder;
+    wxDataViewIconText icontext{prefix + name, bmp};
     wxVariant iconTextVariant;
     iconTextVariant << icontext;
     cols.push_back(iconTextVariant);

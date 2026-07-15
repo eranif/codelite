@@ -227,7 +227,7 @@ void clTreeCtrlPanel::OnItemExpanding(wxDataViewEvent& event)
     event.Skip();
     wxDataViewItem item = event.GetItem();
     CHECK_ITEM_RET(item);
-    DoExpandItem(item, true);
+    DoExpandItem(item, true, /*isNativeExpandEvent=*/true);
 }
 
 void clTreeCtrlPanel::OnFolderDropped(clCommandEvent& event)
@@ -239,7 +239,7 @@ void clTreeCtrlPanel::OnFolderDropped(clCommandEvent& event)
     ::clGetManager()->GetWorkspaceView()->SelectPage(GetViewName());
 }
 
-void clTreeCtrlPanel::DoExpandItem(const wxDataViewItem& parent, bool expand)
+void clTreeCtrlPanel::DoExpandItem(const wxDataViewItem& parent, bool expand, bool isNativeExpandEvent)
 {
     clTreeCtrlData* cd = GetItemData(parent);
     CHECK_PTR_RET(cd);
@@ -300,7 +300,10 @@ void clTreeCtrlPanel::DoExpandItem(const wxDataViewItem& parent, bool expand)
 
     // Sort the parent
     if (GetTreeCtrl()->ItemHasChildren(parent)) {
-        if (expand) {
+        if (expand && !isNativeExpandEvent) {
+            // When called from OnItemExpanding(), the native control is already in the process of
+            // expanding "parent" for us; calling Expand() again here would re-enter its expand
+            // logic for the same node (see the comment on the declaration for details).
             GetTreeCtrl()->Expand(parent);
         }
         SelectItem(parent);

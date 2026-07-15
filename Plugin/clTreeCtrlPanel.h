@@ -182,7 +182,12 @@ protected:
     virtual void OnRefresh(wxCommandEvent& event);
     void OnOpenFolder(wxCommandEvent& event);
     // Helpers
-    void DoExpandItem(const wxDataViewItem& parent, bool expand);
+    // isNativeExpandEvent must be true only when called from OnItemExpanding(): in that case the
+    // native control is already in the middle of expanding "parent", so we must not call
+    // GetTreeCtrl()->Expand() again on it - doing so re-enters the control's expand logic for the
+    // same node and corrupts its internal open/closed bookkeeping (the node ends up reporting as
+    // expanded while still rendered collapsed, or vice versa).
+    void DoExpandItem(const wxDataViewItem& parent, bool expand, bool isNativeExpandEvent = false);
     void DoRenameItem(const wxDataViewItem& item, const wxString& oldname, const wxString& newname);
 
     bool IsTopLevelFolder(const wxDataViewItem& item);

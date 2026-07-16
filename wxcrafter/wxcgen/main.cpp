@@ -27,6 +27,13 @@
 #include <wx/wxcrtvararg.h>
 #include <wx/xml/xml.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+
 static const wxCmdLineEntryDesc s_cmdDesc[] = {
     {wxCMD_LINE_SWITCH, "v", "version", "Print version and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH, "h", "help", "Print usage and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
@@ -47,9 +54,108 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
 
 extern const char* GIT_REVISION;
 
+namespace
+{
+#ifdef _WIN32
+class FileLockGuard
+{
+    HANDLE m_handle = INVALID_HANDLE_VALUE;
+
+public:
+    explicit FileLockGuard(const wxString& lockPath)
+    {
+        m_handle =
+            ::CreateFileW(lockPath.wc_str(), GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+        if (m_handle == INVALID_HANDLE_VALUE) {
+            return;
+        }
+        OVERLAPPED ov{};
+        if (!::LockFileEx(m_handle, LOCKFILE_EXCLUSIVE_LOCK, 0, MAXDWORD, MAXDWORD, &ov)) {
+            ::CloseHandle(m_handle);
+            m_handle = INVALID_HANDLE_VALUE;
+        }
+    }
+
+    ~FileLockGuard()
+    {
+        if (m_handle != INVALID_HANDLE_VALUE) {
+            OVERLAPPED ov{};
+            ::UnlockFileEx(m_handle, 0, MAXDWORD, MAXDWORD, &ov);
+            ::CloseHandle(m_handle);
+        }
+    }
+
+    bool IsLocked() const { return m_handle != INVALID_HANDLE_VALUE; }
+
+    FileLockGuard(const FileLockGuard&) = delete;
+    FileLockGuard& operator=(const FileLockGuard&) = delete;
+};
+#else
+class FileLockGuard
+{
+    int m_fd = -1;
+
+public:
+    explicit FileLockGuard(const wxString& lockPath)
+    {
+        m_fd = ::open(lockPath.ToUTF8().data(), O_CREAT | O_WRONLY | O_CLOEXEC, 0644);
+        if (m_fd < 0) {
+            return;
+        }
+
+        struct flock fl {
+        };
+        fl.l_type = F_WRLCK;
+        fl.l_whence = SEEK_SET;
+
+        // Try non-blocking first; on contention, retry with short sleeps up to 5 seconds.
+        if (::fcntl(m_fd, F_SETLK, &fl) == 0) {
+            return;
+        }
+
+        constexpr int MAX_RETRIES = 50;
+        constexpr useconds_t SLEEP_US = 100000; // 100 ms
+        for (int i = 0; i < MAX_RETRIES; ++i) {
+            ::usleep(SLEEP_US);
+            if (::fcntl(m_fd, F_SETLK, &fl) == 0) {
+                return;
+            }
+        }
+
+        ::close(m_fd);
+        m_fd = -1;
+    }
+
+    ~FileLockGuard()
+    {
+        if (m_fd >= 0) {
+            struct flock fl {
+            };
+            fl.l_type = F_UNLCK;
+            fl.l_whence = SEEK_SET;
+            ::fcntl(m_fd, F_SETLK, &fl);
+            ::close(m_fd);
+        }
+    }
+
+    bool IsLocked() const { return m_fd >= 0; }
+
+    FileLockGuard(const FileLockGuard&) = delete;
+    FileLockGuard& operator=(const FileLockGuard&) = delete;
+};
+#endif
+} // namespace
+
 void UpdateConfigFile(const wxString& filepath, const wxString& section, const wxString& key, const wxString& value)
 {
     using json = nlohmann::ordered_json;
+
+    wxString lockPath = filepath + ".lock";
+    FileLockGuard lock(lockPath);
+    if (!lock.IsLocked()) {
+        wxFprintf(stderr, "wxcgen: warning: could not acquire lock on %s\n", lockPath);
+    }
+
     json j;
 
     // Load existing JSON if file exists

@@ -11,9 +11,7 @@
 - `docs/`, `README.md`, and `TODO.md` describe coding standards, build steps, and outstanding work. Consult them when planning changes.
 
 ## Build & Tooling Notes
-- CodeLite uses CMake. A canonical Windows build sequence is: `cmake -S . -B .build-release -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release`, followed by `cmake --build .build-release --config Release`.
-- On other platforms - Linux and macOS - A build sequence is `cmake -S . -B .build-release -DCMAKE_BUILD_TYPE=Release`, , followed by `cmake --build .build-release --config Release`.
-- After building, `ctest  --output-on-failure --test-dir .build-release` exercises the bundled test suite wherever supported.
+- CodeLite uses CMake. To build, run from root folder: `./build.sh`
 - Keep `compile_commands.json` in sync by regenerating the build directory before running linters or language tooling.
 - After generating a code, use `clang-format -i <source-file>` to keep it formatted properly.
 

@@ -33,3 +33,5 @@ wxcrafter/src/wxcversion.cpp
 LiteEditor/autoversion.h
 .DS_Store
 .kiro/
+.wxcgen.json
+*.lock

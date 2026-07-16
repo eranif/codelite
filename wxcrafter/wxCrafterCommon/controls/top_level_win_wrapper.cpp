@@ -15,6 +15,7 @@
 #include <wx/richmsgdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/toplevel.h>
+#include <wx/wxcrtvararg.h>
 
 TopLevelWinWrapper::TopLevelWinWrapper(int type)
     : wxcWidget(type)
@@ -334,7 +335,6 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
     derivedClassFileHPP.SetExt("h");
 
     const wxFileName wxcpFile = wxcProjectMetadata::Get().GetProjectFileName();
-
     // Fix the paths if needed
     // i.e. if the derived classes are relative, make them use the same
     // path as the base classes file
@@ -345,7 +345,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
     if (derivedClassFileHPP.IsRelative()) {
         derivedClassFileHPP.MakeAbsolute(wxcpFile.GetPath());
     }
-    
+
     // By default we want to generate hpp files. However, if a "h" file exists
     // keep it.
     if (!derivedClassFileHPP.FileExists()) {

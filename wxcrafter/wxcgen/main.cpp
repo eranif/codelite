@@ -5,6 +5,7 @@
 #include "JSON.h"
 #include "file_logger.h"
 #include "fileutils.h"
+#include "json_utils.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
@@ -15,6 +16,8 @@
 #include <wx/app.h>
 #include <wx/arrstr.h>
 #include <wx/cmdline.h>
+#include <wx/confbase.h>
+#include <wx/fileconf.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/image.h>
@@ -28,6 +31,12 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
     {wxCMD_LINE_SWITCH, "v", "version", "Print version and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH, "h", "help", "Print usage and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_OPTION, "o", "output", "Override output directory", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION,
+     "p",
+     "persist",
+     "Persist the output directory in a .wxcrafter resource file",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_PARAM,
      nullptr,
      nullptr,
@@ -37,6 +46,34 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
     wxCMD_LINE_DESC_END};
 
 extern const char* GIT_REVISION;
+
+void UpdateConfigFile(const wxString& filepath, const wxString& section, const wxString& key, const wxString& value)
+{
+    using json = nlohmann::ordered_json;
+    json j;
+
+    // Load existing JSON if file exists
+    if (wxFileName::FileExists(filepath)) {
+        wxString fileContent;
+        if (FileUtils::ReadFileContent(filepath, fileContent)) {
+            try {
+                j = json::parse(fileContent.ToStdString(wxConvUTF8));
+            } catch (...) {
+                j = json::object();
+            }
+        }
+    }
+
+    // Ensure section exists and update/add the key
+    if (!j.contains(section.ToStdString(wxConvUTF8))) {
+        j[section.ToStdString(wxConvUTF8)] = json::object();
+    }
+    j[section.ToStdString(wxConvUTF8)][key.ToStdString(wxConvUTF8)] = value.ToStdString(wxConvUTF8);
+
+    // Write back to file with pretty formatting
+    wxString jsonContent(j.dump(2).c_str(), wxConvUTF8);
+    FileUtils::WriteFileContent(filepath, jsonContent);
+}
 
 static bool
 GenerateFromProject(const wxString& filename, const wxString& fileContent, const wxString& outputDirOverride)
@@ -203,6 +240,16 @@ int wxcgenApp::OnRun()
         }
     }
 
+    wxString persistPath;
+    if (parser.Found("p", &persistPath) && !outputDirStr.empty()) {
+        wxFileName persistenceFile(persistPath);
+        persistenceFile.MakeAbsolute();
+        if (!persistenceFile.DirExists()) {
+            persistenceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        }
+        persistPath = persistenceFile.GetFullPath();
+    }
+
     // Ensure the user data dir exists before anything tries to write into
     // it (FileLogger expect it).
     wxFileName user_data_dir{wxStandardPaths::Get().GetUserDataDir(), wxEmptyString};
@@ -224,6 +271,11 @@ int wxcgenApp::OnRun()
             rc = 1;
             continue;
         }
+
+        if (!persistPath.empty()) {
+            UpdateConfigFile(persistPath, "output-directory", filename, outputDirStr);
+        }
+
         if (!GenerateFromProject(filename, fileContent, outputDirStr)) {
             rc = 1;
         }

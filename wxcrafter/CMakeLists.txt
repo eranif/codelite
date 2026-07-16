@@ -104,9 +104,8 @@ file(
 # GUICraftMainPanel, plugin glue, GUI dialogs) and must NOT be linked into the
 # headless wxcgen executable.
 set(MACRO_SENSITIVE_GUI_ONLY_FILES
-    "UI/main.cpp" "src/wxcrafter_plugin.cpp"
-    "UI/wxguicraft_main_view.cpp" "UI/NewFormWizard.cpp"
-    "UI/wxcSettingsDlg.cpp")
+    "UI/main.cpp" "src/wxcrafter_plugin.cpp" "UI/wxguicraft_main_view.cpp"
+    "UI/NewFormWizard.cpp" "UI/wxcSettingsDlg.cpp")
 
 # Build absolute-path source lists.
 set(MACRO_SENSITIVE_GUI_ONLY_SRCS)
@@ -242,9 +241,11 @@ macro(
   endforeach()
   unset(ExtraMacroArgs)
 
+  set(WXCGEN_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.wxcgen.json")
   add_custom_command(
     OUTPUT ${WXCRAFTER_${Name}_OUTPUTS}
-    COMMAND $<TARGET_FILE:wxcgen> -o "${OutputDir}" "${Input}"
+    COMMAND $<TARGET_FILE:wxcgen> -o "${OutputDir}" -p "${WXCGEN_CONFIG_FILE}"
+            "${Input}"
     VERBATIM
     DEPENDS ${Input} wxcgen
     COMMENT "[WxCrafter][${Name}] Building code (wxcgen)")

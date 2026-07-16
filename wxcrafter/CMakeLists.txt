@@ -81,6 +81,13 @@ configure_file(${CL_SRC_ROOT}/wxcrafter/wxCrafterCommon/wxcversion.cpp.in
 # The macro-sensitive GUI-only files.
 file(GLOB_RECURSE MACRO_SENSITIVE_GUI_ONLY_SRCS "SharedGui/*.cpp")
 
+set(TO_MIGRATE_UI_SRCS
+  wxCrafterCommonGui/UI/NewFormWizard.cpp
+  wxCrafterCommonGui/UI/main.cpp  
+  wxCrafterCommonGui/UI/wxcSettingsDlg.cpp  
+  wxCrafterCommonGui/UI/wxguicraft_main_view.cpp  
+)
+
 # Define-agnostic files split into headless-safe (COMMON_SRCS) and GUI-only
 # (COMMON_GUI_SRCS). The split is based on whether the TU pulls GUI-only symbols
 # (MainFrame, GUICraftMainPanel, wxDialog subclasses, etc.).
@@ -90,10 +97,14 @@ list(APPEND COMMON_SRCS "${CMAKE_BINARY_DIR}/generated/wxcversion.cpp")
 
 file(GLOB_RECURSE COMMON_GUI_SRCS "wxCrafterCommonGui/*.cpp")
 
+foreach(f ${TO_MIGRATE_UI_SRCS})
+  set(absf "${CMAKE_CURRENT_LIST_DIR}/${f}")
+  list(REMOVE_ITEM COMMON_GUI_SRCS "${absf}")
+  list(APPEND MACRO_SENSITIVE_GUI_ONLY_SRCS "${absf}")
+endforeach()
+
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
-  "${CMAKE_CURRENT_LIST_DIR}/SharedGui"
-  "${CMAKE_CURRENT_LIST_DIR}/SharedGui/UI"
   "${CMAKE_CURRENT_LIST_DIR}/SharedGui/src"
   "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommon"
   "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommon/Importer"

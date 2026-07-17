@@ -185,7 +185,9 @@ static bool ReadFile8BitData(const char* file_name, wxString& content)
 bool SendCmdEvent(int eventId, void* clientData) { return EventNotifier::Get()->SendCommandEvent(eventId, clientData); }
 
 bool SendCmdEvent(int eventId, void* clientData, const wxString& str)
-{ return EventNotifier::Get()->SendCommandEvent(eventId, clientData, str); }
+{
+    return EventNotifier::Get()->SendCommandEvent(eventId, clientData, str);
+}
 
 void PostCmdEvent(int eventId, void* clientData) { EventNotifier::Get()->PostCommandEvent(eventId, clientData); }
 
@@ -681,7 +683,9 @@ void clSetManager(IManager* manager) { s_pluginManager = manager; }
 IManager* clGetManager() { return s_pluginManager; }
 
 bool clIsValidProjectName(const wxString& name)
-{ return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos; }
+{
+    return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos;
+}
 
 double clGetContentScaleFactor()
 {
@@ -1019,3 +1023,15 @@ static std::atomic_bool shutdown_flag{false};
 void SetShutdownInProgress() { shutdown_flag.store(true); }
 
 bool IsShutdownInProgress() { return shutdown_flag.load(); }
+
+void AdjustDataViewAlternateColour(wxDataViewCtrl* ctrl)
+{
+#ifdef __WXMSW__
+    wxColour baseColour = ctrl->GetBackgroundColour();
+    bool is_dark = DrawingUtils::IsDark(baseColour);
+    // Adjust Tree Control Alternate Row Color On Windows
+    ctrl->SetAlternateRowColour(ctrl->GetBackgroundColour().ChangeLightness(is_dark ? 103 : 97));
+#else
+    wxUnusedVar(ctrl);
+#endif
+}

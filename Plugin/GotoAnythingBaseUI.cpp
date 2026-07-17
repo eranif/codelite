@@ -53,10 +53,10 @@ GotoAnythingBaseDlg::GotoAnythingBaseDlg(
                                           wxDLG_UNIT(this, wxSize(400, 100)),
                                           wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
-    boxSizer2->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer2->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl->AppendTextColumn(
-        _("Matches"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+        _("Matches"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(350), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrl->AppendTextColumn(
         _("Shortcut"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
 

@@ -14,11 +14,7 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
     : GotoAnythingBaseDlg(parent)
     , m_allEntries(entries)
 {
-#ifdef __WXMSW__
-    // Adjust Tree Control Alternate Row Color On Windows
-    m_dvListCtrl->SetAlternateRowColour(m_dvListCtrl->GetBackgroundColour().ChangeLightness(103));
-#endif
-
+    ::AdjustDataViewAlternateColour(m_dvListCtrl);
     DoPopulate(m_allEntries);
     ::clSetDialogBestSizeAndPosition(*this);
 }

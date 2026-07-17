@@ -56,9 +56,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     , m_lineNumber(wxNOT_FOUND)
 {
     EventNotifier::Get()->Bind(wxEVT_LSP_WORKSPACE_SYMBOLS, &OpenResourceDialog::OnWorkspaceSymbols, this);
-#ifdef __WXMSW__
-    m_dataview->SetAlternateRowColour(m_dataview->GetBackgroundColour().ChangeLightness(103));
-#endif
+    ::AdjustDataViewAlternateColour(m_dataview);
 
     auto* images = clGetManager()->GetStdIcons();
 

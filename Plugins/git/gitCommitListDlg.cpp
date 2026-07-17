@@ -48,6 +48,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     , m_workingDir(workingDir)
     , m_skip(0)
 {
+    ::AdjustDataViewAlternateColour(m_dvListCtrlCommitList);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitCommitListDlg::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitCommitListDlg::OnProcessTerminated, this);
 

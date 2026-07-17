@@ -59,33 +59,38 @@ namespace
 #ifdef _WIN32
 class FileLockGuard
 {
-    HANDLE m_handle = INVALID_HANDLE_VALUE;
+    HANDLE m_mutex = nullptr;
 
 public:
     explicit FileLockGuard(const wxString& lockPath)
     {
-        m_handle =
-            ::CreateFileW(lockPath.wc_str(), GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-        if (m_handle == INVALID_HANDLE_VALUE) {
+        wxUnusedVar(lockPath);
+        // Create a unique mutex name from the lock path
+        wxString mutexName = "Global\\WXCGEN_LOCK_MUTEX";
+
+        // Create or open the named mutex
+        m_mutex = ::CreateMutexW(nullptr, FALSE, mutexName.wc_str());
+        if (m_mutex == nullptr) {
             return;
         }
-        OVERLAPPED ov{};
-        if (!::LockFileEx(m_handle, LOCKFILE_EXCLUSIVE_LOCK, 0, MAXDWORD, MAXDWORD, &ov)) {
-            ::CloseHandle(m_handle);
-            m_handle = INVALID_HANDLE_VALUE;
+
+        // Wait for the mutex (blocking until acquired)
+        DWORD dwRet = ::WaitForSingleObject(m_mutex, INFINITE);
+        if (dwRet != WAIT_OBJECT_0) {
+            ::CloseHandle(m_mutex);
+            m_mutex = nullptr;
         }
     }
 
     ~FileLockGuard()
     {
-        if (m_handle != INVALID_HANDLE_VALUE) {
-            OVERLAPPED ov{};
-            ::UnlockFileEx(m_handle, 0, MAXDWORD, MAXDWORD, &ov);
-            ::CloseHandle(m_handle);
+        if (m_mutex != nullptr) {
+            ::ReleaseMutex(m_mutex);
+            ::CloseHandle(m_mutex);
         }
     }
 
-    bool IsLocked() const { return m_handle != INVALID_HANDLE_VALUE; }
+    bool IsLocked() const { return m_mutex != nullptr; }
 
     FileLockGuard(const FileLockGuard&) = delete;
     FileLockGuard& operator=(const FileLockGuard&) = delete;
@@ -103,8 +108,7 @@ public:
             return;
         }
 
-        struct flock fl {
-        };
+        struct flock fl{};
         fl.l_type = F_WRLCK;
         fl.l_whence = SEEK_SET;
 
@@ -129,8 +133,7 @@ public:
     ~FileLockGuard()
     {
         if (m_fd >= 0) {
-            struct flock fl {
-            };
+            struct flock fl{};
             fl.l_type = F_UNLCK;
             fl.l_whence = SEEK_SET;
             ::fcntl(m_fd, F_SETLK, &fl);

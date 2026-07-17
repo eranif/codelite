@@ -371,6 +371,11 @@
                 "wxDV_SINGLE"
               ],
               "m_sizerFlags": [
+                "wxALL",
+                "wxLEFT",
+                "wxRIGHT",
+                "wxTOP",
+                "wxBOTTOM",
                 "wxEXPAND"
               ],
               "m_properties": [
@@ -479,7 +484,7 @@
                     {
                       "type": "string",
                       "m_label": "Width:",
-                      "m_value": "-2"
+                      "m_value": "350"
                     },
                     {
                       "type": "choice",

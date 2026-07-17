@@ -34,6 +34,7 @@
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/ctrlsub.h>
+#include <wx/dataview.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/string.h>
 #include <wx/variant.h>
@@ -436,5 +437,8 @@ WXDLLIMPEXP_SDK void SetShutdownInProgress();
 
 /// Return the global shutdown flag.
 WXDLLIMPEXP_SDK bool IsShutdownInProgress();
+
+/// Adjust the control alternate colour on some platforms.
+WXDLLIMPEXP_SDK void AdjustDataViewAlternateColour(wxDataViewCtrl* ctrl);
 
 #endif // GLOBALS_H

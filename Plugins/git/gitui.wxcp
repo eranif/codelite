@@ -7320,7 +7320,7 @@
                                                     {
                                                       "type": "string",
                                                       "m_label": "Width:",
-                                                      "m_value": "-2"
+                                                      "m_value": "-1"
                                                     },
                                                     {
                                                       "type": "choice",
@@ -7386,7 +7386,7 @@
                                                     {
                                                       "type": "string",
                                                       "m_label": "Width:",
-                                                      "m_value": "-2"
+                                                      "m_value": "-1"
                                                     },
                                                     {
                                                       "type": "choice",
@@ -7452,7 +7452,7 @@
                                                     {
                                                       "type": "string",
                                                       "m_label": "Width:",
-                                                      "m_value": "-2"
+                                                      "m_value": "-1"
                                                     },
                                                     {
                                                       "type": "choice",
@@ -7518,7 +7518,7 @@
                                                     {
                                                       "type": "string",
                                                       "m_label": "Width:",
-                                                      "m_value": "-2"
+                                                      "m_value": "-1"
                                                     },
                                                     {
                                                       "type": "choice",

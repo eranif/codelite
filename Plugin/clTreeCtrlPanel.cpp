@@ -65,11 +65,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     int style = wxAUI_TB_DEFAULT_STYLE;
     m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
-
-#ifdef __WXMSW__
-    // Adjust Tree Control Alternate Row Color On Windows
-    GetTreeCtrl()->SetAlternateRowColour(GetTreeCtrl()->GetBackgroundColour().ChangeLightness(103));
-#endif
+    ::AdjustDataViewAlternateColour(GetTreeCtrl());
 
     auto images = clGetManager()->GetStdIcons();
     clAuiToolBarArt::AddTool(

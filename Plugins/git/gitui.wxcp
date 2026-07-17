@@ -7273,12 +7273,12 @@
                                                 {
                                                   "type": "string",
                                                   "m_label": "Class Name:",
-                                                  "m_value": "clThemedListCtrl"
+                                                  "m_value": ""
                                                 },
                                                 {
                                                   "type": "string",
                                                   "m_label": "Include File:",
-                                                  "m_value": "clThemedListCtrl.h"
+                                                  "m_value": ""
                                                 },
                                                 {
                                                   "type": "string",

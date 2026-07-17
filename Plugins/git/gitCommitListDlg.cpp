@@ -149,7 +149,8 @@ void GitCommitListDlg::OnSelectionChanged(wxDataViewEvent& event)
         return;
     }
 
-    wxString commitID = m_dvListCtrlCommitList->GetItemText(event.GetItem());
+    auto row = m_dvListCtrlCommitList->ItemToRow(event.GetItem());
+    wxString commitID = m_dvListCtrlCommitList->GetTextValue(row, 0);
     wxString command_args;
     command_args << "--no-pager show --first-parent " << commitID;
     m_process = m_git->AsyncRunGit(this, command_args, IProcessCreateDefault | IProcessWrapInShell, m_workingDir);
@@ -165,19 +166,21 @@ void GitCommitListDlg::OnContextMenu(wxDataViewEvent& event)
 
 void GitCommitListDlg::OnCopyCommitHashToClipboard(wxCommandEvent& e)
 {
-    wxDataViewItem sel = m_dvListCtrlCommitList->GetSelection();
-    CHECK_ITEM_RET(sel);
+    wxDataViewItem item = m_dvListCtrlCommitList->GetSelection();
+    CHECK_ITEM_RET(item);
 
-    wxString commitID = m_dvListCtrlCommitList->GetItemText(sel);
+    auto row = m_dvListCtrlCommitList->ItemToRow(item);
+    wxString commitID = m_dvListCtrlCommitList->GetTextValue(row, 0);
     ::CopyToClipboard(commitID);
 }
 
 void GitCommitListDlg::OnRevertCommit(wxCommandEvent& e)
 {
-    wxDataViewItem sel = m_dvListCtrlCommitList->GetSelection();
-    CHECK_ITEM_RET(sel);
+    wxDataViewItem item = m_dvListCtrlCommitList->GetSelection();
+    CHECK_ITEM_RET(item);
 
-    wxString commitID = m_dvListCtrlCommitList->GetItemText(sel);
+    auto row = m_dvListCtrlCommitList->ItemToRow(item);
+    wxString commitID = m_dvListCtrlCommitList->GetTextValue(row, 0);
 
     if (::wxMessageBox(_("Are you sure you want to revert commit #") + commitID,
                        "CodeLite",
@@ -220,7 +223,7 @@ void GitCommitListDlg::DoLoadCommits(const wxString& filter)
         }
     }
 
-    if (!m_dvListCtrlCommitList->IsEmpty()) {
+    if (m_dvListCtrlCommitList->GetItemCount() > 0) {
         // Choose the first entry, this will trigger an event.
         m_dvListCtrlCommitList->Select(m_dvListCtrlCommitList->RowToItem(0));
     }
@@ -321,6 +324,8 @@ void GitCommitListDlg::OnPrevious(wxCommandEvent& event)
 void GitCommitListDlg::OnPreviousUI(wxUpdateUIEvent& event) { event.Enable(m_skip >= 100); }
 
 void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event)
-{ event.Enable(m_dvListCtrlCommitList->GetItemCount() >= 100); }
+{
+    event.Enable(m_dvListCtrlCommitList->GetItemCount() >= 100);
+}
 
 void GitCommitListDlg::OnBtnClose(wxCommandEvent& event) { Destroy(); }

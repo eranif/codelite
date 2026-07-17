@@ -83,6 +83,7 @@ void GitCommitListDlg::SetCommitList(const wxString& commits)
     m_history.insert(std::make_pair(m_skip, m_commitList));
     // Load all commits, un-filtered
     DoLoadCommits("");
+    UpdateSelection();
 }
 
 void GitCommitListDlg::Display()
@@ -143,19 +144,22 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
 /*******************************************************************************/
 void GitCommitListDlg::OnProcessOutput(clProcessEvent& event) { m_commandOutput.Append(event.GetOutput()); }
 
-void GitCommitListDlg::OnSelectionChanged(wxDataViewEvent& event)
+void GitCommitListDlg::UpdateSelection(const wxDataViewItem& item)
 {
-    wxVariant v;
-    if (!event.GetItem().IsOk()) {
-        return;
+    int row = m_dvListCtrlCommitList->GetSelectedRow();
+    if (item.IsOk()) {
+        row = m_dvListCtrlCommitList->ItemToRow(item);
     }
+    if (row == wxNOT_FOUND)
+        return;
 
-    auto row = m_dvListCtrlCommitList->ItemToRow(event.GetItem());
     wxString commitID = m_dvListCtrlCommitList->GetTextValue(row, 0);
     wxString command_args;
     command_args << "--no-pager show --first-parent " << commitID;
     m_process = m_git->AsyncRunGit(this, command_args, IProcessCreateDefault | IProcessWrapInShell, m_workingDir);
 }
+
+void GitCommitListDlg::OnSelectionChanged(wxDataViewEvent& event) { UpdateSelection(event.GetItem()); }
 
 void GitCommitListDlg::OnContextMenu(wxDataViewEvent& event)
 {

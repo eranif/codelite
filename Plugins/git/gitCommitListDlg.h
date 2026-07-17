@@ -43,6 +43,38 @@ class IProcess;
 class GitPlugin;
 class GitCommitListDlg : public GitCommitListDlgBase
 {
+public:
+    GitCommitListDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* git);
+    virtual ~GitCommitListDlg();
+
+    void SetCommitList(const wxString& commits);
+    void Display();
+
+protected:
+    void OnClose(wxCloseEvent& event) override;
+    void OnContextMenu(wxDataViewEvent& event) override;
+    void OnSelectionChanged(wxDataViewEvent& event) override;
+    void OnRevertCommit(wxCommandEvent& e);
+    void OnCopyCommitHashToClipboard(wxCommandEvent& e);
+    void OnBtnClose(wxCommandEvent& event) override;
+    void OnNextUpdateUI(wxUpdateUIEvent& event) override;
+    void OnNext(wxCommandEvent& event) override;
+    void OnPrevious(wxCommandEvent& event) override;
+    void OnPreviousUI(wxUpdateUIEvent& event) override;
+    void OnSearchCommitList(wxCommandEvent& event) override;
+    void DoLoadCommits(const wxString& filter);
+    void ClearAll(bool includingCommitlist = true);
+    wxString GetFilterString() const;
+    bool Show(bool show = true) override { return wxDialog::Show(show); }
+    void DoShow() { wxDialog::Show(); }
+
+private:
+    void OnChangeFile(wxCommandEvent& e) override;
+    // Event handlers
+    void OnProcessTerminated(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+    void UpdateSelection(const wxDataViewItem& item = {});
+
     GitPlugin* m_git;
     wxStringMap_t m_diffMap;
     wxString m_workingDir;
@@ -52,40 +84,6 @@ class GitCommitListDlg : public GitCommitListDlgBase
     wxString m_Filter;
     int m_skip;
     std::map<int, wxString> m_history;
-
-protected:
-    virtual void OnBtnClose(wxCommandEvent& event);
-    virtual void OnNextUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnNext(wxCommandEvent& event);
-    virtual void OnPrevious(wxCommandEvent& event);
-    virtual void OnPreviousUI(wxUpdateUIEvent& event);
-    virtual void OnSearchCommitList(wxCommandEvent& event);
-    void DoLoadCommits(const wxString& filter);
-    void ClearAll(bool includingCommitlist = true);
-    wxString GetFilterString() const;
-    virtual bool Show(bool show = true) { return wxDialog::Show(show); }
-    void DoShow() { wxDialog::Show(); }
-
-public:
-    GitCommitListDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* git);
-    virtual ~GitCommitListDlg();
-
-    void SetCommitList(const wxString& commits);
-    void Display();
-
-private:
-    void OnChangeFile(wxCommandEvent& e);
-
-    // Event handlers
-    void OnProcessTerminated(clProcessEvent& event);
-    void OnProcessOutput(clProcessEvent& event);
-
-protected:
-    virtual void OnClose(wxCloseEvent& event);
-    virtual void OnContextMenu(wxDataViewEvent& event);
-    virtual void OnSelectionChanged(wxDataViewEvent& event);
-    void OnRevertCommit(wxCommandEvent& e);
-    void OnCopyCommitHashToClipboard(wxCommandEvent& e);
 };
 
 #endif //__gitCommitListDlg__

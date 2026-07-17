@@ -104,6 +104,9 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     m_defaultView = new clTreeCtrlPanelDefaultPage(this);
     GetSizer()->Add(m_defaultView, 1, wxEXPAND);
     GetTreeCtrl()->Hide();
+#ifdef __WXMSW__
+    GetTreeCtrl()->SetIndent(16);
+#endif
 }
 
 clTreeCtrlPanel::~clTreeCtrlPanel()

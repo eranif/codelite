@@ -1,3 +1,6 @@
+add_subdirectory(wxCrafterCommon)
+add_subdirectory(wxcgen)
+
 if(NOT CL_SRC_ROOT)
   message(FATAL_ERROR "Missing CL_SRC_ROOT")
 endif()
@@ -52,10 +55,6 @@ if(NOT MINGW)
   endif(WXC_APP)
 endif()
 
-# configure version file, this needs to be done before we set the SRCS variable
-configure_file(${CL_SRC_ROOT}/wxcrafter/wxCrafterCommon/wxcversion.cpp.in
-               ${CMAKE_BINARY_DIR}/generated/wxcversion.cpp)
-
 # ----------------------------------------------------------------------------
 # Source bucketing
 # ----------------------------------------------------------------------------
@@ -88,12 +87,7 @@ set(TO_MIGRATE_UI_SRCS
   wxCrafterCommonGui/UI/wxguicraft_main_view.cpp  
 )
 
-# Define-agnostic files split into headless-safe (COMMON_SRCS) and GUI-only
-# (COMMON_GUI_SRCS). The split is based on whether the TU pulls GUI-only symbols
-# (MainFrame, GUICraftMainPanel, wxDialog subclasses, etc.).
-
-file(GLOB_RECURSE COMMON_SRCS "wxCrafterCommon/*.cpp")
-list(APPEND COMMON_SRCS "${CMAKE_BINARY_DIR}/generated/wxcversion.cpp")
+# Define-agnostic files GUI-only (COMMON_GUI_SRCS).
 
 file(GLOB_RECURSE COMMON_GUI_SRCS "wxCrafterCommonGui/*.cpp")
 
@@ -106,13 +100,6 @@ endforeach()
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
   "${CMAKE_CURRENT_LIST_DIR}/SharedGui/src"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommon"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommon/Importer"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommon/aui"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommon/controls"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommon/sizers"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommon/src"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommon/top_level_windows"
   "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui"
   "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/Importer"
   "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/UI"
@@ -125,67 +112,6 @@ set(RES_FILE "")
 if(MINGW)
   set(RES_FILES "resources/wxcapp_resources.rc")
 endif()
-
-set(WXCGEN_RES_FILES "")
-if(MINGW)
-  set(WXCGEN_RES_FILES "resources/wxcgen_resources.rc")
-endif()
-
-# ----------------------------------------------------------------------------
-# Non GUI targets
-# ----------------------------------------------------------------------------
-# wxCrafterCommon: define-agnostic, headless-safe TUs. Compiled once, linked
-# into all three targets (wxcrafter, wxCrafterPlugin, wxcgen).
-add_library(wxCrafterCommon STATIC ${COMMON_SRCS})
-set_target_properties(wxCrafterCommon PROPERTIES POSITION_INDEPENDENT_CODE ON)
-# Link the CodeLite internal libs so the static lib picks up their INTERFACE
-# include directories (JSON.h, etc.). Static libs don't actually link against
-# other libs at archive time, but CMake will propagate include dirs and compile
-# features.
-target_link_libraries(wxCrafterCommon PUBLIC libcodelite)
-if(USE_PCH)
-  target_precompile_headers(wxCrafterCommon REUSE_FROM PCH)
-endif()
-
-# Headless CLI code-generator (no DISPLAY required).
-file(GLOB_RECURSE WXCGEN_SRCS "wxcgen/*.cpp")
-add_executable(wxcgen ${WXCGEN_SRCS} ${WXCGEN_RES_FILES})
-target_compile_definitions(wxcgen
-                           PRIVATE INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
-target_link_libraries(wxcgen PRIVATE wxCrafterCommon)
-
-macro(
-  wxcrafter_target
-  Name
-  Input
-  OutputDir
-  OutputCpp
-  OutputHpp
-  OutputBitmaps
-  # Extra output for models
-)
-
-  set(WXCRAFTER_${Name}_OUTPUTS
-      "${OutputDir}/${OutputCpp}" "${OutputDir}/${OutputHpp}"
-      "${OutputDir}/${OutputBitmaps}")
-
-  set(ExtraMacroArgs ${ARGN}) # ARGN is not a variable
-  foreach(ExtraArgs ${ExtraMacroArgs})
-    list(APPEND WXCRAFTER_${Name}_OUTPUTS "${OutputDir}/${ExtraArgs}")
-  endforeach()
-  unset(ExtraMacroArgs)
-
-  set(WXCGEN_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.wxcgen.json")
-  add_custom_command(
-    OUTPUT ${WXCRAFTER_${Name}_OUTPUTS}
-    COMMAND $<TARGET_FILE:wxcgen> -o "${OutputDir}" -p "${WXCGEN_CONFIG_FILE}"
-            "${Input}"
-    VERBATIM
-    DEPENDS ${Input} wxcgen
-    COMMENT "[WxCrafter][${Name}] Building code (wxcgen)")
-
-  set(WXCRAFTER_${Name}_OUTPUTDIR "${OutputDir}")
-endmacro()
 
 # ----------------------------------------------------------------------------
 # GUI targets
@@ -217,7 +143,7 @@ set_target_properties(wxCrafterCommonGui PROPERTIES POSITION_INDEPENDENT_CODE
                                                     ON)
 target_include_directories(wxCrafterCommonGui
                            PUBLIC "${WXCRAFTER_WxCrafterGui_OUTPUTDIR}")
-target_link_libraries(wxCrafterCommonGui PUBLIC libcodelite plugin)
+target_link_libraries(wxCrafterCommonGui PUBLIC wxCrafterCommon plugin)
 if(USE_PCH)
   target_precompile_headers(wxCrafterCommonGui REUSE_FROM PCH)
 endif()
@@ -230,15 +156,14 @@ endif()
 
 # wxCrafter as a CodeLite plugin (shared library)
 add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_GUI_ONLY_SRCS})
-target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommonGui
-                                              wxCrafterCommon)
+target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommonGui)
 
 # wxCrafter as a standalone GUI application
 add_executable(wxcrafter ${MACRO_SENSITIVE_GUI_ONLY_SRCS} ${RES_FILES})
 target_compile_definitions(
   wxcrafter PRIVATE STANDALONE_BUILD=1
                     INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
-target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui wxCrafterCommon)
+target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui)
 
 if(WXC_APP)
   set_target_properties(wxCrafterPlugin PROPERTIES EXCLUDE_FROM_ALL ON)
@@ -270,14 +195,9 @@ endif(NOT OFFICIAL_CL_BUILD)
 target_link_libraries(wxcrafter PRIVATE ${LINKER_OPTIONS}
                                         $<IF:$<BOOL:${MINGW}>,-mwindows,-lutil>)
 
-target_link_libraries(wxcgen PRIVATE ${LINKER_OPTIONS}
-                                     $<IF:$<BOOL:${MINGW}>,-mconsole,-lutil>)
-
 if(UNIX AND NOT APPLE)
   set_target_properties(wxcrafter PROPERTIES SKIP_BUILD_RPATH FALSE
                                              BUILD_WITH_INSTALL_RPATH FALSE)
-  set_target_properties(wxcgen PROPERTIES SKIP_BUILD_RPATH FALSE
-                                          BUILD_WITH_INSTALL_RPATH FALSE)
 endif(UNIX AND NOT APPLE)
 
 if(MINGW)
@@ -303,38 +223,6 @@ if(MINGW)
     COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:wxcrafter>
             $<TARGET_FILE_DIR:wxcrafter>
     COMMAND_EXPAND_LISTS)
-
-  # Get DLL dependencies for additional libraries needed by wxcgen
-  msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/libssh.dll LIBSSH_DLLS)
-  msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/libc++.dll LIBCXX_DLLS)
-  msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/openssl.exe OPENSSL_DLLS)
-
-  # Combine all additional DLLs
-  list(APPEND WXCGEN_EXTRA_DLLS ${LIBSSH_DLLS} ${LIBCXX_DLLS} ${OPENSSL_DLLS})
-  list(APPEND WXCGEN_EXTRA_DLLS "${MSYS2_BASE}/${MSYSTEM}/bin/libsqlite3-0.dll")
-  list(REMOVE_DUPLICATES WXCGEN_EXTRA_DLLS)
-
-  # Copy dlls near the wxcgen executable
-  add_custom_command(
-    TARGET wxcgen
-    POST_BUILD
-    COMMAND cmake -E copy_if_different ${WXDLL} $<TARGET_FILE_DIR:wxcgen>
-    COMMAND_EXPAND_LISTS)
-  add_custom_command(
-    TARGET wxcgen
-    POST_BUILD
-    COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:wxcgen>
-            $<TARGET_FILE_DIR:wxcgen>
-    COMMAND_EXPAND_LISTS)
-
-  # Copy additional dependencies for wxcgen
-  foreach(DLL ${WXCGEN_EXTRA_DLLS})
-    add_custom_command(
-      TARGET wxcgen
-      POST_BUILD
-      COMMAND cmake -E copy_if_different "${DLL}" $<TARGET_FILE_DIR:wxcgen>
-      COMMAND_EXPAND_LISTS)
-  endforeach()
 endif(MINGW)
 
 if(NOT WXC_APP)
@@ -347,7 +235,7 @@ elseif(NOT MINGW)
 
   # Installing the applications
   install(
-    TARGETS wxcrafter wxcgen
+    TARGETS wxcrafter
     DESTINATION ${CL_INSTALL_BIN}
     PERMISSIONS ${EXE_PERM}
     COMPONENT standalone)
@@ -461,7 +349,7 @@ elseif(NOT MINGW)
 endif()
 
 if(WXC_APP AND MINGW)
-  install(TARGETS wxcrafter wxcgen DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")
+  install(TARGETS wxcrafter DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")
   # Install codelite lexer files
   install(
     DIRECTORY ${CL_SRC_ROOT}/Runtime/lexers

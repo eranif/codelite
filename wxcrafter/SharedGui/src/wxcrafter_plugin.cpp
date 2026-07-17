@@ -1232,7 +1232,13 @@ void wxCrafterPlugin::DoImportFB(const wxString& filename)
 }
 void wxCrafterPlugin::OnSettings(wxCommandEvent& e)
 {
-    wxcSettingsDlg dlg(NULL);
+#if STANDALONE_BUILD
+    const bool standAlone = true;
+#else
+    const bool standAlone = false;
+#endif
+
+    wxcSettingsDlg dlg(nullptr, standAlone);
     dlg.ShowModal();
 
     if (dlg.IsRestartRequired()) {

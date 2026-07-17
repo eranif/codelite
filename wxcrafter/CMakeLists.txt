@@ -82,9 +82,8 @@ file(GLOB_RECURSE MACRO_SENSITIVE_GUI_ONLY_SRCS "SharedGui/*.cpp")
 
 set(TO_MIGRATE_UI_SRCS
   wxCrafterCommonGui/UI/NewFormWizard.cpp
-  wxCrafterCommonGui/UI/main.cpp  
-  wxCrafterCommonGui/UI/wxcSettingsDlg.cpp  
-  wxCrafterCommonGui/UI/wxguicraft_main_view.cpp  
+  wxCrafterCommonGui/UI/main.cpp
+  wxCrafterCommonGui/UI/wxguicraft_main_view.cpp
 )
 
 # Define-agnostic files GUI-only (COMMON_GUI_SRCS).

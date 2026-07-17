@@ -8,13 +8,18 @@
 #include "macros.h"
 
 #include <wx/app.h>
+#include <wx/wupdlock.h>
 
 GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry>& entries)
     : GotoAnythingBaseDlg(parent)
     , m_allEntries(entries)
 {
-    DoPopulate(m_allEntries);
+#ifdef __WXMSW__
+    // Adjust Tree Control Alternate Row Color On Windows
+    m_dvListCtrl->SetAlternateRowColour(m_dvListCtrl->GetBackgroundColour().ChangeLightness(103));
+#endif
 
+    DoPopulate(m_allEntries);
     ::clSetDialogBestSizeAndPosition(*this);
 }
 
@@ -51,8 +56,8 @@ void GotoAnythingDlg::OnEnter(wxCommandEvent& event)
 
 void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const std::vector<int>& indexes)
 {
+    wxWindowUpdateLocker locker{m_dvListCtrl};
     m_dvListCtrl->DeleteAllItems();
-    m_dvListCtrl->Begin();
     for (size_t i = 0; i < entries.size(); ++i) {
         const clGotoEntry& entry = entries[i];
         wxVector<wxVariant> cols;
@@ -60,7 +65,7 @@ void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const 
         cols.push_back(entry.GetKeyboardShortcut());
         m_dvListCtrl->AppendItem(cols, indexes.empty() ? i : indexes[i]);
     }
-    m_dvListCtrl->Commit();
+
     if (!entries.empty()) {
         m_dvListCtrl->SelectRow(0);
     }

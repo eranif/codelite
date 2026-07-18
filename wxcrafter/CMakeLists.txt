@@ -78,7 +78,6 @@ endif()
 file(GLOB_RECURSE MACRO_SENSITIVE_GUI_ONLY_SRCS "SharedGui/*.cpp")
 
 set(TO_MIGRATE_UI_SRCS
-  wxCrafterCommonGui/UI/NewFormWizard.cpp
   wxCrafterCommonGui/UI/mainFrame.cpp
   wxCrafterCommonGui/UI/wxguicraft_main_view.cpp
 )

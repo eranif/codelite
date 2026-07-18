@@ -41,7 +41,9 @@
 namespace
 {
 wxString GetTempCommitFile()
-{ return wxFileName{clStandardPaths::Get().GetTempDir(), "commit-message.tmp"}.GetFullPath(); }
+{
+    return wxFileName{clStandardPaths::Get().GetTempDir(), "commit-message.tmp"}.GetFullPath();
+}
 } // namespace
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir)
@@ -50,6 +52,8 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     , m_workingDir(workingDir)
     , m_toggleChecks(false)
 {
+    ::AdjustDataViewAlternateColour(m_dvListCtrlFiles);
+
     // Load persistent settings
     clConfig conf("git.conf");
     GitEntry data;

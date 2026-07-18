@@ -126,7 +126,7 @@
         {
           "type": "string",
           "m_label": "File:",
-          "m_value": "main"
+          "m_value": "mainFrame"
         },
         {
           "type": "string",

@@ -79,7 +79,7 @@ file(GLOB_RECURSE MACRO_SENSITIVE_GUI_ONLY_SRCS "SharedGui/*.cpp")
 
 set(TO_MIGRATE_UI_SRCS
   wxCrafterCommonGui/UI/NewFormWizard.cpp
-  wxCrafterCommonGui/UI/main.cpp
+  wxCrafterCommonGui/UI/mainFrame.cpp
   wxCrafterCommonGui/UI/wxguicraft_main_view.cpp
 )
 
@@ -155,7 +155,7 @@ add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_GUI_ONLY_SRCS})
 target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommonGui)
 
 # wxCrafter as a standalone GUI application
-add_executable(wxcrafter ${MACRO_SENSITIVE_GUI_ONLY_SRCS} ${RES_FILES})
+add_executable(wxcrafter ${MACRO_SENSITIVE_GUI_ONLY_SRCS} wxCrafter/main.cpp ${RES_FILES})
 target_compile_definitions(
   wxcrafter PRIVATE STANDALONE_BUILD=1
                     INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")

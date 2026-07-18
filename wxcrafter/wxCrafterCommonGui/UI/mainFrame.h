@@ -1,5 +1,4 @@
-#ifndef __main__
-#define __main__
+#pragma once
 
 // main wxWidgets header file
 #include "UI/wxcTreeView.h"
@@ -110,27 +109,3 @@ protected:
     void OnFindNext(wxFindDialogEvent& event);
 };
 
-#if STANDALONE_BUILD
-
-#include "wxcrafter_plugin.h"
-
-/// Build wxCrafter as a standalone executable
-/// instead of a plugin
-class wxcApp : public wxApp
-{
-    wxCrafterPlugin* m_wxcPlugin;
-    bool m_hiddenMainFrame;
-
-public:
-    wxcApp();
-    ~wxcApp() override = default;
-    bool OnInit() override;
-    int OnExit() override;
-    bool OnCmdLineParsed(wxCmdLineParser& parser) override;
-};
-
-DECLARE_APP(wxcApp)
-
-#endif
-
-#endif //__main__

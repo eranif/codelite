@@ -2,7 +2,7 @@
 #define CHATAIWINDOWFRAME_HPP
 
 #include "ChatAIWindow.hpp"
-#include "UI.hpp"
+#include "ai_UI.hpp"
 #include "codelite_exports.h"
 
 class InfoBar;

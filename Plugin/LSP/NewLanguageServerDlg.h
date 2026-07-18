@@ -2,7 +2,7 @@
 #define NEWLANGUAGESERVERDLG_H
 
 #include "LanguageServerEntry.h"
-#include "UI.h"
+#include "lsp_UI.hpp"
 
 #include <wx/arrstr.h>
 

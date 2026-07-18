@@ -25,7 +25,7 @@
 #ifndef __newkeyshortcutdlg__
 #define __newkeyshortcutdlg__
 
-#include "NewKeyShortcutBaseDlg.h"
+#include "NewKeyShortcutBaseDlg.hpp"
 #include "clKeyboardManager.h"
 
 class WXDLLIMPEXP_SDK NewKeyShortcutDlg : public NewKeyShortcutBaseDlg

@@ -2,8 +2,8 @@
 #define LANGUAGESERVERPAGE_H
 
 #include "LanguageServerEntry.h"
-#include "UI.h"
 #include "codelite_exports.h"
+#include "lsp_UI.hpp"
 
 class WXDLLIMPEXP_SDK LanguageServerPage : public LanguageServerPageBase
 {

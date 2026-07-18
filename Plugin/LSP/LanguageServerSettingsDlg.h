@@ -1,7 +1,8 @@
 #ifndef LANGUAGESERVERSETTINGSDLG_H
 #define LANGUAGESERVERSETTINGSDLG_H
-#include "UI.h"
+
 #include "codelite_exports.h"
+#include "lsp_UI.hpp"
 
 class WXDLLIMPEXP_SDK LanguageServerSettingsDlg : public LanguageServerSettingsDlgBase
 {

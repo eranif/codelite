@@ -1,10 +1,10 @@
 #pragma once
 
 #include "MarkdownStyler.hpp"
-#include "UI.hpp"
 #include "ai/Common.hpp"
 #include "ai/ProgressToken.hpp"
 #include "ai/SopParser.hpp"
+#include "ai_UI.hpp"
 #include "clEditorEditEventsHandler.h"
 #include "clResult.hpp"
 #include "clWorkspaceEvent.hpp"

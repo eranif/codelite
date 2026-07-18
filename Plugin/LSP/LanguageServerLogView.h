@@ -1,8 +1,8 @@
 #pragma once
 
-#include "UI.h"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
+#include "lsp_UI.hpp"
 
 class WXDLLIMPEXP_SDK LSPManager;
 class WXDLLIMPEXP_SDK LanguageServerLogView : public LanguageServerLogViewBase

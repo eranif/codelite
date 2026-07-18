@@ -1,7 +1,7 @@
 #pragma once
 
-#include "UI.hpp"
 #include "ai/ChatHistoryPage.hpp"
+#include "ai_UI.hpp"
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK ChatHistoryDialog : public ChatHistoryDialogBase

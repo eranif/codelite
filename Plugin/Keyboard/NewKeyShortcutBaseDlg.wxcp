@@ -4,7 +4,7 @@
 		"m_objCounter":	40,
 		"m_includeFiles":	["codelite_exports.h"],
 		"m_bitmapFunction":	"wxC8418InitBitmapResources",
-		"m_bitmapsFile":	"NewKeyShortcutBaseDlg_liteeditor_bitmaps.cpp",
+		"m_bitmapsFile":	"NewKeyShortcutBaseDlg_plugin_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1962645721,
 		"m_outputFileName":	"NewKeyShortcutBaseDlg",
 		"m_firstWindowId":	10000,

@@ -1026,12 +1026,16 @@ endif()
 add_compile_definitions(wxUSE_GUI=1) # Missing `#include <wx/setup.h>` before
                                      # `#if wxUse_GUI` for some generated files
 
-add_subdirectory(CxxParser)
-add_subdirectory(CodeLite)
-add_subdirectory(Plugin)
 if(USE_PCH)
   add_subdirectory(PCH)
 endif()
+
+add_subdirectory(CxxParser)
+add_subdirectory(CodeLite)
+add_subdirectory(wxcrafter/wxCrafterCommon)
+add_subdirectory(wxcrafter/wxcgen)
+
+add_subdirectory(Plugin)
 
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/submodules/yaml-cpp/include")

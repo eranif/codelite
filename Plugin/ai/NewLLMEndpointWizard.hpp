@@ -1,7 +1,7 @@
 #pragma once
 
-#include "UI.hpp"
 #include "ai/LLMManager.hpp"
+#include "ai_UI.hpp"
 
 #include <wx/richtooltip.h>
 

@@ -10,7 +10,7 @@
       "codelite_exports.h"
     ],
     "m_objCounter": 214,
-    "m_outputFileName": "UI",
+    "m_outputFileName": "lsp_UI",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
     "m_templateClasses": []

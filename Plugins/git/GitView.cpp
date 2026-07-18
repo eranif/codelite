@@ -39,6 +39,7 @@
 #include "aui/clAuiToolBarArt.h"
 #include "aui/cl_aui_tool_stickness.h"
 #include "bitmap_loader.h"
+#include "clDataViewListCtrl.h"
 #include "clSideBarCtrl.hpp"
 #include "clStrings.h"
 #include "clTempFile.hpp"

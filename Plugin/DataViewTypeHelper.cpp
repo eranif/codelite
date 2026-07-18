@@ -7,9 +7,10 @@ namespace
 constexpr int SEARCH_RESET_TIMEOUT_MS = 1200;
 }
 
-DataViewTypeHelper::DataViewTypeHelper(wxDataViewCtrl* ctrl)
+DataViewTypeHelper::DataViewTypeHelper(wxDataViewCtrl* ctrl, SearchMethod searchMethod)
     : m_ctrl(ctrl)
     , m_timer(this)
+    , m_searchMethod(searchMethod)
 {
     m_ctrl->Bind(wxEVT_KEY_DOWN, &DataViewTypeHelper::OnKeyDown, this);
     Bind(wxEVT_TIMER, &DataViewTypeHelper::OnTimer, this, m_timer.GetId());
@@ -33,7 +34,7 @@ void DataViewTypeHelper::OnKeyDown(wxKeyEvent& event)
 
     m_searchBuffer << ch;
     SelectMatch(m_searchBuffer);
-    m_timer.Start(SEARCH_RESET_TIMEOUT_MS, wxTIMER_ONE_SHOT);
+    m_timer.StartOnce(SEARCH_RESET_TIMEOUT_MS);
 }
 
 void DataViewTypeHelper::OnTimer(wxTimerEvent& WXUNUSED(event)) { m_searchBuffer.clear(); }
@@ -46,25 +47,25 @@ wxString DataViewTypeHelper::GetRowText(const wxDataViewItem& item) const
     }
 
     unsigned int colCount = m_ctrl->GetColumnCount();
+    wxString text;
     for (unsigned int col = 0; col < colCount; ++col) {
         wxVariant value;
         model->GetValue(value, item, col);
 
         wxString variantType = value.GetType();
-        wxString text;
         if (variantType == "string") {
-            text = value.GetString();
+            if (!text.empty())
+                text << " ";
+            text << value.GetString();
         } else if (variantType == "wxDataViewIconText") {
             wxDataViewIconText iconText;
             iconText << value;
-            text = iconText.GetText();
-        }
-
-        if (!text.empty()) {
-            return text;
+            if (!text.empty())
+                text << " ";
+            text << iconText.GetText();
         }
     }
-    return wxEmptyString;
+    return text;
 }
 
 void DataViewTypeHelper::CollectVisibleItems(const wxDataViewItem& parent, wxDataViewItemArray& items) const
@@ -108,12 +109,21 @@ void DataViewTypeHelper::SelectMatch(const wxString& searchText)
     for (size_t i = 0; i < items.size(); ++i) {
         const wxDataViewItem& item = items[(startIndex + i) % items.size()];
         wxString text = GetRowText(item);
-        if (text.Lower().StartsWith(searchText.Lower())) {
+        bool isMatch{false};
+        switch (m_searchMethod) {
+        case SearchMethod::kStartsWith:
+            isMatch = text.Lower().StartsWith(searchText.Lower());
+            break;
+        case SearchMethod::kContains:
+            isMatch = text.Lower().Contains(searchText.Lower());
+            break;
+        }
+        if (isMatch) {
             m_ctrl->UnselectAll();
             m_ctrl->Select(item);
             m_ctrl->EnsureVisible(item);
             wxDataViewEvent evt(wxEVT_DATAVIEW_SELECTION_CHANGED, m_ctrl, item);
-            m_ctrl->GetEventHandler()->ProcessEvent(evt);
+            m_ctrl->ProcessWindowEvent(evt);
             return;
         }
     }

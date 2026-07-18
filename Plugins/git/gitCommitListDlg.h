@@ -33,6 +33,7 @@
 #ifndef __gitCommitListDlg__
 #define __gitCommitListDlg__
 
+#include "DataViewTypeHelper.h"
 #include "cl_command_event.h"
 #include "gitui.hpp"
 #include "macros.h"
@@ -84,6 +85,7 @@ private:
     wxString m_Filter;
     int m_skip;
     std::map<int, wxString> m_history;
+    std::unique_ptr<DataViewTypeHelper> m_typeHelper;
 };
 
 #endif //__gitCommitListDlg__

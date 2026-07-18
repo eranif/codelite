@@ -52,23 +52,23 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitCommitListDlg::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitCommitListDlg::OnProcessTerminated, this);
 
-    LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("diff");
-    if (lex) {
-        lex->Apply(m_stcDiff, true);
+    auto lexDiff = EditorConfigST::Get()->GetLexer("diff");
+    if (lexDiff) {
+        lexDiff->Apply(m_stcDiff, true);
     }
+    auto lexText = EditorConfigST::Get()->GetLexer("text");
+    if (lexText) {
+        lexText->Apply(m_stcCommitMessage, false);
+    }
+
     m_stcDiff->SetWrapStartIndent(2);
     m_stcDiff->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
-    m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH,
-                                    wxEVT_COMMAND_MENU_SELECTED,
-                                    wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard),
-                                    NULL,
-                                    this);
-    m_dvListCtrlCommitList->Connect(ID_REVERT_COMMIT,
-                                    wxEVT_COMMAND_MENU_SELECTED,
-                                    wxCommandEventHandler(GitCommitListDlg::OnRevertCommit),
-                                    NULL,
-                                    this);
+    m_dvListCtrlCommitList->Bind(wxEVT_MENU, &GitCommitListDlg::OnCopyCommitHashToClipboard, this, ID_COPY_COMMIT_HASH);
+    m_dvListCtrlCommitList->Bind(wxEVT_MENU, &GitCommitListDlg::OnRevertCommit, this, ID_REVERT_COMMIT);
 
+    // Implement a "search as you type" feature
+    m_typeHelper =
+        std::make_unique<DataViewTypeHelper>(m_dvListCtrlCommitList, DataViewTypeHelper::SearchMethod::kContains);
     ::clSetDialogBestSizeAndPosition(*this);
     CenterOnParent();
 }

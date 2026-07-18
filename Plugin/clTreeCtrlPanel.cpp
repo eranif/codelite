@@ -107,6 +107,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
 #ifdef __WXMSW__
     GetTreeCtrl()->SetIndent(16);
 #endif
+    m_typeHelper = std::make_unique<DataViewTypeHelper>(GetTreeCtrl());
 }
 
 clTreeCtrlPanel::~clTreeCtrlPanel()

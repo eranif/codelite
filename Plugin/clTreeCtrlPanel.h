@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DataViewTypeHelper.h"
 #include "bitmap_loader.h"
 #include "clEnhancedToolBar.hpp"
 #include "clFileSystemEvent.h"
@@ -34,6 +35,8 @@
 #include "cl_config.h"
 #include "imanager.h"
 #include "wxcrafter_plugin.h"
+
+#include <memory>
 
 #if defined(__clang__) || defined(__GNUC__)
 #pragma GCC diagnostic push
@@ -205,6 +208,7 @@ protected:
     int m_options = (kShowHiddenFiles | kShowHiddenFolders | kLinkToEditor);
     wxAuiToolBar* m_toolbar = nullptr;
     wxString m_excludeFilePatterns;
+    std::unique_ptr<DataViewTypeHelper> m_typeHelper;
 };
 
 #if defined(__clang__) || defined(__GNUC__)

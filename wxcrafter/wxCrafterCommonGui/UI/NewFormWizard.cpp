@@ -1,5 +1,6 @@
 #include "NewFormWizard.h"
 
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "VirtualDirectorySelectorDlg.h"
 #include "project.h"
 #include "workspace.h"
@@ -10,9 +11,6 @@
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 
-#if !STANDALONE_BUILD
-#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
-#endif
 
 static wxString GetDisplayName(const wxFileName& fn)
 {
@@ -156,17 +154,15 @@ wxString NewFormWizard::GetGeneratedFileBaseName() const { return m_textCtrFileN
 
 void NewFormWizard::OnWizardPageChanging(wxWizardEvent& event)
 {
+    const bool standAlone = m_mgr == nullptr;
     if (event.GetDirection() && m_wizardPageGeneratedCode == event.GetPage()) {
-
-#if STANDALONE_BUILD
-        if (m_choiceWxcp->IsEmpty()) {
+        if (standAlone && m_choiceWxcp->IsEmpty()) {
             ::wxMessageBox(wxString() << _("You must create a project before you can add new forms"),
                            "wxCrafter",
                            wxOK | wxCENTER | wxICON_WARNING);
             event.Veto();
             return;
         }
-#endif
 
         if (m_textCtrFileName->IsEmpty() &&
             (GetFormType() != ID_WXIMAGELIST && GetFormType() != ID_WXAUITOOLBARTOPLEVEL)) {
@@ -181,15 +177,13 @@ void NewFormWizard::OnWizardPageChanging(wxWizardEvent& event)
             return;
         }
 
-#if !STANDALONE_BUILD
-        if (!clFileSystemWorkspace::Get().IsOpen() && m_textCtrlVirtualFolder->IsEmpty()) {
+        if (!standAlone && !clFileSystemWorkspace::Get().IsOpen() && m_textCtrlVirtualFolder->IsEmpty()) {
             ::wxMessageBox(_("Please select a virtual folder for the generated code"),
                            wxT("wxCrafter"),
                            wxICON_WARNING | wxCENTER | wxOK);
             event.Veto();
             return;
         }
-#endif
     }
     event.Skip();
 }
@@ -266,11 +260,8 @@ wxString NewFormWizard::GetInheritedClassName() const
 
 void NewFormWizard::OnStandloneAppUI(wxUpdateUIEvent& event)
 {
-#if STANDALONE_BUILD
-    event.Enable(false);
-#else
-    event.Enable(true);
-#endif
+    const bool standAlone = m_mgr == nullptr;
+    event.Enable(!standAlone);
 }
 
 void NewFormWizard::OnInheritedNameFocus(wxFocusEvent& event)
@@ -318,11 +309,8 @@ bool NewFormWizard::IsWizard() const { return m_choiceFormType->GetStringSelecti
 
 void NewFormWizard::OnSelectVDUI(wxUpdateUIEvent& event)
 {
-#if STANDALONE_BUILD
-    event.Enable(false);
-#else
-    event.Enable(!clFileSystemWorkspace::Get().IsOpen());
-#endif
+    const bool standAlone = m_mgr == nullptr;
+    event.Enable(standAlone && !clFileSystemWorkspace::Get().IsOpen());
 }
 
 void NewFormWizard::OnBrowseWxcpFile(wxCommandEvent& event)

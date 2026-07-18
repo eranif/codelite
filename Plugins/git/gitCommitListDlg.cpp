@@ -83,7 +83,6 @@ void GitCommitListDlg::SetCommitList(const wxString& commits)
     m_history.insert(std::make_pair(m_skip, m_commitList));
     // Load all commits, un-filtered
     DoLoadCommits("");
-    UpdateSelection();
 }
 
 void GitCommitListDlg::Display()
@@ -141,6 +140,7 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
     m_commandOutput.Clear();
     m_stcCommitMessage->SetEditable(false);
 }
+
 /*******************************************************************************/
 void GitCommitListDlg::OnProcessOutput(clProcessEvent& event) { m_commandOutput.Append(event.GetOutput()); }
 
@@ -149,6 +149,8 @@ void GitCommitListDlg::UpdateSelection(const wxDataViewItem& item)
     int row = m_dvListCtrlCommitList->GetSelectedRow();
     if (item.IsOk()) {
         row = m_dvListCtrlCommitList->ItemToRow(item);
+    } else if (row == wxNOT_FOUND && (m_dvListCtrlCommitList->GetItemCount() > 0)) {
+        row = 0;
     }
     if (row == wxNOT_FOUND)
         return;
@@ -334,3 +336,9 @@ void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event)
 }
 
 void GitCommitListDlg::OnBtnClose(wxCommandEvent& event) { Destroy(); }
+
+void GitCommitListDlg::OnInitDone(wxInitDialogEvent& event)
+{
+    event.Skip();
+    UpdateSelection();
+}

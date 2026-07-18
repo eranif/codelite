@@ -52,6 +52,7 @@ public:
     void Display();
 
 protected:
+    void OnInitDone(wxInitDialogEvent& event) override;
     void OnClose(wxCloseEvent& event) override;
     void OnContextMenu(wxDataViewEvent& event) override;
     void OnSelectionChanged(wxDataViewEvent& event) override;

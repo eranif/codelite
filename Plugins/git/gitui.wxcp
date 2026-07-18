@@ -5909,6 +5909,13 @@
           "m_eventName": "wxEVT_CLOSE_WINDOW",
           "m_functionNameAndSignature": "OnClose(wxCloseEvent& event)",
           "m_noBody": false
+        },
+        {
+          "m_description": "A wxInitDialogEvent is sent as a dialog or panel is being initialised. Handlers for this event can transfer data to the window.\nThe default handler calls wxWindow::TransferDataToWindow",
+          "m_eventClass": "wxInitDialogEvent",
+          "m_eventName": "wxEVT_INIT_DIALOG",
+          "m_functionNameAndSignature": "OnInitDone(wxInitDialogEvent& event)",
+          "m_noBody": false
         }
       ],
       "m_children": [
@@ -8284,9 +8291,7 @@
                                                           "border": 5,
                                                           "gbSpan": "1,1",
                                                           "gbPosition": "0,0",
-                                                          "m_styles": [
-                                                            "wxBORDER_SIMPLE"
-                                                          ],
+                                                          "m_styles": [],
                                                           "m_sizerFlags": [
                                                             "wxALL",
                                                             "wxLEFT",
@@ -8706,9 +8711,7 @@
                                   "border": 5,
                                   "gbSpan": "1,1",
                                   "gbPosition": "0,0",
-                                  "m_styles": [
-                                    "wxBORDER_SIMPLE"
-                                  ],
+                                  "m_styles": [],
                                   "m_sizerFlags": [
                                     "wxALL",
                                     "wxLEFT",

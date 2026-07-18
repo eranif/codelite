@@ -4,17 +4,16 @@
 
 class wxcSettingsDlg : public wxcSettingsDlgBase
 {
-    bool m_useTabModeStart;
-    bool m_useTabModeEnd;
-
 public:
-    wxcSettingsDlg(wxWindow* parent);
+    wxcSettingsDlg(wxWindow* parent, bool standAlone);
     ~wxcSettingsDlg() override = default;
     bool IsRestartRequired() const;
 
 protected:
-    void OnMinimizeToTrayUI(wxUpdateUIEvent& event) override;
-    virtual void OnUseAsTabUI(wxUpdateUIEvent& event);
     void OnOk(wxCommandEvent& event) override;
+
+private:
+    bool m_useTabModeStart = false;
+    bool m_useTabModeEnd = false;
 };
 #endif // WXCSETTINGSDLG_H

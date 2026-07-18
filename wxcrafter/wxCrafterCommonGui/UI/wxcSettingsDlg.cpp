@@ -2,11 +2,8 @@
 
 #include "wxc_settings.h"
 
-wxcSettingsDlg::wxcSettingsDlg(wxWindow* parent)
+wxcSettingsDlg::wxcSettingsDlg(wxWindow* parent, bool standAlone)
     : wxcSettingsDlgBase(parent)
-    , m_useTabModeStart(false)
-    , m_useTabModeEnd(false)
-
 {
     m_useTabModeStart = m_useTabModeEnd = wxcSettings::Get().HasFlag(wxcSettings::USE_TABBED_MODE);
     m_checkBoxFormatInheritedFiles->SetValue(wxcSettings::Get().HasFlag(wxcSettings::FORMAT_INHERITED_FILES));
@@ -14,6 +11,12 @@ wxcSettingsDlg::wxcSettingsDlg(wxWindow* parent)
     m_checkBoxKeepAllUsersetNames->SetValue(wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_KEEPS_USERSET_NAMES));
     m_checkBoxCopyEventhandlerToo->SetValue(wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_EVENTHANDLERS_TOO));
     m_checkBoxUseTRay->SetValue(wxcSettings::Get().HasFlag(wxcSettings::EXIT_MINIMIZE_TO_TRAY));
+
+    if (!standAlone) {
+        m_checkBoxUseTRay->Set3StateValue(wxCheckBoxState::wxCHK_UNCHECKED);
+        m_checkBoxUseTRay->Hide();
+        staticBoxSizerGeneral->Show(false);
+    }
 }
 
 void wxcSettingsDlg::OnOk(wxCommandEvent& event)
@@ -31,19 +34,3 @@ void wxcSettingsDlg::OnOk(wxCommandEvent& event)
 }
 
 bool wxcSettingsDlg::IsRestartRequired() const { return m_useTabModeStart != m_useTabModeEnd; }
-void wxcSettingsDlg::OnUseAsTabUI(wxUpdateUIEvent& event)
-{
-#if STANDALONE_BUILD
-    event.Enable(false);
-#endif
-}
-
-void wxcSettingsDlg::OnMinimizeToTrayUI(wxUpdateUIEvent& event)
-{
-#if STANDALONE_BUILD && defined(__WXMSW__)
-    event.Enable(true);
-#else
-    event.Check(false);
-    event.Enable(false);
-#endif
-}

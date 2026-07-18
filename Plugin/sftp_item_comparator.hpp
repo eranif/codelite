@@ -29,9 +29,9 @@
 #include "codelite_exports.h"
 
 #include <vector>
-#include <wx/treectrl.h>
+#include <wx/clntdata.h>
 
-class WXDLLIMPEXP_SDK clRemoteDirCtrlItemData : public wxTreeItemData
+class WXDLLIMPEXP_SDK clRemoteDirCtrlItemData : public wxClientData
 {
 public:
     enum eFileType {

@@ -23,16 +23,27 @@ namespace
 {
 // we don't use FileUtis::IsHidden since it checks for local file existence on windows
 bool is_hidden(const wxString& name) { return !name.empty() && name[0] == '.'; }
+
+bool should_come_before(clRemoteDirCtrlItemData* a, clRemoteDirCtrlItemData* b)
+{
+    if (a->IsFolder() && !b->IsFolder())
+        return true;
+    else if (b->IsFolder() && !a->IsFolder())
+        return false;
+    // same kind
+    return (a->GetFullName().CmpNoCase(b->GetFullName()) < 0);
+}
 } // namespace
 
 clRemoteDirCtrl::clRemoteDirCtrl(wxWindow* parent)
     : wxPanel(parent)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_treeCtrl = new clThemedTreeCtrl(this);
-    m_treeCtrl->Bind(wxEVT_CONTEXT_MENU, &clRemoteDirCtrl::OnContextMenu, this);
-    m_treeCtrl->Bind(wxEVT_TREE_ITEM_EXPANDING, &clRemoteDirCtrl::OnItemExpanding, this);
-    m_treeCtrl->Bind(wxEVT_TREE_ITEM_ACTIVATED, &clRemoteDirCtrl::OnItemActivated, this);
+    m_treeCtrl = new clRemoteDirTreeCtrl(this);
+    ::AdjustDataViewAlternateColour(m_treeCtrl);
+    m_treeCtrl->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &clRemoteDirCtrl::OnContextMenu, this);
+    m_treeCtrl->Bind(wxEVT_DATAVIEW_ITEM_EXPANDING, &clRemoteDirCtrl::OnItemExpanding, this);
+    m_treeCtrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &clRemoteDirCtrl::OnItemActivated, this);
 
     GetSizer()->Add(m_treeCtrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
@@ -46,37 +57,62 @@ clRemoteDirCtrl::clRemoteDirCtrl(wxWindow* parent)
         // update the bitmaps
         m_treeCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     });
-
-    auto SortFunc = [&](const wxTreeItemId& itemA, const wxTreeItemId& itemB) {
-        clRemoteDirCtrlItemData* a = static_cast<clRemoteDirCtrlItemData*>(GetItemData(itemA));
-        clRemoteDirCtrlItemData* b = static_cast<clRemoteDirCtrlItemData*>(GetItemData(itemB));
-        if (a->IsFolder() && !b->IsFolder())
-            return true;
-        else if (b->IsFolder() && !a->IsFolder())
-            return false;
-        // same kind
-        return (a->GetFullName().CmpNoCase(b->GetFullName()) < 0);
-    };
-    m_treeCtrl->SetSortFunction(std::move(SortFunc));
 }
 
 clRemoteDirCtrl::~clRemoteDirCtrl()
 {
-    m_treeCtrl->Unbind(wxEVT_CONTEXT_MENU, &clRemoteDirCtrl::OnContextMenu, this);
-    m_treeCtrl->Unbind(wxEVT_TREE_ITEM_EXPANDING, &clRemoteDirCtrl::OnItemExpanding, this);
-    m_treeCtrl->Unbind(wxEVT_TREE_ITEM_ACTIVATED, &clRemoteDirCtrl::OnItemActivated, this);
+    m_treeCtrl->Unbind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &clRemoteDirCtrl::OnContextMenu, this);
+    m_treeCtrl->Unbind(wxEVT_DATAVIEW_ITEM_EXPANDING, &clRemoteDirCtrl::OnItemExpanding, this);
+    m_treeCtrl->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &clRemoteDirCtrl::OnItemActivated, this);
 }
 
-clRemoteDirCtrlItemData* clRemoteDirCtrl::GetItemData(const wxTreeItemId& item) const
+clRemoteDirCtrlItemData* clRemoteDirCtrl::GetItemData(const wxDataViewItem& item) const
 {
     CHECK_ITEM_RET_NULL(item);
     clRemoteDirCtrlItemData* cd = dynamic_cast<clRemoteDirCtrlItemData*>(m_treeCtrl->GetItemData(item));
     return cd;
 }
 
-void clRemoteDirCtrl::OnItemActivated(wxTreeEvent& event) { DoOpenItem(event.GetItem(), kOpenInCodeLite); }
+void clRemoteDirCtrl::OnItemActivated(wxDataViewEvent& event)
+{
+    auto* cd = GetItemData(event.GetItem());
+    CHECK_PTR_RET(cd);
+    DoOpenItem(*cd, kOpenInCodeLite);
+}
 
-void clRemoteDirCtrl::OnItemExpanding(wxTreeEvent& event) { DoExpandItem(event.GetItem()); }
+void clRemoteDirCtrl::OnItemExpanding(wxDataViewEvent& event) { DoExpandItem(event.GetItem()); }
+
+wxDataViewItem clRemoteDirCtrl::InsertSorted(const wxDataViewItem& parent,
+                                             const wxString& text,
+                                             int icon,
+                                             int expandedIcon,
+                                             bool isContainer,
+                                             wxClientData* data)
+{
+    clRemoteDirCtrlItemData* newData = static_cast<clRemoteDirCtrlItemData*>(data);
+    int count = m_treeCtrl->GetChildCount(parent);
+
+    // Despite its name, wxDataViewTreeStore::InsertItem(parent, "previous", ...) inserts the new
+    // item immediately BEFORE "previous" in the child list. Find the first existing child that
+    // should come after the new item and use it as that anchor.
+    wxDataViewItem nextItem;
+    for (int i = 0; i < count; ++i) {
+        wxDataViewItem child = m_treeCtrl->GetNthChild(parent, i);
+        clRemoteDirCtrlItemData* childData = GetItemData(child);
+        if (childData && should_come_before(newData, childData)) {
+            nextItem = child;
+            break;
+        }
+    }
+
+    if (!nextItem.IsOk()) {
+        // the new item goes at the end (this also covers the "no children yet" case)
+        return isContainer ? m_treeCtrl->AppendContainer(parent, text, icon, expandedIcon, data)
+                           : m_treeCtrl->AppendItem(parent, text, icon, data);
+    }
+    return isContainer ? m_treeCtrl->InsertContainer(parent, nextItem, text, icon, expandedIcon, data)
+                       : m_treeCtrl->InsertItem(parent, nextItem, text, icon, data);
+}
 
 bool clRemoteDirCtrl::Open(const wxString& path, const SSHAccountInfo& account)
 {
@@ -99,8 +135,12 @@ bool clRemoteDirCtrl::Open(const wxString& path, const SSHAccountInfo& account)
         displayString = path;
     }
 
-    wxTreeItemId root = m_treeCtrl->AddRoot(
-        displayString, clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
+    wxDataViewItem root =
+        m_treeCtrl->AppendContainer(m_treeCtrl->GetRootItem(),
+                                    displayString,
+                                    clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder),
+                                    wxNOT_FOUND,
+                                    cd);
     m_treeCtrl->AppendItem(root, "<dummy>");
     DoExpandItem(root);
     return true;
@@ -126,7 +166,7 @@ bool clRemoteDirCtrl::Close(bool promptUser)
     clGetManager()->SetStatusMessage(wxString() << _("Connected to: ") << m_account.GetAccountName());    \
     wxYield();
 
-void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
+void clRemoteDirCtrl::DoExpandItem(const wxDataViewItem& item)
 {
     wxBusyCursor bc;
     clRemoteDirCtrlItemData* cd = GetItemData(item);
@@ -152,9 +192,8 @@ void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
     }
 
     // remove the fake item "dummy"
-    wxTreeItemIdValue cookie;
-    wxTreeItemId dummyItem = m_treeCtrl->GetFirstChild(item, cookie);
-    m_treeCtrl->Delete(dummyItem);
+    wxDataViewItem dummyItem = m_treeCtrl->GetNthChild(item, 0);
+    m_treeCtrl->DeleteItem(dummyItem);
 
     // mark the entry as "initialized"
     cd->SetInitialized(true);
@@ -207,38 +246,35 @@ void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
             childClientData->SetSymlinkTarget(entry->GetSymlinkPath());
         }
 
-        wxTreeItemId child = m_treeCtrl->AppendItem(item, entry->GetName(), imgIdx, expandImgIDx, childClientData);
+        wxDataViewItem child =
+            InsertSorted(item, entry->GetName(), imgIdx, expandImgIDx, entry->IsFolder(), childClientData);
 
         // if its type folder, add a fake child item
         if (entry->IsFolder()) {
             m_treeCtrl->AppendItem(child, "<dummy>");
         }
-
-        if (isHidden) {
-            // a hidden item, use a disabled colour
-            m_treeCtrl->SetItemTextColour(child, m_treeCtrl->GetColours().GetGrayText());
-        }
     }
 }
 
-void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
+void clRemoteDirCtrl::OnContextMenu(wxDataViewEvent& event)
 {
-    wxArrayTreeItemIds items;
+    wxDataViewItemArray items;
     m_treeCtrl->GetSelections(items);
     if (items.size() == 0)
         return;
 
-    wxTreeItemId item = items.Item(0);
+    wxDataViewItem item = items.Item(0);
     CHECK_ITEM_RET(item);
 
     clRemoteDirCtrlItemData* cd = GetItemData(item);
     CHECK_PTR_RET(cd);
 
-    bool is_root_item = (m_treeCtrl->GetRootItem() == item);
+    bool is_root_item = (m_treeCtrl->GetItemParent(item) == m_treeCtrl->GetRootItem());
     wxMenu menu;
 
     // Just incase, make sure the item is selected
-    m_treeCtrl->SelectItem(item);
+    m_treeCtrl->UnselectAll();
+    m_treeCtrl->Select(item);
     if (!cd->IsFolder()) {
         menu.Append(wxID_OPEN, _("Open"));
         menu.Bind(
@@ -246,9 +282,14 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
             [this, items](wxCommandEvent& event) {
                 event.Skip();
                 // open the items
+                std::vector<clRemoteDirCtrlItemData> itemDataArr;
                 for (const auto& i : items) {
-                    CallAfter(&clRemoteDirCtrl::DoOpenItem, i, kOpenInCodeLite);
+                    auto* cd = GetItemData(i);
+                    if (cd) {
+                        itemDataArr.push_back(*cd);
+                    }
                 }
+                CallAfter(&clRemoteDirCtrl::DoOpenItemMulti, itemDataArr, kOpenInCodeLite);
             },
             wxID_OPEN);
         menu.AppendSeparator();
@@ -261,10 +302,14 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
                 if (items.empty()) {
                     return;
                 }
-                // open the items
+                std::vector<clRemoteDirCtrlItemData> itemDataArr;
                 for (const auto& i : items) {
-                    CallAfter(&clRemoteDirCtrl::DoOpenItem, i, kOpenInExplorer);
+                    auto* cd = GetItemData(i);
+                    if (cd) {
+                        itemDataArr.push_back(*cd);
+                    }
                 }
+                CallAfter(&clRemoteDirCtrl::DoOpenItemMulti, itemDataArr, kOpenInExplorer);
             },
             wxID_DOWN);
 
@@ -363,32 +408,37 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
     m_treeCtrl->PopupMenu(&menu);
 }
 
-wxArrayTreeItemIds clRemoteDirCtrl::GetSelections() const
+wxDataViewItemArray clRemoteDirCtrl::GetSelections() const
 {
-    wxArrayTreeItemIds selections;
+    wxDataViewItemArray selections;
     m_treeCtrl->GetSelections(selections);
     return selections;
 }
 
-void clRemoteDirCtrl::DoOpenItem(const wxTreeItemId& item, eDownloadAction action)
+void clRemoteDirCtrl::DoOpenItemMulti(std::vector<clRemoteDirCtrlItemData> itemData, eDownloadAction action)
 {
-    CHECK_ITEM_RET(item);
-    auto cd = GetItemData(item);
-    CHECK_PTR_RET(cd);
-    CHECK_COND_RET(cd->IsFile());
+    for (const auto& d : itemData) {
+        DoOpenItem(d, action);
+    }
+}
+
+void clRemoteDirCtrl::DoOpenItem(clRemoteDirCtrlItemData itemData, eDownloadAction action)
+{
+    wxBusyCursor bc{};
+    CHECK_COND_RET(itemData.IsFile());
 
     switch (action) {
     case kOpenInCodeLite:
-        if (!clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account)) {
+        if (!clSFTPManager::Get().OpenFile(itemData.GetFullPath(), m_account)) {
             RECONNECT_RET(_("Failed to open file: connection lost"));
-            clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);
+            clSFTPManager::Get().OpenFile(itemData.GetFullPath(), m_account);
         }
         break;
     case kOpenInExplorer: {
-        auto editor = clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);
+        auto editor = clSFTPManager::Get().OpenFile(itemData.GetFullPath(), m_account);
         if (!editor) {
             RECONNECT_RET(_("Failed to open file: connection lost"));
-            editor = clSFTPManager::Get().OpenFile(cd->GetFullPath(), m_account);
+            editor = clSFTPManager::Get().OpenFile(itemData.GetFullPath(), m_account);
         }
         CHECK_PTR_RET(editor);
         auto cd = reinterpret_cast<SFTPClientData*>(editor->GetClientData("sftp"));
@@ -400,7 +450,7 @@ void clRemoteDirCtrl::DoOpenItem(const wxTreeItemId& item, eDownloadAction actio
     }
 }
 
-void clRemoteDirCtrl::DoCreateFolder(const wxTreeItemId& item, const wxString& name)
+void clRemoteDirCtrl::DoCreateFolder(const wxDataViewItem& item, const wxString& name)
 {
     CHECK_ITEM_RET(item);
     auto cd = GetItemData(item);
@@ -423,16 +473,17 @@ void clRemoteDirCtrl::DoCreateFolder(const wxTreeItemId& item, const wxString& n
     int imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
     int expandImgIDx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
 
-    auto child = m_treeCtrl->AppendItem(item, name, imgIdx, expandImgIDx, itemData);
+    auto child = InsertSorted(item, name, imgIdx, expandImgIDx, true, itemData);
     // append dummy item, to get the 'expand' icon
     m_treeCtrl->AppendItem(child, "<dummy>");
     if (!m_treeCtrl->IsExpanded(item)) {
         m_treeCtrl->Expand(item);
     }
-    m_treeCtrl->SelectItem(child); // select the newly added folder
+    m_treeCtrl->UnselectAll();
+    m_treeCtrl->Select(child); // select the newly added folder
 }
 
-void clRemoteDirCtrl::DoCreateFile(const wxTreeItemId& item, const wxString& name)
+void clRemoteDirCtrl::DoCreateFile(const wxDataViewItem& item, const wxString& name)
 {
     wxBusyCursor bc;
     CHECK_ITEM_RET(item);
@@ -455,16 +506,16 @@ void clRemoteDirCtrl::DoCreateFile(const wxTreeItemId& item, const wxString& nam
     clRemoteDirCtrlItemData* itemData = new clRemoteDirCtrlItemData(fullpath);
     itemData->SetFile();
     int imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(name);
-    int expandImgIDx = wxNOT_FOUND;
-    auto childItem = m_treeCtrl->AppendItem(item, name, imgIdx, expandImgIDx, itemData);
+    auto childItem = InsertSorted(item, name, imgIdx, wxNOT_FOUND, false, itemData);
     if (!m_treeCtrl->IsExpanded(item)) {
         m_treeCtrl->Expand(item);
     }
-    m_treeCtrl->SelectItem(childItem);
-    CallAfter(&clRemoteDirCtrl::DoOpenItem, childItem, kOpenInCodeLite);
+    m_treeCtrl->UnselectAll();
+    m_treeCtrl->Select(childItem);
+    CallAfter(&clRemoteDirCtrl::DoOpenItem, *itemData, kOpenInCodeLite);
 }
 
-void clRemoteDirCtrl::DoRename(const wxTreeItemId& item)
+void clRemoteDirCtrl::DoRename(const wxDataViewItem& item)
 {
     clRemoteDirCtrlItemData* cd = GetItemData(item);
     if (!cd) {
@@ -500,9 +551,9 @@ void clRemoteDirCtrl::DoRename(const wxTreeItemId& item)
     }
 }
 
-void clRemoteDirCtrl::DoDelete(const wxTreeItemId& item)
+void clRemoteDirCtrl::DoDelete(const wxDataViewItem& item)
 {
-    wxArrayTreeItemIds items;
+    wxDataViewItemArray items;
     m_treeCtrl->GetSelections(items);
     if (items.empty())
         return;
@@ -524,12 +575,15 @@ void clRemoteDirCtrl::DoDelete(const wxTreeItemId& item)
         }
         // Remove the selection
         if (success) {
-            m_treeCtrl->Delete(item);
+            m_treeCtrl->DeleteItem(item);
         }
     }
 }
 
-bool clRemoteDirCtrl::IsConnected() const { return !m_treeCtrl->IsEmpty() && !m_account.GetAccountName().IsEmpty(); }
+bool clRemoteDirCtrl::IsConnected() const
+{
+    return m_treeCtrl->GetChildCount(m_treeCtrl->GetRootItem()) > 0 && !m_account.GetAccountName().IsEmpty();
+}
 
 wxString clRemoteDirCtrl::GetSelectedFolder() const
 {
@@ -579,8 +633,12 @@ bool clRemoteDirCtrl::SetNewRoot(const wxString& remotePath)
     clRemoteDirCtrlItemData* cd = new clRemoteDirCtrlItemData(remotePath);
     cd->SetFolder();
 
-    wxTreeItemId root = m_treeCtrl->AddRoot(
-        remotePath, clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
+    wxDataViewItem root =
+        m_treeCtrl->AppendContainer(m_treeCtrl->GetRootItem(),
+                                    remotePath,
+                                    clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder),
+                                    wxNOT_FOUND,
+                                    cd);
     m_treeCtrl->AppendItem(root, "<dummy>");
     DoExpandItem(root);
     return true;

@@ -57,6 +57,9 @@ clRemoteDirCtrl::clRemoteDirCtrl(wxWindow* parent)
         // update the bitmaps
         m_treeCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     });
+
+    // Provide type helper.
+    m_typeHelper = std::make_unique<DataViewTypeHelper>(m_treeCtrl);
 }
 
 clRemoteDirCtrl::~clRemoteDirCtrl()

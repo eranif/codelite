@@ -1,5 +1,6 @@
 #ifndef CLREMOTEDIRCTRL_HPP
 #define CLREMOTEDIRCTRL_HPP
+#include "DataViewTypeHelper.h"
 #if USE_SFTP
 
 #include "codelite_events.h"
@@ -95,6 +96,7 @@ class WXDLLIMPEXP_SDK clRemoteDirCtrl : public wxPanel
 {
     clRemoteDirTreeCtrl* m_treeCtrl = nullptr;
     SSHAccountInfo m_account;
+    std::unique_ptr<DataViewTypeHelper> m_typeHelper;
 
 protected:
     enum eDownloadAction {

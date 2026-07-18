@@ -3,7 +3,7 @@
 
 #include "UI/NewFormWizard.h"
 #include "UI/import_dlg.h"
-#include "UI/main.h"
+#include "UI/mainFrame.h"
 #include "cl_command_event.h" // clDebugEvent
 #include "plugin.h"
 

@@ -83,7 +83,6 @@ public:
     ~MainFrame() override;
 
     wxcTreeView* GetTreeView() { return m_treeView; }
-    void Add(GUICraftMainPanel* view);
 
     wxPanel* GetMainPanel() { return m_MainPanel; }
 

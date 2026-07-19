@@ -200,6 +200,10 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden, wxCrafterPlugin* plugin)
     m_treeView = new wxcTreeView(GetTreeParent(), plugin);
     m_splitterPageTreeView->GetSizer()->Add(m_treeView, 1, wxEXPAND);
     m_splitterPageTreeView->GetSizer()->Layout();
+    m_wxcView = new GUICraftMainPanel(GetDesignerParent(), plugin, GetTreeView()->GetTree());
+    m_splitterPageDesigner->GetSizer()->Add(m_wxcView, 1, wxEXPAND);
+    m_splitterPageDesigner->GetSizer()->Layout();
+    Layout();
 }
 
 MainFrame::~MainFrame()
@@ -243,13 +247,6 @@ void MainFrame::OnCloseFrame(wxCloseEvent& event)
     wxUnusedVar(event);
     HideDesigner();
 #endif
-}
-
-void MainFrame::Add(GUICraftMainPanel* view)
-{
-    m_wxcView = view;
-    m_splitterPageDesigner->GetSizer()->Add(view, 1, wxEXPAND);
-    m_splitterPageDesigner->GetSizer()->Layout();
 }
 
 void MainFrame::OnClose(wxCommandEvent& event)

@@ -26,7 +26,6 @@ struct GeneratedClass {
 
 class wxCrafterPlugin : public IPlugin
 {
-    GUICraftMainPanel* m_mainPanel = nullptr;
     GeneratedClass m_generatedClassInfo;
     bool m_allEditorsClosing = false;
     MainFrame* m_mainFrame = nullptr;
@@ -60,7 +59,6 @@ protected:
     void OnInitDone(wxCommandEvent& e);
     void OnShowDesigner(wxCommandEvent& e);
     void OnReGenerateForProject(wxCommandEvent& e);
-    void OnDesignerDelete(wxCommandEvent& e);
     void OnBitmapCodeGenerationCompleted(wxCommandEvent& e);
     void OnNewForm(wxCommandEvent& e);
     void OnOpenFile(clCommandEvent& e);

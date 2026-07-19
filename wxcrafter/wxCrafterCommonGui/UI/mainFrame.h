@@ -5,7 +5,6 @@
 #include "UI/wxguicraft_main_view.h"
 #include "gui.hpp"
 
-#include <wx/cmdline.h>
 #include <wx/fdrepdlg.h>
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
@@ -82,13 +81,11 @@ public:
     MainFrame(wxWindow* parent, bool hidden, wxCrafterPlugin* plugin);
     ~MainFrame() override;
 
-    wxcTreeView* GetTreeView() { return m_treeView; }
+    void AddForm(const NewFormDetails& fd) { m_treeView->AddForm(fd); }
 
-    wxPanel* GetMainPanel() { return m_MainPanel; }
-
-    wxWindow* GetTreeParent() { return m_splitterPageTreeView; }
-
-    wxWindow* GetDesignerParent() { return m_splitterPageDesigner; }
+    void LoadProject(const wxFileName& filename) { m_treeView->LoadProject(filename); }
+    void SaveProject() { m_treeView->SaveProject(); }
+    void CloseProject(bool saveBeforeClose) { m_treeView->CloseProject(saveBeforeClose); }
 
     GUICraftMainPanel* GetWxcView() { return m_wxcView; }
 

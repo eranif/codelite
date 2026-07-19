@@ -504,12 +504,12 @@ void wxCrafterPlugin::OnPageClosing(wxNotifyEvent& e)
             int rc = ::wxMessageBox(msg, _("wxCrafter"), wxYES_NO | wxCANCEL | wxCENTER);
             switch (rc) {
             case wxYES: {
-                m_mainFrame->GetTreeView()->CloseProject(true);
+                m_mainFrame->CloseProject(true);
                 e.Skip();
                 break;
             }
             case wxNO:
-                m_mainFrame->GetTreeView()->CloseProject(false);
+                m_mainFrame->CloseProject(false);
                 e.Skip();
                 break;
 
@@ -518,7 +518,7 @@ void wxCrafterPlugin::OnPageClosing(wxNotifyEvent& e)
                 break;
             }
         } else {
-            m_mainFrame->GetTreeView()->CloseProject(false);
+            m_mainFrame->CloseProject(false);
         }
 
     } else {
@@ -834,8 +834,8 @@ void wxCrafterPlugin::DoGenerateCode(const NewFormDetails& fd)
     // At this point, wxcpFile contains the fullpath the
     // wxCrafter project, load it
     DoShowDesigner();
-    m_mainFrame->GetTreeView()->LoadProject(wxcpFile.GetFullPath());
-    m_mainFrame->GetTreeView()->AddForm(fd);
+    m_mainFrame->LoadProject(wxcpFile.GetFullPath());
+    m_mainFrame->AddForm(fd);
 
     // Notify about file system changes here
     clFileSystemEvent eventFilesGenerate(wxEVT_FILE_CREATED);
@@ -930,7 +930,7 @@ void wxCrafterPlugin::OnDesignerItemSelected(wxCommandEvent& e)
 void wxCrafterPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
-    m_mainFrame->GetTreeView()->CloseProject(false);
+    m_mainFrame->CloseProject(false);
 }
 
 void wxCrafterPlugin::DoUpdateDerivedClassEventHandlers()
@@ -1035,7 +1035,7 @@ void wxCrafterPlugin::OnAllEditorsClosing(wxCommandEvent& e)
     e.Skip();
     if (IsTabMode()) {
         m_allEditorsClosing = true;
-        m_mainFrame->GetTreeView()->CloseProject(true);
+        m_mainFrame->CloseProject(true);
     }
 }
 
@@ -1063,7 +1063,7 @@ void wxCrafterPlugin::OnSave(wxCommandEvent& e)
 {
     CHECK_POINTER(m_mgr);
     if (IsTabMode() && m_mainFrame->GetWxcView() && m_mgr->GetActivePage() == m_mainFrame->GetWxcView()) {
-        m_mainFrame->GetTreeView()->SaveProject();
+        m_mainFrame->SaveProject();
 
     } else {
         e.Skip();
@@ -1091,7 +1091,7 @@ void wxCrafterPlugin::OnCloseProject(wxCommandEvent& e)
     if (IsTabMode()) {
         m_mgr->ClosePage(_("[wxCrafter]"));
     }
-    // m_mainFrame->GetTreeView()->CloseProject(true);
+    // m_mainFrame->CloseProject(true);
 }
 
 void wxCrafterPlugin::OnCloseProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProjectMetadata::Get().IsLoaded()); }
@@ -1099,7 +1099,7 @@ void wxCrafterPlugin::OnCloseProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProject
 void wxCrafterPlugin::OnOpenProject(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    m_mainFrame->GetTreeView()->LoadProject(wxFileName());
+    m_mainFrame->LoadProject(wxFileName());
 }
 
 void wxCrafterPlugin::OnOpenProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProjectMetadata::Get().IsLoaded() == false); }
@@ -1107,7 +1107,7 @@ void wxCrafterPlugin::OnOpenProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProjectM
 void wxCrafterPlugin::OnSaveProject(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    m_mainFrame->GetTreeView()->SaveProject();
+    m_mainFrame->SaveProject();
 }
 
 void wxCrafterPlugin::OnSaveProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcEditManager::Get().IsDirty()); }
@@ -1124,7 +1124,7 @@ void wxCrafterPlugin::DoLoadAfterImport(ImportDlg::ImportFileData& data)
     }
 #endif
     if (data.loadWhenDone) {
-        m_mainFrame->GetTreeView()->LoadProject(data.wxcpFilename);
+        m_mainFrame->LoadProject(data.wxcpFilename);
     }
 
     // do it using event, or else the main frame will steal the focus
@@ -1269,7 +1269,7 @@ void wxCrafterPlugin::OnSaveAll(clCommandEvent& e)
 {
     e.Skip();
     if (wxcProjectMetadata::Get().IsLoaded()) {
-        m_mainFrame->GetTreeView()->SaveProject();
+        m_mainFrame->SaveProject();
     }
 }
 
@@ -1324,7 +1324,7 @@ void wxCrafterPlugin::OnOpenWxcpProject(wxCommandEvent& event) { DoLoadWxcProjec
 void wxCrafterPlugin::DoLoadWxcProject(const wxFileName& filename)
 {
     DoShowDesigner();
-    m_mainFrame->GetTreeView()->LoadProject(filename);
+    m_mainFrame->LoadProject(filename);
     DoSelectWorkspaceTab();
 
     if (!IsTabMode()) {

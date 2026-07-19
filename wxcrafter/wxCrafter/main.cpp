@@ -7,6 +7,7 @@
 #include "wxc_project_metadata.h"
 #include "wxcrafter_plugin.h"
 
+#include <wx/cmdline.h>
 #include <wx/filefn.h>
 #include <wx/socket.h>
 #include <wx/sysopt.h>

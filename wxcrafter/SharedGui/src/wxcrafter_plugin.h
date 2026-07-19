@@ -39,12 +39,7 @@ protected:
     bool DoReadFileContentAndPrompt(const wxFileName& fn, wxString& content, IEditor** editor);
     void DoWriteFileContent(const wxFileName& fn, const wxString& content, IEditor* editor);
     void DoGenerateCode(const NewFormDetails& fd);
-    /**
-     * @brief return true if the tab was created, false otherwise.
-     * Note that this function only return true if the tab was allocated
-     * by this function
-     */
-    bool DoShowDesigner(bool createIfNotExist = true);
+    void DoShowDesigner();
 #if !STANDALONE_BUILD
     bool DoCreateVirtualFolder(const wxString& vdFullPath);
 #endif

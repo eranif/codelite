@@ -809,14 +809,13 @@ void wxCrafterPlugin::DoGenerateCode(const NewFormDetails& fd)
     }
 }
 
-bool wxCrafterPlugin::DoShowDesigner(bool createIfNotExist)
+void wxCrafterPlugin::DoShowDesigner()
 {
     if (!m_mgr) {
-        return false;
+        return;
     }
 
     m_mainFrame->DisplayDesigner();
-    return false;
 }
 
 #if !STANDALONE_BUILD
@@ -1349,7 +1348,7 @@ void wxCrafterPlugin::OnReGenerateForProject(wxCommandEvent& e)
         }
 
         // Ensure that we have a designer
-        if (DoShowDesigner()) {}
+        DoShowDesigner();
 
         // Now generate the code
         m_mainFrame->GetWxcView()->BatchGenerate(wxcpFiles);

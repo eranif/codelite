@@ -171,7 +171,7 @@ bool clRemoteDirCtrl::Close(bool promptUser)
 
 void clRemoteDirCtrl::DoExpandItem(const wxDataViewItem& item)
 {
-    wxBusyCursor bc;
+    auto bc = std::make_shared<wxBusyCursor>();
     clRemoteDirCtrlItemData* cd = GetItemData(item);
     CHECK_PTR_RET(cd);
 
@@ -180,83 +180,81 @@ void clRemoteDirCtrl::DoExpandItem(const wxDataViewItem& item)
         return;
     }
 
-    auto res = clSFTPManager::Get().List(cd->IsSymlink() ? cd->GetSymlinkTarget() : cd->GetFullPath(), m_account);
-    if (!res) {
-        wxString msg;
-        msg << "Failed to list remote files. " << res.error_message();
-        RECONNECT_RET(msg);
-        res = clSFTPManager::Get().List(cd->IsSymlink() ? cd->GetSymlinkTarget() : cd->GetFullPath(), m_account);
-    }
-
-    if (!res) {
-        ::wxMessageBox(
-            wxString() << "Failed to list remote files. " << res.error_message(), "CodeLite", wxICON_ERROR | wxOK);
-        return;
-    }
-
-    // remove the fake item "dummy"
+    // remove the fake item "dummy" and trigger a list
     wxDataViewItem dummyItem = m_treeCtrl->GetNthChild(item, 0);
     m_treeCtrl->DeleteItem(dummyItem);
 
-    // mark the entry as "initialized"
-    cd->SetInitialized(true);
-    SFTPAttribute::List_t list = res.value();
-    for (auto entry : list) {
-        if (entry->GetName() == "." || entry->GetName() == "..")
-            continue;
-
-        // determine the icon index
-        bool isHidden = is_hidden(entry->GetName());
-        int imgIdx = wxNOT_FOUND;
-        int expandImgIDx = wxNOT_FOUND;
-        if (entry->IsFolder()) {
-            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder, isHidden);
-            expandImgIDx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded, isHidden);
-        } else if (entry->IsFile()) {
-            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(entry->GetName(), isHidden);
+    auto OnList = [cd, item, bc = std::move(bc), this](clStatusOr<SFTPAttribute::List_t> res) {
+        if (!res) {
+            wxString msg;
+            msg << "Failed to list remote files. " << res.error_message();
+            clGetManager()->SetStatusMessage(msg);
+            return;
         }
 
-        if (entry->IsSymlink()) {
-            if (entry->IsFile()) {
-                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFileSymlink, isHidden);
+        // mark the entry as "initialized"
+        cd->SetInitialized(true);
+        SFTPAttribute::List_t list = res.value();
+        for (auto entry : list) {
+            if (entry->GetName() == "." || entry->GetName() == "..")
+                continue;
 
-            } else {
-                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderSymlink, isHidden);
+            // determine the icon index
+            bool isHidden = is_hidden(entry->GetName());
+            int imgIdx = wxNOT_FOUND;
+            int expandImgIDx = wxNOT_FOUND;
+            if (entry->IsFolder()) {
+                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder, isHidden);
                 expandImgIDx =
-                    clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderSymlinkExpanded, isHidden);
+                    clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded, isHidden);
+            } else if (entry->IsFile()) {
+                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(entry->GetName(), isHidden);
+            }
+
+            if (entry->IsSymlink()) {
+                if (entry->IsFile()) {
+                    imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFileSymlink, isHidden);
+
+                } else {
+                    imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderSymlink, isHidden);
+                    expandImgIDx = clGetManager()->GetStdIcons()->GetMimeImageId(
+                        FileExtManager::TypeFolderSymlinkExpanded, isHidden);
+                }
+            }
+
+            // default bitmap
+            if (imgIdx == wxNOT_FOUND) {
+                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeText, isHidden);
+            }
+
+            wxString path;
+            path << cd->GetFullPath() << "/" << entry->GetName();
+            while (path.Replace("//", "/")) {}
+
+            // prepare the client data
+            auto childClientData = new clRemoteDirCtrlItemData(path);
+            if (entry->IsFolder()) {
+                childClientData->SetFolder();
+            } else if (entry->IsFile()) {
+                childClientData->SetFile();
+            }
+
+            if (entry->IsSymlink()) {
+                childClientData->SetSymlink();
+                childClientData->SetSymlinkTarget(entry->GetSymlinkPath());
+            }
+
+            wxDataViewItem child =
+                InsertSorted(item, entry->GetName(), imgIdx, expandImgIDx, entry->IsFolder(), childClientData);
+
+            // if its type folder, add a fake child item
+            if (entry->IsFolder()) {
+                m_treeCtrl->AppendItem(child, "<dummy>");
             }
         }
-
-        // default bitmap
-        if (imgIdx == wxNOT_FOUND) {
-            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeText, isHidden);
-        }
-
-        wxString path;
-        path << cd->GetFullPath() << "/" << entry->GetName();
-        while (path.Replace("//", "/")) {}
-
-        // prepare the client data
-        auto childClientData = new clRemoteDirCtrlItemData(path);
-        if (entry->IsFolder()) {
-            childClientData->SetFolder();
-        } else if (entry->IsFile()) {
-            childClientData->SetFile();
-        }
-
-        if (entry->IsSymlink()) {
-            childClientData->SetSymlink();
-            childClientData->SetSymlinkTarget(entry->GetSymlinkPath());
-        }
-
-        wxDataViewItem child =
-            InsertSorted(item, entry->GetName(), imgIdx, expandImgIDx, entry->IsFolder(), childClientData);
-
-        // if its type folder, add a fake child item
-        if (entry->IsFolder()) {
-            m_treeCtrl->AppendItem(child, "<dummy>");
-        }
-    }
+    };
+    clSFTPManager::Get().ListWithCallback(
+        cd->IsSymlink() ? cd->GetSymlinkTarget() : cd->GetFullPath(), m_account.GetAccountName(), OnList);
 }
 
 void clRemoteDirCtrl::OnContextMenu(wxDataViewEvent& event)

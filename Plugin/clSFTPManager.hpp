@@ -4,8 +4,8 @@
 #if USE_SFTP
 #include "StdToWX.h"
 #include "StringUtils.h"
-#include "clResult.hpp"
 #include "clEnvironment.hpp"
+#include "clResult.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "ssh/cl_sftp.h"
@@ -194,6 +194,22 @@ public:
     void StatFile(const wxString& remotePath,
                   const wxString& accountName,
                   std::function<void(clStatusOr<Attribute>)> OnAttributes);
+
+    /**
+     * Asynchronously lists files and folders at a specified path for a given account.
+     *
+     * This method queues a listing request to be executed on a background thread. Once the
+     * operation completes, the result is dispatched back to the main thread via the provided callback.
+     *
+     * @param path The remote directory path to list.
+     * @param accountName The name of the account to use for the SFTP connection.
+     * @param OnList A callback function invoked with a clStatusOr containing either the
+     *               list of SFTP attributes or an error status.
+     * @return void
+     */
+    void ListWithCallback(const wxString& path,
+                          const wxString& accountName,
+                          std::function<void(clStatusOr<SFTPAttribute::List_t>)> OnList);
 
     /**
      * @brief create new file with a given path

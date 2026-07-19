@@ -552,6 +552,28 @@ bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUse
     return true;
 }
 
+void clSFTPManager::ListWithCallback(const wxString& path,
+                                     const wxString& accountName,
+                                     std::function<void(clStatusOr<SFTPAttribute::List_t>)> OnList)
+{
+    clDEBUG() << "Listing files for path:" << path << "for account:" << accountName << endl;
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    if (!conn) {
+        OnList(StatusInvalidArgument(wxString::Format("Could not find connection for %s", accountName)));
+        return;
+    }
+    auto func = [path, conn = std::move(conn), OnList = std::move(OnList)]() {
+        try {
+            auto attr = conn->List(path, clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
+            clPostToMain(OnList, std::move(attr));
+        } catch (const clException& e) {
+            auto err = StatusNetworkError(wxString::Format("Failed to list files for path: %s. %s", path, e.What()));
+            clPostToMain(OnList, std::move(err));
+        }
+    };
+    m_q.push_back(std::move(func));
+}
+
 clStatusOr<SFTPAttribute::List_t> clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo)
 {
     wxBusyCursor bc;

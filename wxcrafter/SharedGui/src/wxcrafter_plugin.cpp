@@ -216,8 +216,6 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     EventNotifier::Get()->Connect(
         wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxCrafterPlugin::OnOpenFile), NULL, this);
     EventNotifier::Get()->Connect(
-        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(wxCrafterPlugin::OnPageClosing), NULL, this);
-    EventNotifier::Get()->Connect(
         wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(wxCrafterPlugin::OnProjectModified), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED, wxCommandEventHandler(wxCrafterPlugin::OnProjectSynched), NULL, this);
@@ -347,8 +345,6 @@ void wxCrafterPlugin::UnPlug()
                                      this);
     EventNotifier::Get()->Disconnect(
         wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxCrafterPlugin::OnOpenFile), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(wxCrafterPlugin::OnPageClosing), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(wxCrafterPlugin::OnProjectModified), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -486,45 +482,6 @@ void wxCrafterPlugin::OnInitDone(wxCommandEvent& e)
 }
 
 void wxCrafterPlugin::OnShowDesigner(wxCommandEvent& e) { DoShowDesigner(); }
-
-void wxCrafterPlugin::OnPageClosing(wxNotifyEvent& e)
-{
-    if (!IsTabMode()) {
-        e.Skip();
-        return;
-    }
-
-    wxWindow* win = reinterpret_cast<wxWindow*>(e.GetClientData());
-    if (win && win == m_mainFrame->GetWxcView()) {
-        if (wxcEditManager::Get().IsDirty()) {
-
-            wxString msg;
-            msg << _("wxCrafter project is modified\nDo you want to save your changes?");
-
-            int rc = ::wxMessageBox(msg, _("wxCrafter"), wxYES_NO | wxCANCEL | wxCENTER);
-            switch (rc) {
-            case wxYES: {
-                m_mainFrame->CloseProject(true);
-                e.Skip();
-                break;
-            }
-            case wxNO:
-                m_mainFrame->CloseProject(false);
-                e.Skip();
-                break;
-
-            case wxCANCEL:
-                e.Veto();
-                break;
-            }
-        } else {
-            m_mainFrame->CloseProject(false);
-        }
-
-    } else {
-        e.Skip();
-    }
-}
 
 void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
 {

@@ -62,7 +62,6 @@ protected:
     void OnBitmapCodeGenerationCompleted(wxCommandEvent& e);
     void OnNewForm(wxCommandEvent& e);
     void OnOpenFile(clCommandEvent& e);
-    void OnPageClosing(wxNotifyEvent& e);
     void OnProjectModified(wxCommandEvent& e);
     void OnProjectSynched(wxCommandEvent& e);
     void OnPageChanged(wxCommandEvent& e);

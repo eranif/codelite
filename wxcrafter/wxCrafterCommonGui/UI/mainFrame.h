@@ -69,6 +69,7 @@ protected:
     virtual void OnWorkspaceClosed(clWorkspaceEvent& e);
     virtual void OnCodeLiteGotFocus(wxCommandEvent& e);
     virtual void OnCodeEditorSelected(wxCommandEvent& e);
+    void OnPageClosing(wxNotifyEvent& e);
 
 protected:
     wxTextCtrl* GetActiveTextCtrl();

@@ -31,7 +31,6 @@ extern const wxEventType wxEVT_PREVIEW_CLOSED;
 extern const wxEventType wxEVT_PREVIEW_CTRL_SELECTED;
 extern const wxEventType wxEVT_PREVIEW_BOOKPAGE_SELECTED;
 extern const wxEventType wxEVT_PREVIEW_RIBBON_PAGE_SELECTED;
-extern const wxEventType wxEVT_DESIGNER_DELETED;
 extern const wxEventType wxEVT_REFRESH_DESIGNER;
 extern const wxEventType wxEVT_REFRESH_PROPERTIES_VIEW;
 extern const wxEventType wxEVT_WXC_PROJECT_LOADED;

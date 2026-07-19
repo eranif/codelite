@@ -211,7 +211,6 @@ const wxEventType wxEVT_WXGUI_PROJECT_SAVED = wxNewEventType();
 const wxEventType wxEVT_WXGUI_PROJECT_LOADED = wxNewEventType();
 const wxEventType wxEVT_CLOSE_PREVIEW = wxNewEventType();
 const wxEventType wxEVT_PREVIEW_CLOSED = wxNewEventType();
-const wxEventType wxEVT_DESIGNER_DELETED = wxNewEventType();
 const wxEventType wxEVT_WXC_CMD_GENERATE_CODE = wxNewEventType();
 wxDEFINE_EVENT(wxEVT_WXC_CMD_BATCH_GENERATE_CODE, wxCommandEvent);
 const wxEventType wxEVT_WXC_OPEN_PROJECT = wxNewEventType();
@@ -1065,9 +1064,6 @@ GUICraftMainPanel::~GUICraftMainPanel()
 
     m_treeControls = NULL;
     m_MainPanel = NULL;
-
-    wxCommandEvent deleteEvent(wxEVT_DESIGNER_DELETED);
-    EventNotifier::Get()->AddPendingEvent(deleteEvent);
 }
 
 void GUICraftMainPanel::Clear()

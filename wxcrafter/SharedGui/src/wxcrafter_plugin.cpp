@@ -127,7 +127,6 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     : IPlugin(manager)
-    , m_mainPanel(NULL)
     , m_allEditorsClosing(false)
     , m_mainFrame(NULL)
     , m_serverMode(serverMode)
@@ -210,16 +209,12 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(wxCrafterPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_SHOW_WXCRAFTER_DESIGNER, wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DESIGNER_DELETED, wxCommandEventHandler(wxCrafterPlugin::OnDesignerDelete), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BITMAP_CODE_GENERATION_DONE,
                                   wxCommandEventHandler(wxCrafterPlugin::OnBitmapCodeGenerationCompleted),
                                   NULL,
                                   this);
     EventNotifier::Get()->Connect(
         wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxCrafterPlugin::OnOpenFile), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(wxCrafterPlugin::OnPageClosing), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(wxCrafterPlugin::OnProjectModified), NULL, this);
     EventNotifier::Get()->Connect(
@@ -342,8 +337,6 @@ void wxCrafterPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_PAGE_MODIFIED_UPDATE_UI, &wxCrafterPlugin::OnSaveUI, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &wxCrafterPlugin::OnToggleView, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_DESIGNER_DELETED, wxCommandEventHandler(wxCrafterPlugin::OnDesignerDelete), NULL, this);
-    EventNotifier::Get()->Disconnect(
         wxEVT_SHOW_WXCRAFTER_DESIGNER, wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(wxCrafterPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BITMAP_CODE_GENERATION_DONE,
@@ -352,8 +345,6 @@ void wxCrafterPlugin::UnPlug()
                                      this);
     EventNotifier::Get()->Disconnect(
         wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxCrafterPlugin::OnOpenFile), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(wxCrafterPlugin::OnPageClosing), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(wxCrafterPlugin::OnProjectModified), NULL, this);
     EventNotifier::Get()->Disconnect(
@@ -454,7 +445,6 @@ void wxCrafterPlugin::UnPlug()
                          this);
 
     m_mainFrame->Destroy();
-    m_treeView = NULL;
     wxXmlResource::Get()->ClearHandlers();
 }
 
@@ -492,51 +482,6 @@ void wxCrafterPlugin::OnInitDone(wxCommandEvent& e)
 }
 
 void wxCrafterPlugin::OnShowDesigner(wxCommandEvent& e) { DoShowDesigner(); }
-
-void wxCrafterPlugin::OnDesignerDelete(wxCommandEvent& e)
-{
-    e.Skip();
-    m_mainPanel = NULL;
-}
-
-void wxCrafterPlugin::OnPageClosing(wxNotifyEvent& e)
-{
-    if (!IsTabMode()) {
-        e.Skip();
-        return;
-    }
-
-    wxWindow* win = reinterpret_cast<wxWindow*>(e.GetClientData());
-    if (win && win == m_mainPanel) {
-        if (wxcEditManager::Get().IsDirty()) {
-
-            wxString msg;
-            msg << _("wxCrafter project is modified\nDo you want to save your changes?");
-
-            int rc = ::wxMessageBox(msg, _("wxCrafter"), wxYES_NO | wxCANCEL | wxCENTER);
-            switch (rc) {
-            case wxYES: {
-                m_treeView->CloseProject(true);
-                e.Skip();
-                break;
-            }
-            case wxNO:
-                m_treeView->CloseProject(false);
-                e.Skip();
-                break;
-
-            case wxCANCEL:
-                e.Veto();
-                break;
-            }
-        } else {
-            m_treeView->CloseProject(false);
-        }
-
-    } else {
-        e.Skip();
-    }
-}
 
 void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
 {
@@ -846,8 +791,8 @@ void wxCrafterPlugin::DoGenerateCode(const NewFormDetails& fd)
     // At this point, wxcpFile contains the fullpath the
     // wxCrafter project, load it
     DoShowDesigner();
-    m_treeView->LoadProject(wxcpFile.GetFullPath());
-    m_treeView->AddForm(fd);
+    m_mainFrame->LoadProject(wxcpFile.GetFullPath());
+    m_mainFrame->AddForm(fd);
 
     // Notify about file system changes here
     clFileSystemEvent eventFilesGenerate(wxEVT_FILE_CREATED);
@@ -864,14 +809,13 @@ void wxCrafterPlugin::DoGenerateCode(const NewFormDetails& fd)
     }
 }
 
-bool wxCrafterPlugin::DoShowDesigner(bool createIfNotExist)
+void wxCrafterPlugin::DoShowDesigner()
 {
     if (!m_mgr) {
-        return false;
+        return;
     }
 
     m_mainFrame->DisplayDesigner();
-    return false;
 }
 
 #if !STANDALONE_BUILD
@@ -899,26 +843,26 @@ void wxCrafterPlugin::DoSelectWorkspaceTab() { CHECK_POINTER(m_mgr); }
 void wxCrafterPlugin::OnProjectModified(wxCommandEvent& e)
 {
     e.Skip();
-    CHECK_POINTER(m_mainPanel);
+    CHECK_POINTER(m_mainFrame->GetWxcView());
     CHECK_POINTER(m_mgr);
 
-    wxString title = m_mgr->GetPageTitle(m_mainPanel);
+    wxString title = m_mgr->GetPageTitle(m_mainFrame->GetWxcView());
     if (!title.StartsWith("*")) {
         title.Prepend("*");
-        m_mgr->SetPageTitle(m_mainPanel, title);
+        m_mgr->SetPageTitle(m_mainFrame->GetWxcView(), title);
     }
 }
 
 void wxCrafterPlugin::OnProjectSynched(wxCommandEvent& e)
 {
     e.Skip();
-    CHECK_POINTER(m_mainPanel);
+    CHECK_POINTER(m_mainFrame->GetWxcView());
     CHECK_POINTER(m_mgr);
 
-    wxString title = m_mgr->GetPageTitle(m_mainPanel);
+    wxString title = m_mgr->GetPageTitle(m_mainFrame->GetWxcView());
     if (title.StartsWith("*")) {
         title.Remove(0, 1);
-        m_mgr->SetPageTitle(m_mainPanel, title);
+        m_mgr->SetPageTitle(m_mainFrame->GetWxcView(), title);
     }
 }
 
@@ -927,7 +871,7 @@ void wxCrafterPlugin::OnPageChanged(wxCommandEvent& e)
     e.Skip();
     if (!m_allEditorsClosing) {
         wxWindow* win = reinterpret_cast<wxWindow*>(e.GetClientData());
-        if (win && (win == m_mainPanel)) {
+        if (win && (win == m_mainFrame->GetWxcView())) {
             DoSelectWorkspaceTab();
         }
     }
@@ -942,7 +886,7 @@ void wxCrafterPlugin::OnDesignerItemSelected(wxCommandEvent& e)
 void wxCrafterPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
-    m_treeView->CloseProject(false);
+    m_mainFrame->CloseProject(false);
 }
 
 void wxCrafterPlugin::DoUpdateDerivedClassEventHandlers()
@@ -958,10 +902,10 @@ void wxCrafterPlugin::DoUpdateDerivedClassEventHandlers()
         return;
     }
 
-    CHECK_POINTER(m_mainPanel);
+    CHECK_POINTER(m_mainFrame->GetWxcView());
 
     // Parse and collect all functions declared in the header file
-    wxcWidget* topLevelWin = m_mainPanel->GetActiveTopLevelWin();
+    wxcWidget* topLevelWin = m_mainFrame->GetWxcView()->GetActiveTopLevelWin();
     CHECK_POINTER(topLevelWin);
 
     wxcWidget::Map_t connectedEvents = topLevelWin->GetConnectedEventsRecursively();
@@ -1047,7 +991,7 @@ void wxCrafterPlugin::OnAllEditorsClosing(wxCommandEvent& e)
     e.Skip();
     if (IsTabMode()) {
         m_allEditorsClosing = true;
-        m_treeView->CloseProject(true);
+        m_mainFrame->CloseProject(true);
     }
 }
 
@@ -1074,8 +1018,8 @@ void wxCrafterPlugin::DoWriteFileContent(const wxFileName& fn, const wxString& c
 void wxCrafterPlugin::OnSave(wxCommandEvent& e)
 {
     CHECK_POINTER(m_mgr);
-    if (IsTabMode() && m_mainPanel && m_mgr->GetActivePage() == m_mainPanel) {
-        m_treeView->SaveProject();
+    if (IsTabMode() && m_mainFrame->GetWxcView() && m_mgr->GetActivePage() == m_mainFrame->GetWxcView()) {
+        m_mainFrame->SaveProject();
 
     } else {
         e.Skip();
@@ -1090,7 +1034,7 @@ bool wxCrafterPlugin::IsMainViewActive()
     if(!m_mgr) {
         return true;
     } else {
-        return IsTabMode() && m_mainPanel && m_mgr->GetActivePage() == m_mainPanel;
+        return IsTabMode() && m_mainFrame->GetWxcView() && m_mgr->GetActivePage() == m_mainFrame->GetWxcView();
     }
 #endif
 }
@@ -1103,7 +1047,7 @@ void wxCrafterPlugin::OnCloseProject(wxCommandEvent& e)
     if (IsTabMode()) {
         m_mgr->ClosePage(_("[wxCrafter]"));
     }
-    // m_treeView->CloseProject(true);
+    // m_mainFrame->CloseProject(true);
 }
 
 void wxCrafterPlugin::OnCloseProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProjectMetadata::Get().IsLoaded()); }
@@ -1111,7 +1055,7 @@ void wxCrafterPlugin::OnCloseProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProject
 void wxCrafterPlugin::OnOpenProject(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    m_treeView->LoadProject(wxFileName());
+    m_mainFrame->LoadProject(wxFileName());
 }
 
 void wxCrafterPlugin::OnOpenProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProjectMetadata::Get().IsLoaded() == false); }
@@ -1119,7 +1063,7 @@ void wxCrafterPlugin::OnOpenProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProjectM
 void wxCrafterPlugin::OnSaveProject(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    m_treeView->SaveProject();
+    m_mainFrame->SaveProject();
 }
 
 void wxCrafterPlugin::OnSaveProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcEditManager::Get().IsDirty()); }
@@ -1136,7 +1080,7 @@ void wxCrafterPlugin::DoLoadAfterImport(ImportDlg::ImportFileData& data)
     }
 #endif
     if (data.loadWhenDone) {
-        m_treeView->LoadProject(data.wxcpFilename);
+        m_mainFrame->LoadProject(data.wxcpFilename);
     }
 
     // do it using event, or else the main frame will steal the focus
@@ -1270,13 +1214,8 @@ void wxCrafterPlugin::DoInitDone(wxObject* obj)
     ColoursAndFontsManager::Get().Load();
 #endif
 
-    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_serverMode);
-    m_treeView = new wxcTreeView(m_mainFrame->GetTreeParent(), this);
-    m_mainFrame->Add(m_treeView);
+    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_serverMode, this);
 
-    m_mainPanel = new GUICraftMainPanel(m_mainFrame->GetDesignerParent(), this, m_treeView->GetTree());
-    m_mainFrame->Add(m_mainPanel);
-    m_mainFrame->Layout();
     wxCrafter::SetTopFrame(m_mainFrame);
 }
 
@@ -1286,7 +1225,7 @@ void wxCrafterPlugin::OnSaveAll(clCommandEvent& e)
 {
     e.Skip();
     if (wxcProjectMetadata::Get().IsLoaded()) {
-        m_treeView->SaveProject();
+        m_mainFrame->SaveProject();
     }
 }
 
@@ -1341,7 +1280,7 @@ void wxCrafterPlugin::OnOpenWxcpProject(wxCommandEvent& event) { DoLoadWxcProjec
 void wxCrafterPlugin::DoLoadWxcProject(const wxFileName& filename)
 {
     DoShowDesigner();
-    m_treeView->LoadProject(filename);
+    m_mainFrame->LoadProject(filename);
     DoSelectWorkspaceTab();
 
     if (!IsTabMode()) {
@@ -1409,10 +1348,10 @@ void wxCrafterPlugin::OnReGenerateForProject(wxCommandEvent& e)
         }
 
         // Ensure that we have a designer
-        if (DoShowDesigner()) {}
+        DoShowDesigner();
 
         // Now generate the code
-        m_mainPanel->BatchGenerate(wxcpFiles);
+        m_mainFrame->GetWxcView()->BatchGenerate(wxcpFiles);
     }
 }
 
@@ -1426,7 +1365,7 @@ void wxCrafterPlugin::OnToggleView(clCommandEvent& event)
     if(event.IsSelected()) {
         // show it
         wxcImages images;
-        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_treeView, _("wxCrafter"), false, images.Bitmap("wxc_icon"));
+        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_mainFrame->GetTreeView(), _("wxCrafter"), false, images.Bitmap("wxc_icon"));
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("wxCrafter"));
         if(where != wxNOT_FOUND) {
@@ -1440,7 +1379,7 @@ void wxCrafterPlugin::OnSaveUI(clCommandEvent& event)
 {
     event.Skip();
     wxWindow* win = (wxWindow*)event.GetClientData();
-    if (win == m_mainPanel) {
+    if (win == m_mainFrame->GetWxcView()) {
         event.Skip(false);
         event.SetAnswer(wxcEditManager::Get().IsDirty());
     }

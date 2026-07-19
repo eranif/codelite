@@ -48,7 +48,7 @@ const wxSize BMP_SIZE{32, 32};
 const wxSize BMP_SIZE{16, 16};
 #endif
 
-MainFrame::MainFrame(wxWindow* parent, bool hidden)
+MainFrame::MainFrame(wxWindow* parent, bool hidden, wxCrafterPlugin* plugin)
     : MainFrameBase(parent,
                     wxID_ANY,
                     "wxCrafter",
@@ -184,6 +184,8 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
         wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, wxCommandEventHandler(MainFrame::OnCodeLiteGotFocus), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED, wxCommandEventHandler(MainFrame::OnCodeEditorSelected), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), NULL, this);
 
 #if !STANDALONE_BUILD
     Hide();
@@ -196,6 +198,14 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     SetName("MainFrame");
     WindowAttrManager::Load(this);
 #endif
+
+    m_treeView = new wxcTreeView(m_splitterPageTreeView, plugin);
+    m_splitterPageTreeView->GetSizer()->Add(m_treeView, 1, wxEXPAND);
+    m_splitterPageTreeView->GetSizer()->Layout();
+    m_wxcView = new GUICraftMainPanel(m_splitterPageDesigner, plugin, m_treeView->GetTree());
+    m_splitterPageDesigner->GetSizer()->Add(m_wxcView, 1, wxEXPAND);
+    m_splitterPageDesigner->GetSizer()->Layout();
+    Layout();
 }
 
 MainFrame::~MainFrame()
@@ -213,6 +223,8 @@ MainFrame::~MainFrame()
         wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, wxCommandEventHandler(MainFrame::OnCodeLiteGotFocus), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED, wxCommandEventHandler(MainFrame::OnCodeEditorSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), NULL, this);
 
 #if STANDALONE_BUILD
     if (m_findReplaceDialog) {
@@ -241,24 +253,44 @@ void MainFrame::OnCloseFrame(wxCloseEvent& event)
 #endif
 }
 
-void MainFrame::Add(GUICraftMainPanel* view)
-{
-    m_wxcView = view;
-    m_splitterPageDesigner->GetSizer()->Add(view, 1, wxEXPAND);
-    m_splitterPageDesigner->GetSizer()->Layout();
-}
-
-void MainFrame::Add(wxcTreeView* tree)
-{
-    m_treeView = tree;
-    m_splitterPageTreeView->GetSizer()->Add(tree, 1, wxEXPAND);
-    m_splitterPageTreeView->GetSizer()->Layout();
-}
-
 void MainFrame::OnClose(wxCommandEvent& event)
 {
     wxCommandEvent evtClose(wxEVT_WXC_CLOSE_PROJECT);
     EventNotifier::Get()->AddPendingEvent(evtClose);
+}
+
+void MainFrame::OnPageClosing(wxNotifyEvent& e)
+{
+    const wxWindow* win = reinterpret_cast<wxWindow*>(e.GetClientData());
+    if (win && win == GetWxcView()) {
+        if (wxcEditManager::Get().IsDirty()) {
+
+            wxString msg;
+            msg << _("wxCrafter project is modified\nDo you want to save your changes?");
+
+            const int rc = ::wxMessageBox(msg, _("wxCrafter"), wxYES_NO | wxCANCEL | wxCENTER);
+            switch (rc) {
+            case wxYES: {
+                CloseProject(true);
+                e.Skip();
+                break;
+            }
+            case wxNO:
+                CloseProject(false);
+                e.Skip();
+                break;
+
+            case wxCANCEL:
+                e.Veto();
+                break;
+            }
+        } else {
+            CloseProject(false);
+        }
+
+    } else {
+        e.Skip();
+    }
 }
 
 void MainFrame::OnSave(wxCommandEvent& event) { m_treeView->SaveProject(); }

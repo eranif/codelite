@@ -26,8 +26,6 @@ struct GeneratedClass {
 
 class wxCrafterPlugin : public IPlugin
 {
-    GUICraftMainPanel* m_mainPanel = nullptr;
-    wxcTreeView* m_treeView = nullptr;
     GeneratedClass m_generatedClassInfo;
     bool m_allEditorsClosing = false;
     MainFrame* m_mainFrame = nullptr;
@@ -41,12 +39,7 @@ protected:
     bool DoReadFileContentAndPrompt(const wxFileName& fn, wxString& content, IEditor** editor);
     void DoWriteFileContent(const wxFileName& fn, const wxString& content, IEditor* editor);
     void DoGenerateCode(const NewFormDetails& fd);
-    /**
-     * @brief return true if the tab was created, false otherwise.
-     * Note that this function only return true if the tab was allocated
-     * by this function
-     */
-    bool DoShowDesigner(bool createIfNotExist = true);
+    void DoShowDesigner();
 #if !STANDALONE_BUILD
     bool DoCreateVirtualFolder(const wxString& vdFullPath);
 #endif
@@ -61,11 +54,9 @@ protected:
     void OnInitDone(wxCommandEvent& e);
     void OnShowDesigner(wxCommandEvent& e);
     void OnReGenerateForProject(wxCommandEvent& e);
-    void OnDesignerDelete(wxCommandEvent& e);
     void OnBitmapCodeGenerationCompleted(wxCommandEvent& e);
     void OnNewForm(wxCommandEvent& e);
     void OnOpenFile(clCommandEvent& e);
-    void OnPageClosing(wxNotifyEvent& e);
     void OnProjectModified(wxCommandEvent& e);
     void OnProjectSynched(wxCommandEvent& e);
     void OnPageChanged(wxCommandEvent& e);

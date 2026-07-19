@@ -48,7 +48,7 @@ const wxSize BMP_SIZE{32, 32};
 const wxSize BMP_SIZE{16, 16};
 #endif
 
-MainFrame::MainFrame(wxWindow* parent, bool hidden)
+MainFrame::MainFrame(wxWindow* parent, bool hidden, wxCrafterPlugin* plugin)
     : MainFrameBase(parent,
                     wxID_ANY,
                     "wxCrafter",
@@ -196,6 +196,10 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     SetName("MainFrame");
     WindowAttrManager::Load(this);
 #endif
+
+    m_treeView = new wxcTreeView(GetTreeParent(), plugin);
+    m_splitterPageTreeView->GetSizer()->Add(m_treeView, 1, wxEXPAND);
+    m_splitterPageTreeView->GetSizer()->Layout();
 }
 
 MainFrame::~MainFrame()
@@ -246,13 +250,6 @@ void MainFrame::Add(GUICraftMainPanel* view)
     m_wxcView = view;
     m_splitterPageDesigner->GetSizer()->Add(view, 1, wxEXPAND);
     m_splitterPageDesigner->GetSizer()->Layout();
-}
-
-void MainFrame::Add(wxcTreeView* tree)
-{
-    m_treeView = tree;
-    m_splitterPageTreeView->GetSizer()->Add(tree, 1, wxEXPAND);
-    m_splitterPageTreeView->GetSizer()->Layout();
 }
 
 void MainFrame::OnClose(wxCommandEvent& event)

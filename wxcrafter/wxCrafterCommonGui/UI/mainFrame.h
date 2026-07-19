@@ -79,10 +79,10 @@ protected:
     void DoCreateRecentMenu(wxMenu& menu, wxArrayString& history, std::shared_ptr<wxString> result);
 
 public:
-    MainFrame(wxWindow* parent, bool hidden);
+    MainFrame(wxWindow* parent, bool hidden, wxCrafterPlugin* plugin);
     ~MainFrame() override;
 
-    void Add(wxcTreeView* tree);
+    wxcTreeView* GetTreeView() { return m_treeView; }
     void Add(GUICraftMainPanel* view);
 
     wxPanel* GetMainPanel() { return m_MainPanel; }

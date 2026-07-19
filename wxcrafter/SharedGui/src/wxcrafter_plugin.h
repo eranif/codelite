@@ -27,7 +27,6 @@ struct GeneratedClass {
 class wxCrafterPlugin : public IPlugin
 {
     GUICraftMainPanel* m_mainPanel = nullptr;
-    wxcTreeView* m_treeView = nullptr;
     GeneratedClass m_generatedClassInfo;
     bool m_allEditorsClosing = false;
     MainFrame* m_mainFrame = nullptr;

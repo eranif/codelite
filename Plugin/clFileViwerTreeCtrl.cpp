@@ -1,5 +1,17 @@
 #include "clFileViwerTreeCtrl.h"
 
+#include <wx/settings.h>
+#include <wx/time.h>
+
+namespace
+{
+int DoubleClickIntervalMs()
+{
+    int msec = wxSystemSettings::GetMetric(wxSYS_DCLICK_MSEC);
+    return msec > 0 ? msec : 400;
+}
+} // namespace
+
 clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxDataViewTreeCtrl(parent, id, pos, size, style)
@@ -20,6 +32,40 @@ clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     // out of this tree, so pre-empt the native handling for this specific case:
     // detect it ourselves and consume the event before it reaches the native control.
     Bind(wxEVT_LEFT_DOWN, &clFileViewerTreeCtrl::OnLeftDown, this);
+    // Right-click must update selection/current item before the context menu runs;
+    // otherwise GTK may only move the visual cursor while commands still use the
+    // previous selection (e.g. "Open Shell").
+    Bind(wxEVT_RIGHT_DOWN, &clFileViewerTreeCtrl::OnRightDown, this);
+}
+
+void clFileViewerTreeCtrl::SelectItemForContext(const wxDataViewItem& item)
+{
+    if (!item.IsOk()) {
+        return;
+    }
+
+    // Standard tree UX: right-click outside the selection selects only that item.
+    // Right-click inside an existing multi-selection keeps the multi-selection.
+    if (!IsSelected(item)) {
+        UnselectAll();
+        Select(item);
+    }
+    SetCurrentItem(item);
+
+    wxDataViewEvent selectionEvent(wxEVT_DATAVIEW_SELECTION_CHANGED, this, item);
+    ProcessWindowEvent(selectionEvent);
+    SetFocus();
+}
+
+void clFileViewerTreeCtrl::OnRightDown(wxMouseEvent& event)
+{
+    wxDataViewItem item;
+    wxDataViewColumn* column = nullptr;
+    HitTest(event.GetPosition(), item, column);
+    if (item.IsOk()) {
+        SelectItemForContext(item);
+    }
+    event.Skip();
 }
 
 void clFileViewerTreeCtrl::OnLeftDown(wxMouseEvent& event)
@@ -27,13 +73,22 @@ void clFileViewerTreeCtrl::OnLeftDown(wxMouseEvent& event)
     wxDataViewItem item;
     wxDataViewColumn* column = nullptr;
     HitTest(event.GetPosition(), item, column);
+
     if (item.IsOk()) {
-        // Remember pre-click expand state for activate/double-click handling.
-        m_lastClickItem = item;
-        m_lastClickWasExpanded = IsExpanded(item);
+        // Capture expand state only on the first click of a double-click sequence.
+        // The second LEFT_DOWN of a double-click must keep the original snapshot;
+        // otherwise activate can see a mid-sequence state and "skip" a toggle.
+        const wxLongLong now = wxGetLocalTimeMillis();
+        const bool newSequence =
+            !m_lastClickValid || item != m_lastClickItem || (now - m_lastClickTime) > DoubleClickIntervalMs();
+        if (newSequence) {
+            m_lastClickItem = item;
+            m_lastClickWasExpanded = IsExpanded(item);
+            m_lastClickValid = true;
+            m_lastClickTime = now;
+        }
     } else {
-        m_lastClickItem = wxDataViewItem();
-        m_lastClickWasExpanded = false;
+        ClearLastClickSnapshot();
     }
 
     if (event.CmdDown() || event.ShiftDown() || event.AltDown()) {

@@ -132,11 +132,13 @@ class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
     // Holds the index used for locating top level folders.
     clTreeCtrlData m_rootData{clTreeCtrlData::kRoot};
 
-    // Snapshot of expand state at the most recent left-button press. Used so
-    // double-click / activate can toggle relative to the pre-click state even
-    // if the native control already expanded/collapsed the row.
+    // Expand-state snapshot for the first left-down of a (double-)click sequence.
+    // The second left-down of a double-click must not overwrite this, and the
+    // snapshot is invalidated after activate handling so the next sequence is fresh.
     wxDataViewItem m_lastClickItem;
     bool m_lastClickWasExpanded = false;
+    bool m_lastClickValid = false;
+    wxLongLong m_lastClickTime{0};
 
     bool ShouldComeBefore(clTreeCtrlData* a, clTreeCtrlData* b) const;
     wxDataViewItem InsertSorted(const wxDataViewItem& parent,
@@ -146,6 +148,7 @@ class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
                                 bool isContainer,
                                 wxClientData* data);
     void OnLeftDown(wxMouseEvent& event);
+    void OnRightDown(wxMouseEvent& event);
 
 public:
     clFileViewerTreeCtrl(wxWindow* parent,
@@ -156,14 +159,37 @@ public:
     virtual ~clFileViewerTreeCtrl() = default;
 
     /**
-     * @brief item under the pointer at the last left-down, if any
+     * @brief select / set-current the item for context-menu commands
+     *
+     * Right-click outside the selection selects only that item. Right-click
+     * inside an existing multi-selection keeps the multi-selection.
+     */
+    void SelectItemForContext(const wxDataViewItem& item);
+
+    /**
+     * @brief true if a left-down snapshot is available for activate handling
+     */
+    bool HasLastClickSnapshot() const { return m_lastClickValid; }
+
+    /**
+     * @brief item under the pointer at the first left-down of the current sequence
      */
     const wxDataViewItem& GetLastClickItem() const { return m_lastClickItem; }
 
     /**
-     * @brief whether GetLastClickItem() was expanded at that left-down
+     * @brief whether GetLastClickItem() was expanded at that first left-down
      */
     bool GetLastClickWasExpanded() const { return m_lastClickWasExpanded; }
+
+    /**
+     * @brief drop the left-down snapshot after activate has consumed it
+     */
+    void ClearLastClickSnapshot()
+    {
+        m_lastClickValid = false;
+        m_lastClickItem = wxDataViewItem();
+        m_lastClickWasExpanded = false;
+    }
 
     /**
      * @brief the (invisible) root item. Top level folders are direct children of this item

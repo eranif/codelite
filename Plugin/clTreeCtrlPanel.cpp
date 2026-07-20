@@ -126,6 +126,11 @@ void clTreeCtrlPanel::OnContextMenu(wxDataViewEvent& event)
     wxDataViewItem item = event.GetItem();
     CHECK_ITEM_RET(item);
 
+    // Make sure the right-clicked row is the selection/current item before any
+    // menu command reads GetCurrentItem()/GetSelections(). On GTK the visual
+    // cursor can move without updating the selection.
+    GetTreeCtrl()->SelectItemForContext(item);
+
     clTreeCtrlData* cd = GetItemData(item);
     if (cd && cd->IsFolder()) {
         // Prepare a folder context menu
@@ -226,15 +231,19 @@ void clTreeCtrlPanel::OnItemActivated(wxDataViewEvent& event)
 
     // Double-click (or keyboard activate) on a folder toggles expand/collapse
     // for the whole row, not only when the expander arrow is used.
-    // Use expand state from the initial left-down of the click sequence so that
-    // if the native control already toggled, we still end at the intended state.
+    // Use expand state from the *first* left-down of the double-click sequence
+    // (not the second), so a native expand/collapse mid-sequence cannot invert
+    // the intended toggle. Clear the snapshot afterwards so the next sequence
+    // starts clean and rapid double-clicks do not "stick" on expand.
     wxDataViewItem item = event.GetItem();
     clTreeCtrlData* cd = GetItemData(item);
     if (cd && cd->IsFolder()) {
         bool wasExpanded = GetTreeCtrl()->IsExpanded(item);
-        if (GetTreeCtrl()->GetLastClickItem() == item) {
+        if (GetTreeCtrl()->HasLastClickSnapshot() && GetTreeCtrl()->GetLastClickItem() == item) {
             wasExpanded = GetTreeCtrl()->GetLastClickWasExpanded();
         }
+        GetTreeCtrl()->ClearLastClickSnapshot();
+
         if (wasExpanded) {
             GetTreeCtrl()->Collapse(item);
         } else {
@@ -243,6 +252,7 @@ void clTreeCtrlPanel::OnItemActivated(wxDataViewEvent& event)
         return;
     }
 
+    GetTreeCtrl()->ClearLastClickSnapshot();
     wxCommandEvent dummy;
     OnOpenFile(dummy);
 }

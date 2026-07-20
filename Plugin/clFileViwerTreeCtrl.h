@@ -140,7 +140,6 @@ class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
                                 bool isContainer,
                                 wxClientData* data);
     void OnLeftDown(wxMouseEvent& event);
-    void OnRightDown(wxMouseEvent& event);
     void OnLeftDClick(wxMouseEvent& event);
     void OnKeyDown(wxKeyEvent& event);
 
@@ -151,14 +150,6 @@ public:
                          const wxSize& size = wxDefaultSize,
                          long style = wxDV_MULTIPLE | wxDV_ROW_LINES | wxDV_NO_HEADER | wxBORDER_STATIC);
     virtual ~clFileViewerTreeCtrl() = default;
-
-    /**
-     * @brief select / set-current the item for context-menu commands
-     *
-     * Right-click outside the selection selects only that item. Right-click
-     * inside an existing multi-selection keeps the multi-selection.
-     */
-    void SelectItemForContext(const wxDataViewItem& item);
 
     /**
      * @brief the (invisible) root item. Top level folders are direct children of this item

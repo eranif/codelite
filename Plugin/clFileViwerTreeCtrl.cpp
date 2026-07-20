@@ -20,44 +20,10 @@ clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     // out of this tree, so pre-empt the native handling for this specific case:
     // detect it ourselves and consume the event before it reaches the native control.
     Bind(wxEVT_LEFT_DOWN, &clFileViewerTreeCtrl::OnLeftDown, this);
-    // Right-click must update selection/current item before the context menu runs;
-    // otherwise GTK may only move the visual cursor while commands still use the
-    // previous selection (e.g. "Open Shell").
-    Bind(wxEVT_RIGHT_DOWN, &clFileViewerTreeCtrl::OnRightDown, this);
     // Double-click on a folder row toggles expand/collapse (whole row, not only the arrow).
     Bind(wxEVT_LEFT_DCLICK, &clFileViewerTreeCtrl::OnLeftDClick, this);
     // Left/Right arrows collapse/expand the current folder.
     Bind(wxEVT_KEY_DOWN, &clFileViewerTreeCtrl::OnKeyDown, this);
-}
-
-void clFileViewerTreeCtrl::SelectItemForContext(const wxDataViewItem& item)
-{
-    if (!item.IsOk()) {
-        return;
-    }
-
-    // Standard tree UX: right-click outside the selection selects only that item.
-    // Right-click inside an existing multi-selection keeps the multi-selection.
-    if (!IsSelected(item)) {
-        UnselectAll();
-        Select(item);
-    }
-    SetCurrentItem(item);
-
-    wxDataViewEvent selectionEvent(wxEVT_DATAVIEW_SELECTION_CHANGED, this, item);
-    ProcessWindowEvent(selectionEvent);
-    SetFocus();
-}
-
-void clFileViewerTreeCtrl::OnRightDown(wxMouseEvent& event)
-{
-    wxDataViewItem item;
-    wxDataViewColumn* column = nullptr;
-    HitTest(event.GetPosition(), item, column);
-    if (item.IsOk()) {
-        SelectItemForContext(item);
-    }
-    event.Skip();
 }
 
 void clFileViewerTreeCtrl::OnLeftDClick(wxMouseEvent& event)

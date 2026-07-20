@@ -123,13 +123,23 @@ clTreeCtrlPanel::~clTreeCtrlPanel()
 
 void clTreeCtrlPanel::OnContextMenu(wxDataViewEvent& event)
 {
+    // Use the DataView context-menu event (not wxEVT_RIGHT_DOWN) so trackpad /
+    // gesture context menus also update the selection correctly.
     wxDataViewItem item = event.GetItem();
     CHECK_ITEM_RET(item);
 
-    // Make sure the right-clicked row is the selection/current item before any
-    // menu command reads GetCurrentItem()/GetSelections(). On GTK the visual
-    // cursor can move without updating the selection.
-    GetTreeCtrl()->SelectItemForContext(item);
+    // Always select the item under the cursor as the single selection/current
+    // item so GetCurrentItem() (Open Shell, Open Containing Folder, …) uses it.
+    // Do this before PopupMenu, and show the menu synchronously: CallAfter would
+    // open it while the mouse button may still be down, so the menu vanishes on
+    // release.
+    SelectItem(item);
+    DoContextMenu(item);
+}
+
+void clTreeCtrlPanel::DoContextMenu(const wxDataViewItem& item)
+{
+    CHECK_ITEM_RET(item);
 
     clTreeCtrlData* cd = GetItemData(item);
     if (cd && cd->IsFolder()) {
@@ -564,6 +574,7 @@ void clTreeCtrlPanel::SelectItem(const wxDataViewItem& item)
     }
 
     GetTreeCtrl()->Select(item);
+    GetTreeCtrl()->SetCurrentItem(item);
     GetTreeCtrl()->EnsureVisible(item);
 }
 

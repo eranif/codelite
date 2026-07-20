@@ -27,7 +27,6 @@ struct GeneratedClass {
 class wxCrafterPlugin : public IPlugin
 {
     GeneratedClass m_generatedClassInfo;
-    bool m_allEditorsClosing = false;
     MainFrame* m_mainFrame = nullptr;
     bool m_serverMode = false;
     wxFileName m_selectedFile;
@@ -105,8 +104,6 @@ public:
     void UnPlug() override;
 
     IManager* GetManager() { return m_mgr; }
-    bool IsTabMode() const { return !m_mainFrame; }
-
     bool IsMainViewActive();
 };
 

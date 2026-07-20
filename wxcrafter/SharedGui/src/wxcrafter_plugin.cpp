@@ -127,7 +127,6 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     : IPlugin(manager)
-    , m_allEditorsClosing(false)
     , m_mainFrame(NULL)
     , m_serverMode(serverMode)
 {
@@ -799,14 +798,9 @@ void wxCrafterPlugin::DoGenerateCode(const NewFormDetails& fd)
     eventFilesGenerate.GetPaths().Add(wxcpFile.GetFullPath());
     EventNotifier::Get()->QueueEvent(eventFilesGenerate.Clone());
 
-    // And finally, select the wxCrafter tab in the 'Workspace' view
-    if (IsTabMode()) {
-        DoSelectWorkspaceTab();
-
-    } else {
-        wxCommandEvent evtShowDesigner(wxEVT_SHOW_WXCRAFTER_DESIGNER);
-        EventNotifier::Get()->ProcessEvent(evtShowDesigner);
-    }
+    // Show the designer
+    wxCommandEvent evtShowDesigner(wxEVT_SHOW_WXCRAFTER_DESIGNER);
+    EventNotifier::Get()->ProcessEvent(evtShowDesigner);
 }
 
 void wxCrafterPlugin::DoShowDesigner()
@@ -869,11 +863,9 @@ void wxCrafterPlugin::OnProjectSynched(wxCommandEvent& e)
 void wxCrafterPlugin::OnPageChanged(wxCommandEvent& e)
 {
     e.Skip();
-    if (!m_allEditorsClosing) {
-        wxWindow* win = reinterpret_cast<wxWindow*>(e.GetClientData());
-        if (win && (win == m_mainFrame->GetWxcView())) {
-            DoSelectWorkspaceTab();
-        }
+    wxWindow* win = reinterpret_cast<wxWindow*>(e.GetClientData());
+    if (win && (win == m_mainFrame->GetWxcView())) {
+        DoSelectWorkspaceTab();
     }
 }
 
@@ -986,22 +978,9 @@ void wxCrafterPlugin::OnBuildStarting(wxCommandEvent& e)
     e.Skip(); // Important...
 }
 
-void wxCrafterPlugin::OnAllEditorsClosing(wxCommandEvent& e)
-{
-    e.Skip();
-    if (IsTabMode()) {
-        m_allEditorsClosing = true;
-        m_mainFrame->CloseProject(true);
-    }
-}
+void wxCrafterPlugin::OnAllEditorsClosing(wxCommandEvent& e) { e.Skip(); }
 
-void wxCrafterPlugin::OnAllEditorsClosed(wxCommandEvent& e)
-{
-    e.Skip();
-    if (IsTabMode()) {
-        m_allEditorsClosing = false;
-    }
-}
+void wxCrafterPlugin::OnAllEditorsClosed(wxCommandEvent& e) { e.Skip(); }
 
 void wxCrafterPlugin::DoWriteFileContent(const wxFileName& fn, const wxString& content, IEditor* editor)
 {
@@ -1018,12 +997,7 @@ void wxCrafterPlugin::DoWriteFileContent(const wxFileName& fn, const wxString& c
 void wxCrafterPlugin::OnSave(wxCommandEvent& e)
 {
     CHECK_POINTER(m_mgr);
-    if (IsTabMode() && m_mainFrame->GetWxcView() && m_mgr->GetActivePage() == m_mainFrame->GetWxcView()) {
-        m_mainFrame->SaveProject();
-
-    } else {
-        e.Skip();
-    }
+    e.Skip();
 }
 
 bool wxCrafterPlugin::IsMainViewActive()
@@ -1044,10 +1018,6 @@ void wxCrafterPlugin::OnCloseProject(wxCommandEvent& e)
 {
     CHECK_POINTER(m_mgr);
     wxUnusedVar(e);
-    if (IsTabMode()) {
-        m_mgr->ClosePage(_("[wxCrafter]"));
-    }
-    // m_mainFrame->CloseProject(true);
 }
 
 void wxCrafterPlugin::OnCloseProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProjectMetadata::Get().IsLoaded()); }
@@ -1283,10 +1253,8 @@ void wxCrafterPlugin::DoLoadWxcProject(const wxFileName& filename)
     m_mainFrame->LoadProject(filename);
     DoSelectWorkspaceTab();
 
-    if (!IsTabMode()) {
-        wxCommandEvent evtShowDesigner(wxEVT_COMMAND_MENU_SELECTED, XRCID("ID_SHOW_DESIGNER"));
-        m_mainFrame->GetEventHandler()->AddPendingEvent(evtShowDesigner);
-    }
+    wxCommandEvent evtShowDesigner(wxEVT_COMMAND_MENU_SELECTED, XRCID("ID_SHOW_DESIGNER"));
+    m_mainFrame->GetEventHandler()->AddPendingEvent(evtShowDesigner);
 }
 
 void wxCrafterPlugin::OnImportwxSmithProject(wxCommandEvent& event)

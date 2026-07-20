@@ -3098,9 +3098,9 @@ wxcWidget* GUICraftMainPanel::DoGetItemData(const wxTreeItemId& item) const
 
 void GUICraftMainPanel::OnRedo(wxCommandEvent& e)
 {
-    if (!m_plugin->IsTabMode() && !(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
+    if (!(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
         e.Skip();
-        return; // Otherwise, in non-tabbed mode, there'll be contamination between us and clMainFrame
+        return;
     }
 
     if (IsPropertyGridPropertySelected()) {
@@ -3125,9 +3125,9 @@ void GUICraftMainPanel::OnRedoUI(wxUpdateUIEvent& e) { e.Enable(wxcEditManager::
 
 void GUICraftMainPanel::OnUndo(wxCommandEvent& e)
 {
-    if (!m_plugin->IsTabMode() && !(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
+    if (!(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
         e.Skip();
-        return; // Otherwise, in non-tabbed mode, there'll be contamination between us and clMainFrame
+        return;
     }
 
     if (IsPropertyGridPropertySelected()) {
@@ -3152,9 +3152,9 @@ void GUICraftMainPanel::OnUndoUI(wxUpdateUIEvent& e) { e.Enable(wxcEditManager::
 
 void GUICraftMainPanel::OnLabelCurrentState(wxCommandEvent& event)
 {
-    if (!m_plugin->IsTabMode() && !(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
+    if (!(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
         event.Skip();
-        return; // Otherwise, in non-tabbed mode, there'll be contamination between us and clMainFrame
+        return;
     }
 
     // wxString label = wxGetTextFromUser("What would you like to call the current state?", "Label current state", "",
@@ -3572,12 +3572,9 @@ void GUICraftMainPanel::AddCustomControl(int controlId)
 wxWindow* GUICraftMainPanel::GetTopFrame() const
 {
     wxWindow* top = wxCrafter::TopFrame();
-    if (!m_plugin->IsTabMode() && m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown()) {
+    if (m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown()) {
         top = m_plugin->GetMainFrame();
-    } else if (m_plugin->IsTabMode()) {
-        top = wxDynamicCast(top, wxFrame);
     }
-
     return top;
 }
 

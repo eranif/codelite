@@ -6,55 +6,21 @@
 !!! Important
     We only support `MSYS2` terminal
 
-- [Prepare your working environment][10]
-- [Build wxWidgets from sources][5]
-- Open `MSYS` terminal, and type:
-
-```bash
-pacman -S mingw-w64-clang-x86_64-zlib \
-          mingw-w64-clang-x86_64-libssh \
-          mingw-w64-clang-x86_64-hunspell \
-          mingw-w64-clang-x86_64-openssl \
-          mingw-w64-clang-x86_64-sqlite3 \
-          mingw-w64-clang-x86_64-libmariadbclient \
-          mingw-w64-clang-x86_64-postgresql \
-          mingw-w64-clang-x86_64-ctags \
-          mingw-w64-clang-x86_64-glew \
-          flex bison patch
-```
-
-- Download and build `wx-config.exe` from sources:
-
-```bash
-git clone https://github.com/eranif/wx-config-msys2.git
-cd wx-config-msys2
-mkdir build-release
-cd $_
-cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/root"
-mingw32-make -j$(nproc) install
-```
-
-- Add `$HOME/root/bin` to your path and make sure that `which wx-config` points to the newly installed `wx-config`
-- Build CodeLite (in `Release` mode):
-- Set the environment variable `MSYS2_BASE` to point to `MSYS2` root installation folder (e.g. `C:/msys64`)
-
-**Building in Release mode**
+- Open `MSYS2` terminal, and type:
 
 ```bash
 git clone https://github.com/eranif/codelite.git
 cd codelite
 git submodule update --init --recursive
-mkdir .build-release
-cd $_
-cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN="$HOME/root" -Wno-dev
-mingw32-make -j$(nproc) install
+
+# Use the build script to build CodeLite along with its dependencies
+./build.sh
 ```
 
 - To run the new CodeLite:
 
 ```bash
-cd .build-release/install/bin
-./codelite.exe
+(cd .build-release/install/bin && ./codelite.exe)
 ```
 
 ## Linux
@@ -63,43 +29,33 @@ cd .build-release/install/bin
 - Install `libssh-dev` and `libsqlite3-dev` packages (or similar, depending on your distro). On **Ubuntu / Debian**, you can use this command:
 
 ```bash
-    sudo apt install build-essential            \
-                     git cmake                  \
-                     libssh-dev libsqlite3-dev  \
-                     libmariadb-dev             \
-                     libpq-dev                  \
-                     libpcre2-dev bison flex    \
-                     universal-ctags            \
-                     fonts-noto
-    sudo fc-cache -fv 
+sudo apt install build-essential            \
+                 git cmake                  \
+                 libssh-dev libsqlite3-dev  \
+                 libmariadb-dev             \
+                 libpq-dev                  \
+                 libpcre2-dev bison flex    \
+                 universal-ctags            \
+                 fonts-noto
+sudo fc-cache -fv
 ```
 
 !!! Note
     `fonts-noto` is required for proper display of Unicode symbols in the editor.
 
-- Git clone the sources:
+- Git clone the sources and build CodeLite:
 
 ```bash
-    git clone https://github.com/eranif/codelite.git
-    cd codelite
-    git submodule update --init --recursive
-```
-
-- Build CodeLite:
-
-```bash
- cd codelite
- mkdir build-release
- cd build-release
- cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1
- make -j$(nproc)
- sudo make install
+git clone https://github.com/eranif/codelite.git
+cd codelite
+git submodule update --init --recursive
+./build.sh
 ```
 
 - To uninstall CodeLite:
 
 ```bash
-cd build-release # cd to the build directory
+cd .build-release # cd to the build directory created by build.sh script
 sudo xargs rm -vf < install_manifest.txt
 ```
 
@@ -110,12 +66,9 @@ sudo xargs rm -vf < install_manifest.txt
 
 Prerequisites:
 
- - wxWidgets 3.1 or later
  - CMake
  - Git
- - Xcode
- - Xcode command-line tools
- - Homebrew
+ - clang++ / clang
  - Flex
  - autoconf
 
@@ -153,19 +106,15 @@ echo 'export PATH=/opt/homebrew/bin:$PATH' >> $HOME/.$(basename $SHELL)rc
 source $HOME/.$(basename $SHELL)rc
 ```
 
- - Next step is to [Build wxWidgets from sources][9]
  - Finally, Build CodeLite:
 
 ```bash
-    mkdir -p $HOME/devl
-    cd $_
-    git clone https://github.com/eranif/codelite.git
-    cd codelite
-    git submodule update --init --recursive
-    mkdir build-release
-    cd $_
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_MYSQL=1 -DWITH_POSTGRES=1
-    make -j$(sysctl -n hw.physicalcpu) install
+mkdir -p $HOME/devl
+cd $_
+git clone https://github.com/eranif/codelite.git
+cd codelite
+git submodule update --init --recursive
+./build.sh
 ```
 
 You should now have an app bundle `$HOME/devl/codelite/build-release/codelite.app`
@@ -180,8 +129,6 @@ To launch CodeLite:
  [2]: https://codelite.org/support.php
  [3]: https://codelite.org
  [4]: https://codelite.org/support.php
- [5]: /build/build_wx_widgets/#windows
  [6]: /build/build_wx_widgets/#linux
  [8]: https://codelite.org/support.php
- [9]: /build/build_wx_widgets/#macos
  [10]: /getting_started/windows/

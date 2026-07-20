@@ -132,14 +132,6 @@ class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
     // Holds the index used for locating top level folders.
     clTreeCtrlData m_rootData{clTreeCtrlData::kRoot};
 
-    // Expand-state snapshot for the first left-down of a (double-)click sequence.
-    // The second left-down of a double-click must not overwrite this, and the
-    // snapshot is invalidated after activate handling so the next sequence is fresh.
-    wxDataViewItem m_lastClickItem;
-    bool m_lastClickWasExpanded = false;
-    bool m_lastClickValid = false;
-    wxLongLong m_lastClickTime{0};
-
     bool ShouldComeBefore(clTreeCtrlData* a, clTreeCtrlData* b) const;
     wxDataViewItem InsertSorted(const wxDataViewItem& parent,
                                 const wxString& text,
@@ -149,6 +141,8 @@ class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
                                 wxClientData* data);
     void OnLeftDown(wxMouseEvent& event);
     void OnRightDown(wxMouseEvent& event);
+    void OnLeftDClick(wxMouseEvent& event);
+    void OnKeyDown(wxKeyEvent& event);
 
 public:
     clFileViewerTreeCtrl(wxWindow* parent,
@@ -165,31 +159,6 @@ public:
      * inside an existing multi-selection keeps the multi-selection.
      */
     void SelectItemForContext(const wxDataViewItem& item);
-
-    /**
-     * @brief true if a left-down snapshot is available for activate handling
-     */
-    bool HasLastClickSnapshot() const { return m_lastClickValid; }
-
-    /**
-     * @brief item under the pointer at the first left-down of the current sequence
-     */
-    const wxDataViewItem& GetLastClickItem() const { return m_lastClickItem; }
-
-    /**
-     * @brief whether GetLastClickItem() was expanded at that first left-down
-     */
-    bool GetLastClickWasExpanded() const { return m_lastClickWasExpanded; }
-
-    /**
-     * @brief drop the left-down snapshot after activate has consumed it
-     */
-    void ClearLastClickSnapshot()
-    {
-        m_lastClickValid = false;
-        m_lastClickItem = wxDataViewItem();
-        m_lastClickWasExpanded = false;
-    }
 
     /**
      * @brief the (invisible) root item. Top level folders are direct children of this item

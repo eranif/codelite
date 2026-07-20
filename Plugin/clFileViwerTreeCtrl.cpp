@@ -1,17 +1,5 @@
 #include "clFileViwerTreeCtrl.h"
 
-#include <wx/settings.h>
-#include <wx/time.h>
-
-namespace
-{
-int DoubleClickIntervalMs()
-{
-    int msec = wxSystemSettings::GetMetric(wxSYS_DCLICK_MSEC);
-    return msec > 0 ? msec : 400;
-}
-} // namespace
-
 clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxDataViewTreeCtrl(parent, id, pos, size, style)
@@ -36,6 +24,10 @@ clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     // otherwise GTK may only move the visual cursor while commands still use the
     // previous selection (e.g. "Open Shell").
     Bind(wxEVT_RIGHT_DOWN, &clFileViewerTreeCtrl::OnRightDown, this);
+    // Double-click on a folder row toggles expand/collapse (whole row, not only the arrow).
+    Bind(wxEVT_LEFT_DCLICK, &clFileViewerTreeCtrl::OnLeftDClick, this);
+    // Left/Right arrows collapse/expand the current folder.
+    Bind(wxEVT_KEY_DOWN, &clFileViewerTreeCtrl::OnKeyDown, this);
 }
 
 void clFileViewerTreeCtrl::SelectItemForContext(const wxDataViewItem& item)
@@ -68,35 +60,71 @@ void clFileViewerTreeCtrl::OnRightDown(wxMouseEvent& event)
     event.Skip();
 }
 
-void clFileViewerTreeCtrl::OnLeftDown(wxMouseEvent& event)
+void clFileViewerTreeCtrl::OnLeftDClick(wxMouseEvent& event)
 {
     wxDataViewItem item;
     wxDataViewColumn* column = nullptr;
     HitTest(event.GetPosition(), item, column);
 
-    if (item.IsOk()) {
-        // Capture expand state only on the first click of a double-click sequence.
-        // The second LEFT_DOWN of a double-click must keep the original snapshot;
-        // otherwise activate can see a mid-sequence state and "skip" a toggle.
-        const wxLongLong now = wxGetLocalTimeMillis();
-        const bool newSequence =
-            !m_lastClickValid || item != m_lastClickItem || (now - m_lastClickTime) > DoubleClickIntervalMs();
-        if (newSequence) {
-            m_lastClickItem = item;
-            m_lastClickWasExpanded = IsExpanded(item);
-            m_lastClickValid = true;
-            m_lastClickTime = now;
+    clTreeCtrlData* cd = item.IsOk() ? GetItemData(item) : nullptr;
+    if (cd && cd->IsFolder()) {
+        if (IsExpanded(item)) {
+            Collapse(item);
+        } else {
+            Expand(item);
         }
-    } else {
-        ClearLastClickSnapshot();
+        return;
+    }
+    event.Skip();
+}
+
+void clFileViewerTreeCtrl::OnKeyDown(wxKeyEvent& event)
+{
+    const int key = event.GetKeyCode();
+    if (key != WXK_LEFT && key != WXK_RIGHT) {
+        event.Skip();
+        return;
     }
 
+    wxDataViewItem item = GetCurrentItem();
+    if (!item.IsOk()) {
+        event.Skip();
+        return;
+    }
+
+    if (key == WXK_RIGHT) {
+        // Expand when collapsed; if already expanded, let the native control
+        // move the cursor to the first child (if any).
+        clTreeCtrlData* cd = GetItemData(item);
+        if (cd && cd->IsFolder() && !IsExpanded(item)) {
+            Expand(item);
+            return;
+        }
+        event.Skip();
+        return;
+    }
+
+    // WXK_LEFT: collapse when expanded; if already collapsed, let native
+    // move the cursor to the parent (standard tree navigation).
+    clTreeCtrlData* cd = GetItemData(item);
+    if (cd && cd->IsFolder() && IsExpanded(item)) {
+        Collapse(item);
+        return;
+    }
+    event.Skip();
+}
+
+void clFileViewerTreeCtrl::OnLeftDown(wxMouseEvent& event)
+{
     if (event.CmdDown() || event.ShiftDown() || event.AltDown()) {
         // let modifier-driven range/toggle selection go through the native control
         event.Skip();
         return;
     }
 
+    wxDataViewItem item;
+    wxDataViewColumn* column = nullptr;
+    HitTest(event.GetPosition(), item, column);
     if (!item.IsOk()) {
         event.Skip();
         return;

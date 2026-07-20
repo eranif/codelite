@@ -223,6 +223,26 @@ void clTreeCtrlPanel::OnContextMenu(wxDataViewEvent& event)
 void clTreeCtrlPanel::OnItemActivated(wxDataViewEvent& event)
 {
     event.Skip();
+
+    // Double-click (or keyboard activate) on a folder toggles expand/collapse
+    // for the whole row, not only when the expander arrow is used.
+    // Use expand state from the initial left-down of the click sequence so that
+    // if the native control already toggled, we still end at the intended state.
+    wxDataViewItem item = event.GetItem();
+    clTreeCtrlData* cd = GetItemData(item);
+    if (cd && cd->IsFolder()) {
+        bool wasExpanded = GetTreeCtrl()->IsExpanded(item);
+        if (GetTreeCtrl()->GetLastClickItem() == item) {
+            wasExpanded = GetTreeCtrl()->GetLastClickWasExpanded();
+        }
+        if (wasExpanded) {
+            GetTreeCtrl()->Collapse(item);
+        } else {
+            GetTreeCtrl()->Expand(item);
+        }
+        return;
+    }
+
     wxCommandEvent dummy;
     OnOpenFile(dummy);
 }

@@ -24,15 +24,24 @@ clFileViewerTreeCtrl::clFileViewerTreeCtrl(
 
 void clFileViewerTreeCtrl::OnLeftDown(wxMouseEvent& event)
 {
+    wxDataViewItem item;
+    wxDataViewColumn* column = nullptr;
+    HitTest(event.GetPosition(), item, column);
+    if (item.IsOk()) {
+        // Remember pre-click expand state for activate/double-click handling.
+        m_lastClickItem = item;
+        m_lastClickWasExpanded = IsExpanded(item);
+    } else {
+        m_lastClickItem = wxDataViewItem();
+        m_lastClickWasExpanded = false;
+    }
+
     if (event.CmdDown() || event.ShiftDown() || event.AltDown()) {
         // let modifier-driven range/toggle selection go through the native control
         event.Skip();
         return;
     }
 
-    wxDataViewItem item;
-    wxDataViewColumn* column = nullptr;
-    HitTest(event.GetPosition(), item, column);
     if (!item.IsOk()) {
         event.Skip();
         return;
@@ -95,9 +104,12 @@ bool clFileViewerTreeCtrl::ShouldComeBefore(clTreeCtrlData* a, clTreeCtrlData* b
     return a->GetName().CmpNoCase(b->GetName()) < 0;
 }
 
-wxDataViewItem clFileViewerTreeCtrl::InsertSorted(
-    const wxDataViewItem& parent, const wxString& text, int icon, int expandedIcon, bool isContainer,
-    wxClientData* data)
+wxDataViewItem clFileViewerTreeCtrl::InsertSorted(const wxDataViewItem& parent,
+                                                  const wxString& text,
+                                                  int icon,
+                                                  int expandedIcon,
+                                                  bool isContainer,
+                                                  wxClientData* data)
 {
     clTreeCtrlData* newData = static_cast<clTreeCtrlData*>(data);
     int count = GetChildCount(parent);

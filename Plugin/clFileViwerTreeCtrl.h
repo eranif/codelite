@@ -130,7 +130,13 @@ class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
 {
     // Client data for the (invisible) root item, which has no wxDataViewItem of its own.
     // Holds the index used for locating top level folders.
-    clTreeCtrlData m_rootData{ clTreeCtrlData::kRoot };
+    clTreeCtrlData m_rootData{clTreeCtrlData::kRoot};
+
+    // Snapshot of expand state at the most recent left-button press. Used so
+    // double-click / activate can toggle relative to the pre-click state even
+    // if the native control already expanded/collapsed the row.
+    wxDataViewItem m_lastClickItem;
+    bool m_lastClickWasExpanded = false;
 
     bool ShouldComeBefore(clTreeCtrlData* a, clTreeCtrlData* b) const;
     wxDataViewItem InsertSorted(const wxDataViewItem& parent,
@@ -148,6 +154,16 @@ public:
                          const wxSize& size = wxDefaultSize,
                          long style = wxDV_MULTIPLE | wxDV_ROW_LINES | wxDV_NO_HEADER | wxBORDER_STATIC);
     virtual ~clFileViewerTreeCtrl() = default;
+
+    /**
+     * @brief item under the pointer at the last left-down, if any
+     */
+    const wxDataViewItem& GetLastClickItem() const { return m_lastClickItem; }
+
+    /**
+     * @brief whether GetLastClickItem() was expanded at that left-down
+     */
+    bool GetLastClickWasExpanded() const { return m_lastClickWasExpanded; }
 
     /**
      * @brief the (invisible) root item. Top level folders are direct children of this item

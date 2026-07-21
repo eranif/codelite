@@ -123,7 +123,22 @@ clTreeCtrlPanel::~clTreeCtrlPanel()
 
 void clTreeCtrlPanel::OnContextMenu(wxDataViewEvent& event)
 {
+    // Use the DataView context-menu event (not wxEVT_RIGHT_DOWN) so trackpad /
+    // gesture context menus also update the selection correctly.
     wxDataViewItem item = event.GetItem();
+    CHECK_ITEM_RET(item);
+
+    // Always select the item under the cursor as the single selection/current
+    // item so GetCurrentItem() (Open Shell, Open Containing Folder, …) uses it.
+    // Do this before PopupMenu, and show the menu synchronously: CallAfter would
+    // open it while the mouse button may still be down, so the menu vanishes on
+    // release.
+    SelectItem(item);
+    DoContextMenu(item);
+}
+
+void clTreeCtrlPanel::DoContextMenu(const wxDataViewItem& item)
+{
     CHECK_ITEM_RET(item);
 
     clTreeCtrlData* cd = GetItemData(item);
@@ -223,6 +238,14 @@ void clTreeCtrlPanel::OnContextMenu(wxDataViewEvent& event)
 void clTreeCtrlPanel::OnItemActivated(wxDataViewEvent& event)
 {
     event.Skip();
+
+    // Folders: expand/collapse is handled by LEFT_DCLICK and Left/Right keys on
+    // the tree itself. Activation only opens files.
+    clTreeCtrlData* cd = GetItemData(event.GetItem());
+    if (cd && cd->IsFolder()) {
+        return;
+    }
+
     wxCommandEvent dummy;
     OnOpenFile(dummy);
 }
@@ -551,6 +574,7 @@ void clTreeCtrlPanel::SelectItem(const wxDataViewItem& item)
     }
 
     GetTreeCtrl()->Select(item);
+    GetTreeCtrl()->SetCurrentItem(item);
     GetTreeCtrl()->EnsureVisible(item);
 }
 

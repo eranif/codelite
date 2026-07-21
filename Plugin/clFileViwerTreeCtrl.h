@@ -130,7 +130,7 @@ class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
 {
     // Client data for the (invisible) root item, which has no wxDataViewItem of its own.
     // Holds the index used for locating top level folders.
-    clTreeCtrlData m_rootData{ clTreeCtrlData::kRoot };
+    clTreeCtrlData m_rootData{clTreeCtrlData::kRoot};
 
     bool ShouldComeBefore(clTreeCtrlData* a, clTreeCtrlData* b) const;
     wxDataViewItem InsertSorted(const wxDataViewItem& parent,
@@ -140,6 +140,8 @@ class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public wxDataViewTreeCtrl
                                 bool isContainer,
                                 wxClientData* data);
     void OnLeftDown(wxMouseEvent& event);
+    void OnLeftDClick(wxMouseEvent& event);
+    void OnKeyDown(wxKeyEvent& event);
 
 public:
     clFileViewerTreeCtrl(wxWindow* parent,

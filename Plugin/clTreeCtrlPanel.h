@@ -87,7 +87,9 @@ public:
      * @param excludeFilePatterns
      */
     void SetExcludeFilePatterns(const wxString& excludeFilePatterns)
-    { this->m_excludeFilePatterns = excludeFilePatterns; }
+    {
+        this->m_excludeFilePatterns = excludeFilePatterns;
+    }
 
     const wxString& GetExcludeFilePatterns() const { return m_excludeFilePatterns; }
 
@@ -168,6 +170,7 @@ protected:
     virtual void OnFindInFilesShowing(clFindInFilesEvent& event);
     virtual void OnInitDone(wxCommandEvent& event);
     virtual void OnContextMenu(wxDataViewEvent& event);
+    void DoContextMenu(const wxDataViewItem& item);
     virtual void OnItemActivated(wxDataViewEvent& event);
     virtual void OnItemExpanding(wxDataViewEvent& event);
     virtual void OnCloseFolder(wxCommandEvent& event);

@@ -20,6 +20,64 @@ clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     // out of this tree, so pre-empt the native handling for this specific case:
     // detect it ourselves and consume the event before it reaches the native control.
     Bind(wxEVT_LEFT_DOWN, &clFileViewerTreeCtrl::OnLeftDown, this);
+    // Double-click on a folder row toggles expand/collapse (whole row, not only the arrow).
+    Bind(wxEVT_LEFT_DCLICK, &clFileViewerTreeCtrl::OnLeftDClick, this);
+    // Left/Right arrows collapse/expand the current folder.
+    Bind(wxEVT_KEY_DOWN, &clFileViewerTreeCtrl::OnKeyDown, this);
+}
+
+void clFileViewerTreeCtrl::OnLeftDClick(wxMouseEvent& event)
+{
+    wxDataViewItem item;
+    wxDataViewColumn* column = nullptr;
+    HitTest(event.GetPosition(), item, column);
+
+    clTreeCtrlData* cd = item.IsOk() ? GetItemData(item) : nullptr;
+    if (cd && cd->IsFolder()) {
+        if (IsExpanded(item)) {
+            Collapse(item);
+        } else {
+            Expand(item);
+        }
+        return;
+    }
+    event.Skip();
+}
+
+void clFileViewerTreeCtrl::OnKeyDown(wxKeyEvent& event)
+{
+    const int key = event.GetKeyCode();
+    if (key != WXK_LEFT && key != WXK_RIGHT) {
+        event.Skip();
+        return;
+    }
+
+    wxDataViewItem item = GetCurrentItem();
+    if (!item.IsOk()) {
+        event.Skip();
+        return;
+    }
+
+    if (key == WXK_RIGHT) {
+        // Expand when collapsed; if already expanded, let the native control
+        // move the cursor to the first child (if any).
+        clTreeCtrlData* cd = GetItemData(item);
+        if (cd && cd->IsFolder() && !IsExpanded(item)) {
+            Expand(item);
+            return;
+        }
+        event.Skip();
+        return;
+    }
+
+    // WXK_LEFT: collapse when expanded; if already collapsed, let native
+    // move the cursor to the parent (standard tree navigation).
+    clTreeCtrlData* cd = GetItemData(item);
+    if (cd && cd->IsFolder() && IsExpanded(item)) {
+        Collapse(item);
+        return;
+    }
+    event.Skip();
 }
 
 void clFileViewerTreeCtrl::OnLeftDown(wxMouseEvent& event)
@@ -95,9 +153,12 @@ bool clFileViewerTreeCtrl::ShouldComeBefore(clTreeCtrlData* a, clTreeCtrlData* b
     return a->GetName().CmpNoCase(b->GetName()) < 0;
 }
 
-wxDataViewItem clFileViewerTreeCtrl::InsertSorted(
-    const wxDataViewItem& parent, const wxString& text, int icon, int expandedIcon, bool isContainer,
-    wxClientData* data)
+wxDataViewItem clFileViewerTreeCtrl::InsertSorted(const wxDataViewItem& parent,
+                                                  const wxString& text,
+                                                  int icon,
+                                                  int expandedIcon,
+                                                  bool isContainer,
+                                                  wxClientData* data)
 {
     clTreeCtrlData* newData = static_cast<clTreeCtrlData*>(data);
     int count = GetChildCount(parent);

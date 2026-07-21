@@ -5,7 +5,7 @@
     "m_bitmapFunction": "wxCrafterpca4kKInitBitmapResources",
     "m_bitmapsFile": "gitui_git_bitmaps.cpp",
     "m_firstWindowId": 6000,
-    "m_generatedFilesDir": "/Users/eifrah/devl/codelite/.build-release/Plugins/git",
+    "m_generatedFilesDir": ".",
     "m_includeFiles": [],
     "m_objCounter": 850,
     "m_outputFileName": "gitui",
@@ -4264,7 +4264,7 @@
                                                 {
                                                   "type": "choice",
                                                   "m_label": "Cell Mode",
-                                                  "m_selection": 2,
+                                                  "m_selection": 1,
                                                   "m_options": [
                                                     "wxDATAVIEW_CELL_INERT",
                                                     "wxDATAVIEW_CELL_ACTIVATABLE",

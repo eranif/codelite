@@ -5,7 +5,7 @@
     "m_bitmapFunction": "wxCB60EInitBitmapResources",
     "m_bitmapsFile": "TailUI_tail_bitmaps.cpp",
     "m_firstWindowId": 10000,
-    "m_generatedFilesDir": "./.build-release/Tail",
+    "m_generatedFilesDir": ".",
     "m_includeFiles": [],
     "m_objCounter": 49,
     "m_outputFileName": "",

@@ -5,7 +5,7 @@
     "m_bitmapFunction": "wxC73CEInitBitmapResources",
     "m_bitmapsFile": "SnippetSettings_snipwiz_bitmaps.cpp",
     "m_firstWindowId": 10000,
-    "m_generatedFilesDir": "/Users/eifrah/devl/codelite/.build-release/Plugins/SnipWiz",
+    "m_generatedFilesDir": ".",
     "m_includeFiles": [],
     "m_objCounter": 0,
     "m_outputFileName": "",

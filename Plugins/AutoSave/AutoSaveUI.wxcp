@@ -5,7 +5,7 @@
     "m_bitmapFunction": "wxCrafter7A2fyVInitBitmapResources",
     "m_bitmapsFile": "AutoSaveUI_autosave_bitmaps.cpp",
     "m_firstWindowId": 10000,
-    "m_generatedFilesDir": "/Users/eifrah/devl/codelite/.build-release/Plugins/AutoSave",
+    "m_generatedFilesDir": ".",
     "m_includeFiles": [],
     "m_objCounter": 17,
     "m_outputFileName": "",

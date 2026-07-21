@@ -200,6 +200,7 @@ wxString GitCommitDlg::GetCommitMessage()
 /*******************************************************************************/
 void GitCommitDlg::OnChangeFile(wxDataViewEvent& e)
 {
+    CHECK_ITEM_RET(e.GetItem());
     int row = m_dvListCtrlFiles->ItemToRow(e.GetItem());
     wxVariant value;
     m_dvListCtrlFiles->GetValue(value, row, 1);

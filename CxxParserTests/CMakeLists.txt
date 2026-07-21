@@ -21,7 +21,7 @@ endif()
 add_executable(CxxLocalVariables ${SRCS} ${CXXLOCALVARIABLES_RES_FILES})
 
 if(USE_PCH)
-    target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+    target_precompile_headers(CxxLocalVariables REUSE_FROM PCH)
 endif()
 
 if(UNIX AND NOT APPLE)

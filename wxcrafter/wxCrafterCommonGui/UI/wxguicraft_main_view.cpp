@@ -3714,22 +3714,6 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
         return;
     }
 
-    OutputDirectoryLocker locker{
-        FindConfigEntry(wxcProjectMetadata::Get().GetProjectFileName()).value_or(wxEmptyString)};
-
-    wxFileName outputDir(wxcProjectMetadata::Get().GetGeneratedFilesDir(), "");
-    wxCrafter::MakeAbsToProject(outputDir);
-    if (!outputDir.DirExists()) {
-        if (interactionMode == InteractionMode::HideDialogs) {
-            return;
-        }
-        wxString msg;
-        msg << _("Please set the base classes generated files output directory\nThis can be done by selecting the root "
-                 "item of the tree and edit the properties");
-        ::wxMessageBox(msg, "wxCrafter", wxOK | wxCENTER | wxICON_WARNING, wxCrafter::TopFrame());
-        return;
-    }
-
     if (wxcProjectMetadata::Get().GetProjectFile().IsEmpty()) {
         if (interactionMode == InteractionMode::HideDialogs) {
             return;
@@ -3744,6 +3728,22 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
         // save the project when generating code even if its not modified
         wxCommandEvent dummy;
         OnSaveProject(dummy);
+    }
+
+    OutputDirectoryLocker locker{
+        FindConfigEntry(wxcProjectMetadata::Get().GetProjectFileName()).value_or(wxEmptyString)};
+
+    wxFileName outputDir(wxcProjectMetadata::Get().GetGeneratedFilesDir(), "");
+    wxCrafter::MakeAbsToProject(outputDir);
+    if (!outputDir.DirExists()) {
+        if (interactionMode == InteractionMode::HideDialogs) {
+            return;
+        }
+        wxString msg;
+        msg << _("Please set the base classes generated files output directory\nThis can be done by selecting the root "
+                 "item of the tree and edit the properties");
+        ::wxMessageBox(msg, "wxCrafter", wxOK | wxCENTER | wxICON_WARNING, wxCrafter::TopFrame());
+        return;
     }
 
     wxArrayString headers;

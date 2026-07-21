@@ -128,12 +128,12 @@ void clTreeCtrlPanel::OnContextMenu(wxDataViewEvent& event)
     wxDataViewItem item = event.GetItem();
     CHECK_ITEM_RET(item);
 
-    // Always select the item under the cursor as the single selection/current
-    // item so GetCurrentItem() (Open Shell, Open Containing Folder, …) uses it.
-    // Do this before PopupMenu, and show the menu synchronously: CallAfter would
-    // open it while the mouse button may still be down, so the menu vanishes on
-    // release.
-    SelectItem(item);
+    // If the current item is NOT selected, unselect everything and select it.
+    // otherwise, leave it as is.
+    if (!GetTreeCtrl()->IsSelected(item)) {
+        GetTreeCtrl()->UnselectAll();
+        GetTreeCtrl()->Select(item);
+    }
     DoContextMenu(item);
 }
 

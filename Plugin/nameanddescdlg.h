@@ -26,7 +26,7 @@
 #define __nameanddescdlg__
 
 #include "codelite_exports.h"
-#include "nameanddescbasedlg.h"
+#include "nameanddescbasedlg.hpp"
 class IManager;
 
 class WXDLLIMPEXP_SDK NameAndDescDlg : public NameAndDescBaseDlg

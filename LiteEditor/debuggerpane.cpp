@@ -38,7 +38,7 @@
 #include "event_notifier.h"
 #include "localstable.h"
 #include "manager.h"
-#include "plugin_general_wxcp.h"
+#include "plugin_general_wxcp.hpp"
 #include "shelltab.h"
 #include "simpletable.h"
 #include "threadlistpanel.h"

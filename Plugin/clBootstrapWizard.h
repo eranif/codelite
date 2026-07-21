@@ -26,7 +26,7 @@
 #ifndef CLBOOSTRAPWIZARD_H
 #define CLBOOSTRAPWIZARD_H
 #include "ICompilerLocator.h"
-#include "clBoostrapWizardBase.h"
+#include "clBoostrapWizardBase.hpp"
 #include "codelite_exports.h"
 
 #include <wx/bitmap.h>

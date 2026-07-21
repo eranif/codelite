@@ -34,7 +34,7 @@
 #include "cl_command_event.h"
 #include "cl_config.h"
 #include "imanager.h"
-#include "wxcrafter_plugin.h"
+#include "wxcrafter_plugin.hpp"
 
 #include <memory>
 

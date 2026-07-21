@@ -27,7 +27,7 @@
 #define CLTREECTRLPANELDEFAULTPAGE_H
 #include "clColours.h"
 #include "cl_command_event.h"
-#include "wxcrafter_plugin.h"
+#include "wxcrafter_plugin.hpp"
 
 #include <wx/event.h>
 

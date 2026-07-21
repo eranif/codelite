@@ -25,7 +25,7 @@
 
 #ifndef CLGETTEXTFROMUSERDIALOG_H
 #define CLGETTEXTFROMUSERDIALOG_H
-#include "wxcrafter_plugin.h"
+#include "wxcrafter_plugin.hpp"
 
 class WXDLLIMPEXP_SDK clGetTextFromUserDialog : public clGetTextFromUserBaseDialog
 {

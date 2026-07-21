@@ -28,7 +28,7 @@
 
 #include "LSP/CompletionItem.h"
 #include "database/entry.h"
-#include "wxCodeCompletionBoxBase.h"
+#include "wxCodeCompletionBoxBase.hpp"
 #include "wxCodeCompletionBoxEntry.hpp"
 
 #include <vector>

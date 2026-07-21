@@ -4,7 +4,7 @@
 		"m_objCounter":	10,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCDA09InitBitmapResources",
-		"m_bitmapsFile":	"ToolBar_liteeditor_bitmaps.cpp",
+		"m_bitmapsFile":	"ToolBar_plugin_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
 		"m_outputFileName":	"ToolBarUI",
 		"m_firstWindowId":	10000,

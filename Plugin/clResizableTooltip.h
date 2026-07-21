@@ -26,7 +26,7 @@
 #ifndef CLRESIZABLETOOLTIP_H
 #define CLRESIZABLETOOLTIP_H
 
-#include "clResizableTooltipBase.h"
+#include "clResizableTooltipBase.hpp"
 #include "cl_command_event.h"
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TOOLTIP_DESTROY, clCommandEvent);

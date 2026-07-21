@@ -28,7 +28,7 @@
 
 #if USE_SFTP
 
-#include "sftp_ui.h"
+#include "sftp_ui.hpp"
 #include "ssh/cl_sftp.h"
 
 class SFTPBrowserEntryClientData;

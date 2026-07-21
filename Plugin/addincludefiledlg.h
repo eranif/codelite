@@ -25,7 +25,7 @@
 #ifndef __addincludefiledlg__
 #define __addincludefiledlg__
 
-#include "addincludefiledlgbase.h"
+#include "addincludefiledlgbase.hpp"
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK AddIncludeFileDlg : public AddIncludeFileDlgBase

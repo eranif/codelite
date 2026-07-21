@@ -25,32 +25,20 @@
 
 #include "SFTPTreeView.h"
 
-#include "SFTPBookmark.h"
-#include "SFTPGrep.h"
 #include "SFTPManageBookmarkDlg.h"
 #include "SFTPQuickConnectDlg.h"
 #include "SFTPSettingsDialog.h"
 #include "SFTPStatusPage.h"
-#include "SFTPUploadDialog.h"
 #include "SSHAccountManagerDlg.h"
-#include "bitmap_loader.h"
-#include "clFileOrFolderDropTarget.h"
 #include "clSystemSettings.h"
-#include "clToolBarButtonBase.h"
-#include "cl_config.h"
 #include "event_notifier.h"
-#include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
-#include "macros.h"
 #include "sftp.h"
-#include "sftp_item_comparator.hpp"
 #include "sftp_settings.h"
 #include "sftp_worker_thread.h"
 #include "ssh/ssh_account_info.h"
 
-#include <algorithm>
-#include <vector>
 #include <wx/busyinfo.h>
 #include <wx/fdrepdlg.h>
 #include <wx/menu.h>
@@ -74,49 +62,31 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     SFTPSettings settings;
     settings.Load();
 
-    wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnCopy, this, wxID_COPY);
-    wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnCut, this, wxID_CUT);
-    wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnPaste, this, wxID_PASTE);
-    wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnSelectAll, this, wxID_SELECTALL);
-    wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnUndo, this, wxID_UNDO);
-    wxTheApp->GetTopWindow()->Bind(wxEVT_MENU, &SFTPTreeView::OnRedo, this, wxID_REDO);
-
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(XRCID("ID_OPEN_ACCOUNT_MANAGER"), _("Open account manager..."), images->Add("user"));
-    m_toolbar->AddTool(XRCID("ID_SFTP_CONNECT"),
-                       _("Disconnected. Click to connect"),
-                       images->Add("disconnected"),
-                       wxEmptyString,
-                       wxITEM_CHECK);
-#if !wxUSE_NATIVE_TOOLBAR
-    m_toolbar->AddTool(XRCID("ID_ADD_BOOKMARK"), _("Add Bookmark"), images->Add("bookmark"), "", wxITEM_DROPDOWN);
-#endif
-    m_toolbar->AddTool(XRCID("ID_SSH_OPEN_TERMINAL"), _("Open Terminal"), images->Add("console"), "", wxITEM_DROPDOWN);
-    m_toolbar->Realize();
+    auto images = clGetManager()->GetStdIcons();
+    m_auibar->AddTool(XRCID("ID_OPEN_ACCOUNT_MANAGER"),
+                      _("Open account manager..."),
+                      images->LoadBitmap("user"),
+                      _("Open account manager..."));
+    m_auibar->AddTool(XRCID("ID_SFTP_CONNECT"),
+                      _("Disconnected. Click to connect"),
+                      images->LoadBitmap("disconnected"),
+                      wxEmptyString,
+                      wxITEM_CHECK);
+    m_auibar->AddTool(XRCID("ID_SFTP_GOTO"), _("Goto Folder"), images->LoadBitmap("forward"), _("Goto Folder"));
+    m_auibar->AddTool(
+        XRCID("ID_SSH_OPEN_TERMINAL"), _("Open Terminal"), images->LoadBitmap("console"), "", wxITEM_DROPDOWN);
+    m_auibar->Realize();
 
     // Bind the toolbar events
-    m_toolbar->Bind(wxEVT_TOOL, &SFTPTreeView::OnOpenAccountManager, this, XRCID("ID_OPEN_ACCOUNT_MANAGER"));
-    m_toolbar->Bind(wxEVT_TOOL, &SFTPTreeView::OnConnection, this, XRCID("ID_SFTP_CONNECT"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPTreeView::OnConnectionUI, this, XRCID("ID_SFTP_CONNECT"));
-#if !wxUSE_NATIVE_TOOLBAR
-    m_toolbar->Bind(wxEVT_TOOL, &SFTPTreeView::OnAddBookmark, this, XRCID("ID_ADD_BOOKMARK"));
-#endif
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPTreeView::OnAddBookmarkUI, this, XRCID("ID_ADD_BOOKMARK"));
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &SFTPTreeView::OnAddBookmarkMenu, this, XRCID("ID_ADD_BOOKMARK"));
-    m_toolbar->Bind(wxEVT_TOOL, &SFTPTreeView::OnOpenTerminal, this, XRCID("ID_SSH_OPEN_TERMINAL"));
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &SFTPTreeView::OnOpenTerminalMenu, this, XRCID("ID_SSH_OPEN_TERMINAL"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPTreeView::OnOpenTerminalUI, this, XRCID("ID_SSH_OPEN_TERMINAL"));
+    m_auibar->Bind(wxEVT_TOOL, &SFTPTreeView::OnOpenAccountManager, this, XRCID("ID_OPEN_ACCOUNT_MANAGER"));
+    m_auibar->Bind(wxEVT_TOOL, &SFTPTreeView::OnConnection, this, XRCID("ID_SFTP_CONNECT"));
+    m_auibar->Bind(wxEVT_TOOL, &SFTPTreeView::OnGotoLocation, this, XRCID("ID_SFTP_GOTO"));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &SFTPTreeView::OnConnectionUI, this, XRCID("ID_SFTP_CONNECT"));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &SFTPTreeView::OnGotoLocationUI, this, XRCID("ID_SFTP_GOTO"));
 }
 
 SFTPTreeView::~SFTPTreeView()
 {
-    wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnCopy, this, wxID_COPY);
-    wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnCut, this, wxID_CUT);
-    wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnPaste, this, wxID_PASTE);
-    wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnSelectAll, this, wxID_SELECTALL);
-    wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnUndo, this, wxID_UNDO);
-    wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnRedo, this, wxID_REDO);
-
     m_timer->Stop();
     Unbind(wxEVT_TIMER, &SFTPTreeView::OnKeepAliveTimer, this, m_timer->GetId());
     wxDELETE(m_timer);
@@ -133,6 +103,7 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
 
 void SFTPTreeView::OnOpenAccountManager(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
     SSHAccountManagerDlg dlg(EventNotifier::Get()->TopFrame());
     dlg.ShowModal();
 }
@@ -146,56 +117,12 @@ void SFTPTreeView::DoCloseSession()
 
 void SFTPTreeView::OnDisconnectUI(wxUpdateUIEvent& event) { event.Enable(m_view->IsConnected()); }
 
-void SFTPTreeView::OnAddBookmarkMenu(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-#if !wxUSE_NATIVE_TOOLBAR
-    // Show the menu
-    const wxArrayString& bookmarks = m_account.GetBookmarks();
-    wxMenu menu;
-    for (size_t i = 0; i < bookmarks.GetCount(); ++i) {
-        if (!bookmarks[i].empty()) {
-            menu.Append(ID_SFTP_BOOKMARK_FIRST + i, bookmarks.Item(i));
-        }
-    }
-    menu.AppendSeparator();
-    menu.Append(ID_SFTP_BOOKMARK_SETTINGS, _("Manage bookmarks..."));
-    int sel = m_toolbar->GetMenuSelectionFromUser(XRCID("ID_ADD_BOOKMARK"), &menu);
-    if ((sel >= ID_SFTP_BOOKMARK_FIRST) && (sel <= ID_SFTP_BOOKMARK_LAST)) {
-        // A bookmark was selected
-        CallAfter(&SFTPTreeView::DoChangeLocation, bookmarks.Item(sel - ID_SFTP_BOOKMARK_FIRST));
-
-    } else if (sel == ID_SFTP_BOOKMARK_SETTINGS) {
-        // Bookmark settings
-        CallAfter(&SFTPTreeView::ManageBookmarks);
-    }
-#endif
-}
-
-void SFTPTreeView::OnAddBookmark(wxCommandEvent& event)
-{
-    try {
-        // sanity
-        if (!m_view->IsConnected())
-            return;
-
-        wxString path = m_view->GetSelectedFolder();
-        m_account.AddBookmark(path);
-        SFTPSettings settings;
-        settings.Load();
-        settings.UpdateAccount(m_account);
-        settings.Save();
-
-    } catch (const clException& e) {
-        ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);
-    }
-}
-
-void SFTPTreeView::OnAddBookmarkUI(wxUpdateUIEvent& event) { event.Enable(m_view->IsConnected()); }
 void SFTPTreeView::OnGotoLocation(wxCommandEvent& event)
 {
-    // check that the target folder exists
-    m_view->SetNewRoot(m_textCtrlQuickJump->GetValue());
+    wxString path = ::wxGetTextFromUser(_("Goto Location:"), "CodeLite");
+    if (path.empty())
+        return;
+    DoChangeLocation(path);
 }
 
 void SFTPTreeView::OnGotoLocationUI(wxUpdateUIEvent& event) { event.Enable(m_view->IsConnected()); }
@@ -237,87 +164,6 @@ void SFTPTreeView::DoOpenSession()
     // CallAfter(&SFTPTreeView::DoLoadSession);
 }
 
-void SFTPTreeView::OnCopy(wxCommandEvent& event)
-{
-    event.Skip();
-    if (m_textCtrlQuickJump->HasFocus()) {
-        event.Skip(false);
-    }
-}
-
-void SFTPTreeView::OnPaste(wxCommandEvent& event)
-{
-    event.Skip();
-    if (m_textCtrlQuickJump->HasFocus()) {
-        event.Skip(false);
-        m_textCtrlQuickJump->Paste();
-    }
-}
-
-void SFTPTreeView::OnRedo(wxCommandEvent& event)
-{
-    event.Skip();
-    if (m_textCtrlQuickJump->HasFocus()) {
-        event.Skip(false);
-        m_textCtrlQuickJump->Redo();
-    }
-}
-
-void SFTPTreeView::OnSelectAll(wxCommandEvent& event)
-{
-    event.Skip();
-    if (m_textCtrlQuickJump->HasFocus()) {
-        event.Skip(false);
-        m_textCtrlQuickJump->SelectAll();
-    }
-}
-
-void SFTPTreeView::OnUndo(wxCommandEvent& event)
-{
-    event.Skip();
-    if (m_textCtrlQuickJump->HasFocus()) {
-        event.Skip(false);
-        m_textCtrlQuickJump->Undo();
-    }
-}
-
-void SFTPTreeView::OnCut(wxCommandEvent& event)
-{
-    event.Skip();
-    if (m_textCtrlQuickJump->HasFocus()) {
-        event.Skip(false);
-        m_textCtrlQuickJump->Cut();
-    }
-}
-
-void SFTPTreeView::OnOpenTerminalMenu(wxCommandEvent& event)
-{
-    wxMenu menu;
-    menu.Append(wxID_PREFERENCES);
-    menu.Bind(wxEVT_MENU, &SFTPTreeView::OnSftpSettings, this, wxID_PREFERENCES);
-    m_toolbar->ShowMenuForButton(XRCID("ID_SSH_OPEN_TERMINAL"), &menu);
-}
-
-void SFTPTreeView::OnOpenTerminal(wxCommandEvent& event)
-{
-    // Open terminal to the selected account
-    SSHAccountInfo account;
-    if (!GetAccountFromUser(account)) {
-        return;
-    }
-
-    wxString connectString;
-    connectString << account.GetUsername() << "@" << account.GetHost();
-
-    SFTPSettings settings;
-    settings.Load();
-
-    const wxString& sshClient = settings.GetSshClient();
-    FileUtils::OpenSSHTerminal(sshClient, connectString, account.GetPassword(), account.GetPort());
-}
-
-void SFTPTreeView::OnOpenTerminalUI(wxUpdateUIEvent& event) { event.Enable(true); }
-
 void SFTPTreeView::OnSftpSettings(wxCommandEvent& event)
 {
     // Show the SFTP settings dialog
@@ -337,106 +183,5 @@ bool SFTPTreeView::GetAccountFromUser(SSHAccountInfo& account)
     return true;
 }
 
-// SFTPSessionInfo& SFTPTreeView::GetSession(bool createIfMissing)
-//{
-//    SFTPSessionInfo& sess = m_sessions.GetSession(m_account.GetAccountName());
-//    if(!sess.IsOk() && createIfMissing) {
-//        SFTPSessionInfo s;
-//        s.SetAccount(m_account.GetAccountName());
-//        m_sessions.SetSession(s).Save();
-//        return m_sessions.GetSession(m_account.GetAccountName());
-//    }
-//    return sess;
-//}
-
-// void SFTPTreeView::DoLoadSession()
-//{
-//    // Now that we have successfully opened the connection, try to load the last saved session for this account
-//    const SFTPSessionInfo& sess = GetSession(true);
-//    if(sess.IsOk()) {
-//        wxString msg;
-//        msg << _("Would you like to load the saved session for this account?");
-//        wxStandardID ans = ::PromptForYesNoCancelDialogWithCheckbox(msg, "sftp-load-session-dlg");
-//        if(ans == wxID_YES) {
-//            // we have a session for this account, load it
-//            // Load the files
-//            const std::vector<wxString>& files = sess.GetFiles();
-//            for (const wxString& path : files) { DoOpenFile(path); }
-//
-//            const wxString& rootFolder = sess.GetRootFolder();
-//            if(!rootFolder.IsEmpty()) {
-//                m_textCtrlQuickJump->ChangeValue(rootFolder);
-//                CallAfter(&SFTPTreeView::DoBuildTree, rootFolder);
-//            }
-//        }
-//    }
-//}
-
-// void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
-//{
-//    if(!m_sftp || !m_sftp->GetSsh()) {
-//        return;
-//    }
-//
-//    wxArrayTreeItemIds items;
-//    m_treeCtrl->GetSelections(items);
-//    if(items.GetCount() != 1) {
-//        return;
-//    }
-//    clRemoteDirCtrlItemData* cd = GetItemData(items.Item(0));
-//    if(!cd || !cd->IsFolder()) {
-//        return;
-//    }
-//
-//    wxString remoteFolder = cd->GetFullPath();
-//
-//    SFTPGrep grep(EventNotifier::Get()->TopFrame());
-//    if(grep.ShowModal() != wxID_OK) {
-//        return;
-//    }
-//
-//    try {
-//        if(m_channel && m_channel->IsOpen()) {
-//            m_channel->Close();
-//        }
-//        m_channel.reset(new clSSHChannel(m_sftp->GetSsh(), clSSHChannel::kRemoteCommand, m_plugin->GetOutputPane()));
-//        m_channel->Open();
-//
-//        // Prepare the UI for new search
-//        m_plugin->GetOutputPane()->ClearSearchOutput();
-//        m_plugin->GetOutputPane()->ShowSearchTab();
-//        clGetManager()->ShowOutputPane(_("SFTP Log"));
-//
-//        // Run the search
-//        GrepData gd = grep.GetData();
-//        wxString command = gd.GetGrepCommand(remoteFolder);
-//        m_plugin->GetOutputPane()->AddSearchText(wxString() << "Running command: " << command);
-//        m_channel->Execute(command);
-//
-//    } catch (const clException& e) {
-//        ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);
-//    }
-//}
-
-void SFTPTreeView::OnKeepAliveTimer(wxTimerEvent& event)
-{
-    //    wxUnusedVar(event);
-    //    if(IsConnected()) {
-    //        // Perform a minimal operation to keep our session alive
-    //        try {
-    //            m_sftp->Stat(".");
-    //            clDEBUG1() << "SFTP: Heartbeat successfully sent!";
-    //        } catch (const clException& e) {
-    //            clGetManager()->SetStatusMessage(_("SFTP: session closed by the server"));
-    //        }
-    //    }
-    event.Skip();
-}
-
-void SFTPTreeView::OnFindOutput(clCommandEvent& event) {}
-
-void SFTPTreeView::OnFindFinished(clCommandEvent& event) {}
-
-void SFTPTreeView::OnFindError(clCommandEvent& event) {}
-
+void SFTPTreeView::OnKeepAliveTimer(wxTimerEvent& event) { event.Skip(); }
 void SFTPTreeView::DoChangeLocation(const wxString& path) { m_view->SetNewRoot(path); }

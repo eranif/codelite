@@ -54,7 +54,7 @@ public:
     const wxString& GetAccountName() const { return m_accountName; }
     void SetHost(const wxString& host) { this->m_host = host; }
     void SetPassword(const wxString& password) { this->m_password = password; }
-    void SetPort(int port) { this->m_port = port; }
+    void SetPortNumber(int port) { this->m_port = port; }
     void SetUsername(const wxString& username) { this->m_username = username; }
     const wxString& GetHost() const { return m_host; }
     const wxString& GetPassword() const { return m_password; }

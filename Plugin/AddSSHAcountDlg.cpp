@@ -79,7 +79,7 @@ void AddSSHAcountDlg::GetAccountInfo(SSHAccountInfo& info)
 
     long port = 22;
     m_textCtrlPort->GetValue().ToCLong(&port);
-    info.SetPort(port);
+    info.SetPortNumber(port);
     info.SetUsername(m_textCtrlUsername->GetValue());
     info.SetAccountName(m_textCtrlName->GetValue());
     info.SetDefaultFolder(m_textCtrlHomeFolder->GetValue());
@@ -122,7 +122,9 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
     }
 }
 void AddSSHAcountDlg::OnTestConnectionUI(wxUpdateUIEvent& event)
-{ event.Enable(!m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty()); }
+{
+    event.Enable(!m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty());
+}
 
 void AddSSHAcountDlg::OnHomeFolderUpdated(wxCommandEvent& event)
 {

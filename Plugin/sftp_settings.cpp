@@ -138,7 +138,7 @@ void SFTPSettings::MSWImportPuTTYAccounts()
                         SSHAccountInfo acc;
                         acc.SetAccountName(StringUtils::DecodeURI(strKeyName));
                         acc.SetHost(hostname);
-                        acc.SetPort(port);
+                        acc.SetPortNumber(port);
                         acc.SetUsername(username);
                         puttyAccounts.push_back(acc);
                     }
@@ -173,7 +173,7 @@ void SFTPSettings::MSWImportPuTTYAccounts()
                         SSHAccountInfo acc;
                         acc.SetAccountName(StringUtils::DecodeURI(strKeyName));
                         acc.SetHost(hostname);
-                        acc.SetPort(port);
+                        acc.SetPortNumber(port);
                         acc.SetUsername(username);
                         puttyAccounts.push_back(acc);
                     }

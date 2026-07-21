@@ -31,49 +31,27 @@ SFTPQuickConnectDlg::SFTPQuickConnectDlg(wxWindow* parent)
         m_choiceAccount->SetSelection(where);
     }
 
-    m_checkBoxChooseAccount->SetValue(selecteExistingAccount);
-    m_checkBoxQuickConnect->SetValue(!selecteExistingAccount);
     m_textCtrlHost->ChangeValue(host);
     m_textCtrlUsername->ChangeValue(user);
     m_textCtrlPort->ChangeValue(port);
-    WindowAttrManager::Load(this);
+    CenterOnParent();
 }
 
 SFTPQuickConnectDlg::~SFTPQuickConnectDlg()
 {
-    clConfig::Get().Write("SFTPQuickConnect/ChooseExistingAccount", m_checkBoxChooseAccount->IsChecked());
     clConfig::Get().Write("SFTPQuickConnect/SelectedAccount", m_choiceAccount->GetStringSelection());
     clConfig::Get().Write("SFTPQuickConnect/Host", m_textCtrlHost->GetValue());
     clConfig::Get().Write("SFTPQuickConnect/User", m_textCtrlUsername->GetValue());
     clConfig::Get().Write("SFTPQuickConnect/Port", m_textCtrlPort->GetValue());
 }
 
-void SFTPQuickConnectDlg::OnCheckboxChooseAccount(wxCommandEvent& event)
-{
-    m_checkBoxQuickConnect->SetValue(!event.IsChecked());
-}
-
-void SFTPQuickConnectDlg::OnChooseAccountUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxChooseAccount->IsChecked());
-}
-
-void SFTPQuickConnectDlg::OnOKUI(wxUpdateUIEvent& event) {}
-
-void SFTPQuickConnectDlg::OnQuickConnect(wxCommandEvent& event)
-{
-    m_checkBoxChooseAccount->SetValue(!event.IsChecked());
-}
-
-void SFTPQuickConnectDlg::OnQuickConnectUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxQuickConnect->IsChecked());
-}
+void SFTPQuickConnectDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(GetSelectedAccount().IsOk()); }
 
 SSHAccountInfo SFTPQuickConnectDlg::GetSelectedAccount() const
 {
     SSHAccountInfo acc;
-    if (m_checkBoxChooseAccount->IsChecked()) {
+    if (m_notebook->GetSelection() == 0) {
+        // Connect by account name
         SFTPSettings settings;
         settings.Load();
         settings.GetAccount(m_choiceAccount->GetStringSelection(), acc);
@@ -83,11 +61,17 @@ SSHAccountInfo SFTPQuickConnectDlg::GetSelectedAccount() const
         acc.SetAccountName(wxString() << m_textCtrlUsername->GetValue() << "@" << m_textCtrlHost->GetValue());
         acc.SetPassword(m_textCtrlPassword->GetValue());
         acc.SetHost(m_textCtrlHost->GetValue());
-        long nPort = 22; // Default is 22
+        long nPort{22}; // Default is 22
         if (!m_textCtrlPort->GetValue().ToCLong(&nPort)) {
             nPort = 22;
         }
-        acc.SetPort(nPort);
+        acc.SetPortNumber(nPort);
     }
     return acc;
+}
+
+void SFTPQuickConnectDlg::OnPageChanged(wxNotebookEvent& event)
+{
+    event.Skip();
+    GetSizer()->Fit(this);
 }

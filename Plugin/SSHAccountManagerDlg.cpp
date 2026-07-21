@@ -46,6 +46,10 @@ SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
     }
     SetName("SSHAccountManagerDlg");
     ::clSetDialogBestSizeAndPosition(*this);
+    if (m_dvListCtrl->GetItemCount() > 0) {
+        m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
+        m_dvListCtrl->CallAfter(&wxWindow::SetFocus);
+    }
 }
 
 SSHAccountManagerDlg::~SSHAccountManagerDlg()
@@ -116,10 +120,14 @@ SSHAccountInfo::Vect_t SSHAccountManagerDlg::GetAccounts() const
 }
 
 void SSHAccountManagerDlg::OnDeleteAccountUI(wxUpdateUIEvent& event)
-{ event.Enable(m_dvListCtrl->GetSelectedItemsCount()); }
+{
+    event.Enable(m_dvListCtrl->GetSelectedItemsCount());
+}
 
 void SSHAccountManagerDlg::OnEditAccountUI(wxUpdateUIEvent& event)
-{ event.Enable(m_dvListCtrl->GetSelectedItemsCount()); }
+{
+    event.Enable(m_dvListCtrl->GetSelectedItemsCount());
+}
 
 void SSHAccountManagerDlg::OnItemActivated(wxDataViewEvent& event) { DoEditAccount(event.GetItem()); }
 

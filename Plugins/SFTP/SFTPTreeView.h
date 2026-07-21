@@ -28,15 +28,10 @@
 
 #include "SFTPSessionInfo.h"
 #include "UI.hpp"
-#include "bitmap_loader.h"
 #include "clRemoteDirCtrl.hpp"
-#include "clSSHChannel.hpp"
 #include "cl_command_event.h"
-#include "sftp_item_comparator.hpp"
-#include "ssh/cl_sftp.h"
 #include "ssh/ssh_account_info.h"
 
-#include <vector>
 #include <wx/timer.h>
 
 class SFTP;
@@ -63,47 +58,25 @@ public:
 
 protected:
     void OnSftpSettings(wxCommandEvent& event);
-    void OnOpenTerminal(wxCommandEvent& event);
-    void OnOpenTerminalMenu(wxCommandEvent& event);
-    void OnOpenTerminalUI(wxUpdateUIEvent& event);
     void OnConnection(wxCommandEvent& event);
     void OnConnectionUI(wxUpdateUIEvent& event);
     void OnChoiceAccount(wxCommandEvent& event);
     void OnChoiceAccountUI(wxUpdateUIEvent& event);
     void OnGotoLocation(wxCommandEvent& event);
     void OnGotoLocationUI(wxUpdateUIEvent& event);
-    void OnAddBookmark(wxCommandEvent& event);
-    void OnAddBookmarkMenu(wxCommandEvent& event);
-    void OnAddBookmarkUI(wxUpdateUIEvent& event);
     void OnDisconnect(wxCommandEvent& event);
     void OnDisconnectUI(wxUpdateUIEvent& event);
     void OnConnect(wxCommandEvent& event);
     void OnKeepAliveTimer(wxTimerEvent& event);
-
-    // Edit events
-    void OnCopy(wxCommandEvent& event);
-    void OnCut(wxCommandEvent& event);
-    void OnPaste(wxCommandEvent& event);
-    void OnSelectAll(wxCommandEvent& event);
-    void OnUndo(wxCommandEvent& event);
-    void OnRedo(wxCommandEvent& event);
-
-    // Find events
-    void OnFindOutput(clCommandEvent& event);
-    void OnFindFinished(clCommandEvent& event);
-    void OnFindError(clCommandEvent& event);
 
     void DoCloseSession();
     void DoOpenSession();
     void DoBuildTree(const wxString& initialFolder);
     void ManageBookmarks();
     void DoChangeLocation(const wxString& path);
-
     bool GetAccountFromUser(SSHAccountInfo& account);
-    //    SFTPSessionInfo& GetSession(bool createIfMissing);
-    //    void DoLoadSession();
 
 protected:
-    virtual void OnOpenAccountManager(wxCommandEvent& event);
+    void OnOpenAccountManager(wxCommandEvent& event);
 };
 #endif // SFTPTREEVIEW_H

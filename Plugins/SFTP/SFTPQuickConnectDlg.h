@@ -1,5 +1,4 @@
-#ifndef SFTPQUICKCONNECTDLG_H
-#define SFTPQUICKCONNECTDLG_H
+#pragma once
 
 // clang-format off
 #include <wx/wx.h>
@@ -16,10 +15,6 @@ public:
     SSHAccountInfo GetSelectedAccount() const;
 
 protected:
-    virtual void OnCheckboxChooseAccount(wxCommandEvent& event);
-    virtual void OnChooseAccountUI(wxUpdateUIEvent& event);
-    virtual void OnOKUI(wxUpdateUIEvent& event);
-    virtual void OnQuickConnect(wxCommandEvent& event);
-    virtual void OnQuickConnectUI(wxUpdateUIEvent& event);
+    void OnPageChanged(wxNotebookEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
 };
-#endif // SFTPQUICKCONNECTDLG_H

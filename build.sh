@@ -1,7 +1,9 @@
 #!/bin/bash -e
 
 ROOT_DIR=$(dirname $(readlink -f $0))
-BUILD_DIR=${ROOT_DIR}/.build-release
+BUILD_TARGET=Release
+BUILD_DIR_NAME=.build-release
+BUILD_DIR=${ROOT_DIR}/${BUILD_DIR_NAME}
 OS_NAME="$(uname -s)"
 
 . ${ROOT_DIR}/scripts/functions.rc
@@ -84,7 +86,7 @@ function install_wx_config_MSW() {
   cd $_
   git clone --depth 1 https://github.com/eranif/wx-config-msys2.git
   cd wx-config-msys2
-  mkdir .build-release
+  mkdir ${BUILD_DIR_NAME}
   cd $_
   cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX="${wx_config_install_dir}"
   mingw32-make -j$(nproc) install
@@ -106,8 +108,8 @@ function build_wx_widgets_Linux() {
   git clone --depth 1 https://github.com/wxWidgets/wxWidgets.git
   cd wxWidgets
   git submodule update --init --depth 1
-  mkdir .build-release
-  cd .build-release
+  mkdir ${BUILD_DIR_NAME}
+  cd ${BUILD_DIR_NAME}
   ../configure --disable-debug_flag --with-gtk=3 --enable-stl --prefix=${wx_install_dir}
   make -j$(nproc) install
   export PATH="${wx_install_dir}/bin":$PATH
@@ -129,8 +131,8 @@ function build_wx_widgets_macOS() {
   git clone --depth 1 https://github.com/wxWidgets/wxWidgets.git
   cd wxWidgets
   git submodule update --init --depth 1
-  mkdir .build-release
-  cd .build-release
+  mkdir ${BUILD_DIR_NAME}
+  cd ${BUILD_DIR_NAME}
   cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DwxBUILD_DEBUG_LEVEL=0 \
     -DwxBUILD_MONOLITHIC=1 \
@@ -158,8 +160,8 @@ function build_wx_widgets_MSW() {
   git clone --depth 1 https://github.com/wxWidgets/wxWidgets.git
   cd wxWidgets
   git submodule update --init --depth 1
-  mkdir .build-release
-  cd .build-release
+  mkdir ${BUILD_DIR_NAME}
+  cd ${BUILD_DIR_NAME}
   cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
     -DwxBUILD_DEBUG_LEVEL=0 \
     -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=OFF -DwxUSE_STL=ON \
@@ -182,13 +184,13 @@ function build_CodeLite_Linux() {
   fi
   INFO "Using local wx-config: ${wx_config}"
 
-  local CodeLite_build_dir=${ROOT_DIR}/.build-release
+  local CodeLite_build_dir=${ROOT_DIR}/${BUILD_DIR_NAME}
   mkdir -p ${CodeLite_build_dir}
   cd ${CodeLite_build_dir}
   if [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] ||
     [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ]; then
     INFO "Configuring CodeLite"
-    cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 \
+    cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 \
       -DWITH_WX_CONFIG=${wx_config}
   else
     INFO "CodeLite already configured; skipping cmake"
@@ -215,7 +217,7 @@ function build_CodeLite_macOS() {
   fi
   INFO "Using local wx-config: ${wx_config}"
 
-  local CodeLite_build_dir=${ROOT_DIR}/.build-release
+  local CodeLite_build_dir=${ROOT_DIR}/${BUILD_DIR_NAME}
   mkdir -p ${CodeLite_build_dir}
   cd ${CodeLite_build_dir}
   # Configure if the build tree has not been generated yet, or if
@@ -224,7 +226,7 @@ function build_CodeLite_macOS() {
     [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ] ||
     ! grep -q "^CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOS_DEPLOYMENT_TARGET}$" "${CodeLite_build_dir}/CMakeCache.txt"; then
     INFO "Configuring CodeLite"
-    cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=Release \
+    cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET} \
       -DwxWidgets_CONFIG_EXECUTABLE=${wx_config}
   else
@@ -243,7 +245,7 @@ function build_CodeLite_macOS() {
 
 function build_CodeLite_MSW() {
   INFO "Building CodeLite"
-  local CodeLite_build_dir=${ROOT_DIR}/.build-release
+  local CodeLite_build_dir=${ROOT_DIR}/${BUILD_DIR_NAME}
   mkdir -p ${CodeLite_build_dir}
   cd ${CodeLite_build_dir}
   # Configure if the build tree has not been generated yet, or if
@@ -252,7 +254,7 @@ function build_CodeLite_MSW() {
     [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ]; then
     INFO "Configuring CodeLite"
     rm -f ${CodeLite_build_dir}/CMakeCache.txt
-    cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=Release -DWXWIN="${BUILD_DIR}/wxWidgets-install"
+    cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DWXWIN="${BUILD_DIR}/wxWidgets-install"
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
@@ -288,7 +290,8 @@ function usage() {
   echo "Usage: $(basename $0) [target]"
   echo ""
   echo "Targets:"
-  echo "  (none)      Build CodeLite (default)"
+  echo "  (none)      Build CodeLite (default, release mode)"
+  echo "  debug       Build CodeLite (debug mode)"
   echo "  clean       Remove build artifacts (make clean)"
   echo "  distclean   Remove the entire build directory"
   echo "  package     Create an installer suitable for the current platform"
@@ -357,6 +360,12 @@ package)
 -h | --help)
   usage
   exit 0
+  ;;
+debug)
+  BUILD_TARGET=Debug
+  BUILD_DIR_NAME=.build-debug
+  BUILD_DIR=${ROOT_DIR}/${BUILD_DIR_NAME}
+  INFO "Building CodeLite in DEBUG mode"
   ;;
 "") ;;
 *)

@@ -181,8 +181,7 @@ void clRemoteDirCtrl::DoExpandItem(const wxDataViewItem& item)
     }
 
     // remove the fake item "dummy" and trigger a list
-    wxDataViewItem dummyItem = m_treeCtrl->GetNthChild(item, 0);
-    m_treeCtrl->DeleteItem(dummyItem);
+    m_treeCtrl->DeleteChildren(item);
 
     auto OnList = [cd, item, bc = std::move(bc), this](clStatusOr<SFTPAttribute::List_t> res) {
         if (!res) {

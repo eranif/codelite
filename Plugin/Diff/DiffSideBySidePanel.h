@@ -27,10 +27,10 @@
 #define DIFFSIDEBYSIDEPANEL_H
 
 #include "DiffConfig.h"
+#include "DiffUI.hpp"
 #include "clDTL.h"
 #include "clPluginsFindBar.h"
 #include "clToolBar.h"
-#include "wxcrafter_plugin.h"
 
 #include <vector>
 #include <wx/filename.h>

@@ -17,11 +17,9 @@
 #include <wx/sizer.h>
 #include <wx/stc/stc.h>
 #include <wx/button.h>
-#include <wx/panel.h>
-#include <wx/splitter.h>
-#include "clThemedSplitterWindow.h"
-#include <wx/textctrl.h>
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/panel.h>
 #include <wx/dataview.h>
 #include "clFileViwerTreeCtrl.h"
 #include "clThemedListCtrl.h"
@@ -64,55 +62,6 @@ public:
     wxButton* GetButton8() { return m_button8; }
     EditDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Text"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~EditDlgBase();
-};
-
-
-class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxControl
-{
-protected:
-    clThemedSplitterWindow* m_splitter;
-    wxPanel* m_splitterPageLeft;
-    wxTextCtrl* m_textCtrlLeftFile;
-    wxButton* m_button290;
-    wxStyledTextCtrl* m_stcLeft;
-    wxPanel* m_panelOverviewL;
-    wxStaticText* m_staticTextLeft;
-    wxPanel* m_splitterPageRight;
-    wxTextCtrl* m_textCtrlRightFile;
-    wxButton* m_button294;
-    wxStyledTextCtrl* m_stcRight;
-    wxPanel* m_panelOverviewR;
-    wxStaticText* m_staticTextRight;
-    wxPanel* m_panelOverviewFull;
-
-protected:
-    virtual void OnLeftPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnBrowseLeftFile(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
-    virtual void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnPaneloverviewEraseBackground(wxEraseEvent& event) { event.Skip(); }
-    virtual void OnPaneloverviewLeftDown(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnRightPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnBrowseRightFile(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
-
-public:
-    wxTextCtrl* GetTextCtrlLeftFile() { return m_textCtrlLeftFile; }
-    wxButton* GetButton290() { return m_button290; }
-    wxStyledTextCtrl* GetStcLeft() { return m_stcLeft; }
-    wxPanel* GetPanelOverviewL() { return m_panelOverviewL; }
-    wxStaticText* GetStaticTextLeft() { return m_staticTextLeft; }
-    wxPanel* GetSplitterPageLeft() { return m_splitterPageLeft; }
-    wxTextCtrl* GetTextCtrlRightFile() { return m_textCtrlRightFile; }
-    wxButton* GetButton294() { return m_button294; }
-    wxStyledTextCtrl* GetStcRight() { return m_stcRight; }
-    wxPanel* GetPanelOverviewR() { return m_panelOverviewR; }
-    wxStaticText* GetStaticTextRight() { return m_staticTextRight; }
-    wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }
-    clThemedSplitterWindow* GetSplitter() { return m_splitter; }
-    wxPanel* GetPanelOverviewFull() { return m_panelOverviewFull; }
-    DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL|wxBORDER_NONE);
-    virtual ~DiffSideBySidePanelBase();
 };
 
 

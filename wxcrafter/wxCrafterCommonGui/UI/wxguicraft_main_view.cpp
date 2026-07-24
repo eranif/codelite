@@ -2442,11 +2442,6 @@ void GUICraftMainPanel::OnRibbonPageSelected(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnCut(wxCommandEvent& e)
 {
-    if (!m_plugin->IsMainViewActive()) {
-        e.Skip(); // This event is nothing to do with us
-        return;
-    }
-
     if (!IsTreeViewSelected()) {
         e.Skip(); // The treeview isn't selected, so don't cut its selection!
         return;
@@ -2486,11 +2481,6 @@ void GUICraftMainPanel::OnCut(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnCopy(wxCommandEvent& e)
 {
-    if (!m_plugin->IsMainViewActive()) {
-        e.Skip(); // This event is nothing to do with us
-        return;
-    }
-
     if (!IsTreeViewSelected()) {
         e.Skip(); // The treeview isn't selected, so don't copy its selection unnecessarily
         return;
@@ -2511,11 +2501,6 @@ void GUICraftMainPanel::OnCopy(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
 {
-    if (!m_plugin->IsMainViewActive()) {
-        e.Skip(); // This event is nothing to do with us
-        return;
-    }
-
     if (!IsTreeViewSelected()) {
         e.Skip(); // The treeview isn't selected, so don't make an unintended paste into it
         return;

@@ -1663,7 +1663,7 @@
             {
               "type": "string",
               "m_label": "Name:",
-              "m_value": "boxSizer131"
+              "m_value": "boxSizer"
             },
             {
               "type": "string",
@@ -1706,7 +1706,7 @@
                 {
                   "type": "string",
                   "m_label": "Name:",
-                  "m_value": "boxSizer3142"
+                  "m_value": "boxSizer1"
                 },
                 {
                   "type": "string",
@@ -1768,7 +1768,7 @@
                     {
                       "type": "string",
                       "m_label": "Name:",
-                      "m_value": "m_splitter3"
+                      "m_value": "m_splitter"
                     },
                     {
                       "type": "multi-string",
@@ -1882,7 +1882,7 @@
                         {
                           "type": "string",
                           "m_label": "Name:",
-                          "m_value": "m_splitterPageLeft4"
+                          "m_value": "m_splitterPageLeft"
                         },
                         {
                           "type": "multi-string",
@@ -1961,7 +1961,7 @@
                             {
                               "type": "string",
                               "m_label": "Name:",
-                              "m_value": "boxSizer1115"
+                              "m_value": "boxSizer2"
                             },
                             {
                               "type": "string",
@@ -2004,7 +2004,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Name:",
-                                  "m_value": "boxSizer2856"
+                                  "m_value": "boxSizer3"
                                 },
                                 {
                                   "type": "string",
@@ -2062,7 +2062,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_textCtrlLeftFile7"
+                                      "m_value": "m_textCtrlLeftFile"
                                     },
                                     {
                                       "type": "multi-string",
@@ -2179,7 +2179,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_button2908"
+                                      "m_value": "m_buttonLeft"
                                     },
                                     {
                                       "type": "multi-string",
@@ -2287,7 +2287,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Name:",
-                                  "m_value": "boxSizer3109"
+                                  "m_value": "boxSizer4"
                                 },
                                 {
                                   "type": "string",
@@ -2347,7 +2347,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_stcLeft10"
+                                      "m_value": "m_stcLeft"
                                     },
                                     {
                                       "type": "multi-string",
@@ -2615,7 +2615,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_panelOverviewL11"
+                                      "m_value": "m_panelOverviewL"
                                     },
                                     {
                                       "type": "multi-string",
@@ -2711,7 +2711,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Name:",
-                                  "m_value": "m_staticTextLeft12"
+                                  "m_value": "m_staticTextLeft"
                                 },
                                 {
                                   "type": "multi-string",
@@ -2816,7 +2816,7 @@
                         {
                           "type": "string",
                           "m_label": "Name:",
-                          "m_value": "m_splitterPageRight13"
+                          "m_value": "m_splitterPageRight"
                         },
                         {
                           "type": "multi-string",
@@ -2895,7 +2895,7 @@
                             {
                               "type": "string",
                               "m_label": "Name:",
-                              "m_value": "boxSizer11314"
+                              "m_value": "boxSizer5"
                             },
                             {
                               "type": "string",
@@ -2938,7 +2938,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Name:",
-                                  "m_value": "boxSizer28615"
+                                  "m_value": "boxSizer6"
                                 },
                                 {
                                   "type": "string",
@@ -2996,7 +2996,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_textCtrlRightFile16"
+                                      "m_value": "m_textCtrlRightFile"
                                     },
                                     {
                                       "type": "multi-string",
@@ -3113,7 +3113,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_button29417"
+                                      "m_value": "m_buttonRight"
                                     },
                                     {
                                       "type": "multi-string",
@@ -3221,7 +3221,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Name:",
-                                  "m_value": "boxSizer30718"
+                                  "m_value": "boxSizer7"
                                 },
                                 {
                                   "type": "string",
@@ -3281,7 +3281,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_stcRight19"
+                                      "m_value": "m_stcRight"
                                     },
                                     {
                                       "type": "multi-string",
@@ -3549,7 +3549,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_panelOverviewR20"
+                                      "m_value": "m_panelOverviewR"
                                     },
                                     {
                                       "type": "multi-string",
@@ -3645,7 +3645,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Name:",
-                                  "m_value": "m_staticTextRight21"
+                                  "m_value": "m_staticTextRight"
                                 },
                                 {
                                   "type": "multi-string",
@@ -3753,7 +3753,7 @@
                     {
                       "type": "string",
                       "m_label": "Name:",
-                      "m_value": "m_panelOverviewFull22"
+                      "m_value": "m_panelOverviewFull"
                     },
                     {
                       "type": "multi-string",

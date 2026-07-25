@@ -1033,7 +1033,7 @@ void AdjustDataViewAlternateColour(wxDataViewCtrl* ctrl)
     wxColour baseColour = ctrl->GetBackgroundColour();
     bool is_dark = DrawingUtils::IsDark(baseColour);
     // Adjust Tree Control Alternate Row Color On Windows
-    ctrl->SetAlternateRowColour(ctrl->GetBackgroundColour().ChangeLightness(is_dark ? 103 : 97));
+    ctrl->SetAlternateRowColour(ctrl->GetBackgroundColour().ChangeLightness(is_dark ? 104 : 97));
     int rowHeight = ctrl->GetTextExtent("Tp").GetHeight();
     ctrl->SetRowHeight(wxMax(rowHeight, bmp.GetHeight()) + (2 * kHeightMargin));
 #else

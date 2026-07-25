@@ -25,9 +25,6 @@
 #ifndef __openwindowspanel__
 #define __openwindowspanel__
 
-#include "Notebook.h"
-#include "bitmap_loader.h"
-#include "clToolBar.h"
 #include "cl_command_event.h"
 #include "imanager.h"
 #include "openwindowspanelbase.hpp"
@@ -42,7 +39,6 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
     bool m_initDone;
     std::map<wxString, wxDataViewItem> m_editors;
     bool m_workspaceClosing;
-    clToolBarGeneric* m_toolbar;
     bool m_sortItems = false;
 
 protected:
@@ -57,7 +53,6 @@ protected:
     void DoMarkModify(IEditor* editor, const wxString& filename, bool b);
     wxVariant PrepareValue(const clTab& tab, bool* isModified);
     wxString GetDisplayName(const clTab& tab) const;
-    void MarkItemModified(const wxDataViewItem& item, bool b, bool saved_before);
     void OnThemeChanged(clCommandEvent& event);
 
 protected:

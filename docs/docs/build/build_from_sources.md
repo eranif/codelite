@@ -117,7 +117,7 @@ git submodule update --init --recursive
 ./build.sh
 ```
 
-You should now have an app bundle `$HOME/devl/codelite/build-release/codelite.app`
+You should now have an app bundle `$HOME/devl/codelite/.build-release/codelite.app`
 
 To launch CodeLite:
 

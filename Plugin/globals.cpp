@@ -1027,10 +1027,15 @@ bool IsShutdownInProgress() { return shutdown_flag.load(); }
 void AdjustDataViewAlternateColour(wxDataViewCtrl* ctrl)
 {
 #ifdef __WXMSW__
+    static constexpr size_t kHeightMargin = 2;
+    auto* bmps = clGetManager()->GetStdIcons();
+    const auto& bmp = bmps->LoadBitmap("folder-yellow-opened");
     wxColour baseColour = ctrl->GetBackgroundColour();
     bool is_dark = DrawingUtils::IsDark(baseColour);
     // Adjust Tree Control Alternate Row Color On Windows
     ctrl->SetAlternateRowColour(ctrl->GetBackgroundColour().ChangeLightness(is_dark ? 103 : 97));
+    int rowHeight = ctrl->GetTextExtent("Tp").GetHeight();
+    ctrl->SetRowHeight(wxMax(rowHeight, bmp.GetHeight()) + (2 * kHeightMargin));
 #else
     wxUnusedVar(ctrl);
 #endif

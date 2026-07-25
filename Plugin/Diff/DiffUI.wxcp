@@ -979,12 +979,12 @@
         {
           "type": "string",
           "m_label": "Inherited Class",
-          "m_value": "DiffFoldersDlg"
+          "m_value": "DiffFoldersFrame"
         },
         {
           "type": "string",
           "m_label": "File:",
-          "m_value": "DiffFoldersDlg"
+          "m_value": "DiffFoldersFrame"
         },
         {
           "type": "string",
@@ -1257,12 +1257,12 @@
                         {
                           "type": "string",
                           "m_label": "Class Name:",
-                          "m_value": "clToolBar"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
                           "m_label": "Include File:",
-                          "m_value": "clToolBar.h"
+                          "m_value": ""
                         },
                         {
                           "type": "string",

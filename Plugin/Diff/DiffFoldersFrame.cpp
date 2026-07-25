@@ -18,18 +18,15 @@ DiffFoldersFrame::DiffFoldersFrame(wxWindow* parent)
     : DiffFoldersBaseDlg(parent)
 {
     checksumThreadStop.store(false);
-    m_toolbar->SetMiniToolBar(false);
-
-    clBitmapList* images = new clBitmapList;
-    m_toolbar->AddTool(wxID_NEW, _("New comparison"), images->Add("file_new"));
-    m_toolbar->AddTool(wxID_CLOSE, _("Close"), images->Add("file_close"));
-    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), images->Add("file_reload"));
+    auto* images = clGetManager()->GetStdIcons();
+    m_toolbar->AddTool(wxID_NEW, _("New comparison"), images->LoadBitmap("file_new"));
+    m_toolbar->AddTool(wxID_CLOSE, _("Close"), images->LoadBitmap("file_close"));
+    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), images->LoadBitmap("file_reload"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(
-        XRCID("diff-intersection"), _("Show similar files only"), images->Add("intersection"), "", wxITEM_CHECK);
+        XRCID("diff-intersection"), _("Show similar files only"), images->LoadBitmap("intersection"), "", wxITEM_CHECK);
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("diff-up-folder"), _("Parent folder"), images->Add("up"));
-    m_toolbar->AssignBitmaps(images);
+    m_toolbar->AddTool(XRCID("diff-up-folder"), _("Parent folder"), images->LoadBitmap("up"));
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnNewComparison, this, wxID_NEW);
@@ -74,37 +71,31 @@ void DiffFoldersFrame::OnNewComparison(wxCommandEvent& event)
     }
 }
 
-#define CLOSE_FP(fp)      \
-    {                     \
-        if (fp) {         \
-            fclose(fp);   \
-            fp = nullptr; \
-        }                 \
-    }
-
 static bool CompareFilesCheckSum(const wxString& fn1, const wxString& fn2)
 {
-    // The sizes are the same
-    unsigned char checksum1 = 0;
-    unsigned char checksum2 = 0;
+    auto file_deleter = [](FILE* f) {
+        if (f)
+            fclose(f);
+    };
 
-    FILE* fp1 = fopen(fn1.mb_str(), "rb");
-    FILE* fp2 = fopen(fn2.mb_str(), "rb");
+    std::unique_ptr<FILE, decltype(file_deleter)> fp1(fopen(fn1.mb_str(), "rb"), file_deleter);
+    std::unique_ptr<FILE, decltype(file_deleter)> fp2(fopen(fn2.mb_str(), "rb"), file_deleter);
+
     if (!fp1 || !fp2) {
-        CLOSE_FP(fp1);
-        CLOSE_FP(fp2);
         return false;
     }
 
-    while (!feof(fp1) && !ferror(fp1) && !feof(fp2) && !ferror(fp2)) {
-        checksum1 ^= fgetc(fp1);
-        checksum2 ^= fgetc(fp2);
+    unsigned char checksum1 = 0;
+    unsigned char checksum2 = 0;
+
+    while (!feof(fp1.get()) && !ferror(fp1.get()) && !feof(fp2.get()) && !ferror(fp2.get())) {
+        checksum1 ^= fgetc(fp1.get());
+        checksum2 ^= fgetc(fp2.get());
         if (checksum1 != checksum2) {
             break;
         }
     }
-    CLOSE_FP(fp1);
-    CLOSE_FP(fp2);
+
     return (checksum1 == checksum2);
 }
 
@@ -360,7 +351,9 @@ void DiffFoldersFrame::OnRefresh(wxCommandEvent& event)
 }
 
 void DiffFoldersFrame::OnRefreshUI(wxUpdateUIEvent& event)
-{ event.Enable(!m_leftFolder.IsEmpty() && !m_rightFolder.IsEmpty()); }
+{
+    event.Enable(!m_leftFolder.IsEmpty() && !m_rightFolder.IsEmpty());
+}
 
 void DiffFoldersFrame::StopChecksumThread()
 {

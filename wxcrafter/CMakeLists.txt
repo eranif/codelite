@@ -55,39 +55,24 @@ endif()
 # ----------------------------------------------------------------------------
 # Source bucketing
 # ----------------------------------------------------------------------------
-# We have three target flavors that differ in one preprocessor symbol:
+# We have two gui-target flavors that differ in one preprocessor symbol:
 #
 # target            STANDALONE_BUILD
 # ----------------- ----------------
-# wxCrafterPlugin   undefined wxcrafter (exe)   1 wxcgen (exe)      unused
+# wxCrafterPlugin   undefined
+# wxcrafter (exe)   1
 #
 # Most TUs don't reference the macro; their object files are bit-identical
 # across all flavors and can be compiled once, into a shared static library.
 # Only a handful of TUs actually #if on the macro and must be compiled per
 # flavor.
-#
-# Bucket the files into: MACRO_SENSITIVE_GUI_ONLY_SRCS — TUs whose object code
-# depends on the define above. Compiled per target with the right define.
-# GUI_ONLY_SRCS        — TUs that pull GUI-only symbols (MainFrame, etc.). NOT
-# linked into wxcgen. COMMON_GUI_SRCS      — define-agnostic but GUI-coupled.
-# Compiled into wxCrafterCommonGui (linked by GUI targets only). COMMON_SRCS —
-# define-agnostic AND headless-safe. Compiled into wxCrafterCommon (linked by
-# all three targets).
 
 # The macro-sensitive GUI-only files.
 file(GLOB_RECURSE MACRO_SENSITIVE_GUI_ONLY_SRCS "SharedGui/*.cpp")
 
-set(TO_MIGRATE_UI_SRCS wxCrafterCommonGui/UI/wxguicraft_main_view.cpp)
-
 # Define-agnostic files GUI-only (COMMON_GUI_SRCS).
 
 file(GLOB_RECURSE COMMON_GUI_SRCS "wxCrafterCommonGui/*.cpp")
-
-foreach(f ${TO_MIGRATE_UI_SRCS})
-  set(absf "${CMAKE_CURRENT_LIST_DIR}/${f}")
-  list(REMOVE_ITEM COMMON_GUI_SRCS "${absf}")
-  list(APPEND MACRO_SENSITIVE_GUI_ONLY_SRCS "${absf}")
-endforeach()
 
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"

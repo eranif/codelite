@@ -89,6 +89,7 @@ public:
     void SaveProject() { m_treeView->SaveProject(); }
     void CloseProject(bool saveBeforeClose) { m_treeView->CloseProject(saveBeforeClose); }
 
+    IManager* GetManager() { return m_mgr; }
     GUICraftMainPanel* GetWxcView() { return m_wxcView; }
 
     void DisplayDesigner();

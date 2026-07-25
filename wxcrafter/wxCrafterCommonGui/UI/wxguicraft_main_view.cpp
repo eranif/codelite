@@ -1380,12 +1380,8 @@ void GUICraftMainPanel::OnNewControl(wxCommandEvent& e)
                        e.GetId() == ID_WXPANEL_TOPLEVEL || e.GetId() == ID_WXPOPUPWINDOW ||
                        e.GetId() == ID_WXIMAGELIST || e.GetId() == ID_WXAUITOOLBARTOPLEVEL);
     if (isTopLevel) {
-
         // Use the Wizard instead of adding the form directly
-        wxCommandEvent createFormEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("wxcp_new_form"));
-        createFormEvent.SetInt(e.GetId());
-        wxTheApp->AddPendingEvent(createFormEvent);
-
+        m_mainFrame->OpenNewFormWizard(e.GetId());
     } else if (data && data->m_wxcWidget) {
         // Non toplevel window
         wxcWidget* control = wxcWidget::Create(e.GetId());

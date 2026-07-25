@@ -1,6 +1,7 @@
 #pragma once
 
 // main wxWidgets header file
+#include "UI/import_dlg.h"
 #include "UI/wxcTreeView.h"
 #include "UI/wxguicraft_main_view.h"
 #include "gui.hpp"
@@ -22,8 +23,6 @@ protected:
     void OnFileOpen(wxCommandEvent& event) override;
     void OnBatchGenerateCode(wxCommandEvent& event) override;
     void OnBatchGenerateCodeUI(wxUpdateUIEvent& event) override;
-
-protected:
     virtual void OnFindUI(wxUpdateUIEvent& event);
     void OnOpenFindDialog(wxCommandEvent& event) override;
     void OnGenerateCodeUI(wxUpdateUIEvent& event) override;
@@ -71,6 +70,7 @@ protected:
     virtual void OnCodeLiteGotFocus(wxCommandEvent& e);
     virtual void OnCodeEditorSelected(wxCommandEvent& e);
     void OnPageClosing(wxNotifyEvent& e);
+    void OnBitmapCodeGenerationCompleted(wxCommandEvent& e);
 
 protected:
     wxTextCtrl* GetActiveTextCtrl();
@@ -78,6 +78,14 @@ protected:
     bool DoFindText(wxStyledTextCtrl* stc, const wxFindReplaceData& frd, bool findNext);
     void DoOpenWxcpProject();
     void DoCreateRecentMenu(wxMenu& menu, wxArrayString& history, std::shared_ptr<wxString> result);
+
+    bool DoCreateVirtualFolder(const wxString& vdFullPath);
+    void DoGenerateCode(const NewFormDetails& fd);
+    void DoLoadAfterImport(ImportDlg::ImportFileData& data);
+    bool DoReadFileContentAndPrompt(const wxFileName& fn, wxString& content, IEditor** editor);
+    void DoUpdateDerivedClassEventHandlers(const wxString& className,
+                                           const wxFileName& derivedSource,
+                                           const wxFileName& derivedHeader);
 
 public:
     MainFrame(wxWindow* parent, bool hidden, IManager* manager);
@@ -98,6 +106,20 @@ public:
 
     void SetStatusMessage(const wxString& message);
 
+    void OpenNewFormWizard(int type);
+
+    void OpenDefineCustomControlWizard();
+    void OpenEditCustomControlDialog();
+    void OpenDeleteCustomControlDialog();
+
+    void OpenXRCImporterDialog();
+    void OpenWxFormBuilderImporterDialog(const wxString& filename);
+    void OpenWxSmithImporterDialog(const wxString& filename);
+
+    void OpenSettingsDialog();
+
+    void OpenAboutDialog();
+
 protected:
     // protected event handlers
     void OnCloseFrame(wxCloseEvent& event) override;
@@ -107,4 +129,3 @@ protected:
     void OnFindFirst(wxFindDialogEvent& event);
     void OnFindNext(wxFindDialogEvent& event);
 };
-

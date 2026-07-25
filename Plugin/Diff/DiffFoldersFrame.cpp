@@ -15,28 +15,29 @@ static int nCallCounter = 0;
 static std::atomic_bool checksumThreadStop;
 
 DiffFoldersFrame::DiffFoldersFrame(wxWindow* parent)
-    : DiffFoldersBaseDlg(parent)
+    : DiffFoldersBaseFrame(parent)
 {
+    auto* toolbar = CreateToolBar();
     checksumThreadStop.store(false);
     auto* images = clGetManager()->GetStdIcons();
-    m_toolbar->AddTool(wxID_NEW, _("New comparison"), images->LoadBitmap("file_new"));
-    m_toolbar->AddTool(wxID_CLOSE, _("Close"), images->LoadBitmap("file_close"));
-    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), images->LoadBitmap("file_reload"));
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(
+    toolbar->AddTool(wxID_NEW, _("New comparison"), images->LoadBitmap("file_new"));
+    toolbar->AddTool(wxID_CLOSE, _("Close"), images->LoadBitmap("file_close"));
+    toolbar->AddTool(wxID_REFRESH, _("Refresh"), images->LoadBitmap("file_reload"));
+    toolbar->AddSeparator();
+    toolbar->AddTool(
         XRCID("diff-intersection"), _("Show similar files only"), images->LoadBitmap("intersection"), "", wxITEM_CHECK);
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("diff-up-folder"), _("Parent folder"), images->LoadBitmap("up"));
-    m_toolbar->Realize();
+    toolbar->AddSeparator();
+    toolbar->AddTool(XRCID("diff-up-folder"), _("Parent folder"), images->LoadBitmap("up"));
+    toolbar->Realize();
 
-    m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnNewComparison, this, wxID_NEW);
-    m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnClose, this, wxID_CLOSE);
-    m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnShowSimilarFiles, this, XRCID("diff-intersection"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnShowSimilarFilesUI, this, XRCID("diff-intersection"));
-    m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnRefresh, this, wxID_REFRESH);
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnRefreshUI, this, wxID_REFRESH);
-    m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnUpFolder, this, XRCID("diff-up-folder"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnUpFolderUI, this, XRCID("diff-up-folder"));
+    toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnNewComparison, this, wxID_NEW);
+    toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnClose, this, wxID_CLOSE);
+    toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnShowSimilarFiles, this, XRCID("diff-intersection"));
+    toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnShowSimilarFilesUI, this, XRCID("diff-intersection"));
+    toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnRefresh, this, wxID_REFRESH);
+    toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnRefreshUI, this, wxID_REFRESH);
+    toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnUpFolder, this, XRCID("diff-up-folder"));
+    toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnUpFolderUI, this, XRCID("diff-up-folder"));
 
     ::clSetTLWindowBestSizeAndPosition(*this);
 

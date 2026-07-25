@@ -100,7 +100,7 @@ public:
     }
 };
 
-class WXDLLIMPEXP_SDK DiffFoldersFrame : public DiffFoldersBaseDlg
+class WXDLLIMPEXP_SDK DiffFoldersFrame : public DiffFoldersBaseFrame
 {
     wxString m_leftFolder;
     wxString m_rightFolder;

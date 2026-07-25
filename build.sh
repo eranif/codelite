@@ -5,6 +5,7 @@ BUILD_TARGET=Release
 BUILD_DIR_NAME=.build-release
 BUILD_DIR=${ROOT_DIR}/${BUILD_DIR_NAME}
 OS_NAME="$(uname -s)"
+FORCE_CMAKE=0
 
 . ${ROOT_DIR}/scripts/functions.rc
 
@@ -187,7 +188,7 @@ function build_CodeLite_Linux() {
   local CodeLite_build_dir=${ROOT_DIR}/${BUILD_DIR_NAME}
   mkdir -p ${CodeLite_build_dir}
   cd ${CodeLite_build_dir}
-  if [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] ||
+  if [ "${FORCE_CMAKE}" -eq 1 ] || [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] ||
     [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ]; then
     INFO "Configuring CodeLite"
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 \
@@ -222,7 +223,7 @@ function build_CodeLite_macOS() {
   cd ${CodeLite_build_dir}
   # Configure if the build tree has not been generated yet, or if
   # CMakeLists.txt is newer than the generated cache.
-  if [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] || [ ! -d "${CodeLite_build_dir}/codelite.app" ] ||
+  if [ "${FORCE_CMAKE}" -eq 1 ] || [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] || [ ! -d "${CodeLite_build_dir}/codelite.app" ] ||
     [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ] ||
     ! grep -q "^CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOS_DEPLOYMENT_TARGET}$" "${CodeLite_build_dir}/CMakeCache.txt"; then
     INFO "Configuring CodeLite"
@@ -250,7 +251,7 @@ function build_CodeLite_MSW() {
   cd ${CodeLite_build_dir}
   # Configure if the build tree has not been generated yet, or if
   # CMakeLists.txt is newer than the generated cache.
-  if [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] || [ ! -d "${CodeLite_build_dir}/install" ] ||
+  if [ "${FORCE_CMAKE}" -eq 1 ] || [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] || [ ! -d "${CodeLite_build_dir}/install" ] ||
     [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ]; then
     INFO "Configuring CodeLite"
     rm -f ${CodeLite_build_dir}/CMakeCache.txt
@@ -287,7 +288,7 @@ function distclean() {
 }
 
 function usage() {
-  echo "Usage: $(basename $0) [target]"
+  echo "Usage: $(basename $0) [options] [target]"
   echo ""
   echo "Targets:"
   echo "  (none)      Build CodeLite (default, release mode)"
@@ -295,6 +296,9 @@ function usage() {
   echo "  clean       Remove build artifacts (make clean)"
   echo "  distclean   Remove the entire build directory"
   echo "  package     Create an installer suitable for the current platform"
+  echo ""
+  echo "Options:"
+  echo "  --cmake     Force the cmake configure stage even if it is up to date"
   echo "  -h, --help  Show this help message"
 }
 
@@ -344,7 +348,35 @@ function package() {
   fi
 }
 
-case "${1}" in
+TARGET=""
+
+while [ $# -gt 0 ]; do
+  case "${1}" in
+  --cmake)
+    FORCE_CMAKE=1
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  clean | distclean | package | debug)
+    if [ -n "${TARGET}" ]; then
+      ERROR "Multiple targets specified: '${TARGET}' and '${1}'"
+      usage
+      exit 1
+    fi
+    TARGET="${1}"
+    ;;
+  *)
+    ERROR "Unknown argument: ${1}"
+    usage
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+case "${TARGET}" in
 clean)
   clean
   exit 0
@@ -357,10 +389,6 @@ package)
   package
   exit 0
   ;;
--h | --help)
-  usage
-  exit 0
-  ;;
 debug)
   BUILD_TARGET=Debug
   BUILD_DIR_NAME=.build-debug
@@ -368,11 +396,6 @@ debug)
   INFO "Building CodeLite in DEBUG mode"
   ;;
 "") ;;
-*)
-  ERROR "Unknown target: ${1}"
-  usage
-  exit 1
-  ;;
 esac
 
 check_prerequistes

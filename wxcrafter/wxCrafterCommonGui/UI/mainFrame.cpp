@@ -48,56 +48,59 @@ const wxSize BMP_SIZE{32, 32};
 const wxSize BMP_SIZE{16, 16};
 #endif
 
-MainFrame::MainFrame(wxWindow* parent, bool hidden)
+MainFrame::MainFrame(wxWindow* parent, bool hidden, IManager* manager)
     : MainFrameBase(parent,
                     wxID_ANY,
                     "wxCrafter",
                     wxDefaultPosition,
                     wxDefaultSize,
                     wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxTAB_TRAVERSAL)
+    , m_mgr(manager)
     , m_wxcView(nullptr)
     , m_treeView(nullptr)
     , m_findReplaceDialog(nullptr)
 {
-#if STANDALONE_BUILD
-    // Use wxWidgets images.
-    m_mainToolbar->SetToolBitmapSize(BMP_SIZE);
-    m_mainToolbar->AddTool(wxID_NEW, _("New Project"), wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, BMP_SIZE));
-    m_mainToolbar->AddTool(
-        wxID_OPEN, _("Open Project"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR, BMP_SIZE));
-    m_mainToolbar->SetToolDropDown(wxID_OPEN, true);
-    m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, BMP_SIZE));
-    m_mainToolbar->AddTool(wxID_SAVE, _("Save"), wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_TOOLBAR, BMP_SIZE));
-    m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR, BMP_SIZE));
-    m_mainToolbar->AddTool(wxID_REDO, _("Redo"), wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR, BMP_SIZE));
-    m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(wxID_FIND, _("Find"), wxArtProvider::GetBitmap(wxART_FIND, wxART_TOOLBAR, BMP_SIZE));
-    m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(
-        XRCID("generate-code"), _("Generate Code"), wxArtProvider::GetBitmap(wxART_GO_DOWN, wxART_TOOLBAR, BMP_SIZE));
+    if (m_mgr) {
+        // Use CodeLite's images.
+        auto images = m_mgr->GetStdIcons();
+        m_mainToolbar->SetToolBitmapSize(BMP_SIZE);
+        m_mainToolbar->AddTool(wxID_BACKWARD, _("Back to CodeLite"), images->GetBundle("back"));
+        m_mainToolbar->AddTool(wxID_NEW, _("New Project"), images->GetBundle("file_new"));
+        m_mainToolbar->AddTool(wxID_OPEN, _("Open Project"), images->GetBundle("file_open"));
+        m_mainToolbar->SetToolDropDown(wxID_OPEN, true);
+        m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), images->GetBundle("file_close"));
+        m_mainToolbar->AddTool(wxID_SAVE, _("Save"), images->GetBundle("file_save"));
+        m_mainToolbar->AddSeparator();
+        m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), images->GetBundle("undo"));
+        m_mainToolbar->AddTool(wxID_REDO, _("Redo"), images->GetBundle("redo"));
+        m_mainToolbar->AddSeparator();
+        m_mainToolbar->AddTool(wxID_FIND, _("Find"), images->GetBundle("find"));
+        m_mainToolbar->AddSeparator();
+        m_mainToolbar->AddTool(XRCID("generate-code"), _("Generate Code"), images->GetBundle("execute"));
 
-#else
-    // Use CodeLite's images.
-    auto images = clGetManager()->GetStdIcons();
-    m_mainToolbar->SetToolBitmapSize(BMP_SIZE);
-    m_mainToolbar->AddTool(wxID_BACKWARD, _("Back to CodeLite"), images->GetBundle("back"));
-    m_mainToolbar->AddTool(wxID_NEW, _("New Project"), images->GetBundle("file_new"));
-    m_mainToolbar->AddTool(wxID_OPEN, _("Open Project"), images->GetBundle("file_open"));
-    m_mainToolbar->SetToolDropDown(wxID_OPEN, true);
-    m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), images->GetBundle("file_close"));
-    m_mainToolbar->AddTool(wxID_SAVE, _("Save"), images->GetBundle("file_save"));
-    m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), images->GetBundle("undo"));
-    m_mainToolbar->AddTool(wxID_REDO, _("Redo"), images->GetBundle("redo"));
-    m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(wxID_FIND, _("Find"), images->GetBundle("find"));
-    m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(XRCID("generate-code"), _("Generate Code"), images->GetBundle("execute"));
-
-    m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnSwitchToCodelite, this, wxID_BACKWARD);
-    m_mainToolbar->Bind(wxEVT_UPDATE_UI, &MainFrame::OnSwitchToCodeliteUI, this, wxID_BACKWARD);
-#endif
+        m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnSwitchToCodelite, this, wxID_BACKWARD);
+        m_mainToolbar->Bind(wxEVT_UPDATE_UI, &MainFrame::OnSwitchToCodeliteUI, this, wxID_BACKWARD);
+    } else {
+        // Stand alone build: Use wxWidgets images.
+        m_mainToolbar->SetToolBitmapSize(BMP_SIZE);
+        m_mainToolbar->AddTool(
+            wxID_NEW, _("New Project"), wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, BMP_SIZE));
+        m_mainToolbar->AddTool(
+            wxID_OPEN, _("Open Project"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR, BMP_SIZE));
+        m_mainToolbar->SetToolDropDown(wxID_OPEN, true);
+        m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, BMP_SIZE));
+        m_mainToolbar->AddTool(
+            wxID_SAVE, _("Save"), wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_TOOLBAR, BMP_SIZE));
+        m_mainToolbar->AddSeparator();
+        m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR, BMP_SIZE));
+        m_mainToolbar->AddTool(wxID_REDO, _("Redo"), wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR, BMP_SIZE));
+        m_mainToolbar->AddSeparator();
+        m_mainToolbar->AddTool(wxID_FIND, _("Find"), wxArtProvider::GetBitmap(wxART_FIND, wxART_TOOLBAR, BMP_SIZE));
+        m_mainToolbar->AddSeparator();
+        m_mainToolbar->AddTool(XRCID("generate-code"),
+                               _("Generate Code"),
+                               wxArtProvider::GetBitmap(wxART_GO_DOWN, wxART_TOOLBAR, BMP_SIZE));
+    }
 
     WizardPageWrapper::isActiveWizardPage = [](const wxcWidget* page) {
         if (!GUICraftMainPanel::m_MainPanel) {
@@ -187,17 +190,17 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     EventNotifier::Get()->Connect(
         wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), NULL, this);
 
-#if !STANDALONE_BUILD
-    Hide();
-    SetCanFocus(true);
-    SetName("MainFrame");
-    if (GetParent()) {
-        CenterOnParent();
+    if (m_mgr) {
+        Hide();
+        SetCanFocus(true);
+        SetName("MainFrame");
+        if (GetParent()) {
+            CenterOnParent();
+        }
+    } else {
+        SetName("MainFrame");
+        WindowAttrManager::Load(this);
     }
-#else
-    SetName("MainFrame");
-    WindowAttrManager::Load(this);
-#endif
 
     m_treeView = new wxcTreeView(m_splitterPageTreeView);
     m_splitterPageTreeView->GetSizer()->Add(m_treeView, 1, wxEXPAND);
@@ -226,31 +229,28 @@ MainFrame::~MainFrame()
     EventNotifier::Get()->Disconnect(
         wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), NULL, this);
 
-#if STANDALONE_BUILD
-    if (m_findReplaceDialog) {
+    if (!m_mgr && m_findReplaceDialog) {
         m_findReplaceDialog->Destroy();
-        m_findReplaceDialog = NULL;
+        m_findReplaceDialog = nullptr;
     }
-#endif
 }
 
 void MainFrame::OnCloseFrame(wxCloseEvent& event)
 {
-#if STANDALONE_BUILD
+    if (m_mgr) {
+        wxUnusedVar(event);
+        HideDesigner();
+    } else {
 #ifndef __WXMSW__
-    // We support task bar icon on Windows only
-    event.Skip();
-    wxcCodeGeneratorHelper::Get().UnInitialize();
+        // We support task bar icon on Windows only
+        event.Skip();
+        wxcCodeGeneratorHelper::Get().UnInitialize();
 #else
-    /// In a standalone mode, close the frame
-    event.Skip();
-    wxcCodeGeneratorHelper::Get().UnInitialize();
+        /// In a standalone mode, close the frame
+        event.Skip();
+        wxcCodeGeneratorHelper::Get().UnInitialize();
 #endif
-
-#else
-    wxUnusedVar(event);
-    HideDesigner();
-#endif
+    }
 }
 
 void MainFrame::OnClose(wxCommandEvent& event)
@@ -352,9 +352,7 @@ void MainFrame::OnPreview(wxCommandEvent& event)
 }
 
 void MainFrame::OnPreviewUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_wxcView->IsPreviewAlive() && wxcProjectMetadata::Get().IsLoaded());
-}
+{ event.Enable(!m_wxcView->IsPreviewAlive() && wxcProjectMetadata::Get().IsLoaded()); }
 
 void MainFrame::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
@@ -492,9 +490,9 @@ void MainFrame::OnBuild(wxCommandEvent& event)
 
 void MainFrame::OnBuildUI(wxUpdateUIEvent& event)
 {
-#if STANDALONE_BUILD
-    event.Enable(false);
-#endif
+    if (!m_mgr) {
+        event.Enable(false);
+    }
 }
 
 void MainFrame::OnSwitchToCodelite(wxCommandEvent& event)
@@ -545,11 +543,11 @@ void MainFrame::OnAbout(wxCommandEvent& event)
 void MainFrame::OnHide(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-#if STANDALONE_BUILD
-    Close();
-#else
-    HideDesigner();
-#endif
+    if (m_mgr) {
+        HideDesigner();
+    } else {
+        Close();
+    }
 }
 
 void MainFrame::OnSettings(wxCommandEvent& event)
@@ -609,11 +607,11 @@ void MainFrame::OnProjectClosed(wxCommandEvent& event)
 
 void MainFrame::OnSwitchToCodeliteUI(wxUpdateUIEvent& event)
 {
-#if STANDALONE_BUILD
-    event.Enable(false);
-#else
-    event.Enable(true);
-#endif
+    if (m_mgr) {
+        event.Enable(true);
+    } else {
+        event.Enable(false);
+    }
 }
 
 void MainFrame::OnCodeLiteGotFocus(wxCommandEvent& e) { e.Skip(); }
@@ -737,58 +735,61 @@ void MainFrame::OnGenerateCodeUI(wxUpdateUIEvent& event) { event.Enable(wxcProje
 
 void MainFrame::OnOpenFindDialog(wxCommandEvent& event)
 {
-#if STANDALONE_BUILD
-    if (m_findReplaceDialog) {
-        m_findReplaceDialog->Raise();
-        return;
-    }
+    if (m_mgr)
+    {
+        // Ask CodeLite to open the find dialog
+        wxCommandEvent event_find{wxEVT_MENU, XRCID("id_find")};
+        event_find.SetEventObject(EventNotifier::Get()->TopFrame());
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event_find);
+    } else {
+        if (m_findReplaceDialog) {
+            m_findReplaceDialog->Raise();
+            return;
+        }
 
-    wxStyledTextCtrl* stc = m_wxcView->GetPreviewEditor();
-    if (stc) {
-        m_findReplaceDialog = new wxFindReplaceDialog(stc, &m_findData, _("Find"), wxFR_NOUPDOWN);
-        m_findReplaceDialog->Show();
+        wxStyledTextCtrl* stc = m_wxcView->GetPreviewEditor();
+        if (stc) {
+            m_findReplaceDialog = new wxFindReplaceDialog(stc, &m_findData, _("Find"), wxFR_NOUPDOWN);
+            m_findReplaceDialog->Show();
+        }
     }
-#else
-    // Ask CodeLite to open the find dialog
-    wxCommandEvent event_find{wxEVT_MENU, XRCID("id_find")};
-    event_find.SetEventObject(EventNotifier::Get()->TopFrame());
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event_find);
-#endif
 }
 
 void MainFrame::OnCodeEditorSelected(wxCommandEvent& e)
 {
     e.Skip();
-#if STANDALONE_BUILD
-    bool needToDisplayAgain = false;
-    // if the dialog was show, close it
-    if (m_findReplaceDialog) {
-        m_findReplaceDialog->Destroy();
-        m_findReplaceDialog = NULL;
-        needToDisplayAgain = true;
-    }
+    if (!m_mgr) {
+        bool needToDisplayAgain = false;
+        // if the dialog was show, close it
+        if (m_findReplaceDialog) {
+            m_findReplaceDialog->Destroy();
+            m_findReplaceDialog = NULL;
+            needToDisplayAgain = true;
+        }
 
-    if (needToDisplayAgain && e.GetClientData()) {
-        // Reshow the dialog, this time for the proper parent
-        wxStyledTextCtrl* parent = reinterpret_cast<wxStyledTextCtrl*>(e.GetClientData());
-        if (parent) {
-            m_findReplaceDialog = new wxFindReplaceDialog(parent, &m_findData, _("Find"), wxFR_NOUPDOWN);
-            m_findReplaceDialog->Show();
+        if (needToDisplayAgain && e.GetClientData()) {
+            // Reshow the dialog, this time for the proper parent
+            wxStyledTextCtrl* parent = reinterpret_cast<wxStyledTextCtrl*>(e.GetClientData());
+            if (parent) {
+                m_findReplaceDialog = new wxFindReplaceDialog(parent, &m_findData, _("Find"), wxFR_NOUPDOWN);
+                m_findReplaceDialog->Show();
+            }
         }
     }
-#endif
 }
 
 void MainFrame::OnFindDlgClose(wxFindDialogEvent& event)
 {
-#if STANDALONE_BUILD
-    m_findReplaceDialog = NULL;
-#endif
+    if (!m_mgr) {
+        m_findReplaceDialog = nullptr;
+    }
 }
 
 void MainFrame::OnFindFirst(wxFindDialogEvent& event)
 {
-#if STANDALONE_BUILD
+    if (m_mgr) {
+        return;
+    }
     wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(m_findReplaceDialog->GetParent());
     if (stc) {
         int curpos = stc->GetCurrentPos();
@@ -808,12 +809,13 @@ void MainFrame::OnFindFirst(wxFindDialogEvent& event)
             }
         }
     }
-#endif
 }
 
 void MainFrame::OnFindNext(wxFindDialogEvent& event)
 {
-#if STANDALONE_BUILD
+    if (m_mgr) {
+        return;
+    }
     wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(m_findReplaceDialog->GetParent());
     if (stc) {
         int curpos = stc->GetCurrentPos();
@@ -827,7 +829,6 @@ void MainFrame::OnFindNext(wxFindDialogEvent& event)
             }
         }
     }
-#endif
 }
 
 bool MainFrame::DoFindText(wxStyledTextCtrl* stc, const wxFindReplaceData& frd, bool findNext)
@@ -884,11 +885,11 @@ void MainFrame::OnBatchGenerateCode(wxCommandEvent& event)
 
 void MainFrame::OnBatchGenerateCodeUI(wxUpdateUIEvent& event)
 {
-#ifdef STANDALONE_BUILD
-    event.Enable(!wxcProjectMetadata::Get().IsLoaded());
-#else
-    event.Enable(false);
-#endif
+    if (m_mgr) {
+        event.Enable(false);
+    } else {
+        event.Enable(!wxcProjectMetadata::Get().IsLoaded());
+    }
 }
 
 void MainFrame::DoOpenWxcpProject()

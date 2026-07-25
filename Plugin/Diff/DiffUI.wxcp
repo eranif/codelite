@@ -1495,7 +1495,15 @@
                                       "m_value": true
                                     }
                                   ],
-                                  "m_events": [],
+                                  "m_events": [
+                                    {
+                                      "m_description": "Process a wxEVT_UPDATE_UI event",
+                                      "m_eventClass": "wxUpdateUIEvent",
+                                      "m_eventName": "wxEVT_UPDATE_UI",
+                                      "m_functionNameAndSignature": "OnLeftPickerUI(wxUpdateUIEvent& event)",
+                                      "m_noBody": false
+                                    }
+                                  ],
                                   "m_children": []
                                 },
                                 {
@@ -1613,7 +1621,22 @@
                                       "m_value": "2,2"
                                     }
                                   ],
-                                  "m_events": [],
+                                  "m_events": [
+                                    {
+                                      "m_description": "Process a wxEVT_UPDATE_UI event",
+                                      "m_eventClass": "wxUpdateUIEvent",
+                                      "m_eventName": "wxEVT_UPDATE_UI",
+                                      "m_functionNameAndSignature": "OnLeftPickerUI(wxUpdateUIEvent& event)",
+                                      "m_noBody": false
+                                    },
+                                    {
+                                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+                                      "m_eventClass": "wxCommandEvent",
+                                      "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+                                      "m_functionNameAndSignature": "OnBrowseLeftFile(wxCommandEvent& event)",
+                                      "m_noBody": false
+                                    }
+                                  ],
                                   "m_children": []
                                 }
                               ]
@@ -1926,7 +1949,22 @@
                                       "m_value": ""
                                     }
                                   ],
-                                  "m_events": [],
+                                  "m_events": [
+                                    {
+                                      "m_description": "Process a wxEVT_MOUSEWHEEL event",
+                                      "m_eventClass": "wxMouseEvent",
+                                      "m_eventName": "wxEVT_MOUSEWHEEL",
+                                      "m_functionNameAndSignature": "OnMouseWheel(wxMouseEvent& event)",
+                                      "m_noBody": false
+                                    },
+                                    {
+                                      "m_description": "Painting has just been done.\nUseful when you want to update some other widgets based on a change in Scintilla\nbut want to have the paint occur first to appear more responsive",
+                                      "m_eventClass": "wxStyledTextEvent",
+                                      "m_eventName": "wxEVT_STC_PAINTED",
+                                      "m_functionNameAndSignature": "OnLeftStcPainted(wxStyledTextEvent& event)",
+                                      "m_noBody": false
+                                    }
+                                  ],
                                   "m_children": []
                                 },
                                 {
@@ -2018,7 +2056,22 @@
                                       "m_value": ""
                                     }
                                   ],
-                                  "m_events": [],
+                                  "m_events": [
+                                    {
+                                      "m_description": "Process a wxEVT_ERASE_BACKGROUND event.",
+                                      "m_eventClass": "wxEraseEvent",
+                                      "m_eventName": "wxEVT_ERASE_BACKGROUND",
+                                      "m_functionNameAndSignature": "OnPanelOverviewEraseBackground(wxEraseEvent& event)",
+                                      "m_noBody": false
+                                    },
+                                    {
+                                      "m_description": "Process a wxEVT_LEFT_DOWN event. The handler of this event should normally call event.Skip() to allow the default processing to take place as otherwise the window under mouse wouldn't get the focus.",
+                                      "m_eventClass": "wxMouseEvent",
+                                      "m_eventName": "wxEVT_LEFT_DOWN",
+                                      "m_functionNameAndSignature": "OnPanelOverviewLeftDown(wxMouseEvent& event)",
+                                      "m_noBody": false
+                                    }
+                                  ],
                                   "m_children": []
                                 }
                               ]
@@ -2547,7 +2600,22 @@
                                       "m_value": "2,2"
                                     }
                                   ],
-                                  "m_events": [],
+                                  "m_events": [
+                                    {
+                                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+                                      "m_eventClass": "wxCommandEvent",
+                                      "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
+                                      "m_functionNameAndSignature": "OnBrowseRightFile(wxCommandEvent& event)",
+                                      "m_noBody": false
+                                    },
+                                    {
+                                      "m_description": "Process a wxEVT_UPDATE_UI event",
+                                      "m_eventClass": "wxUpdateUIEvent",
+                                      "m_eventName": "wxEVT_UPDATE_UI",
+                                      "m_functionNameAndSignature": "OnRightPickerUI(wxUpdateUIEvent& event)",
+                                      "m_noBody": false
+                                    }
+                                  ],
                                   "m_children": []
                                 }
                               ]
@@ -2860,7 +2928,22 @@
                                       "m_value": ""
                                     }
                                   ],
-                                  "m_events": [],
+                                  "m_events": [
+                                    {
+                                      "m_description": "Painting has just been done.\nUseful when you want to update some other widgets based on a change in Scintilla\nbut want to have the paint occur first to appear more responsive",
+                                      "m_eventClass": "wxStyledTextEvent",
+                                      "m_eventName": "wxEVT_STC_PAINTED",
+                                      "m_functionNameAndSignature": "OnRightStcPainted(wxStyledTextEvent& event)",
+                                      "m_noBody": false
+                                    },
+                                    {
+                                      "m_description": "Process a wxEVT_MOUSEWHEEL event",
+                                      "m_eventClass": "wxMouseEvent",
+                                      "m_eventName": "wxEVT_MOUSEWHEEL",
+                                      "m_functionNameAndSignature": "OnMouseWheel(wxMouseEvent& event)",
+                                      "m_noBody": false
+                                    }
+                                  ],
                                   "m_children": []
                                 },
                                 {
@@ -2952,7 +3035,22 @@
                                       "m_value": ""
                                     }
                                   ],
-                                  "m_events": [],
+                                  "m_events": [
+                                    {
+                                      "m_description": "Process a wxEVT_ERASE_BACKGROUND event.",
+                                      "m_eventClass": "wxEraseEvent",
+                                      "m_eventName": "wxEVT_ERASE_BACKGROUND",
+                                      "m_functionNameAndSignature": "OnPanelOverviewEraseBackground(wxEraseEvent& event)",
+                                      "m_noBody": false
+                                    },
+                                    {
+                                      "m_description": "Process a wxEVT_LEFT_DOWN event. The handler of this event should normally call event.Skip() to allow the default processing to take place as otherwise the window under mouse wouldn't get the focus.",
+                                      "m_eventClass": "wxMouseEvent",
+                                      "m_eventName": "wxEVT_LEFT_DOWN",
+                                      "m_functionNameAndSignature": "OnPanelOverviewLeftDown(wxMouseEvent& event)",
+                                      "m_noBody": false
+                                    }
+                                  ],
                                   "m_children": []
                                 }
                               ]

@@ -1051,7 +1051,7 @@ void DiffSideBySidePanel::OnShowOverviewBarClicked(wxCommandEvent& event)
 
 void DiffSideBySidePanel::OnShowOverviewBarUI(wxUpdateUIEvent& event) { event.Check(m_config.IsOverviewBarShown()); }
 
-void DiffSideBySidePanel::OnPaneloverviewEraseBackground(wxEraseEvent& event)
+void DiffSideBySidePanel::OnPanelOverviewEraseBackground(wxEraseEvent& event)
 {
     if (!m_config.IsOverviewBarShown()) {
         return;
@@ -1143,7 +1143,7 @@ void DiffSideBySidePanel::OnPaneloverviewEraseBackground(wxEraseEvent& event)
     }
 }
 
-void DiffSideBySidePanel::OnPaneloverviewLeftDown(wxMouseEvent& event)
+void DiffSideBySidePanel::OnPanelOverviewLeftDown(wxMouseEvent& event)
 {
     event.Skip();
 

@@ -113,15 +113,18 @@ protected:
     FileInfo m_right;
 
 protected:
-    virtual void OnBrowseLeftFile(wxCommandEvent& event);
-    virtual void OnBrowseRightFile(wxCommandEvent& event);
-    virtual void OnMouseWheel(wxMouseEvent& event);
-    virtual void OnSingleUI(wxUpdateUIEvent& event);
-    virtual void OnSingleView(wxCommandEvent& event);
-    virtual void OnLeftPickerUI(wxUpdateUIEvent& event);
-    virtual void OnRightPickerUI(wxUpdateUIEvent& event);
-    virtual void OnPaneloverviewLeftDown(wxMouseEvent& event);
+    void OnBrowseLeftFile(wxCommandEvent& event) override;
+    void OnBrowseRightFile(wxCommandEvent& event) override;
+    void OnMouseWheel(wxMouseEvent& event) override;
+    void OnLeftPickerUI(wxUpdateUIEvent& event) override;
+    void OnRightPickerUI(wxUpdateUIEvent& event) override;
+    void OnPanelOverviewEraseBackground(wxEraseEvent& event) override;
+    void OnPanelOverviewLeftDown(wxMouseEvent& event) override;
+    void OnLeftStcPainted(wxStyledTextEvent& event) override;
+    void OnRightStcPainted(wxStyledTextEvent& event) override;
 
+    void OnSingleUI(wxUpdateUIEvent& event);
+    void OnSingleView(wxCommandEvent& event);
     void OnMenuCopyLeft2Right(wxCommandEvent& event);
     void OnMenuCopyRight2Left(wxCommandEvent& event);
     void OnCopyAllMenu(wxCommandEvent& event);
@@ -137,35 +140,32 @@ protected:
     bool IsOriginSourceControl() const { return m_flags & kOriginSourceControl; }
 
 public:
-    virtual void OnRefreshDiffUI(wxUpdateUIEvent& event);
-    virtual void OnHorizontal(wxCommandEvent& event);
-    virtual void OnHorizontalUI(wxUpdateUIEvent& event);
-    virtual void OnVertical(wxCommandEvent& event);
-    virtual void OnVerticalUI(wxUpdateUIEvent& event);
-    virtual void OnCopyFileFromRight(wxCommandEvent& event);
-    virtual void OnCopyFileLeftToRight(wxCommandEvent& event);
-    virtual void OnSaveChanges(wxCommandEvent& event);
-    virtual void OnFind(wxCommandEvent& event);
-    virtual void OnSaveChangesUI(wxUpdateUIEvent& event);
-    virtual void OnCopyLeftToRight(wxCommandEvent& event);
-    virtual void OnCopyRightToLeft(wxCommandEvent& event);
-    virtual void OnCopyLeftToRightUI(wxUpdateUIEvent& event);
-    virtual void OnCopyRightToLeftUI(wxUpdateUIEvent& event);
-    virtual void OnNextDiffUI(wxUpdateUIEvent& event);
-    virtual void OnPrevDiffUI(wxUpdateUIEvent& event);
-    virtual void OnNextDiffSequence(wxCommandEvent& event);
-    virtual void OnPrevDiffSequence(wxCommandEvent& event);
-    virtual void OnRefreshDiff(wxCommandEvent& event);
-    virtual void OnLeftStcPainted(wxStyledTextEvent& event);
-    virtual void OnRightStcPainted(wxStyledTextEvent& event);
-    virtual void OnLeftStcUpdateUI(wxStyledTextEvent& event);
-    virtual void OnIgnoreWhitespaceClicked(wxCommandEvent& event);
-    virtual void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event);
-    virtual void OnShowLinenosClicked(wxCommandEvent& event);
-    virtual void OnShowLinenosUI(wxUpdateUIEvent& event);
-    virtual void OnShowOverviewBarClicked(wxCommandEvent& event);
-    virtual void OnShowOverviewBarUI(wxUpdateUIEvent& event);
-    virtual void OnPaneloverviewEraseBackground(wxEraseEvent& event);
+    void OnRefreshDiffUI(wxUpdateUIEvent& event);
+    void OnHorizontal(wxCommandEvent& event);
+    void OnHorizontalUI(wxUpdateUIEvent& event);
+    void OnVertical(wxCommandEvent& event);
+    void OnVerticalUI(wxUpdateUIEvent& event);
+    void OnCopyFileFromRight(wxCommandEvent& event);
+    void OnCopyFileLeftToRight(wxCommandEvent& event);
+    void OnSaveChanges(wxCommandEvent& event);
+    void OnFind(wxCommandEvent& event);
+    void OnSaveChangesUI(wxUpdateUIEvent& event);
+    void OnCopyLeftToRight(wxCommandEvent& event);
+    void OnCopyRightToLeft(wxCommandEvent& event);
+    void OnCopyLeftToRightUI(wxUpdateUIEvent& event);
+    void OnCopyRightToLeftUI(wxUpdateUIEvent& event);
+    void OnNextDiffUI(wxUpdateUIEvent& event);
+    void OnPrevDiffUI(wxUpdateUIEvent& event);
+    void OnNextDiffSequence(wxCommandEvent& event);
+    void OnPrevDiffSequence(wxCommandEvent& event);
+    void OnRefreshDiff(wxCommandEvent& event);
+    void OnLeftStcUpdateUI(wxStyledTextEvent& event);
+    void OnIgnoreWhitespaceClicked(wxCommandEvent& event);
+    void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event);
+    void OnShowLinenosClicked(wxCommandEvent& event);
+    void OnShowLinenosUI(wxUpdateUIEvent& event);
+    void OnShowOverviewBarClicked(wxCommandEvent& event);
+    void OnShowOverviewBarUI(wxUpdateUIEvent& event);
     void OnPageClosing(wxNotifyEvent& event);
 
     void PrepareViews();
@@ -186,8 +186,8 @@ public:
     void DefineMarkers(wxStyledTextCtrl* ctrl);
 
 public:
-    DiffSideBySidePanel(wxWindow* parent);
-    virtual ~DiffSideBySidePanel();
+    explicit DiffSideBySidePanel(wxWindow* parent);
+    ~DiffSideBySidePanel() override;
 
     void DoLayout();
     /**

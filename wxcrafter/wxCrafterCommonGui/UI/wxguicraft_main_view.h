@@ -15,6 +15,7 @@
 
 class EventsEditorPane;
 class EventsEditorDlg;
+class MainFrame;
 class PropertiesSheet;
 
 extern const wxEventType wxEVT_UPDATE_PREVIEW;
@@ -66,7 +67,6 @@ public:
     }
 };
 
-class wxCrafterPlugin;
 class GUICraftMainPanel : public GUICraftMainPanelBase
 {
     friend class PropertiesSheet;
@@ -78,7 +78,7 @@ class GUICraftMainPanel : public GUICraftMainPanelBase
     wxTreeItemId m_draggedItem;
     bool m_previewAlive;
     clTreeCtrl* m_treeControls;
-    wxCrafterPlugin* m_plugin;
+    MainFrame* m_mainFrame;
     StylesSheetListView m_styles;
     SizerFlagsListView m_sizerFlags;
     AuiPaneInfoListView m_auiPaneInfo;
@@ -160,7 +160,7 @@ public:
      */
     void DoGenerateCode(InteractionMode interactionMode, SaveMode save);
 
-    GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clTreeCtrl* treeView);
+    GUICraftMainPanel(wxWindow* parent, MainFrame* mainFrame, clTreeCtrl* treeView);
     ~GUICraftMainPanel() override;
     /**
      * @brief batch generate the code for a list of wxC files

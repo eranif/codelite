@@ -176,7 +176,7 @@ void DbViewerPanel::RefreshDbView()
     // clear items from tree
     m_treeDatabases->DeleteAllItems();
     // create imageList for icons
-    BitmapLoader* loader = clGetManager()->GetStdIcons();
+    BitmapLoader* loader = m_mgr->GetStdIcons();
     m_treeDatabases->SetBitmaps(loader->GetStandardMimeBitmapListPtr());
 
     int img_folder = loader->GetImageIndex(FileExtManager::TypeFolder);

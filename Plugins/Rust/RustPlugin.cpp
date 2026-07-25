@@ -42,7 +42,6 @@
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "globals.h"
 #include "macros.h"
 #include "md5/wxmd5.h"
 
@@ -315,7 +314,7 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
         editor->CenterLine(line_number - 1, wxNOT_FOUND);
         editor->SetActive();
     };
-    clGetManager()->OpenFileAndAsyncExecute(fnFile.GetFullPath(), std::move(cb));
+    m_mgr->OpenFileAndAsyncExecute(fnFile.GetFullPath(), std::move(cb));
 }
 
 void RustPlugin::AddRustcCompilerIfMissing()

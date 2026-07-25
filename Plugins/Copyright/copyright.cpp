@@ -40,7 +40,6 @@
 #include "project.h"
 #include "workspace.h"
 
-#include <algorithm>
 #include <vector>
 #include <wx/app.h>
 #include <wx/menu.h>
@@ -301,7 +300,7 @@ void Copyright::MassUpdate(const std::vector<std::pair<wxString, std::vector<wxF
                     wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
                     FileUtils::WriteFileContent(fn.GetFullPath(), file_content, fontEncConv);
 
-                    if (auto* editor = clGetManager()->FindEditor(fn.GetFullPath())) {
+                    if (auto* editor = m_mgr->FindEditor(fn.GetFullPath())) {
                         editor->ReloadFromDisk();
                     }
                 }

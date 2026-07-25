@@ -36,7 +36,6 @@
 #include "cppchecksettingsdlg.h"
 #include "event_notifier.h"
 #include "fileextmanager.h"
-#include "globals.h"
 #include "imanager.h"
 #include "shell_command.h"
 
@@ -183,8 +182,8 @@ wxString CppCheckPlugin::DoGetCommand()
             workspace_path = wxFileName(workspace->GetFileName()).GetPath();
         }
     }
-    if (clGetManager()->GetActiveEditor()) {
-        current_file = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
+    if (m_mgr->GetActiveEditor()) {
+        current_file = m_mgr->GetActiveEditor()->GetRemotePathOrLocal();
     }
 
     // replace the place holders

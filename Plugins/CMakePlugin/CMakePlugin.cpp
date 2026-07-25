@@ -61,7 +61,6 @@
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "fileutils.h"
-#include "globals.h"
 #include "macromanager.h"
 #include "project.h"
 #include "workspace.h"
@@ -152,8 +151,8 @@ CMakePlugin::CMakePlugin(IManager* manager)
     // Create cmake application
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
 
-    m_helpTab = new CMakeHelpTab(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
-    clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME, "cmake-button");
+    m_helpTab = new CMakeHelpTab(m_mgr->BookGet(PaneId::SIDE_BAR), this);
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_helpTab, HELP_TAB_NAME, "cmake-button");
     m_mgr->AddWorkspaceTab(HELP_TAB_NAME);
 
     // Bind events
@@ -203,13 +202,13 @@ void CMakePlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void CMakePlugin::UnPlug()
 {
-    auto page = clGetManager()->BookGetPage(PaneId::SIDE_BAR, HELP_TAB_NAME);
+    auto page = m_mgr->BookGetPage(PaneId::SIDE_BAR, HELP_TAB_NAME);
     if (page) {
         CMakeHelpTab* helpTab = dynamic_cast<CMakeHelpTab*>(page);
         if (helpTab) {
             helpTab->Stop();
         }
-        if (!clGetManager()->BookDeletePage(PaneId::SIDE_BAR, page)) {
+        if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, page)) {
             // failed to delete, delete it manually
             page->Destroy();
         }
@@ -518,7 +517,7 @@ wxString CMakePlugin::WriteCMakeListsAndOpenIt(const wxString& lines) const
 {
     wxFileName cmakelists_txt{::wxGetCwd(), "CMakeLists.txt"};
     FileUtils::WriteFileContent(cmakelists_txt, lines);
-    clGetManager()->OpenFile(cmakelists_txt.GetFullPath());
+    m_mgr->OpenFile(cmakelists_txt.GetFullPath());
     return cmakelists_txt.GetFullPath();
 }
 

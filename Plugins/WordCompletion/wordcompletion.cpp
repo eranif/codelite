@@ -1,17 +1,13 @@
 #include "wordcompletion.h"
 
 #include "ColoursAndFontsManager.h"
-#include "Keyboard/clKeyboardManager.h"
 #include "WordCompletionDictionary.h"
 #include "WordCompletionSettingsDlg.h"
 #include "WordCompletionThread.h"
 #include "cl_command_event.h"
 #include "event_notifier.h"
-#include "globals.h"
 #include "lexer_configuration.h"
-#include "wxCodeCompletionBoxManager.h"
 
-#include <wx/app.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
@@ -160,8 +156,8 @@ void WordCompletionPlugin::OnSettings(wxCommandEvent& event)
 
 IEditor* WordCompletionPlugin::GetEditor(const wxString& filepath) const
 {
-    auto editor = clGetManager()->FindEditor(filepath);
-    if (editor && editor == clGetManager()->GetActiveEditor()) {
+    auto editor = m_mgr->FindEditor(filepath);
+    if (editor && editor == m_mgr->GetActiveEditor()) {
         return editor;
     }
     return nullptr;

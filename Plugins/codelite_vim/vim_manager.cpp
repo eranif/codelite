@@ -2,11 +2,7 @@
 
 #include "clStatusBar.h"
 #include "event_notifier.h"
-#include "macros.h"
-#include "search_thread.h"
 
-#include <wx/fontmap.h>
-#include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
 VimManager::VimManager(IManager* manager, VimSettings& settings)
@@ -41,16 +37,16 @@ VimManager::~VimManager()
 void VimManager::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip(); // Always call Skip() so other plugins/core components will get this event
-    CHECK_COND_RET(clGetManager()->GetActiveEditor());
+    CHECK_COND_RET(m_mgr->GetActiveEditor());
 
     m_currentCommand.set_ctrl(
-        clGetManager()
+        m_mgr
             ->GetActiveEditor()
             ->GetCtrl()); // Always keep the current editor. Even when disabled. Otherwise, when opening an
                           // editor and *then* enabling the VIM plugin, it may lead to crashes
     if (!m_settings.IsEnabled())
         return;
-    IEditor* editor = clGetManager()->GetActiveEditor();
+    IEditor* editor = m_mgr->GetActiveEditor();
     SaveOldEditorState();
 
     DoBindEditor(editor);
@@ -363,7 +359,7 @@ void VimManager::DoCleanup(bool unbind)
 void VimManager::SettingsUpdated()
 {
     if (m_settings.IsEnabled()) {
-        CHECK_COND_RET(clGetManager()->GetActiveEditor());
+        CHECK_COND_RET(m_mgr->GetActiveEditor());
         DoBindEditor(m_mgr->GetActiveEditor());
     } else {
         DoCleanup();

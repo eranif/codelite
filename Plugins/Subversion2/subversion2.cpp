@@ -458,7 +458,7 @@ void Subversion2::EnsureVisible()
         pi.Show(true);
         GetManager()->GetDockingManager()->Update();
     }
-    clGetManager()->BookSelectPage(PaneId::BOTTOM_BAR, m_subversionView);
+    m_mgr->BookSelectPage(PaneId::BOTTOM_BAR, m_subversionView);
 }
 
 void Subversion2::DoInitialize()

@@ -35,7 +35,6 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "globals.h"
 #include "macromanager.h"
 #include "macros.h"
 #include "workspace.h"
@@ -369,7 +368,7 @@ void CodeFormatter::OnFormatFile(clSourceFormatEvent& e)
 void CodeFormatter::OnFormatFiles(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clGetManager()->SetStatusMessage(_("Code Formatter: scanning for files..."));
+    m_mgr->SetStatusMessage(_("Code Formatter: scanning for files..."));
     std::thread thr(
         [=, this](const wxString& rootFolder, CodeFormatter* formatter) {
             clFilesScanner fs;
@@ -435,14 +434,14 @@ void CodeFormatter::BatchFormat(const std::vector<wxString>& files, bool silent)
         wxString msg;
         msg << "Formatting file: " << (i + 1) << "/" << files.size() << " " << files[i];
         if (!silent) {
-            clGetManager()->SetStatusMessage(msg, 1);
+            m_mgr->SetStatusMessage(msg, 1);
             wxSafeYield();
         }
         DoFormatFile(files[i], false);
     }
 
     if (!silent) {
-        clGetManager()->SetStatusMessage(wxString() << _("Successfully formatted ") << files.size() << _(" files"), 3);
+        m_mgr->SetStatusMessage(wxString() << _("Successfully formatted ") << files.size() << _(" files"), 3);
         wxSafeYield();
     }
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
@@ -489,8 +488,8 @@ void CodeFormatter::OnWorkspaceLoaded(clWorkspaceEvent& e)
         wxString wd = json["working_directory"].toString();
 
         wxString remote_cmd;
-        cmd = MacroManager::Instance()->Expand(cmd, clGetManager(), wxEmptyString);
-        wd = MacroManager::Instance()->Expand(wd, clGetManager(), wxEmptyString);
+        cmd = MacroManager::Instance()->Expand(cmd, m_mgr, wxEmptyString);
+        wd = MacroManager::Instance()->Expand(wd, m_mgr, wxEmptyString);
         m_manager.GetFormatterByName(tool_name)->SetRemoteCommand(cmd, wd, {});
     }
 }
@@ -512,7 +511,7 @@ void CodeFormatter::OnFileSaved(clCommandEvent& e)
     CHECK_PTR_RET(f);
 
     // Find the editor and format it
-    auto editor = clGetManager()->FindEditor(filepath);
+    auto editor = m_mgr->FindEditor(filepath);
     CHECK_PTR_RET(editor);
 
     // is format required?
@@ -534,7 +533,7 @@ void CodeFormatter::OnFormatCompleted(clSourceFormatEvent& event)
 {
     event.Skip();
     const wxString& filepath = event.GetFileName();
-    auto editor = clGetManager()->FindEditor(filepath);
+    auto editor = m_mgr->FindEditor(filepath);
 
     if (editor) {
         wxWindowUpdateLocker window_locker{editor->GetCtrl()->GetParent()};
@@ -562,7 +561,7 @@ void CodeFormatter::OnInplaceFormatCompleted(clSourceFormatEvent& event)
 {
     event.Skip();
     const wxString& filepath = event.GetFileName();
-    auto editor = clGetManager()->FindEditor(filepath);
+    auto editor = m_mgr->FindEditor(filepath);
 
     if (editor) {
         // need to update the file itself

@@ -185,8 +185,8 @@ void PhpPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar);
 
 void PhpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
-    if (clGetManager()->GetMenuBar()) {
-        DoPlaceMenuBar(clGetManager()->GetMenuBar());
+    if (m_mgr->GetMenuBar()) {
+        DoPlaceMenuBar(m_mgr->GetMenuBar());
     }
 }
 
@@ -269,7 +269,7 @@ void PhpPlugin::UnPlug()
 void PhpPlugin::OnShowQuickOutline(clCodeCompletionEvent& e)
 {
     e.Skip();
-    IEditor* editor = clGetManager()->FindEditor(e.GetFileName());
+    IEditor* editor = m_mgr->FindEditor(e.GetFileName());
     CHECK_PTR_RET(editor);
 
     // we handle only .php files

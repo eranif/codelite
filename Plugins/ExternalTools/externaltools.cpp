@@ -31,7 +31,6 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "externaltooldlg.h"
-#include "globals.h"
 #include "plugin_version.h"
 
 #include <algorithm>
@@ -175,7 +174,7 @@ void ExternalToolsPlugin::DoRecreateToolbar()
 
     std::vector<ToolInfo> tools = m_externalTools.GetTools();
     std::sort(tools.begin(), tools.end(), DecSort());
-    auto toolbar = clGetManager()->GetToolBar();
+    auto toolbar = m_mgr->GetToolBar();
     auto images = toolbar->GetBitmapsCreateIfNeeded();
     size_t cogIndex = images->Add("cog");
 

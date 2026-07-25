@@ -15,7 +15,6 @@
 #include "clSTCHelper.hpp"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "globals.h"
 #include "ieditor.h"
 #include "macros.h"
 
@@ -59,7 +58,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
-    clGetManager()->GetInfoBar()->Bind(
+    m_mgr->GetInfoBar()->Bind(
         wxEVT_BUTTON, &LanguageServerPlugin::OnFixLSPPaths, this, XRCID("lsp-fix-paths"));
 
     EventNotifier::Get()->Bind(wxEVT_LSP_STOP, &LanguageServerPlugin::OnLSPStopOne, this);
@@ -107,7 +106,7 @@ void LanguageServerPlugin::CheckServers()
     message.RemoveLast(2);
     message << "]";
 
-    clGetManager()->DisplayMessage(
+    m_mgr->DisplayMessage(
         message, wxICON_WARNING, {{wxID_CANCEL, _("Cancel")}, {XRCID("lsp-fix-paths"), _("Attempt to fix")}});
 }
 
@@ -206,7 +205,7 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
 
-    IEditor* editor = clGetManager()->GetActiveEditor();
+    IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
     LanguageServerProtocol::Ptr_t lsp = LSP::Manager::GetInstance().GetServerForEditor(editor);
@@ -368,7 +367,7 @@ void LanguageServerPlugin::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Sk
 void LanguageServerPlugin::OnFixLSPPaths(wxCommandEvent& event)
 {
     // Hide and layout the view
-    clGetManager()->GetInfoBar()->Hide();
+    m_mgr->GetInfoBar()->Hide();
     EventNotifier::Get()->TopFrame()->SendSizeEvent(wxSEND_EVENT_POST);
 
     wxUnusedVar(event);

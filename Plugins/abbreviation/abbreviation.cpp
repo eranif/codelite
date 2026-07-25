@@ -30,19 +30,13 @@
 #include "abbreviationssettingsdlg.h"
 #include "cl_config.h"
 #include "event_notifier.h"
-#include "globals.h"
 #include "macromanager.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 #include "wxCodeCompletionBoxManager.h"
 
-#include <algorithm>
-#include <wx/app.h>
 #include <wx/bitmap.h>
 #include <wx/clntdata.h>
-#include <wx/log.h>
 #include <wx/menu.h>
-#include <wx/regex.h>
-#include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
@@ -136,7 +130,7 @@ wxCodeCompletionBoxEntry::Vec_t AbbreviationPlugin::GetAbbreviations(const wxStr
     }
 
     wxCodeCompletionBoxEntry::Vec_t V;
-    wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("replace-blue");
+    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("replace-blue");
     if (bmp.IsOk()) {
         // search for the old item
         for (const auto& vt : jsonData.GetEntries()) {
@@ -313,7 +307,7 @@ void AbbreviationPlugin::OnCompletionBoxShowing(clCodeCompletionEvent& event) { 
 void AbbreviationPlugin::OnShowAbbreviations(wxCommandEvent& e)
 {
     e.Skip();
-    IEditor* editor = clGetManager()->GetActiveEditor();
+    IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
     wxStyledTextCtrl* ctrl = editor->GetCtrl();

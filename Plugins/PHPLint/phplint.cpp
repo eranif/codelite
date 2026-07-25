@@ -5,7 +5,6 @@
 #include "StringUtils.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "globals.h"
 #include "lintoptions.h"
 #include "phplintdlg.h"
 #include "phpoptions.h"
@@ -138,7 +137,7 @@ void PHPLint::DoCheckFile(const wxFileName& filename)
 
     wxFileName php(m_settingsPhp.GetPhpExe());
     if (!php.Exists()) {
-        clGetManager()->SetStatusMessage(_("PHPLint: can not lint file. Missing PHP executable path"), 5);
+        m_mgr->SetStatusMessage(_("PHPLint: can not lint file. Missing PHP executable path"), 5);
         return;
     }
 

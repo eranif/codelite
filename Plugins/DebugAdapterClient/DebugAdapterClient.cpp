@@ -28,7 +28,6 @@
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
 #include "DAPBreakpointsView.h"
-#include "DAPConsoleOutput.hpp"
 #include "DAPDebuggerPane.h"
 #include "DAPMainView.h"
 #include "DAPOutputPane.hpp"
@@ -39,27 +38,23 @@
 #include "DapLocator.hpp"
 #include "DapLogger.hpp"
 #include "Debugger/debuggermanager.h"
-#include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "StringUtils.h"
 #include "clIdleEventThrottler.hpp"
 #include "clResizableTooltip.h"
-#include "clSFTPManager.hpp"
 #include "clWorkspaceManager.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
-#include "globals.h"
 #include "macromanager.h"
 #include "wx/msgqueue.h"
 
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
-#include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
 #if USE_SFTP
-#include "sftp_settings.h"
+#include "clSFTPManager.hpp"
 #endif
 
 namespace
@@ -318,7 +313,7 @@ void DebugAdapterClient::CreatePluginMenu(wxMenu* pluginsMenu)
     // Menu Bar > Settings > LLDB Settings
 
     // Get the main frame's menubar
-    auto mb = clGetManager()->GetMenuBar();
+    auto mb = m_mgr->GetMenuBar();
     if (mb) {
         wxMenu* settingsMenu(NULL);
         int menuPos = mb->FindMenu(_("Settings"));
@@ -340,7 +335,7 @@ void DebugAdapterClient::HookPopupMenu(wxMenu* menu, MenuType type)
 void DebugAdapterClient::ClearDebuggerMarker()
 {
     IEditor::List_t editors;
-    clGetManager()->GetAllEditors(editors);
+    m_mgr->GetAllEditors(editors);
 
     for (auto editor : editors) {
         DAPTextView::ClearMarker(editor->GetCtrl());
@@ -355,7 +350,7 @@ void DebugAdapterClient::RefreshBreakpointsView()
 
     // clear all breakpoint markers
     IEditor::List_t editors;
-    clGetManager()->GetAllEditors(editors);
+    m_mgr->GetAllEditors(editors);
     for (auto editor : editors) {
         editor->DeleteBreakpointMarkers();
     }
@@ -363,7 +358,7 @@ void DebugAdapterClient::RefreshBreakpointsView()
     // update the open editors with breakpoint markers
     for (const auto& bp : m_sessionBreakpoints.get_breakpoints()) {
         wxString path = NormaliseReceivedPath(bp.source.path);
-        auto editor = clGetManager()->FindEditor(path);
+        auto editor = m_mgr->FindEditor(path);
         if (!editor) {
             continue;
         }
@@ -539,9 +534,9 @@ void DebugAdapterClient::HideDebuggerUI()
     }
 
     if (m_textView) {
-        int index = clGetManager()->GetMainNotebook()->FindPage(m_textView);
+        int index = m_mgr->GetMainNotebook()->FindPage(m_textView);
         if (index != wxNOT_FOUND) {
-            clGetManager()->GetMainNotebook()->RemovePage(index, false);
+            m_mgr->GetMainNotebook()->RemovePage(index, false);
         }
         m_textView->Destroy();
         m_textView = nullptr;
@@ -571,8 +566,8 @@ void DebugAdapterClient::InitializeUI()
     }
 
     if (!m_textView) {
-        m_textView = new DAPTextView(clGetManager()->GetMainNotebook());
-        clGetManager()->GetMainNotebook()->AddPage(m_textView, _("Debug Adapter Client"), true);
+        m_textView = new DAPTextView(m_mgr->GetMainNotebook());
+        m_mgr->GetMainNotebook()->AddPage(m_textView, _("Debug Adapter Client"), true);
     }
 }
 
@@ -588,20 +583,20 @@ void DebugAdapterClient::DoCleanup()
 
     // clear all breakpoint markers
     IEditor::List_t editors;
-    clGetManager()->GetAllEditors(editors);
+    m_mgr->GetAllEditors(editors);
     for (auto editor : editors) {
         editor->DeleteBreakpointMarkers();
     }
 
     clDebuggerBreakpoint::Vec_t all_bps;
-    clGetManager()->GetAllBreakpoints(all_bps);
+    m_mgr->GetAllBreakpoints(all_bps);
 
     for (const auto& bp : all_bps) {
         if (bp.file.empty()) {
             continue;
         }
 
-        auto editor = clGetManager()->FindEditor(bp.file);
+        auto editor = m_mgr->FindEditor(bp.file);
         if (!editor) {
             continue;
         }
@@ -695,11 +690,11 @@ void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event)
         dap::EvaluateContext::HOVER,
         [this, word](bool success, const wxString& result, const wxString& type, int variablesReference) {
             if (!success) {
-                clGetManager()->SetStatusMessage(_("Failed to evaluate expression: ") + word);
+                m_mgr->SetStatusMessage(_("Failed to evaluate expression: ") + word);
                 return;
             }
 
-            auto editor = clGetManager()->GetActiveEditor();
+            auto editor = m_mgr->GetActiveEditor();
             CHECK_PTR_RET(editor);
             m_tooltip = new DAPTooltip(&m_client, word, result, type, variablesReference);
             m_tooltip->Move(::wxGetMousePosition());
@@ -1346,7 +1341,7 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
 
         wxFileName fn(file_to_load);
         if (!fn.FileExists()) {
-            clGetManager()->SetStatusMessage(_("ERROR: (dap) file:") + file_to_load + _(" does not exist"));
+            m_mgr->SetStatusMessage(_("ERROR: (dap) file:") + file_to_load + _(" does not exist"));
             return;
         }
 
@@ -1354,7 +1349,7 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
             DAPTextView::ClearMarker(editor->GetCtrl());
             DAPTextView::SetMarker(editor->GetCtrl(), line_number);
         };
-        clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), callback);
+        m_mgr->OpenFileAndAsyncExecute(fn.GetFullPath(), callback);
         if (m_textView) {
             m_textView->ClearMarker();
         }
@@ -1365,7 +1360,7 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
         // easy path
         CHECK_PTR_RET(m_textView);
         if (m_textView->IsSame(sourceId)) {
-            clGetManager()->SelectPage(m_textView);
+            m_mgr->SelectPage(m_textView);
             m_textView->SetMarker(line_number);
             return;
         }
@@ -1376,7 +1371,7 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
                     return;
                 }
                 DAP_DEBUG() << "mimeType:" << mimeType << endl;
-                clGetManager()->SelectPage(m_textView);
+                m_mgr->SelectPage(m_textView);
                 m_textView->SetText(sourceId,
                                     content,
                                     wxString() << sourceId.name << " (ref: " << sourceId.sourceReference << ")",
@@ -1442,7 +1437,7 @@ wxString DebugAdapterClient::ReplacePlaceholders(const wxString& str) const
         project_name = clWorkspaceManager::Get().GetWorkspace()->GetActiveProjectName();
     }
 
-    wxString command = MacroManager::Instance()->Expand(str, clGetManager(), project_name);
+    wxString command = MacroManager::Instance()->Expand(str, m_mgr, project_name);
     return command;
 }
 

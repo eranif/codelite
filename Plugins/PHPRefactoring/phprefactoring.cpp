@@ -8,7 +8,6 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "globals.h"
 #include "phpoptions.h"
 #include "phprefactoringdlg.h"
 #include "phprefactoringoptions.h"
@@ -376,7 +375,7 @@ void PHPRefactoring::OnContextMenu(clContextMenuEvent& event)
     menu->Append(wxID_RENAME_CLASS_AND_NAMESPACES, _("Rename Class and Namespaces"));
     wxMenuItem* item = new wxMenuItem(event.GetMenu(), wxID_ANY, _("PHP Refactoring"));
     item->SetSubMenu(menu);
-    item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("php-workspace"));
+    item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("php-workspace"));
     event.GetMenu()->AppendSeparator();
     event.GetMenu()->Append(item);
     m_selectedFolder = event.GetPath();

@@ -127,7 +127,7 @@ void CodeLiteDiff::OnTabContextMenu(clContextMenuEvent& event)
     auto activeWin = dynamic_cast<wxWindow*>(event.GetEditor());
     CHECK_PTR_RET(activeWin);
 
-    auto activeEditor = clGetManager()->GetEditorFromWindow(activeWin);
+    auto activeEditor = m_mgr->GetEditorFromWindow(activeWin);
     CHECK_PTR_RET(activeEditor);
 
     m_leftFile = activeEditor->GetFileName();

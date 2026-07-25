@@ -43,17 +43,10 @@
 #include "IHunSpell.h"
 #include "SpellCheckerSettings.h"
 #include "clToolBarButtonBase.h"
-#include "ctags_manager.h"
-#include "event_notifier.h"
-#include "globals.h"
 #include "macros.h"
 #include "scGlobals.h"
-#include "workspace.h"
-#include "wxCustomControls.hpp"
 
-#include <wx/mstream.h>
 #include <wx/stc/stc.h>
-#include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
 // clang-format off
@@ -408,7 +401,7 @@ void SpellCheck::OnTimer(wxTimerEvent& e)
 void SpellCheck::SetCheckContinuous(bool value)
 {
     m_options.SetCheckContinuous(value);
-    auto btn = clGetManager()->GetToolBar()->FindById(XRCID(s_contCheckID.ToUTF8()));
+    auto btn = m_mgr->GetToolBar()->FindById(XRCID(s_contCheckID.ToUTF8()));
 
     if (value) {
         m_pLastEditor = nullptr;
@@ -416,7 +409,7 @@ void SpellCheck::SetCheckContinuous(bool value)
 
         if (btn) {
             btn->Check(true);
-            clGetManager()->GetToolBar()->Refresh();
+            m_mgr->GetToolBar()->Refresh();
         }
     } else {
         if (m_timer.IsRunning()) {
@@ -424,7 +417,7 @@ void SpellCheck::SetCheckContinuous(bool value)
         }
         if (btn) {
             btn->Check(false);
-            clGetManager()->GetToolBar()->Refresh();
+            m_mgr->GetToolBar()->Refresh();
         }
     }
 }

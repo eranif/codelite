@@ -18,11 +18,8 @@
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "ctags_manager.h"
-#include "database/entry.h"
 #include "event_notifier.h"
 #include "functions_parser.h"
-#include "globals.h"
-#include "gui.hpp"
 #include "myxh_auimgr.h"
 #include "myxh_auitoolb.h"
 #include "myxh_cmdlinkbtn.h"
@@ -1282,9 +1279,9 @@ void wxCrafterPlugin::OnProjectContextMenu(clContextMenuEvent& event)
 void wxCrafterPlugin::OnReGenerateForProject(wxCommandEvent& e)
 {
     wxArrayString wxcpFiles;
-    if (clGetManager()->GetWorkspace() && clGetManager()->GetWorkspace()->IsOpen()) {
+    if (m_mgr->GetWorkspace() && m_mgr->GetWorkspace()->IsOpen()) {
         wxArrayString projects;
-        ProjectPtr activeProject = clGetManager()->GetSelectedProject();
+        ProjectPtr activeProject = m_mgr->GetSelectedProject();
         if (!activeProject) {
             return;
         }

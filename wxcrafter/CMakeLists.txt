@@ -1,3 +1,5 @@
+add_subdirectory(wxCrafterCommonGui)
+
 if(NOT CL_SRC_ROOT)
   message(FATAL_ERROR "Missing CL_SRC_ROOT")
 endif()
@@ -70,18 +72,9 @@ endif()
 # The macro-sensitive GUI-only files.
 file(GLOB_RECURSE MACRO_SENSITIVE_GUI_ONLY_SRCS "SharedGui/*.cpp")
 
-# Define-agnostic files GUI-only (COMMON_GUI_SRCS).
-
-file(GLOB_RECURSE COMMON_GUI_SRCS "wxCrafterCommonGui/*.cpp")
-
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
   "${CMAKE_CURRENT_LIST_DIR}/SharedGui/src"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/Importer"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/UI"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/src"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/xrc_handlers"
 )
 
 set(RES_FILE "")
@@ -93,37 +86,6 @@ endif()
 # ----------------------------------------------------------------------------
 # GUI targets
 # ----------------------------------------------------------------------------
-
-# wxCrafterCommonGui: define-agnostic but GUI-coupled TUs. Compiled once, linked
-# into wxcrafter and wxCrafterPlugin only — NOT into wxcgen.
-
-wxcrafter_target(
-  WxCrafterGui "${CMAKE_CURRENT_SOURCE_DIR}/wxCrafterCommonGui/UI/gui.wxcp"
-  "${CMAKE_CURRENT_BINARY_DIR}" "gui.cpp" "gui.hpp" "gui_wxcrafter_bitmaps.cpp")
-
-wxcrafter_target(
-  WxCrafterWxCrafter "${CMAKE_CURRENT_SOURCE_DIR}/wxCrafterCommonGui/UI/wxcrafter.wxcp"
-  "${CMAKE_CURRENT_BINARY_DIR}" "wxcrafter.cpp" "wxcrafter.hpp"
-  "wxcrafter_wxcrafter_bitmaps.cpp")
-
-wxcrafter_target(
-  WxCrafterWxCrafterGui "${CMAKE_CURRENT_SOURCE_DIR}/wxCrafterCommonGui/UI/wxcrafter_gui.wxcp"
-  "${CMAKE_CURRENT_BINARY_DIR}" "wxcrafter_gui.cpp" "wxcrafter_gui.hpp"
-  "wxcrafter_gui_wxcrafter_bitmaps.cpp")
-
-add_library(
-  wxCrafterCommonGui STATIC
-  ${COMMON_GUI_SRCS} ${WXCRAFTER_WxCrafterGui_OUTPUTS}
-  ${WXCRAFTER_WxCrafterWxCrafter_OUTPUTS}
-  ${WXCRAFTER_WxCrafterWxCrafterGui_OUTPUTS})
-set_target_properties(wxCrafterCommonGui PROPERTIES POSITION_INDEPENDENT_CODE
-                                                    ON)
-target_include_directories(wxCrafterCommonGui
-                           PUBLIC "${WXCRAFTER_WxCrafterGui_OUTPUTDIR}")
-target_link_libraries(wxCrafterCommonGui PUBLIC wxCrafterCommon plugin)
-if(USE_PCH)
-  target_precompile_headers(wxCrafterCommonGui REUSE_FROM PCH)
-endif()
 
 # ----------------------------------------------------------------------------
 # Per-flavor targets

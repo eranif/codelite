@@ -18,7 +18,6 @@ class EventsEditorPane;
 extern const wxEventType wxEVT_SHOW_WXCRAFTER_DESIGNER;
 
 class wxAuiToolBar;
-class wxCrafterPlugin;
 
 class wxcTreeView : public wxcTreeViewBaseClass
 {
@@ -35,7 +34,7 @@ protected:
     void DoRefreshFileList(bool reloadFileList = true);
 
 public:
-    wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin);
+    explicit wxcTreeView(wxWindow* parent);
     ~wxcTreeView() override;
 
     clTreeCtrl* GetTree() { return m_treeControls; }

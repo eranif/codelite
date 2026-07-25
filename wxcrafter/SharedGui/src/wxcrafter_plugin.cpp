@@ -1000,19 +1000,6 @@ void wxCrafterPlugin::OnSave(wxCommandEvent& e)
     e.Skip();
 }
 
-bool wxCrafterPlugin::IsMainViewActive()
-{
-    return true; // IIUC this function was protecting against outside events being caught when in Tabbed mode and a
-                 // different tab was active
-#if 0
-    if(!m_mgr) {
-        return true;
-    } else {
-        return IsTabMode() && m_mainFrame->GetWxcView() && m_mgr->GetActivePage() == m_mainFrame->GetWxcView();
-    }
-#endif
-}
-
 // plugin menu
 void wxCrafterPlugin::OnCloseProject(wxCommandEvent& e)
 {
@@ -1184,7 +1171,7 @@ void wxCrafterPlugin::DoInitDone(wxObject* obj)
     ColoursAndFontsManager::Get().Load();
 #endif
 
-    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_serverMode, this);
+    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_serverMode);
 
     wxCrafter::SetTopFrame(m_mainFrame);
 }

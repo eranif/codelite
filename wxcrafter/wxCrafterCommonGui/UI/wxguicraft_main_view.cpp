@@ -27,13 +27,13 @@
 #include "fileutils.h"
 #include "frame_wrapper.h"
 #include "globals.h"
+#include "mainFrame.h"
 #include "panel_wrapper_top_level.h"
 #include "popup_window_wrapper.h"
 #include "wizard_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_edit_manager.h"
 #include "wxc_settings.h"
-#include "wxcrafter_plugin.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
 
@@ -787,12 +787,12 @@ void PrepareMenu(wxMenu& menu, const wxcWidget* item)
 }
 } // namespace
 
-GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clTreeCtrl* treeView)
+GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, MainFrame* mainFrame, clTreeCtrl* treeView)
     : GUICraftMainPanelBase(parent)
     , m_clipboardItem(NULL)
     , m_previewAlive(false)
     , m_treeControls(treeView)
-    , m_plugin(plugin)
+    , m_mainFrame(mainFrame)
 {
 #if defined(__WXMSW__) || defined(__WXOSX__)
     wxToolTip::SetDelay(100);
@@ -2442,11 +2442,6 @@ void GUICraftMainPanel::OnRibbonPageSelected(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnCut(wxCommandEvent& e)
 {
-    if (!m_plugin->IsMainViewActive()) {
-        e.Skip(); // This event is nothing to do with us
-        return;
-    }
-
     if (!IsTreeViewSelected()) {
         e.Skip(); // The treeview isn't selected, so don't cut its selection!
         return;
@@ -2486,11 +2481,6 @@ void GUICraftMainPanel::OnCut(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnCopy(wxCommandEvent& e)
 {
-    if (!m_plugin->IsMainViewActive()) {
-        e.Skip(); // This event is nothing to do with us
-        return;
-    }
-
     if (!IsTreeViewSelected()) {
         e.Skip(); // The treeview isn't selected, so don't copy its selection unnecessarily
         return;
@@ -2511,11 +2501,6 @@ void GUICraftMainPanel::OnCopy(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
 {
-    if (!m_plugin->IsMainViewActive()) {
-        e.Skip(); // This event is nothing to do with us
-        return;
-    }
-
     if (!IsTreeViewSelected()) {
         e.Skip(); // The treeview isn't selected, so don't make an unintended paste into it
         return;
@@ -3098,7 +3083,7 @@ wxcWidget* GUICraftMainPanel::DoGetItemData(const wxTreeItemId& item) const
 
 void GUICraftMainPanel::OnRedo(wxCommandEvent& e)
 {
-    if (!(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
+    if (!(m_mainFrame && m_mainFrame->IsShown())) {
         e.Skip();
         return;
     }
@@ -3125,7 +3110,7 @@ void GUICraftMainPanel::OnRedoUI(wxUpdateUIEvent& e) { e.Enable(wxcEditManager::
 
 void GUICraftMainPanel::OnUndo(wxCommandEvent& e)
 {
-    if (!(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
+    if (!(m_mainFrame && m_mainFrame->IsShown())) {
         e.Skip();
         return;
     }
@@ -3152,7 +3137,7 @@ void GUICraftMainPanel::OnUndoUI(wxUpdateUIEvent& e) { e.Enable(wxcEditManager::
 
 void GUICraftMainPanel::OnLabelCurrentState(wxCommandEvent& event)
 {
-    if (!(m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown())) {
+    if (!(m_mainFrame && m_mainFrame->IsShown())) {
         event.Skip();
         return;
     }
@@ -3572,8 +3557,8 @@ void GUICraftMainPanel::AddCustomControl(int controlId)
 wxWindow* GUICraftMainPanel::GetTopFrame() const
 {
     wxWindow* top = wxCrafter::TopFrame();
-    if (m_plugin->GetMainFrame() && m_plugin->GetMainFrame()->IsShown()) {
-        top = m_plugin->GetMainFrame();
+    if (m_mainFrame && m_mainFrame->IsShown()) {
+        top = m_mainFrame;
     }
     return top;
 }

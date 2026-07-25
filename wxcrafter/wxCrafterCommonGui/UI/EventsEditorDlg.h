@@ -5,7 +5,6 @@
 #include "wxcrafter.hpp"
 
 class wxcWidget;
-class wxCrafterPlugin;
 
 class EventsEditorPane : public EventsEditorPaneBase
 {
@@ -25,7 +24,7 @@ protected:
     void OnDoubleClick(wxPropertyGridEvent& e);
 
 public:
-    EventsEditorPane(wxWindow* parent, wxcWidget* control, wxCrafterPlugin* plugin);
+    EventsEditorPane(wxWindow* parent, wxcWidget* control);
     ~EventsEditorPane() override;
     void Save();
     void InitEventsForWidget(wxcWidget* control);

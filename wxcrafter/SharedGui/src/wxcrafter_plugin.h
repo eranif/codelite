@@ -104,7 +104,6 @@ public:
     void UnPlug() override;
 
     IManager* GetManager() { return m_mgr; }
-    bool IsMainViewActive();
 };
 
 #endif //__wxcrafter_plugin__

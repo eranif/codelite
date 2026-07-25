@@ -79,7 +79,7 @@ protected:
     void DoCreateRecentMenu(wxMenu& menu, wxArrayString& history, std::shared_ptr<wxString> result);
 
 public:
-    MainFrame(wxWindow* parent, bool hidden, wxCrafterPlugin* plugin);
+    MainFrame(wxWindow* parent, bool hidden);
     ~MainFrame() override;
 
     void AddForm(const NewFormDetails& fd) { m_treeView->AddForm(fd); }

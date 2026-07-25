@@ -1171,7 +1171,7 @@ void wxCrafterPlugin::DoInitDone(wxObject* obj)
     ColoursAndFontsManager::Get().Load();
 #endif
 
-    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_serverMode);
+    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_serverMode, m_mgr);
 
     wxCrafter::SetTopFrame(m_mainFrame);
 }

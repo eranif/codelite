@@ -217,9 +217,6 @@ public:
     void OnPropertyChanged(wxCommandEvent& e);
     void OnSizerTool(wxCommandEvent& e);
     void OnSetSizerProp1(wxCommandEvent& e);
-    void OnEventEditor(wxCommandEvent& e);
-    void OnEventEditorUI(wxUpdateUIEvent& e);
-    void OnEventEditorCommon(wxCommandEvent& e);
     void OnSizerToolUI(wxUpdateUIEvent& e);
     void OnSetSizerProp1UI(wxUpdateUIEvent& e);
     void OnDelete(wxCommandEvent& e);

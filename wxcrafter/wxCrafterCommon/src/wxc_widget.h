@@ -40,8 +40,8 @@ enum {
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
     ID_FORM_TYPE = 4100,
-    ID_EVENT_EDITOR_COMMON = 4300,
-    ID_EVENT_EDITOR = 4301,
+    ID_EVENT_EDITOR_COMMON = 4300, // Unused
+    ID_EVENT_EDITOR = 4301, // Unused
     ID_GENERATE_CODE = 4399,
     ID_FIRST_CONTROL = 4400,
     ID_WXBUTTON = ID_FIRST_CONTROL,

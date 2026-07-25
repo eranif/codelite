@@ -12,6 +12,7 @@
 class MainFrame : public MainFrameBase
 {
 protected:
+    IManager* m_mgr = nullptr;
     GUICraftMainPanel* m_wxcView = nullptr;
     wxcTreeView* m_treeView = nullptr;
     wxFindReplaceDialog* m_findReplaceDialog = nullptr;
@@ -79,7 +80,7 @@ protected:
     void DoCreateRecentMenu(wxMenu& menu, wxArrayString& history, std::shared_ptr<wxString> result);
 
 public:
-    MainFrame(wxWindow* parent, bool hidden);
+    MainFrame(wxWindow* parent, bool hidden, IManager* manager);
     ~MainFrame() override;
 
     void AddForm(const NewFormDetails& fd) { m_treeView->AddForm(fd); }
@@ -88,6 +89,7 @@ public:
     void SaveProject() { m_treeView->SaveProject(); }
     void CloseProject(bool saveBeforeClose) { m_treeView->CloseProject(saveBeforeClose); }
 
+    IManager* GetManager() { return m_mgr; }
     GUICraftMainPanel* GetWxcView() { return m_wxcView; }
 
     void DisplayDesigner();

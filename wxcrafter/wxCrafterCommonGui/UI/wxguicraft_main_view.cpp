@@ -172,12 +172,6 @@ EVT_MENU(XRCID("GenerateXRC"), GUICraftMainPanel::OnCodeGenerationTypeChanged)
 EVT_TOOL_RANGE(ID_TOOL_ALIGN_LEFT, ID_TOOL_WXEXPAND, GUICraftMainPanel::OnSizerTool)
 EVT_TOOL(ID_TOOL_PROP1, GUICraftMainPanel::OnSetSizerProp1)
 
-EVT_MENU(ID_EVENT_EDITOR, GUICraftMainPanel::OnEventEditor)
-#if STANDALONE_BUILD
-EVT_UPDATE_UI(ID_EVENT_EDITOR, GUICraftMainPanel::OnEventEditorUI)
-#endif
-EVT_MENU(ID_EVENT_EDITOR_COMMON, GUICraftMainPanel::OnEventEditorCommon)
-
 // IMPORTANT: this entry MUST be last!
 EVT_MENU(wxID_ANY, GUICraftMainPanel::OnMenuItemClicked)
 
@@ -227,9 +221,7 @@ const wxEventType wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED = wxNewEventType();
 
 namespace
 {
-#if !STANDALONE_BUILD
 void NotifyFileSaved(const wxFileName& fn) { EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath()); }
-#endif
 
 //-------------------------------------------------------------
 const FLAGS_t __ONE__ = 1;
@@ -564,7 +556,7 @@ wxMenu* CreateTopLevelMenu()
     return menu;
 }
 
-void PrepareMenu(wxMenu& menu, const wxcWidget* item)
+void PrepareMenu(wxMenu& menu, const wxcWidget* item, bool standAlone)
 {
     // ADD_NEW_CONTROL
     bool isChildOfTreeBook = false;
@@ -627,9 +619,9 @@ void PrepareMenu(wxMenu& menu, const wxcWidget* item)
     }
 
     if (flags & MT_TOP_LEVEL) {
-#if STANDALONE_BUILD
-        menu.Append(wxID_NEW, _("New Project..."));
-#endif
+        if (standAlone) {
+            menu.Append(wxID_NEW, _("New Project..."));
+        }
         menu.Append(ID_FORM_TYPE, _("Add Form"), CreateTopLevelMenu());
     }
 
@@ -1095,7 +1087,7 @@ void GUICraftMainPanel::OnMenu(wxTreeEvent& event)
 {
     wxMenu menu;
     GUICraftItemData* data = GetSelItemData();
-    PrepareMenu(menu, data ? data->m_wxcWidget : nullptr);
+    PrepareMenu(menu, data ? data->m_wxcWidget : nullptr, m_mainFrame->GetManager() == nullptr);
     PopupMenu(&menu);
 }
 
@@ -1108,7 +1100,7 @@ void GUICraftMainPanel::OnShowContextMenu(wxCommandEvent& e)
         title = data->m_wxcWidget->GetName();
     }
     wxMenu menu(title.IsEmpty() ? "" : title);
-    PrepareMenu(menu, data ? data->m_wxcWidget : nullptr);
+    PrepareMenu(menu, data ? data->m_wxcWidget : nullptr, m_mainFrame->GetManager() == nullptr);
     PopupMenu(&menu);
 }
 
@@ -2282,10 +2274,6 @@ void GUICraftMainPanel::OnDeleteUI(wxUpdateUIEvent& e)
     GUICraftItemData* itemData = GetSelItemData();
     e.Enable(itemData);
 }
-
-void GUICraftMainPanel::OnEventEditor(wxCommandEvent& e) { wxUnusedVar(e); }
-
-void GUICraftMainPanel::OnEventEditorCommon(wxCommandEvent& e) { wxUnusedVar(e); }
 
 wxTreeItemId GUICraftMainPanel::DoFindBestSelection(const wxTreeItemId& item)
 {
@@ -3667,8 +3655,6 @@ wxStyledTextCtrl* GUICraftMainPanel::GetPreviewEditor() const
     return NULL;
 }
 
-void GUICraftMainPanel::OnEventEditorUI(wxUpdateUIEvent& e) { e.Enable(true); }
-
 void GUICraftMainPanel::OnStylesChanged(wxPropertyGridEvent& event)
 {
     m_styles.Changed(m_pgMgrStyles->GetGrid(), event);
@@ -3752,13 +3738,13 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
 
     wxcProjectMetadata::Get().SetAdditionalFiles(additionalFiles);
     wxCrafter::WriteGeneratedOutput(
-        baseCpp, baseHeader, headers, additionalFiles, autoGenComment, [](const wxFileName& filename) {
-#if !STANDALONE_BUILD
-            clSourceFormatEvent event(wxEVT_FORMAT_FILE);
-            event.SetFileName(filename.GetFullPath());
-            EventNotifier::Get()->ProcessEvent(event);
-            NotifyFileSaved(filename);
-#endif
+        baseCpp, baseHeader, headers, additionalFiles, autoGenComment, [this](const wxFileName& filename) {
+            if (m_mainFrame->GetManager()) {
+                clSourceFormatEvent event(wxEVT_FORMAT_FILE);
+                event.SetFileName(filename.GetFullPath());
+                EventNotifier::Get()->ProcessEvent(event);
+                NotifyFileSaved(filename);
+            }
         });
 
     // Export the XRC output if required
@@ -3780,9 +3766,9 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
                 wxFileName fnXrcFilePath(xrcFilePath);
                 wxCrafter::MakeAbsToProject(fnXrcFilePath);
                 wxCrafter::WriteFile(fnXrcFilePath.GetFullPath(), out.GetString(), true);
-#if !STANDALONE_BUILD
-                NotifyFileSaved(fnXrcFilePath);
-#endif
+                if (m_mainFrame->GetManager()) {
+                    NotifyFileSaved(fnXrcFilePath);
+                }
             }
         }
     }
@@ -3812,12 +3798,7 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
     const auto ret = wxcCodeGeneratorHelper::Get().CreateXRC(requestDesignerRefresh,
                                                              bitmapGenerationStart,
                                                              bitmapGenerationEnd,
-#if STANDALONE_BUILD
-                                                             nullptr
-#else
-                                                             &NotifyFileSaved
-#endif
-    );
+                                                             m_mainFrame->GetManager() ? &NotifyFileSaved : nullptr);
     if (!ret.ok()) {
         ::wxMessageBox(ret.message(), "wxCrafter", wxOK | wxCENTER | wxICON_ERROR, wxCrafter::TopFrame());
     }
@@ -3825,24 +3806,22 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
 
 void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
 {
-    wxArrayString projectsGenerated;
     wxArrayString wxcpFiles;
 
-#ifdef STANDALONE_BUILD
-    wxUnusedVar(files);
-    wxFileDialog openFileDialog(this,
-                                _("Select wxCrafter files:"),
-                                "",
-                                "",
-                                "wxCrafter Project Files (*.wxcp)|*.wxcp",
-                                wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
-    if (openFileDialog.ShowModal() != wxID_OK) {
-        return;
+    if (m_mainFrame->GetManager()) {
+        wxcpFiles = files;
+    } else {
+        wxFileDialog openFileDialog(this,
+                                    _("Select wxCrafter files:"),
+                                    "",
+                                    "",
+                                    "wxCrafter Project Files (*.wxcp)|*.wxcp",
+                                    wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+        if (openFileDialog.ShowModal() != wxID_OK) {
+            return;
+        }
+        openFileDialog.GetPaths(wxcpFiles);
     }
-    openFileDialog.GetPaths(wxcpFiles);
-#else
-    wxcpFiles = files;
-#endif
 
     if (wxcpFiles.IsEmpty()) {
         return;
@@ -3854,6 +3833,7 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
         return;
     }
 
+    wxArrayString projectsGenerated;
     {
         wxBusyCursor bc;
         wxBusyInfo bi(_("Generating Code..."));
@@ -3886,7 +3866,7 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
 void GUICraftMainPanel::OnBatchGenerateCode(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-#ifdef STANDALONE_BUILD
-    BatchGenerate(wxArrayString());
-#endif
+    if (!m_mainFrame->GetManager()) {
+        BatchGenerate(wxArrayString());
+    }
 }

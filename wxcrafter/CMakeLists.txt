@@ -1,3 +1,5 @@
+add_subdirectory(wxCrafterCommonGui)
+
 if(NOT CL_SRC_ROOT)
   message(FATAL_ERROR "Missing CL_SRC_ROOT")
 endif()
@@ -55,51 +57,24 @@ endif()
 # ----------------------------------------------------------------------------
 # Source bucketing
 # ----------------------------------------------------------------------------
-# We have three target flavors that differ in one preprocessor symbol:
+# We have two gui-target flavors that differ in one preprocessor symbol:
 #
 # target            STANDALONE_BUILD
 # ----------------- ----------------
-# wxCrafterPlugin   undefined wxcrafter (exe)   1 wxcgen (exe)      unused
+# wxCrafterPlugin   undefined
+# wxcrafter (exe)   1
 #
 # Most TUs don't reference the macro; their object files are bit-identical
 # across all flavors and can be compiled once, into a shared static library.
 # Only a handful of TUs actually #if on the macro and must be compiled per
 # flavor.
-#
-# Bucket the files into: MACRO_SENSITIVE_GUI_ONLY_SRCS — TUs whose object code
-# depends on the define above. Compiled per target with the right define.
-# GUI_ONLY_SRCS        — TUs that pull GUI-only symbols (MainFrame, etc.). NOT
-# linked into wxcgen. COMMON_GUI_SRCS      — define-agnostic but GUI-coupled.
-# Compiled into wxCrafterCommonGui (linked by GUI targets only). COMMON_SRCS —
-# define-agnostic AND headless-safe. Compiled into wxCrafterCommon (linked by
-# all three targets).
 
 # The macro-sensitive GUI-only files.
 file(GLOB_RECURSE MACRO_SENSITIVE_GUI_ONLY_SRCS "SharedGui/*.cpp")
 
-set(TO_MIGRATE_UI_SRCS
-  wxCrafterCommonGui/UI/mainFrame.cpp
-  wxCrafterCommonGui/UI/wxguicraft_main_view.cpp
-)
-
-# Define-agnostic files GUI-only (COMMON_GUI_SRCS).
-
-file(GLOB_RECURSE COMMON_GUI_SRCS "wxCrafterCommonGui/*.cpp")
-
-foreach(f ${TO_MIGRATE_UI_SRCS})
-  set(absf "${CMAKE_CURRENT_LIST_DIR}/${f}")
-  list(REMOVE_ITEM COMMON_GUI_SRCS "${absf}")
-  list(APPEND MACRO_SENSITIVE_GUI_ONLY_SRCS "${absf}")
-endforeach()
-
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
   "${CMAKE_CURRENT_LIST_DIR}/SharedGui/src"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/Importer"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/UI"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/src"
-  "${CMAKE_CURRENT_LIST_DIR}/wxCrafterCommonGui/xrc_handlers"
 )
 
 set(RES_FILE "")
@@ -111,37 +86,6 @@ endif()
 # ----------------------------------------------------------------------------
 # GUI targets
 # ----------------------------------------------------------------------------
-
-# wxCrafterCommonGui: define-agnostic but GUI-coupled TUs. Compiled once, linked
-# into wxcrafter and wxCrafterPlugin only — NOT into wxcgen.
-
-wxcrafter_target(
-  WxCrafterGui "${CMAKE_CURRENT_SOURCE_DIR}/wxCrafterCommonGui/UI/gui.wxcp"
-  "${CMAKE_CURRENT_BINARY_DIR}" "gui.cpp" "gui.hpp" "gui_wxcrafter_bitmaps.cpp")
-
-wxcrafter_target(
-  WxCrafterWxCrafter "${CMAKE_CURRENT_SOURCE_DIR}/wxCrafterCommonGui/UI/wxcrafter.wxcp"
-  "${CMAKE_CURRENT_BINARY_DIR}" "wxcrafter.cpp" "wxcrafter.hpp"
-  "wxcrafter_wxcrafter_bitmaps.cpp")
-
-wxcrafter_target(
-  WxCrafterWxCrafterGui "${CMAKE_CURRENT_SOURCE_DIR}/wxCrafterCommonGui/UI/wxcrafter_gui.wxcp"
-  "${CMAKE_CURRENT_BINARY_DIR}" "wxcrafter_gui.cpp" "wxcrafter_gui.hpp"
-  "wxcrafter_gui_wxcrafter_bitmaps.cpp")
-
-add_library(
-  wxCrafterCommonGui STATIC
-  ${COMMON_GUI_SRCS} ${WXCRAFTER_WxCrafterGui_OUTPUTS}
-  ${WXCRAFTER_WxCrafterWxCrafter_OUTPUTS}
-  ${WXCRAFTER_WxCrafterWxCrafterGui_OUTPUTS})
-set_target_properties(wxCrafterCommonGui PROPERTIES POSITION_INDEPENDENT_CODE
-                                                    ON)
-target_include_directories(wxCrafterCommonGui
-                           PUBLIC "${WXCRAFTER_WxCrafterGui_OUTPUTDIR}")
-target_link_libraries(wxCrafterCommonGui PUBLIC wxCrafterCommon plugin)
-if(USE_PCH)
-  target_precompile_headers(wxCrafterCommonGui REUSE_FROM PCH)
-endif()
 
 # ----------------------------------------------------------------------------
 # Per-flavor targets

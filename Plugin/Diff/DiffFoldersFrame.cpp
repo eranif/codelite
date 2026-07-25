@@ -41,6 +41,11 @@ DiffFoldersFrame::DiffFoldersFrame(wxWindow* parent)
 
     ::clSetTLWindowBestSizeAndPosition(*this);
 
+    wxIconBundle b;
+    if (clGetManager()->GetStdIcons()->GetIconBundle("diff", &b)) {
+        SetIcons(b);
+    }
+
     // Load persistent items
     m_showSimilarItems = clConfig::Get().Read("DiffFolders/ShowSimilarItems", false);
 }

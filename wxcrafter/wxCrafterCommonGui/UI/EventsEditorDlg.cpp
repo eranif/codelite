@@ -3,11 +3,10 @@
 #include "UI/wxguicraft_main_view.h"
 #include "event_notifier.h"
 #include "wxc_widget.h"
-#include "wxcrafter_plugin.h"
 
 wxString EventsEditorPane::PANE_NAME = "Control Events";
 
-EventsEditorPane::EventsEditorPane(wxWindow* parent, wxcWidget* control, wxCrafterPlugin* plugin)
+EventsEditorPane::EventsEditorPane(wxWindow* parent, wxcWidget* control)
     : EventsEditorPaneBase(parent)
     , m_control(control)
 {

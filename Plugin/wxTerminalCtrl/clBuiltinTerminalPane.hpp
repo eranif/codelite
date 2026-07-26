@@ -89,6 +89,7 @@ public:
     wxTerminalViewCtrl* GetActiveTerminal();
 
 protected:
+    std::optional<wxString> PromptForTerminal();
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnInitDone(wxCommandEvent& e);
     void OnPageChanged(wxBookCtrlEvent& event);

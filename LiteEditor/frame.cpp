@@ -4371,7 +4371,22 @@ void clMainFrame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    clGetManager()->GetTerminalManager()->NewTerminal();
+    auto CreateNewTerminal = []() {
+        wxString working_dir;
+        std::optional<SSHAccountInfo> account{std::nullopt};
+        auto workspace = clWorkspaceManager::Get().GetWorkspace();
+        if (workspace) {
+            working_dir = workspace->GetDir();
+            if (workspace->IsRemote()) {
+                account = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
+            }
+        }
+
+        auto active_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(working_dir, account);
+        if (active_terminal)
+            active_terminal->SetFocus();
+    };
+    CreateNewTerminal();
 }
 
 void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
@@ -4680,7 +4695,7 @@ void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
 void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    auto create_new_terminal = []() {
+    auto CreateNewTerminal = []() {
         wxString working_dir;
         std::optional<SSHAccountInfo> account{std::nullopt};
         auto workspace = clWorkspaceManager::Get().GetWorkspace();
@@ -4692,14 +4707,15 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
         }
 
         auto active_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(working_dir, account);
-        active_terminal->SetFocus();
+        if (active_terminal)
+            active_terminal->SetFocus();
     };
 
     auto& mgr = ManagerST::Get()->GetPerspectiveManager();
     if (mgr.IsPaneVisible(PANE_OUTPUT)) {
         auto active_terminal = clGetManager()->GetTerminalManager()->GetActiveTerminal();
         if (active_terminal == nullptr) {
-            create_new_terminal();
+            CreateNewTerminal();
             return;
         }
 
@@ -4716,7 +4732,7 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
         clGetManager()->ToggleOutputPane(_("Terminal"));
         auto active_terminal = clGetManager()->GetTerminalManager()->GetActiveTerminal();
         if (active_terminal == nullptr) {
-            create_new_terminal();
+            CreateNewTerminal();
         }
     }
 }

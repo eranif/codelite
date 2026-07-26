@@ -288,7 +288,6 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::DoCreateTerminal(const wxString& shel
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCopy, this, wxID_COPY);
 #endif
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnPaste, this, wxID_PASTE);
-
     return ctrl;
 }
 
@@ -300,7 +299,10 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
 {
     wxString cmd;
     if (!terminal_cmd) {
-        cmd = m_terminalSettings.m_defaultShell.empty() ? kTerminalCommand : m_terminalSettings.m_defaultShell;
+        auto shell = PromptForTerminal();
+        if (!shell)
+            return nullptr;
+        cmd = *shell;
     } else {
         cmd = terminal_cmd.value();
     }
@@ -314,7 +316,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
         wd = workingDirectory;
     }
 
-    wxTerminalViewCtrl* ctrl = DoCreateTerminal(cmd, finalTabTitle, makeVisible, true, wd);
+    wxTerminalViewCtrl* ctrl = DoCreateTerminal(cmd, finalTabTitle, makeVisible, !tabTitle.empty(), wd);
     if (!ctrl) {
         return nullptr;
     }
@@ -322,18 +324,15 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
     // If working directory is provided, change to it
     // Handle SSH connection first if provided
     if (sshAccount.has_value() && sshAccount->IsOk()) {
-        // Build SSH connection command
-        auto ssh = ThePlatform->Which("ssh");
-        if (!ssh) {
-            clWARNING() << "Could not locate ssh executable in PATH" << endl;
-            // Continue without SSH - terminal will still be usable locally
-        } else {
+        std::optional<wxString> ssh = ThePlatform->Which("ssh");
+        if (ssh) {
+            // Build SSH connection command
             wxString sshCommand;
-            sshCommand << ssh.value();
+            sshCommand << "\"" << ssh.value() << "\"";
 
             // Add key file if specified
-            if (sshAccount->GetKeyFile().path.has_value()) {
-                sshCommand << " -i " << StringUtils::WrapWithDoubleQuotes(sshAccount->GetKeyFile().path.value());
+            if (sshAccount->GetKeyFile().path) {
+                sshCommand << " -i \"" << (*sshAccount->GetKeyFile().path) << "\"";
             }
 
             // Add user@host
@@ -347,6 +346,8 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
             ctrl->SendCommand(sshCommand);
             // Give SSH time to connect before sending cd command
             // The user will see the connection prompt in the terminal
+        } else {
+            clDEBUG() << "Could not located SSH executable" << endl;
         }
     }
 
@@ -393,13 +394,12 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::FindTerminalByTitle(const wxString& t
     return nullptr;
 }
 
-void clBuiltinTerminalPane::NewTerminal()
+std::optional<wxString> clBuiltinTerminalPane::PromptForTerminal()
 {
     auto terminals = GetTerminalsOptions();
     wxArrayString shells;
-    for (const auto& [_, cmd] : terminals) {
+    for (const auto& [_, cmd] : terminals)
         shells.Add(cmd);
-    }
 
     int initialSelection =
         m_terminalSettings.m_defaultShell.empty() ? 0 : shells.Index(m_terminalSettings.m_defaultShell);
@@ -408,10 +408,16 @@ void clBuiltinTerminalPane::NewTerminal()
     wxString selection =
         ::wxGetSingleChoice(_("Available Shells"), _("Choose a shell to Launch"), shells, initialSelection);
     if (selection.empty())
-        return;
+        return std::nullopt;
+    return terminals[shells.Index(selection)].second;
+}
 
-    wxString command = terminals[shells.Index(selection)].second;
-    m_terminalSettings.m_defaultShell = command;
+void clBuiltinTerminalPane::NewTerminal()
+{
+    auto shell = PromptForTerminal();
+    if (!shell)
+        return;
+    m_terminalSettings.m_defaultShell = *shell;
     m_terminalSettings.Save();
 
     // Create the terminal using the helper method (tab title = shell command, makeActive = true)
@@ -420,7 +426,7 @@ void clBuiltinTerminalPane::NewTerminal()
     if (workspace && !workspace->IsRemote()) {
         wd = workspace->GetDir();
     }
-    DoCreateTerminal(command, command, true, false, wd);
+    DoCreateTerminal(*shell, *shell, true, false, wd);
 }
 
 void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)

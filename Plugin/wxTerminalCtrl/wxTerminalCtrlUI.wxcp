@@ -922,7 +922,15 @@
                               "m_value": "-1"
                             }
                           ],
-                          "m_events": [],
+                          "m_events": [
+                            {
+                              "m_description": "Process a wxEVT_UPDATE_UI event",
+                              "m_eventClass": "wxUpdateUIEvent",
+                              "m_eventName": "wxEVT_UPDATE_UI",
+                              "m_functionNameAndSignature": "OnOptimizedDrawingsUI(wxUpdateUIEvent& event)",
+                              "m_noBody": false
+                            }
+                          ],
                           "m_children": []
                         },
                         {

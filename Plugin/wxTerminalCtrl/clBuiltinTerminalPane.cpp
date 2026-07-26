@@ -143,12 +143,6 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     auto image_list = clGetManager()->GetStdIcons();
     m_toolbar->AddTool(wxID_NEW, _("New"), image_list->LoadBitmap("file_new"), wxEmptyString, wxITEM_NORMAL);
 
-#ifdef __WXMSW__
-    m_toolbar->AddTool(
-        wxID_REFRESH, _("Scan"), image_list->LoadBitmap("debugger_restart"), _("Re-scan for terminals"), wxITEM_NORMAL);
-
-#endif
-
     m_toolbar->AddSeparator();
     // Get list of terminals
     m_choice_themes =
@@ -170,7 +164,6 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnNew, this, wxID_NEW);
-    m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnScanForTerminals, this, wxID_REFRESH);
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnSettings, this, wxID_PREFERENCES);
 
     GetSizer()->Fit(this);
@@ -512,8 +505,6 @@ std::vector<std::pair<wxString, wxString>> clBuiltinTerminalPane::GetTerminalsOp
 #endif
     return terminals;
 }
-
-void clBuiltinTerminalPane::OnScanForTerminals(wxCommandEvent& event) { wxUnusedVar(event); }
 
 #define CHECK_IF_CAN_HANDLE(event)            \
     auto terminal = GetActiveTerminal();      \

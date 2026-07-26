@@ -99,7 +99,6 @@ protected:
     bool ReadTerminalOptionsFromDisk(std::vector<std::pair<wxString, wxString>>& terminals);
     void WriteTerminalOptionsToDisk(const std::vector<std::pair<wxString, wxString>>& terminals);
     std::vector<std::pair<wxString, wxString>> GetTerminalsOptions(bool scan = false);
-    void OnScanForTerminals(wxCommandEvent& event);
     void OnCtrlR(wxCommandEvent& e);
     void OnCtrlU(wxCommandEvent& e);
     void OnCtrlL(wxCommandEvent& e);

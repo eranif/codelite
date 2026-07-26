@@ -2,15 +2,12 @@
 
 #include "ColoursAndFontsManager.h"
 #include "CompilerLocator/CompilerLocatorMSVC.h"
-#include "FontUtils.hpp"
 #include "Platform/Platform.hpp"
 #include "bitmap_loader.h"
 #include "clAuiFlatTabArt.hpp"
-#include "clFileName.hpp"
 #include "clINIParser.hpp"
 #include "clStrings.h"
 #include "clWorkspaceManager.h"
-#include "cl_aui_tool_stickness.h"
 #include "codelite_events.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -19,12 +16,10 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
-#include "procutils.h"
 #include "ssh/ssh_account_info.h"
 #include "terminal_view.h"
-#include "wxTerminalOutputCtrl.hpp"
+#include "wxTerminalCtrl/TerminalSettingsDlg.hpp"
 
-#include <unordered_map>
 #include <wx/app.h>
 #include <wx/choicdlg.h>
 #include <wx/dir.h>
@@ -113,9 +108,6 @@ std::vector<std::pair<wxString, wxString>> LocateDefaultTerminals()
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
-    // Load saved settings
-    m_safeDrawingEnabled = clConfig::Get().Read("terminal/safe_drawing", false);
-
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_book = new wxAuiNotebook(
         this,
@@ -134,6 +126,9 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
         CallAfter([sel, this]() { m_book->DeletePage(sel); });
     });
 
+    // Load settings
+    m_terminalSettings = TerminalSettings::Load();
+
     wxFont font = clTabRenderer::GetTabFont(false);
     auto art = new clAuiFlatTabArt();
     art->SetMeasuringFont(font);
@@ -147,18 +142,6 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
     auto image_list = clGetManager()->GetStdIcons();
     m_toolbar->AddTool(wxID_NEW, _("New"), image_list->LoadBitmap("file_new"), wxEmptyString, wxITEM_NORMAL);
-
-    // Get list of terminals
-    m_terminal_types =
-        new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(300), wxNOT_FOUND), wxArrayString{}, 0);
-#ifdef __WXMAC__
-    m_terminal_types->SetWindowVariant(wxWINDOW_VARIANT_MINI);
-#else
-    m_terminal_types->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
-#endif
-    m_terminal_types->SetToolTip(_("Choose shell interpreter"));
-    UpdateTerminalsChoice(false);
-    m_toolbar->AddControl(m_terminal_types);
 
 #ifdef __WXMSW__
     m_toolbar->AddTool(
@@ -184,12 +167,11 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
     m_toolbar->AddTool(
         wxID_PREFERENCES, _("Settings"), image_list->LoadBitmap("cog"), _("Terminal Settings"), wxITEM_NORMAL);
-    m_toolbar->SetToolDropDown(wxID_PREFERENCES, true);
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnNew, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnScanForTerminals, this, wxID_REFRESH);
-    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &clBuiltinTerminalPane::OnSettingsMenu, this, wxID_PREFERENCES);
+    m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnSettings, this, wxID_PREFERENCES);
 
     GetSizer()->Fit(this);
     m_book->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
@@ -208,7 +190,6 @@ clBuiltinTerminalPane::~clBuiltinTerminalPane()
     m_book->Unbind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
-    clConfig::Get().Write("terminal/last_used_terminal", m_terminal_types->GetStringSelection());
 }
 
 void clBuiltinTerminalPane::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
@@ -232,17 +213,13 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::DoCreateTerminal(const wxString& shel
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
     wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(m_book, shellCommand, env, workingDirectory);
+    ctrl->SetBufferSize(m_terminalSettings.m_scrollBackLines);
     ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!`");
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
 
     // Add the page to the notebook
     m_book->AddPage(ctrl, tabTitle, makeActive);
-
-    // Apply safe drawing setting to the new terminal
-    if (ctrl->IsOpenGLEnabled()) {
-        m_safeDrawingEnabled = true;
-    }
-    ctrl->EnableSafeDrawing(m_safeDrawingEnabled);
+    ctrl->EnableSafeDrawing(!m_terminalSettings.m_optimizedDrawings);
     m_book->SetPageToolTip(m_book->GetPageCount() - 1, tabTitle);
 
     // Bind events
@@ -321,25 +298,9 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
                                                               bool makeVisible,
                                                               std::optional<wxString> terminal_cmd)
 {
-    // Validate that we have at least one terminal type available
-    if (m_terminal_types->IsEmpty() && !terminal_cmd) {
-        return nullptr;
-    }
-
     wxString cmd;
     if (!terminal_cmd) {
-        int selection = m_terminal_types->GetSelection();
-        if (selection == wxNOT_FOUND) {
-            // If no selection, use the first one
-            selection = 0;
-            m_terminal_types->SetSelection(selection);
-        }
-
-        wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
-        if (!cd) {
-            return nullptr;
-        }
-        cmd = cd->GetData();
+        cmd = m_terminalSettings.m_defaultShell.empty() ? kTerminalCommand : m_terminalSettings.m_defaultShell;
     } else {
         cmd = terminal_cmd.value();
     }
@@ -432,24 +393,26 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::FindTerminalByTitle(const wxString& t
     return nullptr;
 }
 
-void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
+void clBuiltinTerminalPane::NewTerminal()
 {
-    wxUnusedVar(event);
-    if (m_terminal_types->IsEmpty()) {
-        return;
+    auto terminals = GetTerminalsOptions();
+    wxArrayString shells;
+    for (const auto& [_, cmd] : terminals) {
+        shells.Add(cmd);
     }
 
-    int selection = m_terminal_types->GetSelection();
-    if (selection == wxNOT_FOUND) {
+    int initialSelection =
+        m_terminalSettings.m_defaultShell.empty() ? 0 : shells.Index(m_terminalSettings.m_defaultShell);
+    if (initialSelection == wxNOT_FOUND)
+        initialSelection = 0;
+    wxString selection =
+        ::wxGetSingleChoice(_("Available Shells"), _("Choose a shell to Launch"), shells, initialSelection);
+    if (selection.empty())
         return;
-    }
 
-    wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
-    if (!cd) {
-        return;
-    }
-
-    const wxString& cmd = cd->GetData();
+    wxString command = terminals[shells.Index(selection)].second;
+    m_terminalSettings.m_defaultShell = command;
+    m_terminalSettings.Save();
 
     // Create the terminal using the helper method (tab title = shell command, makeActive = true)
     std::optional<wxString> wd{std::nullopt};
@@ -457,7 +420,13 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     if (workspace && !workspace->IsRemote()) {
         wd = workspace->GetDir();
     }
-    DoCreateTerminal(cmd, cmd, true, false, wd);
+    DoCreateTerminal(command, command, true, false, wd);
+}
+
+void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    NewTerminal();
 }
 
 void clBuiltinTerminalPane::OnPageChanged(wxBookCtrlEvent& event)
@@ -538,31 +507,7 @@ std::vector<std::pair<wxString, wxString>> clBuiltinTerminalPane::GetTerminalsOp
     return terminals;
 }
 
-void clBuiltinTerminalPane::OnScanForTerminals(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    wxBusyCursor bc{};
-    UpdateTerminalsChoice(true);
-}
-
-void clBuiltinTerminalPane::UpdateTerminalsChoice(bool scan)
-{
-    auto terminals = GetTerminalsOptions(scan);
-    int initial_value = 0;
-    wxString last_selection = clConfig::Get().Read("terminal/last_used_terminal", wxString());
-
-    m_terminal_types->Clear();
-    for (const auto& [name, command] : terminals) {
-        int item_pos = m_terminal_types->Append(name, new wxStringClientData(command));
-        if (!last_selection.empty() && last_selection == name) {
-            initial_value = item_pos;
-        }
-    }
-
-    if (!m_terminal_types->IsEmpty()) {
-        m_terminal_types->SetSelection(initial_value);
-    }
-}
+void clBuiltinTerminalPane::OnScanForTerminals(wxCommandEvent& event) { wxUnusedVar(event); }
 
 #define CHECK_IF_CAN_HANDLE(event)            \
     auto terminal = GetActiveTerminal();      \
@@ -793,41 +738,25 @@ void clBuiltinTerminalPane::OnChoiceTheme(wxCommandEvent& event)
     ApplyThemeChanges();
 }
 
-void clBuiltinTerminalPane::OnSettingsMenu(wxCommandEvent& event)
+void clBuiltinTerminalPane::OnSettings(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
+    auto shells = GetTerminalsOptions();
+    TerminalSettingsDlg dlg{EventNotifier::Get()->TopFrame(), shells};
+    if (dlg.ShowModal() == wxID_OK) {
+        m_terminalSettings = dlg.GetSettings();
+        ApplySettings();
+    }
+}
 
-    wxMenu menu;
-    wxMenuItem* safeDrawingItem = menu.AppendCheckItem(wxID_ANY, _("Enable Safe Drawing"));
-    safeDrawingItem->Check(m_safeDrawingEnabled || wxTerminalViewCtrl::IsOpenGLEnabled());
-    safeDrawingItem->Enable(!wxTerminalViewCtrl::IsOpenGLEnabled());
-    menu.Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent& e) {
-            m_safeDrawingEnabled = !m_safeDrawingEnabled;
-            clDEBUG() << "Safe Drawing:" << (m_safeDrawingEnabled ? "Enabled" : "Disabled") << endl;
-
-            // Persist the setting
-            clConfig::Get().Write("terminal/safe_drawing", m_safeDrawingEnabled);
-            clConfig::Get().Save();
-
-            // Apply to all terminals
-            for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
-                auto terminal = dynamic_cast<wxTerminalViewCtrl*>(m_book->GetPage(i));
-                if (terminal) {
-                    terminal->EnableSafeDrawing(m_safeDrawingEnabled);
-                    terminal->Refresh();
-                }
-            }
-        },
-        safeDrawingItem->GetId());
-
-    wxRect rect = m_toolbar->GetToolRect(wxID_PREFERENCES);
-    wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
-    pt = ScreenToClient(pt);
-
-    clAuiToolStickness st{m_toolbar, event.GetId()};
-    PopupMenu(&menu, pt);
+void clBuiltinTerminalPane::ApplySettings()
+{
+    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        auto terminal = dynamic_cast<wxTerminalViewCtrl*>(m_book->GetPage(i));
+        if (terminal) {
+            terminal->EnableSafeDrawing(!m_terminalSettings.m_optimizedDrawings);
+            terminal->SetBufferSize(m_terminalSettings.m_scrollBackLines);
+        }
+    }
 }
 
 void clBuiltinTerminalPane::ApplyThemeChanges()

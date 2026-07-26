@@ -1155,13 +1155,13 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"lsp_rename_symbol", _("Rename Symbol")},
                          {"lsp_find_references", _("Find References")}});
     mgr->AddAccelerator(_("Search | Bookmarks"),
-                        {{"toggle_bookmark", _("Toggle Bookmark"), "Ctrl-B"},
-                         {"next_bookmark", _("Next Bookmark"), "F2"},
-                         {"previous_bookmark", _("Previous Bookmark"), "Shift-F2"},
-                         {"removeall_bookmarks", _("Remove All Bookmarks")},
-                         {"removeall_current_bookmarks", _("Remove All Currently-Active Bookmarks")},
-                         {"open_shell_from_filepath", _("Open Shell From File Path"), "Ctrl-Shift-T"},
-                         {"open_file_explorer", _("Open Containing Folder"), "Ctrl-Alt-Shift-T"}});
+                        {
+                            {"toggle_bookmark", _("Toggle Bookmark"), "Ctrl-B"},
+                            {"next_bookmark", _("Next Bookmark"), "F2"},
+                            {"previous_bookmark", _("Previous Bookmark"), "Shift-F2"},
+                            {"removeall_bookmarks", _("Remove All Bookmarks")},
+                            {"removeall_current_bookmarks", _("Remove All Currently-Active Bookmarks")},
+                        });
     mgr->AddAccelerator(_("Search | Find In Files"),
                         {{"find_in_files", _("Find In Files..."), "Ctrl-Shift-F"},
                          {"next_fif_match", _("Go to Next 'Find In File' Match"), "F8"},
@@ -1190,6 +1190,12 @@ void clMainFrame::AddKeyboardAccelerators()
                         {{"wxEVT_BOOK_NAV_PREV", _("Show Recent Tabs Dialog"), "RawCtrl-TAB"},
                          {"wxEVT_BOOK_MOVE_TAB_LEFT", _("Move Tab Left"), "RawCtrl-Shift-PGUP"},
                          {"wxEVT_BOOK_MOVE_TAB_RIGHT", _("Move Tab Right"), "RawCtrl-Shift-PGDN"}});
+
+    mgr->AddAccelerator(_("Global"),
+                        {
+                            {"open_shell_from_filepath", _("Open Terminal"), "Ctrl-Shift-T"},
+                            {"open_file_explorer", _("Open Containing Folder"), "Ctrl-Alt-Shift-T"},
+                        });
 
     mgr->AddAccelerator(_("View"),
                         {{"word_wrap", _("Word Wrap")},
@@ -4364,23 +4370,8 @@ void clMainFrame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 
 void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
 {
-    // get the file path
-    wxString filepath;
-    clEditor* editor = GetEditorFromEvent(GetMainBook(), e);
-    if (editor) {
-        filepath = editor->GetFileName().GetPath();
-    }
-
-    if (filepath.IsEmpty()) {
-        return;
-    }
-
-    DirSaver ds;
-    wxSetWorkingDirectory(filepath);
-
-    // Apply the environment variables before opening the shell
-    EnvSetter setter;
-    FileUtils::OpenTerminal(filepath);
+    wxUnusedVar(e);
+    clGetManager()->GetTerminalManager()->NewTerminal();
 }
 
 void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)

@@ -8,6 +8,7 @@
 #include "ssh/ssh_account_info.h"
 #include "terminal_event.h"
 #include "terminal_theme.h"
+#include "wxTerminalCtrl/TerminalSettingsDlg.hpp"
 
 #include <map>
 #include <optional>
@@ -44,6 +45,12 @@ public:
                                            const wxString& tabTitle = wxEmptyString,
                                            bool makeVisible = true,
                                            std::optional<wxString> terminal_cmd = std::nullopt);
+
+    /**
+     * @brief Open new terminal, this is similar to the user clicking the "+" button
+     * on the toolbar.
+     */
+    void NewTerminal();
 
     /**
      * @brief Open a new terminal tab using the platform default shell.
@@ -92,7 +99,6 @@ protected:
     void WriteTerminalOptionsToDisk(const std::vector<std::pair<wxString, wxString>>& terminals);
     std::vector<std::pair<wxString, wxString>> GetTerminalsOptions(bool scan = false);
     void OnScanForTerminals(wxCommandEvent& event);
-    void UpdateTerminalsChoice(bool scan);
     void OnCtrlR(wxCommandEvent& e);
     void OnCtrlU(wxCommandEvent& e);
     void OnCtrlL(wxCommandEvent& e);
@@ -113,8 +119,9 @@ protected:
     void ThemesUpdated();
     void OnChoiceTheme(wxCommandEvent& event);
     void ApplyThemeChanges();
+    void ApplySettings();
     void UpdateFont();
-    void OnSettingsMenu(wxCommandEvent& event);
+    void OnSettings(wxCommandEvent& event);
     void DoOpenLink(const wxString& linkText);
 
 private:
@@ -135,14 +142,13 @@ private:
 
     wxAuiToolBar* m_toolbar = nullptr;
     wxAuiNotebook* m_book = nullptr;
-    wxChoice* m_terminal_types = nullptr;
     wxChoice* m_choice_themes = nullptr;
     std::vector<std::pair<EventFilterCallbackToken, wxEventType>> m_tokens;
     wxMutex m_themes_mutex;
     std::map<wxString, wxTerminalTheme> m_themes;
     std::optional<wxTerminalTheme> m_activeTheme{std::nullopt};
     wxFont m_activeFont;
-    bool m_safeDrawingEnabled = false;
+    TerminalSettings m_terminalSettings;
 };
 
 #endif // CLBUILTINTERMINALPANE_HPP

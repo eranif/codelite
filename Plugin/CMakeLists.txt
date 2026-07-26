@@ -64,6 +64,14 @@ wxcrafter_target(
     "lsp_UI.hpp"
     "UI_languageserver_bitmaps.cpp")
 
+wxcrafter_target(
+    PluginWxTerminal
+    "${CMAKE_CURRENT_SOURCE_DIR}/wxTerminalCtrl/wxTerminalCtrlUI.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "wxTerminalCtrlUI.cpp"
+    "wxTerminalCtrlUI.hpp"
+    "wxTerminalCtrlUI_wxterminalctrl_bitmaps.cpp")
+
 if(MINGW)
   file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp")
   list(FILTER SRCS EXCLUDE REGEX ".*/macos/.*")
@@ -86,6 +94,7 @@ add_library(plugin SHARED ${SRCS}
     ${WXCRAFTER_PluginFileSystemWorkspace_OUTPUTS}
     ${WXCRAFTER_PluginKeyboard_OUTPUTS}
     ${WXCRAFTER_PluginLSP_OUTPUTS}
+    ${WXCRAFTER_PluginWxTerminal_OUTPUTS}
 )
 
 # Include paths

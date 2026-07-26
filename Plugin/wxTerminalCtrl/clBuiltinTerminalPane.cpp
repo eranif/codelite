@@ -390,6 +390,11 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::FindTerminalByTitle(const wxString& t
 std::optional<wxString> clBuiltinTerminalPane::PromptForTerminal()
 {
     auto terminals = GetTerminalsOptions();
+    if (terminals.size() == 1)
+        return terminals[0].second;
+    else if (terminals.empty())
+        return std::nullopt;
+
     wxArrayString shells;
     for (const auto& [_, cmd] : terminals)
         shells.Add(cmd);

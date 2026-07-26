@@ -396,6 +396,7 @@ void Manager::WorkerMain()
 
                     saved_thinking_state = thinking;
                     switch (reason) {
+                    case assistant::Reason::kRetry:
                     case assistant::Reason::kServerCompaction:
                     case assistant::Reason::kToolAllowed:
                     case assistant::Reason::kToolDenied: {

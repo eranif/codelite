@@ -688,6 +688,11 @@ void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
                 AppendTextWithLF(IconType_ToString(IconType::kInfo) + " " + content);
                 reported = true;
                 break;
+            case assistant::Reason::kRetry:
+                content.Trim().Trim(false).Append("\n");
+                AppendTextWithLF(IconType_ToString(IconType::kWarning) + " " + content);
+                reported = true;
+                break;
             default:
                 break;
             }

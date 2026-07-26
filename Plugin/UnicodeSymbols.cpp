@@ -16,6 +16,9 @@ wxString IconType_ToString(IconType type)
     case IconType::kSuccess:
         symbol = wxT("✔");
         break;
+    case IconType::kWarning:
+        symbol = wxT("⋮");
+        break;
     case IconType::kNoIcon:
         symbol = "";
         break;

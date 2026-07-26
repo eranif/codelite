@@ -8,6 +8,7 @@ enum class IconType {
     kQuestion,
     kInfo,
     kError,
+    kWarning,
     kSuccess,
 };
 

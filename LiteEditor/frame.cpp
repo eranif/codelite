@@ -658,7 +658,7 @@ EVT_MENU(XRCID("copy_file_relative_path_to_workspace"), clMainFrame::OnCopyFileP
 EVT_MENU(XRCID("copy_full_path_file_name"), clMainFrame::OnCopyFileFullPath)
 EVT_MENU(XRCID("copy_file_path"), clMainFrame::OnCopyFolder)
 EVT_MENU(XRCID("copy_file_name_only"), clMainFrame::OnCopyFileFullName)
-EVT_MENU(XRCID("open_shell_from_filepath"), clMainFrame::OnOpenShellFromFilePath)
+EVT_MENU(XRCID("open_shell_from_filepath"), clMainFrame::OnOpenShell)
 EVT_MENU(XRCID("open_file_explorer"), clMainFrame::OnOpenFileExplorerFromFilePath)
 EVT_MENU(XRCID("ID_DETACH_EDITOR"), clMainFrame::OnDetachEditor)
 EVT_MENU(XRCID("mark_readonly"), clMainFrame::OnMarkEditorReadonly)
@@ -4368,12 +4368,13 @@ void clMainFrame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
     }
 }
 
-void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
+void clMainFrame::OnOpenShell(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     auto CreateNewTerminal = []() {
         wxString working_dir;
         std::optional<SSHAccountInfo> account{std::nullopt};
+#if 0
         auto workspace = clWorkspaceManager::Get().GetWorkspace();
         if (workspace) {
             working_dir = workspace->GetDir();
@@ -4381,6 +4382,7 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
                 account = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
             }
         }
+#endif
 
         auto active_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(working_dir, account);
         if (active_terminal)
@@ -4698,6 +4700,7 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
     auto CreateNewTerminal = []() {
         wxString working_dir;
         std::optional<SSHAccountInfo> account{std::nullopt};
+#if 0
         auto workspace = clWorkspaceManager::Get().GetWorkspace();
         if (workspace) {
             working_dir = workspace->GetDir();
@@ -4705,7 +4708,7 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
                 account = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
             }
         }
-
+#endif
         auto active_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(working_dir, account);
         if (active_terminal)
             active_terminal->SetFocus();

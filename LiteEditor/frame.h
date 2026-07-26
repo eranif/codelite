@@ -561,7 +561,7 @@ protected:
     void OnHighlightWordUI(wxUpdateUIEvent& event);
     void OnShowNavBar(wxCommandEvent& e);
     void OnShowNavBarUI(wxUpdateUIEvent& e);
-    void OnOpenShellFromFilePath(wxCommandEvent& e);
+    void OnOpenShell(wxCommandEvent& e);
     void OnOpenFileExplorerFromFilePath(wxCommandEvent& e);
     void OnDetachEditor(wxCommandEvent& e);
     void OnMarkEditorReadonly(wxCommandEvent& e);

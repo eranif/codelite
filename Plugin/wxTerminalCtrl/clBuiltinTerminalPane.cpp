@@ -304,7 +304,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
             return nullptr;
         cmd = *shell;
     } else {
-        cmd = terminal_cmd.value();
+        cmd = *terminal_cmd;
     }
 
     // Determine the tab title
@@ -409,24 +409,24 @@ std::optional<wxString> clBuiltinTerminalPane::PromptForTerminal()
         ::wxGetSingleChoice(_("Available Shells"), _("Choose a shell to Launch"), shells, initialSelection);
     if (selection.empty())
         return std::nullopt;
-    return terminals[shells.Index(selection)].second;
+    const wxString shellCommand = terminals[shells.Index(selection)].second;
+    m_terminalSettings.m_defaultShell = shellCommand;
+    m_terminalSettings.Save();
+    return shellCommand;
 }
 
 void clBuiltinTerminalPane::NewTerminal()
 {
     auto shell = PromptForTerminal();
-    if (!shell)
-        return;
-    m_terminalSettings.m_defaultShell = *shell;
-    m_terminalSettings.Save();
-
-    // Create the terminal using the helper method (tab title = shell command, makeActive = true)
-    std::optional<wxString> wd{std::nullopt};
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace && !workspace->IsRemote()) {
-        wd = workspace->GetDir();
+    if (shell) {
+        // Create the terminal using the helper method (tab title = shell command, makeActive = true)
+        std::optional<wxString> wd{std::nullopt};
+        auto workspace = clWorkspaceManager::Get().GetWorkspace();
+        if (workspace && !workspace->IsRemote()) {
+            wd = workspace->GetDir();
+        }
+        DoCreateTerminal(*shell, *shell, true, false, wd);
     }
-    DoCreateTerminal(*shell, *shell, true, false, wd);
 }
 
 void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)

@@ -833,6 +833,9 @@ void wxcWidget::UnSerialize(const JSONItem& json)
             new_name.Replace("_WEB_VIEW_", "_WEBVIEW_");
             details.SetEventName(new_name);
         }
+        if (details.GetEventName() == "wxEVT_COMMAND_MENU_SELECTED") {
+            details.SetEventName("wxEVT_MENU");
+        }
         m_connectedEvents.PushBack(details.GetEventName(), details);
     }
 

@@ -3,19 +3,49 @@
 #include "Importer/importer_from_wxFB.h"
 #include "Importer/importer_from_wxSmith.h"
 #include "Importer/importer_from_xrc.h"
+#include "MyComboBoxXmlHandler.h"
+#include "MyRearrangeListXmlHandler.h"
 #include "UI/AboutDlg.h"
 #include "UI/DefineCustomControlWizard.h"
 #include "UI/DeleteCustomControlDlg.h"
 #include "UI/EditCustomControlDlg.h"
 #include "UI/wxcSettingsDlg.h"
+#include "UI/wxcTreeView.h"
 #include "UI/wxguicraft_main_view.h"
+#include "allocator_mgr.h"
 #include "bitmap_loader.h"
+#include "cl_command_event.h"
 #include "codelite_events.h"
 #include "controls/Containers/wizard_page_wrapper.h"
 #include "ctags_manager.h"
 #include "event_notifier.h"
 #include "functions_parser.h"
 #include "imanager.h"
+#include "myxh_auimgr.h"
+#include "myxh_auitoolb.h"
+#include "myxh_cmdlinkbtn.h"
+#include "myxh_dataview.h"
+#include "myxh_dlg.h"
+#include "myxh_dvlistctrl.h"
+#include "myxh_dvtreectrl.h"
+#include "myxh_frame.h"
+#include "myxh_glcanvas.h"
+#include "myxh_grid.h"
+#include "myxh_infobar.h"
+#include "myxh_listc.h"
+#include "myxh_mediactrl.h"
+#include "myxh_panel.h"
+#include "myxh_propgrid.h"
+#include "myxh_ribbon.h"
+#include "myxh_richtext.h"
+#include "myxh_searchctrl.h"
+#include "myxh_simplebook.h"
+#include "myxh_stc.h"
+#include "myxh_textctrl.h"
+#include "myxh_toolbk.h"
+#include "myxh_treebk.h"
+#include "myxh_treelist.h"
+#include "myxh_webview.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
 #include "wxc_bitmap_code_generator.h"
@@ -40,6 +70,71 @@
 
 namespace
 {
+void InitializeAllImageHandlers()
+{
+    // Initialize all image handlers known to us (that aren't already loaded)
+    if (wxImage::FindHandler(wxBITMAP_TYPE_PNG) == 0) {
+        wxImage::AddHandler(new wxPNGHandler);
+    }
+    if (wxImage::FindHandler(wxBITMAP_TYPE_JPEG) == 0) {
+        wxImage::AddHandler(new wxJPEGHandler);
+    }
+    if (wxImage::FindHandler(wxBITMAP_TYPE_GIF) == 0) {
+        wxImage::AddHandler(new wxGIFHandler);
+    }
+    if (wxImage::FindHandler(wxBITMAP_TYPE_BMP) == 0) {
+        wxImage::AddHandler(new wxBMPHandler);
+    }
+    if (wxImage::FindHandler(wxBITMAP_TYPE_ICO) == 0) {
+        wxImage::AddHandler(new wxICOHandler);
+    }
+    if (wxImage::FindHandler(wxBITMAP_TYPE_ANI) == 0) {
+        wxImage::AddHandler(new wxANIHandler);
+    }
+    if (wxImage::FindHandler(wxBITMAP_TYPE_CUR) == 0) {
+        wxImage::AddHandler(new wxCURHandler);
+    }
+}
+
+void AddMyXmlHandlers()
+{
+    wxXmlResource::Get()->ClearHandlers();
+
+    // +++++++++++---------------------------------------------
+    // Custom XML resource handlers
+    // +++++++++++---------------------------------------------
+
+    wxXmlResource::Get()->AddHandler(new MYwxTreebookXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxRichTextCtrlXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxGridXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxSearchCtrlXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MYwxToolbookXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MYwxListCtrlXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxSimplebookXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxAuiToolBarXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxStcXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxDataViewListCtrlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxDataViewTreeCtrlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxDataViewCtrlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxInfoBarCtrlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxWebViewXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxGLCanvasXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxMediaCtrlXmlHandler);
+    wxXmlResource::Get()->AddHandler(new wxMyFrameXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxPanelXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxAuiManagerXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxDialogXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxPropGridXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxRibbonXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyWxCommandLinkButtonXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyTreeListCtrl);
+    wxXmlResource::Get()->AddHandler(new MyTextCtrlXrcHandler);
+    wxXmlResource::Get()->AddHandler(new MyComboBoxXmlHandler);
+    wxXmlResource::Get()->AddHandler(new MyRearrangeListXmlHandler);
+    wxXmlResource::Get()->InitAllHandlers();
+}
+
+
 void DoWriteFileContent(const wxFileName& fn, const wxString& content, IEditor* editor)
 {
     if (editor) {
@@ -107,6 +202,9 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden, IManager* manager)
     , m_treeView(nullptr)
     , m_findReplaceDialog(nullptr)
 {
+    InitializeAllImageHandlers();
+    AddMyXmlHandlers();
+
     if (m_mgr) {
         // Use CodeLite's images.
         auto images = m_mgr->GetStdIcons();

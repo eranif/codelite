@@ -39,15 +39,9 @@ protected:
     void OnSaveProject(wxCommandEvent& e);
     void OnSaveProjectUI(wxUpdateUIEvent& e);
     void OnOpenProject(wxCommandEvent& e);
-    void OnSettings(wxCommandEvent& e);
     void OnOpenProjectUI(wxUpdateUIEvent& e);
     void OnCloseProject(wxCommandEvent& e);
     void OnCloseProjectUI(wxUpdateUIEvent& e);
-    void OnDefineCustomControls(wxCommandEvent& e);
-    void OnEditCustomControls(wxCommandEvent& e);
-    void OnDeleteCustomControls(wxCommandEvent& e);
-    void OnAbout(wxCommandEvent& e);
-    void OnProjectLoaded(wxCommandEvent& e);
     void OnFileContextMenu(clContextMenuEvent& event);
     void OnVirtualFolderContextMenu(clContextMenuEvent& event);
     void OnProjectContextMenu(clContextMenuEvent& event);

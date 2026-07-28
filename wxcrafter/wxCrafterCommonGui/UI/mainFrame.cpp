@@ -1,29 +1,35 @@
 #include "mainFrame.h"
 
-#include "ColoursAndFontsManager.h"
+#include "Importer/importer_from_wxFB.h"
+#include "Importer/importer_from_wxSmith.h"
+#include "Importer/importer_from_xrc.h"
+#include "UI/AboutDlg.h"
+#include "UI/DefineCustomControlWizard.h"
+#include "UI/DeleteCustomControlDlg.h"
+#include "UI/EditCustomControlDlg.h"
+#include "UI/wxcSettingsDlg.h"
 #include "UI/wxguicraft_main_view.h"
 #include "bitmap_loader.h"
-#include "cl_aui_dock_art.h"
+#include "codelite_events.h"
 #include "controls/Containers/wizard_page_wrapper.h"
-#include "editor_config.h"
+#include "ctags_manager.h"
 #include "event_notifier.h"
-#include "file_logger.h"
-#include "globals.h"
+#include "functions_parser.h"
 #include "imanager.h"
-#include "plugin.h"
 #include "windowattrmanager.h"
+#include "workspace.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
+#include "wxgui_globals.h"
+#include "wxgui_helpers.h"
 
 #include <wx/ffile.h>
 #include <wx/filedlg.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
 #include <wx/msgdlg.h>
-#include <wx/socket.h>
-#include <wx/sysopt.h>
 #include <wx/toplevel.h>
 
 #define CHECK_IF_FOCUS_ON_READONLY_STC()    \
@@ -31,6 +37,47 @@
     if (stc) {                              \
         return;                             \
     }
+
+namespace
+{
+void DoWriteFileContent(const wxFileName& fn, const wxString& content, IEditor* editor)
+{
+    if (editor) {
+        editor->GetCtrl()->SetText(content);
+    } else {
+        // Write the file content to the disk
+        wxCrafter::WriteFile(fn, content, true);
+    }
+}
+void FormatString(wxString& content, const wxFileName& filename)
+{
+    clSourceFormatEvent event{wxEVT_FORMAT_STRING};
+    event.SetFileName(filename.GetFullPath());
+    event.SetInputString(content);
+    EventNotifier::Get()->ProcessEvent(event);
+    if (!event.GetFormattedString().IsEmpty()) {
+        content = event.GetFormattedString();
+    }
+}
+wxStringSet_t GetProjectFiles(const wxString& projectName)
+{
+    ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
+    if (!p) {
+        return {};
+    }
+    const Project::FilesMap_t& filesMap = p->GetFiles();
+    wxStringSet_t files;
+    files.reserve(filesMap.size());
+    for (const auto& [filename, _] : filesMap) {
+        files.insert(filename);
+    }
+    return files;
+}
+void NotifyFileSaved(const wxFileName& fn)
+{
+    EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath());
+}
+} // namespace
 
 // --------------------------------------------------------------------------------------------------
 // Main Frame
@@ -189,6 +236,28 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden, IManager* manager)
         wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED, wxCommandEventHandler(MainFrame::OnCodeEditorSelected), NULL, this);
     EventNotifier::Get()->Connect(
         wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BITMAP_CODE_GENERATION_DONE,
+                                  wxCommandEventHandler(MainFrame::OnBitmapCodeGenerationCompleted),
+                                  nullptr,
+                                  this);
+
+    wxTheApp->Connect(
+        XRCID("wxc_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSettings), nullptr, this);
+    wxTheApp->Connect(XRCID("import_wxFB_project"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(MainFrame::OnImportFB),
+                      nullptr,
+                      this);
+    wxTheApp->Connect(XRCID("import_wxSmith_project"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(MainFrame::OnImportSmith),
+                      nullptr,
+                      this);
+    wxTheApp->Connect(XRCID("import_XRC_project"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(MainFrame::OnImportXRC),
+                      nullptr,
+                      this);
 
     if (m_mgr) {
         Hide();
@@ -228,7 +297,31 @@ MainFrame::~MainFrame()
         wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED, wxCommandEventHandler(MainFrame::OnCodeEditorSelected), NULL, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BITMAP_CODE_GENERATION_DONE,
+                                     wxCommandEventHandler(MainFrame::OnBitmapCodeGenerationCompleted),
+                                     nullptr,
+                                     this);
 
+    wxTheApp->Disconnect(XRCID("wxc_settings"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(MainFrame::OnSettings),
+                         nullptr,
+                         this);
+    wxTheApp->Disconnect(XRCID("import_wxFB_project"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(MainFrame::OnImportFB),
+                         nullptr,
+                         this);
+    wxTheApp->Disconnect(XRCID("import_wxSmith_project"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(MainFrame::OnImportSmith),
+                         nullptr,
+                         this);
+    wxTheApp->Disconnect(XRCID("import_XRC_project"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(MainFrame::OnImportXRC),
+                         nullptr,
+                         this);
     if (!m_mgr && m_findReplaceDialog) {
         m_findReplaceDialog->Destroy();
         m_findReplaceDialog = nullptr;
@@ -293,7 +386,10 @@ void MainFrame::OnPageClosing(wxNotifyEvent& e)
     }
 }
 
-void MainFrame::OnSave(wxCommandEvent& event) { m_treeView->SaveProject(); }
+void MainFrame::OnSave(wxCommandEvent& event)
+{
+    m_treeView->SaveProject();
+}
 
 void MainFrame::OnProjectModified(wxCommandEvent& e)
 {
@@ -352,7 +448,9 @@ void MainFrame::OnPreview(wxCommandEvent& event)
 }
 
 void MainFrame::OnPreviewUI(wxUpdateUIEvent& event)
-{ event.Enable(!m_wxcView->IsPreviewAlive() && wxcProjectMetadata::Get().IsLoaded()); }
+{
+    event.Enable(!m_wxcView->IsPreviewAlive() && wxcProjectMetadata::Get().IsLoaded());
+}
 
 void MainFrame::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
@@ -515,29 +613,42 @@ wxTextCtrl* MainFrame::GetActiveTextCtrl()
     }
     return NULL;
 }
-void MainFrame::OnImportFB(wxCommandEvent& event)
+void MainFrame::OnImportFB(wxCommandEvent&)
 {
-    wxCommandEvent evtImportFB(wxEVT_COMMAND_MENU_SELECTED, XRCID("import_wxFB_project"));
-    wxTheApp->AddPendingEvent(evtImportFB);
+    OpenWxFormBuilderImporterDialog("");
 }
 
-void MainFrame::OnImportSmith(wxCommandEvent& event)
+void MainFrame::OnImportSmith(wxCommandEvent&)
 {
-    wxCommandEvent evtImportFB(wxEVT_COMMAND_MENU_SELECTED, XRCID("import_wxSmith_project"));
-    wxTheApp->AddPendingEvent(evtImportFB);
+    OpenWxSmithImporterDialog("");
 }
 
-void MainFrame::OnImportXRC(wxCommandEvent& event)
+void MainFrame::OnImportXRC(wxCommandEvent&)
 {
-    wxCommandEvent evtImportFB(wxEVT_COMMAND_MENU_SELECTED, XRCID("import_XRC_project"));
-    wxTheApp->AddPendingEvent(evtImportFB);
+    OpenXRCImporterDialog();
+}
+
+void MainFrame::OpenSettingsDialog()
+{
+    const bool standAlone = m_mgr == nullptr;
+
+    wxcSettingsDlg dlg(nullptr, standAlone);
+    dlg.ShowModal();
+
+    if (dlg.IsRestartRequired()) {
+        ::wxMessageBox(_("In order for the change to take place, you need to restart CodeLite"), _("wxCrafter"));
+    }
+}
+
+void MainFrame::OpenAboutDialog()
+{
+    wxcAboutDlg dlg(nullptr);
+    dlg.ShowModal();
 }
 
 void MainFrame::OnAbout(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
-    wxCommandEvent evtAbout(wxEVT_COMMAND_MENU_SELECTED, XRCID("wxcp_about"));
-    wxTheApp->AddPendingEvent(evtAbout);
+    OpenAboutDialog();
 }
 
 void MainFrame::OnHide(wxCommandEvent& event)
@@ -550,10 +661,9 @@ void MainFrame::OnHide(wxCommandEvent& event)
     }
 }
 
-void MainFrame::OnSettings(wxCommandEvent& event)
+void MainFrame::OnSettings(wxCommandEvent&)
 {
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, event.GetId());
-    wxTheApp->AddPendingEvent(e);
+    OpenSettingsDialog();
 }
 
 void MainFrame::DisplayDesigner()
@@ -614,15 +724,30 @@ void MainFrame::OnSwitchToCodeliteUI(wxUpdateUIEvent& event)
     }
 }
 
-void MainFrame::OnCodeLiteGotFocus(wxCommandEvent& e) { e.Skip(); }
+void MainFrame::OnCodeLiteGotFocus(wxCommandEvent& e)
+{
+    e.Skip();
+}
 
-void MainFrame::OnPasteUI(wxUpdateUIEvent& event) { event.Enable(true); }
+void MainFrame::OnPasteUI(wxUpdateUIEvent& event)
+{
+    event.Enable(true);
+}
 
-void MainFrame::OnSaveUI(wxUpdateUIEvent& event) { event.Enable(wxcEditManager::Get().IsDirty()); }
+void MainFrame::OnSaveUI(wxUpdateUIEvent& event)
+{
+    event.Enable(wxcEditManager::Get().IsDirty());
+}
 
-void MainFrame::OnCloseUI(wxUpdateUIEvent& event) { event.Enable(wxcProjectMetadata::Get().IsLoaded()); }
+void MainFrame::OnCloseUI(wxUpdateUIEvent& event)
+{
+    event.Enable(wxcProjectMetadata::Get().IsLoaded());
+}
 
-void MainFrame::OnOpenUI(wxUpdateUIEvent& event) { event.Enable(true); }
+void MainFrame::OnOpenUI(wxUpdateUIEvent& event)
+{
+    event.Enable(true);
+}
 
 void MainFrame::OnNewProject(wxCommandEvent& event)
 {
@@ -658,7 +783,10 @@ void MainFrame::OnNewProject(wxCommandEvent& event)
 
 #define ID_RECENT_DOC_FIRST 2000
 
-void MainFrame::OnOpen(wxCommandEvent& event) { DoOpenWxcpProject(); }
+void MainFrame::OnOpen(wxCommandEvent& event)
+{
+    DoOpenWxcpProject();
+}
 
 void MainFrame::OnOpenMenu(wxAuiToolBarEvent& event)
 {
@@ -696,24 +824,19 @@ void MainFrame::OnOpenMenu(wxAuiToolBarEvent& event)
     }
 }
 
-void MainFrame::OnDeleteCustomControl(wxCommandEvent& event)
+void MainFrame::OnDeleteCustomControl(wxCommandEvent&)
 {
-    wxUnusedVar(event);
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("delete_custom_controls"));
-    wxTheApp->AddPendingEvent(e);
-}
-void MainFrame::OnEditCustomControl(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("edit_custom_controls"));
-    wxTheApp->AddPendingEvent(e);
+    OpenDeleteCustomControlDialog();
 }
 
-void MainFrame::OnNewCustomControl(wxCommandEvent& event)
+void MainFrame::OnEditCustomControl(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("define_custom_controls"));
-    wxTheApp->AddPendingEvent(e);
+    OpenEditCustomControlDialog();
+}
+
+void MainFrame::OnNewCustomControl(wxCommandEvent&)
+{
+    OpenDefineCustomControlWizard();
 }
 
 wxStyledTextCtrl* MainFrame::GetActiveSTC()
@@ -731,12 +854,14 @@ void MainFrame::OnGenerateCode(wxCommandEvent& event)
     EventNotifier::Get()->ProcessEvent(evtGenCode);
 }
 
-void MainFrame::OnGenerateCodeUI(wxUpdateUIEvent& event) { event.Enable(wxcProjectMetadata::Get().IsLoaded()); }
+void MainFrame::OnGenerateCodeUI(wxUpdateUIEvent& event)
+{
+    event.Enable(wxcProjectMetadata::Get().IsLoaded());
+}
 
 void MainFrame::OnOpenFindDialog(wxCommandEvent& event)
 {
-    if (m_mgr)
-    {
+    if (m_mgr) {
         // Ask CodeLite to open the find dialog
         wxCommandEvent event_find{wxEVT_MENU, XRCID("id_find")};
         event_find.SetEventObject(EventNotifier::Get()->TopFrame());
@@ -905,7 +1030,10 @@ void MainFrame::DoOpenWxcpProject()
     }
 }
 
-void MainFrame::OnFileOpen(wxCommandEvent& event) { DoOpenWxcpProject(); }
+void MainFrame::OnFileOpen(wxCommandEvent& event)
+{
+    DoOpenWxcpProject();
+}
 
 void MainFrame::DoCreateRecentMenu(wxMenu& menu, wxArrayString& history, std::shared_ptr<wxString> result)
 {
@@ -943,5 +1071,476 @@ void MainFrame::SetStatusMessage(const wxString& message)
 {
     if (GetStatusBar()) {
         GetStatusBar()->SetStatusText(message, 0);
+    }
+}
+
+void MainFrame::OpenDefineCustomControlWizard()
+{
+    DefineCustomControlWizard wiz(nullptr);
+
+    if (wiz.RunWizard(wiz.GetFirstPage())) {
+        CustomControlTemplate controlData = wiz.GetControl();
+        wxcSettings::Get().RegisterCustomControl(controlData);
+        wxcSettings::Get().Save();
+    }
+}
+
+void MainFrame::OpenEditCustomControlDialog()
+{
+    EditCustomControlDlg dlg(nullptr);
+    dlg.ShowModal();
+
+    // Once this dialog is saved, we should:
+    // 1) Refresh  the view
+    wxCommandEvent evt(wxEVT_PROPERTIES_MODIFIED);
+    EventNotifier::Get()->AddPendingEvent(evt);
+}
+
+void MainFrame::OpenDeleteCustomControlDialog()
+{
+    DeleteCustomControlDlg dlg(nullptr);
+    dlg.ShowModal();
+
+    // Once this dialog is saved, we should:
+    // 1) Refresh  the view
+    wxCommandEvent evt(wxEVT_PROPERTIES_MODIFIED);
+    EventNotifier::Get()->AddPendingEvent(evt);
+}
+
+bool MainFrame::DoCreateVirtualFolder(const wxString& vdFullPath)
+{
+    CHECK_POINTER_RET_FALSE(m_mgr);
+    wxString name = vdFullPath.AfterLast(':');
+    wxString parent = vdFullPath.BeforeLast(':');
+    return m_mgr->CreateVirtualDirectory(parent, name);
+}
+
+void MainFrame::DoLoadAfterImport(ImportDlg::ImportFileData& data)
+{
+    if (m_mgr && data.addToProject && !data.virtualFolder.IsEmpty()) {
+        wxArrayString filesToAdd;
+        filesToAdd.Add(data.wxcpFilename.GetFullPath());
+        if (DoCreateVirtualFolder(data.virtualFolder)) {
+            m_mgr->AddFilesToVirtualFolder(data.virtualFolder, filesToAdd);
+        }
+    }
+    if (data.loadWhenDone) {
+        LoadProject(data.wxcpFilename);
+    }
+
+    // do it using event, or else the main frame will steal the focus
+    wxCommandEvent evtShowDesigner(wxEVT_SHOW_WXCRAFTER_DESIGNER);
+    EventNotifier::Get()->AddPendingEvent(evtShowDesigner);
+}
+
+void MainFrame::OpenWxFormBuilderImporterDialog(const wxString& filename)
+{
+    ImportDlg::ImportFileData data;
+    ImportFromwxFB::Importer import(wxCrafter::TopFrame());
+    const bool showAddToProject = m_mgr != nullptr;
+
+    if (import.ImportProject(data, filename, showAddToProject)) {
+        DoLoadAfterImport(data);
+    }
+}
+
+void MainFrame::OpenXRCImporterDialog()
+{
+    ImportDlg::ImportFileData data;
+    ImportFromXrc::Importer import(wxCrafter::TopFrame());
+    const bool showAddToProject = m_mgr != nullptr;
+
+    if (import.ImportProject(data, showAddToProject)) {
+        DoLoadAfterImport(data);
+    }
+}
+
+void MainFrame::OpenWxSmithImporterDialog(const wxString& filename)
+{
+    ImportDlg::ImportFileData data;
+    ImportFromwxSmith::Importer import(wxCrafter::TopFrame());
+    const bool showAddToProject = m_mgr != nullptr;
+
+    if (import.ImportProject(data, filename, showAddToProject)) {
+        DoLoadAfterImport(data);
+    }
+}
+
+bool MainFrame::DoReadFileContentAndPrompt(const wxFileName& fn, wxString& content, IEditor** editor)
+{
+    *editor = nullptr;
+
+    // Check to see if we got the file opened in the editor
+    if (m_mgr) {
+        *editor = m_mgr->FindEditor(fn.GetFullPath());
+        if (*editor) {
+            content = (*editor)->GetTextRange(0, (*editor)->GetLength());
+            return true;
+        }
+    }
+
+    // Read the header file content from the disk
+    if (!wxCrafter::ReadFileContent(fn.GetFullPath(), content)) {
+        wxString msg;
+        msg << wxString::Format(_("Error while reading file content: '%s'.\n"), fn.GetFullPath())
+            << _("Could not read file content");
+        ::wxMessageBox(msg, _("wxCrafter"), wxICON_WARNING | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
+        return false;
+    }
+    return true;
+}
+
+void MainFrame::DoUpdateDerivedClassEventHandlers(const wxString& className,
+                                                  const wxFileName& derivedSource,
+                                                  const wxFileName& derivedHeader)
+{
+    wxString headerContent, sourceContent;
+    IEditor* headerEditor(nullptr);
+    IEditor* sourceEditor(nullptr);
+
+    if (!DoReadFileContentAndPrompt(derivedHeader, headerContent, &headerEditor)) {
+        return;
+    }
+
+    if (!DoReadFileContentAndPrompt(derivedSource, sourceContent, &sourceEditor)) {
+        return;
+    }
+
+    CHECK_POINTER(GetWxcView());
+
+    // Parse and collect all functions declared in the header file
+    wxcWidget* topLevelWin = GetWxcView()->GetActiveTopLevelWin();
+    CHECK_POINTER(topLevelWin);
+
+    wxcWidget::Map_t connectedEvents = topLevelWin->GetConnectedEventsRecursively();
+    FunctionsParser parser(connectedEvents, className, headerContent);
+    parser.Parse();
+
+    wxString decl, impl;
+    const wxcWidget::Map_t& newEvents = parser.GetAllEvents();
+    if (newEvents.empty()) {
+        return;
+    }
+
+    for (const auto& [_, connectDetail] : newEvents) {
+        impl << connectDetail.GetFunctionImpl(className);
+        decl << connectDetail.GetFunctionDecl();
+    }
+
+    // Insert the functions declarations
+    if (TagsManagerST::Get()->InsertFunctionDecl(className, decl, headerContent, 1)) {
+        if (m_mgr && wxcSettings::Get().HasFlag(wxcSettings::FORMAT_INHERITED_FILES)) {
+            FormatString(headerContent, derivedHeader);
+        }
+
+        // Write the resulting string
+        DoWriteFileContent(derivedHeader, headerContent, headerEditor);
+        if (m_mgr) {
+            NotifyFileSaved(derivedHeader);
+        }
+    }
+
+    // Insert the functions definitions at the end of the file buffer
+    if (!sourceContent.EndsWith("\n")) {
+        sourceContent << "\n";
+    }
+    sourceContent << impl;
+
+    // Format the source file
+    if (m_mgr && wxcSettings::Get().HasFlag(wxcSettings::FORMAT_INHERITED_FILES)) {
+        FormatString(headerContent, derivedSource);
+    }
+
+    DoWriteFileContent(derivedSource, sourceContent, sourceEditor);
+    if (m_mgr) {
+        NotifyFileSaved(derivedSource);
+    }
+}
+
+void MainFrame::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
+{
+    if (wxcProjectMetadata::Get().GetGenerateCPPCode()) {
+        // First, notify CodeLite to reload all modified files that are opened (so CodeLite will not prompt us about
+        // them)
+        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evt);
+
+        // Next, compile a list of all generated files and add them to CodeLite
+        wxFileName bitmapSourceFile(e.GetString());
+        wxCrafter::MakeAbsToProject(bitmapSourceFile);
+
+        // Base header/cpp
+        wxFileName headerFile = wxcProjectMetadata::Get().BaseHeaderFile();
+        wxCrafter::MakeAbsToProject(headerFile);
+
+        wxFileName sourceFile = wxcProjectMetadata::Get().BaseCppFile();
+        wxCrafter::MakeAbsToProject(sourceFile);
+
+        // And the derived classes
+        wxFileName derivedHeader = wxcProjectMetadata::Get().GetGeneratedHeader();
+        wxCrafter::MakeAbsToProject(derivedHeader);
+
+        wxFileName derivedSource = wxcProjectMetadata::Get().GetGeneratedSource();
+        wxCrafter::MakeAbsToProject(derivedSource);
+
+        // XRC file
+        wxFileName xrcFile;
+        if (wxcProjectMetadata::Get().GetGenerateXRC()) {
+            xrcFile = wxcProjectMetadata::Get().GetXrcFileName();
+            wxCrafter::MakeAbsToProject(xrcFile);
+        }
+
+        // Notify CodeLite to retag the workspace
+        std::vector<wxFileName> filesToRetag{headerFile, sourceFile, derivedHeader, derivedSource, bitmapSourceFile};
+
+        // Prepare a list of additional files generated by wxC (this can happen for custom model for wxDataViewCtrl)
+        wxArrayString additionalFiles;
+        for (const auto& p : wxcProjectMetadata::Get().GetAdditionalFiles()) {
+            wxFileName f(wxcProjectMetadata::Get().GetGeneratedHeader());
+            f.SetFullName(p.first);
+            wxCrafter::MakeAbsToProject(f);
+            additionalFiles.Add(f.GetFullPath());
+            filesToRetag.push_back(f);
+        }
+
+        wxString sourceFilesVD;
+        std::set<wxString> uniqueFiles;
+        if (m_mgr) {
+            wxArrayString filesToAdd;
+            if (clCxxWorkspaceST::Get()->IsOpen()) {
+                wxString vd = wxcProjectMetadata::Get().GetVirtualFolder();
+
+                wxString projectName;
+                vd.Trim().Trim(false);
+                if (vd.IsEmpty()) {
+                    // We got no Virtual Folder to place the files to
+                    // Search for resource file
+                    wxFileName projectFile(wxcProjectMetadata::Get().GetProjectFile());
+                    projectName = m_mgr->GetProjectNameByFile(projectFile.GetFullPath());
+
+                } else {
+                    projectName = vd.BeforeFirst(':');
+                }
+
+                projectName.Trim().Trim(false);
+                if (projectName.IsEmpty()) {
+                    return;
+                }
+
+                wxString errMsg;
+                ProjectPtr project = clCxxWorkspaceST::Get()->FindProjectByName(projectName, errMsg);
+
+                if (!project) {
+                    wxString msg;
+                    msg << wxString::Format(_("Could not find target project: '%s'\n"), projectName);
+                    msg << _("Make sure that the virtual folder entry is valid (it must exist)\n");
+                    msg << wxString::Format(_("Virtual Folder provided was: '%s'"), vd);
+                    ::wxMessageBox(msg, _("wxCrafter"), wxOK | wxICON_ERROR);
+                    return;
+                }
+
+                std::vector<wxFileName> projectFiles;
+                project->GetFilesAsVectorOfFileName(projectFiles);
+                uniqueFiles = wxCrafter::VectorToSet(projectFiles);
+
+                wxString baseFilesVD, bitmapFilesVD, xrcVD;
+                sourceFilesVD << wxcProjectMetadata::Get().GetVirtualFolder();
+                sourceFilesVD.Trim().Trim(false);
+
+                if (sourceFilesVD.IsEmpty()) {
+                    sourceFilesVD << projectName << ":src";
+                }
+
+                baseFilesVD << projectName << ":wxcrafter:base";
+                bitmapFilesVD << projectName << ":wxcrafter:resources";
+                xrcVD << projectName << ":wxcrafter:XRC";
+
+                //////////////////////////////////////////////////////////////
+                // Add the bitmap resource files
+                //////////////////////////////////////////////////////////////
+                if (uniqueFiles.find(bitmapSourceFile.GetFullPath()) == uniqueFiles.end()) {
+                    filesToAdd.Add(bitmapSourceFile.GetFullPath());
+                }
+
+                if (filesToAdd.IsEmpty() == false) {
+                    DoCreateVirtualFolder(bitmapFilesVD);
+                    m_mgr->AddFilesToVirtualFolder(bitmapFilesVD, filesToAdd);
+                }
+
+                //////////////////////////////////////////////////////////////
+                // Add the XRC files
+                //////////////////////////////////////////////////////////////
+                filesToAdd.Clear();
+                if (xrcFile.IsOk() && uniqueFiles.find(xrcFile.GetFullPath()) == uniqueFiles.end()) {
+                    filesToAdd.Add(xrcFile.GetFullPath());
+                }
+
+                if (filesToAdd.IsEmpty() == false) {
+                    DoCreateVirtualFolder(xrcVD);
+                    m_mgr->AddFilesToVirtualFolder(xrcVD, filesToAdd);
+                }
+
+                //////////////////////////////////////////////////////////////
+                // Add the base classes files
+                //////////////////////////////////////////////////////////////
+                filesToAdd.Clear();
+                if (uniqueFiles.find(headerFile.GetFullPath()) == uniqueFiles.end()) {
+                    filesToAdd.Add(headerFile.GetFullPath());
+                }
+                if (uniqueFiles.find(sourceFile.GetFullPath()) == uniqueFiles.end()) {
+                    filesToAdd.Add(sourceFile.GetFullPath());
+                }
+
+                // The additional files are added to the 'base'
+                for (size_t i = 0; i < additionalFiles.GetCount(); ++i) {
+                    if (uniqueFiles.find(additionalFiles.Item(i)) == uniqueFiles.end()) {
+                        filesToAdd.Add(additionalFiles.Item(i));
+                    }
+                }
+
+                if (filesToAdd.IsEmpty() == false) {
+                    DoCreateVirtualFolder(baseFilesVD);
+                    m_mgr->AddFilesToVirtualFolder(baseFilesVD, filesToAdd);
+                }
+            }
+        }
+        //////////////////////////////////////////////////////////////
+        // Add the derived classes files
+        //////////////////////////////////////////////////////////////
+
+        // Not all top level windows wants subclassing..
+        if (derivedHeader.IsOk() && !derivedHeader.GetName().IsEmpty()) {
+            if (m_mgr && clCxxWorkspaceST::Get()->IsOpen()) {
+                wxArrayString filesToAdd;
+                if (uniqueFiles.find(derivedHeader.GetFullPath()) == uniqueFiles.end()) {
+                    filesToAdd.Add(derivedHeader.GetFullPath());
+                }
+
+                if (uniqueFiles.find(derivedSource.GetFullPath()) == uniqueFiles.end()) {
+                    filesToAdd.Add(derivedSource.GetFullPath());
+                }
+
+                if (filesToAdd.IsEmpty() == false) {
+                    DoCreateVirtualFolder(sourceFilesVD);
+                    m_mgr->AddFilesToVirtualFolder(sourceFilesVD, filesToAdd);
+                }
+            }
+            DoUpdateDerivedClassEventHandlers(
+                wxcProjectMetadata::Get().GetGeneratedClassName(), derivedSource, derivedHeader);
+        }
+    }
+
+    wxString msg;
+    msg << _("wxCrafter: code generation completed successfully!");
+    SetStatusMessage(msg);
+}
+
+void MainFrame::DoGenerateCode(const NewFormDetails& fd)
+{
+    wxString errMsg;
+
+    wxFileName wxcpFile = wxFileName(fd.wxcpFile);
+    if (!wxcpFile.FileExists()) {
+        wxFFile fp(wxcpFile.GetFullPath(), "w+b");
+        if (fp.IsOpened()) {
+            fp.Close();
+
+        } else {
+            wxString msg;
+            msg << _("Could not create resource file '") << wxcpFile.GetFullPath() << "'";
+            ::wxMessageBox(msg, _("wxCrafter"), wxOK | wxICON_WARNING | wxCENTRE);
+            return;
+        }
+    }
+
+    // If we have a workspace opened, handle the virtual folder thing here
+    if (m_mgr && clCxxWorkspaceST::Get()->IsOpen()) {
+        // Step 1:
+        // Check if we already got a virtual folder named 'wxcrafter'
+        wxString projectName = fd.virtualFolder.BeforeFirst(':');
+        ProjectPtr project = clCxxWorkspaceST::Get()->FindProjectByName(projectName, errMsg);
+        if (!project) {
+            ::wxMessageBox(errMsg, _("wxCrafter"), wxOK | wxICON_WARNING | wxCENTRE);
+            return;
+        }
+
+        wxString vdFullPath;
+        vdFullPath << projectName;
+
+        // Check if already got a file with this name in the project
+        wxStringSet_t files = GetProjectFiles(project->GetName());
+
+        if (!files.count(wxcpFile.GetFullPath())) {
+
+            if (!m_mgr->CreateVirtualDirectory(vdFullPath, "wxcrafter")) {
+                ::wxMessageBox(
+                    _("Could not create virtual folder 'wxcrafter'"), _("wxCrafter"), wxOK | wxICON_WARNING | wxCENTRE);
+                return;
+            }
+
+            // Add the resource file to the newly created virtual folder
+            wxArrayString f;
+            f.Add(wxcpFile.GetFullPath());
+            vdFullPath << ":"
+                       << "wxcrafter";
+            m_mgr->AddFilesToVirtualFolder(vdFullPath, f);
+        }
+    }
+
+    // At this point, wxcpFile contains the fullpath the
+    // wxCrafter project, load it
+    DisplayDesigner();
+    LoadProject(wxcpFile.GetFullPath());
+    AddForm(fd);
+
+    // Notify about file system changes here
+    clFileSystemEvent eventFilesGenerate(wxEVT_FILE_CREATED);
+    eventFilesGenerate.GetPaths().Add(wxcpFile.GetFullPath());
+    EventNotifier::Get()->QueueEvent(eventFilesGenerate.Clone());
+
+    // Show the designer
+    wxCommandEvent evtShowDesigner(wxEVT_SHOW_WXCRAFTER_DESIGNER);
+    EventNotifier::Get()->ProcessEvent(evtShowDesigner);
+}
+
+void MainFrame::OpenNewFormWizard(int type)
+{
+    if (!m_mgr && !wxcProjectMetadata::Get().IsLoaded()) {
+        ::wxMessageBox(_("You must create a project before you can add new forms"),
+                       _("wxCrafter"),
+                       wxOK | wxCENTER | wxICON_WARNING);
+        return;
+    }
+
+    // Check to see if we already got a wxCrafter.wxcp file
+    NewFormWizard wizard(wxCrafter::TopFrame(), m_mgr, type);
+    if (wizard.RunWizard(wizard.GetFirstPage())) {
+        NewFormDetails details = wizard.GetFormDetails();
+        DoGenerateCode(details);
+
+        wxString label;
+        switch (type) {
+        case ID_WXDIALOG:
+            label << "new dialog";
+            break;
+        case ID_WXFRAME:
+            label << "new frame";
+            break;
+        case ID_WXWIZARD:
+            label << "new wizard";
+            break;
+        case ID_WXPANEL_TOPLEVEL:
+            label << "new panel";
+            break;
+        case ID_WXPOPUPWINDOW:
+            label << "new popup window";
+            break;
+        case ID_WXIMAGELIST:
+            label << "new image list";
+            break;
+        default:
+            label << "new top-level item";
+        }
+        wxcEditManager::Get().PushState(label);
     }
 }

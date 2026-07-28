@@ -11,22 +11,8 @@ class EventsEditorPane;
 class GUICraftMainPanel;
 class wxcTreeView;
 
-struct GeneratedClass {
-    wxString classname;
-    wxFileName derivedSource;
-    wxFileName derivedHeader;
-
-    void Clear()
-    {
-        classname.Clear();
-        derivedSource.Clear();
-        derivedHeader.Clear();
-    }
-};
-
 class wxCrafterPlugin : public IPlugin
 {
-    GeneratedClass m_generatedClassInfo;
     MainFrame* m_mainFrame = nullptr;
     bool m_serverMode = false;
     wxFileName m_selectedFile;
@@ -34,17 +20,7 @@ class wxCrafterPlugin : public IPlugin
 protected:
     wxMenu* DoCreateFolderMenu();
     wxMenu* DoProjectMenu();
-    void DoUpdateDerivedClassEventHandlers();
-    bool DoReadFileContentAndPrompt(const wxFileName& fn, wxString& content, IEditor** editor);
-    void DoWriteFileContent(const wxFileName& fn, const wxString& content, IEditor* editor);
-    void DoGenerateCode(const NewFormDetails& fd);
     void DoShowDesigner();
-#if !STANDALONE_BUILD
-    bool DoCreateVirtualFolder(const wxString& vdFullPath);
-#endif
-    void DoSelectWorkspaceTab();
-    void DoLoadAfterImport(ImportDlg::ImportFileData& data);
-    void DoImportFB(const wxString& filename = "");
     void DoInitDone(wxObject* obj = NULL);
     void DoLoadWxcProject(const wxFileName& filename);
 
@@ -53,17 +29,11 @@ protected:
     void OnInitDone(wxCommandEvent& e);
     void OnShowDesigner(wxCommandEvent& e);
     void OnReGenerateForProject(wxCommandEvent& e);
-    void OnBitmapCodeGenerationCompleted(wxCommandEvent& e);
     void OnNewForm(wxCommandEvent& e);
     void OnOpenFile(clCommandEvent& e);
     void OnProjectModified(wxCommandEvent& e);
     void OnProjectSynched(wxCommandEvent& e);
-    void OnPageChanged(wxCommandEvent& e);
-    void OnDesignerItemSelected(wxCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
-    void OnBuildStarting(wxCommandEvent& e);
-    void OnAllEditorsClosing(wxCommandEvent& e);
-    void OnAllEditorsClosed(wxCommandEvent& e);
     void OnSave(wxCommandEvent& e);
     void OnSaveAll(clCommandEvent& e);
     void OnSaveProject(wxCommandEvent& e);
@@ -73,9 +43,6 @@ protected:
     void OnOpenProjectUI(wxUpdateUIEvent& e);
     void OnCloseProject(wxCommandEvent& e);
     void OnCloseProjectUI(wxUpdateUIEvent& e);
-    void OnImportwxFBProject(wxCommandEvent& e);
-    void OnImportwxSmith(wxCommandEvent& e);
-    void OnImportXRC(wxCommandEvent& e);
     void OnDefineCustomControls(wxCommandEvent& e);
     void OnEditCustomControls(wxCommandEvent& e);
     void OnDeleteCustomControls(wxCommandEvent& e);

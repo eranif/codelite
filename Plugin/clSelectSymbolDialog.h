@@ -26,7 +26,7 @@
 #ifndef CLSELECTSYMBOLDIALOG_H
 #define CLSELECTSYMBOLDIALOG_H
 
-#include "clSelectSymbolDialogBase.h"
+#include "clSelectSymbolDialogBase.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 

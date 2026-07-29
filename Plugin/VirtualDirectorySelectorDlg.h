@@ -26,7 +26,7 @@
 #ifndef VIRTUALDIRECTORYSELECTORDLG_H
 #define VIRTUALDIRECTORYSELECTORDLG_H
 
-#include "VirtualDirectorySelectorBase.h"
+#include "VirtualDirectorySelectorBase.hpp"
 #include "bitmap_loader.h"
 #include "clTreeCtrl.h"
 #include "codelite_exports.h"

@@ -1,7 +1,7 @@
 #ifndef CLTABLELINEEDITORDLG_H
 #define CLTABLELINEEDITORDLG_H
 
-#include "wxcrafter_plugin.h"
+#include "wxcrafter_plugin.hpp"
 
 #include <wx/arrstr.h>
 

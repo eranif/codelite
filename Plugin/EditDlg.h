@@ -28,7 +28,7 @@
 
 #include "clEditorEditEventsHandler.h"
 #include "lexer_configuration.h"
-#include "wxcrafter_plugin.h"
+#include "wxcrafter_plugin.hpp"
 
 class WXDLLIMPEXP_SDK EditDlg : public EditDlgBase
 {

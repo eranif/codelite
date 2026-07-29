@@ -1,6 +1,6 @@
 #ifndef SWITCHTOWORKSPACEDLG_H
 #define SWITCHTOWORKSPACEDLG_H
-#include "SwitchToWorkspaceBase.h"
+#include "SwitchToWorkspaceBase.hpp"
 
 class WXDLLIMPEXP_SDK SwitchToWorkspaceDlg : public SwitchToWorkspaceBaseDlg
 {

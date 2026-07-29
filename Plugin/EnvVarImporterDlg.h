@@ -26,7 +26,7 @@
 #ifndef ENVVARIMPORTERDLG_H
 #define ENVVARIMPORTERDLG_H
 
-#include "WSImporterDlgs.h"
+#include "WSImporterDlgs.hpp"
 #include "workspace.h"
 
 #include <set>

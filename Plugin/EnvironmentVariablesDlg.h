@@ -1,7 +1,7 @@
 #ifndef ENVIRONMENTVARIABLESDLG_H
 #define ENVIRONMENTVARIABLESDLG_H
 
-#include "EnvironmentVariablesDlgBase.h"
+#include "EnvironmentVariablesDlgBase.hpp"
 #include "clEditorEditEventsHandler.h"
 
 class WXDLLIMPEXP_SDK EnvironmentVariablesDlg : public EnvVarsTableDlgBase

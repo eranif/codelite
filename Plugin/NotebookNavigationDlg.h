@@ -32,7 +32,7 @@
 #include "clTab.h"
 #include "cl_defs.h"
 #include "globals.h"
-#include "wxcrafter_plugin.h"
+#include "wxcrafter_plugin.hpp"
 
 struct TabData {
     wxString label;

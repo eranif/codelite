@@ -26,7 +26,7 @@
 #ifndef CLSINGLECHOICEDIALOG_H
 #define CLSINGLECHOICEDIALOG_H
 #include "codelite_exports.h"
-#include "wxcrafter_plugin.h"
+#include "wxcrafter_plugin.hpp"
 
 class WXDLLIMPEXP_SDK clSingleChoiceDialog : public clSingleChoiceDialogBase
 {

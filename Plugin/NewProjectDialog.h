@@ -1,7 +1,7 @@
 #ifndef NEWPROJECTDIALOG_H
 #define NEWPROJECTDIALOG_H
 
-#include "NewProjectDialogBase.h"
+#include "NewProjectDialogBase.hpp"
 #include "codelite_exports.h"
 #include "project.h"
 

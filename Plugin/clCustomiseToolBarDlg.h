@@ -1,7 +1,7 @@
 #ifndef CLCUSTOMISETOOLBARDLG_H
 #define CLCUSTOMISETOOLBARDLG_H
 
-#include "ToolBarUI.h"
+#include "ToolBarUI.hpp"
 #include "clToolBar.h"
 #include "codelite_exports.h"
 

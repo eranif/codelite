@@ -3,7 +3,7 @@
 
 #include "LSP/basic_types.h"
 #include "cl_command_event.h"
-#include "wxcrafter_plugin.h"
+#include "wxcrafter_plugin.hpp"
 
 #include <optional>
 #include <vector>

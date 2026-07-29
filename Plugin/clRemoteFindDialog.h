@@ -4,7 +4,7 @@
 #include "clThemedComboBox.hpp"
 #include "codelite_exports.h"
 #include "sessionmanager.h"
-#include "sftp_ui.h"
+#include "sftp_ui.hpp"
 
 #include <wx/arrstr.h>
 

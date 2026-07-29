@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GotoAnythingBaseUI.h"
+#include "GotoAnythingBaseUI.hpp"
 #include "clGotoEntry.h"
 #include "clThemedListCtrl.h"
 #include "codelite_exports.h"

@@ -4,7 +4,7 @@
   "m_objCounter": 45,
   "m_includeFiles": ["codelite_exports.h"],
   "m_bitmapFunction": "wxC9ED9AInitBitmapResources",
-  "m_bitmapsFile": "wxCodeCompletionBox_bitmaps.cpp",
+  "m_bitmapsFile": "wxCodeCompletionBox_plugin_bitmaps.cpp",
   "m_GenerateCodeTypes": 1,
   "m_outputFileName": "wxCodeCompletionBoxBase",
   "m_firstWindowId": 1000,

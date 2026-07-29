@@ -29,7 +29,7 @@
 #include "LSP/basic_types.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
-#include "openresourcedialogbase.h"
+#include "openresourcedialogbase.hpp"
 
 #include <vector>
 #include <wx/arrstr.h>

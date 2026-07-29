@@ -1,7 +1,7 @@
 #pragma once
 
 #include "codelite_exports.h"
-#include "wxcrafter_plugin.h"
+#include "wxcrafter_plugin.hpp"
 
 class WXDLLIMPEXP_SDK TextViewerDlg : public TextViewerBaseDlg
 {

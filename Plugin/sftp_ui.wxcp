@@ -3,7 +3,7 @@
     "m_GenerateCodeTypes": 1,
     "m_addHandlers": true,
     "m_bitmapFunction": "wxCE8CInitBitmapResources",
-    "m_bitmapsFile": "sftp_ui_sftp_bitmaps.cpp",
+    "m_bitmapsFile": "sftp_ui_plugin_bitmaps.cpp",
     "m_firstWindowId": 1000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [

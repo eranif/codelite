@@ -54,27 +54,10 @@ if(NOT MINGW)
   endif(WXC_APP)
 endif()
 
-# ----------------------------------------------------------------------------
-# Source bucketing
-# ----------------------------------------------------------------------------
-# We have two gui-target flavors that differ in one preprocessor symbol:
-#
-# target            STANDALONE_BUILD
-# ----------------- ----------------
-# wxCrafterPlugin   undefined
-# wxcrafter (exe)   1
-#
-# Most TUs don't reference the macro; their object files are bit-identical
-# across all flavors and can be compiled once, into a shared static library.
-# Only a handful of TUs actually #if on the macro and must be compiled per
-# flavor.
-
-# The macro-sensitive GUI-only files.
-file(GLOB_RECURSE MACRO_SENSITIVE_GUI_ONLY_SRCS "SharedGui/*.cpp")
+file(GLOB_RECURSE WXCRAFTER_PLUGIN_SRCS "SharedGui/*.cpp")
 
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
-  "${CMAKE_CURRENT_LIST_DIR}/SharedGui/src"
 )
 
 set(RES_FILE "")
@@ -94,14 +77,13 @@ endif()
 # defines) and links the common static libs above.
 
 # wxCrafter as a CodeLite plugin (shared library)
-add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_GUI_ONLY_SRCS})
+add_library(wxCrafterPlugin SHARED ${WXCRAFTER_PLUGIN_SRCS})
 target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommonGui)
 
 # wxCrafter as a standalone GUI application
-add_executable(wxcrafter ${MACRO_SENSITIVE_GUI_ONLY_SRCS} wxCrafter/main.cpp ${RES_FILES})
+add_executable(wxcrafter wxCrafter/main.cpp ${RES_FILES})
 target_compile_definitions(
-  wxcrafter PRIVATE STANDALONE_BUILD=1
-                    INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+  wxcrafter PRIVATE INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui)
 
 if(WXC_APP)

@@ -190,7 +190,7 @@ const wxSize BMP_SIZE{32, 32};
 const wxSize BMP_SIZE{16, 16};
 #endif
 
-MainFrame::MainFrame(wxWindow* parent, bool hidden, IManager* manager)
+MainFrame::MainFrame(wxWindow* parent, IManager* manager)
     : MainFrameBase(parent,
                     wxID_ANY,
                     "wxCrafter",

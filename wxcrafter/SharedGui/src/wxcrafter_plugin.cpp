@@ -1,6 +1,7 @@
 #include "wxcrafter_plugin.h"
 
 #include "ColoursAndFontsManager.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "UI/wxcTreeView.h"
 #include "UI/wxguicraft_main_view.h"
 #include "allocator_mgr.h"
@@ -18,9 +19,6 @@
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
-#if !STANDALONE_BUILD
-#include "Keyboard/clKeyboardManager.h"
-#endif
 
 namespace
 {
@@ -41,7 +39,7 @@ wxStringSet_t GetProjectFiles(const wxString& projectName)
 } // namespace
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new wxCrafterPlugin(manager, false); }
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new wxCrafterPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -55,25 +53,15 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
+wxCrafterPlugin::wxCrafterPlugin(IManager* manager)
     : IPlugin(manager)
     , m_mainFrame(NULL)
-    , m_serverMode(serverMode)
 {
-#if !STANDALONE_BUILD
     /// Initialize wxPG only in plugin mode
     wxPGInitResourceModule();
 
-// Start the network thread
-#endif
-
     m_longName = _("wxWidgets GUI Designer");
     m_shortName = "wxCrafter";
-
-// will be initialized in the OnInitDone()
-#if STANDALONE_BUILD
-    DoInitDone();
-#endif
 
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &wxCrafterPlugin::OnToggleView, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(wxCrafterPlugin::OnInitDone), NULL, this);
@@ -137,10 +125,8 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
                       NULL,
                       (wxEvtHandler*)this);
 
-#if !STANDALONE_BUILD
     clKeyboardManager::Get()->AddAccelerator(
         "ID_SHOW_DESIGNER", _("wxCrafter"), _("Show the designer"), "Ctrl-Shift-F12");
-#endif
 }
 
 wxCrafterPlugin::~wxCrafterPlugin()
@@ -246,7 +232,7 @@ void wxCrafterPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 void wxCrafterPlugin::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
-    DoInitDone(NULL);
+    DoInitDone();
 }
 
 void wxCrafterPlugin::OnShowDesigner(wxCommandEvent& e) { DoShowDesigner(); }
@@ -361,10 +347,8 @@ void wxCrafterPlugin::OnImportwxSmithProject(wxCommandEvent&)
     m_mainFrame->OpenWxSmithImporterDialog(m_selectedFile.GetFullPath());
 }
 
-void wxCrafterPlugin::DoInitDone(wxObject* obj)
+void wxCrafterPlugin::DoInitDone()
 {
-    wxUnusedVar(obj);
-#if !STANDALONE_BUILD
     wxToolBar* mainToolbar = EventNotifier::Get()->TopFrame()->GetToolBar();
     if (mainToolbar) {
         int toolHeight = mainToolbar->GetToolBitmapSize().GetHeight();
@@ -377,15 +361,7 @@ void wxCrafterPlugin::DoInitDone(wxObject* obj)
                           NULL,
                           (wxEvtHandler*)this);
     }
-
-#endif
-
-#if STANDALONE_BUILD
-    /// explicitly load the lexers
-    ColoursAndFontsManager::Get().Load();
-#endif
-
-    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_serverMode, m_mgr);
+    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_mgr);
 
     wxCrafter::SetTopFrame(m_mainFrame);
 }

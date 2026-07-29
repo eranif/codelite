@@ -1,11 +1,11 @@
 #include "ColoursAndFontsManager.h"
+#include "UI/mainFrame.h"
 #include "UI/wxguicraft_main_view.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "wxc_project_metadata.h"
-#include "wxcrafter_plugin.h"
 
 #include <wx/cmdline.h>
 #include <wx/filefn.h>
@@ -22,7 +22,7 @@ public:
     bool OnCmdLineParsed(wxCmdLineParser& parser) override;
 
 private:
-    wxCrafterPlugin* m_wxcPlugin = nullptr;
+    MainFrame* m_mainFrame = nullptr;
     bool m_hiddenMainFrame = false;
 };
 
@@ -148,8 +148,8 @@ bool wxcApp::OnInit()
     ColoursAndFontsManager::Get().Load();
     ColoursAndFontsManager::Get().RestoreDefaults();
 
-    m_wxcPlugin = new wxCrafterPlugin(nullptr, false);
-    SetTopWindow(m_wxcPlugin->GetMainFrame());
+    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), nullptr);
+    SetTopWindow(m_mainFrame);
 
     if (parser.FoundSwitch("g") == wxCMD_SWITCH_ON) {
         wxString outputDirStr;
@@ -161,7 +161,7 @@ bool wxcApp::OnInit()
             clDEBUG() << "Set output directory to" << outputDirStr << endl;
         }
 
-        auto wxcView = m_wxcPlugin->GetMainFrame()->GetWxcView();
+        auto wxcView = m_mainFrame->GetWxcView();
         for (size_t i = 0; i != parser.GetParamCount(); ++i) {
             wxString filename = parser.GetParam(i);
             clDEBUG() << "Generate from file" << filename << endl;
@@ -184,7 +184,7 @@ bool wxcApp::OnInit()
 
 int wxcApp::OnExit()
 {
-    wxDELETE(m_wxcPlugin);
+    wxDELETE(m_mainFrame);
     return TRUE;
 }
 

@@ -14,14 +14,13 @@ class wxcTreeView;
 class wxCrafterPlugin : public IPlugin
 {
     MainFrame* m_mainFrame = nullptr;
-    bool m_serverMode = false;
     wxFileName m_selectedFile;
 
 protected:
     wxMenu* DoCreateFolderMenu();
     wxMenu* DoProjectMenu();
     void DoShowDesigner();
-    void DoInitDone(wxObject* obj = NULL);
+    void DoInitDone();
     void DoLoadWxcProject(const wxFileName& filename);
 
 protected:
@@ -52,7 +51,7 @@ protected:
     void OnSaveUI(clCommandEvent& event);
 
 public:
-    wxCrafterPlugin(IManager* manager, bool serverMode);
+    explicit wxCrafterPlugin(IManager* manager);
     ~wxCrafterPlugin() override;
 
     MainFrame* GetMainFrame() const { return m_mainFrame; }

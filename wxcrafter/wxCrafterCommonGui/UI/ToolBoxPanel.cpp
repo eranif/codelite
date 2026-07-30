@@ -69,7 +69,7 @@ void ToolBoxPanel::OnCustomControl(wxRibbonToolBarEvent& event)
         menu.AppendSeparator();
     }
 
-    menu.Append(XRCID("define_custom_controls"), _("Define custom control..."));
+    menu.Append(MainFrameBase::ID_CUSTOM_CONTROL_NEW, _("Define custom control..."));
     event.PopupMenu(&menu);
 }
 

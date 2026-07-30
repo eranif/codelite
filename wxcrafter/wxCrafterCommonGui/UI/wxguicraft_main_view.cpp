@@ -3273,7 +3273,7 @@ void GUICraftMainPanel::OnNewCustomControlMenu(wxCommandEvent& e)
         }
         menu.AppendSeparator();
     }
-    menu.Append(XRCID("define_custom_controls"), _("Define custom control..."));
+    menu.Append(MainFrameBase::ID_CUSTOM_CONTROL_NEW, _("Define custom control..."));
 
     wxButton* button = dynamic_cast<wxButton*>(e.GetEventObject());
     if (button) {

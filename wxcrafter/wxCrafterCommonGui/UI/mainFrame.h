@@ -88,7 +88,7 @@ protected:
                                            const wxFileName& derivedHeader);
 
 public:
-    MainFrame(wxWindow* parent, bool hidden, IManager* manager);
+    MainFrame(wxWindow* parent, IManager* manager);
     ~MainFrame() override;
 
     void AddForm(const NewFormDetails& fd) { m_treeView->AddForm(fd); }

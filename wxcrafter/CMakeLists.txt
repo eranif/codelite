@@ -11,7 +11,6 @@ else()
 endif(WXC_APP)
 
 set(APP_NAME "wxcrafter")
-set(PLUGIN_NAME "wxCrafter")
 
 set(WXC_DIR "${CL_SRC_ROOT}/wxcrafter")
 
@@ -54,8 +53,6 @@ if(NOT MINGW)
   endif(WXC_APP)
 endif()
 
-file(GLOB_RECURSE WXCRAFTER_PLUGIN_SRCS "SharedGui/*.cpp")
-
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
 )
@@ -66,52 +63,19 @@ if(MINGW)
   set(RES_FILES "resources/wxcapp_resources.rc")
 endif()
 
-# ----------------------------------------------------------------------------
-# GUI targets
-# ----------------------------------------------------------------------------
-
-# ----------------------------------------------------------------------------
-# Per-flavor targets
-# ----------------------------------------------------------------------------
-# Each target compiles the macro-sensitive sources itself (with the right
-# defines) and links the common static libs above.
-
-# wxCrafter as a CodeLite plugin (shared library)
-add_library(wxCrafterPlugin SHARED ${WXCRAFTER_PLUGIN_SRCS})
-target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommonGui)
-
 # wxCrafter as a standalone GUI application
 add_executable(wxcrafter wxCrafter/main.cpp ${RES_FILES})
 target_compile_definitions(
   wxcrafter PRIVATE INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 target_link_libraries(wxcrafter PRIVATE wxCrafterCommonGui)
 
-if(WXC_APP)
-  set_target_properties(wxCrafterPlugin PROPERTIES EXCLUDE_FROM_ALL ON)
-else()
+if(NOT WXC_APP)
   set_target_properties(wxcrafter PROPERTIES EXCLUDE_FROM_ALL ON)
 endif()
 
 if(UNIX OR APPLE)
-  set_target_properties(wxCrafterPlugin PROPERTIES POSITION_INDEPENDENT_CODE ON)
   set_target_properties(wxcrafter PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
-
-if(USE_PCH)
-  target_precompile_headers(wxCrafterPlugin REUSE_FROM PCH)
-endif()
-
-# Remove the "lib" prefix from the plugin name
-set_target_properties(wxCrafterPlugin PROPERTIES OUTPUT_NAME "wxCrafter" PREFIX
-                                                                         "")
-
-if(NOT OFFICIAL_CL_BUILD)
-  target_link_libraries(
-    wxCrafterPlugin PRIVATE ${LINKER_OPTIONS} ${SQLite3_LIBRARIES} libcodelite
-                            plugin)
-else(OFFICIAL_CL_BUILD)
-  target_link_libraries(wxCrafterPlugin PRIVATE ${LINKER_OPTIONS})
-endif(NOT OFFICIAL_CL_BUILD)
 
 target_link_libraries(wxcrafter PRIVATE ${LINKER_OPTIONS}
                                         $<IF:$<BOOL:${MINGW}>,-mwindows,-lutil>)
@@ -146,12 +110,7 @@ if(MINGW)
     COMMAND_EXPAND_LISTS)
 endif(MINGW)
 
-if(NOT WXC_APP)
-  # wxCrafter as CodeLite's plugin
-  cl_install_plugin(wxCrafterPlugin)
-  cl_install_file_shared(${WXC_DIR}/wxgui.zip)
-
-elseif(NOT MINGW)
+if(WXC_APP AND NOT MINGW)
   set(CPACK_DEB_COMPONENT_INSTALL 1)
 
   # Installing the applications

@@ -24,6 +24,7 @@ add_subdirectory(abbreviation)
 add_subdirectory(codelite_vim)
 add_subdirectory(codelitephp)
 add_subdirectory(git)
+add_subdirectory(wxCrafter)
 
 if(NOT DISABLE_CXX)
   add_subdirectory(CMakePlugin)

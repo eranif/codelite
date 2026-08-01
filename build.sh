@@ -11,6 +11,20 @@ FORCE_CMAKE=0
 
 INFO "Building CodeLite"
 
+function check_cmake_modified() {
+  local build_dir=$1
+  find "${ROOT_DIR}" \
+    -not -path "*/.git/*" \
+    -not -path "*/.build*/*" \
+    -not -path "*/.codelite*/*" \
+    -not -path "*/.vscode/*" \
+    -not -path "*/.idea/*" \
+    -not -path "*/node_modules/*" \
+    -name "CMakeLists.txt" \
+    -newer "${build_dir}/Makefile" \
+    -print -quit | grep -q .
+}
+
 function check_prerequistes() {
   if [[ "${OS_NAME}" == *MINGW* ]]; then
     install_prerequistes_MSW
@@ -189,8 +203,9 @@ function build_CodeLite_Linux() {
   mkdir -p ${CodeLite_build_dir}
   cd ${CodeLite_build_dir}
   if [ "${FORCE_CMAKE}" -eq 1 ] || [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] ||
-    [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ]; then
+    check_cmake_modified "${CodeLite_build_dir}"; then
     INFO "Configuring CodeLite"
+    rm -f ${CodeLite_build_dir}/CMakeCache.txt
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 \
       -DWITH_WX_CONFIG=${wx_config}
   else
@@ -224,9 +239,10 @@ function build_CodeLite_macOS() {
   # Configure if the build tree has not been generated yet, or if
   # CMakeLists.txt is newer than the generated cache.
   if [ "${FORCE_CMAKE}" -eq 1 ] || [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] || [ ! -d "${CodeLite_build_dir}/codelite.app" ] ||
-    [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ] ||
+    check_cmake_modified "${CodeLite_build_dir}" ||
     ! grep -q "^CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOS_DEPLOYMENT_TARGET}$" "${CodeLite_build_dir}/CMakeCache.txt"; then
     INFO "Configuring CodeLite"
+    rm -f ${CodeLite_build_dir}/CMakeCache.txt
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET} \
       -DwxWidgets_CONFIG_EXECUTABLE=${wx_config}
@@ -252,7 +268,7 @@ function build_CodeLite_MSW() {
   # Configure if the build tree has not been generated yet, or if
   # CMakeLists.txt is newer than the generated cache.
   if [ "${FORCE_CMAKE}" -eq 1 ] || [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] || [ ! -d "${CodeLite_build_dir}/install" ] ||
-    [ "${ROOT_DIR}/CMakeLists.txt" -nt "${CodeLite_build_dir}/Makefile" ]; then
+    check_cmake_modified "${CodeLite_build_dir}"; then
     INFO "Configuring CodeLite"
     rm -f ${CodeLite_build_dir}/CMakeCache.txt
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DWXWIN="${BUILD_DIR}/wxWidgets-install"

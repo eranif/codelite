@@ -32,16 +32,7 @@
 #include "manager.h"
 
 #include <map>
-#include <wx/button.h>
-#include <wx/choice.h>
-#include <wx/colour.h>
-#include <wx/font.h>
 #include <wx/gdicmn.h>
-#include <wx/listctrl.h>
-#include <wx/panel.h>
-#include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
 #include <wx/string.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -80,7 +71,7 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class SimpleTableBase
+/// Class DebuggerTreeListCtrlBase
 ///////////////////////////////////////////////////////////////////////////////
 class DebuggerTreeListCtrlBase : public LocalsTableBase
 {

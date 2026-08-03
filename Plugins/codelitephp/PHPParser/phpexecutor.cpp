@@ -1,9 +1,9 @@
 #include "phpexecutor.h"
 
-#include "AsyncProcess/TerminalEmulatorFrame.h"
 #include "AsyncProcess/asyncprocess.h"
 #include "Console/clConsoleBase.h"
 #include "StringUtils.h"
+#include "TerminalEmulator/TerminalEmulatorFrame.h"
 #include "clplatform.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"

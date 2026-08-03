@@ -27,9 +27,9 @@
 #define TERMINALEMULATORFRAME_H
 
 #include "TerminalEmulatorUI.h"
-#include "TerminalEmulatorUIBase.h"
+#include "TerminalEmulatorUIBase.hpp"
 #if wxUSE_GUI
-class WXDLLIMPEXP_CL TerminalEmulatorFrame : public TerminalEmulatorFrameBase
+class WXDLLIMPEXP_SDK TerminalEmulatorFrame : public TerminalEmulatorFrameBase
 {
     TerminalEmulatorUI* m_terminal;
 

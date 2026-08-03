@@ -4,7 +4,7 @@
 		"m_objCounter":	10,
 		"m_includeFiles":	["codelite_exports.h"],
 		"m_bitmapFunction":	"wxCB1DAInitBitmapResources",
-		"m_bitmapsFile":	"TerminalEmulatorUI_codelite_bitmaps.cpp",
+		"m_bitmapsFile":	"TerminalEmulatorUI_plugin_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
 		"m_outputFileName":	"TerminalEmulatorUIBase",
 		"m_firstWindowId":	1000,
@@ -97,7 +97,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	"WXDLLIMPEXP_CL"
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -437,7 +437,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	"WXDLLIMPEXP_CL"
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"choice",
 					"m_label":	"wxFrame Type",

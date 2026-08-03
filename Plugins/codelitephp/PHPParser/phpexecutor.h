@@ -26,7 +26,7 @@
 #ifndef PHPEXECUTOR_H
 #define PHPEXECUTOR_H
 
-#include "AsyncProcess/TerminalEmulator.h"
+#include "TerminalEmulator/TerminalEmulator.h"
 #include "php_project.h"
 
 #include <wx/event.h>

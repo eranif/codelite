@@ -26,7 +26,7 @@
 #ifndef PHPTERMINAL_H
 #define PHPTERMINAL_H
 
-#include "AsyncProcess/TerminalEmulatorFrame.h" // Base class: TerminalEmulatorFrame
+#include "TerminalEmulator/TerminalEmulatorFrame.h" // Base class: TerminalEmulatorFrame
 
 class PHPTerminal : public TerminalEmulatorFrame
 {

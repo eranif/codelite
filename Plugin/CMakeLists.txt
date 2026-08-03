@@ -65,6 +65,14 @@ wxcrafter_target(
     "UI_languageserver_bitmaps.cpp")
 
 wxcrafter_target(
+    PluginTerminalEmulator
+    "${CMAKE_CURRENT_SOURCE_DIR}/TerminalEmulator/TerminalEmulatorUI.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "TerminalEmulatorUIBase.cpp"
+    "TerminalEmulatorUIBase.hpp"
+    "TerminalEmulatorUI_plugin_bitmaps.cpp")
+
+wxcrafter_target(
     PluginWxTerminal
     "${CMAKE_CURRENT_SOURCE_DIR}/wxTerminalCtrl/wxTerminalCtrlUI.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -295,6 +303,7 @@ add_library(plugin SHARED ${SRCS}
     ${WXCRAFTER_PluginFileSystemWorkspace_OUTPUTS}
     ${WXCRAFTER_PluginKeyboard_OUTPUTS}
     ${WXCRAFTER_PluginLSP_OUTPUTS}
+    ${WXCRAFTER_PluginTerminalEmulator_OUTPUTS}
     ${WXCRAFTER_PluginWxTerminal_OUTPUTS}
     ${WXCRAFTER_PluginAddIncludeFile_OUTPUTS}
     ${WXCRAFTER_PluginAboutDialog_OUTPUTS}

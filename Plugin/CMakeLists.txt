@@ -97,6 +97,14 @@ wxcrafter_target(
     "clBoostrapWizardBase_plugin_bitmaps.cpp")
 
 wxcrafter_target(
+    PluginProgressDlg
+    "${CMAKE_CURRENT_SOURCE_DIR}/clprogressdlgbase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "clprogressdlgbase.cpp"
+    "clprogressdlgbase.hpp"
+    "clprogressdlgbase_plugin_bitmaps.cpp")
+
+wxcrafter_target(
     PluginResizableTooltip
     "${CMAKE_CURRENT_SOURCE_DIR}/clResizableTooltipBase.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -291,6 +299,7 @@ add_library(plugin SHARED ${SRCS}
     ${WXCRAFTER_PluginAddIncludeFile_OUTPUTS}
     ${WXCRAFTER_PluginAboutDialog_OUTPUTS}
     ${WXCRAFTER_PluginBoostrapWizard_OUTPUTS}
+    ${WXCRAFTER_PluginProgressDlg_OUTPUTS}
     ${WXCRAFTER_PluginResizableTooltip_OUTPUTS}
     ${WXCRAFTER_PluginSelectSymbolDialog_OUTPUTS}
 #    ${WXCRAFTER_PluginEditorLayout_OUTPUTS}

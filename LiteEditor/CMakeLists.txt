@@ -318,14 +318,6 @@ wxcrafter_target(
     "reconcileproject_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
-    LiteEditorRenameSymbolDlg
-    "${CMAKE_CURRENT_SOURCE_DIR}/rename_symbol_dlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
-    "rename_symbol_dlg.cpp"
-    "rename_symbol_dlg.hpp"
-    "rename_symbol_dlg_liteeditor_bitmaps.cpp")
-
-wxcrafter_target(
     LiteEditorSettersGetters
     "${CMAKE_CURRENT_SOURCE_DIR}/setters_getters.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -426,7 +418,6 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorQuickDebug_OUTPUTS}
     ${WXCRAFTER_LiteEditorProjectSettings_OUTPUTS}
     ${WXCRAFTER_LiteEditorReconcileProject_OUTPUTS}
-    ${WXCRAFTER_LiteEditorRenameSymbolDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorSettersGetters_OUTPUTS}
     ${WXCRAFTER_LiteEditorSyntaxHighlightBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorTabGroupBaseDlgs_OUTPUTS}

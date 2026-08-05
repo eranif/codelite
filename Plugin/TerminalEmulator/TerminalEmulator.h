@@ -26,7 +26,7 @@
 #ifndef TERMINALEMULATOR_H
 #define TERMINALEMULATOR_H
 
-#include "asyncprocess.h"
+#include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
@@ -35,11 +35,11 @@
 #include <wx/process.h>
 #include <wx/string.h>
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_COMMAND_EXIT, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_COMMAND_EXIT, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
 
 class MyProcess;
-class WXDLLIMPEXP_CL TerminalEmulator : public wxEvtHandler
+class WXDLLIMPEXP_SDK TerminalEmulator : public wxEvtHandler
 {
     IProcess* m_process;
     long m_pid;

@@ -33,7 +33,7 @@
 #ifndef _MEMCHECK_H_
 #define _MEMCHECK_H_
 
-#include "AsyncProcess/TerminalEmulator.h"
+#include "TerminalEmulator/TerminalEmulator.h"
 #include "clTabTogglerHelper.h"
 #include "imemcheckprocessor.h"
 #include "memcheckui.hpp"

@@ -26,7 +26,7 @@
 #ifndef PHPDEBUGPANE_H
 #define PHPDEBUGPANE_H
 
-#include "AsyncProcess/TerminalEmulatorUI.h"
+#include "TerminalEmulator/TerminalEmulatorUI.h"
 #include "XDebugManager.h"
 #include "bitmap_loader.h"
 #include "cl_command_event.h"

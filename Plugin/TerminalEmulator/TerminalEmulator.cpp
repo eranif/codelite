@@ -1,8 +1,8 @@
 #include "TerminalEmulator.h"
 
+#include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
 #include "file_logger.h"
-#include "processreaderthread.h"
 
 #include <algorithm>
 

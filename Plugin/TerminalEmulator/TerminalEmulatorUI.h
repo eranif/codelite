@@ -30,9 +30,9 @@
 
 #if wxUSE_GUI
 #include "TerminalEmulator.h"
-#include "TerminalEmulatorUIBase.h"
+#include "TerminalEmulatorUIBase.hpp"
 
-class WXDLLIMPEXP_CL TerminalEmulatorUI : public TerminalEmulatorUIBase
+class WXDLLIMPEXP_SDK TerminalEmulatorUI : public TerminalEmulatorUIBase
 {
     TerminalEmulator* m_terminal;
 

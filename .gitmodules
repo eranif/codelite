@@ -18,7 +18,7 @@
 	url = https://github.com/eranif/lexilla.git
 [submodule "libssh"]
 	path = submodules/libssh
-	url = https://git.libssh.org/projects/libssh.git
+	url = https://github.com/Jarod42/libssh-mirror.git
 [submodule "submodules/lua"]
 	path = submodules/lua
 	url = https://github.com/eranif/lua.git

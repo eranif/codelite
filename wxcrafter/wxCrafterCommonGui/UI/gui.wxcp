@@ -1069,7 +1069,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnFileOpen(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -1136,7 +1136,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnSave(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -1269,7 +1269,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnGenerateCode(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -1343,7 +1343,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnBatchGenerateCode(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -1476,7 +1476,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnHide(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -1573,7 +1573,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnPreview(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -1677,7 +1677,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnDeleteItem(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -1810,7 +1810,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnCopy(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -1884,7 +1884,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnPaste(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -1958,7 +1958,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnCut(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -2091,7 +2091,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnUndo(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -2165,7 +2165,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnRedo(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -2357,7 +2357,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnRename(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -2483,7 +2483,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnSettings(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -2580,8 +2580,15 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnOpenFindDialog(wxCommandEvent& event)",
+                      "m_noBody": false
+                    },
+                    {
+                      "m_description": "Process a wxEVT_UPDATE_UI event",
+                      "m_eventClass": "wxUpdateUIEvent",
+                      "m_eventName": "wxEVT_UPDATE_UI",
+                      "m_functionNameAndSignature": "OnFindUI(wxUpdateUIEvent& event)",
                       "m_noBody": false
                     }
                   ],
@@ -2677,7 +2684,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnBuild(wxCommandEvent& event)",
                       "m_noBody": false
                     },
@@ -2781,7 +2788,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnImportFB(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -2848,7 +2855,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnImportSmith(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -2915,7 +2922,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnImportXRC(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -3012,7 +3019,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnNewCustomControl(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -3079,7 +3086,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnEditCustomControl(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -3146,7 +3153,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnDeleteCustomControl(wxCommandEvent& event)",
                       "m_noBody": false
                     }
@@ -3243,7 +3250,7 @@
                     {
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
-                      "m_eventName": "wxEVT_COMMAND_MENU_SELECTED",
+                      "m_eventName": "wxEVT_MENU",
                       "m_functionNameAndSignature": "OnAbout(wxCommandEvent& event)",
                       "m_noBody": false
                     }

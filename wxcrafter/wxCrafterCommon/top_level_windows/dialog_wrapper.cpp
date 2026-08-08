@@ -61,7 +61,7 @@ wxString DialogWrapper::BaseCtorDecl() const
 {
     wxString code;
     wxString title = wxCrafter::UNDERSCORE(PropertyString(PROP_TITLE));
-    code << wxT("    ") << CreateBaseclassName()
+    code << wxT("    ") << CreateBaseClassName()
          << wxT("(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = ") << title << wxT(", ")
          << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ") << SizeAsString() << wxT(", ")
          << wxT("long style = ") << StyleFlags(wxT("0")) << wxT(");\n");
@@ -71,7 +71,7 @@ wxString DialogWrapper::BaseCtorDecl() const
 wxString DialogWrapper::BaseCtorImplPrefix() const
 {
     wxString code;
-    code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
+    code << CreateBaseClassName() << wxT("::") << CreateBaseClassName()
          << wxT("(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long "
                 "style)\n");
     code << "    : " << GetRealClassName() << "(parent, id, title, pos, size, style)\n";

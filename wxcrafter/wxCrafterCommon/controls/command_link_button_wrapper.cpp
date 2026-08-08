@@ -56,7 +56,7 @@ wxString CommandLinkButtonWrapper::CppCtorCode() const
         cppCode << GetName() << "->SetBitmap(" << bmpCpp << ", wxLEFT );\n";
     }
 
-    if (PropertyBool(PROP_DEFAULT_BUTTON) == "true") {
+    if (IsPropertyChecked(PROP_DEFAULT_BUTTON)) {
         cppCode << GetName() << "->SetDefault();\n";
     }
 

@@ -161,31 +161,31 @@ wxString FrameWrapper::BaseCtorImplPrefix() const
     wxString code;
     wxString frameType = PropertyString(PROP_FRAME_TYPE);
     if (frameType == "wxDocMDIParentFrame") {
-        code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
+        code << CreateBaseClassName() << wxT("::") << CreateBaseClassName()
              << "(wxDocManager *manager, wxFrame* parent, wxWindowID id, const wxString& title, const wxPoint& pos, "
                 "const wxSize& size, long style)\n";
         code << "    : " << GetRealClassName() << "(manager, parent, id, title, pos, size, style)\n";
 
     } else if (frameType == "wxDocMDIChildFrame") {
-        code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
+        code << CreateBaseClassName() << wxT("::") << CreateBaseClassName()
              << "(wxDocument *doc, wxView *view, wxMDIParentFrame *parent, wxWindowID id, const wxString& title, const "
                 "wxPoint& pos, const wxSize& size, long style)\n";
         code << "    : " << GetRealClassName() << "(doc, view, parent, id, title, pos, size, style)\n";
 
     } else if (frameType == "wxDocChildFrame") {
-        code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
+        code << CreateBaseClassName() << wxT("::") << CreateBaseClassName()
              << "(wxDocument *doc, wxView *view, wxFrame *parent, wxWindowID id, const wxString& title, const wxPoint& "
                 "pos, const wxSize& size, long style)\n";
         code << "    : " << GetRealClassName() << "(doc, view, parent, id, title, pos, size, style)\n";
 
     } else if (frameType == "wxDocParentFrame") {
-        code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
+        code << CreateBaseClassName() << wxT("::") << CreateBaseClassName()
              << "(wxDocManager *manager, wxFrame *parent, wxWindowID id, const wxString& title, const wxPoint& pos, "
                 "const wxSize& size, long style)\n";
         code << "    : " << GetRealClassName() << "(manager, parent, id, title, pos, size, style)\n";
 
     } else { // wxFrame or wxMiniFrame
-        code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
+        code << CreateBaseClassName() << wxT("::") << CreateBaseClassName()
              << wxT("(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, "
                     "long style)\n");
         code << "    : " << GetRealClassName() << "(parent, id, title, pos, size, style)\n";
@@ -201,34 +201,34 @@ wxString FrameWrapper::BaseCtorDecl() const
 
     if (frameType == "wxDocMDIParentFrame") {
         // wxDocMDIParentFrame
-        code << wxT("    ") << CreateBaseclassName()
+        code << wxT("    ") << CreateBaseClassName()
              << wxT("(wxDocManager *manager, wxFrame* parent, wxWindowID id = wxID_ANY, const wxString& title = ")
              << title << wxT(", ") << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ")
              << SizeAsString() << wxT(", ") << wxT("long style = ") << StyleFlags(wxT("0")) << wxT(");\n");
 
     } else if (frameType == "wxDocMDIChildFrame") {
-        code << wxT("    ") << CreateBaseclassName()
+        code << wxT("    ") << CreateBaseClassName()
              << wxT("(wxDocument *doc, wxView *view, wxMDIParentFrame *parent, "
                     "wxWindowID id = wxID_ANY, const wxString& title = ")
              << title << wxT(", ") << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ")
              << SizeAsString() << wxT(", ") << wxT("long style = ") << StyleFlags(wxT("0")) << wxT(");\n");
 
     } else if (frameType == "wxDocChildFrame") {
-        code << wxT("    ") << CreateBaseclassName()
+        code << wxT("    ") << CreateBaseClassName()
              << wxT("(wxDocument *doc, wxView *view, wxFrame *parent, "
                     "wxWindowID id = wxID_ANY, const wxString& title = ")
              << title << wxT(", ") << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ")
              << SizeAsString() << wxT(", ") << wxT("long style = ") << StyleFlags(wxT("0")) << wxT(");\n");
 
     } else if (frameType == "wxDocParentFrame") {
-        code << wxT("    ") << CreateBaseclassName()
+        code << wxT("    ") << CreateBaseClassName()
              << wxT("(wxDocManager *manager, wxFrame *parent, wxWindowID id = wxID_ANY, const wxString& title = ")
              << title << wxT(", ") << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ")
              << SizeAsString() << wxT(", ") << wxT("long style = ") << StyleFlags(wxT("0")) << wxT(");\n");
 
     } else {
         // wxFrame
-        code << wxT("    ") << CreateBaseclassName()
+        code << wxT("    ") << CreateBaseClassName()
              << wxT("(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = ") << title << wxT(", ")
              << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ") << SizeAsString() << wxT(", ")
              << wxT("long style = ") << StyleFlags(wxT("0")) << wxT(");\n");

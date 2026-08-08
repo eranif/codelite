@@ -201,10 +201,10 @@ wxShowEffect ShowEffectFromString(const wxString& effect);
 
 /**
  * @brief wrap block of code with #if <...> #endif
- * @param condname
+ * @param preprocessorCondition
  * @param codeblock
  */
-void WrapInIfBlock(const wxString& condname, wxString& codeblock);
+void WrapInIfBlock(const wxString& preprocessorCondition, wxString& codeblock);
 
 /**
  * @brief return the top frame

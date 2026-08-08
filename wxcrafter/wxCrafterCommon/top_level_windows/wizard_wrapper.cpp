@@ -64,7 +64,7 @@ wxString WizardWrapper::BaseCtorDecl() const
 {
     wxString code;
     wxcCodeGeneratorHelper::Get().AddBitmap(PropertyFile(PROP_BITMAP_PATH));
-    code << wxT("    ") << CreateBaseclassName()
+    code << wxT("    ") << CreateBaseClassName()
          << wxT("(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = ")
          << wxCrafter::UNDERSCORE(PropertyString(PROP_TITLE)) << wxT(", ")
          << wxT("const wxBitmap& bmp = wxNullBitmap, ") << wxT("const wxPoint& pos = wxDefaultPosition, ")
@@ -77,7 +77,7 @@ wxString WizardWrapper::BaseCtorDecl() const
 wxString WizardWrapper::BaseCtorImplPrefix() const
 {
     wxString code;
-    code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
+    code << CreateBaseClassName() << wxT("::") << CreateBaseClassName()
          << wxT("(wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bmp, const wxPoint& pos, "
                 "long style)\n");
     return code;

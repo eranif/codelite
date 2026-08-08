@@ -71,7 +71,7 @@ bool PanelWrapperTopLevel::IsTopWindow() const { return GetParent() == NULL; }
 wxString PanelWrapperTopLevel::BaseCtorDecl() const
 {
     wxString code;
-    code << wxT("    ") << CreateBaseclassName() << wxT("(wxWindow* parent, wxWindowID id = wxID_ANY, ")
+    code << wxT("    ") << CreateBaseClassName() << wxT("(wxWindow* parent, wxWindowID id = wxID_ANY, ")
          << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ") << SizeAsString() << wxT(", ")
          << wxT("long style = ") << StyleFlags(wxT("wxTAB_TRAVERSAL")) << wxT(");\n");
     return code;
@@ -80,7 +80,7 @@ wxString PanelWrapperTopLevel::BaseCtorDecl() const
 wxString PanelWrapperTopLevel::BaseCtorImplPrefix() const
 {
     wxString code;
-    code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
+    code << CreateBaseClassName() << wxT("::") << CreateBaseClassName()
          << wxT("(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)\n");
     code << "    : " << GetRealClassName() << "(parent, id, pos, size, style)\n";
     return code;

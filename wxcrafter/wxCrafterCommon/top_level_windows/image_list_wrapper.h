@@ -19,7 +19,7 @@ public:
     wxString GetWxClassName() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     wxString DoGenerateClassMember() const override;
-    wxString CreateBaseclassName() const override { return GetName(); }
+    wxString CreateBaseClassName() const override { return GetName(); }
     // not a real window
     bool IsWindow() const override { return false; }
     // no base class

@@ -30,7 +30,7 @@ wxcWidget* ImageListWrapper::Clone() const { return new ImageListWrapper(); }
 wxString ImageListWrapper::BaseCtorDecl() const
 {
     wxString code;
-    code << "    " << CreateBaseclassName() << "();\n";
+    code << "    " << CreateBaseClassName() << "();\n";
     code << "    const wxBitmap& Bitmap(const wxString &name) const {\n"
          << "        if ( !m_bitmaps.count(name + m_resolution) )\n"
          << "            return wxNullBitmap;\n"
@@ -48,7 +48,7 @@ wxString ImageListWrapper::BaseCtorImplPrefix() const
 {
     wxString code;
 
-    code << CreateBaseclassName() << "::" << CreateBaseclassName() << "()\n";
+    code << CreateBaseClassName() << "::" << CreateBaseClassName() << "()\n";
     code << "    : " << GetRealClassName() << "(" << PropertyInt(PROP_BITMAP_SIZE) << ", "
          << PropertyInt(PROP_BITMAP_SIZE) << ", " << PropertyBool(PROP_IMGLIST_MASK) << ")\n"
          << "    , m_imagesWidth(" << PropertyInt(PROP_BITMAP_SIZE) << ")\n"

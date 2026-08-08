@@ -50,7 +50,7 @@ void PopupWindowWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 wxString PopupWindowWrapper::BaseCtorDecl() const
 {
     wxString code;
-    code << wxT("    ") << CreateBaseclassName() << wxT("(wxWindow* parent, long style = ")
+    code << wxT("    ") << CreateBaseClassName() << wxT("(wxWindow* parent, long style = ")
          << StyleFlags("wxBORDER_NONE") << ");\n";
     return code;
 }
@@ -58,7 +58,7 @@ wxString PopupWindowWrapper::BaseCtorDecl() const
 wxString PopupWindowWrapper::BaseCtorImplPrefix() const
 {
     wxString code;
-    code << CreateBaseclassName() << wxT("::") << CreateBaseclassName() << wxT("(wxWindow* parent,long style)\n");
+    code << CreateBaseClassName() << wxT("::") << CreateBaseClassName() << wxT("(wxWindow* parent,long style)\n");
     code << "    : " << GetRealClassName() << "(parent, style)\n";
     return code;
 }

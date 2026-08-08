@@ -68,7 +68,7 @@ AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
 wxString AuiToolBarTopLevelWrapper::BaseCtorDecl() const
 {
     wxString code;
-    code << "    " << CreateBaseclassName() << "(wxWindow *parent, wxWindowID id = " << WindowID()
+    code << "    " << CreateBaseClassName() << "(wxWindow *parent, wxWindowID id = " << WindowID()
          << ", const wxPoint &position = wxDefaultPosition"
          << ", const wxSize &size = " << SizeAsString() << ", long style = " << StyleFlags("wxAUI_TB_DEFAULT_STYLE")
          << ");\n";
@@ -78,7 +78,7 @@ wxString AuiToolBarTopLevelWrapper::BaseCtorDecl() const
 wxString AuiToolBarTopLevelWrapper::BaseCtorImplPrefix() const
 {
     wxString code;
-    code << CreateBaseclassName() << "::" << CreateBaseclassName() << "("
+    code << CreateBaseClassName() << "::" << CreateBaseClassName() << "("
          << "wxWindow *parent, "
          << "wxWindowID id, "
          << "const wxPoint &position, "

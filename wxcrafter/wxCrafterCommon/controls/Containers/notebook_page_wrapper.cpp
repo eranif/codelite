@@ -311,7 +311,7 @@ wxString NotebookPageWrapper::DoTreebookCppCtorCode() const
         return wxT("");
 
     wxString code;
-    bool isNullPage = (PropertyBool(PROP_NULL_BOOK_PAGE) == "true");
+    const bool isNullPage = IsPropertyChecked(PROP_NULL_BOOK_PAGE);
 
     if (!isNullPage) {
         code << CPPStandardWxCtor(wxT("wxTAB_TRAVERSAL"));
@@ -345,7 +345,7 @@ wxString NotebookPageWrapper::DoTreebookCppCtorCode() const
                  << PropertyBool(PROP_SELECTED) << wxT(", ")
                  << (bHasBitmap && !imgIndex.IsEmpty() ? imgIndex : wxT("wxNOT_FOUND")) << wxT(");\n");
 
-            if (PropertyBool(PROP_EXPANDED) == wxT("true")) {
+            if (IsPropertyChecked(PROP_EXPANDED)) {
                 wxcNotebookCodeHelper::Get().Code()
                     << book->GetName() << wxT("->ExpandNode( ") << GetPageIndex() << wxT(", true );\n");
             }
@@ -356,7 +356,7 @@ wxString NotebookPageWrapper::DoTreebookCppCtorCode() const
              << Label() << wxT(", ") << PropertyBool(PROP_SELECTED) << wxT(", ")
              << (bHasBitmap && !imgIndex.IsEmpty() ? imgIndex : wxT("wxNOT_FOUND")) << wxT(");\n");
 
-        if (PropertyBool(PROP_EXPANDED) == wxT("true")) {
+        if (IsPropertyChecked(PROP_EXPANDED)) {
             wxcNotebookCodeHelper::Get().Code()
                 << book->GetName() << wxT("->ExpandNode( ") << GetPageIndex() << wxT(", true );\n");
         }

@@ -227,10 +227,10 @@ wxString StyledTextCtrlWrapper::CppCtorCode() const
     wxString cppCode;
     cppCode << CPPStandardWxCtor("0");
 
-    bool foldMargin = PropertyBool(PROP_STC_MARGIN_FOLD) == "true";
-    bool symbolMargin = PropertyBool(PROP_STC_MARGIN_SYMBOL) == "true";
-    bool lineNumber = PropertyBool(PROP_STC_MARGIN_LINE_NUMBERS) == "true";
-    bool separatorMargin = PropertyBool(PROP_STC_MARGIN_SEPARATOR) == "true";
+    const bool foldMargin = IsPropertyChecked(PROP_STC_MARGIN_FOLD);
+    const bool symbolMargin = IsPropertyChecked(PROP_STC_MARGIN_SYMBOL);
+    const bool lineNumber = IsPropertyChecked(PROP_STC_MARGIN_LINE_NUMBERS);
+    const bool separatorMargin = IsPropertyChecked(PROP_STC_MARGIN_SEPARATOR);
 
     // Fold margin
     cppCode << "// Configure the fold margin\n";
@@ -304,7 +304,7 @@ wxString StyledTextCtrlWrapper::CppCtorCode() const
         cppCode << GetName() << "->SetIndentationGuides(" << indentGuides << ");\n";
     }
 
-    if (PropertyBool(PROP_STC_VIEW_EOL) == "true") {
+    if (IsPropertyChecked(PROP_STC_VIEW_EOL)) {
         cppCode << GetName() << "->SetViewEOL(true);\n";
     }
 
@@ -335,17 +335,17 @@ void StyledTextCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     } else {
         text << XRCPrefix() << XRCSize() << XRCStyle() << XRCCommonAttributes();
 
-        if (PropertyBool(PROP_STC_MARGIN_FOLD) == "true") {
+        if (IsPropertyChecked(PROP_STC_MARGIN_FOLD)) {
             text << "<fold_margin>1</fold_margin>";
         }
 
-        if (PropertyBool(PROP_STC_MARGIN_SYMBOL) == "true") {
+        if (IsPropertyChecked(PROP_STC_MARGIN_SYMBOL)) {
             text << "<symbol_margin>1</symbol_margin>";
         }
-        if (PropertyBool(PROP_STC_MARGIN_LINE_NUMBERS) == "true") {
+        if (IsPropertyChecked(PROP_STC_MARGIN_LINE_NUMBERS)) {
             text << "<linenumbers_margin>1</linenumbers_margin>";
         }
-        if (PropertyBool(PROP_STC_MARGIN_SEPARATOR) == "true") {
+        if (IsPropertyChecked(PROP_STC_MARGIN_SEPARATOR)) {
             text << "<separator_margin>1</separator_margin>";
         }
 
@@ -354,7 +354,7 @@ void StyledTextCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
         text << "<indentguides>" << m_indentGuides.Index(PropertyString(PROP_STC_INDENT_GUIDES)) << "</indentguides>";
 
-        if (PropertyBool(PROP_STC_VIEW_EOL) == "true") {
+        if (IsPropertyChecked(PROP_STC_VIEW_EOL)) {
             text << "<vieweol>1</vieweol>";
         }
 

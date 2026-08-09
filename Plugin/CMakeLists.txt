@@ -256,13 +256,13 @@ wxcrafter_target(
     "wxcrafter_plugin.hpp"
     "wxcrafter_plugin_bitmaps.cpp")
 
-#wxcrafter_target(
-#    PluginRenameFile
-#    "${CMAKE_CURRENT_SOURCE_DIR}/renamefilebasedlg.wxcp"
-#    "${CMAKE_CURRENT_BINARY_DIR}"
-#    "renamefilebasedlg.cpp"
-#    "renamefilebasedlg.hpp"
-#    "renamefilebasedlg_plugin_bitmaps.cpp")
+wxcrafter_target(
+    PluginRenameFile
+    "${CMAKE_CURRENT_SOURCE_DIR}/renamefilebasedlg.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "renamefilebasedlg.cpp"
+    "renamefilebasedlg.hpp"
+    "renamefilebasedlg_plugin_bitmaps.cpp")
 
 #wxcrafter_target(
 #    PluginTerminal
@@ -303,7 +303,6 @@ add_library(plugin SHARED ${SRCS}
     ${WXCRAFTER_PluginProgressDlg_OUTPUTS}
     ${WXCRAFTER_PluginResizableTooltip_OUTPUTS}
     ${WXCRAFTER_PluginSelectSymbolDialog_OUTPUTS}
-#    ${WXCRAFTER_PluginEditorLayout_OUTPUTS}
     ${WXCRAFTER_PluginEnvVarTableDlg_OUTPUTS}
     ${WXCRAFTER_PluginGotoAnythingBaseUI_OUTPUTS}
     ${WXCRAFTER_PluginMacrosBaseDlg_OUTPUTS}
@@ -320,7 +319,7 @@ add_library(plugin SHARED ${SRCS}
     ${WXCRAFTER_PluginWSImporterDlgs_OUTPUTS}
     ${WXCRAFTER_PluginCodeCompletionBox_OUTPUTS}
     ${WXCRAFTER_PluginWxCrafter_OUTPUTS}
-#    ${WXCRAFTER_PluginRenameFile_OUTPUTS}
+    ${WXCRAFTER_PluginRenameFile_OUTPUTS}
 #    ${WXCRAFTER_PluginTerminal_OUTPUTS}
 )
 

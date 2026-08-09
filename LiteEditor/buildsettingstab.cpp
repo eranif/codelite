@@ -25,15 +25,7 @@
 #include "buildsettingstab.h"
 
 #include "buildtabsettingsdata.h"
-#include "clFontHelper.h"
 #include "editor_config.h"
-#include "event_notifier.h"
-#include "frame.h"
-#include "globals.h"
-#include "macros.h"
-
-#include <wx/any.h>
-#include <wx/fontdlg.h>
 
 BuildTabSetting::BuildTabSetting(wxWindow* parent)
     : BuildTabSettingsBase(parent)

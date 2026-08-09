@@ -330,33 +330,12 @@ using clCodeCompletionEventFunction = void (wxEvtHandler::*)(clCodeCompletionEve
 
 class WXDLLIMPEXP_CL clColourEvent : public clCommandEvent
 {
-#if wxUSE_GUI
-    wxColour m_bgColour;
-    wxColour m_fgColour;
-    wxColour m_borderColour;
-    wxWindow* m_page = nullptr;
-#endif
-    bool m_isActiveTab = false;
-
 public:
     clColourEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     clColourEvent(const clColourEvent&) = default;
     clColourEvent& operator=(const clColourEvent&) = delete;
     ~clColourEvent() override = default;
     wxEvent* Clone() const override { return new clColourEvent(*this); };
-
-#if wxUSE_GUI
-    void SetBorderColour(const wxColour& borderColour) { this->m_borderColour = borderColour; }
-    const wxColour& GetBorderColour() const { return m_borderColour; }
-    void SetPage(wxWindow* page) { this->m_page = page; }
-    wxWindow* GetPage() { return m_page; }
-    void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
-    void SetFgColour(const wxColour& fgColour) { this->m_fgColour = fgColour; }
-    const wxColour& GetBgColour() const { return m_bgColour; }
-    const wxColour& GetFgColour() const { return m_fgColour; }
-#endif
-    void SetIsActiveTab(bool isActiveTab) { this->m_isActiveTab = isActiveTab; }
-    bool IsActiveTab() const { return m_isActiveTab; }
 };
 
 using clColourEventFunction = void (wxEvtHandler::*)(clColourEvent&);

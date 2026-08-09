@@ -440,7 +440,6 @@ JSONItem& JSONItem::addProperty(const wxString& name, const JSONItem& element)
     return *this;
 }
 
-#if wxUSE_GUI
 JSONItem& JSONItem::addProperty(const wxString& name, const wxStringMap_t& stringMap)
 {
     if (!m_json || !isObject())
@@ -456,7 +455,6 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxStringMap_t& strin
     addProperty(name, arr);
     return *this;
 }
-#endif
 
 JSONItem& JSONItem::addProperty(const wxString& name, size_t value) { return addProperty(name, (int)value); }
 

@@ -38,10 +38,6 @@
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
 
-#if !wxUSE_GUI
-#include "cl_command_event.h" // Needed for the definition of wxCommandEvent
-#endif
-
 wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_MATCHFOUND, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHEND, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHCANCELED, wxCommandEvent);

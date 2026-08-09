@@ -36,6 +36,10 @@
 #include <wx/stopwatch.h>
 #include <wx/string.h>
 
+#if !wxUSE_GUI
+#include "cl_command_event.h" // Needed for the definition of wxCommandEvent
+#endif
+
 class wxEvtHandler;
 class SearchResult;
 class SearchThread;

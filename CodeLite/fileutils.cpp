@@ -49,9 +49,6 @@
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 
-#if wxUSE_GUI
-#include <wx/msgdlg.h>
-#endif
 #ifdef __WXGTK__
 #include <signal.h>
 #include <sys/wait.h>

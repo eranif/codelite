@@ -33,7 +33,11 @@
 #include <map>
 #include <memory>
 #include <wx/filename.h>
+
+#if wxUSE_GUI
 #include <wx/colour.h>
+#include <wx/font.h>
+#endif
 
 ////////////////////////////////////////////////////////
 
@@ -166,6 +170,7 @@ public:
     wxArrayString Read(const wxString& name, const wxArrayString& defaultValue);
     void Write(const wxString& name, const wxArrayString& value);
 
+#if wxUSE_GUI
     // wxFont
     wxFont Read(const wxString& name, const wxFont& defaultValue);
     void Write(const wxString& name, const wxFont& value);
@@ -173,6 +178,7 @@ public:
     // wxColour
     wxColour Read(const wxString& name, const wxColour& defaultValue);
     void Write(const wxString& name, const wxColour& value);
+#endif
 
     // Custom items, using lambda
     // A general purpose method that writes JSONItem created by a user defined function

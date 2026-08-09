@@ -1023,9 +1023,6 @@ if(DEBUG_BUILD)
   message(STATUS "CMAKE_CXX_FLAGS_RELEASE=${CMAKE_CXX_FLAGS_RELEASE}")
 endif()
 
-add_compile_definitions(wxUSE_GUI=1) # Missing `#include <wx/setup.h>` before
-                                     # `#if wxUse_GUI` for some generated files
-
 if(USE_PCH)
   add_subdirectory(PCH)
 endif()

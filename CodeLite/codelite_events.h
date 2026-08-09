@@ -599,12 +599,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCom
 // was handled by a plugin
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_RELOAD_WORKSPACE, clCommandEvent);
 
-// Event type: clColourEvent
-// Sent by CodeLite whenever it needs to colour a single tab
-// avoid calling event.Skip() to notify CodeLite that the plugin wants to place a special
-// colour. The colours (*plural*) should be passed using the 'event.SetFgColour()' and 'event.SetBgColour()'
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_COLOUR_TAB, clColourEvent);
-
 // Event type: clCommandEvent
 // Sent by CodeLite before it starts building the "Workspace View" tree view.
 // User may provide a different image list by placing it inside the event
@@ -614,9 +608,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_VIEW_BUILD_STARTING, cl
 // Event type: clColourEvent
 // Sent by CodeLite adding a project item to the file-view ("Workspace View"). Use event.GetString() to get the project
 // name
-// User may alter the following attributes:
-// . Project item background colour
-// . Project item text colour
+// User may alter the following attribute:
 // . Project icon
 // The image id is returned as INT event.SetInt()
 // Avoid calling event.Skip() to notify CodeLite that a new attributes were provided
@@ -625,10 +617,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_VIEW_BUILD_STARTING, cl
 // index image. One can use the event wxEVT_WORKSPACE_VIEW_BUILD_STARTING to replace the default
 // image list with its own list
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT, clColourEvent);
-
-// Event type: clColourEvent
-// Sent by CodeLite whenever it needs the pen colour for the tab area
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GET_TAB_BORDER_COLOUR, clColourEvent);
 
 // ---------------------------------------------------------------------
 // Debugger events

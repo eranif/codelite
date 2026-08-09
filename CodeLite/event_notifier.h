@@ -26,19 +26,18 @@
 #ifndef EVENTNOTIFIER_H
 #define EVENTNOTIFIER_H
 
+#include "codelite_exports.h"
+
 #include <functional>
 #include <future>
 #include <type_traits>
 #include <unordered_map>
 #include <wx/event.h>
-#include <wx/eventfilter.h>
 #include <wx/thread.h>
 
 #if wxUSE_GUI
 #include <wx/frame.h>
 #endif
-
-#include "codelite_exports.h"
 
 using EventFilterCallback = std::function<bool(wxEvent&)>;
 using EventFilterCallbackToken = size_t;

@@ -5,10 +5,10 @@
 
 #include <vector>
 #include <wx/setup.h>
+#include <wx/string.h>
 #if wxUSE_GUI
 #include <wx/bitmap.h>
 #endif
-#include <wx/string.h>
 
 class WXDLLIMPEXP_CL clGotoEntry
 {

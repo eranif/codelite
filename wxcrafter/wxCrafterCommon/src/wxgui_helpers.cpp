@@ -1266,9 +1266,9 @@ wxShowEffect wxCrafter::ShowEffectFromString(const wxString& effect)
     return wxSHOW_EFFECT_NONE;
 }
 
-void wxCrafter::WrapInIfBlock(const wxString& condname, wxString& codeblock)
+void wxCrafter::WrapInIfBlock(const wxString& preprocessorCondition, wxString& codeblock)
 {
-    if (condname.IsEmpty())
+    if (preprocessorCondition.IsEmpty())
         return;
 
     wxString topBlock, bottomBlock;
@@ -1280,8 +1280,8 @@ void wxCrafter::WrapInIfBlock(const wxString& condname, wxString& codeblock)
         bottomBlock << "\n";
     }
 
-    topBlock << "#if " << condname << "\n";
-    bottomBlock << "#endif // " << condname << "\n";
+    topBlock << "#if " << preprocessorCondition << "\n";
+    bottomBlock << "#endif // " << preprocessorCondition << "\n";
 
     codeblock.Prepend(topBlock).Append(bottomBlock);
 }

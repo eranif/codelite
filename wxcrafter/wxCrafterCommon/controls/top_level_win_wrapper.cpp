@@ -220,7 +220,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
     eventDisconnectCode = eventConnectCode;
     eventDisconnectCode.Replace("->Bind(", "->Unbind(");
 
-    wxString baseClassName = CreateBaseclassName();
+    wxString baseClassName = CreateBaseClassName();
 
     wxString cppDecorator = PropertyString(PROP_CLASS_DECORATOR);
     cppDecorator.Trim().Trim(false);

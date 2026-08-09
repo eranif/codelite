@@ -128,14 +128,6 @@ wxcrafter_target(
     "clSelectSymbolDialogBase.hpp"
     "clSelectSymbolDialogBase_plugin_bitmaps.cpp")
 
-# wxcrafter_target(
-#     PluginEditorLayout
-#     "${CMAKE_CURRENT_SOURCE_DIR}/EditorLayoutBase.wxcp"
-#     "${CMAKE_CURRENT_BINARY_DIR}"
-#     "EditorLayoutBase.cpp"
-#     "EditorLayoutBase.hpp"
-#     "editorlayoutbase_plugin_bitmaps.cpp")
-
 wxcrafter_target(
     PluginEnvVarTableDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/envvar_table_dlg.wxcp"

@@ -168,8 +168,8 @@ wxString GetEventtypeFromHandlerstub(const wxString& stub)
         sm_eventMap.insert(std::pair<wxString, wxString>("OnCancelButtonClick", "wxEVT_COMMAND_BUTTON_CLICKED"));
         sm_eventMap.insert(std::pair<wxString, wxString>("OnCheckBox", "wxEVT_COMMAND_CHECKBOX_CLICKED"));
         sm_eventMap.insert(std::pair<wxString, wxString>("EVT_CHECKBOX", "wxEVT_COMMAND_CHECKBOX_CLICKED"));
-        /*        sm_eventMap.insert(std::pair<wxString, wxString>("OnCheckListBox
-                sm_eventMap.insert(std::pair<wxString, wxString>("OnCheckListBoxDClick*/
+        sm_eventMap.insert(std::pair<wxString, wxString>("OnCheckListBox", "wxEVT_COMMAND_LISTBOX_SELECTED"));
+        sm_eventMap.insert(std::pair<wxString, wxString>("OnCheckListBoxDClick", "wxEVT_COMMAND_LISTBOX_DOUBLECLICKED"));
         sm_eventMap.insert(
             std::pair<wxString, wxString>("OnCheckListBoxToggled", "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED"));
         sm_eventMap.insert(std::pair<wxString, wxString>("EVT_CHECKLISTBOX", "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED"));

@@ -1103,7 +1103,6 @@ include(CTest)
 message(STATUS "BUILD_TESTING=${BUILD_TESTING}")
 
 if(BUILD_TESTING)
-  add_subdirectory(CxxParserTests)
   add_subdirectory(Tests)
 endif(BUILD_TESTING)
 

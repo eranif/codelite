@@ -1,7 +1,4 @@
 #include "Diff/clPatchApplier.hpp"
-#include "clTempFile.hpp"
-#include "cl_standard_paths.h"
-#include "fileutils.h"
 #include "test_patch_applier_assets.hpp"
 
 #include <doctest.h>

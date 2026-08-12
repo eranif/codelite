@@ -1,4 +1,4 @@
-project("CodeliteTest")
+project("PluginTest")
 
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
@@ -8,9 +8,9 @@ set(RES_FILES "")
 if(WIN32)
   set(RES_FILES "resources.rc")
 endif()
-add_executable(CodeliteTest ${SRC} ${RES_FILES})
+add_executable(PluginTest ${SRC} ${RES_FILES})
 
-target_link_libraries(CodeliteTest ${LINKER_OPTIONS} doctest libcodelite)
+target_link_libraries(PluginTest ${LINKER_OPTIONS} doctest libcodelite plugin)
 
 if(MINGW)
 
@@ -25,19 +25,19 @@ if(MINGW)
   endif()
 
   # Copy dlls near the executable
-  add_custom_command(TARGET CodeliteTest
+  add_custom_command(TARGET PluginTest
     POST_BUILD
-    COMMAND cmake -E copy_if_different ${WXDLL} $<TARGET_FILE_DIR:CodeliteTest>
+    COMMAND cmake -E copy_if_different ${WXDLL} $<TARGET_FILE_DIR:PluginTest>
     COMMAND_EXPAND_LISTS)
 
-  add_custom_command(TARGET CodeliteTest
+  add_custom_command(TARGET PluginTest
     POST_BUILD
-    COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:CodeliteTest> $<TARGET_FILE_DIR:CodeliteTest>
+    COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:PluginTest> $<TARGET_FILE_DIR:PluginTest>
     COMMAND_EXPAND_LISTS)
 endif(MINGW)
 
 if(UNIX AND NOT APPLE)
-  set_target_properties(CodeliteTest PROPERTIES SKIP_BUILD_RPATH FALSE
-                                                BUILD_WITH_INSTALL_RPATH FALSE)
+  set_target_properties(PluginTest PROPERTIES SKIP_BUILD_RPATH FALSE
+                                              BUILD_WITH_INSTALL_RPATH FALSE)
 endif(UNIX AND NOT APPLE)
-doctest_discover_tests(CodeliteTest)
+doctest_discover_tests(PluginTest)

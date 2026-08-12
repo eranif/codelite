@@ -54,7 +54,6 @@ if(MINGW)
     COMMAND_EXPAND_LISTS)
 endif(MINGW)
 
-add_compile_definitions(CXX_TEST_DIR=\"${CL_SRC_ROOT}/CxxParserTests/Test/\")
 cl_install_executable(CxxLocalVariables)
 
 doctest_discover_tests(CxxLocalVariables)

@@ -5,6 +5,7 @@
 ![MSYS2 Build Status](https://github.com/eranif/codelite/actions/workflows/msys2.yml/badge.svg)
 
 [![Join the chat on Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eranif/codelite?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join Discord](https://img.shields.io/bagde/Discord-Chat-7289DA?logo=discord&logoColor=white)](https://discord.gg/APgxRsnk2k)
 
 ---
 

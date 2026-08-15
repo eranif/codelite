@@ -226,15 +226,15 @@ CppLexerUserData* CxxTokenizer::GetUserData() const
     return ::LexerGetUserData(m_scanner);
 }
 
-void CxxTokenizer::read_until_find(
-    CxxLexerToken& token, int type_1, int type_2, int* what_was_found, wxString* consumed)
+void read_until_find(
+    CxxTokenizer& tokenizer, CxxLexerToken& token, int type_1, int type_2, int* what_was_found, wxString* consumed)
 {
     int depth = 0;
     consumed->clear();
     *what_was_found = 0;
     consumed->reserve(256); // 256 bytes should be enough for most cases
 
-    while (NextToken(token)) {
+    while (tokenizer.NextToken(token)) {
         if (depth == 0 && token.GetType() == type_1) {
             *what_was_found = type_1;
             consumed->Trim().Trim(false);

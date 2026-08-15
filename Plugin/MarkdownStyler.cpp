@@ -269,16 +269,6 @@ inline bool IsValidUrlChar(wxChar c)
     }
 }
 
-// ⟪ ⟫
-
-/// Check if `sv` is a number
-bool IsNumber(wxStringView sv)
-{
-    wxString s{sv.data(), sv.length()};
-    long v{wxNOT_FOUND};
-    return s.ToCLong(&v);
-}
-
 } // namespace
 
 wxDEFINE_EVENT(wxEVT_MARKDOWN_LINK_CLICKED, clCommandEvent);

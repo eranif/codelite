@@ -465,9 +465,6 @@ public:
     void RemoveEvent(const wxString& eventName);
     bool HasEvent(const wxString& eventName) const;
     ConnectDetails GetEvent(const wxString& eventName) const;
-    ConnectDetails GetEventMetaData(const wxString& eventName) const;
-
-    bool IsSizerFlagChecked(const wxString& style) const;
 
     void FixPaths(const wxString& cwd);
 

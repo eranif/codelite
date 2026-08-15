@@ -585,60 +585,6 @@ void TagEntry::SetKind(const wxString& kind)
     }
 }
 
-namespace
-{
-void read_until_find(
-    CxxTokenizer& tokenizer, CxxLexerToken& token, int type_1, int type_2, int* what_was_found, wxString* consumed)
-{
-    // search until we find the `=`
-    int depth = 0;
-    consumed->clear();
-    *what_was_found = 0;
-    consumed->reserve(256); // 256 bytes should be enough for most cases
-
-    while (tokenizer.NextToken(token)) {
-        if (depth == 0 && token.GetType() == type_1) {
-            *what_was_found = type_1;
-            consumed->Trim().Trim(false);
-            return;
-        } else if (depth == 0 && token.GetType() == type_2) {
-            *what_was_found = type_2;
-            consumed->Trim().Trim(false);
-            return;
-        }
-
-        if (token.is_keyword() || token.is_builtin_type()) {
-            consumed->Append(token.GetWXString() + " ");
-            continue;
-        } else if (token.is_pp_keyword()) {
-            continue;
-        }
-
-        // append it
-        consumed->Append(token.GetWXString());
-        switch (token.GetType()) {
-        case '<':
-        case '{':
-        case '[':
-        case '(':
-            depth++;
-            break;
-        case '>':
-        case '}':
-        case ']':
-        case ')':
-            depth--;
-            break;
-        default:
-            break;
-        }
-    }
-
-    // eof
-    consumed->Trim().Trim(false);
-}
-} // namespace
-
 #define CHECK_FOUND(What, Expected) \
     if (What != Expected)           \
     return wxEmptyString

@@ -74,14 +74,10 @@ public:
     /// the path returned is in the workspace private folder .codelite, otherwise, we return the global settings path:
     /// ~/.codelite/config/<NAME>
     static wxString GetSettingFileFullPath(const wxString& name, const WriteOptions& options = {});
-    static wxString GetDirFullPath(const wxString& dir, const WriteOptions& options = {});
 
     /// Create file with a given path. If the path is relative, it is converted to full path by using the method:
     /// `GetFullPath`.
     static bool Create(const wxString& filepath, const WriteOptions& options = {});
-
-    /// Create a settings file with a given name. The path is calculated using the method: `GetSettingFileFullPath`.
-    static bool CreateSettingsFile(const wxString& name, const WriteOptions& options = {});
 
     /// Check if a file exists.
     static bool FileExists(const wxString& filepath, const WriteOptions& options = {});

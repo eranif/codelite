@@ -680,15 +680,6 @@ wxString wxcWidget::DoGenerateClassMember() const
     return BaseDoGenerateClassMember();
 }
 
-bool wxcWidget::IsSizerFlagChecked(const wxString& style) const
-{
-    if (!m_sizerFlags.Contains(style)) {
-        return false;
-    }
-
-    return m_sizerFlags.Item(style).is_set;
-}
-
 /* static */ void wxcWidget::DoEnableStyle(wxcWidget::MapStyles_t& mp, const wxString& style, bool enable)
 {
     if (mp.Contains(style)) {
@@ -1708,15 +1699,6 @@ wxString wxcWidget::XRCSelection() const
     // which in < wx3 results in "foo" -> "\nfoo" and very strange-looking buttons!
     text << "<selection>" << wxCrafter::XMLEncode(PropertyString(PROP_SELECTION)) << "</selection>";
     return text;
-}
-
-ConnectDetails wxcWidget::GetEventMetaData(const wxString& eventName) const
-{
-    if (!m_controlEvents.GetEvents().Contains(eventName)) {
-        return ConnectDetails();
-    }
-
-    return m_controlEvents.GetEvents().Item(eventName);
 }
 
 ConnectDetails wxcWidget::GetEvent(const wxString& eventName) const

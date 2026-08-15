@@ -126,12 +126,6 @@ bool FileManager::Create(const wxString& filepath, const WriteOptions& options)
     return FileUtils::WriteFileContent(fullpath, wxEmptyString);
 }
 
-bool FileManager::CreateSettingsFile(const wxString& name, const WriteOptions& options)
-{
-    wxString fullpath = GetSettingFileFullPath(name, options);
-    return Create(fullpath, options);
-}
-
 bool FileManager::FileExists(const wxString& filepath, const WriteOptions& options)
 {
     wxString fullpath = GetFullPath(filepath, options);
@@ -211,38 +205,6 @@ bool FileManager::RemoveFile(const wxString& filepath, const WriteOptions& optio
     }
 #endif
     return FileUtils::RemoveFile(fullpath);
-}
-
-wxString FileManager::GetDirFullPath(const wxString& dir, const WriteOptions& options)
-{
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace == nullptr || options.ignore_workspace) {
-        // No workspace is opened, assume local.
-        wxFileName fn{dir, wxEmptyString};
-        if (fn.IsRelative()) {
-            fn.MakeAbsolute();
-        }
-        return fn.GetPath();
-    }
-
-    if (workspace && workspace->IsRemote()) {
-        // Remote workspace
-        bool is_relative = !dir.StartsWith("/");
-        if (is_relative) {
-            wxString fullpath;
-            fullpath << workspace->GetDir() << "/" << dir;
-            return fullpath;
-        }
-        return dir;
-    }
-
-    // Local workspace
-    wxFileName fn{dir, wxEmptyString};
-    if (fn.IsRelative()) {
-        wxString full_path = workspace->GetDir() + "/" + dir;
-        return wxFileName{full_path, wxEmptyString}.GetPath();
-    }
-    return fn.GetPath();
 }
 
 bool FileManager::DirExists(const wxString& dir, const WriteOptions& options)

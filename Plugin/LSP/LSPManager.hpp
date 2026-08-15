@@ -43,7 +43,6 @@ public:
     }
 
     void StartServer(const LanguageServerEntry& entry);
-    void StartServer(const wxString& entry);
     void RestartServer(const wxString& name);
 
     void StopServer(const wxString& entry);
@@ -288,7 +287,6 @@ protected:
 
     void ShowQuickOutlineDialog(const LSPEvent& event);
 
-    wxString GetEditorFilePath(IEditor* editor) const;
     /**
      * @brief find an editor either by local or remote path
      */

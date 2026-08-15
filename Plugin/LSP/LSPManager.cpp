@@ -1118,24 +1118,6 @@ void Manager::DeleteServer(const wxString& name)
     LanguageServerConfig::Get().Save();
 }
 
-void Manager::StartServer(const wxString& name)
-{
-    auto entry = LanguageServerConfig::Get().GetServer(name);
-    if (entry.IsNull()) {
-        return;
-    }
-    StartServer(entry);
-}
-
-wxString Manager::GetEditorFilePath(IEditor* editor) const
-{
-    if (editor->IsRemoteFile()) {
-        return editor->GetRemotePath();
-    } else {
-        return editor->GetFileName().GetFullPath();
-    }
-}
-
 IEditor* Manager::FindEditor(const LSPEvent& event) const { return FindEditor(event.GetLocation().GetPath()); }
 
 IEditor* Manager::FindEditor(const wxString& path) const

@@ -1,6 +1,4 @@
-#include <string>
-
-static const std::string kDefaultCodeLiteLUA =
+constexpr auto kDefaultCodeLiteLUA =
     R"#(---@class codelite
 ---@type codelite
 codelite = codelite or {}

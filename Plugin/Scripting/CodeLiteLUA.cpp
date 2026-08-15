@@ -1,6 +1,6 @@
 #include "Scripting/CodeLiteLUA.hpp"
 
-#include "DefaultLuaScript.cpp"
+#include "DefaultLuaScript.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "ai/LLMManager.hpp"

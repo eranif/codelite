@@ -1,6 +1,6 @@
 #include "Scripting/CodeLiteLUA.hpp"
 
-#include "DefaultLuaScript.cpp"
+#include "DefaultLuaScript.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "ai/LLMManager.hpp"
@@ -88,6 +88,7 @@ void CodeLiteLUA::Initialise()
             .addFunction("editor_language", &CodeLiteLUA::editor_language)
             .addFunction("editor_text", &CodeLiteLUA::editor_text)
             .addFunction("editor_filepath", &CodeLiteLUA::editor_filepath)
+            .addFunction("is_workspace_opened", &CodeLiteLUA::is_workspace_opened)
             .addFunction("log_warn", &CodeLiteLUA::log_warn)
             .addFunction("log_error", &CodeLiteLUA::log_error)
             .addFunction("log_system", &CodeLiteLUA::log_system)

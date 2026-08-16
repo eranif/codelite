@@ -57,8 +57,6 @@ public:
     virtual bool PopupAddOptionDlg(wxString& value);
     virtual bool SelectChoiceWithGlobalSettings(wxChoice* c, const wxString& text);
     virtual void SelectChoiceWithGlobalSettings(wxPGProperty* p, const wxString& text);
-    virtual bool PopupAddOptionCheckDlg(wxTextCtrl* ctrl, const wxString& title,
-                                        const Compiler::CmpCmdLineOptions& options);
     virtual bool PopupAddOptionCheckDlg(wxString& v, const wxString& title, const Compiler::CmpCmdLineOptions& options);
 };
 
@@ -74,13 +72,13 @@ class GlobalSettingsPanel : public GlobalSettingsBasePanel, public IProjectSetti
 public:
     GlobalSettingsPanel(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg, PSGeneralPage* gp);
 
-    virtual void Clear();
-    virtual void Load(BuildConfigPtr buildConf);
-    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+    void Clear() override;
+    void Load(BuildConfigPtr buildConf) override;
+    void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) override;
 
 protected:
-    virtual void OnCustomEditorClicked(wxCommandEvent& event);
-    virtual void OnValueChanged(wxPropertyGridEvent& event);
+    void OnCustomEditorClicked(wxCommandEvent& event) override;
+    void OnValueChanged(wxPropertyGridEvent& event) override;
 };
 
 /**

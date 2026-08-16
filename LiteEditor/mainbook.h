@@ -69,10 +69,6 @@ public:
     void InitWelcomePage();
 
     static bool AskUserToSave(clEditor* editor);
-    /**
-     * @brief show the navigation dialog
-     */
-    void ShowNavigationDialog();
 
     /**
      * @brief move the active page right or left

@@ -350,13 +350,6 @@ void WorkspaceTab::OnProjectRemoved(clCommandEvent& e)
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 }
 
-struct wxStringSorter {
-    bool operator()(WorkspaceConfigurationPtr one, WorkspaceConfigurationPtr two) const
-    {
-        return one->GetName().Lower().CmpNoCase(two->GetName().Lower()) < 0;
-    }
-};
-
 void WorkspaceTab::OnLinkEditorUI(wxUpdateUIEvent& event)
 {
     event.Enable(ManagerST::Get()->IsWorkspaceOpen());

@@ -2438,7 +2438,6 @@ void GUICraftMainPanel::OnCut(wxCommandEvent& e)
     wxDELETE(m_clipboardItem);
 
     m_clipboardItem = itemData->m_wxcWidget;
-    m_clipboardItem->SetCopyReason(wxcWidget::CR_Cut);
 
     wxWindowUpdateLocker locker(m_treeControls);
 
@@ -2478,7 +2477,6 @@ void GUICraftMainPanel::OnCopy(wxCommandEvent& e)
     wxDELETE(m_clipboardItem);
     std::set<wxString> unused;
     m_clipboardItem = itemData->m_wxcWidget->Copy((DuplicatingOptions)(DO_renameNone | DO_copyEventsToo), unused);
-    m_clipboardItem->SetCopyReason(wxcWidget::CR_Copy);
 
     m_treeControls->SetFocus(); // Without this, focus will unexpectedly appear elsewhere, e.g. on a propertygrid style
 }

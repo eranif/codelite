@@ -1025,17 +1025,6 @@ bool find_page_label(BookT* book, wxWindow* page, wxString* label)
 }
 
 template <typename BookT>
-int find_page_index(BookT* book, wxWindow* page)
-{
-    for (size_t i = 0; i < book->GetPageCount(); ++i) {
-        if (book->GetPage(i) == page) {
-            return i;
-        }
-    }
-    return wxNOT_FOUND;
-}
-
-template <typename BookT>
 int find_page_index(BookT* book, const wxString& label)
 {
     for (size_t i = 0; i < book->GetPageCount(); ++i) {

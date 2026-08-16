@@ -51,34 +51,6 @@ static const std::string kSystemMessageAgenticLoop = R"#(You are operating in an
     "Do NOT stop and respond to the user until the entire task is fully complete. "
     "If you have more steps to perform, call the next tool immediately.")#";
 
-/**
- * @brief RAII guard that restores an atomic boolean to a specified value upon destruction.
- *
- * This struct acquires a reference to an `std::atomic_bool` and remembers a target value
- * at construction time. When the `AtomiBoolLocker` is destroyed (goes out of scope), it
- * atomically stores the remembered value back into the boolean, ensuring cleanup even if
- * exceptions occur.
- *
- * @param b Reference to the `std::atomic_bool` to be managed.
- * @param v The value to restore to `b` when this locker is destroyed.
- *
- * @note This struct does not return a value; it is intended to be used as a scoped guard.
- * @note No exceptions are thrown by the constructor or destructor (atomic store is noexcept).
- *
- * @see std::atomic_bool
- * @see RAII (Resource Acquisition Is Initialization)
- */
-struct AtomiBoolLocker {
-    std::atomic_bool& bool_;
-    bool value_;
-    explicit AtomiBoolLocker(std::atomic_bool& b, bool v)
-        : bool_{b}
-        , value_{v}
-    {
-    }
-    ~AtomiBoolLocker() { bool_.store(value_); }
-};
-
 wxString TruncateText(const wxString& text, size_t size = 100)
 {
     if (text.size() >= size) {

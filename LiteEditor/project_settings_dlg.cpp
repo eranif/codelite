@@ -22,27 +22,19 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
+
 #include "project_settings_dlg.h"
 
 #include "AddOptionsDialog.h"
-#include "Debugger/debuggermanager.h"
-#include "Debugger/debuggersettings.h"
 #include "addoptioncheckdlg.h"
 #include "build_settings_config.h"
-#include "configuration_manager_dlg.h"
-#include "debuggerconfigtool.h"
-#include "dirsaver.h"
-#include "editor_config.h"
-#include "environmentconfig.h"
 #include "event_notifier.h"
-#include "free_text_dialog.h"
 #include "globals.h"
 #include "macros.h"
 #include "macrosdlg.h"
 #include "manager.h"
-#include "plugin.h"
 #include "pluginmanager.h"
-#include "precompiled_header.h"
 #include "ps_build_events_page.h"
 #include "ps_compiler_page.h"
 #include "ps_custom_build_page.h"
@@ -52,7 +44,6 @@
 #include "ps_general_page.h"
 #include "ps_linker_page.h"
 #include "ps_resources_page.h"
-#include "windowattrmanager.h"
 #include "workspacetab.h"
 
 BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
@@ -540,17 +531,6 @@ bool IProjectSettingsPage::SelectChoiceWithGlobalSettings(wxChoice* c, const wxS
         return false;
     }
     return true;
-}
-
-bool IProjectSettingsPage::PopupAddOptionCheckDlg(wxTextCtrl* ctrl, const wxString& title,
-                                                  const Compiler::CmpCmdLineOptions& options)
-{
-    AddOptionCheckDlg dlg(NULL, title, options, ctrl->GetValue());
-    if(dlg.ShowModal() == wxID_OK) {
-        ctrl->SetValue(dlg.GetValue());
-        return true;
-    }
-    return false;
 }
 
 bool IProjectSettingsPage::PopupAddOptionCheckDlg(wxString& v, const wxString& title,

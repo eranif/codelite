@@ -27,7 +27,6 @@
 #include "FilesModifiedDlg.h"
 #include "FindAndReplaceDialog.h"
 #include "LSP/LSPManager.hpp"
-#include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
 #include "aui/clAuiFlatTabArt.hpp"
 #include "clFileSystemWatcher.h"
@@ -35,7 +34,6 @@
 #include "clImageViewer.h"
 #include "clWorkspaceManager.h"
 #include "cl_defs.h"
-#include "ctags_manager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -1675,22 +1673,6 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
     }
     if (m_book->GetSizer()) {
         m_book->GetSizer()->Layout();
-    }
-}
-
-void MainBook::ShowNavigationDialog()
-{
-    if (!EditorConfigST::Get()->GetOptions()->IsCtrlTabEnabled()) {
-        return;
-    }
-
-    if (m_book->GetPageCount() == 0) {
-        return;
-    }
-
-    NotebookNavigationDlg dlg(EventNotifier::Get()->TopFrame(), m_book);
-    if (dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) {
-        m_book->SetSelection(dlg.GetSelection());
     }
 }
 

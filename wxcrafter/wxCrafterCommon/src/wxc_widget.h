@@ -270,11 +270,6 @@ class wxcWidget
 public:
     enum XRC_TYPE { XRC_PREVIEW, XRC_DESIGNER, XRC_LIVE };
 
-    enum COPY_REASON {
-        CR_Copy,
-        CR_Cut,
-    };
-
     using List_t = std::list<wxcWidget*>;
     using MapStyles_t = wxOrderedMap<wxString, WxStyleInfo>;
     using MapProperties_t = wxOrderedMap<wxString, std::unique_ptr<PropertyBase>>;
@@ -413,9 +408,6 @@ public:
     virtual wxString GetRealName() const { return PropertyString(PROP_NAME); }
 
     virtual wxMenu* GetEventsMenu() { return m_eventsMenu; }
-
-    void SetCopyReason(COPY_REASON cr) { m_copyReason = cr; }
-    COPY_REASON GetCopyReason() const { return m_copyReason; }
 
     wxString PropertyString(const wxString& propName, const wxString& defaultValue = "") const;
     int PropertyInt(const wxString& propName, int defval = -1) const;
@@ -906,7 +898,6 @@ protected:
     MapEvents_t m_connectedEvents;
     EventsDatabase m_controlEvents;
     AuiPaneInfo m_auiPaneInfo;
-    COPY_REASON m_copyReason = CR_Copy; /// The reason for the copy
     wxString m_preprocessorCondition;
 
     static size_t s_objCounter;

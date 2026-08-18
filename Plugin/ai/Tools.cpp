@@ -497,12 +497,12 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     VERIFY_WORKER_THREAD();
 
     // Mandatory fields
-    ASSIGN_FUNC_ARG_OR_RETURN(std::string root_dir, ::assistant::GetFunctionArg<std::string>(args, "root_folder"));
-    ASSIGN_FUNC_ARG_OR_RETURN(std::string find_what, ::assistant::GetFunctionArg<std::string>(args, "find_what"));
-    ASSIGN_FUNC_ARG_OR_RETURN(std::string file_pattern, ::assistant::GetFunctionArg<std::string>(args, "file_pattern"));
+    ASSIGN_FUNC_ARG_OR_RETURN(const std::string root_dir, ::assistant::GetFunctionArg<std::string>(args, "root_folder"));
+    ASSIGN_FUNC_ARG_OR_RETURN(const std::string find_what, ::assistant::GetFunctionArg<std::string>(args, "find_what"));
+    ASSIGN_FUNC_ARG_OR_RETURN(const std::string file_pattern, ::assistant::GetFunctionArg<std::string>(args, "file_pattern"));
 
     // Parse file patterns (semi-colon separated list)
-    wxString file_patterns_str = wxString::FromUTF8(file_pattern);
+    const wxString file_patterns_str = wxString::FromUTF8(file_pattern);
     if (!FileUtils::ValidateFilePattern(file_patterns_str)) {
         return Err("Invalid file patterns. Pattern must be a semicolon-delimited list. Example: "
                    "`*.cpp;*.h;CMakeLists.txt;.bashrc`");
@@ -521,12 +521,10 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         }
     }
 
-    bool recursive = assistant::GetFunctionArg<bool>(args, "recursive").value_or(false);
-    bool whole_word = assistant::GetFunctionArg<bool>(args, "whole_word").value_or(true);
-    bool case_sensitive = assistant::GetFunctionArg<bool>(args, "case_sensitive").value_or(true);
-    bool is_regex = assistant::GetFunctionArg<bool>(args, "is_regex").value_or(false);
-    int context_before = assistant::GetFunctionArg<int>(args, "context_lines_before").value_or(0);
-    int context_after = assistant::GetFunctionArg<int>(args, "context_lines_after").value_or(0);
+    const bool recursive = assistant::GetFunctionArg<bool>(args, "recursive").value_or(false);
+    const bool whole_word = assistant::GetFunctionArg<bool>(args, "whole_word").value_or(true);
+    const bool case_sensitive = assistant::GetFunctionArg<bool>(args, "case_sensitive").value_or(true);
+    const bool is_regex = assistant::GetFunctionArg<bool>(args, "is_regex").value_or(false);
 
     // Build the grep command.
     auto grep_command = ThePlatform->Which("grep");
@@ -536,7 +534,7 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
 
     bool is_remote{false};
 #if USE_SFTP
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    const auto workspace = clWorkspaceManager::Get().GetWorkspace();
     is_remote = workspace && workspace->IsRemote();
     if (is_remote) {
         grep_command = "/usr/bin/grep";
@@ -568,11 +566,11 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     }
 
     // Add the search pattern (properly escaped)
-    wxString search_pattern = FileUtils::NormalizePath(wxString::FromUTF8(find_what));
+    const wxString search_pattern = FileUtils::NormalizePath(wxString::FromUTF8(find_what));
     cmd << " " << StringUtils::EscapeAndWrapWithDoubleQuotes(search_pattern);
 
     // Add the root folder
-    wxString root_folder = FileUtils::NormalizePath(wxString::FromUTF8(root_dir));
+    const wxString root_folder = FileUtils::NormalizePath(wxString::FromUTF8(root_dir));
     cmd << " " << StringUtils::EscapeAndWrapWithDoubleQuotes(root_folder);
 
     // Add include patterns for file types

@@ -630,7 +630,7 @@ void StringUtils::FreeArgv(char** argv, int argc)
     delete[] argv;
 }
 
-wxArrayString StringUtils::BuildArgv(const wxString& str)
+wxArrayString StringUtils::BuildArgv(const wxString& str, bool stripQuotes)
 {
     // Don't bother with an empty command line
     wxString trimmed_str = str;
@@ -647,13 +647,13 @@ wxArrayString StringUtils::BuildArgv(const wxString& str)
     }
     FreeArgv(argv, argc);
 
-#if 0
-    for (wxString& s : arrArgv) {
-        if ((s.length() > 1) && s.StartsWith("\"") && s.EndsWith("\"")) {
-            s.RemoveLast().Remove(0, 1);
+    if (stripQuotes) {
+        for (wxString& s : arrArgv) {
+            if ((s.length() > 1) && s.StartsWith("\"") && s.EndsWith("\"")) {
+                s.RemoveLast().Remove(0, 1);
+            }
         }
     }
-#endif
     return arrArgv;
 }
 

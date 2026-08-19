@@ -178,7 +178,7 @@ public:
     /**
      * @brief build argv out of str
      */
-    static wxArrayString BuildArgv(const wxString& str);
+    static wxArrayString BuildArgv(const wxString& str, bool stripQuotes = true);
 
     /**
      * @brief split a shell command into command groups separated by shell operators.

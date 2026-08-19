@@ -535,7 +535,7 @@ if(MINGW)
 
   math(EXPR wxVERSION "${WX_MAJOR} * 1000 + ${WX_MINOR} * 100")
   message(STATUS "wxVERSION: ${WX_MAJOR}.${WX_MINOR} (${wxVERSION})")
-  if(wxVERSION GREATER_EQUAL 3320)
+  if(wxVERSION GREATER_EQUAL 3300)
     set(wxWITH_ZOOM_NAVIGATOR OFF)
     message(STATUS "✅ MiniMap is available, excluding ZoomNavigator plugin")
   else()

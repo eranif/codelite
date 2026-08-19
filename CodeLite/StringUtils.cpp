@@ -680,7 +680,7 @@ std::vector<std::vector<wxString>> StringUtils::SplitShellCommand(const wxString
     ShellSplitState state = ShellSplitState::Normal;
 
     auto flush_command = [&result](const wxString& cmd) {
-        auto argv = StringUtils::BuildArgv(cmd);
+        auto argv = StringUtils::BuildArgv(cmd, false);
         if (!argv.empty()) {
             result.emplace_back(argv.begin(), argv.end());
         }

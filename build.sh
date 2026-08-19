@@ -6,6 +6,7 @@ BUILD_DIR_NAME=.build-release
 BUILD_DIR=${ROOT_DIR}/${BUILD_DIR_NAME}
 OS_NAME="$(uname -s)"
 FORCE_CMAKE=0
+WITH_TESTS=0
 
 . ${ROOT_DIR}/scripts/functions.rc
 
@@ -206,8 +207,13 @@ function build_CodeLite_Linux() {
     check_cmake_modified "${CodeLite_build_dir}"; then
     INFO "Configuring CodeLite"
     rm -f ${CodeLite_build_dir}/CMakeCache.txt
+    local buildTests=""
+    if [ "${WITH_TESTS}" -eq 1 ]; then
+      buildTests="-DBUILD_TESTING=1"
+      INFO "Building with UT enabled"
+    fi
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 \
-      -DWITH_WX_CONFIG=${wx_config}
+      -DWITH_WX_CONFIG=${wx_config} ${buildTests}
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
@@ -243,9 +249,15 @@ function build_CodeLite_macOS() {
     ! grep -q "^CMAKE_OSX_DEPLOYMENT_TARGET:STRING=${MACOS_DEPLOYMENT_TARGET}$" "${CodeLite_build_dir}/CMakeCache.txt"; then
     INFO "Configuring CodeLite"
     rm -f ${CodeLite_build_dir}/CMakeCache.txt
+    local buildTests=""
+    if [ "${WITH_TESTS}" -eq 1 ]; then
+      buildTests="-DBUILD_TESTING=1"
+      INFO "Building with UT enabled"
+    fi
+
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET} \
-      -DwxWidgets_CONFIG_EXECUTABLE=${wx_config}
+      -DwxWidgets_CONFIG_EXECUTABLE=${wx_config} ${buildTests}
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
@@ -269,9 +281,14 @@ function build_CodeLite_MSW() {
   # CMakeLists.txt is newer than the generated cache.
   if [ "${FORCE_CMAKE}" -eq 1 ] || [ ! -f "${CodeLite_build_dir}/CMakeCache.txt" ] || [ ! -d "${CodeLite_build_dir}/install" ] ||
     check_cmake_modified "${CodeLite_build_dir}"; then
+    local buildTests=""
+    if [ "${WITH_TESTS}" -eq 1 ]; then
+      buildTests="-DBUILD_TESTING=1"
+      INFO "Building with UT enabled"
+    fi
     INFO "Configuring CodeLite"
     rm -f ${CodeLite_build_dir}/CMakeCache.txt
-    cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DWXWIN="${BUILD_DIR}/wxWidgets-install"
+    cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DWXWIN="${BUILD_DIR}/wxWidgets-install" ${buildTests}
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
@@ -315,6 +332,7 @@ function usage() {
   echo ""
   echo "Options:"
   echo "  --cmake     Force the cmake configure stage even if it is up to date"
+  echo "  --tests     Enable Tests"
   echo "  -h, --help  Show this help message"
 }
 
@@ -370,6 +388,9 @@ while [ $# -gt 0 ]; do
   case "${1}" in
   --cmake)
     FORCE_CMAKE=1
+    ;;
+  --tests)
+    WITH_TESTS=1
     ;;
   -h | --help)
     usage

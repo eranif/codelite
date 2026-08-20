@@ -88,3 +88,9 @@ jobs:
 
     - name: codelite --version
       run: xvfb-run -a codelite --version || exit 0 # codelite --version returns -1
+
+    - name: Build again (should do nothing)
+      run: |
+        cd build-release
+        cmake .. -DCMAKE_BUILD_TYPE=Release ${{matrix.codelite-options}} -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1
+        make -j$(nproc)

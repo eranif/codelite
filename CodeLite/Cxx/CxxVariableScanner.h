@@ -12,20 +12,29 @@
 
 class WXDLLIMPEXP_CL CxxVariableScanner
 {
-protected:
-    Scanner_t m_scanner = nullptr;
-    wxString m_buffer;
-    bool m_eof = false;
-    int m_parenthesisDepth = 0;
-    std::unordered_set<int> m_nativeTypes;
-    eCxxStandard m_standard = eCxxStandard::kCxx11;
-    wxStringTable_t m_macros;
-    std::vector<wxString> m_buffers;
-    bool m_isFuncSignature = false;
-    wxString m_optimized_buffer;
-    bool m_buffer_optimized = false;
+public:
+    CxxVariableScanner(const wxString& buffer,
+                       eCxxStandard standard,
+                       const wxStringTable_t& macros,
+                       bool isFuncSignature);
+    ~CxxVariableScanner() = default;
 
-protected:
+    /**
+     * @brief parse the buffer and return the variables
+     */
+    CxxVariable::Vec_t GetVariables(bool sort = true);
+
+    /**
+     * @brief parse the buffer and return a unique set of variables
+     */
+    CxxVariable::Map_t GetVariablesMap();
+
+    /**
+     * @brief parse the buffer and return list of variables
+     */
+    CxxVariable::Vec_t ParseFunctionArguments();
+
+private:
     bool GetNextToken(CxxLexerToken& token);
     void UngetToken(const CxxLexerToken& token);
     bool IsEof() const { return m_eof; }
@@ -42,7 +51,6 @@ protected:
     bool OnDeclType(Scanner_t scanner);
     bool SkipToClosingParenthesis(Scanner_t scanner);
 
-protected:
     /**
      * @brief read the variable type
      */
@@ -72,34 +80,17 @@ protected:
      */
     bool skip_parenthesis_block(Scanner_t scanner);
 
-public:
-    CxxVariableScanner(const wxString& buffer,
-                       eCxxStandard standard,
-                       const wxStringTable_t& macros,
-                       bool isFuncSignature);
-    virtual ~CxxVariableScanner() = default;
-
-    /**
-     * @brief return the optimized buffer
-     */
-    const wxString& GetOptimizeBuffer() const { return m_optimized_buffer; }
-
-    /**
-     * @brief return the variables from the optimized buffer
-     * @return
-     */
-    CxxVariable::Vec_t GetVariables(bool sort = true);
-
-    /**
-     * @brief parse the buffer and return list of variables
-     * @return
-     */
-    CxxVariable::Vec_t ParseFunctionArguments();
-
-    /**
-     * @brief parse the buffer and return a unique set of variables
-     */
-    CxxVariable::Map_t GetVariablesMap();
+private:
+    Scanner_t m_scanner = nullptr;
+    wxString m_buffer;
+    bool m_eof = false;
+    int m_parenthesisDepth = 0;
+    eCxxStandard m_standard = eCxxStandard::kCxx11;
+    wxStringTable_t m_macros;
+    std::vector<wxString> m_buffers;
+    bool m_isFuncSignature = false;
+    wxString m_optimized_buffer;
+    bool m_buffer_optimized = false;
 };
 
 #endif // CXXVARIABLESCANNER_H

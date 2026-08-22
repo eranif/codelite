@@ -9,10 +9,7 @@ CxxVariableScanner::CxxVariableScanner(const wxString& buffer,
                                        eCxxStandard standard,
                                        const wxStringTable_t& macros,
                                        bool isFuncSignature)
-    : m_scanner(NULL)
-    , m_buffer(buffer)
-    , m_eof(false)
-    , m_parenthesisDepth(0)
+    : m_buffer(buffer)
     , m_standard(standard)
     , m_macros(macros)
     , m_isFuncSignature(isFuncSignature)
@@ -20,32 +17,15 @@ CxxVariableScanner::CxxVariableScanner(const wxString& buffer,
     if (!m_buffer.IsEmpty() && m_buffer[0] == '(') {
         m_buffer.Remove(0, 1);
     }
-    m_nativeTypes.insert(T_AUTO);
-    m_nativeTypes.insert(T_BOOL);
-    m_nativeTypes.insert(T_CHAR);
-    m_nativeTypes.insert(T_CHAR16_T);
-    m_nativeTypes.insert(T_CHAR32_T);
-    m_nativeTypes.insert(T_DOUBLE);
-    m_nativeTypes.insert(T_FLOAT);
-    m_nativeTypes.insert(T_INT);
-    m_nativeTypes.insert(T_LONG);
-    m_nativeTypes.insert(T_SHORT);
-    m_nativeTypes.insert(T_SIGNED);
-    m_nativeTypes.insert(T_UNSIGNED);
-    m_nativeTypes.insert(T_VOID);
-    m_nativeTypes.insert(T_WCHAR_T);
     // optimize the buffer
     DoOptimizeBuffer();
 }
 
 CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
 {
-    // this call does nothing if the buffer was already optimized
-    CxxVariable::Vec_t vars = DoGetVariables(GetOptimizeBuffer(), sort);
+    CxxVariable::Vec_t vars = DoGetVariables(m_optimized_buffer, sort);
     if (sort) {
-        std::sort(vars.begin(), vars.end(), [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) {
-            return a->GetName() < b->GetName();
-        });
+        std::ranges::sort(vars, std::ranges::less{}, &CxxVariable::GetName);
     }
     return vars;
 }
@@ -62,7 +42,7 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
                 switch (token.GetType()) {
                 case T_AUTO:
                     isAuto = true;
-                // fall
+                    [[fallthrough]];
                 case T_CLASS:
                 case T_STRUCT:
                 case T_IDENTIFIER:
@@ -178,7 +158,16 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
     return false;
 }
 
-thread_local std::unordered_set<int> s_validLocalTerminators;
+static const std::unordered_set<int> s_validLocalTerminators = {
+    (int)',',
+    (int)'=',
+    (int)';',
+    (int)')',
+    (int)'(',
+    (int)'{', // C++11 initialization, e.g: vector<int> v {1,2,3};
+    (int)'[', // Array
+};
+
 bool CxxVariableScanner::ReadName(wxString& varname,
                                   wxString& pointerOrRef,
                                   int& line_number,
@@ -214,15 +203,6 @@ bool CxxVariableScanner::ReadName(wxString& varname,
             // TYPE name, secondVariable;
             // TYPE name(10);
             // TYPE name;
-            if (s_validLocalTerminators.empty()) {
-                s_validLocalTerminators.insert((int)',');
-                s_validLocalTerminators.insert((int)'=');
-                s_validLocalTerminators.insert((int)';');
-                s_validLocalTerminators.insert((int)')');
-                s_validLocalTerminators.insert((int)'(');
-                s_validLocalTerminators.insert((int)'{'); // C++11 initialization, e.g: vector<int> v {1,2,3};
-                s_validLocalTerminators.insert((int)'['); // Array
-            }
 
             // Now that we got the name, check if have more variables to expect
             if (!GetNextToken(token)) {
@@ -300,63 +280,40 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
 
     if (tokType == '(') {
         // Read the initialization
-        std::unordered_set<int> delims;
-        delims.insert(')');
-        if (ReadUntil(delims, token, consumed) == wxNOT_FOUND) {
+        if (ReadUntil({')'}, token, consumed) == wxNOT_FOUND) {
             return;
         }
         consumed.Prepend("(");
         // Now read until the delimiter
-        delims.clear();
-        delims.insert(';');
-        delims.insert(',');
-        delims.insert('{');
-        type = ReadUntil(delims, token, dummy);
+        type = ReadUntil({';', ',', '{'}, token, dummy);
 
     } else if (tokType == '[') {
         // Array
-        std::unordered_set<int> delims;
-        delims.insert(']');
-        if (ReadUntil(delims, token, consumed) == wxNOT_FOUND) {
+        if (ReadUntil({']'}, token, consumed) == wxNOT_FOUND) {
             return;
         }
         consumed.Prepend("[");
         // Now read until the delimiter
-        delims.clear();
-        delims.insert(';');
-        delims.insert(',');
-        type = ReadUntil(delims, token, dummy);
+        type = ReadUntil({';', ','}, token, dummy);
 
     } else if (tokType == '{') {
         // Read the initialization
-        std::unordered_set<int> delims;
-        delims.insert('}');
-        if (ReadUntil(delims, token, consumed) == wxNOT_FOUND) {
+        if (ReadUntil({'}'}, token, consumed) == wxNOT_FOUND) {
             return;
         }
         consumed.Prepend("{");
         // Now read until the delimiter
-        delims.clear();
-        delims.insert(';');
-        delims.insert(',');
-        type = ReadUntil(delims, token, dummy);
+        type = ReadUntil({';', ','}, token, dummy);
 
     } else if (tokType == '=') {
-        std::unordered_set<int> delims;
-        delims.insert(';');
-        delims.insert(',');
-        type = ReadUntil(delims, token, consumed);
+        type = ReadUntil({';', ','}, token, consumed);
     } else {
         UngetToken(token);
         consumed.clear();
-        std::unordered_set<int> delims;
-        delims.insert(';');
-        delims.insert(',');
-        delims.insert('{');
-        type = ReadUntil(delims, token, dummy);
+        type = ReadUntil({';', ',', '{'}, token, dummy);
     }
 
-    if (type == ',' || type == (int)'{' || type == ';') {
+    if (type == ',' || type == '{' || type == ';') {
         UngetToken(token);
     }
 }
@@ -575,21 +532,18 @@ CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bo
     return vars;
 }
 
-bool CxxVariableScanner::TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t& type)
+bool CxxVariableScanner::TypeHasIdentifier(const CxxVariable::LexerToken::Vec_t& types)
 {
     // do we have an identifier in the type?
-    CxxVariable::LexerToken::Vec_t::const_iterator iter =
-        std::find_if(type.begin(), type.end(), [&](const CxxVariable::LexerToken& token) {
-            return (token.GetType() == T_IDENTIFIER);
-        });
-    return (iter != type.end());
+    return std::ranges::any_of(
+        types, [](const CxxVariable::LexerToken& token) { return token.GetType() == T_IDENTIFIER; });
 }
 
 CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
 {
-    CxxVariable::Vec_t l = GetVariables(true);
+    CxxVariable::Vec_t variables = GetVariables(true);
     CxxVariable::Map_t m;
-    for (const auto& v : l) {
+    for (const auto& v : variables) {
         if (m.count(v->GetName()) == 0) {
             m.insert(std::make_pair(v->GetName(), v));
         }
@@ -597,13 +551,26 @@ CxxVariable::Map_t CxxVariableScanner::GetVariablesMap()
     return m;
 }
 
-bool CxxVariableScanner::HasNativeTypeInList(const CxxVariable::LexerToken::Vec_t& type) const
+bool CxxVariableScanner::HasNativeTypeInList(const CxxVariable::LexerToken::Vec_t& types) const
 {
-    CxxVariable::LexerToken::Vec_t::const_iterator iter =
-        std::find_if(type.begin(), type.end(), [&](const CxxVariable::LexerToken& token) {
-            return ((token._depth == 0) && (m_nativeTypes.count(token.GetType()) != 0));
-        });
-    return (iter != type.end());
+    return std::ranges::any_of(types, [](const CxxVariable::LexerToken& token) {
+        static const std::unordered_set<int> nativeTypes{T_AUTO,
+                                                         T_BOOL,
+                                                         T_CHAR,
+                                                         T_CHAR16_T,
+                                                         T_CHAR32_T,
+                                                         T_DOUBLE,
+                                                         T_FLOAT,
+                                                         T_INT,
+                                                         T_LONG,
+                                                         T_SHORT,
+                                                         T_SIGNED,
+                                                         T_UNSIGNED,
+                                                         T_VOID,
+                                                         T_WCHAR_T};
+
+        return token._depth == 0 && nativeTypes.count(token.GetType()) != 0;
+    });
 }
 
 CxxVariable::Vec_t CxxVariableScanner::DoParseFunctionArguments(const wxString& buffer)
@@ -777,7 +744,6 @@ bool CxxVariableScanner::OnCatch(Scanner_t scanner)
 
 bool CxxVariableScanner::OnWhile(Scanner_t scanner)
 {
-
     CxxLexerToken tok;
 
     // The next token must be '('

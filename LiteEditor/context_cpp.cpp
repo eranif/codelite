@@ -87,6 +87,16 @@ static bool IsSource(const wxString& ext)
     return e == "cpp" || e == "cxx" || e == "c" || e == "c++" || e == "cc" || e == "ipp";
 }
 
+static const TagEntryPtr* GetLastFunctionTagEntry(const std::vector<TagEntryPtr>& tags)
+{
+    const auto reversed_tags = tags | std::views::reverse;
+    auto it = std::ranges::find_if(reversed_tags, &TagEntry::IsMethod);
+    if (it != std::end(reversed_tags)) {
+        return &*it;
+    }
+    return nullptr;
+}
+
 #define VALIDATE_PROJECT(ctrl)         \
     if (ctrl.GetProject().IsEmpty()) { \
         return;                        \
@@ -798,12 +808,9 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
         return;
     }
 
-    auto tags = res.value();
-    if (!tags.empty()) {
-        // the last tag is our function
-        TagEntryPtr t = tags.at(tags.size() - 1);
+    if (auto function_tag = GetLastFunctionTagEntry(res.value())) {
         // get Doxygen comment based on file and line
-        DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, keyPrefix);
+        DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(*function_tag, keyPrefix);
         // do we have a comment?
         if (dc.comment.IsEmpty()) {
             return;

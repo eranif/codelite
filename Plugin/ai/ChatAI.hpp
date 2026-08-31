@@ -66,5 +66,5 @@ private:
 
     ChatAIWindowFrame* m_chatWindowFrame{nullptr};
     ChatAIWindow* m_chatWindow{nullptr};
-    bool m_dock_chat{true};
+    bool m_dock_chat{false};
 };

@@ -21,4 +21,4 @@ More information can be found here:
 [2]: https://codelite.org/support.php
 [3]: https://codelite.org
 [4]: https://codelite.org/support.php
-[5]: download.md
+[5]: ./downloads/download.md

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "codelite_exports.h"
+#include "macros.h"
 
 #include <algorithm>
 #include <span>
@@ -60,6 +61,11 @@ public:
     };
 
 public:
+
+    // Merge 2 arrays of strings into a single array with all duplicate entries removed
+    static wxArrayString MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2);
+    static wxStringMap_t MergeStringMaps(const wxStringMap_t& map1, const wxStringMap_t& map2);
+
     /**
      * @brief convert wxArrayString into std::vector<std::string>
      */

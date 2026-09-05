@@ -213,41 +213,6 @@ void clConfig::Reload()
     m_root = std::make_unique<JSON>(m_filename);
 }
 
-wxArrayString clConfig::MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const
-{
-    // we use set to keep the records sorted
-    std::set<wxString> visited;
-
-    for (const wxString& element : arr1) {
-        if (visited.count(element))
-            continue;
-        visited.insert(element);
-    }
-
-    for (const wxString& element : arr2) {
-        if (visited.count(element))
-            continue;
-        visited.insert(element);
-    }
-
-    wxArrayString merged_array;
-    merged_array.reserve(visited.size());
-    for (const wxString& element : visited) {
-        merged_array.Add(element);
-    }
-    return merged_array;
-}
-
-wxStringMap_t clConfig::MergeStringMaps(const wxStringMap_t& map1, const wxStringMap_t& map2) const
-{
-    wxStringMap_t output;
-    output.reserve(map1.size() + map2.size());
-
-    output.insert(map1.begin(), map1.end());
-    output.insert(map2.begin(), map2.end());
-    return output;
-}
-
 void clConfig::Save()
 {
     if (m_root) {

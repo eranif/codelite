@@ -26,6 +26,7 @@
 
 #include "tags_options_data.h"
 
+#include "StringUtils.h"
 #include "cl_config.h"
 #include "ctags_manager.h"
 #include "json_utils.h"
@@ -540,9 +541,8 @@ wxString TagsOptionsData::DoJoinArray(const wxArrayString& arr) const
 
 void TagsOptionsData::Merge(const TagsOptionsData& tod)
 {
-    clConfig conf;
-    m_tokens = conf.MergeArrays(m_tokens, tod.m_tokens);
-    m_types = conf.MergeArrays(m_types, tod.m_types);
+    m_tokens = StringUtils::MergeArrays(m_tokens, tod.m_tokens);
+    m_types = StringUtils::MergeArrays(m_types, tod.m_types);
     DoUpdateTokensWxMapReversed();
     DoUpdateTokensWxMap();
     if (m_version != TagsOptionsData::CURRENT_VERSION) {

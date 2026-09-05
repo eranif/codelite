@@ -3010,7 +3010,7 @@ void clMainFrame::UpdateParserSearchPathsFromDefaultCompiler()
     wxArrayString curExcludePaths = m_tagsOptionsData.GetParserExcludePaths();
     wxArrayString curIncluePaths = m_tagsOptionsData.GetParserSearchPaths();
 
-    wxArrayString mergedPaths = ccConfig.MergeArrays(curIncluePaths, paths);
+    wxArrayString mergedPaths = StringUtils::MergeArrays(curIncluePaths, paths);
     m_tagsOptionsData.SetParserExcludePaths(curExcludePaths);
     m_tagsOptionsData.SetParserSearchPaths(mergedPaths);
     m_tagsOptionsData.SetVersion(TagsOptionsData::CURRENT_VERSION);
@@ -3020,7 +3020,7 @@ void clMainFrame::UpdateParserSearchPathsFromDefaultCompiler()
     //-----------------------
 
     wxArrayString clangSearchPaths = m_tagsOptionsData.GetClangSearchPathsArray();
-    mergedPaths = ccConfig.MergeArrays(paths, clangSearchPaths);
+    mergedPaths = StringUtils::MergeArrays(paths, clangSearchPaths);
     m_tagsOptionsData.SetClangSearchPathsArray(mergedPaths);
     ccConfig.WriteItem(m_tagsOptionsData);
 }

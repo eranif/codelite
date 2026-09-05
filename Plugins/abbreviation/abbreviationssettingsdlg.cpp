@@ -25,6 +25,7 @@
 
 #include "abbreviationssettingsdlg.h"
 
+#include "StringUtils.h"
 #include "abbreviationentry.h"
 #include "cl_config.h"
 #include "imanager.h"
@@ -270,7 +271,7 @@ void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
     const wxStringMap_t& newEntries = data.GetEntries();
     const wxStringMap_t& curEntries = m_data.GetEntries();
 
-    wxStringMap_t merged = m_config.MergeStringMaps(newEntries, curEntries);
+    wxStringMap_t merged = StringUtils::MergeStringMaps(newEntries, curEntries);
     m_data.SetEntries(merged);
     m_config.WriteItem(m_data);
     m_dirty = false;

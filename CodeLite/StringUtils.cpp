@@ -2,10 +2,42 @@
 
 #include "macros.h"
 
+#include <set>
 #include <vector>
 #include <wx/regex.h>
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
+
+wxArrayString StringUtils::MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2)
+{
+    // we use set to keep the records sorted
+    std::set<wxString> visited;
+
+    for (const wxString& element : arr1) {
+        visited.insert(element);
+    }
+
+    for (const wxString& element : arr2) {
+        visited.insert(element);
+    }
+
+    wxArrayString merged_array;
+    merged_array.reserve(visited.size());
+    for (const wxString& element : visited) {
+        merged_array.Add(element);
+    }
+    return merged_array;
+}
+
+wxStringMap_t StringUtils::MergeStringMaps(const wxStringMap_t& map1, const wxStringMap_t& map2)
+{
+    wxStringMap_t output;
+    output.reserve(map1.size() + map2.size());
+
+    output.insert(map1.begin(), map1.end());
+    output.insert(map2.begin(), map2.end());
+    return output;
+}
 
 std::vector<std::string> StringUtils::ToStdStrings(const wxArrayString& strs)
 {

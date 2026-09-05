@@ -126,12 +126,6 @@ public:
     // Save the content the file passed on the construction
     void Save();
 
-    // Utility functions
-    //------------------------------
-
-    // Merge 2 arrays of strings into a single array with all duplicate entries removed
-    wxArrayString MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const;
-    wxStringMap_t MergeStringMaps(const wxStringMap_t& map1, const wxStringMap_t& map2) const;
     // Workspace history
     void AddRecentWorkspace(const wxString& filename) { DoAddRecentItem("RecentWorkspaces", filename); }
     wxArrayString GetRecentWorkspaces() const { return DoGetRecentItems("RecentWorkspaces"); }

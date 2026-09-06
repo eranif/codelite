@@ -33,29 +33,21 @@
 class AbbreviationEntry : public SerializedObject
 {
     wxStringMap_t m_entries;
-    bool m_autoInsert = false;
 
 public:
     AbbreviationEntry() = default;
     ~AbbreviationEntry() override = default;
 
-public:
     void DeSerialize(Archive& arch) override;
     void Serialize(Archive& arch) override;
 
-    // Setters
     void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
-    void SetAutoInsert(bool autoInsert) { this->m_autoInsert = autoInsert; }
-
-    // Getters
     const wxStringMap_t& GetEntries() const { return m_entries; }
-    bool GetAutoInsert() const { return m_autoInsert; }
 };
 
 class AbbreviationJSONEntry : public clConfigItem
 {
     wxStringMap_t m_entries;
-    bool m_autoInsert = false;
 
 public:
     AbbreviationJSONEntry()
@@ -70,8 +62,6 @@ public:
 
     void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
     const wxStringMap_t& GetEntries() const { return m_entries; }
-    void SetAutoInsert(bool autoInsert) { this->m_autoInsert = autoInsert; }
-    bool IsAutoInsert() const { return m_autoInsert; }
 };
 
 #endif // __abbreviationentry__

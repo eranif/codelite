@@ -124,7 +124,6 @@ wxCodeCompletionBoxEntry::Vec_t AbbreviationPlugin::GetAbbreviations(const wxStr
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
 
-        jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
         m_config.WriteItem(jsonData);
     }
@@ -171,7 +170,6 @@ void AbbreviationPlugin::InitDefaults()
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
 
-        jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
         m_config.WriteItem(jsonData);
     }
@@ -209,7 +207,6 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
 
-        jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
         m_config.WriteItem(jsonData);
     }

@@ -50,7 +50,6 @@ AbbreviationsSettingsDlg::AbbreviationsSettingsDlg(wxWindow* parent, IManager* m
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
 
-        m_data.SetAutoInsert(data.GetAutoInsert());
         m_data.SetEntries(data.GetEntries());
         m_config.WriteItem(m_data);
     }
@@ -146,7 +145,6 @@ void AbbreviationsSettingsDlg::OnSave(wxCommandEvent& event)
     if (m_dirty) {
         DoSaveCurrent();
     }
-    m_data.SetAutoInsert(m_checkBoxImmediateInsert->IsChecked());
     m_config.WriteItem(m_data);
 }
 
@@ -163,7 +161,6 @@ void AbbreviationsSettingsDlg::DoPopulateItems()
         DoSelectItem(0);
     }
 
-    m_checkBoxImmediateInsert->SetValue(m_data.IsAutoInsert());
     m_dirty = false;
 }
 
@@ -286,5 +283,3 @@ void AbbreviationsSettingsDlg::OnHelp(wxCommandEvent& event)
     MacrosDlg dlg(this, MacrosDlg::MacrosProject, nullptr, nullptr);
     dlg.ShowModal();
 }
-
-void AbbreviationsSettingsDlg::OnImmediateInsert(wxCommandEvent& event) { m_dirty = true; }

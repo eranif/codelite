@@ -46,7 +46,6 @@ class AbbreviationsSettingsDlg : public AbbreviationsSettingsBase
     clConfig m_config;
 
 protected:
-    void OnImmediateInsert(wxCommandEvent& event) override;
     void OnHelp(wxCommandEvent& event) override;
     void OnExport(wxCommandEvent& event) override;
     void OnImport(wxCommandEvent& event) override;

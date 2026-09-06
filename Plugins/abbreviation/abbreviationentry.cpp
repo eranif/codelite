@@ -27,27 +27,14 @@
 
 #include "json_utils.h"
 
-void AbbreviationEntry::DeSerialize(Archive& arch)
-{
-    arch.Read(wxT("m_entries"), m_entries);
-    arch.Read(wxT("m_autoInsert"), m_autoInsert);
-}
+void AbbreviationEntry::DeSerialize(Archive& arch) { arch.Read(wxT("m_entries"), m_entries); }
 
-void AbbreviationEntry::Serialize(Archive& arch)
-{
-    arch.Write(wxT("m_entries"), m_entries);
-    arch.Write(wxT("m_autoInsert"), m_autoInsert);
-}
+void AbbreviationEntry::Serialize(Archive& arch) { arch.Write(wxT("m_entries"), m_entries); }
 
 ////////////////////////////////////////////////////////////////
 // JSON
 ////////////////////////////////////////////////////////////////
 
-void AbbreviationJSONEntry::FromJSON(const JSONItem& json)
-{
-    m_entries = json.namedObject("entries").toStringMap();
-    m_autoInsert = json.namedObject("autoInsert").toBool();
-}
+void AbbreviationJSONEntry::FromJSON(const JSONItem& json) { m_entries = json.namedObject("entries").toStringMap(); }
 
-JSONItem AbbreviationJSONEntry::ToJSON() const
-{ return nlohmann::json{{"entries", JsonUtils::ToJson(m_entries)}, {"autoInsert", m_autoInsert}}; }
+JSONItem AbbreviationJSONEntry::ToJSON() const { return nlohmann::json{{"entries", JsonUtils::ToJson(m_entries)}}; }

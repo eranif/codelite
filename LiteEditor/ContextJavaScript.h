@@ -36,7 +36,7 @@ public:
 
 public:
     int GetActiveKeywordSet() const override;
-    int DoGetCalltipParamterIndex() override;
+    int DoGetCalltipParameterIndex() override;
     wxMenu* GetMenu() override;
     void AddMenuDynamicContent(wxMenu* menu) override;
     void ApplySettings() override;

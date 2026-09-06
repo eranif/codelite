@@ -51,7 +51,7 @@ PSGeneralPage::PSGeneralPage(wxWindow* parent, const wxString& projectName, cons
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgr136->GetGrid());
 }
 
-void PSGeneralPage::OnProjectCustumBuildUI(wxUpdateUIEvent& event)
+void PSGeneralPage::OnProjectCustomBuildUI(wxUpdateUIEvent& event)
 {
     // do not disable the General page even when in custom build
     event.Enable(m_checkBoxEnabled->IsChecked());

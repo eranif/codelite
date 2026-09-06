@@ -95,7 +95,7 @@ void PSLinkerPage::OnCheckLinkerNeeded(wxCommandEvent& event)
     m_dlg->SetIsDirty(true);
 }
 
-void PSLinkerPage::OnProjectCustumBuildUI(wxUpdateUIEvent& event) { event.Enable(!m_dlg->IsCustomBuildEnabled()); }
+void PSLinkerPage::OnProjectCustomBuildUI(wxUpdateUIEvent& event) { event.Enable(!m_dlg->IsCustomBuildEnabled()); }
 
 void PSLinkerPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }
 

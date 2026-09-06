@@ -45,12 +45,12 @@ class PSLinkerPage : public PSLinkPageBase, public IProjectSettingsPage
     PSGeneralPage*      m_gp;
 
 protected:
-    virtual void OnPropertyChanged(wxPropertyGridEvent& event);
-    virtual void OnCheckLinkerNeeded(wxCommandEvent& event);
-    virtual void OnLinkerNotNeededUI(wxUpdateUIEvent& event);
-    virtual void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
-    virtual void OnCustomEditorClicked(wxCommandEvent& event);
-    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
+    void OnPropertyChanged(wxPropertyGridEvent& event) override;
+    void OnCheckLinkerNeeded(wxCommandEvent& event) override;
+    void OnLinkerNotNeededUI(wxUpdateUIEvent& event) override;
+    void OnProjectCustomBuildUI(wxUpdateUIEvent& event) override;
+    void OnCustomEditorClicked(wxCommandEvent& event) override;
+    void OnProjectEnabledUI(wxUpdateUIEvent& event) override;
 
 public:
     /** Constructor */

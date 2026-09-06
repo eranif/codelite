@@ -56,7 +56,7 @@ protected:
 
 protected:
     // Handlers for PSGeneralPageBase events.
-    void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
+    void OnProjectCustomBuildUI(wxUpdateUIEvent& event) override;
 
 public:
     /** Constructor */

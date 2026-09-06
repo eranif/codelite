@@ -41,11 +41,12 @@ class PSCustomMakefileRulesPage : public PSCustomMakefileBasePage, public IProje
 {
     ProjectSettingsDlg *m_dlg;
 protected:
-    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
+    void OnProjectEnabledUI(wxUpdateUIEvent& event) override;
     // Handlers for PSCustomMakefileBasePage events.
-    void OnProjectCustumBuildUI( wxUpdateUIEvent& event );
-    void OnCmdEvtVModified( wxCommandEvent& event );
-    void OnStcEvtVModified( wxStyledTextEvent& event );
+    void OnProjectCustomBuildUI(wxUpdateUIEvent& event) override;
+    void OnCmdEvtVModified(wxCommandEvent& event) override;
+    void OnStcEvtVModified(wxStyledTextEvent& event) override;
+
 public:
     /** Constructor */
     PSCustomMakefileRulesPage( wxWindow* parent, ProjectSettingsDlg *dlg );

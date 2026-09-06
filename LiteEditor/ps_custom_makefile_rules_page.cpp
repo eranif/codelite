@@ -33,7 +33,7 @@ PSCustomMakefileRulesPage::PSCustomMakefileRulesPage( wxWindow* parent, ProjectS
     m_textPreBuildRule->SetEOLMode(wxSTC_EOL_LF); // Only "\n"
 }
 
-void PSCustomMakefileRulesPage::OnProjectCustumBuildUI( wxUpdateUIEvent& event )
+void PSCustomMakefileRulesPage::OnProjectCustomBuildUI( wxUpdateUIEvent& event )
 {
     event.Enable( !m_dlg->IsCustomBuildEnabled() );
 }

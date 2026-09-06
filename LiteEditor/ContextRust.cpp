@@ -120,7 +120,7 @@ void ContextRust::AutoIndent(const wxChar& nChar)
     ContextGeneric::AutoIndent(nChar);
 }
 
-int ContextRust::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
+int ContextRust::DoGetCalltipParameterIndex() { return ContextBase::DoGetCalltipParameterIndex(); }
 
 wxMenu* ContextRust::GetMenu() { return ContextBase::GetMenu(); }
 
@@ -224,7 +224,7 @@ void ContextRust::ProcessIdleActions()
 {
     clEditor& ctrl = GetCtrl();
     if (ctrl.GetFunctionTip()->IsActive()) {
-        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
+        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParameterIndex());
     }
 }
 

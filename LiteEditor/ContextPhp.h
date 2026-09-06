@@ -38,7 +38,7 @@ public:
 public:
     bool IsStringTriggerCodeComplete(const wxString& str) const override;
     int GetActiveKeywordSet() const override;
-    int  DoGetCalltipParamterIndex() override;
+    int  DoGetCalltipParameterIndex() override;
     wxMenu* GetMenu() override;
     void AddMenuDynamicContent(wxMenu* menu) override;
     void ApplySettings() override;

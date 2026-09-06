@@ -136,7 +136,7 @@ public:
     virtual void AutoAddComment();
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) { return NULL; }
     virtual void SemicolonShift() {}
-    virtual int DoGetCalltipParamterIndex();
+    virtual int DoGetCalltipParameterIndex();
 
     // ctrl-click style navigation support
     virtual bool GetHyperlinkRange(int& start, int& end);

@@ -140,7 +140,7 @@ void ContextBase::PrependMenuItemSeparator(wxMenu* menu)
     menu->Prepend(item);
 }
 
-int ContextBase::DoGetCalltipParamterIndex()
+int ContextBase::DoGetCalltipParameterIndex()
 {
     int index(0);
     clEditor& ctrl = GetCtrl();
@@ -387,19 +387,19 @@ void ContextBase::OnKeyDown(wxKeyEvent& event)
     }
     switch (event.GetKeyCode()) {
     case WXK_UP:
-        ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
+        ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParameterIndex());
         return;
     case WXK_DOWN:
-        ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
+        ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParameterIndex());
         return;
     default: {
         int modifier_key = event.GetModifiers();
         wxChar ch = event.GetUnicodeKey();
         if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
-            ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParamterIndex());
+            ctrl.GetFunctionTip()->SelectNext(DoGetCalltipParameterIndex());
             return;
         } else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
-            ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParamterIndex());
+            ctrl.GetFunctionTip()->SelectPrev(DoGetCalltipParameterIndex());
             return;
         }
         break;

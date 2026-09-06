@@ -5042,7 +5042,7 @@ bool clEditor::IsFocused() const
 void clEditor::ShowCalltip(clCallTipPtr tip)
 {
     GetFunctionTip()->AddCallTip(tip);
-    GetFunctionTip()->Highlight(m_context->DoGetCalltipParamterIndex());
+    GetFunctionTip()->Highlight(m_context->DoGetCalltipParameterIndex());
 
     // In an ideal world, we would like our tooltip to be placed
     // on top of the caret.

@@ -186,7 +186,7 @@ void ContextHtml::AutoIndent(const wxChar& nChar)
     rCtrl.ChooseCaretX();
 }
 
-int ContextHtml::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
+int ContextHtml::DoGetCalltipParameterIndex() { return ContextBase::DoGetCalltipParameterIndex(); }
 
 wxMenu* ContextHtml::GetMenu() { return ContextBase::GetMenu(); }
 
@@ -226,7 +226,7 @@ void ContextHtml::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 void ContextHtml::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     clEditor& ctrl = GetCtrl();
-    if(ctrl.GetFunctionTip()->IsActive()) { ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex()); }
+    if(ctrl.GetFunctionTip()->IsActive()) { ctrl.GetFunctionTip()->Highlight(DoGetCalltipParameterIndex()); }
 }
 
 void ContextHtml::RetagFile() {}

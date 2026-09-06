@@ -210,7 +210,7 @@ void ContextPhp::AutoIndent(const wxChar& nChar)
     rCtrl.ChooseCaretX();
 }
 
-int ContextPhp::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
+int ContextPhp::DoGetCalltipParameterIndex() { return ContextBase::DoGetCalltipParameterIndex(); }
 
 wxMenu* ContextPhp::GetMenu() { return ContextBase::GetMenu(); }
 
@@ -251,7 +251,7 @@ void ContextPhp::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     clEditor& ctrl = GetCtrl();
     if (ctrl.GetFunctionTip()->IsActive()) {
-        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
+        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParameterIndex());
     }
 }
 

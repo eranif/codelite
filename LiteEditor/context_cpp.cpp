@@ -1701,7 +1701,7 @@ void ContextCpp::DoUpdateCalltipHighlight()
     CHECK_PTR_RET(tip);
 
     if (tip->IsActive()) {
-        tip->Highlight(DoGetCalltipParamterIndex());
+        tip->Highlight(DoGetCalltipParameterIndex());
     }
 }
 

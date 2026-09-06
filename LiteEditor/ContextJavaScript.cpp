@@ -167,7 +167,7 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
     rCtrl.ChooseCaretX();
 }
 
-int ContextJavaScript::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
+int ContextJavaScript::DoGetCalltipParameterIndex() { return ContextBase::DoGetCalltipParameterIndex(); }
 
 wxMenu* ContextJavaScript::GetMenu() { return ContextBase::GetMenu(); }
 
@@ -202,7 +202,7 @@ void ContextJavaScript::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     clEditor& ctrl = GetCtrl();
     if (ctrl.GetFunctionTip()->IsActive()) {
-        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
+        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParameterIndex());
     }
 }
 

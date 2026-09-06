@@ -25,7 +25,7 @@
 
 #include "ps_custom_build_page.h"
 
-#include "ProjectCustomBuildTragetDlg.h"
+#include "ProjectCustomBuildTargetDlg.h"
 #include "dirsaver.h"
 #include "globals.h"
 #include "macros.h"
@@ -86,7 +86,7 @@ void PSCustomBuildPage::OnNewTarget(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
-    ProjectCustomBuildTragetDlg dlg(this, "", "");
+    ProjectCustomBuildTargetDlg dlg(this, "", "");
     if (dlg.ShowModal() == wxID_OK) {
         GetDlg()->SetIsDirty(true);
         if (GetTargetCommand(dlg.GetName()).IsEmpty() == false) {
@@ -132,10 +132,10 @@ void PSCustomBuildPage::OnDeleteTargetUI(wxUpdateUIEvent& event)
         wxVariant vTarget;
         m_dvListCtrlTargets->GetValue(vTarget, m_dvListCtrlTargets->ItemToRow(item), 0);
         wxString name = vTarget.GetString();
-        event.Enable(name != ProjectCustomBuildTragetDlg::CUSTOM_TARGET_BUILD &&
-                     name != ProjectCustomBuildTragetDlg::CUSTOM_TARGET_CLEAN &&
-                     name != ProjectCustomBuildTragetDlg::CUSTOM_TARGET_REBUILD &&
-                     name != ProjectCustomBuildTragetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE &&
+        event.Enable(name != ProjectCustomBuildTargetDlg::CUSTOM_TARGET_BUILD &&
+                     name != ProjectCustomBuildTargetDlg::CUSTOM_TARGET_CLEAN &&
+                     name != ProjectCustomBuildTargetDlg::CUSTOM_TARGET_REBUILD &&
+                     name != ProjectCustomBuildTargetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE &&
                      m_checkEnableCustomBuild->IsChecked());
     } else {
         event.Enable(false);
@@ -150,7 +150,7 @@ void PSCustomBuildPage::DoEditTarget(wxDataViewItem item)
     m_dvListCtrlTargets->GetValue(varcommand, m_dvListCtrlTargets->ItemToRow(item), 1);
     wxString target = varname.GetString();
     wxString cmd = varcommand.GetString();
-    ProjectCustomBuildTragetDlg dlg(this, target, cmd);
+    ProjectCustomBuildTargetDlg dlg(this, target, cmd);
     if (dlg.ShowModal() == wxID_OK) {
         DoUpdateTarget(item, dlg.GetTargetName(), dlg.GetTargetCommand());
         GetDlg()->SetIsDirty(true);
@@ -198,43 +198,19 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
 
     m_dvListCtrlTargets->DeleteAllItems();
 
-    wxVector<wxVariant> cols;
-
-    cols.clear();
-    cols.push_back(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_BUILD);
-    cols.push_back(buildConf->GetCustomBuildCmd());
-    m_dvListCtrlTargets->AppendItem(cols);
-
-    cols.clear();
-    cols.push_back(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_CLEAN);
-    cols.push_back(buildConf->GetCustomCleanCmd());
-    m_dvListCtrlTargets->AppendItem(cols);
-
-    cols.clear();
-    cols.push_back(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_REBUILD);
-    cols.push_back(buildConf->GetCustomRebuildCmd());
-    m_dvListCtrlTargets->AppendItem(cols);
-
-    cols.clear();
-    cols.push_back(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE);
-    cols.push_back(buildConf->GetSingleFileBuildCommand());
-    m_dvListCtrlTargets->AppendItem(cols);
-
-    cols.clear();
-    cols.push_back(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_PREPROCESS_FILE);
-    cols.push_back(buildConf->GetPreprocessFileCommand());
-    m_dvListCtrlTargets->AppendItem(cols);
+    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_BUILD, buildConf->GetCustomBuildCmd()});
+    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_CLEAN, buildConf->GetCustomCleanCmd()});
+    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_REBUILD, buildConf->GetCustomRebuildCmd()});
+    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE, buildConf->GetSingleFileBuildCommand()});
+    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_PREPROCESS_FILE, buildConf->GetPreprocessFileCommand()});
 
     // Initialize the custom build targets
     for (const auto& p : buildConf->GetCustomTargets()) {
 
-        if (ProjectCustomBuildTragetDlg::IsPredefinedTarget(p.first))
+        if (ProjectCustomBuildTargetDlg::IsPredefinedTarget(p.first)) {
             continue;
-
-        cols.clear();
-        cols.push_back(p.first);
-        cols.push_back(p.second);
-        m_dvListCtrlTargets->AppendItem(cols);
+        }
+        m_dvListCtrlTargets->AppendItem({p.first, p.second});
     }
     m_dlg->SetCustomBuildEnabled(m_checkEnableCustomBuild->IsChecked());
 }
@@ -247,19 +223,19 @@ void PSCustomBuildPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSe
         wxVariant vTarget, vCommand;
         m_dvListCtrlTargets->GetValue(vTarget, i, 0);
         m_dvListCtrlTargets->GetValue(vCommand, i, 1);
-        if (ProjectCustomBuildTragetDlg::IsPredefinedTarget(vTarget.GetString()))
+        if (ProjectCustomBuildTargetDlg::IsPredefinedTarget(vTarget.GetString()))
             continue;
 
         targets[vTarget.GetString()] = vCommand.GetString();
     }
 
     buildConf->SetCustomTargets(targets);
-    buildConf->SetCustomBuildCmd(GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_BUILD));
-    buildConf->SetCustomCleanCmd(GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_CLEAN));
-    buildConf->SetCustomRebuildCmd(GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_REBUILD));
+    buildConf->SetCustomBuildCmd(GetTargetCommand(ProjectCustomBuildTargetDlg::CUSTOM_TARGET_BUILD));
+    buildConf->SetCustomCleanCmd(GetTargetCommand(ProjectCustomBuildTargetDlg::CUSTOM_TARGET_CLEAN));
+    buildConf->SetCustomRebuildCmd(GetTargetCommand(ProjectCustomBuildTargetDlg::CUSTOM_TARGET_REBUILD));
     buildConf->SetSingleFileBuildCommand(
-        GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE));
-    buildConf->SetPreprocessFileCommand(GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_PREPROCESS_FILE));
+        GetTargetCommand(ProjectCustomBuildTargetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE));
+    buildConf->SetPreprocessFileCommand(GetTargetCommand(ProjectCustomBuildTargetDlg::CUSTOM_TARGET_PREPROCESS_FILE));
     buildConf->EnableCustomBuild(m_checkEnableCustomBuild->IsChecked());
     buildConf->SetCustomBuildWorkingDir(m_textCtrlCustomBuildWD->GetValue());
 }

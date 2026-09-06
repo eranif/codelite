@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2013 by Eran Ifrah
-// file name            : ProjectCustomBuildTragetDlg.h
+// file name            : ProjectCustomBuildTargetDlg.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,34 +23,30 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PROJECTCUSTOMBUILDTRAGETDLG_H
-#define PROJECTCUSTOMBUILDTRAGETDLG_H
+#ifndef PROJECTCUSTOMBUILDTARGETDLG_H
+#define PROJECTCUSTOMBUILDTARGETDLG_H
+
 #include "project_settings_base_dlg.hpp"
 
-class ProjectCustomBuildTragetDlg : public ProjectCustomBuildTragetDlgBase
+class ProjectCustomBuildTargetDlg : public ProjectCustomBuildTragetDlgBase
 {
 public:
-    static const wxString CUSTOM_TARGET_BUILD               ;
-    static const wxString CUSTOM_TARGET_CLEAN               ;
-    static const wxString CUSTOM_TARGET_REBUILD             ;
-    static const wxString CUSTOM_TARGET_COMPILE_SINGLE_FILE ;
-    static const wxString CUSTOM_TARGET_PREPROCESS_FILE     ;
+    static const wxString CUSTOM_TARGET_BUILD;
+    static const wxString CUSTOM_TARGET_CLEAN;
+    static const wxString CUSTOM_TARGET_REBUILD;
+    static const wxString CUSTOM_TARGET_COMPILE_SINGLE_FILE;
+    static const wxString CUSTOM_TARGET_PREPROCESS_FILE;
 
 public:
-    ProjectCustomBuildTragetDlg(wxWindow* parent, const wxString &targetName, const wxString& targetCommand);
-    virtual ~ProjectCustomBuildTragetDlg() = default;
+    ProjectCustomBuildTargetDlg(wxWindow* parent, const wxString& targetName, const wxString& targetCommand);
+    virtual ~ProjectCustomBuildTargetDlg() = default;
 
-    wxString GetTargetName() const {
-        return m_textCtrlTargetName->GetValue();
-    }
+    wxString GetTargetName() const { return m_textCtrlTargetName->GetValue(); }
+    wxString GetTargetCommand() const { return m_textCtrlCommand->GetValue(); }
 
-    wxString GetTargetCommand() const {
-        return m_textCtrlCommand->GetValue();
-    }
-    
     static bool IsPredefinedTarget(const wxString& name);
-    
+
 protected:
-    virtual void OnEditTargetNameUI(wxUpdateUIEvent& event);
+    void OnEditTargetNameUI(wxUpdateUIEvent& event) override;
 };
-#endif // PROJECTCUSTOMBUILDTRAGETDLG_H
+#endif // PROJECTCUSTOMBUILDTARGETDLG_H

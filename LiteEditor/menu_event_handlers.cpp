@@ -334,7 +334,7 @@ void GotoDefinitionHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEven
 {
     clEditor* editor = dynamic_cast<clEditor*>(owner);
     if (event.GetId() == XRCID("goto_previous_definition")) {
-        event.Enable(editor && editor->CanGotoPreviousDefintion());
+        event.Enable(editor && editor->CanGotoPreviousDefinition());
     } else {
         event.Enable(editor != NULL);
     }

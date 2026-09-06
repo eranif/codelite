@@ -959,7 +959,7 @@ public:
     bool GetIsVisible() const { return m_isVisible; }
 
     wxString GetEolString();
-    void HighlightWord(StringHighlightOutput* highlightOutput);
+    void HighlightWord(const StringHighlightOutput& highlightOutput);
 
     /**
      * Get a vector of relevant position changes. Used for 'GoTo next/previous FindInFiles match'

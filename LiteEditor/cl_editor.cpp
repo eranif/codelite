@@ -4123,7 +4123,7 @@ void clEditor::DoHighlightWord()
     m_highlightedWordInfo.Clear();
     m_highlightedWordInfo.SetFirstOffset(offset);
     m_highlightedWordInfo.SetWord(word);
-    HighlightWord((StringHighlightOutput*)&j.GetOutput());
+    HighlightWord(j.GetOutput());
 }
 
 void clEditor::HighlightWord(bool highlight)
@@ -4960,18 +4960,18 @@ bool clEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replac
 
 void clEditor::SetLexerName(const wxString& lexerName) { SetSyntaxHighlight(lexerName); }
 
-void clEditor::HighlightWord(StringHighlightOutput* highlightOutput)
+void clEditor::HighlightWord(const StringHighlightOutput& highlightOutput)
 {
-    // the search highlighter thread has completed the calculations, fetch the results and mark them
-    // in the editor
-    const std::vector<std::pair<int, int>>& matches = highlightOutput->matches;
+    // the search highlighter thread has completed the calculations,
+    // fetch the results and mark them in the editor
+    const std::vector<std::pair<int, int>>& matches = highlightOutput.matches;
     SetIndicatorCurrent(INDICATOR_WORD_HIGHLIGHT);
 
     // clear the old markers
     IndicatorClearRange(0, GetLength());
-    if (!highlightOutput->matches.empty()) {
+    if (!matches.empty()) {
         m_highlightedWordInfo.SetHasMarkers(true);
-        int selStart = GetSelectionStart();
+        const int selStart = GetSelectionStart();
         for (const std::pair<int, int>& p : matches) {
             // Don't highlight the current selection
             if (p.first != selStart) {

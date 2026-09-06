@@ -382,7 +382,7 @@ public:
      * Return true if editor definition contains more
      * on its stack
      */
-    bool CanGotoPreviousDefintion() { return NavMgr::Get()->CanPrev(); }
+    bool CanGotoPreviousDefinition() { return NavMgr::Get()->CanPrev(); }
 
     // Callback function for UI events
     void OnUpdateUI(wxUpdateUIEvent& event);
@@ -1059,7 +1059,7 @@ private:
     void OnIdle(wxIdleEvent& event);
     void OpenURL(wxCommandEvent& event);
     void OnHighlightWordChecked(wxCommandEvent& e);
-    void OnRemoveMatchInidicator(wxCommandEvent& e);
+    void OnRemoveMatchIndicator(wxCommandEvent& e);
     void OnSavePoint(wxStyledTextEvent& event);
     void OnCharAdded(wxStyledTextEvent& event);
     void OnMarginClick(wxStyledTextEvent& event);

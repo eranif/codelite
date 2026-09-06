@@ -497,7 +497,7 @@ clEditor::clEditor(wxWindow* parent)
     Bind(wxEVT_KILL_FOCUS, &clEditor::OnFocusLost, this);
     Bind(wxEVT_SET_FOCUS, &clEditor::OnFocus, this);
     Bind(wxEVT_STC_DOUBLECLICK, &clEditor::OnLeftDClick, this);
-    Bind(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, &clEditor::OnRemoveMatchInidicator, this);
+    Bind(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, &clEditor::OnRemoveMatchIndicator, this);
     Bind(wxEVT_FILE_MODIFIED, &clEditor::OnFileModifiedExternally, this);
     Bind(wxEVT_FILE_DELETED, &clEditor::OnFileDeleted, this);
     Bind(wxEVT_STC_ZOOM, &clEditor::OnZoom, this);
@@ -4707,7 +4707,7 @@ void clEditor::OnChange(wxStyledTextEvent& event)
     }
 }
 
-void clEditor::OnRemoveMatchInidicator(wxCommandEvent& e)
+void clEditor::OnRemoveMatchIndicator(wxCommandEvent& e)
 {
     // get the current indicator end range
     if (IndicatorValueAt(INDICATOR_MATCH, e.GetInt()) == 1) {

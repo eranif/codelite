@@ -372,7 +372,7 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
     return GetContentType(fileContent, fileType);
 }
 
-std::optional<wxString> FileExtManager::GetFileExtenstion(const wxString& filename, const wxString& string_content)
+std::optional<wxString> FileExtManager::GetFileExtension(const wxString& filename, const wxString& string_content)
 {
     wxFileName fn{filename};
     if (!fn.GetExt().empty()) {

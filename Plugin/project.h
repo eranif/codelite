@@ -30,7 +30,7 @@
 #include "project_settings.h"
 #include "tree.h"
 
-#include <assistant/common/json.hpp> // <nhlomann/json.hpp>
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <list>
 #include <memory>
 #include <set>

@@ -186,7 +186,7 @@ public:
      * @note This is a member function of FileExtManager and depends on the instance's
      *     internal content-type mapping.
      */
-    static std::optional<wxString> GetFileExtenstion(const wxString& filename, const wxString& string_content);
+    static std::optional<wxString> GetFileExtension(const wxString& filename, const wxString& string_content);
 
     /**
      * @brief return the file type only by checking its extension

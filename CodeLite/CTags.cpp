@@ -123,7 +123,7 @@ clStatusOr<std::vector<CTags::SymbolInfo>> CTags::ParseBufferSymbols(const wxStr
         return StatusNotFound("Please install universal-ctags and try again");
     }
 
-    auto ext = FileExtManager::GetFileExtenstion(filename, buffer);
+    auto ext = FileExtManager::GetFileExtension(filename, buffer);
     if (!ext.has_value()) {
         return StatusInvalidArgument(wxString() << _("Failed to resolve file extension for file: ") << filename);
     }
@@ -147,7 +147,7 @@ clStatusOr<std::vector<CTags::SymbolInfo>> CTags::ParseFileSymbols(const wxStrin
         return StatusIOError(wxString() << _("Failed to read file content: ") << file << _(" from disk"));
     }
 
-    auto ext = FileExtManager::GetFileExtenstion(file, file_content);
+    auto ext = FileExtManager::GetFileExtension(file, file_content);
     std::unique_ptr<clTempFile> tmpfile;
     if (ext.has_value() && wxFileName{file}.GetExt().empty()) {
         tmpfile = std::make_unique<clTempFile>(ext.value());

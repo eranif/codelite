@@ -176,7 +176,7 @@ bool UnixProcessImpl::ReadFromFd(int fd, fd_set& rset, wxString& output, std::st
             buffer[bytesRead] = 0; // always place a terminator
             raw_output = std::string(buffer, bytesRead);
 
-            // Remove coloring chars from the incomnig buffer
+            // Remove coloring chars from the incoming buffer
             // colors are marked with ESC and terminates with lower case 'm'
             if (!(this->m_flags & IProcessRawOutput)) {
                 std::string stripped_buffer;

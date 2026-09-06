@@ -198,7 +198,7 @@ void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show, bool tak
     if (take_focus) {
         ::SetBestFocus(notebook->GetPage(index));
     } else {
-        // On GTK port, wxNotbook::ChangeSelection steals the focus
+        // On GTK port, wxNotebook::ChangeSelection steals the focus
         // whether we want it or not
         if (old_focus) {
             old_focus->CallAfter(&wxWindow::SetFocus);
@@ -251,7 +251,7 @@ void PerspectiveManager::ShowSideBar(bool left_sidebar, const wxString& tab, boo
     if (take_focus) {
         ::SetBestFocus(book->GetPage(index));
     } else {
-        // On GTK port, wxNotbook::ChangeSelection steals the focus
+        // On GTK port, wxNotebook::ChangeSelection steals the focus
         // whether we want it or not
         if (old_focus) {
             old_focus->CallAfter(&wxWindow::SetFocus);

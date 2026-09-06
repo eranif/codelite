@@ -87,7 +87,7 @@ void ImageListWrapper::GetIncludeFile(wxArrayString& headers) const
 wxString ImageListWrapper::DoGenerateClassMember() const
 {
     wxString memberCode;
-    memberCode << "    // Maintain a map of all bitmaps representd by their name\n";
+    memberCode << "    // Maintain a map of all bitmaps represented by their name\n";
     memberCode << "    std::map<wxString, wxBitmap> m_bitmaps;\n";
     memberCode
         << "    // The requested image resolution (can be one of @2x, @1.5x, @1.25x or an empty string (the default)\n";

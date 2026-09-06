@@ -319,7 +319,7 @@ bool clSFTPManager::DoSyncDownload(const wxString& remotePath, const wxString& l
 
     // if the local file already exists, compare checksums before downloading it
     if (wxFileName::FileExists(localPath)) {
-        clDEBUG() << "Local file with the same path already exists, comapring checksums..." << endl;
+        clDEBUG() << "Local file with the same path already exists, comparing checksums..." << endl;
         try {
             // read the file size
             size_t remote_file_checksum, local_file_checksum;

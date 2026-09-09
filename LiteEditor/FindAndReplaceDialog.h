@@ -25,7 +25,7 @@
 #pragma once
 
 #include "cl_command_event.h"
-#include "quickfindbarbase.h"
+#include "FindAndReplaceDialogFrameBase.hpp"
 #include "wxTerminalCtrl/wxTerminalHistory.hpp"
 
 #include <vector>

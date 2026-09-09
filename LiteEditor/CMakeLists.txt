@@ -184,6 +184,14 @@ wxcrafter_target(
     "filechecklistbase_liteeditor_bitmaps.cpp")
 
 wxcrafter_target(
+    LiteEditorFindAndReplaceDialogFrameBase
+    "${CMAKE_CURRENT_SOURCE_DIR}/FindAndReplaceDialogFrameBase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "FindAndReplaceDialogFrameBase.cpp"
+    "FindAndReplaceDialogFrameBase.hpp"
+    "findandreplacedialogframebase_liteeditor_bitmaps.cpp")
+
+wxcrafter_target(
     LiteEditorFindInFilesDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/findinfiles_dlg.wxcp"
     "${CMAKE_CURRENT_BINARY_DIR}"
@@ -403,6 +411,7 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorEditWorkspaceConfDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorFileCheckListBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorFindInFilesDlg_OUTPUTS}
+    ${WXCRAFTER_LiteEditorFindAndReplaceDialogFrameBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorFreeTextDialog_OUTPUTS}
     ${WXCRAFTER_LiteEditorImportFileDialog_OUTPUTS}
     ${WXCRAFTER_LiteEditorListCtrlPanelBase_OUTPUTS}

@@ -29,7 +29,7 @@
 #include "clTerminalHistory.h"
 #include "clToolBar.h"
 #include "codelite_exports.h"
-#include "quickfindbarbase.h"
+#include "quickfindbarbase.hpp"
 
 #include <wx/combobox.h>
 #include <wx/panel.h>

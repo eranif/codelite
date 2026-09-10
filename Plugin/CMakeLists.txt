@@ -184,13 +184,13 @@ wxcrafter_target(
     "plugin_general_wxcp.hpp"
     "plugin_general_wxcp_plugin_bitmaps.cpp")
 
-#wxcrafter_target(
-#    PluginQuickFindBar
-#    "${CMAKE_CURRENT_SOURCE_DIR}/quickfindbarbase.wxcp"
-#    "${CMAKE_CURRENT_BINARY_DIR}"
-#    "quickfindbarbase.cpp"
-#    "quickfindbarbase.hpp"
-#    "quickfindbarbase_bitmaps.cpp")
+wxcrafter_target(
+    PluginQuickFindBar
+    "${CMAKE_CURRENT_SOURCE_DIR}/quickfindbarbase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "quickfindbarbase.cpp"
+    "quickfindbarbase.hpp"
+    "quickfindbarbase_bitmaps.cpp")
 
 wxcrafter_target(
     PluginSelectFileTypesDialog
@@ -310,7 +310,7 @@ add_library(plugin SHARED ${SRCS}
     ${WXCRAFTER_PluginNewProjectDialog_OUTPUTS}
     ${WXCRAFTER_PluginOpenResourceDialog_OUTPUTS}
     ${WXCRAFTER_PluginGeneralWxcp_OUTPUTS}
-#    ${WXCRAFTER_PluginQuickFindBar_OUTPUTS}
+    ${WXCRAFTER_PluginQuickFindBar_OUTPUTS}
     ${WXCRAFTER_PluginSelectFileTypesDialog_OUTPUTS}
     ${WXCRAFTER_PluginSftpUi_OUTPUTS}
     ${WXCRAFTER_PluginSwitchToWorkspace_OUTPUTS}

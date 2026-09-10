@@ -36,6 +36,7 @@ jobs:
         update: true
         location: ${{ matrix.arch.runs-on == 'windows-11-arm' && 'C:\' || '' }}
         cache: ${{ matrix.arch.runs-on != 'windows-11-arm' }}
+        release: false
         install: >-
           bison
           flex

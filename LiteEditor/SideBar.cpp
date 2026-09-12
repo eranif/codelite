@@ -24,13 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "SideBar.hpp"
 
+#include "SecondarySideBar.hpp"
 #include "clWorkspaceView.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "fileexplorer.h"
-#include "SecondarySideBar.hpp"
 #include "globals.h"
 #include "openwindowspanel.h"
 #include "pluginmanager.h"

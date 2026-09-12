@@ -33,11 +33,10 @@ public:
     NewCompilerDlg(wxWindow* parent);
     virtual ~NewCompilerDlg() = default;
 
-    wxString GetCompilerName() const {
-        return m_textCtrlCompilerName->GetValue();
-    }
+    wxString GetCompilerName() const { return m_textCtrlCompilerName->GetValue(); }
 
     wxString GetMasterCompiler() const;
+
 protected:
     virtual void OnOkUI(wxUpdateUIEvent& event);
 };

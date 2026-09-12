@@ -40,7 +40,7 @@ class ConfigurationManagerDlg : public ConfigManagerBaseDlg
 protected:
     virtual void OnValueChanged(wxDataViewEvent& event);
     void OnShowConfigList(wxDataViewEvent& event);
-    
+
     /**
      * @brief return list of build configurations for a project. In addition, return
      * the project conifugration name that matches the workspace configuration that is selected

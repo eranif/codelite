@@ -33,19 +33,21 @@ EditorSettingsComments::EditorSettingsComments(wxWindow* parent, OptionsConfigPt
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &m_data);
 
     AddHeader(_("Comments"));
-    AddProperty(_("Hitting ENTER in C comment, adds `*`"), m_data.GetAddStarOnCComment(),
+    AddProperty(_("Hitting ENTER in C comment, adds `*`"),
+                m_data.GetAddStarOnCComment(),
                 [this](const wxString& label, const wxAny& value) mutable {
                     bool value_bool;
-                    if(value.GetAs(&value_bool)) {
+                    if (value.GetAs(&value_bool)) {
                         m_data.SetAddStarOnCComment(value_bool);
                         EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
                     }
                 });
 
-    AddProperty(_("Hitting ENTER in C++ comment, adds `//`"), m_data.GetContinueCppComment(),
+    AddProperty(_("Hitting ENTER in C++ comment, adds `//`"),
+                m_data.GetContinueCppComment(),
                 [this](const wxString& label, const wxAny& value) mutable {
                     bool value_bool;
-                    if(value.GetAs(&value_bool)) {
+                    if (value.GetAs(&value_bool)) {
                         m_data.SetContinueCppComment(value_bool);
                         EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
                     }
@@ -58,39 +60,39 @@ EditorSettingsComments::EditorSettingsComments(wxWindow* parent, OptionsConfigPt
     AddProperty(_("Alt Key"), use_alt, UPDATE_OPTION_CB(Opt_NavKey_Alt));
 
     AddHeader(_("Generated doc comments"));
-    AddProperty(_("Class template"), m_data.GetClassPattern(),
-                [this](const wxString& label, const wxAny& value) mutable {
-                    wxString value_str;
-                    if(value.GetAs(&value_str)) {
-                        m_data.SetClassPattern(value_str);
-                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
-                    }
-                });
+    AddProperty(
+        _("Class template"), m_data.GetClassPattern(), [this](const wxString& label, const wxAny& value) mutable {
+            wxString value_str;
+            if (value.GetAs(&value_str)) {
+                m_data.SetClassPattern(value_str);
+                EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+            }
+        });
 
-    AddProperty(_("Function template"), m_data.GetFunctionPattern(),
-                [this](const wxString& label, const wxAny& value) mutable {
-                    wxString value_str;
-                    if(value.GetAs(&value_str)) {
-                        m_data.SetFunctionPattern(value_str);
-                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
-                    }
-                });
+    AddProperty(
+        _("Function template"), m_data.GetFunctionPattern(), [this](const wxString& label, const wxAny& value) mutable {
+            wxString value_str;
+            if (value.GetAs(&value_str)) {
+                m_data.SetFunctionPattern(value_str);
+                EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+            }
+        });
 
-    AddProperty(_("Auto generate on ENTER"), m_data.IsAutoInsert(),
-                [this](const wxString& label, const wxAny& value) mutable {
-                    bool value_bool;
-                    if(value.GetAs(&value_bool)) {
-                        m_data.SetAutoInsert(value_bool);
-                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
-                    }
-                });
+    AddProperty(
+        _("Auto generate on ENTER"), m_data.IsAutoInsert(), [this](const wxString& label, const wxAny& value) mutable {
+            bool value_bool;
+            if (value.GetAs(&value_bool)) {
+                m_data.SetAutoInsert(value_bool);
+                EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+            }
+        });
 
-    AddProperty(_("Use Qt style docs"), m_data.IsUseQtStyle(),
-                [this](const wxString& label, const wxAny& value) mutable {
-                    bool value_bool;
-                    if(value.GetAs(&value_bool)) {
-                        m_data.SetUseQtStyle(value_bool);
-                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
-                    }
-                });
+    AddProperty(
+        _("Use Qt style docs"), m_data.IsUseQtStyle(), [this](const wxString& label, const wxAny& value) mutable {
+            bool value_bool;
+            if (value.GetAs(&value_bool)) {
+                m_data.SetUseQtStyle(value_bool);
+                EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+            }
+        });
 }

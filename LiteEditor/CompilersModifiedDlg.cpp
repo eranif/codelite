@@ -52,20 +52,17 @@ CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t
     WindowAttrManager::Load(this);
 }
 
-void CompilersModifiedDlg::OnOKUI(wxUpdateUIEvent& event)
-{
-    event.Enable( m_enableOKButton );
-}
+void CompilersModifiedDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_enableOKButton); }
 
 void CompilersModifiedDlg::OnValueChanged(wxPropertyGridEvent& event)
 {
     event.Skip();
     wxString newCompiler = event.GetProperty()->GetValueAsString();
     wxString oldCompiler = event.GetPropertyName();
-    
-    m_table.erase( oldCompiler );
-    m_table[ oldCompiler ] = newCompiler;
-    
+
+    m_table.erase(oldCompiler);
+    m_table[oldCompiler] = newCompiler;
+
     m_enableOKButton = true;
     for (const auto& p : m_table) {
         if (p.second == SELECT_COMPILER) {

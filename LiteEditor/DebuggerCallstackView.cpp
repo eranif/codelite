@@ -68,15 +68,15 @@ void DebuggerCallstackView::OnItemActivated(wxDataViewEvent& event)
     int row = m_dvListCtrl->ItemToRow(event.GetItem());
 
     StackEntry* entry = reinterpret_cast<StackEntry*>(m_dvListCtrl->GetItemData(event.GetItem()));
-    if(entry) {
+    if (entry) {
         long frame, frameLine;
-        if(!entry->level.ToLong(&frame)) {
+        if (!entry->level.ToLong(&frame)) {
             frame = 0;
         }
 
         // Remove the currently selected item
         wxDataViewItem curitem = m_dvListCtrl->RowToItem(m_currLevel);
-        if(curitem.IsOk()) {
+        if (curitem.IsOk()) {
             wxVariant v;
             v = ::MakeBitmapIndexText(wxString() << m_currLevel, 1);
             m_dvListCtrl->SetValue(v, m_currLevel, 0);
@@ -89,7 +89,7 @@ void DebuggerCallstackView::OnItemActivated(wxDataViewEvent& event)
         // At this point m_currLevel is pointing to the new stack level
         // set it as the active one
         curitem = m_dvListCtrl->RowToItem(m_currLevel);
-        if(curitem.IsOk()) {
+        if (curitem.IsOk()) {
             wxVariant v;
             v = ::MakeBitmapIndexText(wxString() << m_currLevel, 0);
             m_dvListCtrl->SetValue(v, m_currLevel, 0);
@@ -103,7 +103,7 @@ void DebuggerCallstackView::Update(const StackEntryArray& stackArr)
     m_stack.insert(m_stack.end(), stackArr.begin(), stackArr.end());
     int activeFrame(-1);
     m_dvListCtrl->Begin();
-    for(int i = 0; i < (int)m_stack.size(); i++) {
+    for (int i = 0; i < (int)m_stack.size(); i++) {
         bool isactive = (i == m_currLevel);
         StackEntry entry = m_stack.at(i);
         wxVector<wxVariant> cols;
@@ -114,7 +114,7 @@ void DebuggerCallstackView::Update(const StackEntryArray& stackArr)
         cols.push_back(entry.address);
         StackEntry* d = new StackEntry(entry);
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)d);
-        if(isactive) {
+        if (isactive) {
             activeFrame = i;
         }
     }
@@ -122,7 +122,7 @@ void DebuggerCallstackView::Update(const StackEntryArray& stackArr)
     // Make sure that everything is drawn before we attempt to select anything
     m_dvListCtrl->Commit();
 
-    if(activeFrame != wxNOT_FOUND) {
+    if (activeFrame != wxNOT_FOUND) {
         CallAfter(&DebuggerCallstackView::EnsureRowVisible, activeFrame);
     }
 }
@@ -136,9 +136,9 @@ void DebuggerCallstackView::SetCurrentLevel(const int level)
 void DebuggerCallstackView::Clear()
 {
     m_stack.clear();
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-        if(item.IsOk()) {
+        if (item.IsOk()) {
             StackEntry* entry = reinterpret_cast<StackEntry*>(m_dvListCtrl->GetItemData(item));
             wxDELETE(entry);
         }
@@ -152,8 +152,11 @@ void DebuggerCallstackView::OnMenu(wxDataViewEvent& event)
     wxMenu menu;
 
     menu.Append(XRCID("stack_copy_backtrace"), _("Copy Backtrace to Clipboard"));
-    menu.Connect(XRCID("stack_copy_backtrace"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(DebuggerCallstackView::OnCopyBacktrace), NULL, this);
+    menu.Connect(XRCID("stack_copy_backtrace"),
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(DebuggerCallstackView::OnCopyBacktrace),
+                 NULL,
+                 this);
     m_dvListCtrl->PopupMenu(&menu);
 }
 
@@ -179,7 +182,7 @@ void DebuggerCallstackView::OnFrameSelected(clCommandEvent& e)
 {
     e.Skip();
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+    if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
         // set the frame
         dbgr->QueryFileLine();
     }
@@ -188,7 +191,7 @@ void DebuggerCallstackView::OnFrameSelected(clCommandEvent& e)
 void DebuggerCallstackView::EnsureRowVisible(int row)
 {
     wxDataViewItem item = m_dvListCtrl->RowToItem(row);
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         m_dvListCtrl->Select(item);
         m_dvListCtrl->EnsureVisible(item);
     }

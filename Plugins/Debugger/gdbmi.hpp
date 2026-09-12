@@ -50,7 +50,7 @@ struct StringView {
 
     wxString to_string() const
     {
-        if(!m_pdata) {
+        if (!m_pdata) {
             return wxString();
         } else {
             return wxString(m_pdata, m_length);
@@ -104,7 +104,7 @@ private:
         children.emplace_back(std::make_shared<Node>());
         auto child = children.back();
         child->name = std::move(name);
-        children_map.insert({ child->name, child });
+        children_map.insert({child->name, child});
         return child;
     }
 
@@ -119,7 +119,7 @@ public:
     Node& operator[](const wxString& name) const { return find_child(name); }
     Node& operator[](size_t index) const
     {
-        if(index >= children.size()) {
+        if (index >= children.size()) {
             thread_local Node emptyNode;
             return emptyNode;
         }

@@ -13,7 +13,9 @@ bool clChoice::Create(wxWindow* parent,
                       long style,
                       const wxValidator& validator,
                       const wxString& name)
-{ return wxChoice::Create(parent, id, pos, size, choices, style, validator, name); }
+{
+    return wxChoice::Create(parent, id, pos, size, choices, style, validator, name);
+}
 
 clChoice::clChoice(wxWindow* parent,
                    wxWindowID id,

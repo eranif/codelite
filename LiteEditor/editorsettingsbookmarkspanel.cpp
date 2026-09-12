@@ -31,31 +31,32 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel(wxWindow* parent, Opt
     : OptionsConfigPage(parent, options)
 {
     AddHeader(_("Symbol margin"));
-    AddProperty(_("Display the symbol margin"), m_options->GetDisplayBookmarkMargin(),
+    AddProperty(_("Display the symbol margin"),
+                m_options->GetDisplayBookmarkMargin(),
                 UPDATE_BOOL_CB(SetDisplayBookmarkMargin));
 
     AddHeader(_("Bookmarks"));
-    const std::vector<wxString> UnlocalisedShapes = { wxT("Small Rectangle"), wxT("Rounded Rectangle"), wxT("Circle"),
-                                                      wxT("Small Arrow"), wxT("Bookmark") };
+    const std::vector<wxString> UnlocalisedShapes = {
+        wxT("Small Rectangle"), wxT("Rounded Rectangle"), wxT("Circle"), wxT("Small Arrow"), wxT("Bookmark")};
 
     AddProperty(_("Shape"), UnlocalisedShapes, m_options->GetBookmarkShape(), UPDATE_TEXT_CB(SetBookmarkShape));
 
-    for(size_t n = 0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
+    for (size_t n = 0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
         wxColour col = m_options->GetBookmarkBgColour(n);
-        if(!col.IsOk()) {
+        if (!col.IsOk()) {
             col = "LIGHT BLUE";
         }
         wxString name = wxString() << _("Bookmark #") << n;
         auto update_colours = [this, n](const wxString&, const wxAny& value) {
             wxColour colour_value;
-            if(value.GetAs(&colour_value)) {
+            if (value.GetAs(&colour_value)) {
                 m_options->SetBookmarkBgColour(colour_value, n);
                 m_options->SetBookmarkFgColour(colour_value, n);
             }
         };
         auto update_label = [this, n](const wxString&, const wxAny& value) {
             wxString str_value;
-            if(value.GetAs(&str_value)) {
+            if (value.GetAs(&str_value)) {
                 m_options->SetBookmarkLabel(str_value, n);
             }
         };
@@ -64,12 +65,13 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel(wxWindow* parent, Opt
     }
 
     AddHeader(_("Highlight matches"));
-    AddProperty(_("Colour"), wxColour(EditorConfigST::Get()->GetString(wxT("WordHighlightColour"))),
+    AddProperty(_("Colour"),
+                wxColour(EditorConfigST::Get()->GetString(wxT("WordHighlightColour"))),
                 [](const wxString&, const wxAny& value) {
                     wxColour colour_value;
-                    if(value.GetAs(&colour_value)) {
-                        EditorConfigST::Get()->SetString(wxT("WordHighlightColour"),
-                                                         colour_value.GetAsString(wxC2S_HTML_SYNTAX));
+                    if (value.GetAs(&colour_value)) {
+                        EditorConfigST::Get()->SetString(
+                            wxT("WordHighlightColour"), colour_value.GetAsString(wxC2S_HTML_SYNTAX));
                     }
                 });
     AddProperty(_("Find/Find Next clears highlighted matching words"),

@@ -26,13 +26,13 @@
 #ifndef BUILDCUSTOMTARGETSMENUMANAGER_H
 #define BUILDCUSTOMTARGETSMENUMANAGER_H
 
-#include <wx/string.h>
 #include <map>
+#include <wx/string.h>
 
 class CustomTargetsMgr
 {
 public:
-    using  Pair_t= std::pair<wxString, wxString>;
+    using Pair_t = std::pair<wxString, wxString>;
     using Map_t = std::map<int, Pair_t>;
 
 protected:

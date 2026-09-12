@@ -41,8 +41,8 @@ class PSGeneralPage;
 /** Implementing PSLinkPageBase */
 class PSLinkerPage : public PSLinkPageBase, public IProjectSettingsPage
 {
-    ProjectSettingsDlg *m_dlg;
-    PSGeneralPage*      m_gp;
+    ProjectSettingsDlg* m_dlg;
+    PSGeneralPage* m_gp;
 
 protected:
     void OnPropertyChanged(wxPropertyGridEvent& event) override;
@@ -54,13 +54,12 @@ protected:
 
 public:
     /** Constructor */
-    PSLinkerPage( wxWindow* parent, ProjectSettingsDlg *dlg, PSGeneralPage *gp );
+    PSLinkerPage(wxWindow* parent, ProjectSettingsDlg* dlg, PSGeneralPage* gp);
     //// end generated class members
 
     virtual void Load(BuildConfigPtr buildConf);
     virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
     virtual void Clear();
-
 };
 
 #endif // __ps_linker_page__

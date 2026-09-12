@@ -73,7 +73,9 @@ bool clButtonBase::Create(wxWindow* parent,
                           long style,
                           const wxValidator& validator,
                           const wxString& name)
-{ return wxButton::Create(parent, id, label, pos, size, style, validator, name); }
+{
+    return wxButton::Create(parent, id, label, pos, size, style, validator, name);
+}
 clButtonBase::~clButtonBase() {}
 #else
 clButtonBase::clButtonBase(wxWindow* parent,

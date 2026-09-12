@@ -5,8 +5,8 @@ AccessModifierOffset: -4
 AlignEscapedNewlinesLeft: true
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortBlocksOnASingleLine: true
-AllowShortFunctionsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: All
 #AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
 BreakBeforeBraces: Linux

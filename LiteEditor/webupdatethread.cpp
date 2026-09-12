@@ -23,13 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "precompiled_header.h"
+
 #include "webupdatethread.h"
 
 #include "JSON.h"
 #include "autoversion.h"
 #include "clVersionString.hpp"
 #include "file_logger.h"
-#include "precompiled_header.h"
 #include "procutils.h"
 
 #include <wx/tokenzr.h>
@@ -73,8 +74,8 @@ struct CodeLiteVersion {
      */
     bool IsNewer(const wxString& os, const wxString& codename, const wxString& arch) const
     {
-        clVersionString this_version{ CURRENT_CODELITE_VERSION };
-        clVersionString version_from_web{ m_version };
+        clVersionString this_version{CURRENT_CODELITE_VERSION};
+        clVersionString version_from_web{m_version};
 
         if ((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
             bool res = version_from_web.Compare(CURRENT_CODELITE_VERSION) > 0;

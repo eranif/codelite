@@ -162,7 +162,10 @@ public:
      * Add a breakpoint to the current debugger at the given line-number/file
      * Depending on the parameters, a temporary/ignored/conditional/commandlist bp can be created
      */
-    bool AddBreakpointByLineno(const wxString& file, int lineno, const wxString& conditions = "", bool is_temp = false,
+    bool AddBreakpointByLineno(const wxString& file,
+                               int lineno,
+                               const wxString& conditions = "",
+                               bool is_temp = false,
                                bool is_disabled = false);
 
     /**

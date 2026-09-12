@@ -7,6 +7,7 @@
 #endif
 
 #include <wx/wxprec.h>
+
 #include <wx/app.h>
 #include <wx/artprov.h>
 #include <wx/bitmap.h>
@@ -43,6 +44,5 @@
 #include <wx/treectrl.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
-
 
 #endif // WXCRAFTER_PCH_RELEASE_H

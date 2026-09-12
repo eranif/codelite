@@ -42,25 +42,13 @@ public:
     virtual void Serialize(Archive& arch);
 
     // Setters
-    void SetFileMask(const wxString& fileMask)
-    {
-        this->m_fileMask = fileMask;
-    }
+    void SetFileMask(const wxString& fileMask) { this->m_fileMask = fileMask; }
     void SetFlags(size_t flags) { this->m_flags = flags; }
     // Getters
-    const wxString& GetFileMask() const
-    {
-        return m_fileMask;
-    }
+    const wxString& GetFileMask() const { return m_fileMask; }
     size_t GetFlags() const { return m_flags; }
 
-    void SetBaseDir(const wxString& baseDir)
-    {
-        this->m_baseDir = baseDir;
-    }
-    const wxString& GetBaseDir() const
-    {
-        return m_baseDir;
-    }
+    void SetBaseDir(const wxString& baseDir) { this->m_baseDir = baseDir; }
+    const wxString& GetBaseDir() const { return m_baseDir; }
 };
 #endif // __importfilessettings__

@@ -50,10 +50,14 @@ public:
     void AddSpacer() { AddSeparator(); }
 
     wxToolBarToolBase* AddToggleButton(wxWindowID id, size_t bitmapIndex, const wxString& label = "")
-    { return AddTool(id, label, bitmapIndex, wxEmptyString, wxITEM_CHECK); }
+    {
+        return AddTool(id, label, bitmapIndex, wxEmptyString, wxITEM_CHECK);
+    }
 
     wxToolBarToolBase* AddButton(wxWindowID id, size_t bitmapIndex, const wxString& label = "")
-    { return AddTool(id, label, bitmapIndex, wxEmptyString, wxITEM_NORMAL); }
+    {
+        return AddTool(id, label, bitmapIndex, wxEmptyString, wxITEM_NORMAL);
+    }
 
     bool DeleteById(wxWindowID toolId) { return DeleteTool(toolId); }
 

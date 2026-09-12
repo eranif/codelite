@@ -22,18 +22,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "cl_editor.h"
-#include "globals.h"
-#include "pluginmanager.h"
 #include "precompiled_header.h"
-#include "stringsearcher.h"
 
-#include "bitmap_loader.h"
 #include "cpp_symbol_tree.h"
+
 #include "frame.h"
+#include "globals.h"
 #include "manager.h"
-#include <wx/imaglist.h>
-#include <wx/xrc/xmlres.h>
 
 IMPLEMENT_DYNAMIC_CLASS(CppSymbolTree, SymbolTree)
 
@@ -53,10 +48,12 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool noti
     // holds the key for searching the its corresponding
     // node in the m_tree data structure
     //-----------------------------------------------------
-    if(!item.IsOk()) { return false; }
+    if (!item.IsOk()) {
+        return false;
+    }
 
     MyTreeItemData* itemData = static_cast<MyTreeItemData*>(GetItemData(item));
-    if(!itemData) {
+    if (!itemData) {
         event.Skip();
         return false;
     }
@@ -67,14 +64,16 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool noti
     int lineno = itemData->GetLine();
 
     // Open the file and set the cursor to line number
-    if(clMainFrame::Get()->GetMainBook()->OpenFile(filename, project, lineno - 1)) {
+    if (clMainFrame::Get()->GetMainBook()->OpenFile(filename, project, lineno - 1)) {
         // get the editor, and search for the pattern in the file
         clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-        if(editor) { FindAndSelect(editor, pattern, GetItemText(item)); }
+        if (editor) {
+            FindAndSelect(editor, pattern, GetItemText(item));
+        }
     }
 
     // post an event that an item was activated
-    if(notify) {
+    if (notify) {
         wxCommandEvent e(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED);
         e.SetEventObject(this);
         wxPostEvent(GetEventHandler(), e);

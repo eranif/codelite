@@ -27,6 +27,7 @@
 
 #include "clThemedListCtrl.h"
 #include "debugger.h"
+
 #include <vector>
 
 class BreakpointsListctrl : public clThemedListCtrl
@@ -46,15 +47,27 @@ class BreakpointsListctrl : public clThemedListCtrl
     };
 
 public:
-    BreakpointsListctrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxDefaultSize, long style = wxDV_ROW_LINES)
+    BreakpointsListctrl(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxDefaultSize,
+                        long style = wxDV_ROW_LINES)
         : clThemedListCtrl(parent, id, pos, size, style)
     {
         // Disable any kind of sorting as we want the item in the order we insert them
         SetSortFunction(nullptr);
-        const wxString column_headers[] = { _("ID"), _("Type"),   _("Enabled"), _("File"),    _("Line"),  _("Function"),
-                                            _("At"), _("Memory"), _("What"),    _("Ignored"), _("Extras") };
-        for(int n = col_id; n <= col_extras; ++n) {
+        const wxString column_headers[] = {_("ID"),
+                                           _("Type"),
+                                           _("Enabled"),
+                                           _("File"),
+                                           _("Line"),
+                                           _("Function"),
+                                           _("At"),
+                                           _("Memory"),
+                                           _("What"),
+                                           _("Ignored"),
+                                           _("Extras")};
+        for (int n = col_id; n <= col_extras; ++n) {
             AddHeader(column_headers[n]);
         }
     }

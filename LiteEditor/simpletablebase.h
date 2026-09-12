@@ -103,8 +103,11 @@ protected:
     int m_LIST_CHILDREN;
 
 public:
-    DebuggerTreeListCtrlBase(wxWindow* parent, wxWindowID id = wxID_ANY, bool withButtonsPane = true,
-                             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+    DebuggerTreeListCtrlBase(wxWindow* parent,
+                             wxWindowID id = wxID_ANY,
+                             bool withButtonsPane = true,
+                             const wxPoint& pos = wxDefaultPosition,
+                             const wxSize& size = wxSize(500, 300),
                              long style = wxTAB_TRAVERSAL);
     ~DebuggerTreeListCtrlBase() = default;
 

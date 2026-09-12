@@ -48,7 +48,7 @@ struct EditorDimmerDisabler {
     EditorDimmerDisabler(clEditor* editor)
         : m_editor(editor)
     {
-        if(m_editor) {
+        if (m_editor) {
             m_editor->SetPreProcessorsWords("");
             m_editor->GetCtrl()->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
             m_editor->GetCtrl()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
@@ -64,8 +64,8 @@ CodeCompletionManager::CodeCompletionManager()
     , m_buildInProgress(false)
 {
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &CodeCompletionManager::OnBuildStarted, this);
-    EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
-                               &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
 
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &CodeCompletionManager::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &CodeCompletionManager::OnFileLoaded, this);
@@ -74,12 +74,12 @@ CodeCompletionManager::CodeCompletionManager()
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
 
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &CodeCompletionManager::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED,
-                               &CodeCompletionManager::OnEnvironmentVariablesModified, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE, &CodeCompletionManager::OnBlockCommentCodeComplete,
-                               this);
-    EventNotifier::Get()->Bind(wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE, &CodeCompletionManager::OnBlockCommentWordComplete,
-                               this);
+    EventNotifier::Get()->Bind(
+        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &CodeCompletionManager::OnEnvironmentVariablesModified, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE, &CodeCompletionManager::OnBlockCommentCodeComplete, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE, &CodeCompletionManager::OnBlockCommentWordComplete, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &CodeCompletionManager::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_ADDED, &CodeCompletionManager::OnFilesAdded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &CodeCompletionManager::OnWorkspaceLoaded, this);
@@ -92,28 +92,28 @@ CodeCompletionManager::~CodeCompletionManager()
 {
     EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_ADDED, &CodeCompletionManager::OnFilesAdded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &CodeCompletionManager::OnWorkspaceLoaded, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE,
-                                 &CodeCompletionManager::OnBlockCommentCodeComplete, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE,
-                                 &CodeCompletionManager::OnBlockCommentWordComplete, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE, &CodeCompletionManager::OnBlockCommentCodeComplete, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE, &CodeCompletionManager::OnBlockCommentWordComplete, this);
 
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &CodeCompletionManager::OnBuildEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTED, &CodeCompletionManager::OnBuildStarted, this);
-    EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
-                                 &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &CodeCompletionManager::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &CodeCompletionManager::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CONFIG_CHANGED, &CodeCompletionManager::OnWorkspaceConfig, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_PROJ_SETTINGS_SAVED, &CodeCompletionManager::OnWorkspaceConfig, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &CodeCompletionManager::OnWorkspaceClosed, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
-    EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED,
-                                 &CodeCompletionManager::OnEnvironmentVariablesModified, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &CodeCompletionManager::OnEnvironmentVariablesModified, this);
 }
 
 CodeCompletionManager& CodeCompletionManager::Get()
 {
-    if(!ms_CodeCompletionManager) {
+    if (!ms_CodeCompletionManager) {
         ms_CodeCompletionManager = new CodeCompletionManager;
     }
     return *ms_CodeCompletionManager;
@@ -149,26 +149,23 @@ void CodeCompletionManager::OnFileLoaded(clCommandEvent& event) { event.Skip(); 
 void CodeCompletionManager::OnWorkspaceConfig(wxCommandEvent& event)
 {
     event.Skip();
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         clCxxWorkspaceST::Get()->ClearBacktickCache();
     }
 
     // Update the compile_flags.txt file
-    if(m_compileCommandsGenerator) {
+    if (m_compileCommandsGenerator) {
         clDEBUG() << "Workspace configuration changed. Re-Generating compile_flags.txt file";
         m_compileCommandsGenerator->GenerateCompileCommands();
     }
 }
 
-void CodeCompletionManager::OnWorkspaceClosed(clWorkspaceEvent& event)
-{
-    event.Skip();
-}
+void CodeCompletionManager::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
 
 void CodeCompletionManager::OnEnvironmentVariablesModified(clCommandEvent& event)
 {
     event.Skip();
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         clCxxWorkspaceST::Get()->ClearBacktickCache();
     }
 }
@@ -180,15 +177,15 @@ void CodeCompletionManager::OnBlockCommentCodeComplete(clCodeCompletionEvent& ev
     CHECK_PTR_RET(ctrl);
 
     wxCodeCompletionBoxEntry::Vec_t entries;
-    if(CreateBlockCommentKeywordsList(entries) == 0) {
+    if (CreateBlockCommentKeywordsList(entries) == 0) {
         return;
     }
     wxCodeCompletionBox::BmpVec_t bitmaps;
     bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("cpp_keyword"));
 
     int startPos = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, bitmaps, wxCodeCompletionBox::kRefreshOnKeyType,
-                                                        startPos);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        ctrl, entries, bitmaps, wxCodeCompletionBox::kRefreshOnKeyType, startPos);
 }
 
 void CodeCompletionManager::OnBlockCommentWordComplete(clCodeCompletionEvent& event)
@@ -198,26 +195,25 @@ void CodeCompletionManager::OnBlockCommentWordComplete(clCodeCompletionEvent& ev
     CHECK_PTR_RET(ctrl);
 
     wxCodeCompletionBoxEntry::Vec_t entries;
-    if(CreateBlockCommentKeywordsList(entries) == 0) {
+    if (CreateBlockCommentKeywordsList(entries) == 0) {
         return;
     }
     wxCodeCompletionBox::BmpVec_t bitmaps;
     bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("cpp_keyword"));
 
     int startPos = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, bitmaps, wxCodeCompletionBox::kRefreshOnKeyType,
-                                                        startPos);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+        ctrl, entries, bitmaps, wxCodeCompletionBox::kRefreshOnKeyType, startPos);
 }
 
 size_t CodeCompletionManager::CreateBlockCommentKeywordsList(wxCodeCompletionBoxEntry::Vec_t& entries) const
 {
     entries.clear();
-    std::vector<wxString> keywords = { "api",        "author",   "brief",         "category",       "copyright",
-                                       "deprecated", "example",  "filesource",    "global",         "ignore",
-                                       "internal",   "license",  "link",          "method",         "package",
-                                       "param",      "property", "property-read", "property-write", "return",
-                                       "see",        "since",    "source",        "subpackage",     "throws",
-                                       "todo",       "uses",     "var",           "version" };
+    std::vector<wxString> keywords = {
+        "api",      "author",        "brief",          "category", "copyright", "deprecated", "example", "filesource",
+        "global",   "ignore",        "internal",       "license",  "link",      "method",     "package", "param",
+        "property", "property-read", "property-write", "return",   "see",       "since",      "source",  "subpackage",
+        "throws",   "todo",          "uses",           "var",      "version"};
     for (const wxString& keyword : keywords) {
         entries.push_back(wxCodeCompletionBoxEntry::New(keyword, 0));
     }

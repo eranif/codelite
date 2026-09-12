@@ -40,7 +40,9 @@ MoveFuncImplDlg::MoveFuncImplDlg(wxWindow* parent, const wxString& text, const w
 {
     m_filePicker->SetPath(fileName);
     LexerConf::Ptr_t lexerCpp = ColoursAndFontsManager::Get().GetLexer("c++");
-    if(lexerCpp) { lexerCpp->Apply(m_preview, true); }
+    if (lexerCpp) {
+        lexerCpp->Apply(m_preview, true);
+    }
 
     // Format the source code before using it
     clSourceFormatEvent event(wxEVT_FORMAT_STRING);
@@ -48,7 +50,7 @@ MoveFuncImplDlg::MoveFuncImplDlg(wxWindow* parent, const wxString& text, const w
     event.SetFileName(wxFileName(fileName).GetFullName());
 
     EventNotifier::Get()->ProcessEvent(event);
-    if(!event.GetFormattedString().IsEmpty()) {
+    if (!event.GetFormattedString().IsEmpty()) {
         m_preview->SetText(event.GetFormattedString());
     } else {
         m_preview->SetText(text);
@@ -75,9 +77,9 @@ void MoveFuncImplDlg::OnButtonOK(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     // make sure that the file exist
-    if(!wxFileName::FileExists(m_filePicker->GetPath())) {
-        wxMessageBox(_("File: ") + m_filePicker->GetPath() + _(" does not exist"), wxT("CodeLite"),
-                     wxICON_WARNING | wxOK);
+    if (!wxFileName::FileExists(m_filePicker->GetPath())) {
+        wxMessageBox(
+            _("File: ") + m_filePicker->GetPath() + _(" does not exist"), wxT("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
     EndModal(wxID_OK);

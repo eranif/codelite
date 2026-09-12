@@ -41,7 +41,9 @@ StyleProperty::StyleProperty(int id,
     , m_fontDesc(fontDesc)
     , m_fgColour(fgColour)
     , m_bgColour(bgColour)
-{ EnableFlag(kEolFilled, eolFilled); }
+{
+    EnableFlag(kEolFilled, eolFilled);
+}
 
 void StyleProperty::FromJSON(const JSONItem& json)
 {

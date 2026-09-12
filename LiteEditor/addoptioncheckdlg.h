@@ -35,7 +35,9 @@ protected:
     Compiler::CmpCmdLineOptions m_cmpOptions;
 
 public:
-    AddOptionCheckDlg(wxWindow* parent, const wxString& title, const Compiler::CmpCmdLineOptions& cmpOptions,
+    AddOptionCheckDlg(wxWindow* parent,
+                      const wxString& title,
+                      const Compiler::CmpCmdLineOptions& cmpOptions,
                       const wxString& value = wxEmptyString);
     virtual ~AddOptionCheckDlg() = default;
 

@@ -90,8 +90,10 @@ void PSCustomBuildPage::OnNewTarget(wxCommandEvent& event)
     if (dlg.ShowModal() == wxID_OK) {
         GetDlg()->SetIsDirty(true);
         if (GetTargetCommand(dlg.GetName()).IsEmpty() == false) {
-            wxMessageBox(wxString::Format(_("Target '%s' already exist!"), dlg.GetName().c_str()), wxT("CodeLite"),
-                         wxICON_WARNING | wxCENTER | wxOK, this);
+            wxMessageBox(wxString::Format(_("Target '%s' already exist!"), dlg.GetName().c_str()),
+                         wxT("CodeLite"),
+                         wxICON_WARNING | wxCENTER | wxOK,
+                         this);
             return;
         }
         wxVector<wxVariant> cols;
@@ -200,9 +202,12 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
 
     m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_BUILD, buildConf->GetCustomBuildCmd()});
     m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_CLEAN, buildConf->GetCustomCleanCmd()});
-    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_REBUILD, buildConf->GetCustomRebuildCmd()});
-    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE, buildConf->GetSingleFileBuildCommand()});
-    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_PREPROCESS_FILE, buildConf->GetPreprocessFileCommand()});
+    m_dvListCtrlTargets->AppendItem(
+        {ProjectCustomBuildTargetDlg::CUSTOM_TARGET_REBUILD, buildConf->GetCustomRebuildCmd()});
+    m_dvListCtrlTargets->AppendItem(
+        {ProjectCustomBuildTargetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE, buildConf->GetSingleFileBuildCommand()});
+    m_dvListCtrlTargets->AppendItem(
+        {ProjectCustomBuildTargetDlg::CUSTOM_TARGET_PREPROCESS_FILE, buildConf->GetPreprocessFileCommand()});
 
     // Initialize the custom build targets
     for (const auto& p : buildConf->GetCustomTargets()) {

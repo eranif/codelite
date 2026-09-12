@@ -31,8 +31,8 @@ EditorOptionsGeneralIndentationPanel::EditorOptionsGeneralIndentationPanel(wxWin
     : OptionsConfigPage(parent, options)
 {
     AddHeader(_("Indentation settings"));
-    AddProperty(_("Disable Smart Indentation"), m_options->GetDisableSmartIndent(),
-                UPDATE_BOOL_CB(SetDisableSmartIndent));
+    AddProperty(
+        _("Disable Smart Indentation"), m_options->GetDisableSmartIndent(), UPDATE_BOOL_CB(SetDisableSmartIndent));
     AddProperty(_("Use tabs"), m_options->GetIndentUsesTabs(), UPDATE_BOOL_CB(SetIndentUsesTabs));
     AddProperty(_("Columns per indentation level"), m_options->GetIndentWidth(), UPDATE_INT_CB(SetIndentWidth));
     AddProperty(_("Tab width"), m_options->GetTabWidth(), UPDATE_INT_CB(SetTabWidth));

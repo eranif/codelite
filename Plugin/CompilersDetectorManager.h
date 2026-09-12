@@ -46,7 +46,9 @@ public:
     bool FoundMinGWCompiler() const;
 
     void SetCompilersFound(const ICompilerLocator::CompilerVec_t& compilersFound)
-    { this->m_compilersFound = compilersFound; }
+    {
+        this->m_compilersFound = compilersFound;
+    }
     void SetDetectors(const ICompilerLocator::Vect_t& detectors) { this->m_detectors = detectors; }
     const ICompilerLocator::CompilerVec_t& GetCompilersFound() const { return m_compilersFound; }
     const ICompilerLocator::Vect_t& GetDetectors() const { return m_detectors; }

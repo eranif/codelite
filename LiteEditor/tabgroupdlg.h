@@ -26,64 +26,55 @@
 #ifndef __tabgroupdlg__
 #define __tabgroupdlg__
 
-#include "tabgroupbasedlgs.hpp"
 #include "sessionmanager.h"
+#include "tabgroupbasedlgs.hpp"
 
 class LoadTabGroupDlg : public LoadTabGroupBaseDlg
 {
-	virtual void OnBrowse( wxCommandEvent& WXUNUSED(event) );
-	virtual void OnItemActivated( wxCommandEvent& WXUNUSED(event) );
+    virtual void OnBrowse(wxCommandEvent& WXUNUSED(event));
+    virtual void OnItemActivated(wxCommandEvent& WXUNUSED(event));
 
 public:
-	LoadTabGroupDlg(wxWindow* parent, const wxString& path, const wxArrayString& previousgroups);
+    LoadTabGroupDlg(wxWindow* parent, const wxString& path, const wxArrayString& previousgroups);
     virtual ~LoadTabGroupDlg() = default;
 
-	void SetListTabs(const wxArrayString& tabs) {
-		m_listBox->Set(tabs);
-	}
+    void SetListTabs(const wxArrayString& tabs) { m_listBox->Set(tabs); }
 
-	void InsertListItem(const wxString& item);
+    void InsertListItem(const wxString& item);
 
-	void EnableReplaceCheck(bool value) {
-		m_replaceCheck->Enable(value);
-	}
+    void EnableReplaceCheck(bool value) { m_replaceCheck->Enable(value); }
 
-	wxListBox* GetListBox() {
-		return m_listBox;
-	}
+    wxListBox* GetListBox() { return m_listBox; }
 
-	bool GetReplaceCheck() {
-		return m_replaceCheck->IsChecked();
-	}
+    bool GetReplaceCheck() { return m_replaceCheck->IsChecked(); }
 };
 
 class SaveTabGroupDlg : public SaveTabGroupBaseDlg
 {
-	virtual void OnCheckAll( wxCommandEvent& event );
-	virtual void OnCheckAllUpdateUI( wxUpdateUIEvent& event );
-	virtual void OnClearAll( wxCommandEvent& event );
-	virtual void OnClearAllUpdateUI( wxUpdateUIEvent& event );
+    virtual void OnCheckAll(wxCommandEvent& event);
+    virtual void OnCheckAllUpdateUI(wxUpdateUIEvent& event);
+    virtual void OnClearAll(wxCommandEvent& event);
+    virtual void OnClearAllUpdateUI(wxUpdateUIEvent& event);
+
 public:
-	SaveTabGroupDlg(wxWindow* parent, const wxArrayString& previousgroups);
+    SaveTabGroupDlg(wxWindow* parent, const wxArrayString& previousgroups);
     virtual ~SaveTabGroupDlg() = default;
-	void SetListTabs(const wxArrayString& tabs) {
-		m_ListTabs->Set(tabs);
-		for ( unsigned int n=0; n < m_ListTabs->GetCount(); ++n ) {
-			m_ListTabs->Check(n, true);
-		}
-	}
+    void SetListTabs(const wxArrayString& tabs)
+    {
+        m_ListTabs->Set(tabs);
+        for (unsigned int n = 0; n < m_ListTabs->GetCount(); ++n) {
+            m_ListTabs->Check(n, true);
+        }
+    }
 
-	void SetTextName(const wxString& name) {
-		m_textName->SetValue(name);
-	}
+    void SetTextName(const wxString& name) { m_textName->SetValue(name); }
 
-	bool GetChoices(wxArrayInt& intArr) const;
+    bool GetChoices(wxArrayInt& intArr) const;
 
-	wxString GetTabgroupName() const {
-		return m_textName->GetValue();
-	}
+    wxString GetTabgroupName() const { return m_textName->GetValue(); }
 
-    bool GetSaveInWorkspace() const {
+    bool GetSaveInWorkspace() const
+    {
         return m_radioBoxWorkspaceOrGlobal->IsShown() && m_radioBoxWorkspaceOrGlobal->GetSelection() == 0;
     }
 };

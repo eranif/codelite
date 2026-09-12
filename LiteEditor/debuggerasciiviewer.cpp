@@ -34,22 +34,23 @@
 #include "manager.h"
 #include "plugin.h"
 
-static void sDefineMarker(wxStyledTextCtrl *s, int marker, int markerType, wxColor fore, wxColor back)
+static void sDefineMarker(wxStyledTextCtrl* s, int marker, int markerType, wxColor fore, wxColor back)
 {
     s->MarkerDefine(marker, markerType);
     s->MarkerSetForeground(marker, fore);
     s->MarkerSetBackground(marker, back);
 }
 
-DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
-    : DebuggerAsciiViewerBase( parent )
+DebuggerAsciiViewer::DebuggerAsciiViewer(wxWindow* parent)
+    : DebuggerAsciiViewerBase(parent)
 {
-    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerAsciiViewer::OnThemeColourChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerAsciiViewer::OnThemeColourChanged), NULL, this);
     LexerConf::Ptr_t cpp_lexer = EditorConfigST::Get()->GetLexer("C++");
-    if ( cpp_lexer ) {
-        cpp_lexer->Apply( m_textView );
+    if (cpp_lexer) {
+        cpp_lexer->Apply(m_textView);
         m_textView->SetLexer(wxSTC_LEX_CPP);
-        
+
     } else {
         // This code should not be called at all...
         // but still - just in case
@@ -65,13 +66,38 @@ DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
         m_textView->SetMarginSensitive(4, true);
         m_textView->SetProperty(wxT("fold"), wxT("1"));
 
-        sDefineMarker(m_textView, wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        sDefineMarker(m_textView, wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        sDefineMarker(m_textView, wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        sDefineMarker(m_textView, wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        sDefineMarker(m_textView, wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_BOXPLUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        sDefineMarker(m_textView, wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_BOXMINUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        sDefineMarker(m_textView, wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        sDefineMarker(m_textView,
+                      wxSTC_MARKNUM_FOLDEROPEN,
+                      wxSTC_MARK_BOXMINUS,
+                      wxColor(0xff, 0xff, 0xff),
+                      wxColor(0x80, 0x80, 0x80));
+        sDefineMarker(
+            m_textView, wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        sDefineMarker(m_textView,
+                      wxSTC_MARKNUM_FOLDERSUB,
+                      wxSTC_MARK_VLINE,
+                      wxColor(0xff, 0xff, 0xff),
+                      wxColor(0x80, 0x80, 0x80));
+        sDefineMarker(m_textView,
+                      wxSTC_MARKNUM_FOLDERTAIL,
+                      wxSTC_MARK_LCORNER,
+                      wxColor(0xff, 0xff, 0xff),
+                      wxColor(0x80, 0x80, 0x80));
+        sDefineMarker(m_textView,
+                      wxSTC_MARKNUM_FOLDEREND,
+                      wxSTC_MARK_BOXPLUSCONNECTED,
+                      wxColor(0xff, 0xff, 0xff),
+                      wxColor(0x80, 0x80, 0x80));
+        sDefineMarker(m_textView,
+                      wxSTC_MARKNUM_FOLDEROPENMID,
+                      wxSTC_MARK_BOXMINUSCONNECTED,
+                      wxColor(0xff, 0xff, 0xff),
+                      wxColor(0x80, 0x80, 0x80));
+        sDefineMarker(m_textView,
+                      wxSTC_MARKNUM_FOLDERMIDTAIL,
+                      wxSTC_MARK_TCORNER,
+                      wxColor(0xff, 0xff, 0xff),
+                      wxColor(0x80, 0x80, 0x80));
 
         // set wrapped line indicator
         m_textView->SetWrapVisualFlags(1);
@@ -87,28 +113,31 @@ DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
 
         // Set TELETYPE font (monospace)
         m_textView->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
-        m_textView->StyleSetSize(wxSTC_STYLE_DEFAULT, 12  );
+        m_textView->StyleSetSize(wxSTC_STYLE_DEFAULT, 12);
     }
-    
+
     m_textView->SetReadOnly(true);
 
-    wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit),   NULL, this);
-    wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit),   NULL, this);
-    wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
-    wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+    wxTheApp->Connect(
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), NULL, this);
+    wxTheApp->Connect(
+        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), NULL, this);
+    wxTheApp->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+    wxTheApp->Connect(
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
 }
 
 bool DebuggerAsciiViewer::IsFocused()
 {
-    wxWindow *win = wxWindow::FindFocus();
+    wxWindow* win = wxWindow::FindFocus();
     return (win && win == m_textView);
 }
 
-void DebuggerAsciiViewer::UpdateView(const wxString &expr, const wxString &value)
+void DebuggerAsciiViewer::UpdateView(const wxString& expr, const wxString& value)
 {
     m_textCtrlExpression->SetValue(expr);
 
-    wxString evaluated (value);
+    wxString evaluated(value);
     evaluated.Replace(wxT("\r\n"), wxT("\n"));
     evaluated.Replace(wxT("\n,"), wxT(",\n"));
     evaluated.Replace(wxT("\n\n"), wxT("\n"));
@@ -117,7 +146,6 @@ void DebuggerAsciiViewer::UpdateView(const wxString &expr, const wxString &value
     m_textView->ClearAll();
     m_textView->SetText(evaluated);
     m_textView->SetReadOnly(true);
-
 }
 
 void DebuggerAsciiViewer::OnClearView(wxCommandEvent& e)
@@ -126,19 +154,18 @@ void DebuggerAsciiViewer::OnClearView(wxCommandEvent& e)
     UpdateView(wxT(""), wxT(""));
 }
 
-
 void DebuggerAsciiViewer::OnEditUI(wxUpdateUIEvent& e)
 {
-    if ( !IsFocused() ) {
+    if (!IsFocused()) {
         e.Skip();
         return;
     }
-    switch ( e.GetId() ) {
+    switch (e.GetId()) {
     case wxID_SELECTALL:
         e.Enable(true);
         break;
     case wxID_COPY:
-        e.Enable( m_textView->GetSelectedText().IsEmpty() == false );
+        e.Enable(m_textView->GetSelectedText().IsEmpty() == false);
         break;
     default:
         e.Enable(false);
@@ -148,12 +175,12 @@ void DebuggerAsciiViewer::OnEditUI(wxUpdateUIEvent& e)
 
 void DebuggerAsciiViewer::OnEdit(wxCommandEvent& e)
 {
-    if ( !IsFocused() ) {
+    if (!IsFocused()) {
         e.Skip();
         return;
     }
 
-    switch ( e.GetId() ) {
+    switch (e.GetId()) {
     case wxID_SELECTALL:
         m_textView->SelectAll();
         break;
@@ -167,20 +194,24 @@ void DebuggerAsciiViewer::OnEdit(wxCommandEvent& e)
 
 DebuggerAsciiViewer::~DebuggerAsciiViewer()
 {
-    wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit),   NULL, this);
-    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit),   NULL, this);
-    wxTheApp->Disconnect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
-    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerAsciiViewer::OnThemeColourChanged), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), NULL, this);
+    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+    wxTheApp->Disconnect(
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerAsciiViewer::OnThemeColourChanged), NULL, this);
 }
 
 void DebuggerAsciiViewer::OnThemeColourChanged(wxCommandEvent& e)
 {
     e.Skip();
-    
+
     // Re-apply C++ lexer
     LexerConf::Ptr_t cpp_lexer = EditorConfigST::Get()->GetLexer("C++");
-    if ( cpp_lexer ) {
-        cpp_lexer->Apply( m_textView );
+    if (cpp_lexer) {
+        cpp_lexer->Apply(m_textView);
     }
 }

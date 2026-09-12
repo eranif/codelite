@@ -30,15 +30,17 @@
 
 class clEditor;
 
-
 class CLTextCommand : public CLCommand
 {
 public:
-    CLTextCommand(CLC_types type, const wxString& name="") : CLCommand(type, name)
-    {}
+    CLTextCommand(CLC_types type, const wxString& name = "")
+        : CLCommand(type, name)
+    {
+    }
     virtual ~CLTextCommand() = default;
 
-    virtual bool GetIsAppendable() const { // We can append to a text command
+    virtual bool GetIsAppendable() const
+    { // We can append to a text command
         return true;
     }
 };
@@ -46,14 +48,20 @@ public:
 class CLInsertTextCommand : public CLTextCommand
 {
 public:
-    CLInsertTextCommand(const wxString& name="insertion:") : CLTextCommand(CLC_insert, name) {}
+    CLInsertTextCommand(const wxString& name = "insertion:")
+        : CLTextCommand(CLC_insert, name)
+    {
+    }
     virtual ~CLInsertTextCommand() = default;
 };
 
 class CLDeleteTextCommand : public CLTextCommand
 {
 public:
-    CLDeleteTextCommand(const wxString& name="deletion:") : CLTextCommand(CLC_delete, name) {}
+    CLDeleteTextCommand(const wxString& name = "deletion:")
+        : CLTextCommand(CLC_delete, name)
+    {
+    }
     virtual ~CLDeleteTextCommand() = default;
 };
 
@@ -66,19 +74,16 @@ public:
     void StartNewTextCommand(CLC_types type, const wxString& text = "");
 
     void AppendToTextCommand(const wxString& text, int position);
-    
+
     virtual void ProcessOpenCommand();
 
-    clEditor* GetParent() const {
-        return m_parent;
-    }
+    clEditor* GetParent() const { return m_parent; }
 
-    void SetParent(clEditor* parent) {
-        m_parent = parent;
-    }
+    void SetParent(clEditor* parent) { m_parent = parent; }
 
-    void Reset() { // Like Clear() but retain m_initialCommand. Used when an editor is reloaded
-       m_commands.clear();
+    void Reset()
+    { // Like Clear() but retain m_initialCommand. Used when an editor is reloaded
+        m_commands.clear();
     }
 
     void CloseSciUndoAction() const; // Closes any open undo action at the scintilla level
@@ -89,7 +94,6 @@ public:
 
 protected:
     clEditor* m_parent;
-
 };
 
 #endif // CLUNREDO_H

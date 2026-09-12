@@ -46,19 +46,19 @@ void ContextGeneric::ApplySettings()
 {
     LexerConf::Ptr_t lexPtr = ColoursAndFontsManager::Get().GetLexer(GetName());
     clEditor& rCtrl = GetCtrl();
-    if(lexPtr) {
+    if (lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
-        for(int i = 0; i <= 4; ++i) {
+        for (int i = 0; i <= 4; ++i) {
             wxString keyWords = lexPtr->GetKeyWords(i);
             keyWords.Replace(wxT("\n"), wxT(" "));
             keyWords.Replace(wxT("\r"), wxT(" "));
             rCtrl.SetKeyWords(i, keyWords);
         }
 
-        if(lexPtr->GetName() == "css") {
+        if (lexPtr->GetName() == "css") {
             // set the word characters for the CSS lexer
             GetCtrl().SetWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-@");
-        } else if(lexPtr->GetName() == "script") {
+        } else if (lexPtr->GetName() == "script") {
             // script (e.g. bash) should include the $ sign
             GetCtrl().SetWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$");
         }
@@ -71,8 +71,8 @@ void ContextGeneric::ApplySettings()
 void ContextGeneric::ProcessIdleActions()
 {
     clEditor& ctrl = GetCtrl();
-    if((ctrl.GetLexerId() == wxSTC_LEX_XML) || (ctrl.GetLexerId() == wxSTC_LEX_PHPSCRIPT) ||
-       (ctrl.GetLexerId() == wxSTC_LEX_HTML)) {
+    if ((ctrl.GetLexerId() == wxSTC_LEX_XML) || (ctrl.GetLexerId() == wxSTC_LEX_PHPSCRIPT) ||
+        (ctrl.GetLexerId() == wxSTC_LEX_HTML)) {
         // XML lexer, highlight XML tags
         // Update the word chars
         clEditorXmlHelper xmlHelper(ctrl.GetCtrl());
@@ -81,7 +81,7 @@ void ContextGeneric::ProcessIdleActions()
         // Highlight matching tags
         int startPos, endPos;
         wxString word = xmlHelper.GetXmlTagAt(ctrl.GetCurrentPosition(), startPos, endPos);
-        if(word.IsEmpty()) {
+        if (word.IsEmpty()) {
             ctrl.SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
             ctrl.IndicatorClearRange(0, ctrl.GetLength());
             return;
@@ -93,7 +93,7 @@ void ContextGeneric::ProcessIdleActions()
         wxString searchWhat;
         wxString closeTag;
 
-        if(reOpenHtmlTag.Matches(word)) {
+        if (reOpenHtmlTag.Matches(word)) {
             searchWhat = reOpenHtmlTag.GetMatch(word, 1);
             closeTag << "</" << searchWhat << ">";
             wxRegEx reOpenTag("<" + searchWhat + "[>]?", wxRE_ADVANCED | wxRE_ICASE);
@@ -102,10 +102,10 @@ void ContextGeneric::ProcessIdleActions()
             int depth = 0;
             int where = FindNext(searchWhat, pos, true);
 
-            while(where != wxNOT_FOUND) {
+            while (where != wxNOT_FOUND) {
                 int startPos2, endPos2;
                 word = xmlHelper.GetXmlTagAt(where, startPos2, endPos2);
-                if((closeTag == word) && (depth == 0)) {
+                if ((closeTag == word) && (depth == 0)) {
                     // We got the closing brace
                     ctrl.SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
                     ctrl.IndicatorClearRange(0, ctrl.GetLength());
@@ -115,21 +115,21 @@ void ContextGeneric::ProcessIdleActions()
                     ctrl.IndicatorFillRange(startPos2, endPos2 - startPos2);
                     return;
 
-                } else if(closeTag == word) {
+                } else if (closeTag == word) {
                     --depth;
-                } else if(reOpenTag.Matches(word)) {
+                } else if (reOpenTag.Matches(word)) {
                     depth++;
                 }
                 where = FindNext(searchWhat, pos, true);
             }
 
-        } else if(reCloseHtmlTag.Matches(word)) {
+        } else if (reCloseHtmlTag.Matches(word)) {
             searchWhat = reCloseHtmlTag.GetMatch(word, 1);
             closeTag << "</" << searchWhat << ">";
 
             wxString reString = "<" + searchWhat + "[>]?";
             wxRegEx reOpenTag(reString, wxRE_DEFAULT | wxRE_ICASE);
-            if(!reOpenTag.IsValid()) {
+            if (!reOpenTag.IsValid()) {
                 clDEBUG() << "Invalid regex:" << reString << clEndl;
             }
 
@@ -137,10 +137,10 @@ void ContextGeneric::ProcessIdleActions()
             int depth = 0;
             int where = FindPrev(searchWhat, pos, true);
 
-            while(where != wxNOT_FOUND) {
+            while (where != wxNOT_FOUND) {
                 int startPos2, endPos2;
                 word = xmlHelper.GetXmlTagAt(where, startPos2, endPos2);
-                if(reOpenTag.Matches(word) && (depth == 0)) {
+                if (reOpenTag.Matches(word) && (depth == 0)) {
                     // We got the closing brace
                     ctrl.SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
                     ctrl.IndicatorClearRange(0, ctrl.GetLength());
@@ -150,9 +150,9 @@ void ContextGeneric::ProcessIdleActions()
                     ctrl.IndicatorFillRange(startPos2, endPos2 - startPos2);
                     return;
 
-                } else if(closeTag == word) {
+                } else if (closeTag == word) {
                     ++depth;
-                } else if(reOpenTag.Matches(word)) {
+                } else if (reOpenTag.Matches(word)) {
                     --depth;
                 }
                 where = FindPrev(searchWhat, pos, true);

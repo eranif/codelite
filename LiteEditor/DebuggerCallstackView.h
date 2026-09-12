@@ -41,7 +41,7 @@ protected:
     void OnUpdateBacktrace(clCommandEvent& e);
     void OnFrameSelected(clCommandEvent& e);
     void EnsureRowVisible(int row);
-    
+
 public:
     virtual void OnMenu(wxDataViewEvent& event);
     virtual void OnItemActivated(wxDataViewEvent& event);

@@ -33,8 +33,11 @@ protected:
     void DoConfigChanged(const wxString& newConfigName);
 
 public:
-    clConfigurationSelectionCtrl(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                                 const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL);
+    clConfigurationSelectionCtrl(wxWindow* parent,
+                                 wxWindowID winid = wxID_ANY,
+                                 const wxPoint& pos = wxDefaultPosition,
+                                 const wxSize& size = wxDefaultSize,
+                                 long style = wxTAB_TRAVERSAL);
     virtual ~clConfigurationSelectionCtrl();
 
     /**

@@ -34,7 +34,7 @@
     [this](const wxString& label, const wxAny& value) { \
         wxUnusedVar(label);                             \
         bool value_bool = false;                        \
-        if(value.GetAs(&value_bool)) {                  \
+        if (value.GetAs(&value_bool)) {                 \
             m_options->SetterMethod(value_bool);        \
         }                                               \
     }
@@ -43,7 +43,7 @@
     [](const wxString& label, const wxAny& value) {          \
         wxUnusedVar(label);                                  \
         bool value_bool = false;                             \
-        if(value.GetAs(&value_bool)) {                       \
+        if (value.GetAs(&value_bool)) {                      \
             clConfig::Get().Write(PropertyName, value_bool); \
         }                                                    \
     }
@@ -52,7 +52,7 @@
     [](const wxString& label, const wxAny& value) {          \
         wxUnusedVar(label);                                  \
         int value_long = false;                              \
-        if(value.GetAs(&value_long)) {                       \
+        if (value.GetAs(&value_long)) {                      \
             clConfig::Get().Write(PropertyName, value_long); \
         }                                                    \
     }
@@ -61,7 +61,7 @@
     [](const wxString& label, const wxAny& value) {         \
         wxUnusedVar(label);                                 \
         wxString value_str;                                 \
-        if(value.GetAs(&value_str)) {                       \
+        if (value.GetAs(&value_str)) {                      \
             clConfig::Get().Write(PropertyName, value_str); \
         }                                                   \
     }
@@ -70,25 +70,25 @@
     [this](const wxString& label, const wxAny& value) {                      \
         wxUnusedVar(label);                                                  \
         bool value_bool = false;                                             \
-        if(value.GetAs(&value_bool)) {                                       \
+        if (value.GetAs(&value_bool)) {                                      \
             m_options->EnableOption(OptionsConfig::OPTION_NAME, value_bool); \
         }                                                                    \
     }
 
-#define UPDATE_COLOUR_CB(SetterMethod)                          \
-    [this](const wxString& label, const wxAny& value) {         \
-        wxUnusedVar(label);                                     \
-        wxColour colour_value;                                  \
-        if(value.GetAs(&colour_value) && colour_value.IsOk()) { \
-            m_options->SetterMethod(colour_value);              \
-        }                                                       \
+#define UPDATE_COLOUR_CB(SetterMethod)                           \
+    [this](const wxString& label, const wxAny& value) {          \
+        wxUnusedVar(label);                                      \
+        wxColour colour_value;                                   \
+        if (value.GetAs(&colour_value) && colour_value.IsOk()) { \
+            m_options->SetterMethod(colour_value);               \
+        }                                                        \
     }
 
 #define UPDATE_TEXT_CB(SetterMethod)                    \
     [this](const wxString& label, const wxAny& value) { \
         wxUnusedVar(label);                             \
         wxString str_value;                             \
-        if(value.GetAs(&str_value)) {                   \
+        if (value.GetAs(&str_value)) {                  \
             m_options->SetterMethod(str_value);         \
         }                                               \
     }
@@ -97,7 +97,7 @@
     [this](const wxString& label, const wxAny& value) { \
         wxUnusedVar(label);                             \
         long long_value;                                \
-        if(value.GetAs(&long_value)) {                  \
+        if (value.GetAs(&long_value)) {                 \
             m_options->SetterMethod(long_value);        \
         }                                               \
     }

@@ -33,7 +33,8 @@ class Copyright : public IPlugin
 {
 protected:
     bool Validate(wxString& content);
-    void MassUpdate(const std::vector<std::pair<wxString, std::vector<wxFileName>>>& filenamesByProject, const wxString& content);
+    void MassUpdate(const std::vector<std::pair<wxString, std::vector<wxFileName>>>& filenamesByProject,
+                    const wxString& content);
 
 public:
     Copyright(IManager* manager);

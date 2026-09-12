@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "cl_command_event.h"
 #include "FindAndReplaceDialogFrameBase.hpp"
+#include "cl_command_event.h"
 #include "wxTerminalCtrl/wxTerminalHistory.hpp"
 
 #include <vector>

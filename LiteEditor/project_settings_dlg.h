@@ -108,7 +108,7 @@ public:
     bool IsCustomBuildEnabled() const { return m_isCustomBuild; }
     void SetCustomBuildEnabled(bool b)
     {
-        if(b != m_isCustomBuild) {
+        if (b != m_isCustomBuild) {
             SetIsDirty(true);
         }
         m_isCustomBuild = b;
@@ -128,8 +128,11 @@ public:
 
 public:
     /** Constructor */
-    ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspaceTab, const wxString& configName,
-                       const wxString& projectName, const wxString& title);
+    ProjectSettingsDlg(wxWindow* parent,
+                       WorkspaceTab* workspaceTab,
+                       const wxString& configName,
+                       const wxString& projectName,
+                       const wxString& title);
     virtual ~ProjectSettingsDlg();
 
     const wxString& GetConfigName() const { return m_configName; }

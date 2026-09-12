@@ -2,6 +2,7 @@
 #define BUILDORDERDIALOG_H
 
 #include "buildorderbasepage.hpp"
+
 #include <wx/arrstr.h>
 
 class BuildOrderDialog : public BuildOrderDialogBase

@@ -32,24 +32,18 @@
 
 #include <wx/tokenzr.h>
 
-BatchBuildDlg::BatchBuildDlg( wxWindow* parent )
-    : BatchBuildBaseDlg( parent )
+BatchBuildDlg::BatchBuildDlg(wxWindow* parent)
+    : BatchBuildBaseDlg(parent)
 {
     m_checkListConfigurations->SetFocus();
     DoInitialize();
 }
 
-void BatchBuildDlg::OnItemSelected( wxCommandEvent& event )
-{
-    event.Skip();
-}
+void BatchBuildDlg::OnItemSelected(wxCommandEvent& event) { event.Skip(); }
 
-void BatchBuildDlg::OnItemToggled( wxCommandEvent& event )
-{
-    wxUnusedVar(event);
-}
+void BatchBuildDlg::OnItemToggled(wxCommandEvent& event) { wxUnusedVar(event); }
 
-void BatchBuildDlg::OnBuild( wxCommandEvent& event )
+void BatchBuildDlg::OnBuild(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_cmd = QueueCommand::kBuild;
@@ -57,10 +51,10 @@ void BatchBuildDlg::OnBuild( wxCommandEvent& event )
     EndModal(wxID_OK);
 }
 
-void BatchBuildDlg::OnBuildUI( wxUpdateUIEvent& event )
+void BatchBuildDlg::OnBuildUI(wxUpdateUIEvent& event)
 {
     bool enable(false);
-    for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+    for (unsigned int i = 0; i < m_checkListConfigurations->GetCount(); i++) {
         if (m_checkListConfigurations->IsChecked(i)) {
             enable = true;
             break;
@@ -70,7 +64,7 @@ void BatchBuildDlg::OnBuildUI( wxUpdateUIEvent& event )
     event.Enable(enable);
 }
 
-void BatchBuildDlg::OnClean( wxCommandEvent& event )
+void BatchBuildDlg::OnClean(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_cmd = QueueCommand::kClean;
@@ -78,10 +72,10 @@ void BatchBuildDlg::OnClean( wxCommandEvent& event )
     EndModal(wxID_OK);
 }
 
-void BatchBuildDlg::OnCleanUI( wxUpdateUIEvent& event )
+void BatchBuildDlg::OnCleanUI(wxUpdateUIEvent& event)
 {
     bool enable(false);
-    for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+    for (unsigned int i = 0; i < m_checkListConfigurations->GetCount(); i++) {
         if (m_checkListConfigurations->IsChecked(i)) {
             enable = true;
             break;
@@ -91,32 +85,32 @@ void BatchBuildDlg::OnCleanUI( wxUpdateUIEvent& event )
     event.Enable(enable);
 }
 
-void BatchBuildDlg::OnCheckAll( wxCommandEvent& event )
+void BatchBuildDlg::OnCheckAll(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+    for (unsigned int i = 0; i < m_checkListConfigurations->GetCount(); i++) {
         m_checkListConfigurations->Check(i, true);
     }
 }
 
-void BatchBuildDlg::OnUnCheckAll( wxCommandEvent& event )
+void BatchBuildDlg::OnUnCheckAll(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+    for (unsigned int i = 0; i < m_checkListConfigurations->GetCount(); i++) {
         m_checkListConfigurations->Check(i, false);
     }
 }
 
-void BatchBuildDlg::OnMoveUp( wxCommandEvent& event )
+void BatchBuildDlg::OnMoveUp(wxCommandEvent& event)
 {
-    wxString selectedString  = m_checkListConfigurations->GetStringSelection();
+    wxString selectedString = m_checkListConfigurations->GetStringSelection();
 
     int sel = m_checkListConfigurations->GetSelection();
     if (sel == wxNOT_FOUND) {
         return;
     }
     bool checked = m_checkListConfigurations->IsChecked(sel);
-    sel --;
+    sel--;
     if (sel < 0) {
         return;
     }
@@ -128,19 +122,16 @@ void BatchBuildDlg::OnMoveUp( wxCommandEvent& event )
     m_checkListConfigurations->Select(sel);
 }
 
-void BatchBuildDlg::OnMoveUpUI( wxUpdateUIEvent& event )
-{
-    event.Skip();
-}
+void BatchBuildDlg::OnMoveUpUI(wxUpdateUIEvent& event) { event.Skip(); }
 
-void BatchBuildDlg::OnMoveDown( wxCommandEvent& event )
+void BatchBuildDlg::OnMoveDown(wxCommandEvent& event)
 {
     int sel = m_checkListConfigurations->GetSelection();
     if (sel == wxNOT_FOUND) {
         return;
     }
     bool checked = m_checkListConfigurations->IsChecked(sel);
-    sel ++;
+    sel++;
     if (sel >= (int)m_checkListConfigurations->GetCount()) {
         return;
     }
@@ -150,16 +141,13 @@ void BatchBuildDlg::OnMoveDown( wxCommandEvent& event )
 
     m_checkListConfigurations->Delete(sel);
     m_checkListConfigurations->Insert(oldStr, sel - 1);
-    m_checkListConfigurations->Check(sel -1, checked);
+    m_checkListConfigurations->Check(sel - 1, checked);
     m_checkListConfigurations->Select(sel);
 }
 
-void BatchBuildDlg::OnMoveDownUI( wxUpdateUIEvent& event )
-{
-    event.Skip();
-}
+void BatchBuildDlg::OnMoveDownUI(wxUpdateUIEvent& event) { event.Skip(); }
 
-void BatchBuildDlg::OnClose( wxCommandEvent& event )
+void BatchBuildDlg::OnClose(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     DoSaveBatchBuildOrder();
@@ -170,11 +158,11 @@ std::list<QueueCommand> BatchBuildDlg::GetBuildInfoList() const
 {
     std::list<QueueCommand> buildInfoList;
     bool clean_log(true);
-    for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+    for (unsigned int i = 0; i < m_checkListConfigurations->GetCount(); i++) {
         if (m_checkListConfigurations->IsChecked(i)) {
             wxString text = m_checkListConfigurations->GetString(i);
             wxString project = text.BeforeFirst(wxT('|'));
-            wxString config  = text.AfterFirst(wxT('|'));
+            wxString config = text.AfterFirst(wxT('|'));
 
             project.Trim().Trim(false);
             config.Trim().Trim(false);
@@ -215,7 +203,7 @@ void BatchBuildDlg::DoInitialize()
     wxArrayString arr;
     if (ReadFileWithConversion(fn.GetFullPath(), content)) {
         arr = wxStringTokenize(content, wxT("\n"), wxTOKEN_STRTOK);
-        for (size_t i=0; i<arr.GetCount(); i++) {
+        for (size_t i = 0; i < arr.GetCount(); i++) {
             int idx = m_checkListConfigurations->Append(arr.Item(i));
             m_checkListConfigurations->Check((unsigned int)idx);
         }
@@ -225,7 +213,7 @@ void BatchBuildDlg::DoInitialize()
     // build configurations and add them to the check list control
     wxArrayString projects;
     clCxxWorkspaceST::Get()->GetProjectList(projects);
-    for (size_t i=0; i<projects.GetCount(); i++) {
+    for (size_t i = 0; i < projects.GetCount(); i++) {
         ProjectPtr p = ManagerST::Get()->GetProject(projects.Item(i));
         if (p) {
             ProjectSettingsPtr settings = p->GetSettings();
@@ -253,7 +241,7 @@ void BatchBuildDlg::DoInitialize()
 
     // check to see which configuration was left in 'arr'
     // and remove them from the checklistbox
-    for (size_t i=0; i<arr.GetCount(); i++) {
+    for (size_t i = 0; i < arr.GetCount(); i++) {
         int where = m_checkListConfigurations->FindString(arr.Item(i));
         if (where != wxNOT_FOUND) {
             m_checkListConfigurations->Delete((unsigned int)where);
@@ -261,7 +249,7 @@ void BatchBuildDlg::DoInitialize()
     }
     arr.clear();
 
-    if (m_checkListConfigurations->GetCount()>0) {
+    if (m_checkListConfigurations->GetCount() > 0) {
         m_checkListConfigurations->Select(0);
     }
 }
@@ -272,7 +260,7 @@ void BatchBuildDlg::DoSaveBatchBuildOrder()
     fn.SetExt(wxT("batch_build"));
 
     wxString content;
-    for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+    for (unsigned int i = 0; i < m_checkListConfigurations->GetCount(); i++) {
         if (m_checkListConfigurations->IsChecked(i)) {
             content << m_checkListConfigurations->GetString(i) << wxT("\n");
         }

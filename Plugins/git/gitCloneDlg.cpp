@@ -38,7 +38,9 @@ gitCloneDlg::gitCloneDlg(wxWindow* parent)
 }
 
 void gitCloneDlg::OnOKUI(wxUpdateUIEvent& event)
-{ event.Enable(!m_textCtrlURL->IsEmpty() && !m_dirPickerTargetDir->GetPath().IsEmpty()); }
+{
+    event.Enable(!m_textCtrlURL->IsEmpty() && !m_dirPickerTargetDir->GetPath().IsEmpty());
+}
 
 wxString gitCloneDlg::GetCloneURL() const
 {

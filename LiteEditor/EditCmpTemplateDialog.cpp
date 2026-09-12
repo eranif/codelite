@@ -1,4 +1,5 @@
 #include "EditCmpTemplateDialog.h"
+
 #include "globals.h"
 
 EditCmpTemplateDialog::EditCmpTemplateDialog(wxWindow* parent)

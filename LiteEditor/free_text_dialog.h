@@ -32,8 +32,12 @@
 class FreeTextDialog : public FreeTextDialogBase
 {
 public:
-    FreeTextDialog(wxWindow* parent, const wxString& value = wxEmptyString, int id = wxID_ANY,
-                   const wxString& title = _("Edit"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize(481, 299),
+    FreeTextDialog(wxWindow* parent,
+                   const wxString& value = wxEmptyString,
+                   int id = wxID_ANY,
+                   const wxString& title = _("Edit"),
+                   wxPoint pos = wxDefaultPosition,
+                   wxSize size = wxSize(481, 299),
                    int style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     wxString GetValue() const { return m_text->GetValue(); }
 };

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "workspacesettingsdlg.h"
+
 #include "ColoursAndFontsManager.h"
 #include "code_completion_page.h"
 #include "environmentconfig.h"
@@ -31,6 +32,7 @@
 #include "globals.h"
 #include "localworkspace.h"
 #include "windowattrmanager.h"
+
 #include <map>
 #include <wx/dirdlg.h>
 #include <wx/tokenzr.h>
@@ -61,12 +63,12 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
     wxString activeEnvSet;
     wxString tmpSet = localWorkspace->GetActiveEnvironmentSet();
 
-    if(tmpSet == _("<Use Active Set>")) {
+    if (tmpSet == _("<Use Active Set>")) {
         tmpSet = wxGetTranslation(USE_GLOBAL_SETTINGS);
     }
 
     int where = m_choiceEnvSets->FindString(tmpSet);
-    if(where == wxNOT_FOUND) {
+    if (where == wxNOT_FOUND) {
         activeEnvSet = activePage;
         m_choiceEnvSets->SetSelection(useActiveSetIndex);
 
@@ -75,7 +77,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
         m_choiceEnvSets->SetSelection(where);
     }
 
-    if(activeEnvSet.IsEmpty() == false) {
+    if (activeEnvSet.IsEmpty() == false) {
         vars.SetActiveSet(activeEnvSet);
         EnvironmentConfig::Instance()->SetSettings(vars);
     }

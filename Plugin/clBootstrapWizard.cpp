@@ -235,7 +235,9 @@ clBootstrapData clBootstrapWizard::GetData()
 }
 
 void clBootstrapWizard::OnInstallCompiler(wxCommandEvent& event)
-{ CompilersDetectorManager::MSWSuggestToDownloadMinGW(false); }
+{
+    CompilersDetectorManager::MSWSuggestToDownloadMinGW(false);
+}
 
 void clBootstrapWizard::OnInstallCompilerUI(wxUpdateUIEvent& event)
 {
@@ -264,7 +266,9 @@ wxArrayString clBootstrapWizard::GetSelectedPlugins()
 }
 
 bool clBootstrapWizard::IsRestartRequired()
-{ return m_firstTime || (m_developmentProfile != m_radioBoxProfile->GetSelection()) || m_globalThemeChanged; }
+{
+    return m_firstTime || (m_developmentProfile != m_radioBoxProfile->GetSelection()) || m_globalThemeChanged;
+}
 
 void clBootstrapWizard::OnFinish(wxWizardEvent& event)
 {

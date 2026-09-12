@@ -41,7 +41,9 @@
 #include <wx/msgdlg.h>
 #include <wx/regex.h>
 
-PSGeneralPage::PSGeneralPage(wxWindow* parent, const wxString& projectName, const wxString& conf,
+PSGeneralPage::PSGeneralPage(wxWindow* parent,
+                             const wxString& projectName,
+                             const wxString& conf,
                              ProjectSettingsDlg* dlg)
     : PSGeneralPageBase(parent)
     , m_dlg(dlg)
@@ -78,7 +80,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     m_pgPropProjectType->SetChoices(choices);
 
     int sel = choices.Index(buildConf->GetProjectType());
-    if(sel != wxNOT_FOUND) {
+    if (sel != wxNOT_FOUND) {
         m_pgPropProjectType->SetChoiceSelection(sel);
     }
 
@@ -95,7 +97,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
 
     wxString builderName = buildConf->GetBuildSystem();
     sel = builders.Index(builderName);
-    if(sel != wxNOT_FOUND) {
+    if (sel != wxNOT_FOUND) {
         m_pgPropMakeGenerator->SetChoiceSelection(sel);
     }
 
@@ -109,21 +111,22 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     compiler_names.reserve(10);
 
     // build the compiler list + sort it
-    while(cmp) {
+    while (cmp) {
         compiler_names.push_back(cmp->GetName());
         cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
     }
 
-    std::sort(compiler_names.begin(), compiler_names.end(),
-              [](const wxString& a, const wxString& b) { return a.CmpNoCase(b) < 0; });
+    std::sort(compiler_names.begin(), compiler_names.end(), [](const wxString& a, const wxString& b) {
+        return a.CmpNoCase(b) < 0;
+    });
 
-    for(const wxString& name: compiler_names) {
+    for (const wxString& name : compiler_names) {
         choices.Add(name);
     }
 
     m_pgPropCompiler->SetChoices(choices);
     sel = choices.Index(buildConf->GetCompiler()->GetName());
-    if(sel != wxNOT_FOUND) {
+    if (sel != wxNOT_FOUND) {
         m_pgPropCompiler->SetChoiceSelection(sel);
     }
 
@@ -134,7 +137,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     choices.Add(dbgs);
     m_pgPropDebugger->SetChoices(choices);
     sel = choices.Index(buildConf->GetDebuggerType());
-    if(sel != wxNOT_FOUND) {
+    if (sel != wxNOT_FOUND) {
         m_pgPropDebugger->SetChoiceSelection(sel);
     }
     m_pgPropUseSeparateDebuggerArgs->SetValue(buildConf->GetUseSeparateDebugArgs());
@@ -163,7 +166,7 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
 
     // Do not set an empty compiler, this will be prompted later by the CompilersModifiedDlg
     wxString compilerType = GetPropertyAsString(m_pgPropCompiler);
-    if(!compilerType.IsEmpty()) {
+    if (!compilerType.IsEmpty()) {
         buildConf->SetCompilerType(compilerType);
     }
 }
@@ -171,8 +174,8 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
 void PSGeneralPage::Clear()
 {
     wxPropertyGridIterator iter = m_pgMgr136->GetGrid()->GetIterator();
-    for(; !iter.AtEnd(); ++iter) {
-        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
+    for (; !iter.AtEnd(); ++iter) {
+        if (iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
             iter.GetProperty()->SetValueToUnspecified();
         }
     }
@@ -182,9 +185,9 @@ void PSGeneralPage::Clear()
 void PSGeneralPage::OnValueChanging(wxPropertyGridEvent& event)
 {
     event.Skip();
-    if(event.GetProperty() == m_pgPropProjectType) {
+    if (event.GetProperty() == m_pgPropProjectType) {
         BuilderPtr builder = BuildManagerST::Get()->GetBuilder(m_pgPropMakeGenerator->GetValueAsString());
-        if(!builder) {
+        if (!builder) {
             return;
         }
         // The project type has changed, adjust the output file extension
@@ -193,11 +196,11 @@ void PSGeneralPage::OnValueChanging(wxPropertyGridEvent& event)
                  newProjectType = m_pgPropProjectType->ValueToString(variant);
         static const wxRegEx reFileExt("^(.*)(\\.[a-zA-Z]+)$"); // libfoobar.a -> (libfoobar) (.a)
         wxString outputFile = m_pgPropOutputFile->GetValueAsString();
-        if(outputFile.IsEmpty()) {
+        if (outputFile.IsEmpty()) {
             // The output file was blank, simply set a default value
             outputFile = builder->GetOptimalBuildConfig(newProjectType).outputFile;
-        } else if(reFileExt.Matches(outputFile) &&
-                  reFileExt.GetMatch(outputFile, 2).IsSameAs(builder->GetOutputFileSuffix(oldProjectType), false)) {
+        } else if (reFileExt.Matches(outputFile) &&
+                   reFileExt.GetMatch(outputFile, 2).IsSameAs(builder->GetOutputFileSuffix(oldProjectType), false)) {
             // Update the old file extension
             outputFile = reFileExt.GetMatch(outputFile, 1) + builder->GetOutputFileSuffix(newProjectType);
         } else {
@@ -212,15 +215,17 @@ void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)
 {
     m_dlg->SetIsDirty(true);
 
-    if(event.GetProperty() == m_pgPropMakeGenerator) {
+    if (event.GetProperty() == m_pgPropMakeGenerator) {
         BuilderPtr builder = BuildManagerST::Get()->GetBuilder(m_pgPropMakeGenerator->GetValueAsString());
-        if(!builder) {
+        if (!builder) {
             return;
         }
         wxString dlgmsg;
         dlgmsg = _("Adjust settings to fit this generator?");
-        if(::wxMessageBox(dlgmsg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
-                          ::wxGetTopLevelParent(this)) != wxYES) {
+        if (::wxMessageBox(dlgmsg,
+                           "CodeLite",
+                           wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
+                           ::wxGetTopLevelParent(this)) != wxYES) {
             return;
         }
         // Update the settings
@@ -259,19 +264,19 @@ void PSGeneralPage::OnCustomEditorClicked(wxCommandEvent& event)
     CHECK_PTR_RET(prop);
     m_dlg->SetIsDirty(true);
 
-    if(prop == m_pgPropProgram) {
+    if (prop == m_pgPropProgram) {
         wxFileName curvalue = prop->GetValueAsString();
         wxString program = ::wxFileSelector(_("Choose a file"), curvalue.GetPath());
-        if(!program.IsEmpty()) {
+        if (!program.IsEmpty()) {
             program.Replace("\\", "/");
             prop->SetValue(program);
         }
 
-    } else if(prop == m_pgPropWorkingDirectory) {
+    } else if (prop == m_pgPropWorkingDirectory) {
         wxString curpath = prop->GetValueAsString();
         wxFileName fp(curpath, "");
         wxString newPath = ::wxDirSelector(_("Choose a directory"), fp.GetPath());
-        if(!newPath.IsEmpty()) {
+        if (!newPath.IsEmpty()) {
             newPath.Replace("\\", "/");
             prop->SetValue(newPath);
         }

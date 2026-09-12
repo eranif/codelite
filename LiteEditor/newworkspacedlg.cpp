@@ -55,8 +55,8 @@ NewWorkspaceDlg::~NewWorkspaceDlg()
     history.Insert(m_comboBoxPath->GetValue(),
                    0); // Place the current value at the top so we make sure it gets stored in the history
     wxArrayString uniqueArr;
-    for(size_t i = 0; i < history.size(); ++i) {
-        if(uniqueArr.Index(history.Item(i)) == wxNOT_FOUND && (uniqueArr.size() < 20)) {
+    for (size_t i = 0; i < history.size(); ++i) {
+        if (uniqueArr.Index(history.Item(i)) == wxNOT_FOUND && (uniqueArr.size() < 20)) {
             uniqueArr.Add(history.Item(i));
         }
     }
@@ -69,9 +69,11 @@ void NewWorkspaceDlg::OnWorkspacePathUpdated(wxCommandEvent& event)
     wxUnusedVar(event);
     // set the workspace name to the last directory part
     // but only if the user did not set the name manually
-    if(!m_manualNameTyped) {
+    if (!m_manualNameTyped) {
         wxFileName fnPath(m_comboBoxPath->GetValue(), "");
-        if(fnPath.GetDirCount()) { m_textCtrlWorkspaceName->ChangeValue(fnPath.GetDirs().Last()); }
+        if (fnPath.GetDirCount()) {
+            m_textCtrlWorkspaceName->ChangeValue(fnPath.GetDirs().Last());
+        }
     }
     DoUpdateFilePath();
 }
@@ -79,14 +81,18 @@ void NewWorkspaceDlg::OnWorkspacePathUpdated(wxCommandEvent& event)
 void NewWorkspaceDlg::OnWorkspaceDirPicker(wxCommandEvent& event)
 {
     const wxString& dir = ::wxDirSelector(_("Choose a folder:"), m_comboBoxPath->GetValue());
-    if(!dir.empty()) {
+    if (!dir.empty()) {
 
         static wxString INVALID_CHARS = " ,'()";
-        if(dir.find_first_of(INVALID_CHARS) != wxString::npos) {
+        if (dir.find_first_of(INVALID_CHARS) != wxString::npos) {
             int answer = ::wxMessageBox(wxString() << _("The selected project path '") << dir
                                                    << _("'\nContains some invalid characters\nContinue anyways?"),
-                                        "CodeLite", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
-            if(answer != wxYES) { return; }
+                                        "CodeLite",
+                                        wxYES_NO | wxCANCEL | wxICON_WARNING,
+                                        this);
+            if (answer != wxYES) {
+                return;
+            }
         }
 
         // Use SetValue to ensure that an TEXT_UPDATE event is fired
@@ -100,12 +106,12 @@ void NewWorkspaceDlg::OnButtonCreate(wxCommandEvent& event)
     m_workspacePath = m_staticTextWorkspaceFileName->GetLabel();
     wxFileName fn(m_workspacePath);
 
-    if(m_checkBoxCreateSeparateDir->IsChecked()) {
+    if (m_checkBoxCreateSeparateDir->IsChecked()) {
         // don't test the result
         fn.Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
     }
 
-    if(!wxDirExists(fn.GetPath())) {
+    if (!wxDirExists(fn.GetPath())) {
         wxMessageBox(_("Invalid path: ") + fn.GetPath(), _("Error"), wxOK | wxICON_HAND);
         return;
     }
@@ -133,16 +139,16 @@ void NewWorkspaceDlg::DoUpdateFilePath()
     workspacePath = workspacePath.Trim().Trim(false);
 
     wxString tmpSep(wxFileName::GetPathSeparator());
-    if(!workspacePath.EndsWith(tmpSep) && workspacePath.IsEmpty() == false) {
+    if (!workspacePath.EndsWith(tmpSep) && workspacePath.IsEmpty() == false) {
         workspacePath << wxFileName::GetPathSeparator();
     }
 
-    if(m_textCtrlWorkspaceName->GetValue().Trim().Trim(false).IsEmpty()) {
+    if (m_textCtrlWorkspaceName->GetValue().Trim().Trim(false).IsEmpty()) {
         m_staticTextWorkspaceFileName->SetLabel(wxEmptyString);
         return;
     }
 
-    if(m_checkBoxCreateSeparateDir->IsChecked()) {
+    if (m_checkBoxCreateSeparateDir->IsChecked()) {
         workspacePath << m_textCtrlWorkspaceName->GetValue();
         workspacePath << wxFileName::GetPathSeparator();
     }
@@ -151,7 +157,7 @@ void NewWorkspaceDlg::DoUpdateFilePath()
     workspacePath << wxT(".workspace");
     m_staticTextWorkspaceFileName->SetLabel(workspacePath);
 
-    if(wxFileName::FileExists(workspacePath)) {
+    if (wxFileName::FileExists(workspacePath)) {
         m_infobar->ShowMessage(_("A workspace file with this name already exists"), wxICON_WARNING);
     } else {
         m_infobar->Hide();

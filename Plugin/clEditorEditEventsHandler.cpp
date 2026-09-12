@@ -14,7 +14,9 @@ clEditEventsHandler::clEditEventsHandler(wxStyledTextCtrl* wnd, const wxString& 
     , m_combo(nullptr)
     , m_noUnbind(false)
     , m_name(name)
-{ DoInitialize(); }
+{
+    DoInitialize();
+}
 
 clEditEventsHandler::clEditEventsHandler(wxTextCtrl* wnd, const wxString& name)
     : m_stc(nullptr)
@@ -22,7 +24,9 @@ clEditEventsHandler::clEditEventsHandler(wxTextCtrl* wnd, const wxString& name)
     , m_combo(nullptr)
     , m_noUnbind(false)
     , m_name(name)
-{ DoInitialize(); }
+{
+    DoInitialize();
+}
 
 clEditEventsHandler::clEditEventsHandler(wxComboBox* wnd, const wxString& name)
     : m_stc(nullptr)
@@ -30,7 +34,9 @@ clEditEventsHandler::clEditEventsHandler(wxComboBox* wnd, const wxString& name)
     , m_combo(wnd)
     , m_noUnbind(false)
     , m_name(name)
-{ DoInitialize(); }
+{
+    DoInitialize();
+}
 
 clEditEventsHandler::~clEditEventsHandler()
 {

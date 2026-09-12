@@ -7,7 +7,7 @@
 // extend clModuleLogger to handle dap:: objects
 clModuleLogger& operator<<(clModuleLogger& logger, const dap::SourceBreakpoint& obj)
 {
-    if(!logger.CanLog()) {
+    if (!logger.CanLog()) {
         return logger;
     }
 
@@ -19,11 +19,11 @@ clModuleLogger& operator<<(clModuleLogger& logger, const dap::SourceBreakpoint& 
 
 clModuleLogger& operator<<(clModuleLogger& logger, const std::vector<dap::SourceBreakpoint>& obj)
 {
-    if(!logger.CanLog()) {
+    if (!logger.CanLog()) {
         return logger;
     }
 
-    for(const auto& bp : obj) {
+    for (const auto& bp : obj) {
         logger << bp << endl;
     }
     return logger;
@@ -31,7 +31,7 @@ clModuleLogger& operator<<(clModuleLogger& logger, const std::vector<dap::Source
 
 clModuleLogger& operator<<(clModuleLogger& logger, const dap::FunctionBreakpoint& obj)
 {
-    if(!logger.CanLog()) {
+    if (!logger.CanLog()) {
         return logger;
     }
 
@@ -43,11 +43,11 @@ clModuleLogger& operator<<(clModuleLogger& logger, const dap::FunctionBreakpoint
 
 clModuleLogger& operator<<(clModuleLogger& logger, const std::vector<dap::FunctionBreakpoint>& obj)
 {
-    if(!logger.CanLog()) {
+    if (!logger.CanLog()) {
         return logger;
     }
 
-    for(const auto& bp : obj) {
+    for (const auto& bp : obj) {
         logger << bp << endl;
     }
     return logger;

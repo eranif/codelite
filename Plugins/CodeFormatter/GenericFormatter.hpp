@@ -40,8 +40,8 @@ class GenericFormatter : public SourceFormatterBase
 
 protected:
     bool DoFormatFile(const wxString& filepath, wxEvtHandler* sink, wxString* output);
-    void AsyncFormat(const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter,
-                     wxEvtHandler* sink);
+    void AsyncFormat(
+        const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter, wxEvtHandler* sink);
     bool SyncFormat(const wxString& cmd, const wxString& wd, bool inplace_formatter, wxString* output);
     void OnAsyncShellProcessTerminated(clShellProcessEvent& event);
     void OnRemoteCommandStdout(clCommandEvent& event);

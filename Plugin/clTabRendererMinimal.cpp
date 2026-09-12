@@ -69,7 +69,9 @@ void clTabRendererMinimal::Draw(wxWindow* parent,
                                 size_t style,
                                 eButtonState tabState,
                                 eButtonState xButtonState)
-{ DoDraw(parent, dc, fontDC, tabInfo, tabIndex, activeTabIndex, colors, style, tabState, xButtonState); }
+{
+    DoDraw(parent, dc, fontDC, tabInfo, tabIndex, activeTabIndex, colors, style, tabState, xButtonState);
+}
 
 void clTabRendererMinimal::FinaliseBackground(wxWindow* parent,
                                               wxDC& dc,
@@ -77,7 +79,9 @@ void clTabRendererMinimal::FinaliseBackground(wxWindow* parent,
                                               const wxRect& activeTabRect,
                                               const clTabColours& colours,
                                               size_t style)
-{ clTabRenderer::FinaliseBackground(parent, dc, clientRect, activeTabRect, colours, style); }
+{
+    clTabRenderer::FinaliseBackground(parent, dc, clientRect, activeTabRect, colours, style);
+}
 
 void clTabRendererMinimal::DrawBottomRect(wxWindow* parent,
                                           clTabInfo::Ptr_t tabInfo,

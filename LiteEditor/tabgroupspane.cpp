@@ -60,7 +60,7 @@ public:
     virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data)
     {
         static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}\\{(.*?)\\}", wxRE_ADVANCED);
-        if(re.Matches(data)) {
+        if (re.Matches(data)) {
             m_pane->FileDropped(re.GetMatch(data, 2));
         }
         return true;
@@ -96,20 +96,24 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
 
     m_tree->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(TabgroupsPane::OnItemActivated), NULL, this);
     m_tree->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(TabgroupsPane::OnItemRtClick), NULL, this);
-    m_tree->Connect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnBeginLabelEdit), NULL,
-                    this);
+    m_tree->Connect(
+        wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnBeginLabelEdit), NULL, this);
     m_tree->Connect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnEndLabelEdit), NULL, this);
     m_tree->Connect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(TabgroupsPane::OnBeginDrag), NULL, this);
     m_tree->Connect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(TabgroupsPane::OnEndDrag), NULL, this);
     // Context menu:
-    Connect(TGM_ID_Add, TGM_ID_RemoveItem, wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(TabgroupsPane::OnContextMenu), NULL, this);
+    Connect(TGM_ID_Add,
+            TGM_ID_RemoveItem,
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(TabgroupsPane::OnContextMenu),
+            NULL,
+            this);
     // Shortcuts:
     m_tree->Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCopy), NULL, this);
     m_tree->Connect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnPaste), NULL, this);
     m_tree->Connect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCut), NULL, this);
-    m_tree->Connect(wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), NULL,
-                    this);
+    m_tree->Connect(
+        wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &TabgroupsPane::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &TabgroupsPane::OnInitDone, this);
@@ -117,26 +121,30 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
 
 TabgroupsPane::~TabgroupsPane()
 {
-    m_tree->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(TabgroupsPane::OnItemActivated), NULL,
-                       this);
+    m_tree->Disconnect(
+        wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(TabgroupsPane::OnItemActivated), NULL, this);
     m_tree->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(TabgroupsPane::OnItemRtClick), NULL, this);
-    m_tree->Disconnect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnBeginLabelEdit), NULL,
-                       this);
-    m_tree->Disconnect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnEndLabelEdit), NULL,
-                       this);
+    m_tree->Disconnect(
+        wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnBeginLabelEdit), NULL, this);
+    m_tree->Disconnect(
+        wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnEndLabelEdit), NULL, this);
     m_tree->Disconnect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(TabgroupsPane::OnBeginDrag), NULL, this);
     m_tree->Disconnect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(TabgroupsPane::OnEndDrag), NULL, this);
     // Context menu:
-    Disconnect(TGM_ID_Add, TGM_ID_RemoveItem, wxEVT_COMMAND_MENU_SELECTED,
-               wxCommandEventHandler(TabgroupsPane::OnContextMenu), NULL, this);
+    Disconnect(TGM_ID_Add,
+               TGM_ID_RemoveItem,
+               wxEVT_COMMAND_MENU_SELECTED,
+               wxCommandEventHandler(TabgroupsPane::OnContextMenu),
+               NULL,
+               this);
     // Shortcuts:
-    m_tree->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCopy), NULL,
-                       this);
-    m_tree->Disconnect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnPaste), NULL,
-                       this);
+    m_tree->Disconnect(
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCopy), NULL, this);
+    m_tree->Disconnect(
+        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnPaste), NULL, this);
     m_tree->Disconnect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCut), NULL, this);
-    m_tree->Disconnect(wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), NULL,
-                       this);
+    m_tree->Disconnect(
+        wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), NULL, this);
 
     delete m_node;
 
@@ -163,7 +171,9 @@ void TabgroupsPane::DisplayTabgroups(bool isGlobal /*=false*/)
     GetSizer()->Layout();
 }
 
-void TabgroupsPane::AddTreeItem(bool isGlobal, const wxString& tabgroupfpath, const wxArrayString& tabfilepaths,
+void TabgroupsPane::AddTreeItem(bool isGlobal,
+                                const wxString& tabgroupfpath,
+                                const wxArrayString& tabfilepaths,
                                 const wxTreeItemId insertafter /*=wxTreeItemId()*/)
 {
     wxCHECK_RET(!tabgroupfpath.IsEmpty(), wxT("A tabgroup with an empty name in TabgroupsPane::AddTreeItem"));
@@ -174,18 +184,25 @@ void TabgroupsPane::AddTreeItem(bool isGlobal, const wxString& tabgroupfpath, co
     wxTreeItemId tbnameId;
 
     int folderImgID = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
-    if(insertafter.IsOk()) {
+    if (insertafter.IsOk()) {
         // There's a valid id to insert after, so..
-        tbnameId = m_tree->InsertItem(GetRootItemForTabgroup(isGlobal), insertafter, tabgroupname, folderImgID,
-                                      folderImgID, new TabGrpTreeItemData(tabgroupfpath, TGT_group));
+        tbnameId = m_tree->InsertItem(GetRootItemForTabgroup(isGlobal),
+                                      insertafter,
+                                      tabgroupname,
+                                      folderImgID,
+                                      folderImgID,
+                                      new TabGrpTreeItemData(tabgroupfpath, TGT_group));
     } else {
         // Otherwise, append
-        tbnameId = m_tree->AppendItem(GetRootItemForTabgroup(isGlobal), tabgroupname, folderImgID, folderImgID,
+        tbnameId = m_tree->AppendItem(GetRootItemForTabgroup(isGlobal),
+                                      tabgroupname,
+                                      folderImgID,
+                                      folderImgID,
                                       new TabGrpTreeItemData(tabgroupfpath, TGT_group));
     }
     wxCHECK_RET(tbnameId.IsOk(), wxT("Failed to add the tabgroup to the tree"));
     // NB. I'm not going to try to cater for idiots who have >1 tab with the same filename!
-    for(size_t n = 0; n < tabfilepaths.GetCount(); ++n) {
+    for (size_t n = 0; n < tabfilepaths.GetCount(); ++n) {
         wxString name = tabfilepaths.Item(n).AfterLast(wxFILE_SEP_PATH);
         int imgIdx = DoGetIconIndex(name);
         m_tree->AppendItem(tbnameId, name, imgIdx, imgIdx, new TabGrpTreeItemData(tabfilepaths.Item(n)));
@@ -195,27 +212,27 @@ void TabgroupsPane::AddTreeItem(bool isGlobal, const wxString& tabgroupfpath, co
 void TabgroupsPane::OnItemActivated(wxTreeEvent& event)
 {
     wxTreeItemId item = event.GetItem();
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-    if(!data) {
+    if (!data) {
         return;
     }
     wxString filepath = data->GetFilepath();
     wxFileName fn(filepath);
 
-    if(data->GetType() == TGT_group) { // Activating a tabgroup means offer to load it
+    if (data->GetType() == TGT_group) { // Activating a tabgroup means offer to load it
         wxArrayString previousgroups;
         EditorConfigST::Get()->GetRecentItems(previousgroups, wxT("RecentTabgroups"));
 
-        if(!fn.FileExists()) {
+        if (!fn.FileExists()) {
             wxMessageBox(_("I'm afraid that tabgroup no longer exists :/"), wxT("CodeLite"), wxICON_ERROR | wxOK, this);
             m_tree->DeleteChildren(item);
             m_tree->Delete(item);
             // Remove it from the RecentTabgroups list too
             int index = previousgroups.Index(filepath);
-            if(index != wxNOT_FOUND) {
+            if (index != wxNOT_FOUND) {
                 previousgroups.RemoveAt(index);
                 EditorConfigST::Get()->SetRecentItems(previousgroups, wxT("RecentTabgroups"));
             }
@@ -223,27 +240,27 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event)
         }
 
         std::vector<clEditor*> editors = clMainFrame::Get()->GetMainBook()->GetAllEditors();
-        if(editors.size() > 0) {
+        if (editors.size() > 0) {
             // If there are editors currently loaded, ask if they are to be replaced or added to
             wxString msg(_("Do you want to replace the existing editors? (Say 'No' to load the new ones alongside)"));
             int ans = wxMessageBox(msg, _("Load the tabgroup"), wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
-            if(ans == wxCANCEL) {
+            if (ans == wxCANCEL) {
                 return;
             }
-            if(ans == wxYES) {
+            if (ans == wxYES) {
                 clMainFrame::Get()->GetMainBook()->CloseAll(true);
             }
         }
 
         clWindowUpdateLocker locker(clMainFrame::Get());
         TabGroupEntry session;
-        if(SessionManager::Get().GetSession(filepath.BeforeLast(wxT('.')), session, wxString(wxT("tabgroup")),
-                                            tabgroupTag)) {
+        if (SessionManager::Get().GetSession(
+                filepath.BeforeLast(wxT('.')), session, wxString(wxT("tabgroup")), tabgroupTag)) {
             clMainFrame::Get()->GetMainBook()->RestoreSession(session);
 
             // Remove any previous instance of this group from the history, then prepend it and save
             int index = previousgroups.Index(filepath);
-            if(index != wxNOT_FOUND) {
+            if (index != wxNOT_FOUND) {
                 previousgroups.RemoveAt(index);
             }
             previousgroups.Insert(filepath, 0);
@@ -251,9 +268,9 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event)
         }
     } else {
         // Activating an item means load just it, as an editor
-        if(!fn.FileExists()) {
-            wxMessageBox(_("I'm afraid that tabgroup item no longer exists :/"), wxT("CodeLite"), wxICON_ERROR | wxOK,
-                         this);
+        if (!fn.FileExists()) {
+            wxMessageBox(
+                _("I'm afraid that tabgroup item no longer exists :/"), wxT("CodeLite"), wxICON_ERROR | wxOK, this);
             DeleteTabgroupItem();
             return;
         }
@@ -265,18 +282,18 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event)
 void TabgroupsPane::OnItemRtClick(wxTreeEvent& event)
 {
     wxTreeItemId item = event.GetItem();
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-    if(!data) {
+    if (!data) {
         return;
     }
 
     wxMenu menu; // Tabgroup Menu
-    if(data->GetType() == TGT_group) {
+    if (data->GetType() == TGT_group) {
         menu.Append(TGM_ID_Add, _("&Add a new item to this tabgroup"));
-        if(m_node) {
+        if (m_node) {
             menu.Append(TGM_ID_Paste, _("&Paste an item into this tabgroup"));
         }
         menu.AppendSeparator();
@@ -285,7 +302,7 @@ void TabgroupsPane::OnItemRtClick(wxTreeEvent& event)
     } else {
         menu.Append(TGM_ID_CopyItem, _("&Copy this item, to be pasted to another tabgroup"));
         menu.Append(TGM_ID_CutItem, _("Cu&t this item, to be pasted to another tabgroup"));
-        if(m_node) {
+        if (m_node) {
             menu.Append(TGM_ID_Paste, _("&Paste an item into this tabgroup"));
         }
         menu.Append(TGM_ID_RemoveItem, _("&Remove this item from the tabgroup"));
@@ -295,7 +312,7 @@ void TabgroupsPane::OnItemRtClick(wxTreeEvent& event)
 
 void TabgroupsPane::OnContextMenu(wxCommandEvent& event)
 {
-    switch(event.GetId()) {
+    switch (event.GetId()) {
     case TGM_ID_Add:
         AddTabgroupItem();
         break;
@@ -323,12 +340,12 @@ void TabgroupsPane::OnContextMenu(wxCommandEvent& event)
 void TabgroupsPane::OnDelete(wxCommandEvent& WXUNUSED(event)) // From a keypress, not the context menu
 {
     wxTreeItemId item = m_tree->GetSelection();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-        if(!data) {
+        if (!data) {
             return;
         }
-        if(data->GetType() == TGT_group) {
+        if (data->GetType() == TGT_group) {
             DeleteTabgroup();
         } else {
             DeleteTabgroupItem();
@@ -339,9 +356,9 @@ void TabgroupsPane::OnDelete(wxCommandEvent& WXUNUSED(event)) // From a keypress
 void TabgroupsPane::OnBeginLabelEdit(wxTreeEvent& event)
 {
     wxTreeItemId item = event.GetItem();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-        if(!data || data->GetType() == TGT_group) {
+        if (!data || data->GetType() == TGT_group) {
             // Only allow renaming of a group; renaming an item makes little sense: the name is the filename
             return;
         }
@@ -353,34 +370,34 @@ void TabgroupsPane::OnBeginLabelEdit(wxTreeEvent& event)
 void TabgroupsPane::OnEndLabelEdit(wxTreeEvent& event)
 {
     wxTreeItemId item = event.GetItem();
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         event.Veto();
         return;
     }
 
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-    if(!data) {
+    if (!data) {
         return;
     }
     wxFileName oldfilepath(data->GetFilepath());
 
     wxString newfilename = event.GetLabel();
-    if(newfilename.IsEmpty() || newfilename == oldfilepath.GetFullName()) {
+    if (newfilename.IsEmpty() || newfilename == oldfilepath.GetFullName()) {
         event.Veto();
         return;
     }
 
     wxFileName newfilepath(oldfilepath.GetPath(), newfilename);
-    if(newfilepath.FileExists()) {
+    if (newfilepath.FileExists()) {
         wxString msg(_("There is already a file with this name. Overwrite it?"));
-        if(wxMessageBox(msg, _("Overwrite?"), wxICON_QUESTION | wxYES_NO, this) != wxYES) {
+        if (wxMessageBox(msg, _("Overwrite?"), wxICON_QUESTION | wxYES_NO, this) != wxYES) {
             event.Veto(); // The user doesn't want to overwrite
             return;
         }
     }
     // If we're here, the event won't be vetoed, so the tree shows the new name
     // Update the file system correspondingly
-    if(wxRenameFile(oldfilepath.GetFullPath(), newfilepath.GetFullPath(), true)) {
+    if (wxRenameFile(oldfilepath.GetFullPath(), newfilepath.GetFullPath(), true)) {
         clMainFrame::Get()->GetStatusBar()->SetMessage(_("Tabgroup renamed"));
         return;
     }
@@ -389,9 +406,9 @@ void TabgroupsPane::OnEndLabelEdit(wxTreeEvent& event)
 void TabgroupsPane::OnBeginDrag(wxTreeEvent& event)
 {
     wxTreeItemId item = event.GetItem();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-        if(data && data->GetType() == TGT_item) {
+        if (data && data->GetType() == TGT_item) {
             // Only allow dragging of an item, not a group
             m_draggedItem = item;
             event.Allow(); // need explicitly to allow drag
@@ -401,19 +418,19 @@ void TabgroupsPane::OnBeginDrag(wxTreeEvent& event)
 
 void TabgroupsPane::OnEndDrag(wxTreeEvent& event)
 {
-    if(!m_draggedItem.IsOk()) {
+    if (!m_draggedItem.IsOk()) {
         return;
     }
 
     wxTreeItemId ItemSrc = m_draggedItem;
     m_draggedItem = wxTreeItemId(); // Reset the dragged-item store
 
-    if(wxGetKeyState(WXK_ESCAPE)) {
+    if (wxGetKeyState(WXK_ESCAPE)) {
         return; // If ESC is being pressed, take this as a hint
     }
 
     wxTreeItemId ItemDest = event.GetItem();
-    if(!ItemDest.IsOk()) {
+    if (!ItemDest.IsOk()) {
         return;
     }
 
@@ -424,7 +441,7 @@ void TabgroupsPane::OnEndDrag(wxTreeEvent& event)
 #else
         WXK_CONTROL;
 #endif
-    if(wxGetKeyState(copykey)) {
+    if (wxGetKeyState(copykey)) {
         CopyTabgroupItem(ItemSrc);
     } else {
         DeleteTabgroupItem(true, ItemSrc);
@@ -436,24 +453,26 @@ void TabgroupsPane::OnEndDrag(wxTreeEvent& event)
 void TabgroupsPane::AddTabgroupItem()
 {
     wxTreeItemId selection = m_tree->GetSelection();
-    if(!selection.IsOk()) {
+    if (!selection.IsOk()) {
         return;
     }
 
     wxString defaultPath;
     IEditor* editor = PluginManager::Get()->GetActiveEditor();
-    if(editor) {
+    if (editor) {
         defaultPath = editor->GetFileName().GetPath();
     }
 
     wxString newfilepath = ::wxFileSelector(_("Select the file you want to add"), defaultPath);
-    if(newfilepath.IsEmpty()) {
+    if (newfilepath.IsEmpty()) {
         return;
     }
 
-    if(!wxFileExists(newfilepath)) {
-        if (wxMessageBox(_("That filepath doesn't seem to exist. Are you sure?"), wxT("CodeLite"),
-                        wxICON_QUESTION | wxYES_NO, this) != wxYES) {
+    if (!wxFileExists(newfilepath)) {
+        if (wxMessageBox(_("That filepath doesn't seem to exist. Are you sure?"),
+                         wxT("CodeLite"),
+                         wxICON_QUESTION | wxYES_NO,
+                         this) != wxYES) {
             return;
         }
     }
@@ -463,17 +482,17 @@ void TabgroupsPane::AddTabgroupItem()
 
 void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId()*/)
 {
-    if(m_node == NULL) {
+    if (m_node == NULL) {
         return; // The data to be pasted should have been stored here, so...
     }
 
     wxTreeItemId GroupId;
-    if(itemtopaste.IsOk()) {
+    if (itemtopaste.IsOk()) {
         GroupId = itemtopaste; // We got here from D'n'D, so the item was passed
     } else {
         GroupId = m_tree->GetSelection(); // Just a plain 'Paste'
     }
-    if(!GroupId.IsOk()) {
+    if (!GroupId.IsOk()) {
         return;
     }
 
@@ -481,10 +500,10 @@ void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId(
     wxTreeItemId ItemId(GroupId);
 
     TabGrpTreeItemData* groupdata = (TabGrpTreeItemData*)m_tree->GetItemData(GroupId);
-    if(!groupdata) {
+    if (!groupdata) {
         return;
     }
-    if(groupdata->GetType() == TGT_item) {
+    if (groupdata->GetType() == TGT_item) {
         GroupId = m_tree->GetItemParent(ItemId);
         wxCHECK_RET(GroupId.IsOk(), wxT("Trying to paste on something that isn't a tabgroup"));
         groupdata = (TabGrpTreeItemData*)m_tree->GetItemData(GroupId);
@@ -492,25 +511,27 @@ void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId(
         // The paste *was* on the group, so null ItemId: we use ItemId.IsOk() later as a flag
         ItemId = wxTreeItemId();
     }
-    if(!groupdata) {
+    if (!groupdata) {
         return;
     }
     wxCHECK_RET(groupdata->GetType() == TGT_group, wxT("Trying to paste on something that isn't a tabgroup"));
 
     wxString filepath = groupdata->GetFilepath();
     wxXmlDocument doc(filepath);
-    if(!doc.IsOk()) {
+    if (!doc.IsOk()) {
         wxMessageBox(_("Failed to load the destination tabgroup :/"), wxT("CodeLite"), wxICON_ERROR | wxOK, this);
         return;
     }
 
     bool NeedToChangeTree = true;
     wxXmlNode* node = TabGroupsManager::Get()->FindTabgroupItem(doc, filepath, m_copieditem_filepath);
-    if(node) {
-        if (wxMessageBox(_("There is already an item with this filepath in the tabgroup. Overwrite it?"), wxT("CodeLite"),
-                        wxICON_QUESTION | wxYES_NO, this) == wxYES) {
+    if (node) {
+        if (wxMessageBox(_("There is already an item with this filepath in the tabgroup. Overwrite it?"),
+                         wxT("CodeLite"),
+                         wxICON_QUESTION | wxYES_NO,
+                         this) == wxYES) {
             wxXmlNode* parent = node->GetParent();
-            if(parent) {
+            if (parent) {
                 parent->RemoveChild(node);
             }
             NeedToChangeTree = false;
@@ -523,24 +544,24 @@ void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId(
     // pass info to DoAddItemToTabgroup() to find the node corresponding to the item, so that we can insert after it in
     // the doc
     wxString nextitemfilepath;
-    if(ItemId.IsOk() && NeedToChangeTree) {
+    if (ItemId.IsOk() && NeedToChangeTree) {
         TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(ItemId);
-        if(data) {
+        if (data) {
             nextitemfilepath = data->GetFilepath();
         }
     }
 
-    if(TabGroupsManager::Get()->DoAddItemToTabgroup(doc, new wxXmlNode(*m_node), filepath, nextitemfilepath)) {
+    if (TabGroupsManager::Get()->DoAddItemToTabgroup(doc, new wxXmlNode(*m_node), filepath, nextitemfilepath)) {
         doc.Save(filepath);
 
-        if(NeedToChangeTree) {
+        if (NeedToChangeTree) {
             // We're not overwriting a pre-existing tab, so add the pasted tab to the tree
             wxString name = m_copieditem_filepath.AfterLast(wxFILE_SEP_PATH);
             int imgIdx = DoGetIconIndex(name);
-            if(ItemId.IsOk()) {
+            if (ItemId.IsOk()) {
                 // either after the selected item (if there was one)..
-                m_tree->InsertItem(GroupId, ItemId, name, imgIdx, imgIdx,
-                                   new TabGrpTreeItemData(m_copieditem_filepath));
+                m_tree->InsertItem(
+                    GroupId, ItemId, name, imgIdx, imgIdx, new TabGrpTreeItemData(m_copieditem_filepath));
             } else {
                 // ..or append to the group
                 m_tree->AppendItem(GroupId, name, imgIdx, imgIdx, new TabGrpTreeItemData(m_copieditem_filepath));
@@ -554,17 +575,17 @@ void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId(
 void TabgroupsPane::DeleteTabgroup()
 {
     wxTreeItemId item = m_tree->GetSelection();
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-    if(!data) {
+    if (!data) {
         return;
     }
     wxCHECK_RET(data->GetType() == TGT_group, wxT("The selection wasn't a tabgroup"));
 
     wxString filepath = data->GetFilepath();
-    if(!wxFileName::FileExists(filepath)) {
+    if (!wxFileName::FileExists(filepath)) {
         m_tree->DeleteChildren(item);
         m_tree->Delete(item);
         return;
@@ -578,7 +599,7 @@ void TabgroupsPane::DeleteTabgroup()
         wxArrayString previousgroups;
         EditorConfigST::Get()->GetRecentItems(previousgroups, wxT("RecentTabgroups"));
         int index = previousgroups.Index(filepath);
-        if(index != wxNOT_FOUND) {
+        if (index != wxNOT_FOUND) {
             previousgroups.RemoveAt(index);
             EditorConfigST::Get()->SetRecentItems(previousgroups, wxT("RecentTabgroups"));
         }
@@ -592,11 +613,11 @@ void TabgroupsPane::DeleteTabgroup()
 void TabgroupsPane::DuplicateTabgroup()
 {
     wxTreeItemId selection = m_tree->GetSelection();
-    if(!selection.IsOk()) {
+    if (!selection.IsOk()) {
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(selection);
-    if(!data) {
+    if (!data) {
         return;
     }
 
@@ -606,22 +627,24 @@ void TabgroupsPane::DuplicateTabgroup()
     wxCHECK_RET(oldfilepath.FileExists(), wxT("There was no file corresponding to the tree selection"));
 
     wxString newname = wxGetTextFromUser(_("What name to you want to give the duplicated tabgroup?"),
-                                         _("Duplicate a tabgroup"), oldfilepath.GetFullName(), this);
-    if(newname.IsEmpty() || newname == oldfilepath.GetFullName()) {
+                                         _("Duplicate a tabgroup"),
+                                         oldfilepath.GetFullName(),
+                                         this);
+    if (newname.IsEmpty() || newname == oldfilepath.GetFullName()) {
         return;
     }
 
-    if(!newname.EndsWith(".tabgroup")) {
+    if (!newname.EndsWith(".tabgroup")) {
         newname << ".tabgroup"; // Otherwise things break
     }
     wxFileName newfilepath(oldfilepath.GetPath(), newname);
-    if(newfilepath.FileExists()) {
-        wxMessageBox(_("Sorry, there is already a tabgroup with this name"), wxT("CodeLite"), wxICON_INFORMATION | wxOK,
-                     this);
+    if (newfilepath.FileExists()) {
+        wxMessageBox(
+            _("Sorry, there is already a tabgroup with this name"), wxT("CodeLite"), wxICON_INFORMATION | wxOK, this);
         return;
     }
 
-    if(!wxCopyFile(oldfilepath.GetFullPath(), newfilepath.GetFullPath())) {
+    if (!wxCopyFile(oldfilepath.GetFullPath(), newfilepath.GetFullPath())) {
         wxMessageBox(_("Sorry, duplication of the tabgroup failed :/"), wxT("CodeLite"), wxICON_ERROR | wxOK, this);
         return;
     }
@@ -632,19 +655,20 @@ void TabgroupsPane::DuplicateTabgroup()
     bool isGlobal = parentdata->GetFilepath().StartsWith(_("Global"));
 
     // Do the rest in a separate method, which is also called by Frame::OnFileSaveTabGroup
-    if(AddNewTabgroupToTree(isGlobal, newfilepath.GetFullPath(), selection)) {
+    if (AddNewTabgroupToTree(isGlobal, newfilepath.GetFullPath(), selection)) {
         clMainFrame::Get()->GetStatusBar()->SetMessage(_("Tabgroup duplicated"));
     }
 }
 
-bool TabgroupsPane::AddNewTabgroupToTree(bool isGlobal, const wxString& newfilepath,
+bool TabgroupsPane::AddNewTabgroupToTree(bool isGlobal,
+                                         const wxString& newfilepath,
                                          wxTreeItemId selection /*=wxTreeItemId()*/)
 {
     // Tell TabGroupsManager to load the new group. Probably a good idea anyway, but we'll need it below
     TabGroupsManager::Get()->LoadTabgroupData(isGlobal, newfilepath);
     // Now add the newly-loaded info to the tree
     wxArrayString items;
-    if(TabGroupsManager::Get()->FindTabgroup(isGlobal, newfilepath, items)) {
+    if (TabGroupsManager::Get()->FindTabgroup(isGlobal, newfilepath, items)) {
         AddTreeItem(isGlobal, newfilepath, items, selection);
         return true;
     }
@@ -655,26 +679,26 @@ bool TabgroupsPane::AddNewTabgroupToTree(bool isGlobal, const wxString& newfilep
 void TabgroupsPane::CopyTabgroupItem(wxTreeItemId itemtocopy /*= wxTreeItemId()*/)
 {
     wxTreeItemId item;
-    if(itemtocopy.IsOk()) {
+    if (itemtocopy.IsOk()) {
         item = itemtocopy; // We got here from D'n'D, so the item was passed
     } else {
         item = m_tree->GetSelection(); // Just a plain 'Copy'
     }
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
 
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-    if(!data) {
+    if (!data) {
         return;
     }
-    if(data->GetType() != TGT_item) {
+    if (data->GetType() != TGT_item) {
         return; // I can't think of any reason to copy a whole group
     }
 
     wxTreeItemId GroupId = m_tree->GetItemParent(item);
     TabGrpTreeItemData* groupdata = (TabGrpTreeItemData*)m_tree->GetItemData(GroupId);
-    if(!groupdata) {
+    if (!groupdata) {
         return;
     }
 
@@ -696,33 +720,33 @@ void TabgroupsPane::CopyTabgroupItem(wxTreeItemId itemtocopy /*= wxTreeItemId()*
 void TabgroupsPane::DeleteTabgroupItem(bool DoCut /*=false*/, wxTreeItemId itemtocut /*= wxTreeItemId()*/)
 {
     wxTreeItemId item;
-    if(itemtocut.IsOk()) {
+    if (itemtocut.IsOk()) {
         item = itemtocut; // We got here from D'n'D, so the item was passed
     } else {
         item = m_tree->GetSelection(); // Just a plain 'Cut' or 'Delete'
     }
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-    if(!data) {
+    if (!data) {
         return;
     }
     wxCHECK_RET(data->GetType() == TGT_item, wxT("The selection was a tabgroup, not a tabgroup item"));
     wxString itemfilepath = data->GetFilepath(); // Need to do this here, before the item is deleted!
     wxTreeItemId parent = m_tree->GetItemParent(item);
     TabGrpTreeItemData* tabgrpdata = (TabGrpTreeItemData*)m_tree->GetItemData(parent);
-    if(!tabgrpdata) {
+    if (!tabgrpdata) {
         return;
     }
     wxString filepath = tabgrpdata->GetFilepath();
-    if(!wxFileName::FileExists(filepath)) {
+    if (!wxFileName::FileExists(filepath)) {
         return;
     }
 
-    if(!DoCut) { // If we're deleting, check the user really meant it
-        wxString msg = wxString::Format(_("Remove item %s from %s?"), m_tree->GetItemText(item).c_str(),
-                                        m_tree->GetItemText(parent).c_str());
+    if (!DoCut) { // If we're deleting, check the user really meant it
+        wxString msg = wxString::Format(
+            _("Remove item %s from %s?"), m_tree->GetItemText(item).c_str(), m_tree->GetItemText(parent).c_str());
         if (wxMessageBox(msg, wxT("CodeLite"), wxICON_QUESTION | wxYES_NO, this) != wxYES) {
             return;
         }
@@ -730,10 +754,10 @@ void TabgroupsPane::DeleteTabgroupItem(bool DoCut /*=false*/, wxTreeItemId itemt
     m_tree->Delete(item);
 
     wxXmlDocument doc(filepath);
-    if(doc.IsOk()) {
+    if (doc.IsOk()) {
         wxXmlNode* TabInfoNode = TabGroupsManager::Get()->DoDeleteTabgroupItem(doc, filepath, itemfilepath);
-        if(TabInfoNode) {
-            if(DoCut) {
+        if (TabInfoNode) {
+            if (DoCut) {
                 // If we're cutting, store the deleted node ready for paste
                 m_node = new wxXmlNode(*TabInfoNode);
                 m_copieditem_filepath = itemfilepath;
@@ -752,7 +776,7 @@ void TabgroupsPane::DeleteTabgroupItem(bool DoCut /*=false*/, wxTreeItemId itemt
 int TabgroupsPane::DoGetIconIndex(const wxString& filename)
 {
     int imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(filename);
-    if(imgIdx == wxNOT_FOUND) {
+    if (imgIdx == wxNOT_FOUND) {
         imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeText);
     }
     return imgIdx;
@@ -804,15 +828,15 @@ wxTreeItemId TabgroupsPane::GetRootItemForTabgroup(bool global)
     // First see if the appropriate tabgroup base-item has already been created
     wxTreeItemIdValue cookie;
     wxTreeItemId child = m_tree->GetFirstChild(m_tree->GetRootItem(), cookie);
-    while(child.IsOk()) {
+    while (child.IsOk()) {
         TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(child);
-        if(data && data->GetFilepath() == label) {
+        if (data && data->GetFilepath() == label) {
             return child;
         }
         child = m_tree->GetNextSibling(child);
     }
     // Nope, so create it
     int folderImgID = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
-    return m_tree->AppendItem(m_tree->GetRootItem(), label, folderImgID, folderImgID,
-                              new TabGrpTreeItemData(label, TGT_group));
+    return m_tree->AppendItem(
+        m_tree->GetRootItem(), label, folderImgID, folderImgID, new TabGrpTreeItemData(label, TGT_group));
 }

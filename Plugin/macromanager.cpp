@@ -49,7 +49,9 @@ wxString MacroManager::Expand(const wxString& expression,
                               IManager* manager,
                               const wxString& project,
                               const wxString& confToBuild)
-{ return DoExpand(expression, manager, project, true, confToBuild); }
+{
+    return DoExpand(expression, manager, project, true, confToBuild);
+}
 
 bool MacroManager::FindVariable(const wxString& inString, wxString& name, wxString& fullname)
 {
@@ -159,7 +161,9 @@ const std::unordered_set<wxString> CODELITE_MACROS = {
 } // namespace
 
 wxString MacroManager::ExpandNoEnv(const wxString& expression, const wxString& project, const wxString& confToBuild)
-{ return DoExpand(expression, NULL, project, false, confToBuild); }
+{
+    return DoExpand(expression, NULL, project, false, confToBuild);
+}
 
 wxString MacroManager::DoExpand(
     const wxString& expression, IManager* manager, const wxString& project, bool applyEnv, const wxString& confToBuild)

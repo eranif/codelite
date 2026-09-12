@@ -89,8 +89,8 @@ ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projn
     , m_projname(projname)
     , m_projectModified(false)
 {
-    m_dvListCtrl1Unassigned->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                                  wxDataViewEventHandler(ReconcileProjectDlg::OnDVLCContextMenu), this);
+    m_dvListCtrl1Unassigned->Bind(
+        wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(ReconcileProjectDlg::OnDVLCContextMenu), this);
     ::clSetDialogBestSizeAndPosition(*this);
 }
 
@@ -120,7 +120,7 @@ bool ReconcileProjectDlg::LoadData()
 
         clFilesScanner scanner;
         std::vector<wxString> filesOutput;
-        const wxStringSet_t excludeFoldersSet{ excludeFolders.begin(), excludeFolders.end() };
+        const wxStringSet_t excludeFoldersSet{excludeFolders.begin(), excludeFolders.end()};
         if (scanner.Scan(toplevelDir, filesOutput, filespec, ignorefilespec, excludeFoldersSet)) {
             m_allfiles.insert(filesOutput.begin(), filesOutput.end());
             DoFindFiles();
@@ -128,8 +128,10 @@ bool ReconcileProjectDlg::LoadData()
     }
 
     if (m_newfiles.empty() && m_stalefiles.empty()) {
-        wxMessageBox(_("No new or stale files found. The project is up-to-date"), wxT("CodeLite"),
-                     wxICON_INFORMATION | wxOK, this);
+        wxMessageBox(_("No new or stale files found. The project is up-to-date"),
+                     wxT("CodeLite"),
+                     wxICON_INFORMATION | wxOK,
+                     this);
         return false;
     }
 
@@ -312,10 +314,10 @@ void ReconcileProjectDlg::DoFindFiles()
     // get list of files from the project
     const Project::FilesMap_t& files = proj->GetFiles();
     wxStringSet_t projectfilesSet;
-    for (const auto&p : files) {
+    for (const auto& p : files) {
         projectfilesSet.insert(p.first);
         if (!wxFileName::FileExists(p.second->GetFilename())) {
-            m_stalefiles.insert({ p.second->GetFilename(), p.second });
+            m_stalefiles.insert({p.second->GetFilename(), p.second});
         }
     }
 
@@ -365,8 +367,8 @@ void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
             wxVector<wxVariant> cols;
             cols.push_back(::MakeIconText(path, GetBitmap(path)));
             cols.push_back(vd);
-            m_dataviewAssignedModel->AppendItem(wxDataViewItem(0), cols,
-                                                new ReconcileFileItemData(fn.GetFullPath(), vd));
+            m_dataviewAssignedModel->AppendItem(
+                wxDataViewItem(0), cols, new ReconcileFileItemData(fn.GetFullPath(), vd));
             m_dvListCtrl1Unassigned->DeleteItem(m_dvListCtrl1Unassigned->GetStore()->GetRow(items.Item(i)));
         }
     }
@@ -583,8 +585,11 @@ void ReconcileProjectDlg::OnDVLCContextMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
     menu.Append(wxID_DELETE);
-    menu.Connect(wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(ReconcileProjectDlg::OnDeleteSelectedNewFiles), NULL, this);
+    menu.Connect(wxID_DELETE,
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(ReconcileProjectDlg::OnDeleteSelectedNewFiles),
+                 NULL,
+                 this);
     m_dvListCtrl1Unassigned->PopupMenu(&menu);
 }
 
@@ -674,8 +679,11 @@ void ReconcileProjectFiletypesDlg::SetData()
     }
 }
 
-void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& types, wxString& ignoreFiles,
-                                           wxArrayString& excludePaths, wxArrayString& regexes) const
+void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir,
+                                           wxString& types,
+                                           wxString& ignoreFiles,
+                                           wxArrayString& excludePaths,
+                                           wxArrayString& regexes) const
 {
     toplevelDir = m_dirPickerToplevel->GetPath();
     types = m_textExtensions->GetValue();
@@ -714,8 +722,8 @@ void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& type
     ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);
     wxCHECK_RET(proj, "Can't find a Project with the supplied name");
 
-    proj->SetReconciliationData(wxFileName(toplevelDir).GetFullPath(wxPATH_UNIX), types, ignoreFilesArr, excludePaths,
-                                regexes);
+    proj->SetReconciliationData(
+        wxFileName(toplevelDir).GetFullPath(wxPATH_UNIX), types, ignoreFilesArr, excludePaths, regexes);
 }
 
 void ReconcileProjectFiletypesDlg::SetRegex(const wxString& regex)
@@ -755,8 +763,8 @@ void ReconcileProjectFiletypesDlg::OnIgnoreBrowse(wxCommandEvent& WXUNUSED(event
     if (tld.IsRelative()) {
         tld.MakeAbsolute(proj->GetFileName().GetPath());
     }
-    wxString new_exclude = wxDirSelector(_("Select a directory to ignore:"), tld.GetFullPath(), wxDD_DEFAULT_STYLE,
-                                         wxDefaultPosition, this);
+    wxString new_exclude = wxDirSelector(
+        _("Select a directory to ignore:"), tld.GetFullPath(), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 
     if (!new_exclude.empty()) {
         if (m_listExclude->FindString(new_exclude) == wxNOT_FOUND) {
@@ -842,8 +850,8 @@ void ReconcileByRegexDlg::OnTextEnter(wxCommandEvent& event)
 
 void ReconcileByRegexDlg::OnVDBrowse(wxCommandEvent& WXUNUSED(event))
 {
-    VirtualDirectorySelectorDlg selector(this, clCxxWorkspaceST::Get(), m_textCtrlVirtualFolder->GetValue(),
-                                         m_projname);
+    VirtualDirectorySelectorDlg selector(
+        this, clCxxWorkspaceST::Get(), m_textCtrlVirtualFolder->GetValue(), m_projname);
     if (selector.ShowModal() == wxID_OK) {
         m_textCtrlVirtualFolder->ChangeValue(selector.GetVirtualDirectoryPath());
     }

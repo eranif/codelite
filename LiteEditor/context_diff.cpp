@@ -46,7 +46,7 @@ std::shared_ptr<ContextBase> ContextDiff::NewInstance(clEditor* container)
 void ContextDiff::ApplySettings()
 {
     LexerConf::Ptr_t lexPtr;
-    if(EditorConfigST::Get()->IsOk()) {
+    if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }
     GetCtrl().SetLexer(lexPtr ? lexPtr->GetLexerId() : wxSTC_LEX_NULL);

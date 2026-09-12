@@ -44,9 +44,9 @@ void BuildTabSetting::Save()
     options.SetSkipWarnings(m_checkBoxSkipWarnings->IsChecked());
 
     wxString marker_style = m_choiceMarkerStyle->GetStringSelection().Lower();
-    if(marker_style == "none") {
+    if (marker_style == "none") {
         options.SetErrorWarningStyle(BuildTabSettingsData::MARKER_NONE);
-    } else if(marker_style == "annotation box") {
+    } else if (marker_style == "annotation box") {
         options.SetErrorWarningStyle(BuildTabSettingsData::MARKER_ANNOTATE);
     } else {
         options.SetErrorWarningStyle(BuildTabSettingsData::MARKER_BOOKMARKS);

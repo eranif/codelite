@@ -91,11 +91,8 @@ void WizardsPlugin::CreateToolBar(clToolBarGeneric* toolbar)
                                 nullptr,
                                 this);
 #endif
-    m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"),
-                                wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI),
-                                nullptr,
-                                this);
+    m_mgr->GetTheApp()->Connect(
+        XRCID("gizmos_options"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), nullptr, this);
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN,
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(WizardsPlugin::OnNewPlugin),
@@ -111,11 +108,8 @@ void WizardsPlugin::CreateToolBar(clToolBarGeneric* toolbar)
                                 wxCommandEventHandler(WizardsPlugin::OnNewClass),
                                 nullptr,
                                 this);
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS,
-                                wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI),
-                                nullptr,
-                                this);
+    m_mgr->GetTheApp()->Connect(
+        ID_MI_NEW_NEW_CLASS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &WizardsPlugin::OnFolderContentMenu, this);
 }
 

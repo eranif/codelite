@@ -31,23 +31,23 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-EditConfigurationDialog::EditConfigurationDialog(wxWindow* parent, const wxString& projectName, int id, wxString title,
-                                                 wxPoint pos, wxSize size, int style)
+EditConfigurationDialog::EditConfigurationDialog(
+    wxWindow* parent, const wxString& projectName, int id, wxString title, wxPoint pos, wxSize size, int style)
     : EditConfigurationDialogBase(parent, id, title, pos, size, style)
     , m_projectName(projectName)
 {
     this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 
     ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(m_projectName);
-    if(settings) {
+    if (settings) {
         ProjectSettingsCookie cookie;
         BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
-        while(bldConf) {
+        while (bldConf) {
             m_configurationsList->Append(bldConf->GetName());
             bldConf = settings->GetNextBuildConfiguration(cookie);
         }
     }
-    if(m_configurationsList->GetCount() > 0)
+    if (m_configurationsList->GetCount() > 0)
         m_configurationsList->SetSelection(0);
 
     Layout();
@@ -60,9 +60,9 @@ EditConfigurationDialog::EditConfigurationDialog(wxWindow* parent, const wxStrin
 void EditConfigurationDialog::RenameConfiguration(const wxString& oldName, const wxString& newName)
 {
     ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(m_projectName);
-    if(settings) {
+    if (settings) {
         BuildConfigPtr bldConf = settings->GetBuildConfiguration(oldName);
-        if(bldConf) {
+        if (bldConf) {
             settings->RemoveConfiguration(oldName);
             bldConf->SetName(newName);
             settings->SetBuildConfiguration(bldConf);
@@ -73,11 +73,11 @@ void EditConfigurationDialog::RenameConfiguration(const wxString& oldName, const
             m_configurationsList->Clear();
             ProjectSettingsCookie cookie;
             BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
-            while(bldConf) {
+            while (bldConf) {
                 m_configurationsList->Append(bldConf->GetName());
                 bldConf = settings->GetNextBuildConfiguration(cookie);
             }
-            if(m_configurationsList->GetCount() > 0)
+            if (m_configurationsList->GetCount() > 0)
                 m_configurationsList->SetSelection(0);
         }
     }
@@ -89,7 +89,7 @@ void EditConfigurationDialog::OnItemDclick(wxCommandEvent& event)
     wxTextEntryDialog* dlg = new wxTextEntryDialog(this, _("Enter New Name:"), _("Rename"), oldName);
     dlg->SetTextValidator(wxFILTER_ASCII);
 
-    if(dlg->ShowModal() == wxID_OK) {
+    if (dlg->ShowModal() == wxID_OK) {
         wxString newName = dlg->GetValue();
         RenameConfiguration(oldName, newName);
     }
@@ -105,13 +105,13 @@ void EditConfigurationDialog::OnButtonRename(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString oldName = m_configurationsList->GetStringSelection();
-    if(oldName.IsEmpty()) {
+    if (oldName.IsEmpty()) {
         return;
     }
     wxTextEntryDialog* dlg = new wxTextEntryDialog(this, _("Enter New Name:"), _("Rename"), oldName);
     dlg->SetTextValidator(wxFILTER_ASCII);
 
-    if(dlg->ShowModal() == wxID_OK) {
+    if (dlg->ShowModal() == wxID_OK) {
         wxString newName = dlg->GetValue();
         RenameConfiguration(oldName, newName);
     }
@@ -121,16 +121,16 @@ void EditConfigurationDialog::OnButtonDelete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString selection = m_configurationsList->GetStringSelection();
-    if(selection.IsEmpty()) {
+    if (selection.IsEmpty()) {
         return;
     }
     wxString msg = wxString::Format(_("Remove configuration '%s'?"), selection);
-    if(wxMessageBox(msg, _("Confirm"), wxYES_NO | wxCANCEL | wxICON_WARNING) == wxYES) {
+    if (wxMessageBox(msg, _("Confirm"), wxYES_NO | wxCANCEL | wxICON_WARNING) == wxYES) {
         ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(m_projectName);
-        if(settings) {
+        if (settings) {
             settings->RemoveConfiguration(selection);
             m_configurationsList->Delete(m_configurationsList->GetSelection());
-            if(m_configurationsList->GetCount() > 0)
+            if (m_configurationsList->GetCount() > 0)
                 m_configurationsList->SetSelection(0);
 
             // save changes

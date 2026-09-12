@@ -124,7 +124,9 @@ bool EditorConfig::Load()
 }
 
 LexerConf::Ptr_t EditorConfig::GetLexerForFile(const wxString& filename)
-{ return ColoursAndFontsManager::Get().GetLexerForFile(filename); }
+{
+    return ColoursAndFontsManager::Get().GetLexerForFile(filename);
+}
 
 LexerConf::Ptr_t EditorConfig::GetLexer(const wxString& lexerName)
 {

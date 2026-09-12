@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ps_compiler_page.h"
+
 #include "CopyCompilerSettingsDlg.h"
 #include "addoptioncheckdlg.h"
 #include "build_settings_config.h"
@@ -31,11 +33,13 @@
 #include "manager.h"
 #include "project.h"
 #include "project_settings_dlg.h"
-#include "ps_compiler_page.h"
 #include "ps_general_page.h"
+
 #include <wx/filedlg.h>
 
-PSCompilerPage::PSCompilerPage(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg,
+PSCompilerPage::PSCompilerPage(wxWindow* parent,
+                               const wxString& projectName,
+                               ProjectSettingsDlg* dlg,
                                PSGeneralPage* gp)
     : PSCompilerPageBase(parent)
     , m_dlg(dlg)
@@ -78,8 +82,8 @@ void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
 void PSCompilerPage::Clear()
 {
     wxPropertyGridIterator iter = m_pgMgr->GetGrid()->GetIterator();
-    for(; !iter.AtEnd(); ++iter) {
-        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
+    for (; !iter.AtEnd(); ++iter) {
+        if (iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
             iter.GetProperty()->SetValueToUnspecified();
         }
     }
@@ -98,23 +102,23 @@ void PSCompilerPage::OnCustomEditorClicked(wxCommandEvent& event)
     CHECK_PTR_RET(prop);
     m_dlg->SetIsDirty(true);
 
-    if(prop == m_pgPropPreProcessors || prop == m_pgPropIncludePaths || prop == m_pgPropAssembler) {
+    if (prop == m_pgPropPreProcessors || prop == m_pgPropIncludePaths || prop == m_pgPropAssembler) {
         wxString value = prop->GetValueAsString();
-        if(PopupAddOptionDlg(value)) {
+        if (PopupAddOptionDlg(value)) {
             prop->SetValueFromString(value);
         }
 
-    } else if(prop == m_pgPropCppOpts || prop == m_pgPropCOpts) {
+    } else if (prop == m_pgPropCppOpts || prop == m_pgPropCOpts) {
         wxString value = prop->GetValueAsString();
         wxString cmpName = m_gp->GetCompiler();
         CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-        if(PopupAddOptionCheckDlg(value, _("Compiler options"), cmp->GetCompilerOptions())) {
+        if (PopupAddOptionCheckDlg(value, _("Compiler options"), cmp->GetCompilerOptions())) {
             prop->SetValueFromString(value);
         }
-    } else if(prop == m_pgPropPreCmpHeaderFile) {
+    } else if (prop == m_pgPropPreCmpHeaderFile) {
         wxFileName curvalue = prop->GetValueAsString();
         wxString program = ::wxFileSelector(_("Choose a file"), curvalue.GetPath());
-        if(!program.IsEmpty()) {
+        if (!program.IsEmpty()) {
             program.Replace("\\", "/");
             prop->SetValue(program);
         }
@@ -125,7 +129,7 @@ void PSCompilerPage::OnCompilerNeeded(wxCommandEvent& event) { m_dlg->SetIsDirty
 void PSCompilerPage::OnCopyCompilerSettings(wxCommandEvent& event)
 {
     CopyCompilerSettingsDlg dlg(this);
-    if(dlg.ShowModal() != wxID_OK) {
+    if (dlg.ShowModal() != wxID_OK) {
         return;
     }
 

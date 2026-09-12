@@ -5,4 +5,6 @@ clToolBarToggleButton::clToolBarToggleButton(clToolBarGeneric* parent,
                                              size_t bitmapId,
                                              const wxString& label)
     : clToolBarButton(parent, id, bitmapId, label)
-{ m_flags = kToggleButton; }
+{
+    m_flags = kToggleButton;
+}

@@ -19,7 +19,6 @@
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
-
 namespace
 {
 wxStringSet_t GetProjectFiles(const wxString& projectName)
@@ -252,10 +251,7 @@ wxMenu* wxCrafterPlugin::DoCreateFolderMenu()
     return menu;
 }
 
-void wxCrafterPlugin::OnNewForm(wxCommandEvent& e)
-{
-    m_mainFrame->OpenNewFormWizard(e.GetInt());
-}
+void wxCrafterPlugin::OnNewForm(wxCommandEvent& e) { m_mainFrame->OpenNewFormWizard(e.GetInt()); }
 
 void wxCrafterPlugin::DoShowDesigner()
 {
@@ -323,17 +319,11 @@ void wxCrafterPlugin::OnCloseProject(wxCommandEvent& e)
 
 void wxCrafterPlugin::OnCloseProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProjectMetadata::Get().IsLoaded()); }
 
-void wxCrafterPlugin::OnOpenProject(wxCommandEvent&)
-{
-    m_mainFrame->LoadProject(wxFileName());
-}
+void wxCrafterPlugin::OnOpenProject(wxCommandEvent&) { m_mainFrame->LoadProject(wxFileName()); }
 
 void wxCrafterPlugin::OnOpenProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcProjectMetadata::Get().IsLoaded() == false); }
 
-void wxCrafterPlugin::OnSaveProject(wxCommandEvent&)
-{
-    m_mainFrame->SaveProject();
-}
+void wxCrafterPlugin::OnSaveProject(wxCommandEvent&) { m_mainFrame->SaveProject(); }
 
 void wxCrafterPlugin::OnSaveProjectUI(wxUpdateUIEvent& e) { e.Enable(wxcEditManager::Get().IsDirty()); }
 

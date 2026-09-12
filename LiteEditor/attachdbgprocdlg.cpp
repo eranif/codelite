@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "attachdbgprocdlg.h"
 
-#include "cl_config.h"
 #include "Debugger/debuggermanager.h"
+#include "cl_config.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "procutils.h"
@@ -52,7 +52,9 @@ AttachDbgProcDlg::AttachDbgProcDlg(wxWindow* parent)
     wxArrayString choices = DebuggerMgr::Get().GetAvailableDebuggers();
     m_choiceDebugger->Append(choices);
 
-    if(choices.IsEmpty() == false) { m_choiceDebugger->SetSelection(0); }
+    if (choices.IsEmpty() == false) {
+        m_choiceDebugger->SetSelection(0);
+    }
 
     wxString filter = clConfig::Get().Read("AttachDebuggerDialog/Filter", wxString());
     m_textCtrlFilter->ChangeValue(filter);
@@ -83,8 +85,10 @@ void AttachDbgProcDlg::RefreshProcessesList(wxString filter)
         processID << processEntry.pid;
 
         // Append only processes that matches the filter string
-        if(filter.IsEmpty() || FileUtils::FuzzyMatch(filter, processName) || FileUtils::FuzzyMatch(filter, processID)) {
-            if(processEntry.pid == (long)wxGetProcessId()) continue;
+        if (filter.IsEmpty() || FileUtils::FuzzyMatch(filter, processName) ||
+            FileUtils::FuzzyMatch(filter, processID)) {
+            if (processEntry.pid == (long)wxGetProcessId())
+                continue;
             wxVector<wxVariant> cols;
             cols.push_back(wxString() << processEntry.pid);
             cols.push_back(processEntry.name);
@@ -133,6 +137,8 @@ void AttachDbgProcDlg::OnRefresh(wxCommandEvent& event)
 }
 void AttachDbgProcDlg::OnEnter(wxCommandEvent& event)
 {
-    if(!GetProcessId().IsEmpty()) { EndModal(wxID_OK); }
+    if (!GetProcessId().IsEmpty()) {
+        EndModal(wxID_OK);
+    }
 }
 void AttachDbgProcDlg::OnItemActivated(wxDataViewEvent& event) { EndModal(wxID_OK); }

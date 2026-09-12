@@ -40,8 +40,8 @@ public:
     CompilerPatternDlg(wxWindow* parent, const wxString& title);
     virtual ~CompilerPatternDlg() = default;
 
-    void SetPattern(const wxString& pattern, const wxString& lineIdx, const wxString& fileIdx,
-                    const wxString& columnIndex);
+    void
+    SetPattern(const wxString& pattern, const wxString& lineIdx, const wxString& fileIdx, const wxString& columnIndex);
 
 protected:
     virtual void OnSubmit(wxCommandEvent& event);
@@ -57,8 +57,8 @@ public:
 class CompilerOptionDialog : public CompilerOptionDlgBase
 {
 public:
-    CompilerOptionDialog(wxWindow* parent, const wxString& title, const wxString& name, const wxString& help,
-                         wxWindowID id = wxID_ANY)
+    CompilerOptionDialog(
+        wxWindow* parent, const wxString& title, const wxString& name, const wxString& help, wxWindowID id = wxID_ANY)
         : CompilerOptionDlgBase(parent, id, title)
     {
         m_textCtrl18->ChangeValue(name);

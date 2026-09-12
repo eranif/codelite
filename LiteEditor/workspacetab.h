@@ -27,6 +27,7 @@
 
 #include "cl_command_event.h"
 #include "wxcrafter.hpp"
+
 #include <wx/panel.h>
 
 class clWorkspaceView;

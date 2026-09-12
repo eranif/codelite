@@ -35,9 +35,9 @@ struct DebugSession {
     {
         dap::Environment dap_env;
         dap_env.format = dap_server.GetEnvFormat();
-        if(dap_env.format != dap::EnvFormat::NONE) {
-            for(const auto& p : environment) {
-                dap_env.vars.insert({ p.first, p.second });
+        if (dap_env.format != dap::EnvFormat::NONE) {
+            for (const auto& p : environment) {
+                dap_env.vars.insert({p.first, p.second});
             }
         }
         return dap_env;

@@ -1,5 +1,7 @@
 #include "FindInFilesLocationsDlg.h"
+
 #include "macros.h"
+
 #include <wx/dirdlg.h>
 
 FindInFilesLocationsDlg::FindInFilesLocationsDlg(wxWindow* parent, const wxArrayString& locations)
@@ -21,7 +23,7 @@ FindInFilesLocationsDlg::FindInFilesLocationsDlg(wxWindow* parent, const wxArray
     DoAppendItem(SEARCH_IN_OPEN_FILES);
     m_initialLocations.Remove(SEARCH_IN_OPEN_FILES);
 
-    for(size_t i = 0; i < m_initialLocations.size(); ++i) {
+    for (size_t i = 0; i < m_initialLocations.size(); ++i) {
         DoAppendItem(m_initialLocations.Item(i));
     }
     m_initialLocations.clear();
@@ -36,8 +38,8 @@ void FindInFilesLocationsDlg::DoAppendItem(const wxString& str)
 wxArrayString FindInFilesLocationsDlg::GetLocations() const
 {
     wxArrayString locs;
-    for(size_t i = 0; i < m_checkListBoxLocations->GetCount(); ++i) {
-        if(m_checkListBoxLocations->IsChecked(i)) {
+    for (size_t i = 0; i < m_checkListBoxLocations->GetCount(); ++i) {
+        if (m_checkListBoxLocations->IsChecked(i)) {
             locs.Add(m_checkListBoxLocations->GetString(i));
         }
     }
@@ -46,14 +48,16 @@ wxArrayString FindInFilesLocationsDlg::GetLocations() const
 void FindInFilesLocationsDlg::OnAddPath(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector();
-    if(path.IsEmpty()) return;
+    if (path.IsEmpty())
+        return;
     DoAppendItem(path, true);
 }
 
 void FindInFilesLocationsDlg::OnDeletePath(wxCommandEvent& event)
 {
     int sel = m_checkListBoxLocations->GetSelection();
-    if(sel == wxNOT_FOUND) return;
+    if (sel == wxNOT_FOUND)
+        return;
     m_checkListBoxLocations->Delete(sel);
 }
 

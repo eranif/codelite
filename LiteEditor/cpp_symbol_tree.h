@@ -25,6 +25,7 @@
 #ifndef LITEEDITOR_CPP_SYMBOL_TREE_H
 #define LITEEDITOR_CPP_SYMBOL_TREE_H
 
+#include "cl_editor.h"
 #include "stack"
 #include "symbol_tree.h"
 
@@ -39,12 +40,15 @@ public:
     CppSymbolTree() = default;
 
     /// Nothing special here, just call our parent constructor
-    CppSymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
+    CppSymbolTree(wxWindow* parent,
+                  const wxWindowID id,
+                  const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxDefaultSize,
+                  long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
 
     /// destructor
     ~CppSymbolTree() override = default;
-    
+
     /**
      * @brief emulate user activated the selected item
      */

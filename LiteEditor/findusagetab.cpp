@@ -137,7 +137,7 @@ void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
     std::map<wxString, std::vector<const LSP::Location*>> sorted_entries;
     for (const LSP::Location& location : m_locations) {
         if (sorted_entries.count(location.GetPath()) == 0) {
-            sorted_entries.insert({ location.GetPath(), {} });
+            sorted_entries.insert({location.GetPath(), {}});
         }
         std::vector<const LSP::Location*>& file_matches = sorted_entries[location.GetPath()];
         file_matches.push_back(&location);
@@ -249,7 +249,7 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     }
 
     // the file does not exist
-    clCommandEvent open_file_event{ wxEVT_OPEN_FILE };
+    clCommandEvent open_file_event{wxEVT_OPEN_FILE};
     open_file_event.SetFileName(item_data->location->GetPath());
     if (!EventNotifier::Get()->ProcessEvent(open_file_event)) {
         ::wxMessageBox(_("Failed to open file: ") + item_data->location->GetPath(),
@@ -291,7 +291,7 @@ bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
     wxString filepath = m_ctrl->GetItemText(item);
     if (!wxFileName::Exists(filepath)) {
         // not a local file, request for file download
-        clCommandEvent event_download{ wxEVT_DOWNLOAD_FILE };
+        clCommandEvent event_download{wxEVT_DOWNLOAD_FILE};
         event_download.SetFileName(filepath);
         clDEBUG() << "Sending event wxEVT_DOWNLOAD_FILE" << endl;
         if (!EventNotifier::Get()->ProcessEvent(event_download)) {

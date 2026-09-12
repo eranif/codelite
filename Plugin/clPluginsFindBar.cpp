@@ -242,7 +242,9 @@ bool clPluginsFindBar::Show(bool show)
 #define SHOW_STATUS_MESSAGES(searchFlags) (true)
 
 bool clPluginsFindBar::DoSearch(size_t searchFlags)
-{ return Search(m_sci, m_textCtrlFind->GetValue(), searchFlags, this); }
+{
+    return Search(m_sci, m_textCtrlFind->GetValue(), searchFlags, this);
+}
 
 void clPluginsFindBar::OnHide(wxCommandEvent& e)
 {
@@ -1087,7 +1089,9 @@ void clPluginsFindBar::OnFindPrevUI(wxUpdateUIEvent& event) { event.Enable(!m_te
 void clPluginsFindBar::OnFindUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->IsEmpty()); }
 void clPluginsFindBar::OnReplaceAllUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->IsEmpty()); }
 void clPluginsFindBar::OnReplaceUI(wxUpdateUIEvent& event)
-{ event.Enable(!m_textCtrlFind->IsEmpty() && !m_replaceInSelection); }
+{
+    event.Enable(!m_textCtrlFind->IsEmpty() && !m_replaceInSelection);
+}
 
 void clPluginsFindBar::DoArrowDown(clTerminalHistory& history, wxTextCtrl* ctrl)
 {

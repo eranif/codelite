@@ -32,7 +32,7 @@ class ContextHtml : public ContextBase
 {
 public:
     ContextHtml();
-    explicit ContextHtml(clEditor *Editor);
+    explicit ContextHtml(clEditor* Editor);
     ~ContextHtml() override = default;
 
 public:

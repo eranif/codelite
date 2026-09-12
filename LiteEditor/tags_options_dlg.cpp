@@ -95,7 +95,7 @@ void CodeCompletionSettingsDialog::CopyData()
 
 void CodeCompletionSettingsDialog::SetFlag(CodeCompletionOpts flag, bool set)
 {
-    if(set) {
+    if (set) {
         m_data.SetFlags(m_data.GetFlags() | flag);
     } else {
         m_data.SetFlags(m_data.GetFlags() & ~(flag));
@@ -104,7 +104,7 @@ void CodeCompletionSettingsDialog::SetFlag(CodeCompletionOpts flag, bool set)
 
 void CodeCompletionSettingsDialog::SetColouringFlag(CodeCompletionColourOpts flag, bool set)
 {
-    if(set) {
+    if (set) {
         m_data.SetCcColourFlags(m_data.GetCcColourFlags() | flag);
     } else {
         m_data.SetCcColourFlags(m_data.GetCcColourFlags() & ~(flag));
@@ -122,13 +122,13 @@ void CodeCompletionSettingsDialog::OnButtonCancel(wxCommandEvent& event)
 void CodeCompletionSettingsDialog::DoSetEditEventsHandler(wxWindow* win)
 {
     // wxTextCtrl needs some extra special handling
-    if(dynamic_cast<wxStyledTextCtrl*>(win)) {
+    if (dynamic_cast<wxStyledTextCtrl*>(win)) {
         m_handlers.push_back(std::make_unique<clEditEventsHandler>(dynamic_cast<wxStyledTextCtrl*>(win)));
     }
 
     // Check the children
     wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
-    while(pclNode) {
+    while (pclNode) {
         wxWindow* pclChild = pclNode->GetData();
         this->DoSetEditEventsHandler(pclChild);
         pclNode = pclNode->GetNext();

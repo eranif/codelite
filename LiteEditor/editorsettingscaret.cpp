@@ -30,18 +30,22 @@ EditorSettingsCaret::EditorSettingsCaret(wxWindow* parent, OptionsConfigPtr opti
 {
     AddProperty(_("Caret blink period"), m_options->GetCaretBlinkPeriod(), UPDATE_INT_CB(SetCaretBlinkPeriod));
     AddProperty(_("Caret width"), m_options->GetCaretWidth(), UPDATE_INT_CB(SetCaretWidth));
-    AddProperty(_("Use block caret"), m_options->HasOption(OptionsConfig::Opt_UseBlockCaret),
+    AddProperty(_("Use block caret"),
+                m_options->HasOption(OptionsConfig::Opt_UseBlockCaret),
                 UPDATE_OPTION_CB(Opt_UseBlockCaret));
-    AddProperty(_("Allow caret to scroll beyond end of file"), m_options->GetScrollBeyondLastLine(),
+    AddProperty(_("Allow caret to scroll beyond end of file"),
+                m_options->GetScrollBeyondLastLine(),
                 UPDATE_BOOL_CB(SetScrollBeyondLastLine));
 
     AddProperty(_("Allow caret to be placed beyond the end of line"),
                 m_options->HasOption(OptionsConfig::Opt_AllowCaretAfterEndOfLine),
                 UPDATE_OPTION_CB(Opt_AllowCaretAfterEndOfLine));
 
-    AddProperty(_("Caret jumps between word segments"), m_options->GetCaretUseCamelCase(),
+    AddProperty(_("Caret jumps between word segments"),
+                m_options->GetCaretUseCamelCase(),
                 UPDATE_BOOL_CB(SetCaretUseCamelCase));
 
-    AddProperty(_("Auto-adjust horizontal scrollbar width"), m_options->GetAutoAdjustHScrollBarWidth(),
+    AddProperty(_("Auto-adjust horizontal scrollbar width"),
+                m_options->GetAutoAdjustHScrollBarWidth(),
                 UPDATE_BOOL_CB(SetAutoAdjustHScrollBarWidth));
 }

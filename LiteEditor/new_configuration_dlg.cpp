@@ -25,14 +25,14 @@
 
 #include "new_configuration_dlg.h"
 
+#include "macros.h"
 #include "manager.h"
 #include "project_settings.h"
-#include "macros.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
-NewConfigurationDlg::NewConfigurationDlg(wxWindow* parent, const wxString& projectName, int id, wxString title,
-                                         wxPoint pos, wxSize size, int style)
+NewConfigurationDlg::NewConfigurationDlg(
+    wxWindow* parent, const wxString& projectName, int id, wxString title, wxPoint pos, wxSize size, int style)
     : NewConfigurationDlgBase(parent, id, title, pos, size, style)
     , m_projectName(projectName)
 {
@@ -45,10 +45,10 @@ NewConfigurationDlg::NewConfigurationDlg(wxWindow* parent, const wxString& proje
     // Get all configuration of the project
     m_choiceCopyConfigurations->Append(_("-- None --"));
     ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(m_projectName);
-    if(settings) {
+    if (settings) {
         ProjectSettingsCookie cookie;
         BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
-        while(bldConf) {
+        while (bldConf) {
             m_choiceCopyConfigurations->Append(bldConf->GetName());
             bldConf = settings->GetNextBuildConfiguration(cookie);
         }
@@ -75,7 +75,7 @@ void NewConfigurationDlg::OnButtonOK(wxCommandEvent& event)
     newConfName = m_textConfigurationName->GetValue();
     newConfName = newConfName.Trim();
     newConfName = newConfName.Trim(false);
-    if(newConfName.IsEmpty()) {
+    if (newConfName.IsEmpty()) {
         wxMessageBox(_("Configuration Name is empty"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
         return;
     }
@@ -84,7 +84,7 @@ void NewConfigurationDlg::OnButtonOK(wxCommandEvent& event)
     wxString copyFrom = m_choiceCopyConfigurations->GetStringSelection();
     BuildConfigPtr newBuildConf;
 
-    if(copyFrom == _("-- None --")) {
+    if (copyFrom == _("-- None --")) {
         newBuildConf = std::make_shared<BuildConfig>(nullptr);
     } else {
         BuildConfigPtr origBuildConf = settings->GetBuildConfiguration(copyFrom);

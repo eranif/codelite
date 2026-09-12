@@ -34,8 +34,10 @@
 #include <wx/tokenzr.h>
 #include <wx/txtstrm.h>
 
-AddOptionCheckDlg::AddOptionCheckDlg(wxWindow* parent, const wxString& title,
-                                     const Compiler::CmpCmdLineOptions& cmpOptions, const wxString& value)
+AddOptionCheckDlg::AddOptionCheckDlg(wxWindow* parent,
+                                     const wxString& title,
+                                     const Compiler::CmpCmdLineOptions& cmpOptions,
+                                     const wxString& value)
     : AddOptionCheckDialogBase(parent, wxID_ANY, title)
     , m_cmpOptions(cmpOptions)
 {
@@ -76,24 +78,24 @@ void AddOptionCheckDlg::UpdateOptions()
     // Remove all check boxes
     m_checkListOptions->Freeze();
 
-    for(unsigned int idx = 0; idx < m_checkListOptions->GetCount(); ++idx) {
+    for (unsigned int idx = 0; idx < m_checkListOptions->GetCount(); ++idx) {
         m_checkListOptions->Check(idx, false);
     }
 
     // Check all options entered
     wxString customOptions;
     wxStringTokenizer tkz(m_textCmdLn->GetValue(), wxT(";"));
-    while(tkz.HasMoreTokens()) {
+    while (tkz.HasMoreTokens()) {
         wxString token = tkz.GetNextToken();
         token = token.Trim().Trim(false);
-        if(!token.empty()) {
+        if (!token.empty()) {
             Compiler::CmpCmdLineOptions::const_iterator itOption = m_cmpOptions.find(token);
-            if(itOption != m_cmpOptions.end()) {
+            if (itOption != m_cmpOptions.end()) {
                 const Compiler::CmpCmdLineOption& cmpOption = itOption->second;
                 m_checkListOptions->Check(
                     m_checkListOptions->FindString(cmpOption.help + wxT(" [") + cmpOption.name + wxT("]")));
             } else {
-                if(!customOptions.empty())
+                if (!customOptions.empty())
                     customOptions << wxT(";");
                 customOptions << token;
             }
@@ -110,19 +112,19 @@ void AddOptionCheckDlg::UpdateCmdLine()
     std::list<wxString> options;
     wxStringInputStream input(m_textOptions->GetValue());
     wxTextInputStream text(input);
-    while(!input.Eof()) {
+    while (!input.Eof()) {
         wxString option = text.ReadLine().Trim().Trim(false);
-        if(!option.empty()) {
+        if (!option.empty()) {
             options.push_back(option);
         }
     }
 
     // Read check box options
-    for(unsigned int idx = 0; idx < m_checkListOptions->GetCount(); ++idx) {
+    for (unsigned int idx = 0; idx < m_checkListOptions->GetCount(); ++idx) {
         wxString value = m_checkListOptions->GetString(idx).AfterLast(wxT('[')).BeforeLast(wxT(']'));
-        if(m_checkListOptions->IsChecked(idx)) {
+        if (m_checkListOptions->IsChecked(idx)) {
             // If the option doesn't exist actually, add it
-            if(std::find(options.begin(), options.end(), value) == options.end()) {
+            if (std::find(options.begin(), options.end(), value) == options.end()) {
                 // options.push_back(value.AfterLast(wxT('[')).BeforeLast(wxT(']')));
                 options.insert(options.begin(), value);
             } else

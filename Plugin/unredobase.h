@@ -82,7 +82,9 @@ public:
     virtual ~CommandProcessorBase();
 
     bool CanAppend(CLC_types type)
-    { return GetOpenCommand()->GetIsAppendable() && GetOpenCommand()->GetCommandType() == type; }
+    {
+        return GetOpenCommand()->GetIsAppendable() && GetOpenCommand()->GetCommandType() == type;
+    }
 
     virtual void ProcessOpenCommand();
 
@@ -128,7 +130,9 @@ public:
     bool CanUndo() const { return (GetCurrentCommand() > -1); }
 
     bool CanRedo() const
-    { return (GetCommands().size() > 0) && (GetCurrentCommand() < (int)(GetCommands().size() - 1)); }
+    {
+        return (GetCommands().size() > 0) && (GetCurrentCommand() < (int)(GetCommands().size() - 1));
+    }
 
     void ClearRedos()
     { // Remove any redos invalidated by a new addition

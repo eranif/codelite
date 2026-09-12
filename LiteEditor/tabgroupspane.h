@@ -81,7 +81,9 @@ public:
 protected:
     void AddFile(const wxString& filename);
 
-    void AddTreeItem(bool isGlobal, const wxString& tabgroupname, const wxArrayString& tabfilepaths,
+    void AddTreeItem(bool isGlobal,
+                     const wxString& tabgroupname,
+                     const wxArrayString& tabfilepaths,
                      const wxTreeItemId insertafter = wxTreeItemId());
     void AddTabgroupItem();
     void PasteTabgroupItem(wxTreeItemId itemtopaste = wxTreeItemId());

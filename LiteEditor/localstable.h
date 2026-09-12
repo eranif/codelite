@@ -47,7 +47,8 @@ protected:
     bool m_defaultHexDisplay;
 
 protected:
-    void DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags,
+    void DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved,
+                                         size_t flags,
                                          std::map<wxString, wxString>& oldValues);
     void DoUpdateLocals(const LocalVariables& locals, size_t kind);
 

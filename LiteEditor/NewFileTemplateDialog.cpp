@@ -1,4 +1,5 @@
 #include "NewFileTemplateDialog.h"
+
 #include "globals.h"
 
 NewFileTemplateDialog::NewFileTemplateDialog(wxWindow* parent)

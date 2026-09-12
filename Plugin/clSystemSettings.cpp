@@ -127,7 +127,9 @@ class MyDialog : public wxDialog
 public:
     MyDialog(wxWindow* parent)
         : wxDialog(parent, wxID_ANY, wxEmptyString)
-    { Hide(); }
+    {
+        Hide();
+    }
     ~MyDialog() override = default;
 };
 std::once_flag once;

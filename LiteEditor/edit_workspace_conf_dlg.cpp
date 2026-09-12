@@ -24,13 +24,14 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "edit_workspace_conf_dlg.h"
+
 #include "macros.h"
 #include "manager.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
-EditWorkspaceConfDlg::EditWorkspaceConfDlg(wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size,
-                                           int style)
+EditWorkspaceConfDlg::EditWorkspaceConfDlg(
+    wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size, int style)
     : EditWorkspaceConfDlgBase(parent, id, title, pos, size, style)
 {
     this->SetSizeHints(wxDefaultSize, wxDefaultSize);
@@ -65,11 +66,11 @@ void EditWorkspaceConfDlg::FillList()
 void EditWorkspaceConfDlg::OnDelete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_wspConfList->GetCount() == 0) {
+    if (m_wspConfList->GetCount() == 0) {
         return;
     }
     wxString delMe = m_wspConfList->GetStringSelection();
-    if(delMe.IsEmpty()) {
+    if (delMe.IsEmpty()) {
         return;
     }
 
@@ -89,10 +90,10 @@ void EditWorkspaceConfDlg::OnDelete(wxCommandEvent& event)
 void EditWorkspaceConfDlg::DoRename(const wxString& selItem)
 {
     wxTextEntryDialog* dlg = new wxTextEntryDialog(this, _("New Configuration Name:"), _("Rename"), selItem);
-    if(dlg->ShowModal() == wxID_OK) {
+    if (dlg->ShowModal() == wxID_OK) {
         wxString newName = dlg->GetValue();
         TrimString(newName);
-        if(!newName.IsEmpty()) {
+        if (!newName.IsEmpty()) {
             newName.Replace(" ", "_"); // using spaces will break the build, replace them with hyphens
             BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
             WorkspaceConfigurationPtr conf = matrix->GetConfigurationByName(selItem);
@@ -114,12 +115,12 @@ void EditWorkspaceConfDlg::OnRename(wxCommandEvent& event)
 {
     wxString changeMe;
     wxUnusedVar(event);
-    if(m_wspConfList->GetCount() == 0) {
+    if (m_wspConfList->GetCount() == 0) {
         return;
     }
 
     changeMe = m_wspConfList->GetStringSelection();
-    if(changeMe.IsEmpty()) {
+    if (changeMe.IsEmpty()) {
         return;
     }
 

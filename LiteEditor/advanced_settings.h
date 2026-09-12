@@ -87,8 +87,12 @@ public:
     void OnCompilersDetected(const ICompilerLocator::CompilerVec_t& compilers);
 
 public:
-    BuildSettingsDialog(wxWindow* parent, size_t selected_page, int id = wxID_ANY, wxString title = _("Build Settings"),
-                        wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize,
+    BuildSettingsDialog(wxWindow* parent,
+                        size_t selected_page,
+                        int id = wxID_ANY,
+                        wxString title = _("Build Settings"),
+                        wxPoint pos = wxDefaultPosition,
+                        wxSize size = wxDefaultSize,
                         int style = wxDEFAULT_DIALOG_STYLE);
     ~BuildSettingsDialog();
     void OnAutoDetectCompilers(wxButton* btn);

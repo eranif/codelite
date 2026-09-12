@@ -26,6 +26,7 @@
 #define __stringhighlighterjob__
 
 #include <vector>
+#include <wx/string.h>
 
 struct StringHighlightOutput {
     wxString filename;

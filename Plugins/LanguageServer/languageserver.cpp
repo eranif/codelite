@@ -58,8 +58,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
-    m_mgr->GetInfoBar()->Bind(
-        wxEVT_BUTTON, &LanguageServerPlugin::OnFixLSPPaths, this, XRCID("lsp-fix-paths"));
+    m_mgr->GetInfoBar()->Bind(wxEVT_BUTTON, &LanguageServerPlugin::OnFixLSPPaths, this, XRCID("lsp-fix-paths"));
 
     EventNotifier::Get()->Bind(wxEVT_LSP_STOP, &LanguageServerPlugin::OnLSPStopOne, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_START, &LanguageServerPlugin::OnLSPStartOne, this);

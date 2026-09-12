@@ -1,4 +1,5 @@
 #include "clPrintout.h"
+
 #include "cl_editor.h"
 
 //----------------------------------------------------------------------------
@@ -18,14 +19,15 @@ bool clPrintout::OnPrintPage(int page)
 {
 
     wxDC* dc = GetDC();
-    if(!dc) return false;
+    if (!dc)
+        return false;
 
     // scale DC
     PrintScaling(dc);
 
     // print page
-    m_edit->FormatRange(true, page == 1 ? 0 : m_pageEnds[page-2], m_pageEnds[page-1],
-                                      dc, dc, m_printRect, m_pageRect);
+    m_edit->FormatRange(
+        true, page == 1 ? 0 : m_pageEnds[page - 2], m_pageEnds[page - 1], dc, dc, m_printRect, m_pageRect);
 
     return true;
 }
@@ -33,7 +35,7 @@ bool clPrintout::OnPrintPage(int page)
 bool clPrintout::OnBeginDocument(int startPage, int endPage)
 {
 
-    if(!wxPrintout::OnBeginDocument(startPage, endPage)) {
+    if (!wxPrintout::OnBeginDocument(startPage, endPage)) {
         return false;
     }
 
@@ -50,7 +52,8 @@ void clPrintout::GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* 
 
     // scale DC if possible
     wxDC* dc = GetDC();
-    if(!dc) return;
+    if (!dc)
+        return;
     PrintScaling(dc);
 
     // get print page informations and convert to printer pixels
@@ -60,7 +63,7 @@ void clPrintout::GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* 
     page.x = static_cast<int>(page.x * ppiScr.x / 25.4);
     page.y = static_cast<int>(page.y * ppiScr.y / 25.4);
     // In landscape mode we need to swap the width and height
-    if ( g_pageSetupData->GetPrintData().GetOrientation() == wxLANDSCAPE ) {
+    if (g_pageSetupData->GetPrintData().GetOrientation() == wxLANDSCAPE) {
         wxSwap(page.x, page.y);
     }
     m_pageRect = wxRect(0, 0, page.x, page.y);
@@ -83,14 +86,14 @@ void clPrintout::GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* 
     // count pages
     m_pageEnds.Clear();
     int printed = 0;
-    while ( printed < m_edit->GetLength() ) {
-        printed = m_edit->FormatRange(false, printed, m_edit->GetLength(),
-                                      dc, dc, m_printRect, m_pageRect);
+    while (printed < m_edit->GetLength()) {
+        printed = m_edit->FormatRange(false, printed, m_edit->GetLength(), dc, dc, m_printRect, m_pageRect);
         m_pageEnds.Add(printed);
         *maxPage += 1;
     }
-    
-    if(*maxPage > 0) *minPage = 1;
+
+    if (*maxPage > 0)
+        *minPage = 1;
     *selPageFrom = *minPage;
     *selPageTo = *maxPage;
 
@@ -98,24 +101,25 @@ void clPrintout::GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* 
     m_maxPage = *maxPage;
 }
 
-bool clPrintout::HasPage(int page) {  return page <= (int)m_pageEnds.Count(); }
+bool clPrintout::HasPage(int page) { return page <= (int)m_pageEnds.Count(); }
 
 bool clPrintout::PrintScaling(wxDC* dc)
 {
 
     // check for dc, return if none
-    if(!dc) return false;
+    if (!dc)
+        return false;
 
     // get printer and screen sizing values
     wxSize ppiScr;
     GetPPIScreen(&ppiScr.x, &ppiScr.y);
-    if(ppiScr.x == 0) { // most possible guess 96 dpi
+    if (ppiScr.x == 0) { // most possible guess 96 dpi
         ppiScr.x = 96;
         ppiScr.y = 96;
     }
     wxSize ppiPrt;
     GetPPIPrinter(&ppiPrt.x, &ppiPrt.y);
-    if(ppiPrt.x == 0) { // scaling factor to 1
+    if (ppiPrt.x == 0) { // scaling factor to 1
         ppiPrt.x = ppiScr.x;
         ppiPrt.y = ppiScr.y;
     }

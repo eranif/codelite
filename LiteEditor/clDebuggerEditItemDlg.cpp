@@ -25,13 +25,10 @@
 
 #include "clDebuggerEditItemDlg.h"
 
-clDebuggerEditItemDlg::clDebuggerEditItemDlg(wxWindow* parent, const wxString &initialValue)
+clDebuggerEditItemDlg::clDebuggerEditItemDlg(wxWindow* parent, const wxString& initialValue)
     : clDebuggerEditItemDlgBase(parent)
 {
-    SetValue( initialValue );
+    SetValue(initialValue);
 }
 
-wxString clDebuggerEditItemDlg::GetValue() const
-{
-    return m_textCtrl38->GetValue().Trim();
-}
+wxString clDebuggerEditItemDlg::GetValue() const { return m_textCtrl38->GetValue().Trim(); }

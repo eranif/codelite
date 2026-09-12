@@ -1,8 +1,10 @@
 #include "BuildOrderDialog.h"
+
 #include "globals.h"
 #include "imanager.h"
 #include "project.h"
 #include "workspace.h"
+
 #include <wx/msgdlg.h>
 
 BuildOrderDialog::BuildOrderDialog(wxWindow* parent, const wxString& projectName)
@@ -17,18 +19,18 @@ BuildOrderDialog::BuildOrderDialog(wxWindow* parent, const wxString& projectName
     // determine the current project configuration
     BuildConfigPtr selBuildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(m_projectName, wxEmptyString);
     wxString config_name;
-    if(selBuildConf) {
+    if (selBuildConf) {
         config_name = selBuildConf->GetName();
     }
 
     ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(m_projectName);
-    if(proj) {
+    if (proj) {
         // populate the choice control with the list of available configurations for this project
         ProjectSettingsPtr settings = proj->GetSettings();
-        if(settings) {
+        if (settings) {
             ProjectSettingsCookie cookie;
             BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
-            while(bldConf) {
+            while (bldConf) {
                 wxString curr_config_name = bldConf->GetName();
                 m_choiceProjectConfig->Append(curr_config_name);
                 bldConf = settings->GetNextBuildConfiguration(cookie);
@@ -37,7 +39,7 @@ BuildOrderDialog::BuildOrderDialog(wxWindow* parent, const wxString& projectName
     }
 
     int index = m_choiceProjectConfig->FindString(config_name);
-    if(index != wxNOT_FOUND) {
+    if (index != wxNOT_FOUND) {
         m_choiceProjectConfig->SetSelection(index);
         m_current_configuration = config_name;
         Initialise(config_name);
@@ -58,7 +60,7 @@ void BuildOrderDialog::OnMoveDown(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     int index = m_dvListCtrlBuildOrder->GetSelectedRow();
-    if(index == (int)(m_dvListCtrlBuildOrder->GetItemCount() - 1)) {
+    if (index == (int)(m_dvListCtrlBuildOrder->GetItemCount() - 1)) {
         return;
     }
     index++;
@@ -70,7 +72,7 @@ void BuildOrderDialog::OnMoveUp(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     int index = m_dvListCtrlBuildOrder->GetSelectedRow();
-    if(index == wxNOT_FOUND || index == 0) {
+    if (index == wxNOT_FOUND || index == 0) {
         return;
     }
 
@@ -80,7 +82,7 @@ void BuildOrderDialog::OnMoveUp(wxCommandEvent& event)
 void BuildOrderDialog::DoMoveUp(int index, const wxString& projectName)
 {
     wxString text = m_dvListCtrlBuildOrder->GetItemText(m_dvListCtrlBuildOrder->RowToItem(index));
-    if(index == 0) {
+    if (index == 0) {
         return;
     }
 
@@ -95,11 +97,11 @@ void BuildOrderDialog::DoMoveUp(int index, const wxString& projectName)
 
     m_dvListCtrlBuildOrder->DeleteAllItems();
     m_dvListCtrlBuildOrder->Begin();
-    for(const wxString& project : projects) {
+    for (const wxString& project : projects) {
         m_dvListCtrlBuildOrder->AppendItem(project);
     }
     m_dvListCtrlBuildOrder->Commit();
-    if(new_sel != wxNOT_FOUND) {
+    if (new_sel != wxNOT_FOUND) {
         m_dvListCtrlBuildOrder->SelectRow(new_sel);
         m_dvListCtrlBuildOrder->EnsureVisible(m_dvListCtrlBuildOrder->RowToItem(new_sel));
     }
@@ -110,7 +112,7 @@ void BuildOrderDialog::OnMoveLeft(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     int selected_row = m_dvListCtrlBuildOrder->GetSelectedRow();
-    if(selected_row == wxNOT_FOUND) {
+    if (selected_row == wxNOT_FOUND) {
         return;
     }
 
@@ -132,7 +134,7 @@ void BuildOrderDialog::OnMoveRight(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     int selected_row = m_dvListCtrlProjects->GetSelectedRow();
-    if(selected_row == wxNOT_FOUND) {
+    if (selected_row == wxNOT_FOUND) {
         return;
     }
 
@@ -155,12 +157,13 @@ void BuildOrderDialog::OnMoveRightUI(wxUpdateUIEvent& event)
 
 void BuildOrderDialog::Initialise(const wxString& config_name)
 {
-    if(config_name.empty())
+    if (config_name.empty())
         return;
 
-    if(m_dirty && !m_current_configuration.empty()) {
-        if(::wxMessageBox(_("You have un-saved changes, would you like to save them before changing configuration?"),
-                          "CodeLite", wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION) == wxYES) {
+    if (m_dirty && !m_current_configuration.empty()) {
+        if (::wxMessageBox(_("You have un-saved changes, would you like to save them before changing configuration?"),
+                           "CodeLite",
+                           wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION) == wxYES) {
             Save(m_current_configuration);
         }
     }
@@ -174,7 +177,7 @@ void BuildOrderDialog::DoPopulateControl(const wxString& configuration)
 {
     wxString errMsg;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(m_projectName, errMsg);
-    if(!proj) {
+    if (!proj) {
         return;
     }
 
@@ -185,7 +188,7 @@ void BuildOrderDialog::DoPopulateControl(const wxString& configuration)
     wxStringSet_t deps_set;
     wxArrayString depArr = proj->GetDependencies(configuration);
     size_t i = 0;
-    for(i = 0; i < depArr.GetCount(); i++) {
+    for (i = 0; i < depArr.GetCount(); i++) {
         deps_set.insert(depArr[i]);
         m_dvListCtrlBuildOrder->AppendItem(depArr[i]);
     }
@@ -195,8 +198,8 @@ void BuildOrderDialog::DoPopulateControl(const wxString& configuration)
     clGetManager()->GetWorkspace()->GetProjectList(projArr);
 
     // add only projects that do not exist in the dependencies view
-    for(i = 0; i < projArr.GetCount(); i++) {
-        if((deps_set.count(projArr[i]) == 0) && (projArr.Item(i) != m_projectName)) {
+    for (i = 0; i < projArr.GetCount(); i++) {
+        if ((deps_set.count(projArr[i]) == 0) && (projArr.Item(i) != m_projectName)) {
             m_dvListCtrlProjects->AppendItem(projArr.Item(i));
         }
     }
@@ -205,7 +208,7 @@ void BuildOrderDialog::DoPopulateControl(const wxString& configuration)
 void BuildOrderDialog::Save(const wxString& config_name)
 {
     // Save only if its dirty...
-    if(m_dirty) {
+    if (m_dirty) {
         ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(m_projectName);
         wxArrayString depsArr = GetBuildOrderProjects();
         proj->SetDependencies(depsArr, config_name);
@@ -218,7 +221,7 @@ wxArrayString BuildOrderDialog::GetBuildOrderProjects() const
     wxArrayString projects;
     projects.reserve(m_dvListCtrlBuildOrder->GetItemCount());
 
-    for(size_t i = 0; i < m_dvListCtrlBuildOrder->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrlBuildOrder->GetItemCount(); ++i) {
         projects.Add(m_dvListCtrlBuildOrder->GetItemText(m_dvListCtrlBuildOrder->RowToItem(i)));
     }
     return projects;

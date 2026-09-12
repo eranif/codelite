@@ -33,8 +33,8 @@
 #ifndef _MEMCHECKOUTPUTVIEW_H_
 #define _MEMCHECKOUTPUTVIEW_H_
 
-#include "memcheckerror.h"
 #include "memcheck.h"
+#include "memcheckerror.h"
 #include "memcheckui.hpp"
 
 #include <wx/valnum.h>

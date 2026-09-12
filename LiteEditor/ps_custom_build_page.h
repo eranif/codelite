@@ -42,7 +42,7 @@ class ProjectSettingsDlg;
 class PSCustomBuildPage : public PSCustomBuildBasePage, public IProjectSettingsPage
 {
     const wxString& m_projectName;
-    
+
     ProjectSettingsDlg* m_dlg;
     StringManager m_stringManager;
 

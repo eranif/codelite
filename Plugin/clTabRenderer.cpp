@@ -216,7 +216,9 @@ const wxBitmap& clTabInfo::GetBitmap(int index, bool disabled) const
 }
 
 bool clTabInfo::HasDisableBitmap() const
-{ return m_tabCtrl && m_tabCtrl->GetBitmaps()->Get(m_disabledBitmp, true).IsOk(); }
+{
+    return m_tabCtrl && m_tabCtrl->GetBitmaps()->Get(m_disabledBitmp, true).IsOk();
+}
 bool clTabInfo::HasBitmap() const { return m_tabCtrl && m_tabCtrl->GetBitmaps()->Get(m_bitmap, false).IsOk(); }
 
 std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderers;
@@ -224,7 +226,9 @@ std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderers;
 clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
     : bottomAreaHeight(0)
     , m_name(name)
-{ ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2; }
+{
+    ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;
+}
 
 wxFont clTabRenderer::GetTabFont(bool bold)
 {

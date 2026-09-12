@@ -50,21 +50,21 @@ void* clSingleInstanceThread::Entry()
         m_serverSocket.Start(connectionString);
         clDEBUG() << "clSingleInstanceThread: starting on:" << connectionString << clEndl;
 
-        while(!TestDestroy()) {
+        while (!TestDestroy()) {
             // wait for a new connection
             clSocketBase::Ptr_t client = m_serverSocket.WaitForNewConnection(1);
-            if(!client)
+            if (!client)
                 continue;
 
             wxString message;
-            if(client->ReadMessage(message, 3) == clSocketBase::kTimeout)
+            if (client->ReadMessage(message, 3) == clSocketBase::kTimeout)
                 continue;
             clDEBUG() << "clSingleInstanceThread: received new message:" << message << endl;
 
             JSON root(message);
             wxArrayString args = root.toElement().namedObject("args").toArrayString();
 
-            if(args.IsEmpty()) {
+            if (args.IsEmpty()) {
                 // just raise CodeLite
                 clCommandEvent event(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP);
                 EventNotifier::Get()->AddPendingEvent(event);

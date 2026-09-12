@@ -171,7 +171,9 @@ int clRowEntry::Y_SPACER = 2;
 #endif
 
 void clRowEntry::DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
-{ DoDrawSimpleSelection(win, dc, rect, colours); }
+{
+    DoDrawSimpleSelection(win, dc, rect, colours);
+}
 
 clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex, int bitmapSelectedIndex)
     : m_tree(tree)
@@ -786,7 +788,9 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
 
 void clRowEntry::RenderText(
     wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col)
-{ RenderTextSimple(win, dc, colours, text, x, y, col); }
+{
+    RenderTextSimple(win, dc, colours, text, x, y, col);
+}
 
 void clRowEntry::RenderTextSimple(
     wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col)

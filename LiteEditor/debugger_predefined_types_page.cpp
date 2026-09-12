@@ -23,9 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "dbgcommanddlg.h"
 #include "debugger_predefined_types_page.h"
+
+#include "dbgcommanddlg.h"
 #include "globals.h"
+
 #include <wx/msgdlg.h>
 
 PreDefinedTypesPage::PreDefinedTypesPage(wxWindow* parent, const DebuggerPreDefinedTypes& preDefTypes)
@@ -68,7 +70,7 @@ void PreDefinedTypesPage::OnNewShortcut(wxCommandEvent& event)
     wxUnusedVar(event);
     DbgCommandDlg dlg(this);
 
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
 
         // add new command to the table
         wxString name = dlg.GetName();
@@ -77,11 +79,11 @@ void PreDefinedTypesPage::OnNewShortcut(wxCommandEvent& event)
 
         // Make sure that the expression does not exist
         int count = m_listCtrl1->GetItemCount();
-        for(int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             wxString existingName = GetColumnText(m_listCtrl1, i, 0);
-            if(name == existingName) {
-                wxMessageBox(_("A Debugger type with that name already exists"), wxT("CodeLite"),
-                             wxOK | wxICON_INFORMATION);
+            if (name == existingName) {
+                wxMessageBox(
+                    _("A Debugger type with that name already exists"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
                 return;
             }
         }
@@ -114,7 +116,7 @@ void PreDefinedTypesPage::OnDeleteShortcut(wxCommandEvent& event)
 void PreDefinedTypesPage::DoEditItem()
 {
     // Edit the selection
-    if(m_selectedItem == wxNOT_FOUND) {
+    if (m_selectedItem == wxNOT_FOUND) {
         return;
     }
 
@@ -129,7 +131,7 @@ void PreDefinedTypesPage::DoEditItem()
     dlg.SetExpression(expr);
     dlg.SetDbgCommand(dbgCmd);
 
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         SetColumnText(m_listCtrl1, m_selectedItem, 0, dlg.GetName());
         SetColumnText(m_listCtrl1, m_selectedItem, 1, dlg.GetExpression());
         SetColumnText(m_listCtrl1, m_selectedItem, 2, dlg.GetDbgCommand());
@@ -138,7 +140,7 @@ void PreDefinedTypesPage::DoEditItem()
 
 void PreDefinedTypesPage::DoDeleteItem()
 {
-    if(m_selectedItem == wxNOT_FOUND) {
+    if (m_selectedItem == wxNOT_FOUND) {
         return;
     }
     m_listCtrl1->DeleteItem(m_selectedItem);
@@ -150,7 +152,7 @@ DebuggerPreDefinedTypes PreDefinedTypesPage::GetPreDefinedTypes()
     int count = m_listCtrl1->GetItemCount();
     DebuggerCmdDataVec cmdArr;
 
-    for(int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
         DebuggerCmdData cmd;
         cmd.SetName(GetColumnText(m_listCtrl1, i, 0));
         cmd.SetCommand(GetColumnText(m_listCtrl1, i, 1));

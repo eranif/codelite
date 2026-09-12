@@ -1,35 +1,36 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : filedroptarget.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : filedroptarget.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef DROPFILETARGET_H
+#ifndef DROPFILETARGET_H
 #define DROPFILETARGET_H
 
 #include <wx/dnd.h>
-class FileDropTarget : public wxFileDropTarget {
+class FileDropTarget : public wxFileDropTarget
+{
 public:
-	FileDropTarget();
-	virtual ~FileDropTarget() = default;
-	virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+    FileDropTarget();
+    virtual ~FileDropTarget() = default;
+    virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
 };
-#endif //DROPFILETARGET_H
+#endif // DROPFILETARGET_H

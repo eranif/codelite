@@ -192,7 +192,8 @@ void clEnvironment::ApplyFromList(const clEnvList_t* envlist)
     }
 }
 
-clEnvList_t BuildEnvFromString(const wxString& env_str) {
+clEnvList_t BuildEnvFromString(const wxString& env_str)
+{
     clEnvList_t result;
     wxArrayString lines = ::wxStringTokenize(env_str, "\r\n", wxTOKEN_STRTOK);
     for (wxString& line : lines) {

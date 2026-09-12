@@ -653,7 +653,9 @@ void clToolBarGeneric::OnSize(wxSizeEvent& event)
 }
 
 clToolBarButtonBase* clToolBarGeneric::AddControl(wxWindow* control)
-{ return Add(new clToolBarControl(this, control)); }
+{
+    return Add(new clToolBarControl(this, control));
+}
 
 int clToolBarGeneric::GetMenuSelectionFromUser(wxWindowID buttonID, wxMenu* menu)
 {

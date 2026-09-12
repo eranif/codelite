@@ -58,7 +58,8 @@ protected:
     void DoUnbindEvents();
     void DoFilesEndDrag(wxTreeItemId& itemDst);
     void DoProjectsEndDrag(wxTreeItemId& itemDst);
-    void DoSetItemBackgroundColour(const wxTreeItemId& item, const FolderColour::List_t& colours,
+    void DoSetItemBackgroundColour(const wxTreeItemId& item,
+                                   const FolderColour::List_t& colours,
                                    const ProjectItem& projectItem);
 
     void ExcludeFileFromBuildUI(const wxTreeItemId& item, bool exclude);
@@ -72,8 +73,11 @@ public:
      * @param size Window size
      * @param style Window style
      */
-    FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                 const wxSize& size = wxDefaultSize, long style = wxBORDER_NONE);
+    FileViewTree(wxWindow* parent,
+                 const wxWindowID id,
+                 const wxPoint& pos = wxDefaultPosition,
+                 const wxSize& size = wxDefaultSize,
+                 long style = wxBORDER_NONE);
 
     /**
      * Destructor .
@@ -248,8 +252,11 @@ private:
     void DoRemoveItems();
     void DoItemActivated(wxTreeItemId& item, wxEvent& event);
     void DoAddItem(ProjectPtr proj, const FileViewItem& item);
-    void DoImportFolder(ProjectPtr proj, const wxString& baseDir, const wxArrayString& all_files,
-                        const wxString& filespec, bool extlessFiles);
+    void DoImportFolder(ProjectPtr proj,
+                        const wxString& baseDir,
+                        const wxArrayString& all_files,
+                        const wxString& filespec,
+                        bool extlessFiles);
 
     wxTreeItemId DoGetItemByText(const wxTreeItemId& parent, const wxString& text);
 

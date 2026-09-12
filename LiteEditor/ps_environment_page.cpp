@@ -79,14 +79,14 @@ void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
 void PSEnvironmentPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
     wxString env = m_choiceDbgEnv->GetStringSelection();
-    if(env == wxGetTranslation(USE_GLOBAL_SETTINGS)) {
+    if (env == wxGetTranslation(USE_GLOBAL_SETTINGS)) {
         // Save it untranslated
         env = USE_GLOBAL_SETTINGS;
     }
     buildConf->SetDbgEnvSet(env);
 
     env = m_choiceEnv->GetStringSelection();
-    if(env == wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET)) {
+    if (env == wxGetTranslation(USE_WORKSPACE_ENV_VAR_SET)) {
         env = USE_WORKSPACE_ENV_VAR_SET;
     }
     buildConf->SetEnvVarSet(env);

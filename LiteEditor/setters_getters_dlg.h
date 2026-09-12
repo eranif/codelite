@@ -134,7 +134,9 @@ public:
     wxString GetGenCode();
     bool GetFormatText() const { return m_checkBoxFormatFileWhenDone->IsChecked(); }
 
-    bool Init(const std::vector<TagEntryPtr>& tags, const std::vector<TagEntryPtr>& existing_functions,
-              const wxFileName& file, int lineno);
+    bool Init(const std::vector<TagEntryPtr>& tags,
+              const std::vector<TagEntryPtr>& existing_functions,
+              const wxFileName& file,
+              int lineno);
 };
 #endif // __setters_getters_dlg__

@@ -330,7 +330,9 @@ void NewClassDlg::DoUpdateCheckBoxes()
 }
 
 void NewClassDlg::OnOkUpdateUI(wxUpdateUIEvent& event)
-{ event.Enable(!(GetClassFile().IsEmpty() || GetVirtualDirectoryPath().IsEmpty())); }
+{
+    event.Enable(!(GetClassFile().IsEmpty() || GetVirtualDirectoryPath().IsEmpty()));
+}
 void NewClassDlg::OnBlockGuardUI(wxUpdateUIEvent& event) { event.Enable(!m_checkBoxPragmaOnce->IsChecked()); }
 
 void NewClassDlg::DoSaveOptions()

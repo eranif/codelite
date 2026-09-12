@@ -24,11 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ps_resources_page.h"
-#include "macros.h"
-#include "globals.h"
 
-PSResourcesPage::PSResourcesPage( wxWindow* parent, ProjectSettingsDlg *dlg )
-    : PSResourcesPageBase( parent )
+#include "globals.h"
+#include "macros.h"
+
+PSResourcesPage::PSResourcesPage(wxWindow* parent, ProjectSettingsDlg* dlg)
+    : PSResourcesPageBase(parent)
     , m_dlg(dlg)
 {
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
@@ -43,16 +44,16 @@ void PSResourcesPage::Load(BuildConfigPtr buildConf)
 
 void PSResourcesPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
-    buildConf->SetResCmpIncludePath( m_pgPropResCmpSearchPath->GetValueAsString() );
-    buildConf->SetResCmpOptions( m_pgPropResCmpOptions->GetValueAsString() );
+    buildConf->SetResCmpIncludePath(m_pgPropResCmpSearchPath->GetValueAsString());
+    buildConf->SetResCmpOptions(m_pgPropResCmpOptions->GetValueAsString());
     buildConf->SetBuildResWithGlobalSettings(m_pgPropBehaviorWithGlobalSettings->GetValueAsString());
 }
 
 void PSResourcesPage::Clear()
 {
     wxPropertyGridIterator iter = m_pgMgr->GetGrid()->GetIterator();
-    for( ; !iter.AtEnd(); ++iter ) {
-        if ( iter.GetProperty() && !iter.GetProperty()->IsCategory() ) {
+    for (; !iter.AtEnd(); ++iter) {
+        if (iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
             iter.GetProperty()->SetValueToUnspecified();
         }
     }
@@ -64,25 +65,16 @@ void PSResourcesPage::OnCustomEditorClicked(wxCommandEvent& event)
     wxPGProperty* prop = m_pgMgr->GetSelectedProperty();
     CHECK_PTR_RET(prop);
 
-    if ( prop == m_pgPropResCmpOptions || prop == m_pgPropResCmpSearchPath ) {
+    if (prop == m_pgPropResCmpOptions || prop == m_pgPropResCmpSearchPath) {
         wxString v = prop->GetValueAsString();
-        if ( PopupAddOptionDlg( v ) ) {
-            prop->SetValue( v );
+        if (PopupAddOptionDlg(v)) {
+            prop->SetValue(v);
         }
     }
 }
 
-void PSResourcesPage::OnValueChanged(wxPropertyGridEvent& event)
-{
-    m_dlg->SetIsDirty(true);
-}
+void PSResourcesPage::OnValueChanged(wxPropertyGridEvent& event) { m_dlg->SetIsDirty(true); }
 
-void PSResourcesPage::OnResourcesEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable( !m_dlg->IsCustomBuildEnabled() );
-}
+void PSResourcesPage::OnResourcesEnabledUI(wxUpdateUIEvent& event) { event.Enable(!m_dlg->IsCustomBuildEnabled()); }
 
-void PSResourcesPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable( m_dlg->IsProjectEnabled() );
-}
+void PSResourcesPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }

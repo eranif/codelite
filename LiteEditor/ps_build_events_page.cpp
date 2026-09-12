@@ -46,7 +46,7 @@ void PSBuildEventsPage::Load(BuildConfigPtr buildConf)
 
     BuildCommandList buildCmds;
     wxString text;
-    if(m_isPreEvents) {
+    if (m_isPreEvents) {
         buildCmds = buildConf->GetPreBuildCommands();
         text = _("Set the commands to run in the pre build stage");
 
@@ -72,14 +72,14 @@ void PSBuildEventsPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSe
 {
     BuildCommandList cmds;
     wxArrayString commands = StringUtils::SplitString(m_textCtrlBuildEvents->GetValue(), true);
-    for(size_t i = 0; i < commands.GetCount(); i++) {
+    for (size_t i = 0; i < commands.GetCount(); i++) {
         wxString command = commands.Item(i).Trim().Trim(false);
         bool enabled = !command.StartsWith(wxT("#"));
         BuildCommand cmd(command, enabled);
         cmds.push_back(cmd);
     }
 
-    if(m_isPreEvents) {
+    if (m_isPreEvents) {
         buildConf->SetPreBuildCommands(cmds);
 
     } else {

@@ -78,7 +78,9 @@ VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent,
 VirtualDirectorySelectorDlg::~VirtualDirectorySelectorDlg() {}
 
 void VirtualDirectorySelectorDlg::OnItemSelected(wxTreeEvent& event)
-{ m_staticTextPreview->SetLabel(DoGetPath(m_treeCtrl, event.GetItem(), true)); }
+{
+    m_staticTextPreview->SetLabel(DoGetPath(m_treeCtrl, event.GetItem(), true));
+}
 
 void VirtualDirectorySelectorDlg::OnButtonOK(wxCommandEvent& event)
 {

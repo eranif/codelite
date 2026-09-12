@@ -27,16 +27,16 @@ wxString GetFontInfo(const wxFont& font) { return font.GetNativeFontInfoDesc(); 
 wxString GetFontInfo(const wxString& font_desc)
 {
     return font_desc;
-//    // check the cache first
-//    if (fixed_fonts_cache.count(font_desc) != 0) {
-//        return fixed_fonts_cache[font_desc];
-//    }
-//    wxString desc = font_desc;
-//
-//    // update the cache
-//    fixed_fonts_cache.insert({font_desc, desc});
-//    // return the cached entry
-//    return fixed_fonts_cache[font_desc];
+    //    // check the cache first
+    //    if (fixed_fonts_cache.count(font_desc) != 0) {
+    //        return fixed_fonts_cache[font_desc];
+    //    }
+    //    wxString desc = font_desc;
+    //
+    //    // update the cache
+    //    fixed_fonts_cache.insert({font_desc, desc});
+    //    // return the cached entry
+    //    return fixed_fonts_cache[font_desc];
 }
 
 wxFont GetDefaultMonospacedFont()

@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
+
 #include "dbgcmd.h"
 
 #include "Debugger/debuggermanager.h"
@@ -33,7 +35,6 @@
 #include "gdb_parser_incl.h"
 #include "gdbmi.hpp"
 #include "gdbmi_parse_thread_info.h"
-#include "precompiled_header.h"
 #include "procutils.h"
 
 #include <algorithm>

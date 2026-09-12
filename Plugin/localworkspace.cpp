@@ -353,7 +353,9 @@ bool LocalWorkspace::Create()
 }
 
 wxXmlNode* LocalWorkspace::GetLocalWorkspaceOptionsNode() const
-{ return XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("LocalWorkspaceOptions")); }
+{
+    return XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("LocalWorkspaceOptions"));
+}
 
 wxXmlNode* LocalWorkspace::GetLocalProjectOptionsNode(const wxString& projectname) const
 {

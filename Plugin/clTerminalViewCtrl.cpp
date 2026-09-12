@@ -30,7 +30,9 @@ private:
 public:
     MyAnsiCodeRenderer(clDataViewListCtrl* ctrl)
         : m_ctrl(ctrl)
-    { wxUnusedVar(m_ctrl); }
+    {
+        wxUnusedVar(m_ctrl);
+    }
 
     void SetFont(const wxFont& f) { this->m_font = f; }
 
@@ -100,7 +102,9 @@ clTerminalViewCtrl::clTerminalViewCtrl(
 }
 
 clTerminalViewCtrl::~clTerminalViewCtrl()
-{ EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clTerminalViewCtrl::OnSysColourChanged, this); }
+{
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clTerminalViewCtrl::OnSysColourChanged, this);
+}
 
 void clTerminalViewCtrl::OnSysColourChanged(clCommandEvent& e)
 {

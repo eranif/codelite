@@ -65,7 +65,7 @@ void PSDebuggerPage::Load(BuildConfigPtr buildConf)
     m_checkBoxDbgRemoteExt->SetValue(buildConf->GetIsDbgRemoteExtended());
 
     const wxArrayString& searchPaths = buildConf->GetDebuggerSearchPaths();
-    for(size_t i = 0; i < searchPaths.GetCount(); ++i) {
+    for (size_t i = 0; i < searchPaths.GetCount(); ++i) {
         wxVector<wxVariant> cols;
         cols.push_back(searchPaths.Item(i));
         m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)NULL);
@@ -84,10 +84,10 @@ void PSDebuggerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
 
     wxArrayString searchPaths;
     int nCount = m_dvListCtrlDebuggerSearchPaths->GetItemCount();
-    for(int i = 0; i < nCount; ++i) {
+    for (int i = 0; i < nCount; ++i) {
         wxVariant colValue;
         m_dvListCtrlDebuggerSearchPaths->GetValue(colValue, i, 0);
-        if(!colValue.IsNull()) {
+        if (!colValue.IsNull()) {
             searchPaths.Add(colValue.GetString());
         }
     }
@@ -109,13 +109,13 @@ void PSDebuggerPage::OnBrowseForDebuggerPath(wxCommandEvent& event)
 {
     wxString debugger_path = ::wxFileSelector(_("Select debugger:"));
 
-    if(!debugger_path.IsEmpty()) {
+    if (!debugger_path.IsEmpty()) {
         wxString errMsg;
         ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(m_dlg->GetProjectName(), errMsg);
-        if(proj) {
+        if (proj) {
             wxFileName fnDebuggerPath(debugger_path);
             wxString project_path = proj->GetFileName().GetPath();
-            if(fnDebuggerPath.MakeRelativeTo(project_path)) {
+            if (fnDebuggerPath.MakeRelativeTo(project_path)) {
                 debugger_path = fnDebuggerPath.GetFullPath();
             }
         }
@@ -126,7 +126,7 @@ void PSDebuggerPage::OnBrowseForDebuggerPath(wxCommandEvent& event)
 void PSDebuggerPage::OnAddDebuggerSearchPath(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector();
-    if(!path.IsEmpty()) {
+    if (!path.IsEmpty()) {
         wxVector<wxVariant> cols;
         cols.push_back(path);
         m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)NULL);
@@ -138,10 +138,10 @@ void PSDebuggerPage::OnDeleteDebuggerSearchPath(wxCommandEvent& event)
 {
     wxDataViewItemArray items;
     m_dvListCtrlDebuggerSearchPaths->GetSelections(items);
-    if(items.IsEmpty())
+    if (items.IsEmpty())
         return;
 
-    for(size_t i = 0; i < items.GetCount(); ++i) {
+    for (size_t i = 0; i < items.GetCount(); ++i) {
         m_dvListCtrlDebuggerSearchPaths->DeleteItem(m_dvListCtrlDebuggerSearchPaths->ItemToRow(items.Item(i)));
     }
     m_dlg->SetIsDirty(true);
@@ -157,12 +157,12 @@ void PSDebuggerPage::OnItemActivated(wxDataViewEvent& event)
     wxVariant value;
     m_dvListCtrlDebuggerSearchPaths->GetValue(value, m_dvListCtrlDebuggerSearchPaths->ItemToRow(event.GetItem()), 0);
 
-    if(!value.IsNull()) {
+    if (!value.IsNull()) {
 
         wxString path = value.GetString();
         path = ::wxDirSelector(_("Select a folder"), path);
 
-        if(!path.IsEmpty()) {
+        if (!path.IsEmpty()) {
             m_dvListCtrlDebuggerSearchPaths->DeleteItem(m_dvListCtrlDebuggerSearchPaths->ItemToRow(event.GetItem()));
             CallAfter(&PSDebuggerPage::DoAddPath, path);
         }

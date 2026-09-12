@@ -27,9 +27,9 @@
 #define CLPRINTOUT_H
 
 #include <wx/choice.h>
-#include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/prntbase.h>
+#include <wx/string.h>
 
 class clEditor;
 class clPrintout : public wxPrintout
@@ -40,7 +40,7 @@ class clPrintout : public wxPrintout
     wxRect m_printRect;
     int m_minPage;
     int m_maxPage;
-    
+
 protected:
     bool PrintScaling(wxDC* dc);
 

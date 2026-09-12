@@ -26,40 +26,40 @@
 #ifndef __filechecklist__
 #define __filechecklist__
 
+#include "filechecklistbase.hpp"
+
 #include <vector>
 #include <wx/filename.h>
-#include "filechecklistbase.hpp"
 
 class FileCheckList : public FileCheckListBase
 {
-    std::vector<std::pair<wxFileName,bool> > m_files;
+    std::vector<std::pair<wxFileName, bool>> m_files;
     wxFileName m_baseDir;
 
 protected:
     // Handlers for filechecklistbase events.
-    void OnCheckAll( wxCommandEvent& event );
-    void OnClearAll( wxCommandEvent& event );
-    void OnFileSelected( wxCommandEvent& event );
-    void OnFileCheckChanged( wxCommandEvent& event );
+    void OnCheckAll(wxCommandEvent& event);
+    void OnClearAll(wxCommandEvent& event);
+    void OnFileSelected(wxCommandEvent& event);
+    void OnFileCheckChanged(wxCommandEvent& event);
 
     void ShowFilePath(size_t n);
 
 public:
     /** Constructor */
-    FileCheckList( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
-                   const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
+    FileCheckList(wxWindow* parent,
+                  wxWindowID id = wxID_ANY,
+                  const wxString& title = wxEmptyString,
+                  const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxDefaultSize);
     ~FileCheckList() = default;
 
-    void SetCancellable(bool can) {
-        m_buttonCancel->Show(can);
-    }
-    void SetCaption(const wxString &caption);
-    void SetBaseDir(const wxFileName &dir);
+    void SetCancellable(bool can) { m_buttonCancel->Show(can); }
+    void SetCaption(const wxString& caption);
+    void SetBaseDir(const wxFileName& dir);
 
-    void SetFiles(const std::vector<std::pair<wxFileName, bool> > &files);
-    const std::vector<std::pair<wxFileName,bool> >  &GetFiles() const {
-        return m_files;
-    }
+    void SetFiles(const std::vector<std::pair<wxFileName, bool>>& files);
+    const std::vector<std::pair<wxFileName, bool>>& GetFiles() const { return m_files; }
 };
 
 #endif // __filechecklist__

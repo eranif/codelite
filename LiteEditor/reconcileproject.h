@@ -29,6 +29,7 @@
 #include "bitmap_loader.h"
 #include "project.h"
 #include "reconcileprojectbase.hpp"
+
 #include <deque>
 #include <vector>
 
@@ -102,7 +103,10 @@ public:
     virtual ~ReconcileProjectFiletypesDlg() = default;
 
     void SetData();
-    void GetData(wxString& toplevelDir, wxString& types, wxString& ignoreFiles, wxArrayString& excludePaths,
+    void GetData(wxString& toplevelDir,
+                 wxString& types,
+                 wxString& ignoreFiles,
+                 wxArrayString& excludePaths,
                  wxArrayString& regexes) const;
 
 protected:

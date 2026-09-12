@@ -55,7 +55,9 @@ clThemedButton::clThemedButton(wxWindow* parent,
 }
 
 clThemedButton::~clThemedButton()
-{ EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this); }
+{
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this);
+}
 
 void clThemedButton::OnThemeChanged(clCommandEvent& event)
 {

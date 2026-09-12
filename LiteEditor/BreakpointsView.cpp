@@ -66,7 +66,7 @@ void BreakpointsView::Initialize()
     }
 
     bool hasItems = !m_dvListCtrlBreakpoints->IsEmpty();
-    if(hasItems) {
+    if (hasItems) {
         m_dvListCtrlBreakpoints->Select(m_dvListCtrlBreakpoints->RowToItem(0));
     }
 
@@ -86,7 +86,7 @@ void BreakpointsView::Initialize()
 void BreakpointsView::OnDelete(wxCommandEvent& e)
 {
     wxDataViewItem item = m_dvListCtrlBreakpoints->GetSelection();
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
 
@@ -137,7 +137,7 @@ void BreakpointsView::OnBreakpointActivated(wxDataViewEvent& event)
 void BreakpointsView::OnEdit(wxCommandEvent& e)
 {
     wxDataViewItem item = m_dvListCtrlBreakpoints->GetSelection();
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return;
     }
 
@@ -145,7 +145,7 @@ void BreakpointsView::OnEdit(wxCommandEvent& e)
     bool bpExist;
     ManagerST::Get()->GetBreakpointsMgr()->EditBreakpoint(row, bpExist);
 
-    if(!bpExist) {
+    if (!bpExist) {
         // the breakpoint does not exist! remove it from the UI as well
         m_dvListCtrlBreakpoints->DeleteItem(row);
     }
@@ -164,7 +164,7 @@ void BreakpointsView::OnAdd(wxCommandEvent& e)
 void BreakpointsListctrl::Initialise(std::vector<clDebuggerBreakpoint>& bps)
 {
     DeleteAllItems();
-    for(const auto& bp : bps) {
+    for (const auto& bp : bps) {
 
         // Store the internal and external ids
         bpd_IDs IDs(bp);
@@ -197,10 +197,10 @@ void BreakpointsListctrl::Initialise(std::vector<clDebuggerBreakpoint>& bps)
         } else if (!bp.commandlist.IsEmpty()) {
             extras = bp.commandlist;
         }
-        if(!extras.IsEmpty()) {
+        if (!extras.IsEmpty()) {
             // We don't want to try to display massive commandlist spread over several lines...
             int index = extras.Find(wxT("\\n"));
-            if(index != wxNOT_FOUND) {
+            if (index != wxNOT_FOUND) {
                 extras = extras.Left(index) + wxT("...");
             }
         }
@@ -216,12 +216,12 @@ void BreakpointsView::OnContextMenu(wxDataViewEvent& event)
     menu.Append(XRCID("delete_breakpoint"), _("Delete Breakpoint"));
 
     int where = GetPopupMenuSelectionFromUser(menu);
-    if(where == wxID_NONE)
+    if (where == wxID_NONE)
         return;
-    if(where == XRCID("edit_breakpoint")) {
+    if (where == XRCID("edit_breakpoint")) {
         wxCommandEvent dummy;
         OnEdit(event);
-    } else if(where == XRCID("delete_breakpoint")) {
+    } else if (where == XRCID("delete_breakpoint")) {
         wxCommandEvent dummy;
         OnDelete(event);
     }

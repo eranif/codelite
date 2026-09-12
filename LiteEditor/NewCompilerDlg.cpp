@@ -24,8 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "NewCompilerDlg.h"
-#include "windowattrmanager.h"
+
 #include "build_settings_config.h"
+#include "windowattrmanager.h"
 
 NewCompilerDlg::NewCompilerDlg(wxWindow* parent)
     : NewCompilerDlgBase(parent)
@@ -33,7 +34,7 @@ NewCompilerDlg::NewCompilerDlg(wxWindow* parent)
     BuildSettingsConfigCookie cookie;
     m_choiceCompilers->Append("<None>");
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
-    while ( cmp ) {
+    while (cmp) {
         m_choiceCompilers->Append(cmp->GetName());
         cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
     }
@@ -43,15 +44,12 @@ NewCompilerDlg::NewCompilerDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-void NewCompilerDlg::OnOkUI(wxUpdateUIEvent& event)
-{
-    event.Enable( !m_textCtrlCompilerName->IsEmpty() );
-}
+void NewCompilerDlg::OnOkUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlCompilerName->IsEmpty()); }
 
 wxString NewCompilerDlg::GetMasterCompiler() const
 {
     wxString compilerName = m_choiceCompilers->GetStringSelection();
-    if ( compilerName == "<None>" ) {
+    if (compilerName == "<None>") {
         return wxEmptyString;
     }
     return compilerName;

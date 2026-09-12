@@ -22,11 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "commentconfigdata.h"
-
 #include "ContextRust.hpp"
+
 #include "cl_editor.h"
 #include "cl_editor_tip_window.h"
+#include "commentconfigdata.h"
 #include "editor_config.h"
 
 #include <unordered_set>
@@ -128,9 +128,12 @@ TagEntryPtr ContextRust::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
 
 bool ContextRust::IsCommentOrString(long pos)
 {
-    static std::unordered_set<int> string_styles = { wxSTC_RUST_BYTECHARACTER, wxSTC_RUST_BYTESTRING,
-                                                     wxSTC_RUST_BYTESTRINGR,   wxSTC_RUST_STRING,
-                                                     wxSTC_RUST_STRINGR,       wxSTC_RUST_CHARACTER };
+    static std::unordered_set<int> string_styles = {wxSTC_RUST_BYTECHARACTER,
+                                                    wxSTC_RUST_BYTESTRING,
+                                                    wxSTC_RUST_BYTESTRINGR,
+                                                    wxSTC_RUST_STRING,
+                                                    wxSTC_RUST_STRINGR,
+                                                    wxSTC_RUST_CHARACTER};
     int style = GetCtrl().GetStyleAt(pos);
     return IsComment(pos) || string_styles.count(style);
 }
@@ -191,8 +194,8 @@ void ContextRust::SetActive() {}
 
 bool ContextRust::IsComment(long pos) const
 {
-    static std::unordered_set<int> comment_styles = { wxSTC_RUST_COMMENTBLOCK, wxSTC_RUST_COMMENTLINE,
-                                                      wxSTC_RUST_COMMENTBLOCKDOC, wxSTC_RUST_COMMENTLINEDOC };
+    static std::unordered_set<int> comment_styles = {
+        wxSTC_RUST_COMMENTBLOCK, wxSTC_RUST_COMMENTLINE, wxSTC_RUST_COMMENTBLOCKDOC, wxSTC_RUST_COMMENTLINEDOC};
     int style = GetCtrl().GetStyleAt(pos);
     return comment_styles.count(style);
 }

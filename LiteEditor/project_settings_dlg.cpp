@@ -49,11 +49,14 @@
 BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
 END_EVENT_TABLE()
 
-ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspaceTab, const wxString& configName,
-                                       const wxString& projectName, const wxString& title)
+ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent,
+                                       WorkspaceTab* workspaceTab,
+                                       const wxString& configName,
+                                       const wxString& projectName,
+                                       const wxString& title)
 #ifdef __WXMAC__
-    : ProjectSettingsBaseDlg(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
-                             wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+    : ProjectSettingsBaseDlg(
+          parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 #else
     : ProjectSettingsBaseDlg(parent, wxID_ANY, title)
 #endif
@@ -74,8 +77,8 @@ ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspace
     CentreOnParent();
     SetName("ProjectSettingsDlg");
 
-    EventNotifier::Get()->Connect(wxEVT_PROJECT_TREEITEM_CLICKED,
-                                  wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &ProjectSettingsDlg::OnWorkspaceClosed, this);
 
     // No effects plz
@@ -110,8 +113,8 @@ ProjectSettingsDlg::~ProjectSettingsDlg()
 {
     m_workspaceTab->ProjectSettingsDlgClosed();
 
-    EventNotifier::Get()->Disconnect(wxEVT_PROJECT_TREEITEM_CLICKED,
-                                     wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &ProjectSettingsDlg::OnWorkspaceClosed, this);
     PluginManager::Get()->UnHookProjectSettingsTab(m_treebook, m_projectName, wxEmptyString /* all tabs */);
 }
@@ -147,17 +150,17 @@ void ProjectSettingsDlg::SaveValues()
     ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
     wxCHECK_RET(projSettingsPtr, "Project settings not found");
     BuildConfigPtr buildConf = projSettingsPtr->GetBuildConfiguration(m_configName);
-    if(!buildConf) {
+    if (!buildConf) {
         return;
     }
 
     size_t pageCount = m_treebook->GetPageCount();
-    for(size_t i = 0; i < pageCount; i++) {
+    for (size_t i = 0; i < pageCount; i++) {
         wxWindow* page = m_treebook->GetPage(i);
-        if(!page)
+        if (!page)
             continue;
         IProjectSettingsPage* p = dynamic_cast<IProjectSettingsPage*>(page);
-        if(p) {
+        if (p) {
             p->Save(buildConf, projSettingsPtr);
         }
     }
@@ -181,23 +184,23 @@ void ProjectSettingsDlg::LoadValues(const wxString& configName)
     ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
     wxCHECK_RET(projSettingsPtr, "Project settings not found");
     buildConf = projSettingsPtr->GetBuildConfiguration(configName);
-    if(!buildConf) {
+    if (!buildConf) {
         return;
     }
 
-    if(buildConf->GetProjectType().IsEmpty()) {
+    if (buildConf->GetProjectType().IsEmpty()) {
         // no project type is defined by the
         buildConf->SetProjectType(projSettingsPtr->GetProjectType(wxEmptyString));
     }
     size_t pageCount = m_treebook->GetPageCount();
-    for(size_t i = 0; i < pageCount; i++) {
+    for (size_t i = 0; i < pageCount; i++) {
         wxWindow* page = m_treebook->GetPage(i);
-        if(!page)
+        if (!page)
             continue; // NULL page ...
         IProjectSettingsPage* p = dynamic_cast<IProjectSettingsPage*>(page);
-        if(p) {
+        if (p) {
             GlobalSettingsPanel* globalPage = dynamic_cast<GlobalSettingsPanel*>(page);
-            if(globalPage) {
+            if (globalPage) {
                 // update the project name
                 // globalPage->SetProjectName(m_projectName);
             }
@@ -205,7 +208,7 @@ void ProjectSettingsDlg::LoadValues(const wxString& configName)
         }
     }
 
-    if(sel != wxNOT_FOUND) {
+    if (sel != wxNOT_FOUND) {
         m_treebook->SetSelection(sel);
     }
     m_isDirty = false;
@@ -214,13 +217,13 @@ void ProjectSettingsDlg::LoadValues(const wxString& configName)
 void ProjectSettingsDlg::ClearValues()
 {
     size_t pageCount = m_treebook->GetPageCount();
-    for(size_t i = 0; i < pageCount; i++) {
+    for (size_t i = 0; i < pageCount; i++) {
         wxWindow* page = m_treebook->GetPage(i);
-        if(!page)
+        if (!page)
             continue;
 
         IProjectSettingsPage* p = dynamic_cast<IProjectSettingsPage*>(page);
-        if(p) {
+        if (p) {
             p->Clear();
         }
     }
@@ -245,9 +248,10 @@ void ProjectSettingsDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(
 void ProjectSettingsDlg::OnConfigurationChanged(wxCommandEvent& event)
 {
     event.Skip();
-    if(m_isDirty) {
-        if(wxMessageBox(_("Save changes before loading new configuration?"), _("Save Changes"),
-                        wxICON_QUESTION | wxYES_NO | wxCENTER) == wxYES) {
+    if (m_isDirty) {
+        if (wxMessageBox(_("Save changes before loading new configuration?"),
+                         _("Save Changes"),
+                         wxICON_QUESTION | wxYES_NO | wxCENTER) == wxYES) {
             SaveValues();
         } else {
             ClearValues();
@@ -271,10 +275,11 @@ void ProjectSettingsDlg::OnProjectSelected(wxCommandEvent& e)
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(e.GetString(), "");
     CHECK_PTR_RET(bldConf);
 
-    if(m_isDirty) {
-        int answer = ::wxMessageBox(_("Save changes before loading new configuration?"), _("Save Changes"),
+    if (m_isDirty) {
+        int answer = ::wxMessageBox(_("Save changes before loading new configuration?"),
+                                    _("Save Changes"),
                                     wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCENTER);
-        switch(answer) {
+        switch (answer) {
         case wxYES:
             SaveValues();
             break;
@@ -307,18 +312,18 @@ void ProjectSettingsDlg::DoGetAllBuildConfigs()
     wxCHECK_RET(projSettingsPtr, "Project settings not found");
     ProjectSettingsCookie cookie;
     BuildConfigPtr conf = projSettingsPtr->GetFirstBuildConfiguration(cookie);
-    while(conf) {
+    while (conf) {
         configs.Add(conf->GetName());
         conf = projSettingsPtr->GetNextBuildConfiguration(cookie);
     }
 
     m_choiceConfig->Append(configs);
     int where = m_choiceConfig->FindString(m_configName);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
 
         m_choiceConfig->SetSelection(where);
 
-    } else if(!m_choiceConfig->IsEmpty()) {
+    } else if (!m_choiceConfig->IsEmpty()) {
 
         m_configName = m_choiceConfig->GetString(0);
         m_choiceConfig->SetSelection(0);
@@ -346,7 +351,7 @@ void ProjectSettingsDlg::OnButtonCancel(wxCommandEvent& event)
 
 void ProjectSettingsDlg::ShowHideDisabledMessage()
 {
-    if(!m_isProjectEnabled) {
+    if (!m_isProjectEnabled) {
         m_infobar->ShowMessage(_("This project is disabled"), wxICON_WARNING);
     } else {
         m_infobar->Dismiss();
@@ -355,7 +360,7 @@ void ProjectSettingsDlg::ShowHideDisabledMessage()
 
 void ProjectSettingsDlg::ShowCustomProjectMessage(bool show)
 {
-    if(show) {
+    if (show) {
         m_infobar->ShowMessage(_("The settings on this page are ignored during build"), wxICON_INFORMATION);
     } else {
         m_infobar->Dismiss();
@@ -367,16 +372,16 @@ void ProjectSettingsDlg::OnPageChanged(wxTreebookEvent& event)
     event.Skip();
 
     // Do nothing if the project is disabled
-    if(!IsProjectEnabled())
+    if (!IsProjectEnabled())
         return;
 
     int sel = m_treebook->GetSelection();
-    if(sel != wxNOT_FOUND && IsCustomBuildEnabled()) {
+    if (sel != wxNOT_FOUND && IsCustomBuildEnabled()) {
         wxWindow* page = m_treebook->GetPage(sel);
 
-        if(!page || dynamic_cast<PSCustomBuildPage*>(page) || dynamic_cast<PSGeneralPage*>(page) ||
-           dynamic_cast<PSBuildEventsPage*>(page) || dynamic_cast<PSEnvironmentPage*>(page) ||
-           dynamic_cast<PSDebuggerPage*>(page) /* || dynamic_cast<PSCompletionPage*>(page)*/) {
+        if (!page || dynamic_cast<PSCustomBuildPage*>(page) || dynamic_cast<PSGeneralPage*>(page) ||
+            dynamic_cast<PSBuildEventsPage*>(page) || dynamic_cast<PSEnvironmentPage*>(page) ||
+            dynamic_cast<PSDebuggerPage*>(page) /* || dynamic_cast<PSCompletionPage*>(page)*/) {
             ShowCustomProjectMessage(false);
 
         } else {
@@ -390,7 +395,9 @@ void ProjectSettingsDlg::OnPageChanged(wxTreebookEvent& event)
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg,
+GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent,
+                                         const wxString& projectName,
+                                         ProjectSettingsDlg* dlg,
                                          PSGeneralPage* gp)
     : GlobalSettingsBasePanel(parent)
     , m_projectName(projectName)
@@ -405,8 +412,8 @@ GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent, const wxString& proje
 void GlobalSettingsPanel::Clear()
 {
     wxPropertyGridIterator iter = m_pgMgr->GetGrid()->GetIterator();
-    for(; !iter.AtEnd(); ++iter) {
-        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
+    for (; !iter.AtEnd(); ++iter) {
+        if (iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
             iter.GetProperty()->SetValueToUnspecified();
         }
     }
@@ -417,7 +424,7 @@ void GlobalSettingsPanel::Load(BuildConfigPtr buildConf)
     ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
     wxCHECK_RET(projSettingsPtr, "Project settings not found");
     BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
-    if(!globalSettings) {
+    if (!globalSettings) {
         Clear();
         return;
     }
@@ -439,7 +446,7 @@ void GlobalSettingsPanel::Save(BuildConfigPtr buildConf, ProjectSettingsPtr proj
     wxUnusedVar(projSettingsPtr);
 
     BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
-    if(!globalSettings) {
+    if (!globalSettings) {
         return;
     }
 
@@ -468,20 +475,20 @@ void GlobalSettingsPanel::OnCustomEditorClicked(wxCommandEvent& event)
     wxString cmpName = m_gp->GetCompiler();
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
 
-    if(prop == m_pgPropCCmpOpts || prop == m_pgPropCppCmpOpts) {
+    if (prop == m_pgPropCCmpOpts || prop == m_pgPropCppCmpOpts) {
         wxString v = prop->GetValueAsString();
-        if(PopupAddOptionCheckDlg(v, _("Compiler Options"), cmp->GetCompilerOptions())) {
+        if (PopupAddOptionCheckDlg(v, _("Compiler Options"), cmp->GetCompilerOptions())) {
             prop->SetValueFromString(v);
         }
-    } else if(prop == m_pgPropIncludePaths || prop == m_pgPropPreProcessors || prop == m_pgPropLibPath ||
-              prop == m_pgPropLIbs || prop == m_pgPropResCmpOptions || prop == m_pgPropResCmpSearchPath) {
+    } else if (prop == m_pgPropIncludePaths || prop == m_pgPropPreProcessors || prop == m_pgPropLibPath ||
+               prop == m_pgPropLIbs || prop == m_pgPropResCmpOptions || prop == m_pgPropResCmpSearchPath) {
         wxString v = prop->GetValueAsString();
-        if(PopupAddOptionDlg(v)) {
+        if (PopupAddOptionDlg(v)) {
             prop->SetValueFromString(v);
         }
-    } else if(prop == m_pgPropOptions) {
+    } else if (prop == m_pgPropOptions) {
         wxString v = prop->GetValueAsString();
-        if(PopupAddOptionCheckDlg(v, _("Linker Options"), cmp->GetLinkerOptions())) {
+        if (PopupAddOptionCheckDlg(v, _("Linker Options"), cmp->GetLinkerOptions())) {
             prop->SetValueFromString(v);
         }
     }
@@ -497,7 +504,7 @@ void GlobalSettingsPanel::OnValueChanged(wxPropertyGridEvent& event) { m_dlg->Se
 bool IProjectSettingsPage::PopupAddOptionDlg(wxTextCtrl* ctrl)
 {
     AddOptionsDialog dlg(EventNotifier::Get()->TopFrame(), ctrl->GetValue());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         ctrl->SetValue(dlg.GetValue());
         return true;
     }
@@ -507,7 +514,7 @@ bool IProjectSettingsPage::PopupAddOptionDlg(wxTextCtrl* ctrl)
 bool IProjectSettingsPage::PopupAddOptionDlg(wxString& value)
 {
     AddOptionsDialog dlg(EventNotifier::Get()->TopFrame(), value);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         value.Clear();
         value << dlg.GetValue();
         return true;
@@ -517,13 +524,13 @@ bool IProjectSettingsPage::PopupAddOptionDlg(wxString& value)
 
 bool IProjectSettingsPage::SelectChoiceWithGlobalSettings(wxChoice* c, const wxString& text)
 {
-    if(text == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
+    if (text == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
         c->Select(c->FindString(BuildConfig::APPEND_TO_GLOBAL_SETTINGS));
 
-    } else if(text == BuildConfig::OVERWRITE_GLOBAL_SETTINGS) {
+    } else if (text == BuildConfig::OVERWRITE_GLOBAL_SETTINGS) {
         c->Select(c->FindString(BuildConfig::OVERWRITE_GLOBAL_SETTINGS));
 
-    } else if(text == BuildConfig::PREPEND_GLOBAL_SETTINGS) {
+    } else if (text == BuildConfig::PREPEND_GLOBAL_SETTINGS) {
         c->Select(c->FindString(BuildConfig::PREPEND_GLOBAL_SETTINGS));
 
     } else {
@@ -533,11 +540,12 @@ bool IProjectSettingsPage::SelectChoiceWithGlobalSettings(wxChoice* c, const wxS
     return true;
 }
 
-bool IProjectSettingsPage::PopupAddOptionCheckDlg(wxString& v, const wxString& title,
+bool IProjectSettingsPage::PopupAddOptionCheckDlg(wxString& v,
+                                                  const wxString& title,
                                                   const Compiler::CmpCmdLineOptions& options)
 {
     AddOptionCheckDlg dlg(NULL, title, options, v);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         v = dlg.GetValue();
         return true;
     }

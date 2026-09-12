@@ -24,9 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "context_html.h"
+
 #include "cl_editor.h"
-#include "editor_config.h"
 #include "cl_editor_tip_window.h"
+#include "editor_config.h"
 
 ContextHtml::ContextHtml(clEditor* editor)
     : ContextBase(editor)
@@ -49,11 +50,13 @@ void ContextHtml::ApplySettings()
 {
     SetName(wxT("Html"));
     LexerConf::Ptr_t lexPtr;
-    if(EditorConfigST::Get()->IsOk()) { lexPtr = EditorConfigST::Get()->GetLexer(GetName()); }
+    if (EditorConfigST::Get()->IsOk()) {
+        lexPtr = EditorConfigST::Get()->GetLexer(GetName());
+    }
     clEditor& rCtrl = GetCtrl();
-    if(lexPtr) {
+    if (lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
-        for(int i = 0; i <= 4; ++i) {
+        for (int i = 0; i <= 4; ++i) {
             wxString keyWords = lexPtr->GetKeyWords(i);
             keyWords.Replace(wxT("\n"), wxT(" "));
             keyWords.Replace(wxT("\r"), wxT(" "));
@@ -69,21 +72,25 @@ void ContextHtml::AutoIndent(const wxChar& nChar)
 {
     clEditor& rCtrl = GetCtrl();
 
-    if(rCtrl.GetDisableSmartIndent()) { return; }
-    if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) { return; }
+    if (rCtrl.GetDisableSmartIndent()) {
+        return;
+    }
+    if (rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) {
+        return;
+    }
 
     int curpos = rCtrl.GetCurrentPos();
-    if(IsCommentOrString(curpos) && nChar == wxT('\n')) {
+    if (IsCommentOrString(curpos) && nChar == wxT('\n')) {
         AutoAddComment();
         return;
     }
 
-    if(IsCommentOrString(curpos)) {
+    if (IsCommentOrString(curpos)) {
         ContextBase::AutoIndent(nChar);
         return;
     }
     int line = rCtrl.LineFromPosition(curpos);
-    if(nChar == wxT('\n')) {
+    if (nChar == wxT('\n')) {
 
         int prevpos(wxNOT_FOUND);
         int foundPos(wxNOT_FOUND);
@@ -93,7 +100,7 @@ void ContextHtml::AutoIndent(const wxChar& nChar)
         word = rCtrl.PreviousWord(curpos, foundPos);
 
         // user hit ENTER after 'else'
-        if(word == wxT("else")) {
+        if (word == wxT("else")) {
             int prevLine = rCtrl.LineFromPosition(prevpos);
             rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
             rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
@@ -102,18 +109,18 @@ void ContextHtml::AutoIndent(const wxChar& nChar)
         }
 
         // User typed 'ENTER' immediately after closing brace ')'
-        if(prevpos != wxNOT_FOUND && ch == wxT(')')) {
+        if (prevpos != wxNOT_FOUND && ch == wxT(')')) {
 
             long openBracePos(wxNOT_FOUND);
             int posWordBeforeOpenBrace(wxNOT_FOUND);
 
-            if(rCtrl.MatchBraceBack(wxT(')'), prevpos, openBracePos)) {
+            if (rCtrl.MatchBraceBack(wxT(')'), prevpos, openBracePos)) {
                 rCtrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
-                if(posWordBeforeOpenBrace != wxNOT_FOUND) {
+                if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                     word = rCtrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
                     // c++ expression with single line and should be treated separately
-                    if(word == wxT("if") || word == wxT("while") || word == wxT("for")) {
+                    if (word == wxT("if") || word == wxT("while") || word == wxT("for")) {
                         int prevLine = rCtrl.LineFromPosition(prevpos);
                         rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
                         rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
@@ -125,22 +132,22 @@ void ContextHtml::AutoIndent(const wxChar& nChar)
         }
 
         // User typed 'ENTER' immediately after colons ':'
-        if(prevpos != wxNOT_FOUND && ch == wxT(':')) {
+        if (prevpos != wxNOT_FOUND && ch == wxT(':')) {
             int posWordBeforeColons(wxNOT_FOUND);
 
             rCtrl.PreviousChar(prevpos, posWordBeforeColons);
-            if(posWordBeforeColons != wxNOT_FOUND) {
+            if (posWordBeforeColons != wxNOT_FOUND) {
                 word = rCtrl.PreviousWord(posWordBeforeColons, foundPos);
                 int prevLine = rCtrl.LineFromPosition(posWordBeforeColons);
 
                 // If we found one of the following keywords, un-indent their line by (foldLevel - 1)*indentSize
-                if(word == wxT("public") || word == wxT("private") || word == wxT("protected")) {
+                if (word == wxT("public") || word == wxT("private") || word == wxT("protected")) {
 
                     ContextBase::AutoIndent(nChar);
 
                     // Indent this line according to the block indentation level
                     int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSTC_FOLDLEVELNUMBERMASK) - wxSTC_FOLDLEVELBASE;
-                    if(foldLevel) {
+                    if (foldLevel) {
                         rCtrl.SetLineIndentation(prevLine, ((foldLevel - 1) * rCtrl.GetIndent()));
                         rCtrl.ChooseCaretX();
                     }
@@ -150,7 +157,7 @@ void ContextHtml::AutoIndent(const wxChar& nChar)
         }
 
         // use the previous line indentation level
-        if(prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
+        if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
             ContextBase::AutoIndent(nChar);
             return;
         }
@@ -160,21 +167,23 @@ void ContextHtml::AutoIndent(const wxChar& nChar)
         rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
         rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
 
-    } else if(nChar == wxT('}')) {
+    } else if (nChar == wxT('}')) {
 
         long matchPos = wxNOT_FOUND;
-        if(!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos)) return;
+        if (!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
+            return;
         int secondLine = rCtrl.LineFromPosition(matchPos);
-        if(secondLine == line) return;
+        if (secondLine == line)
+            return;
         rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(secondLine));
 
-    } else if(nChar == wxT('{')) {
+    } else if (nChar == wxT('{')) {
         wxString lineString = rCtrl.GetLine(line);
         lineString.Trim().Trim(false);
 
         int matchPos = wxNOT_FOUND;
         wxChar previousChar = rCtrl.PreviousChar(rCtrl.PositionBefore(curpos), matchPos);
-        if(previousChar != wxT('{') && lineString == wxT("{")) {
+        if (previousChar != wxT('{') && lineString == wxT("{")) {
             // indent this line according to the previous line
             int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
             rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line - 1));
@@ -226,7 +235,9 @@ void ContextHtml::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 void ContextHtml::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     clEditor& ctrl = GetCtrl();
-    if(ctrl.GetFunctionTip()->IsActive()) { ctrl.GetFunctionTip()->Highlight(DoGetCalltipParameterIndex()); }
+    if (ctrl.GetFunctionTip()->IsActive()) {
+        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParameterIndex());
+    }
 }
 
 void ContextHtml::RetagFile() {}
@@ -236,15 +247,15 @@ void ContextHtml::SemicolonShift()
     int foundPos(wxNOT_FOUND);
     int semiColonPos(wxNOT_FOUND);
     clEditor& ctrl = GetCtrl();
-    if(ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
+    if (ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
 
         // test to see if we are inside a 'for' statement
         long openBracePos(wxNOT_FOUND);
         int posWordBeforeOpenBrace(wxNOT_FOUND);
 
-        if(ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
+        if (ctrl.MatchBraceBack(wxT(')'), semiColonPos, openBracePos)) {
             ctrl.PreviousChar(openBracePos, posWordBeforeOpenBrace);
-            if(posWordBeforeOpenBrace != wxNOT_FOUND) {
+            if (posWordBeforeOpenBrace != wxNOT_FOUND) {
                 wxString word = ctrl.PreviousWord(posWordBeforeOpenBrace, foundPos);
 
                 // At the current pos, we got a ';'
@@ -281,14 +292,14 @@ int ContextHtml::GetActiveKeywordSet() const
     // Python 3
     // PHP 4
     int style = GetCtrl().GetStyleAt(GetCtrl().GetCurrentPos());
-    if(IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_SGML_BLOCK_DEFAULT))
+    if (IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_SGML_BLOCK_DEFAULT))
         return 0;
-    else if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX))
+    else if (IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX))
         return 1;
-    else if(IS_BETWEEN(style, wxSTC_HPHP_DEFAULT, wxSTC_HPHP_OPERATOR) || style == wxSTC_HPHP_COMPLEX_VARIABLE)
+    else if (IS_BETWEEN(style, wxSTC_HPHP_DEFAULT, wxSTC_HPHP_OPERATOR) || style == wxSTC_HPHP_COMPLEX_VARIABLE)
         return 4;
-    else if(IS_BETWEEN(style, wxSTC_HP_START, wxSTC_HP_IDENTIFIER) ||
-            IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER))
+    else if (IS_BETWEEN(style, wxSTC_HP_START, wxSTC_HP_IDENTIFIER) ||
+             IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER))
         return 3;
     return wxNOT_FOUND;
 }

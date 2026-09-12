@@ -118,7 +118,9 @@ clGenericNotebook::~clGenericNotebook()
 
 void clGenericNotebook::AddPage(
     wxWindow* page, const wxString& label, bool selected, int bitmapId, const wxString& shortLabel)
-{ InsertPage(GetPageCount(), page, label, selected, bitmapId, shortLabel); }
+{
+    InsertPage(GetPageCount(), page, label, selected, bitmapId, shortLabel);
+}
 
 void clGenericNotebook::DoChangeSelection(wxWindow* page) { m_windows->Select(page); }
 
@@ -174,7 +176,9 @@ void clGenericNotebook::SetTabDirection(wxDirection d)
 }
 
 bool clGenericNotebook::MoveActivePage(int newIndex)
-{ return m_tabCtrl->MoveActiveToIndex(newIndex, GetSelection() > newIndex ? eDirection::kLeft : eDirection::kRight); }
+{
+    return m_tabCtrl->MoveActiveToIndex(newIndex, GetSelection() > newIndex ? eDirection::kLeft : eDirection::kRight);
+}
 
 void clGenericNotebook::OnSize(wxSizeEvent& event) { event.Skip(); }
 
@@ -1303,7 +1307,9 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
                                 const wxRect& clientRect,
                                 wxDC& dc,
                                 const clTabColours& colours)
-{ GetArt()->DrawBottomRect(this, activeTab, clientRect, dc, colours, GetStyle()); }
+{
+    GetArt()->DrawBottomRect(this, activeTab, clientRect, dc, colours, GetStyle());
+}
 
 bool clTabCtrl::IsVerticalTabs() const { return false; }
 

@@ -26,10 +26,11 @@
 #ifndef __singleinstancethreadjob__
 #define __singleinstancethreadjob__
 
-#include <wx/event.h>
-#include "cl_command_event.h"
-#include <wx/thread.h>
 #include "SocketAPI/clSocketServer.h"
+#include "cl_command_event.h"
+
+#include <wx/event.h>
+#include <wx/thread.h>
 
 wxDECLARE_EVENT(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, clCommandEvent);
 wxDECLARE_EVENT(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, clCommandEvent);
@@ -40,7 +41,7 @@ wxDECLARE_EVENT(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, clCommandEvent);
 #else
 #define SINGLE_INSTANCE_PORT 16617
 #endif
-#else 
+#else
 #include <unistd.h>
 #ifdef NDEBUG
 #define SINGLE_INSTANCE_PORT ((getuid() % 57) + 13617)
@@ -58,7 +59,7 @@ public:
      * @brief the thread main loop
      */
     virtual void* Entry();
-    
+
     /**
      * @brief start the single instance thread
      */
@@ -75,7 +76,7 @@ public:
     {
         // Notify the thread to exit and
         // wait for it
-        if(IsAlive()) {
+        if (IsAlive()) {
             Delete(NULL, wxTHREAD_WAIT_BLOCK);
 
         } else {

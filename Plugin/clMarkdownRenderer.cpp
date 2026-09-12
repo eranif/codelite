@@ -48,7 +48,9 @@ void clMarkdownRenderer::UpdateFont(wxDC& dc, const mdparser::Style& style)
 }
 
 wxSize clMarkdownRenderer::Render(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect)
-{ return DoRender(win, dc, text, rect, true); }
+{
+    return DoRender(win, dc, text, rect, true);
+}
 
 wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect, bool do_draw)
 {
@@ -150,4 +152,6 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
 }
 
 wxSize clMarkdownRenderer::GetSize(wxWindow* win, wxDC& dc, const wxString& text)
-{ return DoRender(win, dc, text, {}, false); }
+{
+    return DoRender(win, dc, text, {}, false);
+}

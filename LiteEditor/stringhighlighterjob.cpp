@@ -22,10 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "search_thread.h"
 #include "stringhighlighterjob.h"
+
+#include "search_thread.h"
 #include "stringsearcher.h"
-#include <vector>
 
 StringHighlighterJob::StringHighlighterJob(const wxString& str, const wxString& word, int offset)
     : m_str(str)
@@ -43,7 +43,9 @@ void StringHighlighterJob::Set(const wxString& str, const wxString& word, int of
 
 void StringHighlighterJob::Process()
 {
-    if(m_str.IsEmpty() || m_word.IsEmpty()) { return; }
+    if (m_str.IsEmpty() || m_word.IsEmpty()) {
+        return;
+    }
 
     int pos(0);
     int match_len(0);
@@ -54,7 +56,7 @@ void StringHighlighterJob::Process()
     const wchar_t* pin = m_str.c_str().AsWChar();
     const wchar_t* pwo = m_word.c_str().AsWChar();
 
-    while(StringFindReplacer::Search(pin, offset, pwo, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len)) {
+    while (StringFindReplacer::Search(pin, offset, pwo, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len)) {
         // add result pair(offset, len)
         std::pair<int, int> match;
         match.first = pos + m_offset; // add the offset

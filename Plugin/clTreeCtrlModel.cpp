@@ -39,7 +39,9 @@ void clTreeCtrlModel::GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_
 }
 
 void clTreeCtrlModel::GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded) const
-{ return from->GetPrevItems(count, items, selfIncluded); }
+{
+    return from->GetPrevItems(count, items, selfIncluded);
+}
 
 wxTreeItemId clTreeCtrlModel::AddRoot(const wxString& text, int image, int selImage, wxTreeItemData* data)
 {
@@ -247,10 +249,14 @@ void clTreeCtrlModel::DoExpandAllChildren(const wxTreeItemId& item, bool expand)
 }
 
 wxTreeItemId clTreeCtrlModel::GetItemBefore(const wxTreeItemId& item, bool visibleItem) const
-{ return wxTreeItemId(GetRowBefore(ToPtr(item), visibleItem)); }
+{
+    return wxTreeItemId(GetRowBefore(ToPtr(item), visibleItem));
+}
 
 wxTreeItemId clTreeCtrlModel::GetItemAfter(const wxTreeItemId& item, bool visibleItem) const
-{ return wxTreeItemId(GetRowAfter(ToPtr(item), visibleItem)); }
+{
+    return wxTreeItemId(GetRowAfter(ToPtr(item), visibleItem));
+}
 
 void clTreeCtrlModel::DeleteItem(const wxTreeItemId& item)
 {

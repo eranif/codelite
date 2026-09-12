@@ -1061,6 +1061,4 @@ void MemCheckOutputView::OnClearOutputUpdateUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_notebookOutputView->GetCurrentPage() == m_panelErrors && m_listCtrlErrors->GetItemCount() > 0);
 }
-void MemCheckOutputView::OnValueChanged(wxDataViewEvent& event)
-{
-}
+void MemCheckOutputView::OnValueChanged(wxDataViewEvent& event) {}

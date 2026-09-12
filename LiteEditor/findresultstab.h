@@ -163,7 +163,7 @@ public:
 
     void Pop()
     {
-        if(m_changes.size() > 1) {
+        if (m_changes.size() > 1) {
             m_changes.pop_back();
             m_changes.pop_back();
         }

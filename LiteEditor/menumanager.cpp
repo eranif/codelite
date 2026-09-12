@@ -22,9 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "menumanager.h"
+
 #include "macros.h"
 #include "menu_event_handlers.h"
-#include "menumanager.h"
 
 MenuManager::MenuManager()
 {
@@ -90,15 +91,12 @@ MenuManager::MenuManager()
     PushHandler(std::make_shared<DebuggerMenuHandler>(XRCID("show_breakpoint_dlg")));
 }
 
-void MenuManager::PushHandler(MenuEventHandlerPtr handler)
-{
-    m_handlers[handler->GetEventId()] = handler;
-}
+void MenuManager::PushHandler(MenuEventHandlerPtr handler) { m_handlers[handler->GetEventId()] = handler; }
 
 MenuEventHandlerPtr MenuManager::GetHandler(int id)
 {
     HandlesrHash::iterator iter = m_handlers.find(id);
-    if(iter != m_handlers.end())
+    if (iter != m_handlers.end())
         return iter->second;
     return NULL;
 }

@@ -9,10 +9,14 @@
 clWorkspaceView::clWorkspaceView(wxSimplebook* book)
     : m_simpleBook(book)
     , m_defaultPage(_("Default"))
-{ EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceView::OnWorkspaceClosed, this); }
+{
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceView::OnWorkspaceClosed, this);
+}
 
 clWorkspaceView::~clWorkspaceView()
-{ EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceView::OnWorkspaceClosed, this); }
+{
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceView::OnWorkspaceClosed, this);
+}
 
 size_t clWorkspaceView::GetPageIndex(const wxString& name) const
 {

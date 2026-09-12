@@ -71,7 +71,7 @@ ImportFilesDialogNew::ImportFilesDialogNew(wxWindow* parent)
     m_dataview->SetExpanderColumn(m_dataview->GetColumn(1));
     m_dataview->SetIndent(WXC_FROM_DIP(16));
     ImportFilesSettings options;
-    if(!EditorConfigST::Get()->ReadObject(wxT("import_dir_options"), &options)) {
+    if (!EditorConfigST::Get()->ReadObject(wxT("import_dir_options"), &options)) {
         // first time, read the settings from the ctags options
         options.SetFileMask("*.cpp;*.c;*.cxx;*.cc;*.hpp;*.h");
         size_t flags(0);
@@ -79,7 +79,7 @@ ImportFilesDialogNew::ImportFilesDialogNew(wxWindow* parent)
     }
 
     options.SetBaseDir(PluginManager::Get()->GetSelectedTreeItemInfo(TreeFileView).m_fileName.GetPath());
-    if(options.GetBaseDir().IsEmpty()) {
+    if (options.GetBaseDir().IsEmpty()) {
         options.SetBaseDir(wxGetCwd());
     }
 
@@ -101,7 +101,7 @@ ImportFilesDialogNew::~ImportFilesDialogNew()
     options.SetFileMask(m_textCtrSpec->GetValue());
 
     size_t flags(0);
-    if(m_checkBoxFilesWOExt->IsChecked())
+    if (m_checkBoxFilesWOExt->IsChecked())
         flags |= IFS_INCLUDE_FILES_WO_EXT;
     options.SetFlags(flags);
     EditorConfigST::Get()->WriteObject(wxT("import_dir_options"), &options);
@@ -115,7 +115,7 @@ void ImportFilesDialogNew::DoBuildTree(const wxDataViewItem& parent, const wxDir
 
     // Collect list of directories
     std::vector<wxString> D;
-    while(cont) {
+    while (cont) {
         D.push_back(dir.GetNameWithSep() + path);
         cont = dir.GetNext(&path);
     }
@@ -133,7 +133,7 @@ void ImportFilesDialogNew::DoBuildTree(const wxDataViewItem& parent, const wxDir
         wxDataViewItem child =
             m_dataviewModel->AppendItem(parent, cols, new ImportFilesDlgData(childDir.GetName(), initialState));
         // Add dummy columns
-        if(childDir.IsOpened() && childDir.HasSubDirs()) {
+        if (childDir.IsOpened() && childDir.HasSubDirs()) {
             wxVector<wxVariant> dummyCols;
             dummyCols.push_back(false);
             dummyCols.push_back(MakeIconText("dummy", folderBmp));
@@ -150,26 +150,26 @@ void ImportFilesDialogNew::OnDirChanged(wxCommandEvent& event)
 
 void ImportFilesDialogNew::DoBuildTree()
 {
-    if(!wxFileName::DirExists(m_textCtrlDir->GetValue()))
+    if (!wxFileName::DirExists(m_textCtrlDir->GetValue()))
         return;
     m_dataviewModel->Clear();
 
     wxString curpath = m_textCtrlDir->GetValue();
-    if(!wxDir::Exists(curpath)) {
+    if (!wxDir::Exists(curpath)) {
         m_textCtrlDir->ChangeValue(::wxGetCwd());
     }
 
     wxVector<wxVariant> cols;
     cols.push_back(false);
-    cols.push_back(MakeIconText(m_textCtrlDir->GetValue(),
-                                PluginManager::Get()->GetStdIcons()->LoadBitmap("mime/16/folder-yellow")));
+    cols.push_back(MakeIconText(
+        m_textCtrlDir->GetValue(), PluginManager::Get()->GetStdIcons()->LoadBitmap("mime/16/folder-yellow")));
 
     m_root =
         m_dataviewModel->AppendItem(wxDataViewItem(0), cols, new ImportFilesDlgData(m_textCtrlDir->GetValue(), false));
 
     // For performance, we add only the direct children of the root node
     wxDir dir(m_textCtrlDir->GetValue());
-    if(dir.IsOpened() && dir.HasSubDirs()) {
+    if (dir.IsOpened() && dir.HasSubDirs()) {
         DoBuildTree(m_root, dir, false);
     }
     m_dataview->Expand(m_root);
@@ -179,11 +179,11 @@ void ImportFilesDialogNew::OnValueChanged(wxDataViewEvent& event)
 {
     event.Skip();
     wxVector<wxVariant> cols = m_dataviewModel->GetItemColumnsData(event.GetItem());
-    if(cols.size() > 1) {
+    if (cols.size() > 1) {
         bool isChecked = cols.at(0).GetBool();
         ImportFilesDlgData* cd =
             reinterpret_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(event.GetItem()));
-        if(cd) {
+        if (cd) {
             cd->SetIsChecked(isChecked);
             DoCheckChildren(event.GetItem(), isChecked);
         }
@@ -205,10 +205,10 @@ wxVariant ImportFilesDialogNew::MakeIconText(const wxString& text, const wxBitma
 
 void ImportFilesDialogNew::DoCheckChildren(const wxDataViewItem& parent, bool check)
 {
-    if(m_dataviewModel->HasChildren(parent)) {
+    if (m_dataviewModel->HasChildren(parent)) {
         wxDataViewItemArray children;
         m_dataviewModel->GetChildren(parent, children);
-        for(size_t i = 0; i < children.GetCount(); ++i) {
+        for (size_t i = 0; i < children.GetCount(); ++i) {
 
             // First, update the UI by replacing the columns
             wxDataViewItem item = children.Item(i);
@@ -216,12 +216,12 @@ void ImportFilesDialogNew::DoCheckChildren(const wxDataViewItem& parent, bool ch
 
             // Update the client data
             ImportFilesDlgData* cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(item));
-            if(cd) {
+            if (cd) {
                 cd->SetIsChecked(check);
             }
 
             // Check if this child has children
-            if(m_dataviewModel->HasChildren(item)) {
+            if (m_dataviewModel->HasChildren(item)) {
                 DoCheckChildren(item, check);
             }
         }
@@ -232,10 +232,10 @@ void ImportFilesDialogNew::OnItemExpanding(wxDataViewEvent& event)
 {
     event.Skip();
     wxDataViewItemArray children;
-    if(m_dataviewModel->GetChildren(event.GetItem(), children)) {
+    if (m_dataviewModel->GetChildren(event.GetItem(), children)) {
         wxDataViewItem child = children.Item(0);
         ImportFilesDlgData* cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(child));
-        if(cd && cd->IsDummy()) {
+        if (cd && cd->IsDummy()) {
             cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(event.GetItem()));
             m_dataviewModel->DeleteItem(child);
             wxDir dir(cd->GetPath());
@@ -256,33 +256,33 @@ void ImportFilesDialogNew::DoGetCheckedDirs(const wxDataViewItem& parent, wxStri
     wxDataViewItemArray children;
     bool itemExpanded = false;
     ImportFilesDlgData* cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(parent));
-    if(cd) {
+    if (cd) {
         bool bParentFolderChecked = cd->IsChecked();
         wxString dirname = cd->GetPath();
         bool recurse = false;
         // check if this item was expanded before
-        if(m_dataviewModel->HasChildren(parent) && m_dataviewModel->GetChildren(parent, children)) {
+        if (m_dataviewModel->HasChildren(parent) && m_dataviewModel->GetChildren(parent, children)) {
             wxDataViewItem child = children.Item(0);
             cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(child));
 
             // If the directory is checked and it was never expanded
             // we should recurse into it
-            if(cd && cd->IsDummy()) {
+            if (cd && cd->IsDummy()) {
                 recurse = true;
 
-            } else if(cd) {
+            } else if (cd) {
                 itemExpanded = true;
             }
         }
 
-        if(bParentFolderChecked) {
+        if (bParentFolderChecked) {
             dirs.insert(std::make_pair(dirname, recurse));
         }
     }
 
     // if the parent has children and it was expanded by the user, keep on recursing
-    if(!children.IsEmpty() && itemExpanded) {
-        for(size_t i = 0; i < children.GetCount(); ++i) {
+    if (!children.IsEmpty() && itemExpanded) {
+        for (size_t i = 0; i < children.GetCount(); ++i) {
             DoGetCheckedDirs(children.Item(i), dirs);
         }
     }
@@ -295,9 +295,9 @@ wxString ImportFilesDialogNew::GetBaseDir() { return m_textCtrlDir->GetValue(); 
 wxString ImportFilesDialogNew::GetFileMask() { return m_textCtrSpec->GetValue(); }
 void ImportFilesDialogNew::OnBrowse(wxCommandEvent& event)
 {
-    wxString new_path = wxDirSelector(_("Select working directory:"), m_textCtrlDir->GetValue(), wxDD_DEFAULT_STYLE,
-                                      wxDefaultPosition, this);
-    if(new_path.IsEmpty())
+    wxString new_path = wxDirSelector(
+        _("Select working directory:"), m_textCtrlDir->GetValue(), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+    if (new_path.IsEmpty())
         return;
     m_textCtrlDir->ChangeValue(new_path);
     DoBuildTree();

@@ -61,7 +61,6 @@ public:
     };
 
 public:
-
     // Merge 2 arrays of strings into a single array with all duplicate entries removed
     static wxArrayString MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2);
     static wxStringMap_t MergeStringMaps(const wxStringMap_t& map1, const wxStringMap_t& map2);

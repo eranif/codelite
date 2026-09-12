@@ -31,8 +31,11 @@ protected:
     DAPVariableListCtrlItemData* GetItemData(const wxTreeItemId& item);
 
 public:
-    DAPVariableListCtrl(wxWindow* parent, dap::Client* client, dap::EvaluateContext dapContext,
-                        wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+    DAPVariableListCtrl(wxWindow* parent,
+                        dap::Client* client,
+                        dap::EvaluateContext dapContext,
+                        wxWindowID id = wxID_ANY,
+                        const wxPoint& pos = wxDefaultPosition,
                         const wxSize& size = wxDefaultSize);
     virtual ~DAPVariableListCtrl() = default;
     /**

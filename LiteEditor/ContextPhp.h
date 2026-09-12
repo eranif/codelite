@@ -32,13 +32,13 @@ class ContextPhp : public ContextGeneric
 {
 public:
     ContextPhp();
-    explicit ContextPhp(clEditor *Editor);
+    explicit ContextPhp(clEditor* Editor);
     ~ContextPhp() override = default;
 
 public:
     bool IsStringTriggerCodeComplete(const wxString& str) const override;
     int GetActiveKeywordSet() const override;
-    int  DoGetCalltipParameterIndex() override;
+    int DoGetCalltipParameterIndex() override;
     wxMenu* GetMenu() override;
     void AddMenuDynamicContent(wxMenu* menu) override;
     void ApplySettings() override;

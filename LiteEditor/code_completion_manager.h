@@ -26,8 +26,8 @@
 #ifndef CODECOMPLETIONMANAGER_H
 #define CODECOMPLETIONMANAGER_H
 
-#include "cl_command_event.h"
 #include "clWorkspaceEvent.hpp"
+#include "cl_command_event.h"
 #include "clangd/CompileCommandsGenerator.h"
 
 #include <wx/event.h>

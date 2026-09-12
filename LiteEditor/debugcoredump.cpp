@@ -53,12 +53,12 @@ DebugCoreDumpDlg::DebugCoreDumpDlg(wxWindow* parent)
     SetMaxSize(wxSize(width * 2 / 3, -1));
     GetSizer()->Layout();
     GetSizer()->Fit(this);
-    
+
     SetName("DebugCoreDumpDlg");
     WindowAttrManager::Load(this);
 
     Initialize();
-    if(m_Core->GetCount() == 0) {
+    if (m_Core->GetCount() == 0) {
         // If there's no known core yet, set focus here so one can be added
         m_Core->SetFocus();
     } else {
@@ -72,25 +72,25 @@ void DebugCoreDumpDlg::Initialize()
     EditorConfigST::Get()->ReadObject(wxT("DebugCoreDumpDlg"), &info);
 
     m_choiceDebuggers->Append(DebuggerMgr::Get().GetAvailableDebuggers());
-    if(m_choiceDebuggers->GetCount()) {
+    if (m_choiceDebuggers->GetCount()) {
         m_choiceDebuggers->SetSelection(0);
     }
-    if(m_choiceDebuggers->GetCount() > (unsigned int)info.GetSelectedDbg()) {
+    if (m_choiceDebuggers->GetCount() > (unsigned int)info.GetSelectedDbg()) {
         m_choiceDebuggers->SetSelection(info.GetSelectedDbg());
     }
 
     m_Core->Append(info.GetCoreFilepaths());
-    if(m_Core->GetCount() > 0) {
+    if (m_Core->GetCount() > 0) {
         m_Core->SetSelection(0);
     }
 
     m_WD->Append(info.GetWds());
-    if(m_WD->GetCount() > 0) {
+    if (m_WD->GetCount() > 0) {
         m_WD->SetSelection(0);
     }
 
     m_ExeFilepath->Append(info.GetExeFilepaths());
-    if(m_ExeFilepath->GetCount() > 0) {
+    if (m_ExeFilepath->GetCount() > 0) {
         m_ExeFilepath->SetSelection(0);
     } else {
         // determine the executable to debug:
@@ -99,18 +99,18 @@ void DebugCoreDumpDlg::Initialize()
         wxString activename, conf;
         ManagerST::Get()->GetActiveProjectAndConf(activename, conf);
         BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(activename, conf);
-        if(buildConf) {
+        if (buildConf) {
             // expand all macros with their values
             wxString programToDebug = buildConf->GetCommand();
             programToDebug.Trim().Trim(false);
 
-            if(programToDebug.IsEmpty()) {
+            if (programToDebug.IsEmpty()) {
                 programToDebug = buildConf->GetOutputFileName();
             }
             wxString outputFile =
                 MacroManager::Instance()->Expand(programToDebug, PluginManager::Get(), activename, conf);
 
-            if(m_ExeFilepath->Append(outputFile) != wxNOT_FOUND) {
+            if (m_ExeFilepath->Append(outputFile) != wxNOT_FOUND) {
                 m_ExeFilepath->SetSelection(0);
             }
 
@@ -122,15 +122,15 @@ void DebugCoreDumpDlg::Initialize()
             projWD.Trim().Trim(false);
             wxString wd;
             ProjectPtr proj = ManagerST::Get()->GetProject(activename);
-            if(proj) {
-                if(projWD.IsEmpty() || !wxFileName(projWD).IsAbsolute()) {
+            if (proj) {
+                if (projWD.IsEmpty() || !wxFileName(projWD).IsAbsolute()) {
                     wxString basePath = proj->GetFileName().GetPath();
                     wd << basePath << wxFileName::GetPathSeparator();
                 }
             }
             wd << projWD;
 
-            if(m_WD->Insert(wd, 0) != wxNOT_FOUND) {
+            if (m_WD->Insert(wd, 0) != wxNOT_FOUND) {
                 m_WD->SetSelection(0);
             }
         }
@@ -143,7 +143,7 @@ void DebugCoreDumpDlg::OnButtonBrowseCore(wxCommandEvent& event)
 
     wxString path, ans;
     wxFileName fn(GetCore());
-    if(fn.FileExists()) {
+    if (fn.FileExists()) {
         // Use the serialised path as the wxFileSelector default path
         path = fn.GetPath();
     } else {
@@ -152,7 +152,7 @@ void DebugCoreDumpDlg::OnButtonBrowseCore(wxCommandEvent& event)
     }
 
     ans = wxFileSelector(_("Select core dump:"), path);
-    if(!ans.empty()) {
+    if (!ans.empty()) {
         m_Core->Insert(ans, 0);
         m_Core->SetSelection(0);
     }
@@ -164,7 +164,7 @@ void DebugCoreDumpDlg::OnButtonBrowseExe(wxCommandEvent& event)
 
     wxString path, ans;
     wxFileName fn(GetExe());
-    if(fn.FileExists()) {
+    if (fn.FileExists()) {
         // Use the serialised path as the wxFileSelector default path
         path = fn.GetPath();
     } else {
@@ -173,7 +173,7 @@ void DebugCoreDumpDlg::OnButtonBrowseExe(wxCommandEvent& event)
     }
 
     ans = wxFileSelector(_("Select file:"), path);
-    if(!ans.empty()) {
+    if (!ans.empty()) {
         m_ExeFilepath->Insert(ans, 0);
         m_ExeFilepath->SetSelection(0);
     }
@@ -184,12 +184,12 @@ void DebugCoreDumpDlg::OnButtonBrowseWD(wxCommandEvent& event)
     wxUnusedVar(event);
 
     wxString ans, path(GetWorkingDirectory());
-    if(!wxFileName::DirExists(path)) {
+    if (!wxFileName::DirExists(path)) {
         path = wxGetCwd();
     }
 
     ans = wxDirSelector(_("Select working directory:"), path);
-    if(!ans.empty()) {
+    if (!ans.empty()) {
         m_WD->Insert(ans, 0);
         m_WD->SetSelection(0);
     }

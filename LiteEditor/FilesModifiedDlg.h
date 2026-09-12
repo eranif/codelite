@@ -32,17 +32,16 @@ class FilesModifiedDlg : public FilesModifiedDlgBase
 public:
     enum {
         kID_BUTTON_CHOOSE = ID_BUTTON_CHOOSE,
-        kID_BUTTON_LOAD   = ID_BUTTON_LOAD,
+        kID_BUTTON_LOAD = ID_BUTTON_LOAD,
         kID_BUTTON_IGNORE = ID_BUTTON_IGNORE,
     };
-    
+
 public:
     FilesModifiedDlg(wxWindow* parent);
     virtual ~FilesModifiedDlg() = default;
 
-    bool GetRememberMyAnswer() const {
-        return m_checkBoxRemember->IsChecked();
-    }
+    bool GetRememberMyAnswer() const { return m_checkBoxRemember->IsChecked(); }
+
 protected:
     virtual void OnIgnore(wxCommandEvent& event);
     virtual void OnChoose(wxCommandEvent& event);

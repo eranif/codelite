@@ -17,10 +17,10 @@ AddOptionsDialog::AddOptionsDialog(wxWindow* parent, const wxString& value)
 
     wxArrayString lines = StringUtils::BuildArgv(value);
     wxString content;
-    for(const wxString& line : lines) {
+    for (const wxString& line : lines) {
         content << line << "\n";
     }
-    if(!content.IsEmpty()) {
+    if (!content.IsEmpty()) {
         content.RemoveLast();
     }
     m_stc->SetText(content);
@@ -33,7 +33,7 @@ wxString AddOptionsDialog::GetValue() const
     wxTextInputStream text(input);
 
     wxString value;
-    while(!input.Eof()) {
+    while (!input.Eof()) {
         // Read the next line
         value += text.ReadLine();
         value += ";";

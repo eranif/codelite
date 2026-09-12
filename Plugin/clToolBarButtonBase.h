@@ -142,6 +142,8 @@ public:
 
     template <typename T>
     T* Cast()
-    { return dynamic_cast<T*>(this); }
+    {
+        return dynamic_cast<T*>(this);
+    }
 };
 #endif // CLTOOLBARBUTTONBASE_H

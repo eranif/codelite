@@ -48,12 +48,12 @@ ThreadListPanel::ThreadListPanel(wxWindow* parent)
 
 void ThreadListPanel::OnItemActivated(wxDataViewEvent& event)
 {
-    if(!event.GetItem().IsOk())
+    if (!event.GetItem().IsOk())
         return;
 
     long threadId;
     wxString str_id = m_dvListCtrl->GetItemText(event.GetItem(), 0);
-    if(str_id.ToCLong(&threadId)) {
+    if (str_id.ToCLong(&threadId)) {
         Manager* mgr = ManagerST::Get();
         mgr->DbgSetThread(threadId);
     }
@@ -62,11 +62,11 @@ void ThreadListPanel::OnItemActivated(wxDataViewEvent& event)
 void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
 {
     // Check if the new thread list is the same as the current one
-    if(IsTheSame(m_threads, threads)) {
+    if (IsTheSame(m_threads, threads)) {
         // No need to repopulate the list, just set the active thread indicator
 
         // Loop over the table and set all threads to "NO"
-        for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
             ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
             d->GetThreadEntry().active = false;
             wxVariant v = "NO";
@@ -78,18 +78,18 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
         m_threads.insert(m_threads.end(), threads.begin(), threads.end());
 
         long threadID = wxNOT_FOUND;
-        for(size_t i = 0; i < m_threads.size(); ++i) {
-            if(m_threads.at(i).active) {
+        for (size_t i = 0; i < m_threads.size(); ++i) {
+            if (m_threads.at(i).active) {
                 threadID = m_threads.at(i).dbgid;
                 break;
             }
         }
 
-        if(threadID != wxNOT_FOUND) {
+        if (threadID != wxNOT_FOUND) {
             // Update the new active thread
-            for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+            for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
                 ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
-                if(d->GetThreadEntry().dbgid == threadID) {
+                if (d->GetThreadEntry().dbgid == threadID) {
                     d->GetThreadEntry().active = true;
                     wxVariant v = "YES";
                     m_dvListCtrl->SetValue(v, i, 1);
@@ -104,10 +104,10 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
         m_threads.insert(m_threads.end(), threads.begin(), threads.end());
 
         int sel = wxNOT_FOUND;
-        if(m_threads.empty())
+        if (m_threads.empty())
             return;
 
-        for(int i = (int)(m_threads.size() - 1); i >= 0; --i) {
+        for (int i = (int)(m_threads.size() - 1); i >= 0; --i) {
             const ThreadEntry& entry = m_threads.at(i);
 
             wxString str_id;
@@ -115,7 +115,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
 
             str_id << entry.dbgid;
             str_active = entry.active ? "YES" : "NO";
-            if(entry.active) {
+            if (entry.active) {
                 sel = i;
             }
 
@@ -129,7 +129,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
         }
         m_dvListCtrl->Update();
         // Ensure that the active thread is visible
-        if(sel != wxNOT_FOUND) {
+        if (sel != wxNOT_FOUND) {
             wxDataViewItem item = m_dvListCtrl->RowToItem(sel);
             m_dvListCtrl->EnsureVisible(item);
         }
@@ -138,7 +138,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
 
 void ThreadListPanel::Clear()
 {
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
         delete d;
     }
@@ -147,14 +147,14 @@ void ThreadListPanel::Clear()
 
 bool ThreadListPanel::IsTheSame(const ThreadEntryArray& threads1, const ThreadEntryArray& threads2)
 {
-    if(threads1.size() != threads2.size()) {
+    if (threads1.size() != threads2.size()) {
         return false;
     }
 
-    for(size_t i = 0; i < threads1.size(); ++i) {
+    for (size_t i = 0; i < threads1.size(); ++i) {
         const ThreadEntry& entry1 = threads1.at(i);
         const ThreadEntry& entry2 = threads2.at(i);
-        if((entry1.file != entry2.file) || (entry1.function != entry2.function) || (entry1.line != entry2.line)) {
+        if ((entry1.file != entry2.file) || (entry1.function != entry2.function) || (entry1.line != entry2.line)) {
             return false;
         }
     }

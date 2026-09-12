@@ -28,6 +28,7 @@
 
 #include "clWorkspaceEvent.hpp"
 #include "singleton.h"
+
 #include <utility>
 #include <vector>
 #include <wx/arrstr.h>
@@ -62,7 +63,9 @@ public:
     void LoadTabgroupData(bool isGlobal, const wxString& tabgroup);
 
     wxXmlNode* FindTabgroupItem(wxXmlDocument& doc, const wxString& filepath, const wxString& itemfilepath);
-    bool DoAddItemToTabgroup(wxXmlDocument& doc, wxXmlNode* node, const wxString& filepath,
+    bool DoAddItemToTabgroup(wxXmlDocument& doc,
+                             wxXmlNode* node,
+                             const wxString& filepath,
                              const wxString& nextitemfilepath);
     /*!
      * \brief Remove this item from the tabgroup on disc, optionally returning its data in an xml node to be stored for

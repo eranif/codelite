@@ -61,7 +61,6 @@ public:
     };
 
 public:
-
     static std::optional<wxFileName> Backup(const wxString& file_name);
 
     static bool ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv = wxConvUTF8);

@@ -23,8 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cl_editor.h"
 #include "cl_unredo.h"
+
+#include "cl_editor.h"
 
 CLCommandProcessor::CLCommandProcessor()
     : CommandProcessorBase()
@@ -52,11 +53,11 @@ void CLCommandProcessor::StartNewTextCommand(CLC_types type, const wxString& tex
 {
     wxCHECK_RET(!GetOpenCommand(), "Trying to start a new command when there's already an existing one");
 
-    if(CanRedo()) {
+    if (CanRedo()) {
         ClearRedos(); // Remove any now-stale redoable items
     }
 
-    if(type == CLC_delete) {
+    if (type == CLC_delete) {
         Add(CLCommand::Ptr_t(new CLDeleteTextCommand));
     } else {
         Add(CLCommand::Ptr_t(new CLInsertTextCommand));
@@ -69,7 +70,7 @@ void CLCommandProcessor::AppendToTextCommand(const wxString& text, int WXUNUSED(
 {
     wxCHECK_RET(GetOpenCommand(), "Trying to add to a non-existent or non-open command");
     CLCommand::Ptr_t command = GetOpenCommand();
-    if(command->GetCommandType() == CLC_delete) {
+    if (command->GetCommandType() == CLC_delete) {
         // Reverse any incrementally-added string here, so that undoing an insertion of "abcd" gets displayed as: delete
         // "abcd", not "dcba"
         command->SetText(text + command->GetText());

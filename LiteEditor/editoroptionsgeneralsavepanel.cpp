@@ -33,30 +33,31 @@ EditorOptionsGeneralSavePanel::EditorOptionsGeneralSavePanel(wxWindow* parent, O
     AddProperty(_("Enable trim on save"), trim_empty_lines, [&](const wxString& label, const wxAny& value) {
         wxUnusedVar(label);
         bool value_bool;
-        if(value.GetAs(&value_bool)) {
+        if (value.GetAs(&value_bool)) {
             EditorConfigST::Get()->SetInteger("EditorTrimEmptyLines", value_bool ? 1 : 0);
         }
     });
 
     bool do_not_trim_caret_line = EditorConfigST::Get()->GetInteger(wxT("DontTrimCaretLine"), 0) ? true : false;
-    AddProperty(_("Do not trim the caret line"), do_not_trim_caret_line,
-                [&](const wxString& label, const wxAny& value) {
-                    wxUnusedVar(label);
-                    bool value_bool;
-                    if(value.GetAs(&value_bool)) {
-                        EditorConfigST::Get()->SetInteger("DontTrimCaretLine", value_bool ? 1 : 0);
-                    }
-                });
+    AddProperty(
+        _("Do not trim the caret line"), do_not_trim_caret_line, [&](const wxString& label, const wxAny& value) {
+            wxUnusedVar(label);
+            bool value_bool;
+            if (value.GetAs(&value_bool)) {
+                EditorConfigST::Get()->SetInteger("DontTrimCaretLine", value_bool ? 1 : 0);
+            }
+        });
 
-    AddProperty(_("Trim modified lines only"), m_options->GetTrimOnlyModifiedLines(),
-                UPDATE_BOOL_CB(SetTrimOnlyModifiedLines));
+    AddProperty(
+        _("Trim modified lines only"), m_options->GetTrimOnlyModifiedLines(), UPDATE_BOOL_CB(SetTrimOnlyModifiedLines));
     AddHeader(_("Misc"));
     bool append_eol_if_missing = EditorConfigST::Get()->GetInteger(wxT("EditorAppendLf"), 0) ? true : false;
-    AddProperty(_("If missing, append EOL at the end of file"), append_eol_if_missing,
+    AddProperty(_("If missing, append EOL at the end of file"),
+                append_eol_if_missing,
                 [&](const wxString& label, const wxAny& value) {
                     wxUnusedVar(label);
                     bool value_bool;
-                    if(value.GetAs(&value_bool)) {
+                    if (value.GetAs(&value_bool)) {
                         EditorConfigST::Get()->SetInteger("EditorAppendLf", value_bool ? 1 : 0);
                     }
                 });

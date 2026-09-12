@@ -14,7 +14,9 @@ void AutoSaveSettings::FromJSON(const JSONItem& json)
 }
 
 JSONItem AutoSaveSettings::ToJSON() const
-{ return nlohmann::json{{"m_flags", m_flags}, {"m_checkInterval", m_checkInterval}}; }
+{
+    return nlohmann::json{{"m_flags", m_flags}, {"m_checkInterval", m_checkInterval}};
+}
 
 AutoSaveSettings AutoSaveSettings::Load()
 {

@@ -77,7 +77,9 @@ public:
 
     // Read from process stdout - return immediately if no data is available
     bool Read(wxString& buff, wxString& buffErr, std::string& raw_buff, std::string& raw_buff_err) override
-    { return false; }
+    {
+        return false;
+    }
 
     // Write to the process stdin
     // This version add LF to the buffer
@@ -480,7 +482,9 @@ void clCodeLiteRemoteProcess::ExecWithCallback(const wxArrayString& args,
 }
 
 void clCodeLiteRemoteProcess::Exec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env)
-{ DoExec(cmd, working_directory, env); }
+{
+    DoExec(cmd, working_directory, env);
+}
 
 void clCodeLiteRemoteProcess::Write(const wxString& str)
 {

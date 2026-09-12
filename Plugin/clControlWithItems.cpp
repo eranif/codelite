@@ -145,7 +145,9 @@ public:
 clControlWithItems::clControlWithItems(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clScrolledPanel(parent, id, pos, size, style)
-{ DoInitialize(); }
+{
+    DoInitialize();
+}
 
 bool clControlWithItems::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
@@ -606,7 +608,9 @@ void clControlWithItems::SetColours(const clColours& colours)
 }
 
 void clControlWithItems::SetCustomRenderer(clControlWithItemsRowRenderer* renderer)
-{ m_customRenderer.reset(renderer); }
+{
+    m_customRenderer.reset(renderer);
+}
 
 void clControlWithItems::SetDefaultFont(const wxFont& font)
 {

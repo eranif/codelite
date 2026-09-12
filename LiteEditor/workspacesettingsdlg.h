@@ -38,21 +38,21 @@ class CodeCompletionPage;
 /** Implementing WorkspaceSettingsBase */
 class WorkspaceSettingsDlg : public WorkspaceSettingsBase
 {
-	LocalWorkspace*         m_localWorkspace;
-	CodeCompletionPage*     m_ccPage;
-	
+    LocalWorkspace* m_localWorkspace;
+    CodeCompletionPage* m_ccPage;
+
 protected:
-	// Handlers for WorkspaceSettingsBase events.
-	//void OnAddIncludePath( wxCommandEvent& event );
-	//void OnAddExcludePath( wxCommandEvent& event );
-	void OnButtonOK( wxCommandEvent& event );
+    // Handlers for WorkspaceSettingsBase events.
+    // void OnAddIncludePath( wxCommandEvent& event );
+    // void OnAddExcludePath( wxCommandEvent& event );
+    void OnButtonOK(wxCommandEvent& event);
 
 public:
-	/** Constructor */
-	WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *localWorkspace);
-	virtual ~WorkspaceSettingsDlg() = default;
+    /** Constructor */
+    WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* localWorkspace);
+    virtual ~WorkspaceSettingsDlg() = default;
 
-	wxArrayString GetIncludePaths() const;
+    wxArrayString GetIncludePaths() const;
 };
 
 #endif // __workspacesettingsdlg__

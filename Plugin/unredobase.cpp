@@ -137,7 +137,9 @@ void CommandProcessorBase::SetUserLabel(const wxString& label)
 }
 
 void CommandProcessorBase::OnTBUnRedo(wxCommandEvent& event)
-{ PopulateUnRedoMenu(dynamic_cast<clToolBar*>(event.GetEventObject()), event.GetId()); }
+{
+    PopulateUnRedoMenu(dynamic_cast<clToolBar*>(event.GetEventObject()), event.GetId());
+}
 
 void CommandProcessorBase::PopulateUnRedoMenu(clToolBar* tb, wxWindowID toolId)
 {

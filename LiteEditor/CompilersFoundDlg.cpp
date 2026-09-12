@@ -36,7 +36,7 @@ CompilersFoundDlg::CompilersFoundDlg(wxWindow* parent, const ICompilerLocator::C
 {
     m_allCompilers = compilers;
 
-    for(size_t i = 0; i < m_allCompilers.size(); ++i) {
+    for (size_t i = 0; i < m_allCompilers.size(); ++i) {
         wxVector<wxVariant> cols;
         cols.push_back(::MakeCheckboxVariant(m_allCompilers[i]->GetName(), true, wxNOT_FOUND));
         cols.push_back(m_allCompilers[i]->GetInstallationPath());
@@ -47,9 +47,9 @@ CompilersFoundDlg::CompilersFoundDlg(wxWindow* parent, const ICompilerLocator::C
 
 size_t CompilersFoundDlg::GetSelectedCompilers(ICompilerLocator::CompilerVec_t& compilers)
 {
-    for(size_t i = 0; i < m_dataview->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dataview->GetItemCount(); ++i) {
         auto item = m_dataview->RowToItem(i);
-        if(m_dataview->IsItemChecked(item)) {
+        if (m_dataview->IsItemChecked(item)) {
             size_t index = m_dataview->GetItemData(item);
             compilers.push_back(m_allCompilers[index]);
         }

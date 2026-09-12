@@ -27,6 +27,7 @@
 #define __new_item_dlg__
 
 #include "new_item_base_dlg.hpp"
+
 #include <wx/filename.h>
 
 ///////////////////////////////////////////////////////////////////////////

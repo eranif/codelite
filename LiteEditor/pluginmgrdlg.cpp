@@ -22,12 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "pluginmgrdlg.h"
+
 #include "cl_config.h"
 #include "globals.h"
 #include "manager.h"
 #include "pluginmanager.h"
-#include "pluginmgrdlg.h"
 #include "windowattrmanager.h"
+
 #include <algorithm>
 
 PluginMgrDlg::PluginMgrDlg(wxWindow* parent)
@@ -50,14 +52,14 @@ void PluginMgrDlg::Initialize()
 
     // Clear the list
     m_dvListCtrl->DeleteAllItems();
-    for(const auto& vt : pluginsMap) {
+    for (const auto& vt : pluginsMap) {
         const PluginInfo& info = vt.second;
         wxVector<wxVariant> cols;
         cols.push_back(::MakeCheckboxVariant(info.GetName(), plugins.CanLoad(info), wxNOT_FOUND));
         m_dvListCtrl->AppendItem(cols);
     }
 
-    if(!m_dvListCtrl->IsEmpty()) {
+    if (!m_dvListCtrl->IsEmpty()) {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
         CreateInfoPage(0);
     }
@@ -76,9 +78,9 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent& event)
     conf.ReadItem(plugins);
 
     wxArrayString enabledPlugins;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-        if(m_dvListCtrl->IsItemChecked(item)) {
+        if (m_dvListCtrl->IsItemChecked(item)) {
             enabledPlugins.Add(m_dvListCtrl->GetItemText(item));
         }
     }
@@ -109,7 +111,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
     // get the plugin name
     wxString pluginName = m_dvListCtrl->GetItemText(m_dvListCtrl->RowToItem(index));
     auto iter = PluginManager::Get()->GetInstalledPlugins().find(pluginName);
-    if(iter != plugins.GetPlugins().end()) {
+    if (iter != plugins.GetPlugins().end()) {
         const PluginInfo& info = iter->second;
         m_richTextCtrl->BeginBold();
         m_richTextCtrl->WriteText(info.GetName());
@@ -138,7 +140,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
 
 void PluginMgrDlg::OnCheckAll(wxCommandEvent& event)
 {
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         m_dvListCtrl->SetItemChecked(m_dvListCtrl->RowToItem(i), true);
     }
 }
@@ -146,9 +148,9 @@ void PluginMgrDlg::OnCheckAll(wxCommandEvent& event)
 void PluginMgrDlg::OnCheckAllUI(wxUpdateUIEvent& event)
 {
     bool atLeastOneIsUnChecked = false;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-        if(!m_dvListCtrl->IsItemChecked(item)) {
+        if (!m_dvListCtrl->IsItemChecked(item)) {
             atLeastOneIsUnChecked = true;
             break;
         }
@@ -158,7 +160,7 @@ void PluginMgrDlg::OnCheckAllUI(wxUpdateUIEvent& event)
 
 void PluginMgrDlg::OnUncheckAll(wxCommandEvent& event)
 {
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         m_dvListCtrl->SetItemChecked(m_dvListCtrl->RowToItem(i), false);
     }
 }
@@ -166,9 +168,9 @@ void PluginMgrDlg::OnUncheckAll(wxCommandEvent& event)
 void PluginMgrDlg::OnUncheckAllUI(wxUpdateUIEvent& event)
 {
     bool atLeastOneIsChecked = false;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-        if(m_dvListCtrl->IsItemChecked(item)) {
+        if (m_dvListCtrl->IsItemChecked(item)) {
             atLeastOneIsChecked = true;
             break;
         }

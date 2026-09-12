@@ -26,21 +26,20 @@
 
 #include <wx/menu.h>
 
-void FileHistory::GetFiles(wxArrayString &files)
+void FileHistory::GetFiles(wxArrayString& files)
 {
-    for(size_t i=0; i<GetCount(); i++) {
+    for (size_t i = 0; i < GetCount(); i++) {
         files.Add(m_fileHistory[i]);
     }
 }
 
 void FileHistory::AddFilesToMenuWithoutExt()
 {
-    if ( m_fileHistory.empty() )
+    if (m_fileHistory.empty())
         return;
 
-    for ( wxList::compatibility_iterator node = m_fileMenus.GetFirst();
-          node; node = node->GetNext() ) {
-        AddFilesToMenuWithoutExt((wxMenu *) node->GetData());
+    for (wxList::compatibility_iterator node = m_fileMenus.GetFirst(); node; node = node->GetNext()) {
+        AddFilesToMenuWithoutExt((wxMenu*)node->GetData());
     }
 }
 
@@ -58,13 +57,13 @@ wxString GetMRUEntryLabel(int n, const wxString& path)
 
 void FileHistory::AddFilesToMenuWithoutExt(wxMenu* menu)
 {
-    if ( m_fileHistory.empty() )
+    if (m_fileHistory.empty())
         return;
 
-    if ( menu->GetMenuItemCount() )
+    if (menu->GetMenuItemCount())
         menu->AppendSeparator();
 
-    for ( size_t i = 0; i < m_fileHistory.GetCount(); i++ ) {
+    for (size_t i = 0; i < m_fileHistory.GetCount(); i++) {
         wxString label = GetMRUEntryLabel(i, m_fileHistory[i]);
         menu->Append(GetBaseId() + i, label);
     }

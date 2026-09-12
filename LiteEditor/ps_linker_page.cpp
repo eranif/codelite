@@ -24,10 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ps_linker_page.h"
-#include "compiler.h"
+
 #include "build_settings_config.h"
-#include "ps_general_page.h"
+#include "compiler.h"
 #include "globals.h"
+#include "ps_general_page.h"
 
 PSLinkerPage::PSLinkerPage(wxWindow* parent, ProjectSettingsDlg* dlg, PSGeneralPage* gp)
     : PSLinkPageBase(parent)
@@ -60,8 +61,8 @@ void PSLinkerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetting
 void PSLinkerPage::Clear()
 {
     wxPropertyGridIterator iter = m_pgMgr->GetGrid()->GetIterator();
-    for(; !iter.AtEnd(); ++iter) {
-        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
+    for (; !iter.AtEnd(); ++iter) {
+        if (iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
             iter.GetProperty()->SetValueToUnspecified();
         }
     }
@@ -74,17 +75,17 @@ void PSLinkerPage::OnCustomEditorClicked(wxCommandEvent& event)
     CHECK_PTR_RET(prop);
     m_dlg->SetIsDirty(true);
 
-    if(prop == m_pgPropLibraries || prop == m_pgPropLibraryPaths) {
+    if (prop == m_pgPropLibraries || prop == m_pgPropLibraryPaths) {
         wxString value = prop->GetValueAsString();
-        if(PopupAddOptionDlg(value)) {
+        if (PopupAddOptionDlg(value)) {
             prop->SetValueFromString(value);
         }
 
-    } else if(prop == m_pgPropOptions) {
+    } else if (prop == m_pgPropOptions) {
         wxString value = prop->GetValueAsString();
         wxString cmpName = m_gp->GetCompiler();
         CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-        if(PopupAddOptionCheckDlg(value, _("Linker options"), cmp->GetLinkerOptions())) {
+        if (PopupAddOptionCheckDlg(value, _("Linker options"), cmp->GetLinkerOptions())) {
             prop->SetValueFromString(value);
         }
     }

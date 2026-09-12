@@ -31,16 +31,20 @@
 #include <wx/fontmap.h>
 #include <wx/stc/stc.h>
 
-EditorSettingsLocal::EditorSettingsLocal(OptionsConfigPtr hrOptions, wxXmlNode* nde, enum prefsLevel level,
-                                         wxWindow* parent, wxWindowID id, const wxString& title)
+EditorSettingsLocal::EditorSettingsLocal(OptionsConfigPtr hrOptions,
+                                         wxXmlNode* nde,
+                                         enum prefsLevel level,
+                                         wxWindow* parent,
+                                         wxWindowID id,
+                                         const wxString& title)
     : LocalEditorSettingsbase(parent, id, title)
     , higherOptions(hrOptions)
     , node(nde)
 {
     wxString label = title;
-    if(level == pLevel_workspace) {
+    if (level == pLevel_workspace) {
         label = _("Workspace local editor preferences");
-    } else if(level == pLevel_project) {
+    } else if (level == pLevel_project) {
         label = _("Project local editor preferences");
     }
     SetTitle(label);
@@ -75,10 +79,12 @@ void EditorSettingsLocal::DisplayHigherValues(const OptionsConfigPtr options)
     m_checkBoxDisplayFoldMargin->SetValue(options->GetDisplayFoldMargin());
     m_displayBookmarkMargin->SetValue(options->GetDisplayBookmarkMargin());
 
-    const wxString WhitespaceStyle[] = { wxTRANSLATE("Invisible"), wxTRANSLATE("Visible always"),
-                                         wxTRANSLATE("Visible after indentation"), wxTRANSLATE("Indentation only") };
+    const wxString WhitespaceStyle[] = {wxTRANSLATE("Invisible"),
+                                        wxTRANSLATE("Visible always"),
+                                        wxTRANSLATE("Visible after indentation"),
+                                        wxTRANSLATE("Indentation only")};
     wxString currentWhitespace;
-    switch(options->GetShowWhitespaces()) {
+    switch (options->GetShowWhitespaces()) {
     case wxSTC_WS_VISIBLEALWAYS:
         currentWhitespace = wxT("Visible always");
         break;
@@ -89,24 +95,24 @@ void EditorSettingsLocal::DisplayHigherValues(const OptionsConfigPtr options)
         currentWhitespace = wxT("Invisible");
         break;
     }
-    m_WSstringManager.AddStrings(sizeof(WhitespaceStyle) / sizeof(wxString), WhitespaceStyle, currentWhitespace,
-                                 m_whitespaceStyle);
+    m_WSstringManager.AddStrings(
+        sizeof(WhitespaceStyle) / sizeof(wxString), WhitespaceStyle, currentWhitespace, m_whitespaceStyle);
 
-    const wxString EOLChoices[] = { wxTRANSLATE("Default"), wxT("Mac (CR)"), wxT("Windows (CRLF)"), wxT("Unix (LF)") };
-    m_EOLstringManager.AddStrings(sizeof(EOLChoices) / sizeof(wxString), EOLChoices, options->GetEolMode(),
-                                  m_choiceEOL);
+    const wxString EOLChoices[] = {wxTRANSLATE("Default"), wxT("Mac (CR)"), wxT("Windows (CRLF)"), wxT("Unix (LF)")};
+    m_EOLstringManager.AddStrings(
+        sizeof(EOLChoices) / sizeof(wxString), EOLChoices, options->GetEolMode(), m_choiceEOL);
 
     wxArrayString astrEncodings;
     wxFontEncoding fontEnc;
     int iCurrSelId = 0;
     size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
-    for(size_t i = 0; i < iEncCnt; i++) {
+    for (size_t i = 0; i < iEncCnt; i++) {
         fontEnc = wxFontMapper::GetEncoding(i);
-        if(wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+        if (wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
             continue;
         }
         astrEncodings.Add(wxFontMapper::GetEncodingName(fontEnc));
-        if(fontEnc == options->GetFileFontEncoding()) {
+        if (fontEnc == options->GetFileFontEncoding()) {
             iCurrSelId = i;
         }
     }
@@ -120,54 +126,54 @@ void EditorSettingsLocal::DisplayLocalValues(const LocalOptionsConfigPtr options
     // Override this with any valid previously-make local pref, then untick the corresponding enabling checkbox, so that
     // item will be enabled
 
-    if(options->IndentUsesTabsIsValid()) {
+    if (options->IndentUsesTabsIsValid()) {
         m_indentsUsesTabs->SetValue(options->GetIndentUsesTabs());
         m_indentsUsesTabsEnable->SetValue(false);
     }
-    if(options->IndentWidthIsValid()) {
+    if (options->IndentWidthIsValid()) {
         m_indentWidth->SetValue(options->GetIndentWidth());
         m_indentWidthEnable->SetValue(false);
     }
 
-    if(options->TabWidthIsValid()) {
+    if (options->TabWidthIsValid()) {
         m_tabWidth->SetValue(options->GetTabWidth());
         m_tabWidthEnable->SetValue(false);
     }
-    if(options->DisplayLineNumbersIsValid()) {
+    if (options->DisplayLineNumbersIsValid()) {
         m_displayLineNumbers->SetValue(options->GetDisplayLineNumbers());
         m_displayLineNumbersEnable->SetValue(false);
     }
-    if(options->ShowIndentationGuidelinesIsValid()) {
+    if (options->ShowIndentationGuidelinesIsValid()) {
         m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
         m_showIndentationGuideLinesEnable->SetValue(false);
     }
-    if(options->HighlightCaretLineIsValid()) {
+    if (options->HighlightCaretLineIsValid()) {
         m_highlightCaretLine->SetValue(options->GetHighlightCaretLine());
         m_highlightCaretLineEnable->SetValue(false);
     }
-    if(options->TrimLineIsValid()) {
+    if (options->TrimLineIsValid()) {
         m_checkBoxTrimLine->SetValue(options->GetHighlightCaretLine());
         m_checkBoxTrimLineEnable->SetValue(false);
     }
-    if(options->AppendLFIsValid()) {
+    if (options->AppendLFIsValid()) {
         m_checkBoxAppendLF->SetValue(options->GetHighlightCaretLine());
         m_checkBoxAppendLFEnable->SetValue(false);
     }
-    if(options->IsTrackChangesIsValid()) {
+    if (options->IsTrackChangesIsValid()) {
         m_checkBoxTrackEditorChanges->SetValue(options->IsTrackChanges());
         m_checkBoxHideChangeMarkerMarginEnable->SetValue(false);
     }
-    if(options->DisplayFoldMarginIsValid()) {
+    if (options->DisplayFoldMarginIsValid()) {
         m_checkBoxDisplayFoldMargin->SetValue(options->GetDisplayFoldMargin());
         m_checkBoxDisplayFoldMarginEnable->SetValue(false);
     }
-    if(options->DisplayBookmarkMarginIsValid()) {
+    if (options->DisplayBookmarkMarginIsValid()) {
         m_displayBookmarkMargin->SetValue(options->GetDisplayBookmarkMargin());
         m_displayBookmarkMarginEnable->SetValue(false);
     }
 
-    if(options->ShowWhitespacesIsValid()) {
-        switch(options->GetShowWhitespaces()) {
+    if (options->ShowWhitespacesIsValid()) {
+        switch (options->GetShowWhitespaces()) {
         case wxSTC_WS_VISIBLEALWAYS:
             m_WSstringManager.SetStringSelection(wxT("Visible always"));
             break;
@@ -181,15 +187,15 @@ void EditorSettingsLocal::DisplayLocalValues(const LocalOptionsConfigPtr options
         m_whitespaceStyleEnable->SetValue(false);
     }
 
-    if(options->EolModeIsValid()) {
+    if (options->EolModeIsValid()) {
         m_EOLstringManager.SetStringSelection(options->GetEolMode());
         m_choiceEOLEnable->SetValue(false);
     }
 
-    if(options->FileFontEncodingIsValid()) {
+    if (options->FileFontEncodingIsValid()) {
         wxArrayString entries = m_fileEncoding->GetStrings();
-        for(size_t n = 0; n < entries.GetCount(); ++n) {
-            if(entries.Item(n) == wxFontMapper::GetEncodingName(options->GetFileFontEncoding())) {
+        for (size_t n = 0; n < entries.GetCount(); ++n) {
+            if (entries.Item(n) == wxFontMapper::GetEncodingName(options->GetFileFontEncoding())) {
                 m_fileEncoding->SetSelection(n);
                 break;
             }
@@ -206,55 +212,55 @@ void EditorSettingsLocal::OnOK(wxCommandEvent& event)
     // Assume that, for any items still disabled, the user wants to use the global setting
     // That's true even if he decided to change an item, then disabled it again
     // or if there *was* a local pref, which is now to be deleted
-    if(m_indentsUsesTabs->IsEnabled()) {
+    if (m_indentsUsesTabs->IsEnabled()) {
         GetLocalOpts()->SetIndentUsesTabs(m_indentsUsesTabs->GetValue());
     }
-    if(m_indentWidth->IsEnabled()) {
+    if (m_indentWidth->IsEnabled()) {
         GetLocalOpts()->SetIndentWidth(m_indentWidth->GetValue());
     }
-    if(m_tabWidth->IsEnabled()) {
+    if (m_tabWidth->IsEnabled()) {
         GetLocalOpts()->SetTabWidth(m_tabWidth->GetValue());
     }
-    if(m_displayLineNumbers->IsEnabled()) {
+    if (m_displayLineNumbers->IsEnabled()) {
         GetLocalOpts()->SetDisplayLineNumbers(m_displayLineNumbers->GetValue());
     }
-    if(m_showIndentationGuideLines->IsEnabled()) {
+    if (m_showIndentationGuideLines->IsEnabled()) {
         GetLocalOpts()->SetShowIndentationGuidelines(m_showIndentationGuideLines->GetValue());
     }
-    if(m_highlightCaretLine->IsEnabled()) {
+    if (m_highlightCaretLine->IsEnabled()) {
         GetLocalOpts()->SetHighlightCaretLine(m_highlightCaretLine->GetValue());
     }
-    if(m_checkBoxTrimLine->IsEnabled()) {
+    if (m_checkBoxTrimLine->IsEnabled()) {
         GetLocalOpts()->SetTrimLine(m_checkBoxTrimLine->GetValue());
     }
-    if(m_checkBoxAppendLF->IsEnabled()) {
+    if (m_checkBoxAppendLF->IsEnabled()) {
         GetLocalOpts()->SetAppendLF(m_checkBoxAppendLF->GetValue());
     }
-    if(m_checkBoxTrackEditorChanges->IsEnabled()) {
+    if (m_checkBoxTrackEditorChanges->IsEnabled()) {
         GetLocalOpts()->SetTrackChanges(m_checkBoxTrackEditorChanges->GetValue());
     }
-    if(m_checkBoxDisplayFoldMargin->IsEnabled()) {
+    if (m_checkBoxDisplayFoldMargin->IsEnabled()) {
         GetLocalOpts()->SetDisplayFoldMargin(m_checkBoxDisplayFoldMargin->GetValue());
     }
-    if(m_displayBookmarkMargin->IsEnabled()) {
+    if (m_displayBookmarkMargin->IsEnabled()) {
         GetLocalOpts()->SetDisplayBookmarkMargin(m_displayBookmarkMargin->GetValue());
     }
-    if(m_whitespaceStyle->IsEnabled()) {
+    if (m_whitespaceStyle->IsEnabled()) {
         wxString Whitespace = m_WSstringManager.GetStringSelection();
         int style(wxSTC_WS_INVISIBLE); // invisible
-        if(Whitespace == wxT("Visible always")) {
+        if (Whitespace == wxT("Visible always")) {
             style = wxSTC_WS_VISIBLEALWAYS;
-        } else if(Whitespace == wxT("Visible after indentation")) {
+        } else if (Whitespace == wxT("Visible after indentation")) {
             style = wxSTC_WS_VISIBLEAFTERINDENT;
-        } else if(Whitespace == wxT("Indentation only")) {
+        } else if (Whitespace == wxT("Indentation only")) {
             style = wxSTC_WS_VISIBLEAFTERINDENT;
         }
         GetLocalOpts()->SetShowWhitespaces(style);
     }
-    if(m_choiceEOL->IsEnabled()) {
+    if (m_choiceEOL->IsEnabled()) {
         GetLocalOpts()->SetEolMode(m_EOLstringManager.GetStringSelection());
     }
-    if(m_fileEncoding->IsEnabled()) {
+    if (m_fileEncoding->IsEnabled()) {
         GetLocalOpts()->SetFileFontEncoding(m_fileEncoding->GetStringSelection());
     }
 

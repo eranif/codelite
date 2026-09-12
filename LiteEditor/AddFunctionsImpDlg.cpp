@@ -45,16 +45,16 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
     // Clear the impl array
     m_implArr.Clear();
     m_implArr.reserve(tags.size());
-    for(size_t i = 0; i < m_tags.size(); ++i) {
+    for (size_t i = 0; i < m_tags.size(); ++i) {
         wxVector<wxVariant> cols;
         cols.push_back(::MakeCheckboxVariant(m_tags.at(i)->GetDisplayName(), true, functionIndex));
 
         // keep the implementation as the client data
         TagEntryPtr tag = m_tags[i];
         wxString body = tag->GetFunctionDefinition();
-        if(tag->GetTypename() == "std::string" || tag->GetTypename() == "string") {
+        if (tag->GetTypename() == "std::string" || tag->GetTypename() == "string") {
             body << "\n{ return \"\"; }";
-        } else if(tag->GetTypename() == "bool") {
+        } else if (tag->GetTypename() == "bool") {
             body << "\n{ return false; }";
         } else {
             body << "\n{}";
@@ -72,20 +72,20 @@ wxString AddFunctionsImpDlg::GetFileName() const { return m_filePicker->GetPath(
 wxString AddFunctionsImpDlg::GetText() const
 {
     wxString text;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-        if(m_dvListCtrl->IsItemChecked(item, 0)) {
-            if(text.IsEmpty())
+        if (m_dvListCtrl->IsItemChecked(item, 0)) {
+            if (text.IsEmpty())
                 text << "\n";
             // checked
             wxString* impl = reinterpret_cast<wxString*>(m_dvListCtrl->GetItemData(item));
-            if(impl) {
+            if (impl) {
                 text << (*impl);
             }
         }
     }
 
-    if(!text.IsEmpty()) {
+    if (!text.IsEmpty()) {
         text.RemoveLast();
     }
     return text;
@@ -98,8 +98,8 @@ void AddFunctionsImpDlg::OnUncheckAll(wxCommandEvent& event) { DoCheckAll(false)
 void AddFunctionsImpDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     event.Enable(false);
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
-        if(m_dvListCtrl->IsItemChecked(m_dvListCtrl->RowToItem(i), 0)) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        if (m_dvListCtrl->IsItemChecked(m_dvListCtrl->RowToItem(i), 0)) {
             event.Enable(true);
             return;
         }
@@ -108,7 +108,7 @@ void AddFunctionsImpDlg::OnOKUI(wxUpdateUIEvent& event)
 
 void AddFunctionsImpDlg::DoCheckAll(bool checked)
 {
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         m_dvListCtrl->SetItemChecked(m_dvListCtrl->RowToItem(i), checked, 0);
     }
 }

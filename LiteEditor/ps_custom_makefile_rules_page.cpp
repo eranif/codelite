@@ -25,26 +25,26 @@
 
 #include "ps_custom_makefile_rules_page.h"
 
-PSCustomMakefileRulesPage::PSCustomMakefileRulesPage( wxWindow* parent, ProjectSettingsDlg *dlg )
-    : PSCustomMakefileBasePage( parent )
+PSCustomMakefileRulesPage::PSCustomMakefileRulesPage(wxWindow* parent, ProjectSettingsDlg* dlg)
+    : PSCustomMakefileBasePage(parent)
     , m_dlg(dlg)
 {
-    m_textPreBuildRule->SetUseTabs(true); // since this is a Makefile content, we only allow tabs here
+    m_textPreBuildRule->SetUseTabs(true);         // since this is a Makefile content, we only allow tabs here
     m_textPreBuildRule->SetEOLMode(wxSTC_EOL_LF); // Only "\n"
 }
 
-void PSCustomMakefileRulesPage::OnProjectCustomBuildUI( wxUpdateUIEvent& event )
+void PSCustomMakefileRulesPage::OnProjectCustomBuildUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_dlg->IsCustomBuildEnabled() );
+    event.Enable(!m_dlg->IsCustomBuildEnabled());
 }
 
-void PSCustomMakefileRulesPage::OnCmdEvtVModified( wxCommandEvent& event )
+void PSCustomMakefileRulesPage::OnCmdEvtVModified(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_dlg->SetIsDirty(true);
 }
 
-void PSCustomMakefileRulesPage::OnStcEvtVModified( wxStyledTextEvent& event )
+void PSCustomMakefileRulesPage::OnStcEvtVModified(wxStyledTextEvent& event)
 {
     event.Skip();
     m_dlg->SetIsDirty(true);
@@ -52,10 +52,10 @@ void PSCustomMakefileRulesPage::OnStcEvtVModified( wxStyledTextEvent& event )
 
 void PSCustomMakefileRulesPage::Load(BuildConfigPtr buildConf)
 {
-    //set the custom pre-prebuild step
+    // set the custom pre-prebuild step
     wxString customPreBuild = buildConf->GetPreBuildCustom();
 
-    //extract the dependencies
+    // extract the dependencies
     wxString deps, rules;
     deps = customPreBuild.BeforeFirst(wxT('\n'));
     rules = customPreBuild.AfterFirst(wxT('\n'));
@@ -72,7 +72,7 @@ void PSCustomMakefileRulesPage::Load(BuildConfigPtr buildConf)
 
 void PSCustomMakefileRulesPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
-    //set the pre-build step
+    // set the pre-build step
     wxString rules = m_textPreBuildRule->GetText();
     wxString deps = m_textDeps->GetValue();
 
@@ -87,7 +87,7 @@ void PSCustomMakefileRulesPage::Save(BuildConfigPtr buildConf, ProjectSettingsPt
     // Set the content only if there is real content to add
     wxString tmpPreBuildStep(prebuilstep);
     tmpPreBuildStep.Trim().Trim(false);
-    if(tmpPreBuildStep.IsEmpty() == false) {
+    if (tmpPreBuildStep.IsEmpty() == false) {
         buildConf->SetPreBuildCustom(prebuilstep);
     } else {
         buildConf->SetPreBuildCustom(wxT(""));
@@ -99,7 +99,4 @@ void PSCustomMakefileRulesPage::Clear()
     m_textPreBuildRule->Clear();
     m_textDeps->Clear();
 }
-void PSCustomMakefileRulesPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable( m_dlg->IsProjectEnabled() );
-}
+void PSCustomMakefileRulesPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }

@@ -4,7 +4,9 @@
 #include "event_notifier.h"
 
 clThemedComboBox::~clThemedComboBox()
-{ EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clThemedComboBox::OnThemeChanged, this); }
+{
+    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clThemedComboBox::OnThemeChanged, this);
+}
 
 bool clThemedComboBox::Create(wxWindow* parent,
                               wxWindowID id,

@@ -34,7 +34,7 @@
 void FindReplaceData::SetReplaceString(const wxString& str)
 {
     int where = m_replaceString.Index(str);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         m_replaceString.RemoveAt(where);
     }
     m_replaceString.Insert(str, 0);
@@ -46,7 +46,7 @@ void FindReplaceData::SetReplaceString(const wxString& str)
 void FindReplaceData::SetFindString(const wxString& str)
 {
     int where = m_findString.Index(str);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         m_findString.RemoveAt(where);
     }
     m_findString.Insert(str, 0);
@@ -57,7 +57,7 @@ void FindReplaceData::SetFindString(const wxString& str)
 
 wxString FindReplaceData::GetReplaceString() const
 {
-    if(m_replaceString.IsEmpty()) {
+    if (m_replaceString.IsEmpty()) {
         return wxEmptyString;
     } else {
         return m_replaceString.Item(0);
@@ -66,7 +66,7 @@ wxString FindReplaceData::GetReplaceString() const
 
 wxString FindReplaceData::GetFindString() const
 {
-    if(m_findString.IsEmpty()) {
+    if (m_findString.IsEmpty()) {
         return wxEmptyString;
 
     } else {
@@ -76,7 +76,7 @@ wxString FindReplaceData::GetFindString() const
 
 void FindReplaceData::TruncateArray(wxArrayString& arr, size_t maxSize)
 {
-    while(arr.GetCount() > maxSize && arr.GetCount() > 0) {
+    while (arr.GetCount() > maxSize && arr.GetCount() > 0) {
         arr.RemoveAt(arr.GetCount() - 1);
     }
 }
@@ -95,7 +95,7 @@ void FindReplaceData::FromJSON(const JSONItem& json)
     TruncateArray(m_replaceString, (size_t)max_value);
     TruncateArray(m_findString, (size_t)max_value);
 
-    if(m_fileMask.IsEmpty()) {
+    if (m_fileMask.IsEmpty()) {
         m_fileMask.Add("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc");
         m_selectedMask = m_fileMask.Item(0);
     }
@@ -116,8 +116,8 @@ JSONItem FindReplaceData::ToJSON() const
 wxArrayString FindReplaceData::GetFindStringArr() const
 {
     wxArrayString findArr;
-    for(size_t i = 0; i < m_findString.GetCount(); ++i) {
-        if((findArr.Index(m_findString.Item(i)) == wxNOT_FOUND) && !m_findString.Item(i).IsEmpty()) {
+    for (size_t i = 0; i < m_findString.GetCount(); ++i) {
+        if ((findArr.Index(m_findString.Item(i)) == wxNOT_FOUND) && !m_findString.Item(i).IsEmpty()) {
             findArr.Add(m_findString.Item(i));
         }
     }
@@ -127,8 +127,8 @@ wxArrayString FindReplaceData::GetFindStringArr() const
 wxArrayString FindReplaceData::GetReplaceStringArr() const
 {
     wxArrayString replaceArr;
-    for(size_t i = 0; i < m_replaceString.GetCount(); ++i) {
-        if((replaceArr.Index(m_replaceString.Item(i)) == wxNOT_FOUND) && !m_replaceString.Item(i).IsEmpty()) {
+    for (size_t i = 0; i < m_replaceString.GetCount(); ++i) {
+        if ((replaceArr.Index(m_replaceString.Item(i)) == wxNOT_FOUND) && !m_replaceString.Item(i).IsEmpty()) {
             replaceArr.Add(m_replaceString.Item(i));
         }
     }
@@ -146,7 +146,7 @@ FindReplaceData::FindReplaceData()
 
 wxString FindReplaceData::GetWhere() const
 {
-    if(m_findWhere.empty()) {
+    if (m_findWhere.empty()) {
         return SEARCH_IN_WORKSPACE;
     }
     return m_findWhere[0];
@@ -158,8 +158,8 @@ void FindReplaceData::SetWhereOptions(const wxArrayString& where)
     wxArrayString normalized_list;
     normalized_list.reserve(where.size());
 
-    for(const wxString& str : where) {
-        if(!visited.insert(str).second || str.empty()) {
+    for (const wxString& str : where) {
+        if (!visited.insert(str).second || str.empty()) {
             continue;
         }
         normalized_list.Add(str);

@@ -59,7 +59,9 @@ PluginInfoArray::PluginInfoArray()
 }
 
 bool PluginInfoArray::CanLoad(const PluginInfo& plugin) const
-{ return m_enabledPlugins.Index(plugin.GetName()) != wxNOT_FOUND; }
+{
+    return m_enabledPlugins.Index(plugin.GetName()) != wxNOT_FOUND;
+}
 
 void PluginInfoArray::FromJSON(const JSONItem& json)
 {
@@ -90,7 +92,9 @@ void PluginInfoArray::FromJSON(const JSONItem& json)
 }
 
 JSONItem PluginInfoArray::ToJSON() const
-{ return nlohmann::json{{"enabledPlugins", JsonUtils::ToJson(m_enabledPlugins)}}; }
+{
+    return nlohmann::json{{"enabledPlugins", JsonUtils::ToJson(m_enabledPlugins)}};
+}
 
 void PluginInfoArray::EnablePlugin(const wxString& plugin)
 {

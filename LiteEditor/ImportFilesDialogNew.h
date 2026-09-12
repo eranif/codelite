@@ -27,20 +27,21 @@
 #define IMPORTFILESDIALOGNEW_H
 
 #include "importfilesdialog_new.hpp"
-#include <wx/dir.h>
-#include <map>
 #include "macros.h"
+
+#include <map>
+#include <wx/dir.h>
 
 class ImportFilesDialogNew : public ImportFilesDialogNewBase
 {
     wxDataViewItem m_root;
-    wxVariant MakeIconText(const wxString &text, const wxBitmap& bmp) const;
-    
+    wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp) const;
+
 protected:
     virtual void OnBrowse(wxCommandEvent& event);
     virtual void OnItemExpanding(wxDataViewEvent& event);
     void DoCheckChildren(const wxDataViewItem& parent, bool check);
-    void DoGetCheckedDirs(const wxDataViewItem& parent, wxStringBoolMap_t &dirs);
+    void DoGetCheckedDirs(const wxDataViewItem& parent, wxStringBoolMap_t& dirs);
 
 protected:
     virtual void OnValueChanged(wxDataViewEvent& event);
@@ -55,6 +56,5 @@ public:
     bool ExtlessFiles();
     wxString GetFileMask();
     wxString GetBaseDir();
-
 };
 #endif // IMPORTFILESDIALOGNEW_H

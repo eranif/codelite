@@ -101,7 +101,9 @@ END_EVENT_TABLE()
 
 ListCtrlImproved::ListCtrlImproved(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxListCtrl(parent, id, pos, size, style | wxLC_REPORT)
-{ DoInitialize(); }
+{
+    DoInitialize();
+}
 
 ListCtrlImproved::~ListCtrlImproved()
 {
@@ -204,7 +206,9 @@ void ListCtrlImproved::OnLeftDown(wxMouseEvent& event)
 }
 
 bool ListCtrlImproved::SetItemClientData(long item, wxClientData* clientData)
-{ return SetItemPtrData(item, (wxUIntPtr)clientData); }
+{
+    return SetItemPtrData(item, (wxUIntPtr)clientData);
+}
 
 void ListCtrlImproved::SetCheckboxRow(long item, bool checked)
 {

@@ -15,9 +15,9 @@ CopyCompilerSettingsDlg::CopyCompilerSettingsDlg(wxWindow* parent)
     wxString savedProject, savedName;
     savedProject = clConfig::Get().Read("CopyCompilerSettingsDlg/Project", savedProject);
     savedName = clConfig::Get().Read("CopyCompilerSettingsDlg/Name", savedName);
-    if(!projects.empty()) {
+    if (!projects.empty()) {
         int where = wxNOT_FOUND;
-        if(!savedProject.empty()) {
+        if (!savedProject.empty()) {
             where = m_choiceConfigurations->FindString(savedProject);
         }
 
@@ -43,7 +43,7 @@ void CopyCompilerSettingsDlg::DoUpdateConfigurations(const wxString& configToSel
     ProjectSettingsCookie cookie;
     auto settings = p->GetSettings();
     auto config = settings->GetFirstBuildConfiguration(cookie);
-    while(config) {
+    while (config) {
         configurations.Add(config->GetName());
         config = settings->GetNextBuildConfiguration(cookie);
     }
@@ -51,9 +51,9 @@ void CopyCompilerSettingsDlg::DoUpdateConfigurations(const wxString& configToSel
     configurations.Sort([](const wxString& a, const wxString& b) -> int { return a.CmpNoCase(b); });
     m_choiceConfigurations->Append(configurations);
 
-    if(!configurations.empty()) {
+    if (!configurations.empty()) {
         int where = wxNOT_FOUND;
-        if(!configToSelect.empty()) {
+        if (!configToSelect.empty()) {
             where = m_choiceConfigurations->FindString(configToSelect);
         }
         m_choiceConfigurations->SetSelection(where == wxNOT_FOUND ? 0 : where);

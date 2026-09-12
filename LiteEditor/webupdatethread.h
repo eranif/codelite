@@ -43,8 +43,12 @@ class WebUpdateJobData
     bool m_showMessage;
 
 public:
-    WebUpdateJobData(const wxString& url, const wxString& releaseNotes, wxString curVersion, wxString newVersion,
-                     bool upToDate, bool showMessage)
+    WebUpdateJobData(const wxString& url,
+                     const wxString& releaseNotes,
+                     wxString curVersion,
+                     wxString newVersion,
+                     bool upToDate,
+                     bool showMessage)
         : m_url(url.c_str())
         , m_curVersion(curVersion)
         , m_newVersion(newVersion)

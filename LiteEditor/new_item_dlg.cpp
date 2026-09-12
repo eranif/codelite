@@ -23,9 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "new_item_dlg.h"
+
 #include "globals.h"
 #include "macros.h"
-#include "new_item_dlg.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"
 
@@ -50,7 +51,7 @@ NewItemDlg::NewItemDlg(wxWindow* parent, const wxString& cwd)
 void NewItemDlg::OnBrowseButton(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector(_("select a folder"), m_location->GetValue());
-    if(path.empty()) {
+    if (path.empty()) {
         return;
     }
     m_location->ChangeValue(path); // we want event here

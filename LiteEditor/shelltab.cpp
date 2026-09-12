@@ -103,7 +103,7 @@ bool ShellTab::DoSendInput(const wxString& line)
 
 void ShellTab::OnProcStarted(wxCommandEvent& e)
 {
-    if(m_cmd && m_cmd->IsBusy()) {
+    if (m_cmd && m_cmd->IsBusy()) {
         return;
     }
     m_cmd = (AsyncExeCmd*)e.GetEventObject();
@@ -115,7 +115,7 @@ void ShellTab::OnProcStarted(wxCommandEvent& e)
 void ShellTab::OnProcOutput(wxCommandEvent& e)
 {
     AsyncExeCmd* cmd = (AsyncExeCmd*)e.GetEventObject();
-    if(cmd != m_cmd) {
+    if (cmd != m_cmd) {
         // TODO: log message
         return;
     }
@@ -125,7 +125,7 @@ void ShellTab::OnProcOutput(wxCommandEvent& e)
 void ShellTab::OnProcError(wxCommandEvent& e)
 {
     AsyncExeCmd* cmd = (AsyncExeCmd*)e.GetEventObject();
-    if(cmd != m_cmd) {
+    if (cmd != m_cmd) {
         // TODO: log message
         return;
     }
@@ -135,7 +135,7 @@ void ShellTab::OnProcError(wxCommandEvent& e)
 void ShellTab::OnProcEnded(wxCommandEvent& e)
 {
     AsyncExeCmd* cmd = (AsyncExeCmd*)e.GetEventObject();
-    if(cmd != m_cmd) {
+    if (cmd != m_cmd) {
         // TODO: log message
         return;
     }
@@ -148,8 +148,8 @@ void ShellTab::OnSendInput(wxCommandEvent& e)
     wxUnusedVar(e);
 
     wxString line = m_input->GetValue();
-    if(DoSendInput(line)) {
-        if(m_input->FindString(line) == wxNOT_FOUND) {
+    if (DoSendInput(line)) {
+        if (m_input->FindString(line) == wxNOT_FOUND) {
             m_input->Append(line);
         }
         m_input->SetValue(wxEmptyString);
@@ -161,7 +161,7 @@ void ShellTab::OnStopProc(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
-    if(m_cmd && m_cmd->IsBusy()) {
+    if (m_cmd && m_cmd->IsBusy()) {
         m_cmd->Terminate();
     }
 }
@@ -171,10 +171,10 @@ void ShellTab::OnUpdateUI(wxUpdateUIEvent& e) { e.Enable(m_cmd && m_cmd->IsBusy(
 void ShellTab::OnKeyDown(wxKeyEvent& e)
 {
     wxCommandEvent dummy;
-    switch(e.GetKeyCode()) {
+    switch (e.GetKeyCode()) {
     case wxT('c'):
     case wxT('C'):
-        if(e.GetModifiers() == wxMOD_CONTROL) {
+        if (e.GetModifiers() == wxMOD_CONTROL) {
             OnStopProc(dummy);
             e.Skip();
         } else {
@@ -209,10 +209,13 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
     wxCheckBox* checkBoxLog = new wxCheckBox(m_toolbar, wxID_ANY, _("Enable Log"));
     checkBoxLog->Bind(wxEVT_CHECKBOX, &DebugTab::OnEnableDbgLog, this);
     checkBoxLog->Bind(wxEVT_UPDATE_UI, &DebugTab::OnEnableDbgLogUI, this);
-    m_toolbar->AddTool(XRCID("hold_pane_open"), _("Keep open"), images->Add("ToolPin"),
-                       _("Don't close this pane when an editor gets focus"), wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("word_wrap_output"), _("Word Wrap"), images->Add("word_wrap"), _("Word Wrap"),
+    m_toolbar->AddTool(XRCID("hold_pane_open"),
+                       _("Keep open"),
+                       images->Add("ToolPin"),
+                       _("Don't close this pane when an editor gets focus"),
                        wxITEM_CHECK);
+    m_toolbar->AddTool(
+        XRCID("word_wrap_output"), _("Word Wrap"), images->Add("word_wrap"), _("Word Wrap"), wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("clear_all_output"), _("Clear All"), images->Add("clear"), _("Clear All"));
     m_toolbar->AddSeparator();
     m_toolbar->AddControl(checkBoxLog);
@@ -223,7 +226,7 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
         [&](wxCommandEvent& event) {
             int sel = wxNOT_FOUND;
             Notebook* book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
-            if(book && (sel = book->GetSelection()) != wxNOT_FOUND) {
+            if (book && (sel = book->GetSelection()) != wxNOT_FOUND) {
                 EditorConfigST::Get()->SetPaneStickiness(book->GetPageText(sel), event.IsChecked());
             }
         },
@@ -233,7 +236,7 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
         [&](wxUpdateUIEvent& event) {
             int sel = wxNOT_FOUND;
             Notebook* book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
-            if(book && (sel = book->GetSelection()) != wxNOT_FOUND) {
+            if (book && (sel = book->GetSelection()) != wxNOT_FOUND) {
                 event.Check(EditorConfigST::Get()->GetPaneStickiness(book->GetPageText(sel)));
             }
         },
@@ -249,10 +252,10 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
         [&](wxUpdateUIEvent& event) { event.Check(m_terminal->GetCtrl()->GetWrapMode() == wxSTC_WRAP_WORD); },
         XRCID("word_wrap_output"));
 
+    m_toolbar->Bind(wxEVT_TOOL, [&](wxCommandEvent& event) { m_terminal->Clear(); }, XRCID("clear_all_output"));
     m_toolbar->Bind(
-        wxEVT_TOOL, [&](wxCommandEvent& event) { m_terminal->Clear(); }, XRCID("clear_all_output"));
-    m_toolbar->Bind(
-        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& event) { event.Enable(!m_terminal->IsEmpty()); },
+        wxEVT_UPDATE_UI,
+        [&](wxUpdateUIEvent& event) { event.Enable(!m_terminal->IsEmpty()); },
         XRCID("clear_all_output"));
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(m_toolbar, 0, wxEXPAND);
@@ -281,7 +284,7 @@ void DebugTab::OnUpdateUI(wxUpdateUIEvent& e)
 void DebugTab::OnEnableDbgLog(wxCommandEvent& event)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(dbgr) {
+    if (dbgr) {
         dbgr->EnableLogging(event.IsChecked());
         DebuggerInformation info = dbgr->GetDebuggerInformation();
         info.enableDebugLog = event.IsChecked();
@@ -292,7 +295,7 @@ void DebugTab::OnEnableDbgLog(wxCommandEvent& event)
 void DebugTab::OnEnableDbgLogUI(wxUpdateUIEvent& event)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(dbgr) {
+    if (dbgr) {
         DebuggerInformation info = dbgr->GetDebuggerInformation();
         event.Check(info.enableDebugLog);
     }
@@ -301,7 +304,7 @@ void DebugTab::OnEnableDbgLogUI(wxUpdateUIEvent& event)
 void DebugTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
     int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
-    if(clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
+    if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
         return;
     }
 
@@ -319,7 +322,7 @@ void DebugTab::OnCtrlC(clCommandEvent& event)
 {
     wxUnusedVar(event);
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(dbgr && dbgr->IsRunning()) {
+    if (dbgr && dbgr->IsRunning()) {
         ManagerST::Get()->DbgDoSimpleCommand(DBG_PAUSE);
     }
 }
@@ -327,12 +330,12 @@ void DebugTab::OnCtrlC(clCommandEvent& event)
 void DebugTab::OnExecuteCommand(clCommandEvent& event)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(!dbgr || !dbgr->IsRunning()) {
+    if (!dbgr || !dbgr->IsRunning()) {
         return;
     }
     bool contIsNeeded = ManagerST::Get()->GetBreakpointsMgr()->PauseDebuggerIfNeeded();
     dbgr->ExecuteCmd(event.GetString());
-    if(contIsNeeded) {
+    if (contIsNeeded) {
         ManagerST::Get()->DbgContinue();
     }
 }
@@ -342,7 +345,7 @@ void DebugTab::OnExecuteCommand(clCommandEvent& event)
 void ShellTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
     int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
-    if(clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
+    if (clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
         return;
     }
 
@@ -388,7 +391,7 @@ OutputTab::~OutputTab()
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &OutputTab::OnDebugStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &OutputTab::OnDebugStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &OutputTab::OnWorkspaceClosed, this);
-    if(m_thread) {
+    if (m_thread) {
         m_thread->Stop();
         wxDELETE(m_thread);
     }
@@ -397,12 +400,12 @@ OutputTab::~OutputTab()
 void OutputTab::OnOutputDebugString(clCommandEvent& event)
 {
     event.Skip();
-    if(!m_outputDebugStringActive)
+    if (!m_outputDebugStringActive)
         return;
 
     wxString msg = event.GetString();
     msg.Trim().Trim(false);
-    if(msg.IsEmpty())
+    if (msg.IsEmpty())
         return;
 
     wxString formattedMessage;
@@ -449,8 +452,8 @@ void OutputTab::OnWorkspaceClosed(clWorkspaceEvent& event)
 void OutputTab::DoSetCollecting(bool b)
 {
 #ifdef __WXMSW__
-    if(b) {
-        if(m_thread) {
+    if (b) {
+        if (m_thread) {
             m_thread->Stop();
             wxDELETE(m_thread);
         }
@@ -458,7 +461,7 @@ void OutputTab::DoSetCollecting(bool b)
         m_thread->Start();
         m_thread->SetCollecting(true);
     } else {
-        if(m_thread) {
+        if (m_thread) {
             m_thread->Stop();
             wxDELETE(m_thread);
         }

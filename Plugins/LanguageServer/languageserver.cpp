@@ -333,8 +333,6 @@ void LanguageServerPlugin::OnLSPShowSettingsDlg(clLanguageServerEvent& event)
     OnSettings(dummy);
 }
 
-wxString LanguageServerPlugin::GetEditorFilePath(IEditor* editor) const { return editor->GetRemotePathOrLocal(); }
-
 void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxString& message, int log_level)
 {
     wxString log_message;

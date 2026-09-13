@@ -51,7 +51,6 @@ protected:
     void OnLSPConfigure(clLanguageServerEvent& event);
     void OnLSPDelete(clLanguageServerEvent& event);
     void OnLSPShowSettingsDlg(clLanguageServerEvent& event);
-    wxString GetEditorFilePath(IEditor* editor) const;
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnFixLSPPaths(wxCommandEvent& event);
     // Called by the plugin after load to check that all the configured

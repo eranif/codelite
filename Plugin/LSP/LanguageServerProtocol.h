@@ -129,11 +129,6 @@ protected:
     void SendCloseRequest(const wxString& filename);
 
     /**
-     * @brief report a file-changed notification
-     */
-    void SendChangeRequest(IEditor* editor, const wxString& fileContent, bool force_reparse = false);
-
-    /**
      * @brief report a file-save notification
      */
     void SendSaveRequest(IEditor* editor, const wxString& fileContent);
@@ -238,11 +233,6 @@ public:
      * @brief find the definition of the item at the caret position
      */
     void FindDefinition(IEditor* editor);
-
-    /**
-     * @brief find the definition of the item at the caret position
-     */
-    void FindDefinition(IEditor* editor, LSPCallback cb);
 
     /**
      * @brief find the definition of the item at the caret position

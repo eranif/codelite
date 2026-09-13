@@ -35,7 +35,7 @@
      rx="28"
      fill="#2E2B28"
      id="rect1"
-     style="stroke:none;stroke-opacity:1;fill:#555753" />
+     style="fill:#555753;fill-opacity:1.0" />
   <path
      d="M 30 26 L 62 56 L 30 86"
      fill="none"

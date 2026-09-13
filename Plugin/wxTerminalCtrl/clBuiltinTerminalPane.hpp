@@ -88,6 +88,31 @@ public:
     void CloseTerminalByTitle(const wxString& tabTitle);
     wxTerminalViewCtrl* GetActiveTerminal();
 
+    /**
+     * Creates and initializes a new terminal control instance within a notebook pane.
+     *
+     * This method handles the instantiation of the wxTerminalViewCtrl, configures its
+     * visual settings (buffer size, theme, and delimiters), adds it as a page to the
+     * provided book control, and sets up keyboard accelerators and event bindings.
+     *
+     * @param book The notebook control (wxBookCtrlBase) where the terminal page will be added.
+     * @param shellCommand The command string used to launch the terminal shell.
+     * @param tabTitle The initial text to display on the notebook tab.
+     * @param makeActive Whether the newly created terminal tab should be selected/active.
+     * @param persistTabTitle If true, prevents the tab title from being automatically updated by the shell.
+     * @param bindEvents Whether to bind terminal events (title changes, termination, and links) to handlers.
+     * @param workingDirectory An optional string specifying the directory where the shell should start.
+     *
+     * @return A pointer to the newly created wxTerminalViewCtrl instance.
+     */
+    wxTerminalViewCtrl* CreateTerminal(wxBookCtrlBase* book,
+                                       const wxString& shellCommand,
+                                       const wxString& tabTitle,
+                                       bool makeActive,
+                                       bool persistTabTitle,
+                                       bool bindEvents,
+                                       std::optional<wxString> workingDirectory);
+
 protected:
     std::optional<wxString> PromptForTerminal();
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
@@ -126,20 +151,6 @@ protected:
 
 private:
     static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);
-    /**
-     * @brief Helper method to create and setup a terminal control
-     * @param shellCommand The shell command to run
-     * @param tabTitle The title for the terminal tab
-     * @param makeActive If true, make this tab the active tab
-     * @param persistTabTitle If true, the initial tab title is persisted and the control will ignore any attempt to
-     * change it using ANSI escape sequences.
-     */
-    wxTerminalViewCtrl* DoCreateTerminal(const wxString& shellCommand,
-                                         const wxString& tabTitle,
-                                         bool makeActive,
-                                         bool persistTabTitle,
-                                         std::optional<wxString> workingDirectory);
-
     wxAuiToolBar* m_toolbar = nullptr;
     wxAuiNotebook* m_book = nullptr;
     wxChoice* m_choice_themes = nullptr;

@@ -31,7 +31,7 @@ class ClaudeCode : public IPlugin
 {
 public:
     ClaudeCode(IManager* manager);
-    ~ClaudeCode() override = default;
+    ~ClaudeCode() override;
 
     //--------------------------------------------
     // Abstract methods
@@ -50,6 +50,9 @@ public:
 protected:
     void OnSettings(wxCommandEvent& event);
     void ShowClaudeTerminal();
+    void OnPageClosing(wxNotifyEvent& event);
+    void OnAllPagesClosed(wxCommandEvent& event);
 
+    wxTerminalViewCtrl* m_claudeTerminal{nullptr};
     std::shared_ptr<std::function<void()>> m_showClaudeCode;
 };

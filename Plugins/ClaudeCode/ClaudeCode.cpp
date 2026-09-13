@@ -72,11 +72,16 @@ void ClaudeCode::ShowClaudeTerminal()
             book->SetPageText(index, new_title);
         }
     });
-    m_claudeTerminal->Bind(wxEVT_TERMINAL_TERMINATED, [this](wxTerminalEvent& event) { m_claudeTerminal = nullptr; });
+
+    m_claudeTerminal->Bind(wxEVT_TERMINAL_TERMINATED, [this](wxTerminalEvent& event) {
+        m_claudeTerminal = nullptr;
+        wxUnusedVar(event);
+    });
 
     // TODO: add support for link clicked (open URLs in default browser or files inside CodeLite).
     // TODO: in case the current workspace is remote -> open claude over the network.
     // TOOD: suggest a "--continue" option to the caller.
+    // TOOD: add keyboard shortcut for opening claude-code
     m_claudeTerminal->SendCommand(claude_exec.value());
 }
 

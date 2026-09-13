@@ -23,7 +23,7 @@ protected:
     void OnFileOpen(wxCommandEvent& event) override;
     void OnBatchGenerateCode(wxCommandEvent& event) override;
     void OnBatchGenerateCodeUI(wxUpdateUIEvent& event) override;
-    virtual void OnFindUI(wxUpdateUIEvent& event);
+    void OnFindUI(wxUpdateUIEvent& event) override;
     void OnOpenFindDialog(wxCommandEvent& event) override;
     void OnGenerateCodeUI(wxUpdateUIEvent& event) override;
     void OnGenerateCode(wxCommandEvent& event) override;

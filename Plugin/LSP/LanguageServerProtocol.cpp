@@ -1168,7 +1168,7 @@ void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepat
         LSP_DEBUG() << "Sending `workspace/executeCommand`" << endl;
         wxString filename = GetEditorFilePath(editor);
         LSP::WorkspaceExecuteCommand::Ptr_t req =
-            LSP::MessageWithParams::MakeRequest(new LSP::WorkspaceExecuteCommand(filename, command));
+            LSP::MessageWithParams::MakeRequest(new LSP::WorkspaceExecuteCommand(m_name, filename, command));
         QueueMessage(req);
     }
 }

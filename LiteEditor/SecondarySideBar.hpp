@@ -21,6 +21,7 @@ public:
     void AddPage(wxWindow* win, const wxString& bmpname, const wxString& label);
     void SetSelection(int selection);
     clSideBarCtrl* GetNotebook() { return m_book; }
+    SideBar* GetSidebar() { return m_sidebar; }
 
 private:
     clSideBarCtrl* m_book{nullptr};

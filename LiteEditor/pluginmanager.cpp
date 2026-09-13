@@ -1329,3 +1329,6 @@ IEditor* PluginManager::CreateOrOpenLocalFile(const wxString& filepath)
     }
     return clGetManager()->OpenFile(fn.GetFullPath());
 }
+
+clSideBarCtrl* PluginManager::GetLeftSideBarCtrl() { return clMainFrame::Get()->GetWorkspacePane()->GetNotebook(); }
+clSideBarCtrl* PluginManager::GetRightSideBarCtrl() { return clMainFrame::Get()->GetSecondarySideBar()->GetNotebook(); }

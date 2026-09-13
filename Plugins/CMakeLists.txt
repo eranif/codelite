@@ -1,5 +1,6 @@
 add_subdirectory(AutoSave)
 add_subdirectory(CallGraph)
+add_subdirectory(ClaudeCode)
 add_subdirectory(CodeFormatter)
 add_subdirectory(CodeLiteDiff)
 add_subdirectory(Copyright)

@@ -59,6 +59,7 @@ class BuildSettingsConfig;
 class NavMgr;
 class wxAuiManager;
 class clInfoBar;
+class clSideBarCtrl;
 
 #if MAINBOOK_AUIBOOK
 
@@ -246,6 +247,10 @@ public:
      * @return
      */
     virtual clEditorBar* GetNavigationBar() = 0;
+
+    virtual clSideBarCtrl* GetLeftSideBarCtrl() = 0;
+    virtual clSideBarCtrl* GetRightSideBarCtrl() = 0;
+
     /**
      * @brief open file and make it the active editor
      * @param fileName the file to open - use absolute path

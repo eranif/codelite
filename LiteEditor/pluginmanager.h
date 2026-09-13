@@ -26,6 +26,7 @@
 #define PLUGINMANAGER_H
 
 #include "Notebook.h"
+#include "SideBar.hpp"
 #include "clAuiBook.hpp"
 #include "clToolBar.h"
 #include "debugger.h"
@@ -194,6 +195,8 @@ public:
     clStatusBar* GetStatusBar() override;
     clEditorBar* GetNavigationBar() override;
     clWorkspaceView* GetWorkspaceView() override;
+    clSideBarCtrl *GetLeftSideBarCtrl() override;
+    clSideBarCtrl *GetRightSideBarCtrl() override;
     bool IsToolBarShown() const override;
     void ShowToolBar(bool show = true) override;
     void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId) override;

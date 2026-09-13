@@ -46,7 +46,7 @@ public:
     bool IsWaitingResponse() const { return m_waitingResponse; }
 
     /// move the content of `other` into `this` while consuming the `other` queue
-    void Move(LSPRequestMessageQueue& other);
+    void Move(LSPRequestMessageQueue&& other);
 };
 
 using LSPCallback = std::function<void(const LSPEvent&)>;
@@ -104,15 +104,15 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnEditorChanged(wxCommandEvent& event);
 
-    wxString GetEditorFilePath(IEditor* editor) const;
+    wxString GetEditorFilePath(const IEditor& editor) const;
     bool
     CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName, const wxString& lspRequestName);
 
     void DoClear();
-    bool ShouldHandleFile(IEditor* editor) const;
+    bool ShouldHandleFile(const IEditor& editor) const;
     wxString GetLogPrefix() const;
     void ProcessQueue();
-    static wxString GetLanguageId(IEditor* editor);
+    static wxString GetLanguageId(const IEditor& editor);
     void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleWorkspaceEdit(const JSONItem& changes);
@@ -121,7 +121,7 @@ protected:
     /**
      * @brief notify about file open
      */
-    bool SendOpenOrChangeRequest(IEditor* editor, const wxString& fileContent, const wxString& languageId);
+    bool SendOpenOrChangeRequest(IEditor& editor, const wxString& fileContent, const wxString& languageId);
 
     /**
      * @brief report a file-close notification
@@ -131,12 +131,12 @@ protected:
     /**
      * @brief report a file-save notification
      */
-    void SendSaveRequest(IEditor* editor, const wxString& fileContent);
+    void SendSaveRequest(IEditor& editor, const wxString& fileContent);
 
     /**
      * @brief request for a code completion at a given doc/position
      */
-    void SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column, bool userTriggered);
+    void SendCodeCompleteRequest(IEditor& editor, size_t line, size_t column, bool userTriggered);
 
     bool DoStart();
 
@@ -147,7 +147,7 @@ protected:
 
 public:
     LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner);
-    virtual ~LanguageServerProtocol();
+    ~LanguageServerProtocol() override;
 
     static wxString GetLanguageId(FileExtManager::FileType file_type);
 
@@ -183,7 +183,7 @@ public:
      * @brief return list of all supported languages by LSP. The list contains the abbreviation entry and a description
      */
     static std::set<wxString> GetSupportedLanguages();
-    bool CanHandle(IEditor* editor) const;
+    bool CanHandle(const IEditor& editor) const;
     bool CanHandle(FileExtManager::FileType file_type) const;
 
     /**
@@ -223,7 +223,7 @@ public:
     /**
      * @brief Restarts the component by stopping it and then starting it again.
      */
-    inline void Restart()
+    void Restart()
     {
         Stop();
         Start();
@@ -232,57 +232,57 @@ public:
     /**
      * @brief find the definition of the item at the caret position
      */
-    void FindDefinition(IEditor* editor);
+    void FindDefinition(IEditor& editor);
 
     /**
      * @brief find the definition of the item at the caret position
      * @param for_add_missing_header the context of the `FindDeclaration` is `Add include header` request
      */
-    void FindDeclaration(IEditor* editor, bool for_add_missing_header);
+    void FindDeclaration(IEditor& editor, bool for_add_missing_header);
 
     /**
      * @brief perform code completion for a given editor
      */
-    void CodeComplete(IEditor* editor, bool userTriggered);
+    void CodeComplete(IEditor& editor, bool userTriggered);
 
     /**
      * @brief ask for function call help
      */
-    void FunctionHelp(IEditor* editor);
+    void FunctionHelp(IEditor& editor);
 
     /**
      * @brief ask for available hover tip
      */
-    void HoverTip(IEditor* editor);
+    void HoverTip(IEditor& editor);
 
     /**
      * @brief manually load file into the server
      */
-    void OpenEditor(IEditor* editor);
+    void OpenEditor(IEditor& editor);
 
     /**
      * @brief tell the server to close editor
      */
-    void CloseEditor(IEditor* editor);
+    void CloseEditor(IEditor& editor);
 
     /**
      * @brief find references of a symbol
      */
-    void FindReferences(IEditor* editor);
+    void FindReferences(IEditor& editor);
 
     void SendAck(size_t message_id);
 
     /**
      * @brief rename a symbol
      */
-    void RenameSymbol(IEditor* editor);
+    void RenameSymbol(IEditor& editor);
 
     /**
      * @brief get list of symbols for the current editor
      * @param editor the current editor
      * @param context_flags request context. See LSP::DocumentSymbolsRequest::eDocumentSymbolsContext (bit or'd)
      */
-    void DocumentSymbols(IEditor* editor, size_t context_flags, LSP::ResponseCallback cb);
+    void DocumentSymbols(IEditor& editor, size_t context_flags, LSP::ResponseCallback cb);
 
     /**
      * @brief execute remote command `workspace/executeCommand`
@@ -292,12 +292,12 @@ public:
     /**
      * @brief request a code action from the server
      */
-    void SendCodeActionRequest(IEditor* editor, const std::vector<LSP::Diagnostic>& diags);
+    void SendCodeActionRequest(IEditor& editor, const std::vector<LSP::Diagnostic>& diags);
 
     /**
      * @brief ask the server for semantic tokens
      */
-    void SendSemanticTokensRequest(IEditor* editor);
+    void SendSemanticTokensRequest(IEditor& editor);
     /**
      * @brief query the LSP for a list of workspace symbols that matches a query string
      */

@@ -220,6 +220,15 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
     ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!`");
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
 
+    // wxTerminalViewCtrl's own wxEVT_CHAR_HOOK handler (bound in its constructor, above) swallows
+    // some keys unconditionally regardless of modifiers (e.g. Tab) or sends Ctrl+<punctuation> as
+    // literal input to the shell, which shadows application-wide shortcuts such as "RawCtrl-TAB"
+    // (show recent tabs) and "Ctrl-`" (toggle output pane). Binding here, after the control's own
+    // constructor already ran, makes this handler run first (wx tries the most-recently-bound
+    // handler for a given event on an object first), so we can reserve those specific combinations
+    // for the main frame before the terminal ever sees them.
+    ctrl->Bind(wxEVT_CHAR_HOOK, &clBuiltinTerminalPane::OnTerminalShortcutCharHook, this);
+
     // Add the page to the notebook
     book->AddPage(ctrl, tabTitle, makeActive);
     ctrl->EnableSafeDrawing(!m_terminalSettings.m_optimizedDrawings);
@@ -547,6 +556,32 @@ wxTerminalViewCtrl* FindActiveTerminal()
         event.Skip();                         \
         return;                               \
     }
+
+void clBuiltinTerminalPane::OnTerminalShortcutCharHook(wxKeyEvent& e)
+{
+    const bool ctrlDown = e.ControlDown() || e.RawControlDown();
+    if (ctrlDown && e.GetKeyCode() == WXK_TAB) {
+        // "RawCtrl-TAB" is reserved application-wide for the recent tabs dialog; don't let it
+        // reach the terminal, which would otherwise send it as a literal Tab keypress.
+        wxCommandEvent event(wxEVT_MENU, XRCID("wxEVT_BOOK_NAV_PREV"));
+        if (auto* frame = EventNotifier::Get()->TopFrame()) {
+            frame->GetEventHandler()->ProcessEvent(event);
+        }
+        return;
+    }
+
+    if (ctrlDown && e.GetKeyCode() == '`') {
+        // "Ctrl-`" is reserved application-wide for toggling the Output Pane; don't let it reach
+        // the terminal, which would otherwise send it as a literal backtick character.
+        wxCommandEvent event(wxEVT_MENU, XRCID("output_pane"));
+        if (auto* frame = EventNotifier::Get()->TopFrame()) {
+            frame->GetEventHandler()->ProcessEvent(event);
+        }
+        return;
+    }
+
+    e.Skip();
+}
 
 void clBuiltinTerminalPane::OnCtrlR(wxCommandEvent& e)
 {

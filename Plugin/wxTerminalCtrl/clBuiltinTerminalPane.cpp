@@ -208,6 +208,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
     wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(book, shellCommand, env, workingDirectory);
+    ctrl->EnsureStarted();
     ctrl->SetBufferSize(m_terminalSettings.m_scrollBackLines);
     ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!`");
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
@@ -290,7 +291,8 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
                                                               const std::optional<SSHAccountInfo>& sshAccount,
                                                               const wxString& tabTitle,
                                                               bool makeVisible,
-                                                              std::optional<wxString> terminal_cmd)
+                                                              std::optional<wxString> terminal_cmd,
+                                                              wxBookCtrlBase* book)
 {
     wxString cmd;
     if (!terminal_cmd) {
@@ -311,7 +313,8 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
         wd = workingDirectory;
     }
 
-    wxTerminalViewCtrl* ctrl = CreateTerminal(m_book, cmd, finalTabTitle, makeVisible, !tabTitle.empty(), true, wd);
+    wxTerminalViewCtrl* ctrl = CreateTerminal(
+        book == nullptr ? m_book : book, cmd, finalTabTitle, makeVisible, !tabTitle.empty(), book == m_book, wd);
     if (!ctrl) {
         return nullptr;
     }
@@ -337,7 +340,6 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
             if (sshAccount->GetPort() != wxNOT_FOUND) {
                 sshCommand << " -p " << sshAccount->GetPort();
             }
-
             ctrl->SendCommand(sshCommand);
             // Give SSH time to connect before sending cd command
             // The user will see the connection prompt in the terminal
@@ -347,12 +349,13 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
     }
 
     // If we have SSH and a working directory, send cd command for the remote system
-    if (!workingDirectory.IsEmpty() && sshAccount.has_value() && sshAccount->IsOk()) {
-        ctrl->SendCommand(wxString::Format("cd \"%s\"", workingDirectory));
+    if (!workingDirectory.empty()) {
+        wxString cdCommand = wxString::Format("cd \"%s\"", workingDirectory);
+        ctrl->SendCommand(cdCommand);
     }
 
     // If makeVisible is true, show the output pane and select the Terminal tab
-    if (makeVisible) {
+    if (makeVisible && (book == m_book)) {
         clGetManager()->ShowOutputPane(TERMINAL_TAB);
     }
     return ctrl;

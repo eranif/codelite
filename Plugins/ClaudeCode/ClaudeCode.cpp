@@ -1,5 +1,6 @@
 #include "ClaudeCode.hpp"
 
+#include "Keyboard/clKeyboardManager.h"
 #include "Platform/Platform.hpp"
 #include "clSideBarCtrl.hpp"
 #include "globals.h"
@@ -36,8 +37,12 @@ void ClaudeCode::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar)
 void ClaudeCode::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
 void ClaudeCode::UnPlug() {}
 void ClaudeCode::OnSettings(wxCommandEvent& event) { wxUnusedVar(event); }
+
 void ClaudeCode::ShowClaudeTerminal()
 {
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    CHECK_PTR_RET(workspace);
+
     if (m_claudeTerminal) {
         if (!clGetManager()->SelectPage(m_claudeTerminal)) {
             clWARNING() << "Could not select claude tab window" << endl;
@@ -45,20 +50,38 @@ void ClaudeCode::ShowClaudeTerminal()
         return;
     }
 
-    // TODO: only attempt to locate claude on a local workspace.
-    auto claude_exec = ThePlatform->Which("claude");
-    if (!claude_exec) {
-        wxMessageBox(_("Could not locate claude executable"), "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
-        return;
+    std::optional<wxString> claude_exec{std::nullopt};
+    if (workspace->IsRemote())
+        claude_exec = "claude";
+    else {
+        claude_exec = ThePlatform->Which("claude");
+        if (!claude_exec) {
+            wxMessageBox(_("Could not locate claude executable"), "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
+            return;
+        }
     }
+
+    // Define the working directory & the ssh account (if a remote workspace)
+    std::optional<SSHAccountInfo> sshAccount{std::nullopt};
+    std::optional<wxString> wd{std::nullopt};
+
+    if (workspace) {
+        wd = workspace->GetDir();
+        if (workspace->IsRemote()) {
+            sshAccount = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
+        }
+    }
+
 #ifdef __WXMSW__
     const wxString kShellCommand = "CMD";
+    const wxString kShellTitle = wxT("🤖 Claude Code");
 #else
     const wxString kShellCommand = "/bin/bash --login -i";
+    const wxString kShellTitle = wxEmptyString;
 #endif
 
-    m_claudeTerminal = clGetManager()->GetTerminalManager()->CreateTerminal(
-        clGetManager()->GetMainNotebook(), kShellCommand, "Claude Code", true, false, false, std::nullopt);
+    m_claudeTerminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
+        wd.value(), sshAccount, kShellTitle, true, kShellCommand, clGetManager()->GetMainNotebook());
 
     m_claudeTerminal->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [this](wxTerminalEvent& event) {
         wxString new_title = event.GetTitle();
@@ -79,9 +102,9 @@ void ClaudeCode::ShowClaudeTerminal()
     });
 
     // TODO: add support for link clicked (open URLs in default browser or files inside CodeLite).
-    // TODO: in case the current workspace is remote -> open claude over the network.
     // TOOD: suggest a "--continue" option to the caller.
     // TOOD: add keyboard shortcut for opening claude-code
+    claude_exec.value().Prepend("\"").Append("\"");
     m_claudeTerminal->SendCommand(claude_exec.value());
 }
 

@@ -44,7 +44,8 @@ public:
                                            const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
                                            const wxString& tabTitle = wxEmptyString,
                                            bool makeVisible = true,
-                                           std::optional<wxString> terminal_cmd = std::nullopt);
+                                           std::optional<wxString> terminal_cmd = std::nullopt,
+                                           wxBookCtrlBase* book = nullptr);
 
     /**
      * @brief Open new terminal, this is similar to the user clicking the "+" button
@@ -113,8 +114,9 @@ public:
                                        bool bindEvents,
                                        std::optional<wxString> workingDirectory);
 
-protected:
     std::optional<wxString> PromptForTerminal();
+
+protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnInitDone(wxCommandEvent& e);
     void OnPageChanged(wxBookCtrlEvent& event);

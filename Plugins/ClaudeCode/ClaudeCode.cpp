@@ -29,6 +29,12 @@ ClaudeCode::ClaudeCode(IManager* manager)
         "claude-code", _("Launch Claude Code for the Current Workspace"), m_showClaudeCode);
     EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &ClaudeCode::OnAllPagesClosed, this);
+
+    m_mgr->GetTheApp()->Bind(wxEVT_MENU, &ClaudeCode::OnShowClaudeCode, this, XRCID("launch_claude_code"));
+    clKeyboardManager::Get()->AddAccelerator(_("Claude Code"),
+                                             {
+                                                 {"launch_claude_code", _("Launch Claude Code"), "Ctrl-Shift-I"},
+                                             });
 }
 
 ClaudeCode::~ClaudeCode() { EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this); }
@@ -103,7 +109,6 @@ void ClaudeCode::ShowClaudeTerminal()
 
     // TODO: add support for link clicked (open URLs in default browser or files inside CodeLite).
     // TOOD: suggest a "--continue" option to the caller.
-    // TOOD: add keyboard shortcut for opening claude-code
     claude_exec.value().Prepend("\"").Append("\"");
     m_claudeTerminal->SendCommand(claude_exec.value());
 }
@@ -122,4 +127,10 @@ void ClaudeCode::OnAllPagesClosed(wxCommandEvent& event)
 {
     m_claudeTerminal = nullptr;
     event.Skip();
+}
+
+void ClaudeCode::OnShowClaudeCode(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    ShowClaudeTerminal();
 }

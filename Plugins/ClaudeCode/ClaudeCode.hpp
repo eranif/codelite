@@ -51,6 +51,7 @@ protected:
     void OnSettings(wxCommandEvent& event);
     void ShowClaudeTerminal();
     void OnPageClosing(wxNotifyEvent& event);
+    void OnShowClaudeCode(wxCommandEvent& event);
     void OnAllPagesClosed(wxCommandEvent& event);
 
     wxTerminalViewCtrl* m_claudeTerminal{nullptr};

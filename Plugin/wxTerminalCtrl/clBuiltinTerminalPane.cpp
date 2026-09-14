@@ -30,6 +30,13 @@
 
 namespace
 {
+// Every Ctrl+<letter> not already bound to a dedicated command id below is routed through
+// OnCtrlLetter() using an id in this range, so the accelerator table set on the terminal
+// control itself claims the key. Without this, an unclaimed Ctrl+<letter> keystroke is left
+// for the enclosing frame's accelerator table to resolve, which may match an unrelated menu
+// shortcut (e.g. Ctrl+F for "Find") instead of being sent to the shell.
+constexpr int ID_CTRL_LETTER_BASE = wxID_HIGHEST + 8000;
+
 std::vector<std::pair<wxString, wxString>> LocateDefaultTerminals()
 {
     std::vector<std::pair<wxString, wxString>> terminals;
@@ -258,6 +265,12 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
     V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'A', XRCID("Ctrl_ID_start_of_line")});
     V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'E', XRCID("Ctrl_ID_end_of_line")});
 
+    // Claim every remaining Ctrl+<letter> combination for the terminal (see ID_CTRL_LETTER_BASE
+    // above). R, U, L, D, C, W, Z, A, E and V are already claimed above/below.
+    for (char letter : {'B', 'F', 'G', 'H', 'I', 'J', 'K', 'M', 'N', 'O', 'P', 'Q', 'S', 'T', 'X', 'Y'}) {
+        V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)letter, ID_CTRL_LETTER_BASE + (letter - 'A')});
+    }
+
 #ifdef __WXMAC__
     V.push_back(wxAcceleratorEntry{wxACCEL_CMD, (int)'V', wxID_PASTE});
     V.push_back(wxAcceleratorEntry{wxACCEL_CMD, (int)'C', wxID_COPY});
@@ -280,6 +293,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnAltF, this, XRCID("Alt_ID_forward"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlA, this, XRCID("Ctrl_ID_start_of_line"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlE, this, XRCID("Ctrl_ID_end_of_line"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlLetter, this, ID_CTRL_LETTER_BASE, ID_CTRL_LETTER_BASE + 25);
 #ifdef __WXMAC__
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCopy, this, wxID_COPY);
 #endif
@@ -598,6 +612,14 @@ void clBuiltinTerminalPane::OnCtrlE(wxCommandEvent& e)
 {
     CHECK_IF_CAN_HANDLE(e);
     terminal->SendCtrlE();
+}
+
+void clBuiltinTerminalPane::OnCtrlLetter(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    char letter = static_cast<char>('A' + (e.GetId() - ID_CTRL_LETTER_BASE));
+    char ctrlCode = static_cast<char>(letter - 'A' + 1);
+    terminal->SendInput(std::string(1, ctrlCode));
 }
 
 void clBuiltinTerminalPane::OnInitDone(wxCommandEvent& e)

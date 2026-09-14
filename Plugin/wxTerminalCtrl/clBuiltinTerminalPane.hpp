@@ -137,6 +137,7 @@ protected:
     void OnAltB(wxCommandEvent& e);
     void OnCtrlA(wxCommandEvent& e);
     void OnCtrlE(wxCommandEvent& e);
+    void OnCtrlLetter(wxCommandEvent& e);
     void OnPaste(wxCommandEvent& e);
 #ifdef __WXMAC__
     void OnCopy(wxCommandEvent& e);

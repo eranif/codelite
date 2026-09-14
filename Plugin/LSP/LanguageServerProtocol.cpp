@@ -139,13 +139,10 @@ wxString LanguageServerProtocol::GetLanguageId(FileExtManager::FileType file_typ
     }
 }
 
-wxString LanguageServerProtocol::GetLanguageId(IEditor* editor)
+wxString LanguageServerProtocol::GetLanguageId(const IEditor& editor)
 {
-    if (!editor) {
-        return wxEmptyString;
-    }
     FileExtManager::FileType type =
-        FileExtManager::GetType(editor->GetFileName().GetFullPath(), FileExtManager::TypeText);
+        FileExtManager::GetType(editor.GetFileName().GetFullPath(), FileExtManager::TypeText);
     return GetLanguageId(type);
 }
 
@@ -253,7 +250,7 @@ void LanguageServerProtocol::DoClear()
 
 bool LanguageServerProtocol::IsRunning() const { return m_network->IsConnected(); }
 
-bool LanguageServerProtocol::CanHandle(IEditor* editor) const
+bool LanguageServerProtocol::CanHandle(const IEditor& editor) const
 {
     // use the local file path
     wxString lang = GetLanguageId(editor);
@@ -266,7 +263,7 @@ bool LanguageServerProtocol::CanHandle(FileExtManager::FileType file_type) const
     return IsRunning() && m_languages.count(lang) != 0;
 }
 
-bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
+bool LanguageServerProtocol::ShouldHandleFile(const IEditor& editor) const
 {
     // always use the local file path to determine the file path
     // this to ensure that we can open it in case we will need
@@ -278,34 +275,32 @@ bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
 // Protocol implementation
 //===--------------------------------------------------
 
-void LanguageServerProtocol::FindDefinition(IEditor* editor)
+void LanguageServerProtocol::FindDefinition(IEditor& editor)
 {
-    CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     // If the editor is modified, we need to tell the LSP to re-parse the source file
     wxString filename = GetEditorFilePath(editor);
-    wxString fileContent = editor->GetEditorText();
+    wxString fileContent = editor.GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
     // If we have a selection, use the start position.
     int pos{wxNOT_FOUND};
-    if (!editor->GetSelection().IsEmpty()) {
-        pos = editor->GetSelectionStart();
+    if (!editor.GetSelection().IsEmpty()) {
+        pos = editor.GetSelectionStart();
     } else {
-        pos = editor->GetCurrentPosition();
+        pos = editor.GetCurrentPosition();
     }
     LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDefinitionRequest(
-        GetEditorFilePath(editor), editor->GetCurrentLine(), editor->GetColumnInChars(pos)));
+        GetEditorFilePath(editor), editor.GetCurrentLine(), editor.GetColumnInChars(pos)));
     QueueMessage(req);
 }
 
-bool LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor,
+bool LanguageServerProtocol::SendOpenOrChangeRequest(IEditor& editor,
                                                      const wxString& fileContent,
                                                      const wxString& languageId)
 {
     __PERF_IF_ENABLED(BlockTimer timer{"SendOpenOrChangeRequest"})
-    CHECK_PTR_RET_FALSE(editor);
     wxString filename = GetEditorFilePath(editor);
 
     wxString preContent;
@@ -359,9 +354,8 @@ void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
     m_filesTracker.erase(filename);
 }
 
-void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fileContent)
+void LanguageServerProtocol::SendSaveRequest(IEditor& editor, const wxString& fileContent)
 {
-    CHECK_PTR_RET(editor);
     // For now: report a change event
     wxString filename = GetEditorFilePath(editor);
     if (ShouldHandleFile(editor)) {
@@ -389,21 +383,21 @@ LSP::Range GetFileRange(wxStyledTextCtrl* ctrl)
 }
 } // namespace
 
-void LanguageServerProtocol::SendCodeActionRequest(IEditor* editor, const std::vector<LSP::Diagnostic>& diags)
+void LanguageServerProtocol::SendCodeActionRequest(IEditor& editor, const std::vector<LSP::Diagnostic>& diags)
 {
     LSP_DEBUG() << "Sending Code Action for file:" << GetEditorFilePath(editor) << endl;
     if (ShouldHandleFile(editor)) {
         wxString filename = GetEditorFilePath(editor);
         LSP::CodeActionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-            new LSP::CodeActionRequest(LSP::TextDocumentIdentifier(filename), GetFileRange(editor->GetCtrl()), diags));
+            new LSP::CodeActionRequest(LSP::TextDocumentIdentifier(filename), GetFileRange(editor.GetCtrl()), diags));
         QueueMessage(req);
     }
 }
 
-void LanguageServerProtocol::SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column, bool userTriggered)
+void LanguageServerProtocol::SendCodeCompleteRequest(IEditor& editor, size_t line, size_t column, bool userTriggered)
 {
     __PERF_IF_ENABLED(BlockTimer timer{"SendCodeCompleteRequest"})
-    CHECK_PTR_RET(editor);
+
     wxString filename = GetEditorFilePath(editor);
     if (ShouldHandleFile(editor)) {
         LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::CompletionRequest(
@@ -422,8 +416,8 @@ void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event)
     CHECK_PTR_RET(editor);
 
     // starting fresh
-    m_filesTracker.erase(GetEditorFilePath(editor));
-    OpenEditor(editor);
+    m_filesTracker.erase(GetEditorFilePath(*editor));
+    OpenEditor(*editor);
 }
 
 void LanguageServerProtocol::OnFileClosed(clCommandEvent& event)
@@ -439,14 +433,14 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     // For now, it does the same as 'OnFileLoaded'
     IEditor* editor = clGetManager()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
-    if (ShouldHandleFile(editor)) {
-        SendSaveRequest(editor, editor->GetEditorText());
+    if (ShouldHandleFile(*editor)) {
+        SendSaveRequest(*editor, editor->GetEditorText());
     }
 }
 
 wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "[" << GetName() << "]"; }
 
-void LanguageServerProtocol::OpenEditor(IEditor* editor)
+void LanguageServerProtocol::OpenEditor(IEditor& editor)
 {
     LOG_IF_TRACE { LSP_TRACE() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl; }
     if (!IsInitialized()) {
@@ -455,8 +449,8 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         return;
     }
 
-    if (editor && ShouldHandleFile(editor)) {
-        wxString fileContent = editor->GetEditorText();
+    if (ShouldHandleFile(editor)) {
+        wxString fileContent = editor.GetEditorText();
         if (SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor))) {
             SendSemanticTokensRequest(editor);
         }
@@ -465,57 +459,54 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
     }
 }
 
-void LanguageServerProtocol::FunctionHelp(IEditor* editor)
+void LanguageServerProtocol::FunctionHelp(IEditor& editor)
 {
     // sanity
-    CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
-    wxString fileContent = editor->GetEditorText();
+    wxString fileContent = editor.GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
     const wxString& filename = GetEditorFilePath(editor);
     LSP::SignatureHelpRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::SignatureHelpRequest(
-        filename, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition())));
+        filename, editor.GetCurrentLine(), editor.GetColumnInChars(editor.GetCurrentPosition())));
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::HoverTip(IEditor* editor)
+void LanguageServerProtocol::HoverTip(IEditor& editor)
 {
     // sanity
-    CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxString& filename = GetEditorFilePath(editor);
-    wxString fileContent = editor->GetEditorText();
+    wxString fileContent = editor.GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
     if (ShouldHandleFile(editor)) {
-        int pos = editor->GetPosAtMousePointer();
+        int pos = editor.GetPosAtMousePointer();
         // trigger a hover request only when we are hovering something
-        if (pos != wxNOT_FOUND && isgraph(editor->GetCharAtPos(pos))) {
+        if (pos != wxNOT_FOUND && isgraph(editor.GetCharAtPos(pos))) {
             LSP::HoverRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-                new LSP::HoverRequest(filename, editor->LineFromPos(pos), editor->GetColumnInChars(pos)));
+                new LSP::HoverRequest(filename, editor.LineFromPos(pos), editor.GetColumnInChars(pos)));
             QueueMessage(req);
         }
     }
 }
 
-void LanguageServerProtocol::CodeComplete(IEditor* editor, bool userTriggered)
+void LanguageServerProtocol::CodeComplete(IEditor& editor, bool userTriggered)
 {
     // sanity
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->CodeComplete"})
-    CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
-    wxString fileContent = editor->GetEditorText();
+    wxString fileContent = editor.GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
-    // Now request the for code completion
+    // Now request for code completion
     SendCodeCompleteRequest(
-        editor, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition()), userTriggered);
+        editor, editor.GetCurrentLine(), editor.GetColumnInChars(editor.GetCurrentPosition()), userTriggered);
 }
 
 void LanguageServerProtocol::ProcessQueue()
@@ -545,17 +536,17 @@ void LanguageServerProtocol::ProcessQueue()
     }
 }
 
-void LanguageServerProtocol::CloseEditor(IEditor* editor)
+void LanguageServerProtocol::CloseEditor(IEditor& editor)
 {
     if (!IsInitialized()) {
         return;
     }
-    if (editor && ShouldHandleFile(editor)) {
+    if (ShouldHandleFile(editor)) {
         SendCloseRequest(GetEditorFilePath(editor));
     }
 }
 
-void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missing_header)
+void LanguageServerProtocol::FindDeclaration(IEditor& editor, bool for_add_missing_header)
 {
     if (!IsDeclarationSupported()) {
         LSP_DEBUG() << GetLogPrefix() << "message `textDocument/declaration` is not supported" << endl;
@@ -564,18 +555,17 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missi
 
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->FindDeclaration"})
     LSP_DEBUG() << GetLogPrefix() << "FindDeclaration() is called" << endl;
-    CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
-    wxString fileContent = editor->GetEditorText();
+    wxString fileContent = editor.GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
     LSP_DEBUG() << GetLogPrefix() << "Sending GotoDeclarationRequest" << endl;
     LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
         new LSP::GotoDeclarationRequest(GetEditorFilePath(editor),
-                                        editor->GetCurrentLine(),
-                                        editor->GetColumnInChars(editor->GetCurrentPosition()),
+                                        editor.GetCurrentLine(),
+                                        editor.GetColumnInChars(editor.GetCurrentPosition()),
                                         for_add_missing_header));
     QueueMessage(req);
 }
@@ -770,7 +760,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
                     m_cluster->AddPendingEvent(initEvent);
 
                     // Move the content of the pending queue into the main queue
-                    m_Queue.Move(m_pendingQueue);
+                    m_Queue.Move(std::move(m_pendingQueue));
 
                 } else if (message_method == "window/workDoneProgress/create") {
                     // Unexpected in this branch, but keep it harmless if it arrives here.
@@ -804,14 +794,13 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->OnEditorChanged"})
     IEditor* editor = clGetManager()->GetActiveEditor();
     if (editor) {
-        OpenEditor(editor);
+        OpenEditor(*editor);
         // a semantic tokens request will be sent as part of the `OpenEditor` request
     }
 }
 
-void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_flags, LSP::ResponseCallback cb)
+void LanguageServerProtocol::DocumentSymbols(IEditor& editor, size_t context_flags, LSP::ResponseCallback cb)
 {
-    CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->DocumentSymbols"})
     const wxString& filename = GetEditorFilePath(editor);
@@ -821,12 +810,12 @@ void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_fla
     QueueMessage(req);
 }
 
-wxString LanguageServerProtocol::GetEditorFilePath(IEditor* editor) const
+wxString LanguageServerProtocol::GetEditorFilePath(const IEditor& editor) const
 {
-    if (editor->IsRemoteFile()) {
-        return editor->GetRemotePath();
+    if (editor.IsRemoteFile()) {
+        return editor.GetRemotePath();
     } else {
-        return editor->GetFileName().GetFullPath();
+        return editor.GetFileName().GetFullPath();
     }
 }
 
@@ -846,14 +835,13 @@ void LanguageServerProtocol::SendWorkspaceSymbolsRequest(const wxString& query_s
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
+void LanguageServerProtocol::SendSemanticTokensRequest(IEditor& editor)
 {
-    CHECK_PTR_RET(editor);
-    wxString filepath = GetEditorFilePath(editor);
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->SendSemanticTokensRequest"})
 
     // check if this is implemented by the server
     if (IsSemanticTokensSupported()) {
+        wxString filepath = GetEditorFilePath(editor);
         LSP::DidChangeTextDocumentRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRequest(filepath));
         QueueMessage(req);
@@ -988,9 +976,8 @@ void LanguageServerProtocol::SendAck(size_t message_id)
     m_network->Send(str);
 }
 
-void LanguageServerProtocol::FindReferences(IEditor* editor)
+void LanguageServerProtocol::FindReferences(IEditor& editor)
 {
-    CHECK_PTR_RET(editor);
     CHECK_EXPECTED_RETURN(IsReferencesSupported(), true);
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->FindReferences"})
 
@@ -999,8 +986,8 @@ void LanguageServerProtocol::FindReferences(IEditor* editor)
 
     LSP::FindReferencesRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
         new LSP::FindReferencesRequest(GetEditorFilePath(editor),
-                                       editor->GetCurrentLine(),
-                                       editor->GetColumnInChars(editor->GetCurrentPosition()),
+                                       editor.GetCurrentLine(),
+                                       editor.GetColumnInChars(editor.GetCurrentPosition()),
                                        false));
     QueueMessage(req);
 
@@ -1009,13 +996,12 @@ void LanguageServerProtocol::FindReferences(IEditor* editor)
     EventNotifier::Get()->AddPendingEvent(event_start);
 }
 
-void LanguageServerProtocol::RenameSymbol(IEditor* editor)
+void LanguageServerProtocol::RenameSymbol(IEditor& editor)
 {
-    CHECK_PTR_RET(editor);
     CHECK_EXPECTED_RETURN(IsRenameSupported(), true);
     LSP_DEBUG() << GetLogPrefix() << "Sending `rename symbol` request" << endl;
 
-    wxString old_name = editor->GetWordAtCaret();
+    wxString old_name = editor.GetWordAtCaret();
     old_name.Trim().Trim(false);
 
     if (old_name.empty()) {
@@ -1033,8 +1019,8 @@ void LanguageServerProtocol::RenameSymbol(IEditor* editor)
     LSP::RenameRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
         new LSP::RenameRequest(newname,
                                GetEditorFilePath(editor),
-                               editor->GetCurrentLine(),
-                               editor->GetColumnInChars(editor->GetCurrentPosition())));
+                               editor.GetCurrentLine(),
+                               editor.GetColumnInChars(editor.GetCurrentPosition())));
     QueueMessage(req);
 }
 
@@ -1111,10 +1097,10 @@ void LSPRequestMessageQueue::Clear()
     m_pendingReplyMessages.clear();
 }
 
-void LSPRequestMessageQueue::Move(LSPRequestMessageQueue& other)
+void LSPRequestMessageQueue::Move(LSPRequestMessageQueue&& other)
 {
     while (!other.m_Queue.empty()) {
-        m_Queue.push(other.m_Queue.front());
+        m_Queue.push(std::move(other.m_Queue.front()));
         other.m_Queue.pop();
     }
 
@@ -1164,9 +1150,9 @@ void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepat
         return;
     }
 
-    if (ShouldHandleFile(editor)) {
+    if (ShouldHandleFile(*editor)) {
         LSP_DEBUG() << "Sending `workspace/executeCommand`" << endl;
-        wxString filename = GetEditorFilePath(editor);
+        wxString filename = GetEditorFilePath(*editor);
         LSP::WorkspaceExecuteCommand::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::WorkspaceExecuteCommand(m_name, filename, command));
         QueueMessage(req);

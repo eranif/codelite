@@ -222,7 +222,7 @@ void Manager::Initialise() {}
 void Manager::ShowOutlineView(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     if (server == nullptr || !server->IsDocumentSymbolsSupported()) {
         // Let others handle this
         clCodeCompletionEvent evt{wxEVT_CC_SHOW_QUICK_OUTLINE};
@@ -248,7 +248,7 @@ void Manager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind ki
     CHECK_PTR_RET(editor);
 
     __PERF_IF_ENABLED(BlockTimer timer_preps{"Preps"};)
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     auto ctrl = editor->GetCtrl();
     int curpos = ctrl->GetCurrentPos();
     auto file_path = editor->GetRemotePathOrLocal();
@@ -276,14 +276,14 @@ void Manager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind ki
     }
     {
         __PERF_IF_ENABLED(BlockTimer timer_cc{"Calling Code Complete"};)
-        server->CodeComplete(editor, kind == LSP::CompletionItem::kTriggerUser);
+        server->CodeComplete(*editor, kind == LSP::CompletionItem::kTriggerUser);
     }
 }
 
 void Manager::FindDeclaration(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     if (server == nullptr || !server->IsDeclarationSupported()) {
         clCodeCompletionEvent event_declaration(wxEVT_CC_FIND_SYMBOL_DECLARATION);
         event_declaration.SetFileName(editor->GetRemotePathOrLocal());
@@ -291,14 +291,14 @@ void Manager::FindDeclaration(IEditor* editor)
         return;
     }
 
-    server->FindDeclaration(editor, false);
+    server->FindDeclaration(*editor, false);
 }
 
 void Manager::FindSymbol(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
 
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     if (server == nullptr) {
         // Let others handle this
         clCodeCompletionEvent findEvent{wxEVT_CC_FIND_SYMBOL};
@@ -309,14 +309,14 @@ void Manager::FindSymbol(IEditor* editor)
         return;
     }
 
-    server->FindDefinition(editor);
+    server->FindDefinition(*editor);
 }
 
 void Manager::FunctionCalltip(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
 
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     if (server == nullptr || clSTCHelper::IsPositionInComment(editor->GetCtrl())) {
         // Let others handle this
         clCodeCompletionEvent findEvent{wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP};
@@ -326,7 +326,7 @@ void Manager::FunctionCalltip(IEditor* editor)
         EventNotifier::Get()->AddPendingEvent(findEvent);
         return;
     }
-    server->FunctionHelp(editor);
+    server->FunctionHelp(*editor);
 }
 
 void Manager::HoverTip(IEditor* editor)
@@ -336,7 +336,7 @@ void Manager::HoverTip(IEditor* editor)
     if (clSTCHelper::IsPositionInComment(editor->GetCtrl())) {
         return;
     }
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     if (server == nullptr) {
         clCodeCompletionEvent evtTypeinfo{wxEVT_CC_TYPEINFO_TIP};
         evtTypeinfo.SetPosition(editor->GetCurrentPosition());
@@ -345,14 +345,14 @@ void Manager::HoverTip(IEditor* editor)
         EventNotifier::Get()->AddPendingEvent(evtTypeinfo);
         return;
     }
-    server->HoverTip(editor);
+    server->HoverTip(*editor);
 }
 
 void Manager::SemanticTokens(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
 
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     if (server == nullptr) {
         clCodeCompletionEvent event_semantic_tokens{wxEVT_CC_SEMANTICS_HIGHLIGHT};
         event_semantic_tokens.SetFileName(editor->GetRemotePathOrLocal());
@@ -360,8 +360,8 @@ void Manager::SemanticTokens(IEditor* editor)
         return;
     }
 
-    server->OpenEditor(editor);
-    server->SendSemanticTokensRequest(editor);
+    server->OpenEditor(*editor);
+    server->SendSemanticTokensRequest(*editor);
 }
 
 void Manager::WorkspaceSymbols(const wxString& filter)
@@ -371,7 +371,7 @@ void Manager::WorkspaceSymbols(const wxString& filter)
     if (editor) {
         // search for server for the current file.
         LSP_DEBUG() << "WorkspaceSymbols: searching for server for file:" << editor->GetRemotePathOrLocal() << endl;
-        server = GetServerForEditor(editor);
+        server = GetServerForEditor(*editor);
     } else {
         LSP_DEBUG() << "WorkspaceSymbols: searching for server for workspace type:"
                     << std::string{magic_enum::enum_name<FileExtManager::FileType>(
@@ -387,7 +387,7 @@ void Manager::WorkspaceSymbols(const wxString& filter)
 void Manager::FindHeaderFile(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     if (server == nullptr) {
         clCodeCompletionEvent find_header_event{wxEVT_CC_FIND_HEADER_FILE};
         find_header_event.SetWord(editor->GetWordAtCaret());
@@ -395,17 +395,17 @@ void Manager::FindHeaderFile(IEditor* editor)
         EventNotifier::Get()->ProcessEvent(find_header_event);
         return;
     }
-    server->FindDeclaration(editor, true);
+    server->FindDeclaration(*editor, true);
 }
 
 bool Manager::RequestSymbolsForEditor(IEditor* editor, LSP::ResponseCallback cb)
 {
     CHECK_PTR_RET_FALSE(editor);
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     CHECK_PTR_RET_FALSE(server);
     CHECK_COND_RET_FALSE(server->IsDocumentSymbolsSupported());
     clGetManager()->SetStatusMessage(_("Requesting document symbols from LSP server..."), 1);
-    server->DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, std::move(cb));
+    server->DocumentSymbols(*editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, std::move(cb));
     return true;
 }
 
@@ -421,7 +421,7 @@ void Manager::Reload(const std::unordered_set<wxString>& languages)
     StartAll(languages);
 }
 
-LanguageServerProtocol::Ptr_t Manager::GetServerForEditor(IEditor* editor)
+LanguageServerProtocol::Ptr_t Manager::GetServerForEditor(const IEditor& editor)
 {
     for (const auto& [_, server] : m_servers) {
         if (server->CanHandle(editor)) {
@@ -507,7 +507,7 @@ void Manager::OnLSPInitialized(LSPEvent& event)
 
     LanguageServerProtocol::Ptr_t lsp = GetServerByName(event.GetServerName());
     if (lsp) {
-        lsp->OpenEditor(editor);
+        lsp->OpenEditor(*editor);
     }
 }
 
@@ -591,8 +591,8 @@ void Manager::OnReparseNeeded(LSPEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    server->CloseEditor(editor);
-    server->OpenEditor(editor);
+    server->CloseEditor(*editor);
+    server->OpenEditor(*editor);
 }
 
 void Manager::OnSemanticTokens(LSPEvent& event)
@@ -1349,10 +1349,10 @@ void Manager::OnMarginClicked(clEditorEvent& event)
     auto editor = clGetManager()->GetActiveEditor();
 
     CHECK_PTR_RET(editor);
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
 
     CHECK_PTR_RET(server);
-    server->SendCodeActionRequest(editor, {cd->diagnostic});
+    server->SendCodeActionRequest(*editor, {cd->diagnostic});
 }
 
 void Manager::OnCodeActionAvailable(LSPEvent& event)
@@ -1402,7 +1402,7 @@ void Manager::OnCodeActionAvailable(LSPEvent& event)
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     CHECK_PTR_RET(server);
 
     server->SendWorkspaceExecuteCommand(event.GetFileName(), *command_to_apply);
@@ -1509,10 +1509,10 @@ void Manager::OnRenameSymbol(wxCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    auto server = LSP::Manager::GetInstance().GetServerForEditor(editor);
+    auto server = LSP::Manager::GetInstance().GetServerForEditor(*editor);
     CHECK_PTR_RET(server);
 
-    server->RenameSymbol(editor);
+    server->RenameSymbol(*editor);
 }
 
 void Manager::OnFindReferences(wxCommandEvent& event)
@@ -1521,9 +1521,9 @@ void Manager::OnFindReferences(wxCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    auto server = GetServerForEditor(editor);
+    auto server = GetServerForEditor(*editor);
     CHECK_PTR_RET(server);
 
-    server->FindReferences(editor);
+    server->FindReferences(*editor);
 }
 } // namespace LSP

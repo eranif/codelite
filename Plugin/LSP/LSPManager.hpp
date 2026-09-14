@@ -69,7 +69,7 @@ public:
      * @brief restart language servers associated with a given languages
      */
     void Reload(const std::unordered_set<wxString>& languages = {});
-    LanguageServerProtocol::Ptr_t GetServerForEditor(IEditor* editor);
+    LanguageServerProtocol::Ptr_t GetServerForEditor(const IEditor& editor);
     LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
     LanguageServerProtocol::Ptr_t GetServerForLanguage(const wxString& lang);
     LanguageServerProtocol::Ptr_t GetServerForFileType(FileExtManager::FileType file_type);
@@ -106,7 +106,7 @@ public:
      * its position, and the file name.
      *
      * If a suitable server is found, the request is forwarded to the server via
-     * @c server->FindDefinition(editor).
+     * @c server->FindDefinition(*editor).
      *
      * @param editor Pointer to the editor instance where the symbol lookup should be performed.
      */
@@ -143,7 +143,7 @@ public:
      *
      * The method obtains the appropriate language server for the editor. If a server
      * is available and the caret is not within a comment, the request is forwarded to
-     * the server via `server->FunctionHelp(editor)`. Otherwise, it falls back to the
+     * the server via `server->FunctionHelp(*editor)`. Otherwise, it falls back to the
      * legacy code‑completion system by emitting a `clCodeCompletionEvent` containing
      * the word at the caret, the current cursor position, and the file name.
      *
@@ -201,7 +201,7 @@ public:
      *
      * The function first validates that {@code editor} is not {@code nullptr}. It then attempts to
      * retrieve a language server associated with the editor via {@code GetServerForEditor}. If a
-     * server is available, the request is delegated to {@code server->FindDeclaration(editor, true)}.
+     * server is available, the request is delegated to {@code server->FindDeclaration(*editor, true)}.
      * Otherwise, a {@code clCodeCompletionEvent} of type {@code wxEVT_CC_FIND_HEADER_FILE} is
      * constructed, populated with the word at the caret and the editor's file path, and dispatched
      * through {@code EventNotifier::Get()->ProcessEvent}. This allows other components to handle

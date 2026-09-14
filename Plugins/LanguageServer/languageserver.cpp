@@ -207,7 +207,7 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    LanguageServerProtocol::Ptr_t lsp = LSP::Manager::GetInstance().GetServerForEditor(editor);
+    LanguageServerProtocol::Ptr_t lsp = LSP::Manager::GetInstance().GetServerForEditor(*editor);
     if (!lsp) {
         wxMenu* menu = event.GetMenu();
         return;

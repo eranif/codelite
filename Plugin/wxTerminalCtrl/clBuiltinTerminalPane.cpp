@@ -861,26 +861,26 @@ void clBuiltinTerminalPane::UpdateFont()
 void clBuiltinTerminalPane::OnLinkClicked(wxTerminalEvent& event)
 {
     event.Skip();
-    CallAfter(&clBuiltinTerminalPane::OpenLink, event.GetClickedText());
+    CallAfter(&clBuiltinTerminalPane::DoOpenLink, event.GetClickedText());
 }
 
-void clBuiltinTerminalPane::OpenLink(const wxString& linkText)
+bool clBuiltinTerminalPane::OpenLink(const wxString& linkText)
 {
     clDEBUG() << "Text clicked inside terminal:" << linkText << endl;
     if (linkText.StartsWith("http://") || linkText.StartsWith("https://")) {
         ::wxLaunchDefaultBrowser(linkText);
-        return;
+        return true;
     }
 
     if (wxFileName::DirExists(linkText)) {
         CallAfter([linkText]() { FileUtils::OpenFileExplorer(linkText); });
-        return;
+        return true;
     }
 
     wxFileName fn{linkText};
     if (FileUtils::IsBinaryExecutable(fn)) {
         ::wxLaunchDefaultApplication(fn.GetFullPath());
-        return;
+        return true;
     }
 
     auto res = FileUtils::ParseTriplet(linkText);
@@ -893,7 +893,9 @@ void clBuiltinTerminalPane::OpenLink(const wxString& linkText)
         event_clicked.SetFileName(triplet.filename);
         event_clicked.SetLineNumber(triplet.line_number);
         EventNotifier::Get()->AddPendingEvent(event_clicked);
-    } else {
-        clDEBUG() << "Failed to parse file triplet:" << linkText << endl;
+        return true;
     }
+    return false;
 }
+
+void clBuiltinTerminalPane::DoOpenLink(const wxString& linkText) { OpenLink(linkText); }

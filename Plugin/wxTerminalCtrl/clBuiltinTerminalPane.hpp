@@ -115,9 +115,10 @@ public:
                                        std::optional<wxString> workingDirectory);
 
     std::optional<wxString> PromptForTerminal();
-    void OpenLink(const wxString& linkText);
+    bool OpenLink(const wxString& linkText);
 
 protected:
+    void DoOpenLink(const wxString& linkText);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnInitDone(wxCommandEvent& e);
     void OnPageChanged(wxBookCtrlEvent& event);

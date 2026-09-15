@@ -5,6 +5,7 @@
 #include "Platform/Platform.hpp"
 #include "clSideBarCtrl.hpp"
 #include "globals.h"
+#include "open_resource_dialog.h"
 
 namespace
 {
@@ -213,7 +214,34 @@ void ClaudeCode::OnTerminalFocus(wxFocusEvent& event)
 
 void ClaudeCode::OnTerminalLink(wxTerminalEvent& event)
 {
-    clGetManager()->GetTerminalManager()->OpenLink(event.GetClickedText());
+    wxString text = event.GetClickedText();
+    if (text.EndsWith("."))
+        text.RemoveLast();
+
+    if (clGetManager()->GetTerminalManager()->OpenLink(text))
+        return;
+
+    // Could not resolve it, try to open a symbol.
+    OpenResourceDialog dlg(EventNotifier::Get()->TopFrame(), clGetManager(), text);
+
+    if (dlg.ShowModal() == wxID_OK && !dlg.GetSelections().empty()) {
+        std::vector<OpenResourceDialogItemData*> items = dlg.GetSelections();
+        for (const auto item : items) {
+
+            // try the plugins first
+            clCommandEvent open_resource_event(wxEVT_OPEN_RESOURCE_FILE_SELECTED);
+            open_resource_event.SetFileName(item->m_file);
+            open_resource_event.SetLineNumber(item->m_line);
+            open_resource_event.SetInt(item->m_column); // use the int field for the column
+
+            if (EventNotifier::Get()->ProcessEvent(open_resource_event)) {
+                continue;
+            }
+
+            // default behaviour
+            OpenResourceDialog::OpenSelection(*item, clGetManager());
+        }
+    }
 }
 
 void ClaudeCode::OnTerminalBell(wxTerminalEvent& event)

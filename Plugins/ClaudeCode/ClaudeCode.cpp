@@ -7,6 +7,10 @@
 #include "globals.h"
 #include "open_resource_dialog.h"
 
+#if USE_SFTP
+#include "clSFTPManager.hpp"
+#endif
+
 namespace
 {
 /// While Claude Code waits for the user, the tab label alternates between these two markers.
@@ -214,28 +218,42 @@ void ClaudeCode::OnTerminalFocus(wxFocusEvent& event)
 
 void ClaudeCode::OnTerminalLink(wxTerminalEvent& event)
 {
-    wxString text = event.GetClickedText();
-    if (text.EndsWith("."))
-        text.RemoveLast();
+    wxString trimmed_text = event.GetClickedText();
+    while (trimmed_text.EndsWith(".") || trimmed_text.EndsWith(":"))
+        trimmed_text.RemoveLast();
 
-    if (text.StartsWith("http://") || text.StartsWith("https://")) {
-        ::wxLaunchDefaultBrowser(text);
+    if (trimmed_text.StartsWith("http://") || trimmed_text.StartsWith("https://")) {
+        ::wxLaunchDefaultBrowser(trimmed_text);
         return;
     }
 
-    if (wxFileName::DirExists(text)) {
-        CallAfter([text]() { FileUtils::OpenFileExplorer(text); });
+    wxString saved_trimmed_text = trimmed_text;
+    if (trimmed_text.StartsWith("~/"))
+        trimmed_text = wxGetHomeDir() + trimmed_text.Mid(1);
+
+    if (wxFileName::DirExists(trimmed_text)) {
+        CallAfter([trimmed_text]() { FileUtils::OpenFileExplorer(trimmed_text); });
         return;
     }
 
-    wxFileName fn{text};
-    if (FileUtils::IsBinaryExecutable(fn)) {
-        ::wxLaunchDefaultApplication(fn.GetFullPath());
+    if (FileUtils::IsBinaryExecutable(trimmed_text)) {
+        ::wxLaunchDefaultApplication(trimmed_text);
         return;
     }
+
+    if (clGetManager()->OpenFile(trimmed_text) != nullptr)
+        return;
+
+#if USE_SFTP
+    // Try a remote file.
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (workspace && workspace->IsRemote() &&
+        (clSFTPManager::Get().OpenFile(saved_trimmed_text, workspace->GetSshAccount()) != nullptr))
+        return;
+#endif
 
     // Could not resolve it, try the "open resource dialog"
-    OpenResourceDialog dlg(EventNotifier::Get()->TopFrame(), clGetManager(), text);
+    OpenResourceDialog dlg(EventNotifier::Get()->TopFrame(), clGetManager(), trimmed_text);
 
     if (dlg.ShowModal() == wxID_OK && !dlg.GetSelections().empty()) {
         std::vector<OpenResourceDialogItemData*> items = dlg.GetSelections();

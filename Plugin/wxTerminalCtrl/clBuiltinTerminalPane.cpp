@@ -892,8 +892,7 @@ bool clBuiltinTerminalPane::OpenLink(const wxString& linkText)
         event_clicked.SetBuildDir(wxEmptyString); // can be empty
         event_clicked.SetFileName(triplet.filename);
         event_clicked.SetLineNumber(triplet.line_number);
-        EventNotifier::Get()->AddPendingEvent(event_clicked);
-        return true;
+        return EventNotifier::Get()->ProcessEvent(event_clicked);
     }
     return false;
 }

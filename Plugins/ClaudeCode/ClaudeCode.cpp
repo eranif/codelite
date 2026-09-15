@@ -218,10 +218,23 @@ void ClaudeCode::OnTerminalLink(wxTerminalEvent& event)
     if (text.EndsWith("."))
         text.RemoveLast();
 
-    if (clGetManager()->GetTerminalManager()->OpenLink(text))
+    if (text.StartsWith("http://") || text.StartsWith("https://")) {
+        ::wxLaunchDefaultBrowser(text);
         return;
+    }
 
-    // Could not resolve it, try to open a symbol.
+    if (wxFileName::DirExists(text)) {
+        CallAfter([text]() { FileUtils::OpenFileExplorer(text); });
+        return;
+    }
+
+    wxFileName fn{text};
+    if (FileUtils::IsBinaryExecutable(fn)) {
+        ::wxLaunchDefaultApplication(fn.GetFullPath());
+        return;
+    }
+
+    // Could not resolve it, try the "open resource dialog"
     OpenResourceDialog dlg(EventNotifier::Get()->TopFrame(), clGetManager(), text);
 
     if (dlg.ShowModal() == wxID_OK && !dlg.GetSelections().empty()) {

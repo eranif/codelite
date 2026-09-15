@@ -168,8 +168,13 @@ void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show, bool tak
     if (!show) {
         // Make sure we set a focus to something
         auto editor = clGetManager()->GetActiveEditor();
-        CHECK_PTR_RET(editor);
-        editor->GetCtrl()->CallAfter(&wxWindow::SetFocus);
+        if (editor)
+            editor->GetCtrl()->CallAfter(&wxWindow::SetFocus);
+        else {
+            auto currentPage = clGetManager()->GetMainNotebook()->GetCurrentPage();
+            if (currentPage)
+                currentPage->CallAfter(&wxWindow::SetFocus);
+        }
         return;
     }
 

@@ -173,13 +173,15 @@ const wxEventType wxEVT_LOAD_SESSION = ::wxNewEventType();
 #define FACTOR_2 2.0
 #endif
 
-#define CODELITE_SET_BEST_FOCUS()                          \
-    if (clGetManager()->GetActiveEditor()) {               \
-        clGetManager()->GetActiveEditor()->SetActive();    \
-    } else if (m_sidebar->IsShown()) {                     \
-        m_sidebar->GrabFocus();                            \
-    } else if (GetMainBook()->GetWelcomePage(false)) {     \
-        GetMainBook()->GetWelcomePage(false)->GrabFocus(); \
+#define CODELITE_SET_BEST_FOCUS()                                                            \
+    if (clGetManager()->GetActiveEditor()) {                                                 \
+        clGetManager()->GetActiveEditor()->SetActive();                                      \
+    } else if (clGetManager()->GetMainNotebook()->GetCurrentPage()) {                        \
+        clGetManager()->GetMainNotebook()->GetCurrentPage()->CallAfter(&wxWindow::SetFocus); \
+    } else if (m_sidebar->IsShown()) {                                                       \
+        m_sidebar->GrabFocus();                                                              \
+    } else if (GetMainBook()->GetWelcomePage(false)) {                                       \
+        GetMainBook()->GetWelcomePage(false)->GrabFocus();                                   \
     }
 
 /**

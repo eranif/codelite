@@ -1,5 +1,6 @@
 #include "ClaudeCode.hpp"
 
+#include "ClaudeCodeSettgingsDlg.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "Platform/Platform.hpp"
 #include "clSideBarCtrl.hpp"
@@ -29,20 +30,43 @@ ClaudeCode::ClaudeCode(IManager* manager)
         "claude-code", _("Launch Claude Code for the Current Workspace"), m_showClaudeCode);
     EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &ClaudeCode::OnAllPagesClosed, this);
-
-    m_mgr->GetTheApp()->Bind(wxEVT_MENU, &ClaudeCode::OnShowClaudeCode, this, XRCID("launch_claude_code"));
-    clKeyboardManager::Get()->AddAccelerator(_("Claude Code"),
-                                             {
-                                                 {"launch_claude_code", _("Launch Claude Code"), "Ctrl-Shift-I"},
-                                             });
 }
 
 ClaudeCode::~ClaudeCode() { EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this); }
 
 void ClaudeCode::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
-void ClaudeCode::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
+void ClaudeCode::CreatePluginMenu(wxMenu* pluginsMenu)
+{
+    wxMenu* menu = new wxMenu();
+    wxMenuItem* item(NULL);
+    item = new wxMenuItem(menu,
+                          XRCID("launch_claude_code"),
+                          _("Launch Claude Code\tCtrl-Shift-I"),
+                          _("Launch Claude Code"),
+                          wxITEM_NORMAL);
+    menu->Append(item);
+    menu->AppendSeparator();
+    item = new wxMenuItem(menu, XRCID("claude_code_options"), _("Options..."), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);
+    pluginsMenu->Append(wxID_ANY, _("Claude Code"), menu);
+    menu->Bind(wxEVT_MENU, &ClaudeCode::OnSettings, this, XRCID("claude_code_options"));
+    menu->Bind(wxEVT_MENU, &ClaudeCode::OnShowClaudeCode, this, XRCID("launch_claude_code"));
+
+    clKeyboardManager::Get()->AddAccelerator(
+        _("Claude Code"),
+        {{"launch_claude_code", _("Launch Claude Code"), "Ctrl-Shift-I"}, {"claude_code_options", _("Options...")}});
+}
+
 void ClaudeCode::UnPlug() {}
-void ClaudeCode::OnSettings(wxCommandEvent& event) { wxUnusedVar(event); }
+void ClaudeCode::OnSettings(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    ClaudeCodeSettgingsDlg dlg{EventNotifier::Get()->TopFrame()};
+    if (dlg.ShowModal() == wxID_OK) {
+        auto claude_exec = dlg.GetClaudeCode();
+        clConfig::Get().Write(kClaudeCodeExecutable, claude_exec);
+    }
+}
 
 void ClaudeCode::ShowClaudeTerminal()
 {
@@ -58,9 +82,17 @@ void ClaudeCode::ShowClaudeTerminal()
 
     std::optional<wxString> claude_exec{std::nullopt};
     if (workspace->IsRemote())
+        // On remote machines, always use the claude executable defined by the PATH
         claude_exec = "claude";
     else {
-        claude_exec = ThePlatform->Which("claude");
+        // On local executions, use the configured claude executable first if one is not set, locate using
+        // the environment variables.
+        auto configured_claude_exec = clConfig::Get().Read(kClaudeCodeExecutable, wxString{});
+        if (configured_claude_exec.empty())
+            claude_exec = ThePlatform->Which("claude");
+        else
+            claude_exec = configured_claude_exec;
+
         if (!claude_exec) {
             wxMessageBox(_("Could not locate claude executable"), "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
             return;
@@ -108,9 +140,9 @@ void ClaudeCode::ShowClaudeTerminal()
     });
 
     // TODO: add support for link clicked (open URLs in default browser or files inside CodeLite).
-    // TOOD: suggest a "--continue" option to the caller.
     claude_exec.value().Prepend("\"").Append("\"");
-    m_claudeTerminal->SendCommand(claude_exec.value());
+    wxString command_to_run = wxString::Format("%s --continue || %s", *claude_exec, *claude_exec);
+    m_claudeTerminal->SendCommand(command_to_run);
 }
 
 void ClaudeCode::OnPageClosing(wxNotifyEvent& event)

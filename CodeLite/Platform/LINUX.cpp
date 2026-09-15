@@ -82,6 +82,7 @@ std::optional<wxString> LINUX::GetPath(bool useSystemPath)
 #if defined(__WXGTK__) || defined(__WXMAC__)
     // both macOS and Linux are using this path
     special_paths.Add(wxString() << HOME.value_or("") << "/.local/bin");
+    special_paths.Add(wxString() << HOME.value_or("") << "/.toolbox/bin");
 #if defined(__WXGTK__)
     // linux also supports homebrew
     if (wxFileName::DirExists("/home/linuxbrew/.linuxbrew/bin")) {

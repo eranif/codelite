@@ -27,6 +27,10 @@
 
 #include "plugin.h"
 
+#include <wx/timer.h>
+
+class wxTerminalEvent;
+
 class ClaudeCode : public IPlugin
 {
 public:
@@ -53,7 +57,33 @@ protected:
     void OnPageClosing(wxNotifyEvent& event);
     void OnShowClaudeCode(wxCommandEvent& event);
     void OnAllPagesClosed(wxCommandEvent& event);
+    void OnPageChanged(wxCommandEvent& event);
+    void OnBlinkTimer(wxTimerEvent& event);
+
+    /// The terminal rang the bell. Claude Code does this when it needs the user (a question, a
+    /// permission prompt or a completed task).
+    void OnTerminalBell(wxTerminalEvent& event);
+    void OnTerminalLink(wxTerminalEvent& event);
+
+    /// The user is looking at the terminal again, clear the attention state.
+    void OnTerminalFocus(wxFocusEvent& event);
+
+    /// Start / stop blinking the tab label of the Claude Code terminal.
+    void StartAttentionBlink();
+    void StopAttentionBlink();
+
+    /// Apply `m_tabTitle` to the tab, with the attention marker if we are blinking.
+    void UpdateTabLabel();
+
+    /// Return true if the Claude Code tab is the selected tab and the main frame is active.
+    bool IsClaudeTerminalVisible() const;
 
     wxTerminalViewCtrl* m_claudeTerminal{nullptr};
     std::shared_ptr<std::function<void()>> m_showClaudeCode;
+
+    /// The tab label without the attention marker.
+    wxString m_tabTitle;
+    wxTimer m_blinkTimer;
+    bool m_needsAttention{false};
+    bool m_blinkOn{false};
 };

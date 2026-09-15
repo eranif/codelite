@@ -861,10 +861,10 @@ void clBuiltinTerminalPane::UpdateFont()
 void clBuiltinTerminalPane::OnLinkClicked(wxTerminalEvent& event)
 {
     event.Skip();
-    CallAfter(&clBuiltinTerminalPane::DoOpenLink, event.GetClickedText());
+    CallAfter(&clBuiltinTerminalPane::OpenLink, event.GetClickedText());
 }
 
-void clBuiltinTerminalPane::DoOpenLink(const wxString& linkText)
+void clBuiltinTerminalPane::OpenLink(const wxString& linkText)
 {
     clDEBUG() << "Text clicked inside terminal:" << linkText << endl;
     if (linkText.StartsWith("http://") || linkText.StartsWith("https://")) {

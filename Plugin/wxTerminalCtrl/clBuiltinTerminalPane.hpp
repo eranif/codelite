@@ -115,6 +115,7 @@ public:
                                        std::optional<wxString> workingDirectory);
 
     std::optional<wxString> PromptForTerminal();
+    void OpenLink(const wxString& linkText);
 
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
@@ -151,7 +152,6 @@ protected:
     void ApplySettings();
     void UpdateFont();
     void OnSettings(wxCommandEvent& event);
-    void DoOpenLink(const wxString& linkText);
 
 private:
     static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);

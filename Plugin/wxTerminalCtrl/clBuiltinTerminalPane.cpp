@@ -203,7 +203,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::GetActiveTerminal()
     return static_cast<wxTerminalViewCtrl*>(m_book->GetPage(m_book->GetSelection()));
 }
 
-wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
+wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxWindow* parent,
                                                           const wxString& shellCommand,
                                                           const wxString& tabTitle,
                                                           bool makeActive,
@@ -214,7 +214,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
     // By default, inherit parent's env.
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
-    wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(book, shellCommand, env, workingDirectory);
+    wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(parent, shellCommand, env, workingDirectory);
     ctrl->EnsureStarted();
     ctrl->SetBufferSize(m_terminalSettings.m_scrollBackLines);
     ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!`");
@@ -230,11 +230,14 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
     ctrl->Bind(wxEVT_CHAR_HOOK, &clBuiltinTerminalPane::OnTerminalShortcutCharHook, this);
 
     // Add the page to the notebook
-    book->AddPage(ctrl, tabTitle, makeActive);
+    wxBookCtrlBase* book = dynamic_cast<wxBookCtrlBase*>(parent);
+    if (book) {
+        book->AddPage(ctrl, tabTitle, makeActive);
+    }
     ctrl->EnableSafeDrawing(!m_terminalSettings.m_optimizedDrawings);
 
     // Bind events
-    if (bindEvents) {
+    if (bindEvents && book != nullptr) {
         ctrl->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [ctrl, persistTabTitle, book](wxTerminalEvent& event) {
             if (persistTabTitle) {
                 return;
@@ -260,6 +263,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
         });
         ctrl->Bind(wxEVT_TERMINAL_TEXT_LINK, &clBuiltinTerminalPane::OnLinkClicked, this);
     }
+
     // Register standard keyboard shortcuts for the terminal.
     std::vector<wxAcceleratorEntry> V;
     V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'R', XRCID("Ctrl_ID_command")});
@@ -315,7 +319,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
                                                               const wxString& tabTitle,
                                                               bool makeVisible,
                                                               std::optional<wxString> terminal_cmd,
-                                                              wxBookCtrlBase* book)
+                                                              wxWindow* parent)
 {
     wxString cmd;
     if (!terminal_cmd) {
@@ -336,8 +340,9 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
         wd = workingDirectory;
     }
 
-    wxTerminalViewCtrl* ctrl = CreateTerminal(
-        book == nullptr ? m_book : book, cmd, finalTabTitle, makeVisible, !tabTitle.empty(), book == m_book, wd);
+    bool usingInternalBook = parent == nullptr || parent == m_book;
+    wxTerminalViewCtrl* ctrl =
+        CreateTerminal(parent, cmd, finalTabTitle, makeVisible, !tabTitle.empty(), usingInternalBook, wd);
     if (!ctrl) {
         return nullptr;
     }
@@ -378,7 +383,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
     }
 
     // If makeVisible is true, show the output pane and select the Terminal tab
-    if (makeVisible && (book == m_book)) {
+    if (makeVisible && usingInternalBook) {
         clGetManager()->ShowOutputPane(TERMINAL_TAB);
     }
     return ctrl;

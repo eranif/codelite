@@ -25,9 +25,8 @@
 
 #pragma once
 
+#include "ClaudeCodePage.hpp"
 #include "plugin.h"
-
-#include <wx/timer.h>
 
 class wxTerminalEvent;
 
@@ -78,7 +77,7 @@ protected:
     /// Return true if the Claude Code tab is the selected tab and the main frame is active.
     bool IsClaudeTerminalVisible() const;
 
-    wxTerminalViewCtrl* m_claudeTerminal{nullptr};
+    ClaudeCodePage* m_claudeCodePage{nullptr};
     std::shared_ptr<std::function<void()>> m_showClaudeCode;
 
     /// The tab label without the attention marker.

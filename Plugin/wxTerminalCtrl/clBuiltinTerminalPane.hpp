@@ -45,7 +45,7 @@ public:
                                            const wxString& tabTitle = wxEmptyString,
                                            bool makeVisible = true,
                                            std::optional<wxString> terminal_cmd = std::nullopt,
-                                           wxBookCtrlBase* book = nullptr);
+                                           wxWindow* parent = nullptr);
 
     /**
      * @brief Open new terminal, this is similar to the user clicking the "+" button
@@ -106,11 +106,10 @@ public:
      *
      * @return A pointer to the newly created wxTerminalViewCtrl instance.
      */
-    wxTerminalViewCtrl* CreateTerminal(wxBookCtrlBase* book,
+    wxTerminalViewCtrl* CreateTerminal(wxWindow* parent,
                                        const wxString& shellCommand,
                                        const wxString& tabTitle,
                                        bool makeActive,
-                                       bool persistTabTitle,
                                        bool bindEvents,
                                        std::optional<wxString> workingDirectory);
 
@@ -118,6 +117,7 @@ public:
     bool OpenLink(const wxString& linkText);
 
 protected:
+    void BindTerminalEvents(wxTerminalViewCtrl* terminal, bool persistTabTitle);
     void DoOpenLink(const wxString& linkText);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnInitDone(wxCommandEvent& e);

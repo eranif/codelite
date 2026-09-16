@@ -49,6 +49,7 @@ const wxArrayString& GetBasePlugins()
         basePlugins.push_back("Diff Plugin");
         basePlugins.push_back("SmartCompletion");
         basePlugins.push_back("Rust");
+        basePlugins.push_back("ClaudeCode");
     }
     return basePlugins;
 }

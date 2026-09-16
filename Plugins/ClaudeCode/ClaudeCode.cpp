@@ -94,10 +94,13 @@ void ClaudeCode::OnSettings(wxCommandEvent& event)
 void ClaudeCode::ShowClaudeTerminal()
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    CHECK_PTR_RET(workspace);
+    if (workspace == nullptr) {
+        wxMessageBox(_("Launching Claude Code requires a workspace"), "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
+        return;
+    }
 
-    if (m_claudeTerminal) {
-        if (!clGetManager()->SelectPage(m_claudeTerminal)) {
+    if (m_claudeCodePage) {
+        if (!clGetManager()->SelectPage(m_claudeCodePage)) {
             clWARNING() << "Could not select claude tab window" << endl;
         }
         return;
@@ -124,64 +127,56 @@ void ClaudeCode::ShowClaudeTerminal()
 
     // Define the working directory & the ssh account (if a remote workspace)
     std::optional<SSHAccountInfo> sshAccount{std::nullopt};
-    std::optional<wxString> wd{std::nullopt};
+    wxString workdingDirectory;
 
-    if (workspace) {
-        wd = workspace->GetDir();
-        if (workspace->IsRemote()) {
-            sshAccount = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
-        }
+    workdingDirectory = workspace->GetDir();
+    if (workspace->IsRemote()) {
+        sshAccount = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
     }
 
-#ifdef __WXMSW__
-    const wxString kShellCommand = "CMD";
-    const wxString kShellTitle = wxT("🤖 Claude Code");
-#else
-    const wxString kShellCommand = "/bin/bash --login -i";
-    const wxString kShellTitle = wxEmptyString;
-#endif
+    m_claudeCodePage = new ClaudeCodePage(clGetManager()->GetMainNotebook(), workdingDirectory, sshAccount);
+    clGetManager()->GetMainNotebook()->AddPage(m_claudeCodePage, _("Claude Code"), true);
 
-    m_claudeTerminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-        wd.value(), sshAccount, kShellTitle, true, kShellCommand, clGetManager()->GetMainNotebook());
-
-    CHECK_PTR_RET(m_claudeTerminal);
+    CHECK_PTR_RET(m_claudeCodePage);
 
     // Remember the label given to the tab, the blink code needs it.
     auto book = clGetManager()->GetMainNotebook();
-    int page_index = book->FindPage(m_claudeTerminal);
+    int page_index = book->FindPage(m_claudeCodePage);
     m_tabTitle = page_index == wxNOT_FOUND ? _("Claude Code") : book->GetPageText(page_index);
 
-    m_claudeTerminal->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [this](wxTerminalEvent& event) {
+    m_claudeCodePage->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [this](wxTerminalEvent& event) {
         wxString new_title = event.GetTitle();
         new_title.Trim().Trim(false);
         if (new_title.empty()) {
-            new_title = _("Terminal");
+            new_title = _("Claude Code");
         }
         m_tabTitle = new_title;
         UpdateTabLabel();
     });
 
-    m_claudeTerminal->Bind(wxEVT_TERMINAL_BELL, &ClaudeCode::OnTerminalBell, this);
-    m_claudeTerminal->Bind(wxEVT_SET_FOCUS, &ClaudeCode::OnTerminalFocus, this);
-
-    m_claudeTerminal->Bind(wxEVT_TERMINAL_TERMINATED, [this](wxTerminalEvent& event) {
+    m_claudeCodePage->Bind(wxEVT_TERMINAL_BELL, &ClaudeCode::OnTerminalBell, this);
+    m_claudeCodePage->Bind(wxEVT_SET_FOCUS, &ClaudeCode::OnTerminalFocus, this);
+    m_claudeCodePage->Bind(wxEVT_TERMINAL_TERMINATED, [book, this](wxTerminalEvent& event) {
         StopAttentionBlink();
-        m_claudeTerminal = nullptr;
-        wxUnusedVar(event);
+        int where = book->FindPage(m_claudeCodePage);
+        if (where != wxNOT_FOUND) {
+            book->DeletePage(where);
+        }
+        m_claudeCodePage = nullptr;
     });
 
-    m_claudeTerminal->Bind(wxEVT_TERMINAL_TEXT_LINK, &ClaudeCode::OnTerminalLink, this);
+    m_claudeCodePage->Bind(wxEVT_TERMINAL_TEXT_LINK, &ClaudeCode::OnTerminalLink, this);
     claude_exec.value().Prepend("\"").Append("\"");
     wxString command_to_run = wxString::Format("%s --continue || %s", *claude_exec, *claude_exec);
-    m_claudeTerminal->SendCommand(command_to_run);
+    m_claudeCodePage->GetTerminal()->SendCommand(command_to_run);
 }
 
 void ClaudeCode::OnPageClosing(wxNotifyEvent& event)
 {
     const wxWindow* win = reinterpret_cast<wxWindow*>(event.GetClientData());
-    if (win && win == m_claudeTerminal) {
+    if (win && win == m_claudeCodePage) {
         StopAttentionBlink();
-        m_claudeTerminal = nullptr;
+        m_claudeCodePage = nullptr;
         return;
     }
     event.Skip();
@@ -190,7 +185,7 @@ void ClaudeCode::OnPageClosing(wxNotifyEvent& event)
 void ClaudeCode::OnAllPagesClosed(wxCommandEvent& event)
 {
     StopAttentionBlink();
-    m_claudeTerminal = nullptr;
+    m_claudeCodePage = nullptr;
     event.Skip();
 }
 
@@ -204,7 +199,7 @@ void ClaudeCode::OnPageChanged(wxCommandEvent& event)
 {
     event.Skip();
     const wxWindow* win = reinterpret_cast<wxWindow*>(event.GetClientData());
-    if (win && win == m_claudeTerminal) {
+    if (win && win == m_claudeCodePage) {
         // The user switched to the Claude Code tab, the attention state is no longer needed.
         StopAttentionBlink();
     }
@@ -288,7 +283,7 @@ void ClaudeCode::OnTerminalBell(wxTerminalEvent& event)
 void ClaudeCode::OnBlinkTimer(wxTimerEvent& event)
 {
     wxUnusedVar(event);
-    if (!m_needsAttention || !m_claudeTerminal) {
+    if (!m_needsAttention || !m_claudeCodePage) {
         StopAttentionBlink();
         return;
     }
@@ -298,7 +293,7 @@ void ClaudeCode::OnBlinkTimer(wxTimerEvent& event)
 
 void ClaudeCode::StartAttentionBlink()
 {
-    CHECK_PTR_RET(m_claudeTerminal);
+    CHECK_PTR_RET(m_claudeCodePage);
     if (m_needsAttention) {
         // Already blinking.
         return;
@@ -322,9 +317,9 @@ void ClaudeCode::StopAttentionBlink()
 
 void ClaudeCode::UpdateTabLabel()
 {
-    CHECK_PTR_RET(m_claudeTerminal);
+    CHECK_PTR_RET(m_claudeCodePage);
     auto book = clGetManager()->GetMainNotebook();
-    int index = book->FindPage(m_claudeTerminal);
+    int index = book->FindPage(m_claudeCodePage);
     if (index == wxNOT_FOUND) {
         return;
     }
@@ -338,12 +333,12 @@ void ClaudeCode::UpdateTabLabel()
 
 bool ClaudeCode::IsClaudeTerminalVisible() const
 {
-    if (!m_claudeTerminal) {
+    if (!m_claudeCodePage) {
         return false;
     }
 
     auto book = clGetManager()->GetMainNotebook();
-    int index = book->FindPage(m_claudeTerminal);
+    int index = book->FindPage(m_claudeCodePage);
     if (index == wxNOT_FOUND || index != book->GetSelection()) {
         return false;
     }

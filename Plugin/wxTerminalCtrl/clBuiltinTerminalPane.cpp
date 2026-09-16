@@ -203,18 +203,46 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::GetActiveTerminal()
     return static_cast<wxTerminalViewCtrl*>(m_book->GetPage(m_book->GetSelection()));
 }
 
-wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
+void clBuiltinTerminalPane::BindTerminalEvents(wxTerminalViewCtrl* terminal, bool persistTabTitle)
+{
+    // Bind events
+    terminal->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [terminal, persistTabTitle, this](wxTerminalEvent& event) {
+        if (persistTabTitle) {
+            return;
+        }
+        wxString new_title = event.GetTitle();
+        new_title.Trim().Trim(false);
+
+        if (new_title.empty()) {
+            new_title = _("Terminal");
+        }
+        int index = m_book->FindPage(terminal);
+        if (index != wxNOT_FOUND) {
+            m_book->SetPageText(index, new_title);
+        }
+    });
+
+    terminal->Bind(wxEVT_TERMINAL_TERMINATED, [terminal, this](wxTerminalEvent& event) {
+        wxUnusedVar(event);
+        int where = m_book->FindPage(terminal);
+        if (where != wxNOT_FOUND) {
+            m_book->DeletePage(where);
+        }
+    });
+    terminal->Bind(wxEVT_TERMINAL_TEXT_LINK, &clBuiltinTerminalPane::OnLinkClicked, this);
+}
+
+wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxWindow* parent,
                                                           const wxString& shellCommand,
                                                           const wxString& tabTitle,
                                                           bool makeActive,
-                                                          bool persistTabTitle,
                                                           bool bindEvents,
                                                           std::optional<wxString> workingDirectory)
 {
     // By default, inherit parent's env.
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
-    wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(book, shellCommand, env, workingDirectory);
+    wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(parent, shellCommand, env, workingDirectory);
     ctrl->EnsureStarted();
     ctrl->SetBufferSize(m_terminalSettings.m_scrollBackLines);
     ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!`");
@@ -230,36 +258,12 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxBookCtrlBase* book,
     ctrl->Bind(wxEVT_CHAR_HOOK, &clBuiltinTerminalPane::OnTerminalShortcutCharHook, this);
 
     // Add the page to the notebook
-    book->AddPage(ctrl, tabTitle, makeActive);
+    wxBookCtrlBase* book = dynamic_cast<wxBookCtrlBase*>(parent);
+    if (book) {
+        book->AddPage(ctrl, tabTitle, makeActive);
+    }
     ctrl->EnableSafeDrawing(!m_terminalSettings.m_optimizedDrawings);
 
-    // Bind events
-    if (bindEvents) {
-        ctrl->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [ctrl, persistTabTitle, book](wxTerminalEvent& event) {
-            if (persistTabTitle) {
-                return;
-            }
-            wxString new_title = event.GetTitle();
-            new_title.Trim().Trim(false);
-
-            if (new_title.empty()) {
-                new_title = _("Terminal");
-            }
-            int index = book->FindPage(ctrl);
-            if (index != wxNOT_FOUND) {
-                book->SetPageText(index, new_title);
-            }
-        });
-
-        ctrl->Bind(wxEVT_TERMINAL_TERMINATED, [ctrl, book](wxTerminalEvent& event) {
-            wxUnusedVar(event);
-            int where = book->FindPage(ctrl);
-            if (where != wxNOT_FOUND) {
-                book->DeletePage(where);
-            }
-        });
-        ctrl->Bind(wxEVT_TERMINAL_TEXT_LINK, &clBuiltinTerminalPane::OnLinkClicked, this);
-    }
     // Register standard keyboard shortcuts for the terminal.
     std::vector<wxAcceleratorEntry> V;
     V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'R', XRCID("Ctrl_ID_command")});
@@ -315,7 +319,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
                                                               const wxString& tabTitle,
                                                               bool makeVisible,
                                                               std::optional<wxString> terminal_cmd,
-                                                              wxBookCtrlBase* book)
+                                                              wxWindow* parent)
 {
     wxString cmd;
     if (!terminal_cmd) {
@@ -336,10 +340,15 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
         wd = workingDirectory;
     }
 
-    wxTerminalViewCtrl* ctrl = CreateTerminal(
-        book == nullptr ? m_book : book, cmd, finalTabTitle, makeVisible, !tabTitle.empty(), book == m_book, wd);
+    bool usingInternalBook = parent == nullptr || parent == m_book;
+    wxTerminalViewCtrl* ctrl =
+        CreateTerminal(parent == nullptr ? m_book : parent, cmd, finalTabTitle, makeVisible, usingInternalBook, wd);
     if (!ctrl) {
         return nullptr;
+    }
+
+    if (usingInternalBook) {
+        BindTerminalEvents(ctrl, !tabTitle.empty());
     }
 
     // If working directory is provided, change to it
@@ -378,7 +387,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
     }
 
     // If makeVisible is true, show the output pane and select the Terminal tab
-    if (makeVisible && (book == m_book)) {
+    if (makeVisible && usingInternalBook) {
         clGetManager()->ShowOutputPane(TERMINAL_TAB);
     }
     return ctrl;
@@ -451,7 +460,8 @@ void clBuiltinTerminalPane::NewTerminal()
         if (workspace && !workspace->IsRemote()) {
             wd = workspace->GetDir();
         }
-        CreateTerminal(m_book, *shell, *shell, true, false, true, wd);
+        auto ctrl = CreateTerminal(m_book, *shell, *shell, true, true, wd);
+        BindTerminalEvents(ctrl, false);
     }
 }
 

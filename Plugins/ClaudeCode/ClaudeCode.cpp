@@ -94,7 +94,10 @@ void ClaudeCode::OnSettings(wxCommandEvent& event)
 void ClaudeCode::ShowClaudeTerminal()
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    CHECK_PTR_RET(workspace);
+    if (workspace == nullptr) {
+        wxMessageBox(_("Launching Claude Code requires a workspace"), "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
+        return;
+    }
 
     if (m_claudeCodePage) {
         if (!clGetManager()->SelectPage(m_claudeCodePage)) {
@@ -124,27 +127,15 @@ void ClaudeCode::ShowClaudeTerminal()
 
     // Define the working directory & the ssh account (if a remote workspace)
     std::optional<SSHAccountInfo> sshAccount{std::nullopt};
-    std::optional<wxString> wd{std::nullopt};
+    wxString workdingDirectory;
 
-    if (workspace) {
-        wd = workspace->GetDir();
-        if (workspace->IsRemote()) {
-            sshAccount = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
-        }
+    workdingDirectory = workspace->GetDir();
+    if (workspace->IsRemote()) {
+        sshAccount = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
     }
 
-#ifdef __WXMSW__
-    const wxString kShellCommand = "CMD";
-    const wxString kShellTitle = wxT("🤖 Claude Code");
-#else
-    const wxString kShellCommand = "/bin/bash --login -i";
-    const wxString kShellTitle = wxEmptyString;
-#endif
-    m_claudeCodePage =
-        new ClaudeCodePage(clGetManager()->GetMainNotebook(),
-                           clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-                               wd.value(), sshAccount, kShellTitle, true, kShellCommand, m_claudeCodePage));
-    clGetManager()->GetMainNotebook()->AddPage(m_claudeCodePage, kShellTitle, true);
+    m_claudeCodePage = new ClaudeCodePage(clGetManager()->GetMainNotebook(), workdingDirectory, sshAccount);
+    clGetManager()->GetMainNotebook()->AddPage(m_claudeCodePage, _("Claude Code"), true);
 
     CHECK_PTR_RET(m_claudeCodePage);
 
@@ -157,7 +148,7 @@ void ClaudeCode::ShowClaudeTerminal()
         wxString new_title = event.GetTitle();
         new_title.Trim().Trim(false);
         if (new_title.empty()) {
-            new_title = _("Terminal");
+            new_title = _("Claude Code");
         }
         m_tabTitle = new_title;
         UpdateTabLabel();
@@ -165,11 +156,13 @@ void ClaudeCode::ShowClaudeTerminal()
 
     m_claudeCodePage->Bind(wxEVT_TERMINAL_BELL, &ClaudeCode::OnTerminalBell, this);
     m_claudeCodePage->Bind(wxEVT_SET_FOCUS, &ClaudeCode::OnTerminalFocus, this);
-
-    m_claudeCodePage->Bind(wxEVT_TERMINAL_TERMINATED, [this](wxTerminalEvent& event) {
+    m_claudeCodePage->Bind(wxEVT_TERMINAL_TERMINATED, [book, this](wxTerminalEvent& event) {
         StopAttentionBlink();
+        int where = book->FindPage(m_claudeCodePage);
+        if (where != wxNOT_FOUND) {
+            book->DeletePage(where);
+        }
         m_claudeCodePage = nullptr;
-        wxUnusedVar(event);
     });
 
     m_claudeCodePage->Bind(wxEVT_TERMINAL_TEXT_LINK, &ClaudeCode::OnTerminalLink, this);

@@ -341,8 +341,8 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
     }
 
     bool usingInternalBook = parent == nullptr || parent == m_book;
-    wxTerminalViewCtrl* ctrl =
-        CreateTerminal(parent, cmd, finalTabTitle, makeVisible, !tabTitle.empty(), usingInternalBook, wd);
+    wxTerminalViewCtrl* ctrl = CreateTerminal(
+        parent == nullptr ? m_book : parent, cmd, finalTabTitle, makeVisible, !tabTitle.empty(), usingInternalBook, wd);
     if (!ctrl) {
         return nullptr;
     }

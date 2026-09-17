@@ -427,7 +427,7 @@ IMPLEMENT_APP(CodeLiteApp)
 
 extern void InitXmlResource();
 CodeLiteApp::CodeLiteApp()
-    : m_pMainFrame(NULL)
+    : m_pMainFrame(nullptr)
     , m_singleInstance(NULL)
     , m_pluginLoadPolicy(PP_All)
     , m_startedInDebuggerMode(false)

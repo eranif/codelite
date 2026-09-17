@@ -315,7 +315,7 @@ void MainBook::OnPageClosed(wxBookCtrlEvent& e)
     SelectPage(m_book->GetCurrentPage());
 
     // any editors left open?
-    clEditor* editor = NULL;
+    clEditor* editor = nullptr;
     for (size_t i = 0; i < m_book->GetPageCount() && editor == NULL; i++) {
         editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
     }
@@ -489,7 +489,7 @@ clEditor* MainBook::GetActiveEditor()
     }
 
     if (!GetCurrentPage()) {
-        return NULL;
+        return nullptr;
     }
     return dynamic_cast<clEditor*>(GetCurrentPage());
 }
@@ -602,7 +602,7 @@ wxWindow* MainBook::FindPage(const wxString& text)
             return m_book->GetPage(i);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 clEditor* MainBook::NewEditor()
@@ -731,13 +731,13 @@ clEditor* MainBook::OpenFile(const wxString& file_name,
 
     if (!IsFileExists(fileName)) {
         clDEBUG() << "Failed to open:" << fileName << ". No such file or directory";
-        return NULL;
+        return nullptr;
     }
 
     if (FileExtManager::GetType(fileName.GetFullPath()) == FileExtManager::TypeBmp) {
         // a bitmap file, open it using an image viewer
         DoOpenImageViewer(fileName);
-        return NULL;
+        return nullptr;
     }
 
     wxString projName = projectName;
@@ -758,10 +758,10 @@ clEditor* MainBook::OpenFile(const wxString& file_name,
     if (editor) {
         editor->SetProject(projName);
     } else if (fileName.IsOk() == false) {
-        return NULL;
+        return nullptr;
 
     } else if (!fileName.FileExists()) {
-        return NULL;
+        return nullptr;
 
     } else {
 #if !CL_USE_NATIVEBOOK
@@ -1146,9 +1146,9 @@ bool MainBook::CloseAll(bool cancellable)
     clGetManager()->SetStatusMessage("");
 
     // Update the frame's title
-    clMainFrame::Get()->SetFrameTitle(NULL);
+    clMainFrame::Get()->SetFrameTitle(nullptr);
 
-    DoHandleFrameMenu(NULL);
+    DoHandleFrameMenu(nullptr);
 
     // OutputTabWindow::OnEditUI will crash on >=wxGTK-2.9.3 if we don't set the focus somewhere that still exists
     // This workaround doesn't seem to work if applied earlier in the function :/
@@ -1300,7 +1300,7 @@ bool MainBook::DoSelectPage(wxWindow* win)
     DoHandleFrameMenu(editor);
 
     if (!editor) {
-        clMainFrame::Get()->SetFrameTitle(NULL);
+        clMainFrame::Get()->SetFrameTitle(nullptr);
         clMainFrame::Get()->GetStatusBar()->SetLinePosColumn(wxEmptyString);
         EventNotifier::Get()->SendCommandEvent(wxEVT_CMD_PAGE_CHANGED, win);
 
@@ -1922,13 +1922,13 @@ void MainBook::OnEditorChanged(wxCommandEvent& event)
         m_findBar->SetEditor(editor->GetCtrl());
         return;
     }
-    m_findBar->SetEditor(NULL);
+    m_findBar->SetEditor(nullptr);
 }
 
 void MainBook::OnAllEditorClosed(wxCommandEvent& event)
 {
     event.Skip();
-    m_findBar->SetEditor(NULL);
+    m_findBar->SetEditor(nullptr);
 
 #if wxHAS_MINIMAP
     if (m_miniMapsBook->GetPageCount()) {

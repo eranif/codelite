@@ -1525,7 +1525,7 @@ void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
     wxMenuItem* labelCurrentState = event.GetMenu()->FindChildItem(XRCID("label_current_state"));
     if (labelCurrentState) { // Here seems to be the only reliable place to do 'updateui' for this; a real UpdateUI
                              // handler is only hit when there's no editor :/
-        labelCurrentState->Enable(editor != NULL);
+        labelCurrentState->Enable(editor != nullptr);
     } else {
         // In wx3.1 Bind()ing wxEVT_MENU_OPEN for the Edit menu catches its submenu opens too, so we arrive here
         // multiple times
@@ -5500,7 +5500,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
 
 void clMainFrame::OnDetachEditor(wxCommandEvent& e) { wxUnusedVar(e); }
 
-void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()->GetActiveEditor() != NULL); }
+void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()->GetActiveEditor() != nullptr); }
 
 void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
 {

@@ -52,7 +52,7 @@ public:
         : CLTextCommand(CLC_insert, name)
     {
     }
-    virtual ~CLInsertTextCommand() = default;
+    ~CLInsertTextCommand() override = default;
 };
 
 class CLDeleteTextCommand : public CLTextCommand
@@ -62,7 +62,7 @@ public:
         : CLTextCommand(CLC_delete, name)
     {
     }
-    virtual ~CLDeleteTextCommand() = default;
+    ~CLDeleteTextCommand() override = default;
 };
 
 class CLCommandProcessor : public CommandProcessorBase

@@ -148,7 +148,7 @@ class VirtualDirectoryTree
 
 public:
     VirtualDirectoryTree()
-        : m_parent(NULL)
+        : m_parent(nullptr)
     {
     }
     VirtualDirectoryTree(const VirtualDirectoryTree* parent, const wxString& displayname, const wxString& vdPath)

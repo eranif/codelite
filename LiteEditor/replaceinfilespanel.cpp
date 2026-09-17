@@ -207,7 +207,7 @@ wxStyledTextCtrl* ReplaceInFilesPanel::DoGetEditor(const wxString& fileName)
     if (!ReadFileWithConversion(fileName, content)) {
         wxMessageBox(_("Failed to open file:\n") + fileName, _("CodeLite - Replace"), wxICON_ERROR | wxOK);
         clDEBUG() << "Replace: Failed to read file" << fileName;
-        return NULL;
+        return nullptr;
     }
 
     sci = new wxStyledTextCtrl(this);
@@ -268,7 +268,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 
     // Step 1: apply selected replacements
 
-    wxStyledTextCtrl* sci = NULL; // file that is being altered by replacements
+    wxStyledTextCtrl* sci = nullptr; // file that is being altered by replacements
 
     wxString lastFile; // track offsets of pending substitutions caused by previous substitutions
     long lastLine = 0;
@@ -293,7 +293,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
             firstInFile = i;
             lastFile = res.GetFileName();
             lastLine = 0;
-            sci = NULL;
+            sci = nullptr;
         }
 
         if (res.GetLineNumber() == lastLine) {

@@ -906,7 +906,7 @@ VirtualDirectoryTree* VirtualDirectoryTree::FindParent(const wxString& vdChildPa
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void VirtualDirectoryTree::StoreChild(const wxString& displayname, const wxString& vdPath)

@@ -264,7 +264,7 @@ void PluginManager::Load()
 
         // Let the plugins plug their menu in the 'Plugins' menu at the menu bar
         // the create menu will be placed as a sub menu of the 'Plugin' menu
-        wxMenu* pluginsMenu = NULL;
+        wxMenu* pluginsMenu = nullptr;
         wxMenuItem* menuitem = clMainFrame::Get()->GetMainMenuBar()->FindItem(XRCID("manage_plugins"), &pluginsMenu);
         if (pluginsMenu && menuitem) {
             for (auto& vt : m_plugins) {
@@ -330,7 +330,7 @@ IEditor* PluginManager::GetActiveEditor()
         }
         return dynamic_cast<IEditor*>(editor);
     }
-    return NULL;
+    return nullptr;
 }
 
 IConfigTool* PluginManager::GetConfigTool() { return EditorConfigST::Get(); }
@@ -461,7 +461,7 @@ IPlugin* PluginManager::GetPlugin(const wxString& pluginName)
     if (iter != m_plugins.end()) {
         return iter->second;
     }
-    return NULL;
+    return nullptr;
 }
 
 wxEvtHandler* PluginManager::GetOutputWindow() { return clMainFrame::Get()->GetOutputPane()->GetOutputWindow(); }
@@ -825,7 +825,7 @@ clStatusBar* PluginManager::GetStatusBar()
     if (clMainFrame::m_initCompleted) {
         return clMainFrame::Get()->GetStatusBar();
     }
-    return NULL;
+    return nullptr;
 }
 
 void PluginManager::ToggleSidebarPane(const wxString& selectedWindow)

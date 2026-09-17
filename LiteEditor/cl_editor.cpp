@@ -453,14 +453,14 @@ clEditor::clEditor(wxWindow* parent)
     , m_autoAddNormalBraces(false)
     , m_autoAdjustHScrollbarWidth(true)
     , m_reloadingFile(false)
-    , m_functionTip(NULL)
-    , m_calltip(NULL)
+    , m_functionTip(nullptr)
+    , m_calltip(nullptr)
     , m_lastCharEntered(0)
     , m_lastCharEnteredPos(0)
     , m_isFocused(true)
     , m_findBookmarksActive(false)
     , m_mgr(PluginManager::Get())
-    , m_richTooltip(NULL)
+    , m_richTooltip(nullptr)
     , m_lastEndLine(0)
     , m_lastLineCount(0)
 {
@@ -5484,7 +5484,7 @@ void clEditor::DoCancelCodeCompletionBox()
     if (m_calltip) {
         m_calltip->Hide();
         m_calltip->Destroy();
-        m_calltip = NULL;
+        m_calltip = nullptr;
     }
     // wxCodeCompletionBoxManager::Get().DestroyCCBox();
 }

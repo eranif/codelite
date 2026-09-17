@@ -40,7 +40,7 @@
 #include <algorithm>
 #include <vector>
 
-static CodeCompletionManager* ms_CodeCompletionManager = NULL;
+static CodeCompletionManager* ms_CodeCompletionManager = nullptr;
 
 // Helper class
 struct EditorDimmerDisabler {

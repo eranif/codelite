@@ -143,7 +143,7 @@ wxXmlNode* TabgroupManager::FindTabgroupItem(wxXmlDocument& doc, const wxString&
         }
     }
     // The Find failed, so return null
-    return NULL;
+    return nullptr;
 }
 
 wxXmlNode*
@@ -163,7 +163,7 @@ TabgroupManager::DoDeleteTabgroupItem(wxXmlDocument& doc, const wxString& filepa
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void TabgroupManager::OnWorkspaceLoaded(clWorkspaceEvent& evt)

@@ -297,7 +297,7 @@ void BreakptMgr::DoRefreshFileBreakpoints(clEditor* editor)
 // Given a list of bps, tell the editor which is the most significant (in marker terms)
 void BreakptMgr::DoProvideBestBP_Type(clEditor* editor, const std::vector<clDebuggerBreakpoint>& li)
 {
-    if ((editor == NULL) || (li.size() == 0)) {
+    if ((editor == nullptr) || (li.size() == 0)) {
         return;
     }
     // If there's an enabled bp of any sort, it beats all disabled ones

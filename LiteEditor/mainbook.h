@@ -95,12 +95,12 @@ public:
     clEditorBar* GetEditorBar() { return m_navBar; }
     void SetEditorBar(clEditorBar* bar) { m_navBar = bar; }
 
-    void SaveSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
+    void SaveSession(SessionEntry& session, wxArrayInt* excludeArr = nullptr);
     void RestoreSession(const SessionEntry& session);
     /**
      * @brief create session from current IDE state
      */
-    void CreateSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
+    void CreateSession(SessionEntry& session, wxArrayInt* excludeArr = nullptr);
 
     clEditor* GetActiveEditor();
     /**

@@ -62,7 +62,7 @@ public:
 
     virtual void Load(BuildConfigPtr buildConf);
     virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
-    virtual void Clear();
+    void Clear() override;
 };
 
 #endif // __ps_debugger_page__

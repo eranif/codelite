@@ -61,9 +61,9 @@ class swString : public swBase
 
 public:
     swString() = default;
-    virtual ~swString() = default;
+    ~swString() override = default;
 
-    void Serialize(wxSerialize& ar)
+    void Serialize(wxSerialize& ar) override
     {
         if (ar.IsStoring())
             ar << m_string;

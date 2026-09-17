@@ -21,7 +21,7 @@ TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     , m_lastPos(0)
     , m_plugin(plugin)
     , m_isDetached(false)
-    , m_frame(NULL)
+    , m_frame(nullptr)
 {
     DoBuildToolbar();
     m_fileWatcher = std::make_unique<clFileSystemWatcher>();

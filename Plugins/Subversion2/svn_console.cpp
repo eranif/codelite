@@ -48,7 +48,7 @@
 //-------------------------------------------------------------
 SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)
     : m_sci(stc)
-    , m_process(NULL)
+    , m_process(nullptr)
     , m_plugin(plugin)
     , m_inferiorEnd(0)
 {
@@ -156,13 +156,13 @@ void SvnConsole::Stop()
 {
     if (m_process) {
         delete m_process;
-        m_process = NULL;
+        m_process = nullptr;
     }
     AppendText(_("Aborted.\n"));
     AppendText(wxT("--------\n"));
 }
 
-bool SvnConsole::IsRunning() { return m_process != NULL; }
+bool SvnConsole::IsRunning() { return m_process != nullptr; }
 
 bool SvnConsole::IsEmpty() { return m_sci->GetText().IsEmpty(); }
 

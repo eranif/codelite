@@ -138,7 +138,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 Subversion2::Subversion2(IManager* manager)
     : IPlugin(manager)
-    , m_projectSepItem(NULL)
+    , m_projectSepItem(nullptr)
     , m_simpleCommand(this)
     , m_diffCommand(this)
     , m_blameCommand(this)
@@ -266,7 +266,7 @@ void Subversion2::CreatePluginMenu(wxMenu* pluginsMenu)
 
     // You can use the below code a snippet:
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item = new wxMenuItem(menu, XRCID("subversion2_settings"), _("Subversion Options"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("Subversion2"), menu);
@@ -275,7 +275,7 @@ void Subversion2::CreatePluginMenu(wxMenu* pluginsMenu)
 wxMenu* Subversion2::CreateProjectPopMenu()
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(menu, XRCID("svn_workspace_sync"), _("Sync Project Files..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
@@ -298,7 +298,7 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu(bool isFile)
     // Create the popup menu for the file explorer
     // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     if (!isFile) {
         item = new wxMenuItem(
@@ -783,7 +783,7 @@ void Subversion2::Patch(bool dryRun, const wxString& workingDirectory, wxEvtHand
             }
             command << " -i \"" << patchFile << "\"";
 
-            SvnCommandHandler* handler(NULL);
+            SvnCommandHandler* handler(nullptr);
             if (dryRun) {
                 handler = new SvnPatchDryRunHandler(this, id, owner, removeFileWhenDone, patchFile);
             } else {

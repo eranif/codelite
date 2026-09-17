@@ -6,5 +6,5 @@ class fmtShfmtFormat : public GenericFormatter
 {
 public:
     fmtShfmtFormat();
-    virtual ~fmtShfmtFormat();
+    ~fmtShfmtFormat() override;
 };

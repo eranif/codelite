@@ -50,9 +50,9 @@
 
 #define DBE_VERSION "0.5.3 Beta"
 
-static DatabaseExplorer* thePlugin = NULL;
+static DatabaseExplorer* thePlugin = nullptr;
 
-DbViewerPanel* DatabaseExplorer::m_dbViewerPanel = NULL;
+DbViewerPanel* DatabaseExplorer::m_dbViewerPanel = nullptr;
 
 IManager* DatabaseExplorer::GetManager() { return thePlugin->m_mgr; }
 

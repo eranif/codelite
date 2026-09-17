@@ -25,7 +25,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 Tail::Tail(IManager* manager)
     : IPlugin(manager)
-    , m_view(NULL)
+    , m_view(nullptr)
 {
     m_longName = _("A Linux like tail command ");
     m_shortName = wxT("Tail");
@@ -61,10 +61,10 @@ void Tail::UnPlug()
     if (m_view && !m_view->IsDetached()) {
         DoDetachWindow();
         m_view->Destroy();
-        m_view = NULL;
+        m_view = nullptr;
     } else if (m_view && m_view->GetFrame()) {
         m_view->GetFrame()->Destroy();
-        m_view->SetFrame(NULL);
+        m_view->SetFrame(nullptr);
     }
 }
 
@@ -98,7 +98,7 @@ void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, 
         // copy the settinhs from the current view
         DoDetachWindow();
         m_view->Destroy();
-        m_view = NULL;
+        m_view = nullptr;
     }
 
     // Hook our output-pane panel

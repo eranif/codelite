@@ -57,7 +57,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
 
     MSWSetNativeTheme(m_treeDatabases);
 
-    m_pDbAdapter = NULL;
+    m_pDbAdapter = nullptr;
     m_pConnections = new xsSerializable();
     GetSizer()->Layout();
 
@@ -721,8 +721,8 @@ void DbViewerPanel::AddEditorPage(wxWindow* page, const wxString& name)
 
 void DbViewerPanel::OnContextMenu(wxTreeEvent& event)
 {
-    m_pEditedDatabase = NULL;
-    m_pEditedConnection = NULL;
+    m_pEditedDatabase = nullptr;
+    m_pEditedConnection = nullptr;
     m_selectedID = event.GetItem();
 
     DbItem* item = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);

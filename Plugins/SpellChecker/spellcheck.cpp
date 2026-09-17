@@ -109,7 +109,7 @@ SpellCheck::~SpellCheck()
     m_topWin->Unbind(wxEVT_MENU, &SpellCheck::OnAddWord, this, SPC_ADD_WORD);
     m_topWin->Unbind(wxEVT_MENU, &SpellCheck::OnIgnoreWord, this, SPC_IGNORE_WORD);
 
-    if (m_pEngine != NULL) {
+    if (m_pEngine != nullptr) {
         SaveSettings();
         wxDELETE(m_pEngine);
     }
@@ -119,7 +119,7 @@ SpellCheck::~SpellCheck()
 void SpellCheck::Init()
 {
     m_topWin = NULL;
-    m_pEngine = NULL;
+    m_pEngine = nullptr;
     m_longName = _("CodeLite spell-checker");
     m_shortName = s_plugName;
     m_sepItem = NULL;
@@ -250,7 +250,7 @@ IEditor* SpellCheck::GetEditor()
 
     if (!editor) {
         ::wxMessageBox(::wxGetTranslation(s_noEditor), s_codeLite, wxICON_WARNING | wxOK);
-        return NULL;
+        return nullptr;
     }
     return editor;
 }

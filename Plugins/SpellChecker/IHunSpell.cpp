@@ -183,7 +183,7 @@ IHunSpell::~IHunSpell()
 {
     CloseEngine();
 
-    if (m_pSpellDlg != NULL)
+    if (m_pSpellDlg != nullptr)
         m_pSpellDlg->Destroy();
 }
 // ------------------------------------------------------------
@@ -289,7 +289,7 @@ void IHunSpell::CheckSpelling()
     wxString text = pEditor->GetEditorText() + " ";
 
     // check for dialog and create if necessary
-    if (m_pSpellDlg == NULL) {
+    if (m_pSpellDlg == nullptr) {
         m_pSpellDlg = new CorrectSpellingDlg(NULL);
     }
     m_pSpellDlg->SetPHs(this);

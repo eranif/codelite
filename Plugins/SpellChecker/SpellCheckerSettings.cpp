@@ -44,7 +44,7 @@
 SpellCheckerSettings::SpellCheckerSettings(wxWindow* parent)
     : SpellCheckerSettings_base(parent)
 {
-    m_pHunspell = NULL;
+    m_pHunspell = nullptr;
     m_dictionaryPath.Empty();
 
     m_pCurrentLanguage->SetValidator(wxGenericValidator(&m_dictionaryFileName));

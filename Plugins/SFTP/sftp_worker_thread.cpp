@@ -33,17 +33,17 @@
 #include <libssh/sftp.h>
 #include <wx/ffile.h>
 
-SFTPWorkerThread* SFTPWorkerThread::ms_instance = 0;
+SFTPWorkerThread* SFTPWorkerThread::ms_instance = nullptr;
 
 SFTPWorkerThread::SFTPWorkerThread()
     : m_sftp(NULL)
-    , m_plugin(NULL)
+    , m_plugin(nullptr)
 {
 }
 
 SFTPWorkerThread* SFTPWorkerThread::Instance()
 {
-    if (ms_instance == 0) {
+    if (ms_instance == nullptr) {
         ms_instance = new SFTPWorkerThread();
     }
     return ms_instance;
@@ -55,7 +55,7 @@ void SFTPWorkerThread::Release()
         ms_instance->Stop();
         delete ms_instance;
     }
-    ms_instance = 0;
+    ms_instance = nullptr;
 }
 
 void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)

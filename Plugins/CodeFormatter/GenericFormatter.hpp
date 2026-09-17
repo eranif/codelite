@@ -52,7 +52,7 @@ protected:
 
 public:
     GenericFormatter();
-    virtual ~GenericFormatter();
+    ~GenericFormatter() override;
 
     void FromJSON(const JSONItem& json) override;
     JSONItem ToJSON() const override;

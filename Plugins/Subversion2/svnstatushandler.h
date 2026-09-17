@@ -42,7 +42,7 @@ public:
                      wxEvtHandler* owner,
                      bool fileExplorerOnly = false,
                      const wxString& rootDir = wxT(""));
-    virtual ~SvnStatusHandler() = default;
+    ~SvnStatusHandler() override = default;
 
 public:
     virtual void Process(const wxString& output);

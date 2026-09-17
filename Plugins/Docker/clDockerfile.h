@@ -9,7 +9,7 @@ class clDockerfile : public clDockerBuildableFile
 public:
     clDockerfile(const wxString& path);
     clDockerfile();
-    virtual ~clDockerfile() = default;
+    ~clDockerfile() override = default;
 
     void FromJSON(const JSONItem& json, const wxString& workspaceDir);
     JSONItem ToJSON(const wxString& workspaceDir) const;

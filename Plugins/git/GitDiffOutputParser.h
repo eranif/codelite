@@ -22,7 +22,7 @@ public:
      * @param M [output]
      * @param commitMessage optional store for the commit message in Blame and CommitList dialogs
      */
-    void GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, wxArrayString* commitMessage = NULL) const;
+    void GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, wxArrayString* commitMessage = nullptr) const;
 };
 
 #endif // GITDIFFOUTPUTPARSER_H

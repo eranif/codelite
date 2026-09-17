@@ -27,7 +27,7 @@
 
 XS_IMPLEMENT_CLONABLE_CLASS(DbConnection, xsSerializable);
 
-DbConnection::DbConnection() { m_pDbAdapter = NULL; }
+DbConnection::DbConnection() { m_pDbAdapter = nullptr; }
 DbConnection::DbConnection(IDbAdapter* dbAdapter, const wxString& serverName)
 {
     m_serverName = serverName;
@@ -45,7 +45,7 @@ DbConnection::~DbConnection()
 {
     if (m_pDbAdapter) {
         delete m_pDbAdapter;
-        m_pDbAdapter = NULL;
+        m_pDbAdapter = nullptr;
     }
 }
 

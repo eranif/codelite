@@ -43,18 +43,18 @@ class MySqlDbAdapter : public IDbAdapter
 public:
     MySqlDbAdapter();
     MySqlDbAdapter(const wxString& serverName, const wxString& userName, const wxString& password);
-    ~MySqlDbAdapter() = default;
+    ~MySqlDbAdapter() override = default;
 
-    virtual bool GetColumns(Table* pTab);
-    virtual void GetDatabases(DbConnection* dbCon);
-    virtual void GetTables(Database* db, bool includeViews);
-    virtual void GetViews(Database* db);
+    bool GetColumns(Table* pTab) override;
+    void GetDatabases(DbConnection* dbCon) override;
+    void GetTables(Database* db, bool includeViews) override;
+    void GetViews(Database* db) override;
 
-    virtual IDbAdapter* Clone();
+    IDbAdapter* Clone() override;
 
-    virtual bool CanConnect();
-    virtual bool IsConnected();
-    virtual void CloseConnection();
+    bool CanConnect() override;
+    bool IsConnected() override;
+    void CloseConnection() override;
     virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName);
 
     virtual wxString GetUseDb(const wxString& dbName);
@@ -71,9 +71,9 @@ public:
 
     virtual wxArrayString* GetDbTypes();
 
-    virtual IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type);
-    virtual void ConvertTable(Table* pTab);
-    virtual IDbType* ConvertType(IDbType* pType);
+    IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type) override;
+    void ConvertTable(Table* pTab) override;
+    IDbType* ConvertType(IDbType* pType) override;
 
 protected:
     IDbType* parseTypeString(const wxString& typeString);

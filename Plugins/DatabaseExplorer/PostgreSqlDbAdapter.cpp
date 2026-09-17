@@ -99,7 +99,7 @@ wxString PostgreSqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable)
 
     SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
     while (node) {
-        Column* col = NULL;
+        Column* col = nullptr;
         if (node->GetData()->IsKindOf(CLASSINFO(Column)))
             col = (Column*)node->GetData();
         if (col)
@@ -140,7 +140,7 @@ wxString PostgreSqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable)
 
 IDbType* PostgreSqlDbAdapter::GetDbTypeByName(const wxString& typeName)
 {
-    IDbType* type = NULL;
+    IDbType* type = nullptr;
     // numeric types
     if (typeName == wxT("SMALLINT")) {
         type = new PostgreSqlType(wxT("SMALLINT"), IDbType::dbtNOT_NULL, IDbType::dbtTYPE_INT);
@@ -505,7 +505,7 @@ wxString PostgreSqlDbAdapter::GetAlterTableConstraintSql(Table* tab)
 
     SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
     while (node) {
-        Constraint* constr = NULL;
+        Constraint* constr = nullptr;
         constr = wxDynamicCast(node->GetData(), Constraint);
         if (constr) {
             if (constr->GetType() == Constraint::foreignKey) {
@@ -626,7 +626,7 @@ IDbType* PostgreSqlDbAdapter::ConvertType(IDbType* pType)
 
 IDbType* PostgreSqlDbAdapter::GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type)
 {
-    IDbType* newType = NULL;
+    IDbType* newType = nullptr;
     switch (type) {
     case IDbType::dbtTYPE_INT:
         newType = GetDbTypeByName(wxT("INTEGER"));

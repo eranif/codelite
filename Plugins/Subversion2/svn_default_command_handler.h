@@ -34,7 +34,7 @@ class SvnDefaultCommandHandler : public SvnCommandHandler
 {
 public:
     SvnDefaultCommandHandler(Subversion2* plugin, int commandId, wxEvtHandler* owner);
-    virtual ~SvnDefaultCommandHandler() = default;
+    ~SvnDefaultCommandHandler() override = default;
 
 public:
     virtual void Process(const wxString& output);

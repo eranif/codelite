@@ -7,7 +7,7 @@ class DAPConsoleOutput : public DAPTerminalCtrlView
 {
 public:
     DAPConsoleOutput(wxWindow* parent);
-    virtual ~DAPConsoleOutput() = default;
+    ~DAPConsoleOutput() override = default;
 
     void AddOutputEvent(dap::OutputEvent* event);
 };

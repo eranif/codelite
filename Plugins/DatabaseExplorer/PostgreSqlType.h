@@ -40,31 +40,31 @@ public:
     virtual ~PostgreSqlType() = default;
     void InitSerialize();
 
-    virtual bool GetAutoIncrement() { return m_autoIncrement; }
-    virtual bool GetNotNull() { return m_notNull; }
-    virtual bool GetPrimaryKey() { return m_primaryKey; }
-    virtual long GetSize() { return m_size; }
-    virtual long GetSize2() { return m_size2; }
+    bool GetAutoIncrement() override { return m_autoIncrement; }
+    bool GetNotNull() override { return m_notNull; }
+    bool GetPrimaryKey() override { return m_primaryKey; }
+    long GetSize() override { return m_size; }
+    long GetSize2() override { return m_size2; }
     virtual wxString GetTypeName() { return m_typeName; }
-    virtual bool GetUnique() { return m_unique; }
-    virtual bool HaveAutoIncrement() { return (m_dbtPropertyFlags & dbtAUTO_INCREMENT); }
-    virtual bool HaveNotNull() { return (m_dbtPropertyFlags & dbtNOT_NULL); }
-    virtual bool HavePrimaryKey() { return (m_dbtPropertyFlags & dbtPRIMARY_KEY); }
-    virtual bool HaveSize() { return (m_dbtPropertyFlags & dbtSIZE); }
-    virtual bool HaveSize2() { return (m_dbtPropertyFlags & dbtSIZE_TWO); }
-    virtual bool HaveUnique() { return (m_dbtPropertyFlags & dbtUNIQUE); }
-    virtual void SetAutoIncrement(bool autoIncrement) { m_autoIncrement = autoIncrement; }
-    virtual void SetNotNull(bool notNull) { m_notNull = notNull; }
-    virtual void SetPrimaryKey(bool primaryKey) { m_primaryKey = primaryKey; }
-    virtual void SetSize(long size) { m_size = size; }
-    virtual void SetSize2(long size) { m_size2 = size; }
-    virtual void SetUnique(bool unique) { m_unique = unique; }
+    bool GetUnique() override { return m_unique; }
+    bool HaveAutoIncrement() override { return (m_dbtPropertyFlags & dbtAUTO_INCREMENT); }
+    bool HaveNotNull() override { return (m_dbtPropertyFlags & dbtNOT_NULL); }
+    bool HavePrimaryKey() override { return (m_dbtPropertyFlags & dbtPRIMARY_KEY); }
+    bool HaveSize() override { return (m_dbtPropertyFlags & dbtSIZE); }
+    bool HaveSize2() override { return (m_dbtPropertyFlags & dbtSIZE_TWO); }
+    bool HaveUnique() override { return (m_dbtPropertyFlags & dbtUNIQUE); }
+    void SetAutoIncrement(bool autoIncrement) override { m_autoIncrement = autoIncrement; }
+    void SetNotNull(bool notNull) override { m_notNull = notNull; }
+    void SetPrimaryKey(bool primaryKey) override { m_primaryKey = primaryKey; }
+    void SetSize(long size) override { m_size = size; }
+    void SetSize2(long size) override { m_size2 = size; }
+    void SetUnique(bool unique) override { m_unique = unique; }
     virtual wxString ReturnSql();
 
-    virtual long GetPropertyFlags() { return m_dbtPropertyFlags; }
-    virtual void SetPropertyFlags(long flags) { m_dbtPropertyFlags = flags; }
+    long GetPropertyFlags() override { return m_dbtPropertyFlags; }
+    void SetPropertyFlags(long flags) override { m_dbtPropertyFlags = flags; }
 
-    virtual IDbType::UNIVERSAL_TYPE GetUniversalType();
+    IDbType::UNIVERSAL_TYPE GetUniversalType() override;
 
 protected:
     wxString m_typeName;

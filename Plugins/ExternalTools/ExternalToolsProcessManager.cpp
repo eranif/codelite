@@ -34,7 +34,7 @@ public:
     }
 };
 
-ToolsTaskManager* ToolsTaskManager::ms_instance = 0;
+ToolsTaskManager* ToolsTaskManager::ms_instance = nullptr;
 
 ToolsTaskManager::ToolsTaskManager()
 {
@@ -50,7 +50,7 @@ ToolsTaskManager::~ToolsTaskManager()
 
 ToolsTaskManager* ToolsTaskManager::Instance()
 {
-    if (ms_instance == 0) {
+    if (ms_instance == nullptr) {
         ms_instance = new ToolsTaskManager();
     }
     return ms_instance;
@@ -61,7 +61,7 @@ void ToolsTaskManager::Release()
     if (ms_instance) {
         delete ms_instance;
     }
-    ms_instance = 0;
+    ms_instance = nullptr;
 }
 
 void ToolsTaskManager::OnProcessEnd(clProcessEvent& event)

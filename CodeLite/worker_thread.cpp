@@ -70,7 +70,7 @@ void* WorkerThread::Entry()
         ProcessRequest(request);
         wxDELETE(request);
     }
-    return NULL;
+    return nullptr;
 }
 
 void WorkerThread::Add(ThreadRequest* request)

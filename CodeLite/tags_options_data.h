@@ -107,8 +107,8 @@ public:
     static size_t CURRENT_VERSION;
 
 protected:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     void DoUpdateTokensWxMap();
     void DoUpdateTokensWxMapReversed();
@@ -119,7 +119,7 @@ public:
 
 public:
     TagsOptionsData();
-    virtual ~TagsOptionsData() = default;
+    ~TagsOptionsData() override = default;
 
     void AddDefaultTokens();
 

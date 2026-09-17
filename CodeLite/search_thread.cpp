@@ -554,18 +554,18 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
     files.Sort([](const wxString& f1, const wxString& f2) -> int { return f1.CmpNoCase(f2); });
 }
 
-static SearchThread* gs_SearchThread = NULL;
+static SearchThread* gs_SearchThread = nullptr;
 void SearchThreadST::Free()
 {
     if (gs_SearchThread) {
         delete gs_SearchThread;
     }
-    gs_SearchThread = NULL;
+    gs_SearchThread = nullptr;
 }
 
 SearchThread* SearchThreadST::Get()
 {
-    if (gs_SearchThread == NULL)
+    if (gs_SearchThread == nullptr)
         gs_SearchThread = new SearchThread;
     return gs_SearchThread;
 }

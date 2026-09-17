@@ -97,7 +97,7 @@ public:
 	virtual int yylex() = 0;
 
 	/// Call yylex with new input/output sources.
-	int yylex( std::istream* new_in, std::ostream* new_out = 0 )
+	int yylex( std::istream* new_in, std::ostream* new_out = nullptr )
 		{
 		switch_streams( new_in, new_out );
 		return yylex();
@@ -105,8 +105,8 @@ public:
 
 	/// Switch to new input/output streams.  A nil stream pointer
 	/// indicates "keep the current one".
-	virtual void switch_streams( std::istream* new_in = 0,
-					std::ostream* new_out = 0 ) = 0;
+	virtual void switch_streams( std::istream* new_in = nullptr,
+					std::ostream* new_out = nullptr ) = 0;
 
 	int lineno() const		{ return yylineno; }
 
@@ -139,17 +139,17 @@ class WXDLLIMPEXP_CL yyFlexLexer : public FlexLexer {
 public:
 	/// arg_yyin and arg_yyout default to the cin and cout, but we
 	/// only make that assignment when initializing in yylex().
-	yyFlexLexer( std::istream* arg_yyin = 0, std::ostream* arg_yyout = 0 );
+	yyFlexLexer( std::istream* arg_yyin = nullptr, std::ostream* arg_yyout = nullptr );
 
-	virtual ~yyFlexLexer();
+	~yyFlexLexer() override;
 
-	void yy_switch_to_buffer( struct yy_buffer_state* new_buffer );
-	struct yy_buffer_state* yy_create_buffer( std::istream* s, int size );
-	void yy_delete_buffer( struct yy_buffer_state* b );
-	void yyrestart( std::istream* s );
+	void yy_switch_to_buffer( struct yy_buffer_state* new_buffer ) override;
+	struct yy_buffer_state* yy_create_buffer( std::istream* s, int size ) override;
+	void yy_delete_buffer( struct yy_buffer_state* b ) override;
+	void yyrestart( std::istream* s ) override;
 
-	virtual int yylex();
-	virtual void switch_streams( std::istream* new_in, std::ostream* new_out );
+	int yylex() override;
+	void switch_streams( std::istream* new_in, std::ostream* new_out ) override;
 
 protected:
 	virtual int LexerInput( char* buf, int max_size );

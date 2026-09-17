@@ -39,11 +39,11 @@ class WXDLLIMPEXP_CL CommentConfigData : public SerializedObject
 
 public:
     CommentConfigData();
-    virtual ~CommentConfigData() = default;
+    ~CommentConfigData() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     // Setters
     void SetAddStarOnCComment(bool addStarOnCComment) { this->m_addStarOnCComment = addStarOnCComment; }

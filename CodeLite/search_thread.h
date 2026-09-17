@@ -334,12 +334,12 @@ public:
     /**
      * Destructor.
      */
-    virtual ~SearchThread() = default;
+    ~SearchThread() override = default;
 
     /**
      * Process request from caller
      */
-    void ProcessRequest(ThreadRequest* req);
+    void ProcessRequest(ThreadRequest* req) override;
 
     /**
      * Add a request to the search thread to start

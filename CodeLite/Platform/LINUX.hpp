@@ -17,7 +17,7 @@ protected:
 
 public:
     LINUX() = default;
-    virtual ~LINUX() = default;
+    ~LINUX() override = default;
 
     static LINUX* Get();
 

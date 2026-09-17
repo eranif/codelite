@@ -33,7 +33,7 @@
 
 Language::Language()
     : m_expression(wxEmptyString)
-    , m_tm(NULL)
+    , m_tm(nullptr)
 {
 }
 
@@ -327,18 +327,18 @@ wxString TemplateHelper::GetPath() const
 }
 
 // Adaptor to Language
-static Language* gs_Language = NULL;
+static Language* gs_Language = nullptr;
 void LanguageST::Free()
 {
     if (gs_Language) {
         delete gs_Language;
     }
-    gs_Language = NULL;
+    gs_Language = nullptr;
 }
 
 Language* LanguageST::Get()
 {
-    if (gs_Language == NULL)
+    if (gs_Language == nullptr)
         gs_Language = new Language();
     return gs_Language;
 }

@@ -174,9 +174,9 @@ public:
      *
      * Destructor
      */
-    virtual ~TagsStorageSQLite();
+    ~TagsStorageSQLite() override;
 
-    virtual void SetUseCache(bool useCache);
+    void SetUseCache(bool useCache) override;
 
     /**
      * Return the currently opened database.
@@ -225,7 +225,7 @@ public:
     /**
      * Begin transaction.
      */
-    void Begin()
+    void Begin() override
     {
         try {
             m_db->Begin();
@@ -237,7 +237,7 @@ public:
     /**
      * Commit transaction.
      */
-    void Commit()
+    void Commit() override
     {
         try {
             m_db->Commit();
@@ -249,13 +249,13 @@ public:
     /**
      * Rollback transaction.
      */
-    void Rollback() { return m_db->Rollback(); }
+    void Rollback() override { return m_db->Rollback(); }
 
     /**
      * Test whether the database is opened
      * @return true if database is attached to a file
      */
-    bool IsOpen() const;
+    bool IsOpen() const override;
 
     /**
      * Return SQLite3 prepare statement object
@@ -389,7 +389,7 @@ public:
     /**
      * @brief
      */
-    virtual void ClearCache();
+    void ClearCache() override;
 
     /**
      * @brief

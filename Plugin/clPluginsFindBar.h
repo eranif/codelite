@@ -158,7 +158,7 @@ public:
      * 'This' is used internally, so pass it NULL
      */
     static bool
-    Search(wxStyledTextCtrl* ctrl, const wxString& findwhat, size_t search_flags, clPluginsFindBar* This = NULL);
+    Search(wxStyledTextCtrl* ctrl, const wxString& findwhat, size_t search_flags, clPluginsFindBar* This = nullptr);
 
     wxString GetFindWhat() const { return m_textCtrlFind->GetValue(); }
     void SetFindWhat(const wxString& findwhat) { m_textCtrlFind->ChangeValue(findwhat); }

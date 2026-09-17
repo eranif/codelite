@@ -88,7 +88,7 @@ public:
                            const wxCodeCompletionBoxEntry::Vec_t& entries,
                            size_t flags,
                            int startPos,
-                           wxEvtHandler* eventObject = NULL,
+                           wxEvtHandler* eventObject = nullptr,
                            const wxSize& control_size = wxDefaultSize);
     /**
      * @brief show the completion box
@@ -105,7 +105,7 @@ public:
                            const wxCodeCompletionBox::BmpVec_t& bitmaps,
                            size_t flags,
                            int startPos,
-                           wxEvtHandler* eventObject = NULL,
+                           wxEvtHandler* eventObject = nullptr,
                            const wxSize& control_size = wxDefaultSize);
 
     /**
@@ -121,7 +121,7 @@ public:
                            const TagEntryPtrVector_t& tags,
                            size_t flags,
                            int startPos,
-                           wxEvtHandler* eventObject = NULL,
+                           wxEvtHandler* eventObject = nullptr,
                            const wxSize& control_size = wxDefaultSize);
 
     /**
@@ -131,13 +131,13 @@ public:
                            const LSP::CompletionItem::Vec_t& completions,
                            size_t flags = 0,
                            int startPos = wxNOT_FOUND,
-                           wxEvtHandler* eventObject = NULL,
+                           wxEvtHandler* eventObject = nullptr,
                            const wxSize& control_size = wxDefaultSize);
 
     /**
      * @brief do we have a completion box shown?
      */
-    bool IsShown() const { return m_box != NULL; }
+    bool IsShown() const { return m_box != nullptr; }
 
     /**
      * @brief return the code completion box

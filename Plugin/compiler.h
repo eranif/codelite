@@ -134,7 +134,7 @@ public:
     using ConstIterator = std::map<wxString, wxString>::const_iterator;
 
     Compiler(wxXmlNode* node, Compiler::eRegexType regexType = Compiler::kRegexGNU);
-    virtual ~Compiler() = default;
+    ~Compiler() override = default;
 
     /**
      * @brief attempt to parse line and provide details about the parsed data
@@ -156,7 +156,7 @@ public:
      */
     bool IsGnuCompatibleCompiler() const;
 
-    wxXmlNode* ToXml() const;
+    wxXmlNode* ToXml() const override;
     void SetTool(const wxString& toolname, const wxString& cmd);
     void SetSwitch(const wxString& switchName, const wxString& switchValue);
 

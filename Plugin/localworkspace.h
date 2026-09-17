@@ -131,7 +131,7 @@ public:
      * Return an XML representation of this object
      * \return XML node
      */
-    wxXmlNode* ToXml(wxXmlNode* parent = NULL, const wxString& nodename = wxT("Options")) const;
+    wxXmlNode* ToXml(wxXmlNode* parent = nullptr, const wxString& nodename = wxT("Options")) const;
 };
 
 class WXDLLIMPEXP_SDK LocalWorkspace

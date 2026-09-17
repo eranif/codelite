@@ -879,7 +879,7 @@ time_t clCxxWorkspace::GetFileLastModifiedTime() const
 }
 
 // Singleton access
-static clCxxWorkspace* gs_Workspace = NULL;
+static clCxxWorkspace* gs_Workspace = nullptr;
 void clCxxWorkspaceST::Free()
 {
     if (gs_Workspace) {

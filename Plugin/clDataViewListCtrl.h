@@ -57,7 +57,7 @@ public:
                        const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize,
                        long style = 0);
-    virtual ~clDataViewListCtrl();
+    ~clDataViewListCtrl() override;
 
     void ScrollToBottom();
 

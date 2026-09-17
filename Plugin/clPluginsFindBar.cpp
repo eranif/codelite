@@ -95,8 +95,8 @@ wxBorder get_border_simple_theme_aware_bit()
 clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     : QuickFindBarBase(
           parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit())
-    , m_sci(NULL)
-    , m_lastTextPtr(NULL)
+    , m_sci(nullptr)
+    , m_lastTextPtr(nullptr)
     , m_eventsConnected(false)
     , m_regexType(kRegexNone)
     , m_disableTextUpdateEvent(false)
@@ -776,7 +776,7 @@ void clPluginsFindBar::OnReleaseEditor(clFindEvent& e)
 {
     wxStyledTextCtrl* win = e.GetCtrl();
     if (win && win == m_sci) {
-        m_sci = NULL;
+        m_sci = nullptr;
         Show(false);
     }
 }

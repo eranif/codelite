@@ -28,7 +28,7 @@ protected:
 
 public:
     clTabRendererMinimal(const wxWindow* parent);
-    virtual ~clTabRendererMinimal() = default;
+    ~clTabRendererMinimal() override = default;
     void Draw(wxWindow* parent,
               wxDC& dc,
               wxDC& fontDC,

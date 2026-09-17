@@ -27,13 +27,13 @@ struct DnD_Data {
     int tabIndex;
 
     DnD_Data()
-        : srcTabCtrl(NULL)
+        : srcTabCtrl(nullptr)
         , tabIndex(wxNOT_FOUND)
     {
     }
     void Clear()
     {
-        srcTabCtrl = NULL;
+        srcTabCtrl = nullptr;
         tabIndex = wxNOT_FOUND;
     }
 };
@@ -143,7 +143,7 @@ void clGenericNotebook::SetStyle(size_t style)
 wxWindow* clGenericNotebook::GetCurrentPage() const
 {
     if (m_tabCtrl->GetSelection() == wxNOT_FOUND)
-        return NULL;
+        return nullptr;
     return m_tabCtrl->GetPage(m_tabCtrl->GetSelection());
 }
 
@@ -211,7 +211,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     : wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL)
     , m_style(style)
     , m_closeButtonClickedIndex(wxNOT_FOUND)
-    , m_contextMenu(NULL)
+    , m_contextMenu(nullptr)
     , m_dragStartTime((time_t)-1)
 {
     m_bitmaps = new clBitmapList;
@@ -869,7 +869,7 @@ wxWindow* clTabCtrl::GetPage(size_t index) const
     clTabInfo::Ptr_t tab = GetTabInfo(index);
     if (tab)
         return tab->GetWindow();
-    return NULL;
+    return nullptr;
 }
 
 bool clTabCtrl::IsIndexValid(size_t index) const { return (index < m_tabs.size()); }
@@ -1456,12 +1456,12 @@ void clTabCtrl::PositionFilelistButton()
 
 clTabCtrlDropTarget::clTabCtrlDropTarget(clTabCtrl* tabCtrl)
     : m_tabCtrl(tabCtrl)
-    , m_notebook(NULL)
+    , m_notebook(nullptr)
 {
 }
 
 clTabCtrlDropTarget::clTabCtrlDropTarget(clGenericNotebook* notebook)
-    : m_tabCtrl(NULL)
+    : m_tabCtrl(nullptr)
     , m_notebook(notebook)
 {
 }

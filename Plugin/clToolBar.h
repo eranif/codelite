@@ -131,7 +131,7 @@ protected:
     void OnLeaveWindow(wxMouseEvent& event);
     void OnOverflowItem(wxCommandEvent& event);
     void OnSize(wxSizeEvent& event);
-    virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) override;
+    void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) override;
     void DoIdleUpdate();
     wxRect CalculateRect(wxDC& dc) const;
     void DoShowOverflowMenu();
@@ -265,7 +265,7 @@ public:
                                  wxItemKind kind = wxITEM_NORMAL,
                                  const wxString& shortHelp = wxEmptyString,
                                  const wxString& longHelp = wxEmptyString,
-                                 wxObject* data = NULL)
+                                 wxObject* data = nullptr)
     {
         wxUnusedVar(bitmapIndexDisabled);
         wxUnusedVar(longHelp);

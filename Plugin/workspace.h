@@ -83,7 +83,7 @@ public:
     clCxxWorkspace();
 
     /// Destructor
-    virtual ~clCxxWorkspace();
+    ~clCxxWorkspace() override;
     /**
      * @brief return the XML version of this workspace
      */

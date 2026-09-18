@@ -26,6 +26,12 @@ inline constexpr const char kTerminalCommand[] = "cmd.exe";
 inline constexpr const char kTerminalCommand[] = "/bin/bash --login -i";
 #endif
 
+// Translate wxTerminalViewCtrl events into exported events (these events can be used from outside the DLL)
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TERMINATED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
+
 class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 {
 public:
@@ -110,7 +116,6 @@ public:
                                        const wxString& shellCommand,
                                        const wxString& tabTitle,
                                        bool makeActive,
-                                       bool bindEvents,
                                        std::optional<wxString> workingDirectory);
 
     std::optional<wxString> PromptForTerminal();

@@ -44,14 +44,10 @@ ClaudeCode::ClaudeCode(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &ClaudeCode::OnAllPagesClosed, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &ClaudeCode::OnPageChanged, this);
-
-    m_blinkTimer.SetOwner(this, XRCID("claude_code_blink_timer"));
-    Bind(wxEVT_TIMER, &ClaudeCode::OnBlinkTimer, this, XRCID("claude_code_blink_timer"));
 }
 
 ClaudeCode::~ClaudeCode()
 {
-    m_blinkTimer.Stop();
     EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &ClaudeCode::OnAllPagesClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &ClaudeCode::OnPageChanged, this);
@@ -127,55 +123,22 @@ void ClaudeCode::ShowClaudeTerminal()
 
     // Define the working directory & the ssh account (if a remote workspace)
     std::optional<SSHAccountInfo> sshAccount{std::nullopt};
-    wxString workdingDirectory;
+    m_claudeCodePage = new ClaudeCodePage(clGetManager()->GetMainNotebook(), sshAccount);
+    clGetManager()->GetMainNotebook()->AddPage(m_claudeCodePage, _("Claude Code"), true);
+    CHECK_PTR_RET(m_claudeCodePage);
 
+    wxString workdingDirectory;
     workdingDirectory = workspace->GetDir();
     if (workspace->IsRemote()) {
         sshAccount = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
     }
-
-    m_claudeCodePage = new ClaudeCodePage(clGetManager()->GetMainNotebook(), workdingDirectory, sshAccount);
-    clGetManager()->GetMainNotebook()->AddPage(m_claudeCodePage, _("Claude Code"), true);
-
-    CHECK_PTR_RET(m_claudeCodePage);
-
-    // Remember the label given to the tab, the blink code needs it.
-    auto book = clGetManager()->GetMainNotebook();
-    int page_index = book->FindPage(m_claudeCodePage);
-    m_tabTitle = page_index == wxNOT_FOUND ? _("Claude Code") : book->GetPageText(page_index);
-
-    m_claudeCodePage->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [this](wxTerminalEvent& event) {
-        wxString new_title = event.GetTitle();
-        new_title.Trim().Trim(false);
-        if (new_title.empty()) {
-            new_title = _("Claude Code");
-        }
-        m_tabTitle = new_title;
-        UpdateTabLabel();
-    });
-
-    m_claudeCodePage->Bind(wxEVT_TERMINAL_BELL, &ClaudeCode::OnTerminalBell, this);
-    m_claudeCodePage->Bind(wxEVT_SET_FOCUS, &ClaudeCode::OnTerminalFocus, this);
-    m_claudeCodePage->Bind(wxEVT_TERMINAL_TERMINATED, [book, this](wxTerminalEvent& event) {
-        StopAttentionBlink();
-        int where = book->FindPage(m_claudeCodePage);
-        if (where != wxNOT_FOUND) {
-            book->DeletePage(where);
-        }
-        m_claudeCodePage = nullptr;
-    });
-
-    m_claudeCodePage->Bind(wxEVT_TERMINAL_TEXT_LINK, &ClaudeCode::OnTerminalLink, this);
-    claude_exec.value().Prepend("\"").Append("\"");
-    wxString command_to_run = wxString::Format("%s --continue || %s", *claude_exec, *claude_exec);
-    m_claudeCodePage->GetTerminal()->SendCommand(command_to_run);
+    m_claudeCodePage->StartClaudeCode(*claude_exec, workdingDirectory);
 }
 
 void ClaudeCode::OnPageClosing(wxNotifyEvent& event)
 {
     const wxWindow* win = reinterpret_cast<wxWindow*>(event.GetClientData());
     if (win && win == m_claudeCodePage) {
-        StopAttentionBlink();
         m_claudeCodePage = nullptr;
         return;
     }
@@ -184,7 +147,6 @@ void ClaudeCode::OnPageClosing(wxNotifyEvent& event)
 
 void ClaudeCode::OnAllPagesClosed(wxCommandEvent& event)
 {
-    StopAttentionBlink();
     m_claudeCodePage = nullptr;
     event.Skip();
 }
@@ -195,141 +157,7 @@ void ClaudeCode::OnShowClaudeCode(wxCommandEvent& event)
     ShowClaudeTerminal();
 }
 
-void ClaudeCode::OnPageChanged(wxCommandEvent& event)
-{
-    event.Skip();
-    const wxWindow* win = reinterpret_cast<wxWindow*>(event.GetClientData());
-    if (win && win == m_claudeCodePage) {
-        // The user switched to the Claude Code tab, the attention state is no longer needed.
-        StopAttentionBlink();
-    }
-}
-
-void ClaudeCode::OnTerminalFocus(wxFocusEvent& event)
-{
-    event.Skip();
-    StopAttentionBlink();
-}
-
-void ClaudeCode::OnTerminalLink(wxTerminalEvent& event)
-{
-    wxString trimmed_text = event.GetClickedText();
-    while (trimmed_text.EndsWith(".") || trimmed_text.EndsWith(":"))
-        trimmed_text.RemoveLast();
-
-    if (trimmed_text.StartsWith("http://") || trimmed_text.StartsWith("https://")) {
-        ::wxLaunchDefaultBrowser(trimmed_text);
-        return;
-    }
-
-    wxString saved_trimmed_text = trimmed_text;
-    if (trimmed_text.StartsWith("~/"))
-        trimmed_text = wxGetHomeDir() + trimmed_text.Mid(1);
-
-    if (wxFileName::DirExists(trimmed_text)) {
-        CallAfter([trimmed_text]() { FileUtils::OpenFileExplorer(trimmed_text); });
-        return;
-    }
-
-    if (FileUtils::IsBinaryExecutable(trimmed_text)) {
-        ::wxLaunchDefaultApplication(trimmed_text);
-        return;
-    }
-
-    if (clGetManager()->OpenFile(trimmed_text) != nullptr)
-        return;
-
-#if USE_SFTP
-    // Try a remote file.
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace && workspace->IsRemote() &&
-        (clSFTPManager::Get().OpenFile(saved_trimmed_text, workspace->GetSshAccount()) != nullptr))
-        return;
-#endif
-
-    // Could not resolve it, try the "open resource dialog"
-    OpenResourceDialog dlg(EventNotifier::Get()->TopFrame(), clGetManager(), trimmed_text);
-
-    if (dlg.ShowModal() == wxID_OK && !dlg.GetSelections().empty()) {
-        std::vector<OpenResourceDialogItemData*> items = dlg.GetSelections();
-        for (const auto item : items) {
-
-            // try the plugins first
-            clCommandEvent open_resource_event(wxEVT_OPEN_RESOURCE_FILE_SELECTED);
-            open_resource_event.SetFileName(item->m_file);
-            open_resource_event.SetLineNumber(item->m_line);
-            open_resource_event.SetInt(item->m_column); // use the int field for the column
-
-            if (EventNotifier::Get()->ProcessEvent(open_resource_event)) {
-                continue;
-            }
-
-            // default behaviour
-            OpenResourceDialog::OpenSelection(*item, clGetManager());
-        }
-    }
-}
-
-void ClaudeCode::OnTerminalBell(wxTerminalEvent& event)
-{
-    wxUnusedVar(event);
-    if (IsClaudeTerminalVisible()) {
-        // The user is already looking at the terminal, no need to blink.
-        return;
-    }
-    StartAttentionBlink();
-}
-
-void ClaudeCode::OnBlinkTimer(wxTimerEvent& event)
-{
-    wxUnusedVar(event);
-    if (!m_needsAttention || !m_claudeCodePage) {
-        StopAttentionBlink();
-        return;
-    }
-    m_blinkOn = !m_blinkOn;
-    UpdateTabLabel();
-}
-
-void ClaudeCode::StartAttentionBlink()
-{
-    CHECK_PTR_RET(m_claudeCodePage);
-    if (m_needsAttention) {
-        // Already blinking.
-        return;
-    }
-    m_needsAttention = true;
-    m_blinkOn = true;
-    UpdateTabLabel();
-    m_blinkTimer.Start(kBlinkIntervalMs);
-}
-
-void ClaudeCode::StopAttentionBlink()
-{
-    m_blinkTimer.Stop();
-    if (!m_needsAttention) {
-        return;
-    }
-    m_needsAttention = false;
-    m_blinkOn = false;
-    UpdateTabLabel();
-}
-
-void ClaudeCode::UpdateTabLabel()
-{
-    CHECK_PTR_RET(m_claudeCodePage);
-    auto book = clGetManager()->GetMainNotebook();
-    int index = book->FindPage(m_claudeCodePage);
-    if (index == wxNOT_FOUND) {
-        return;
-    }
-
-    wxString label = m_tabTitle;
-    if (m_needsAttention) {
-        label.Prepend(m_blinkOn ? kAttentionMarkerOn : kAttentionMarkerOff);
-    }
-    book->SetPageText(index, label);
-}
+void ClaudeCode::OnPageChanged(wxCommandEvent& event) { event.Skip(); }
 
 bool ClaudeCode::IsClaudeTerminalVisible() const
 {

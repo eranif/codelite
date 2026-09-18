@@ -112,6 +112,11 @@ std::vector<std::pair<wxString, wxString>> LocateDefaultTerminals()
 }
 } // namespace
 
+wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TERMINATED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
+
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
@@ -219,6 +224,12 @@ void clBuiltinTerminalPane::BindTerminalEvents(wxTerminalViewCtrl* terminal, boo
         int index = m_book->FindPage(terminal);
         if (index != wxNOT_FOUND) {
             m_book->SetPageText(index, new_title);
+        } else {
+            // Translate and re-fire the event.
+            clCommandEvent evt{wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED};
+            evt.SetString(new_title);
+            evt.SetEventObject(terminal);
+            EventNotifier::Get()->ProcessEvent(evt);
         }
     });
 
@@ -227,6 +238,10 @@ void clBuiltinTerminalPane::BindTerminalEvents(wxTerminalViewCtrl* terminal, boo
         int where = m_book->FindPage(terminal);
         if (where != wxNOT_FOUND) {
             m_book->DeletePage(where);
+        } else {
+            clCommandEvent evt{wxEVT_BUILTIN_TERMINAL_TERMINATED};
+            evt.SetEventObject(terminal);
+            EventNotifier::Get()->ProcessEvent(evt);
         }
     });
     terminal->Bind(wxEVT_TERMINAL_TEXT_LINK, &clBuiltinTerminalPane::OnLinkClicked, this);
@@ -236,7 +251,6 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxWindow* parent,
                                                           const wxString& shellCommand,
                                                           const wxString& tabTitle,
                                                           bool makeActive,
-                                                          bool bindEvents,
                                                           std::optional<wxString> workingDirectory)
 {
     // By default, inherit parent's env.
@@ -341,15 +355,12 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
     }
 
     bool usingInternalBook = parent == nullptr || parent == m_book;
-    wxTerminalViewCtrl* ctrl =
-        CreateTerminal(parent == nullptr ? m_book : parent, cmd, finalTabTitle, makeVisible, usingInternalBook, wd);
+    wxTerminalViewCtrl* ctrl = CreateTerminal(parent == nullptr ? m_book : parent, cmd, finalTabTitle, makeVisible, wd);
     if (!ctrl) {
         return nullptr;
     }
 
-    if (usingInternalBook) {
-        BindTerminalEvents(ctrl, !tabTitle.empty());
-    }
+    BindTerminalEvents(ctrl, !tabTitle.empty());
 
     // If working directory is provided, change to it
     // Handle SSH connection first if provided
@@ -460,7 +471,7 @@ void clBuiltinTerminalPane::NewTerminal()
         if (workspace && !workspace->IsRemote()) {
             wd = workspace->GetDir();
         }
-        auto ctrl = CreateTerminal(m_book, *shell, *shell, true, true, wd);
+        auto ctrl = CreateTerminal(m_book, *shell, *shell, true, wd);
         BindTerminalEvents(ctrl, false);
     }
 }
@@ -871,6 +882,14 @@ void clBuiltinTerminalPane::UpdateFont()
 void clBuiltinTerminalPane::OnLinkClicked(wxTerminalEvent& event)
 {
     event.Skip();
+    auto terminal = dynamic_cast<wxTerminalViewCtrl*>(event.GetEventObject());
+    if (m_book->FindPage(terminal) == wxNOT_FOUND) {
+        clCommandEvent evt{wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED};
+        evt.SetEventObject(terminal);
+        evt.SetString(event.GetClickedText());
+        EventNotifier::Get()->ProcessEvent(evt);
+        return;
+    }
     CallAfter(&clBuiltinTerminalPane::DoOpenLink, event.GetClickedText());
 }
 

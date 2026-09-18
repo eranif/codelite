@@ -3,17 +3,24 @@
 #include "ClaudeCodeUI.hpp"
 #include "cl_command_event.h"
 #include "ssh_account_info.h"
+#include "terminal_event.h"
 
 class wxTerminalViewCtrl;
 class ClaudeCodePage : public ClaudeCodePageBase
 {
 public:
-    ClaudeCodePage(wxWindow* parent, const wxString& workingDirectory, const std::optional<SSHAccountInfo>& sshAccount);
+    ClaudeCodePage(wxBookCtrlBase* parent, const std::optional<SSHAccountInfo>& sshAccount);
     ~ClaudeCodePage() override;
 
     inline wxTerminalViewCtrl* GetTerminal() { return m_terminal; }
+    void StartClaudeCode(const wxString& claudeExecutable, const wxString& workingDirectory = wxEmptyString);
+
+protected:
+    void OnThemeChanged(clCommandEvent& event);
+    void OnTerminalLink(clCommandEvent& event);
+    void OnTerminalTerminated(clCommandEvent& event);
+    void OnTerminalTitleChanged(clCommandEvent& event);
 
 private:
-    void OnThemeChanged(clCommandEvent& event);
     wxTerminalViewCtrl* m_terminal{nullptr};
 };

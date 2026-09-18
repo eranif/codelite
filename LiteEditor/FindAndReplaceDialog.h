@@ -206,7 +206,7 @@ protected:
 
 public:
     FindAndReplaceDialog(wxWindow* parent, wxWindowID id = wxID_ANY);
-    virtual ~FindAndReplaceDialog();
+    ~FindAndReplaceDialog() override;
 
     bool ShowForPlugins();
     bool Show(bool s = true) override;

@@ -281,7 +281,7 @@ public:
     clEditor(wxWindow* parent);
 
     /// Default destructor
-    virtual ~clEditor();
+    ~clEditor() override;
 
     // Save the editor data into file
     virtual bool SaveFile();

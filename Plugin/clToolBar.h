@@ -147,7 +147,7 @@ public:
                      const wxSize& size = wxDefaultSize,
                      long style = wxTAB_TRAVERSAL | wxNO_BORDER,
                      const wxString& name = "clToolBarGeneric");
-    virtual ~clToolBarGeneric();
+    ~clToolBarGeneric() override;
 
     const wxBitmap& GetBitmap(size_t index) const;
 

@@ -55,21 +55,21 @@ public:
     bool CanConnect() override;
     bool IsConnected() override;
     void CloseConnection() override;
-    virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName);
+    DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName)override;
 
-    virtual wxString GetUseDb(const wxString& dbName);
-    virtual wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName);
-    virtual wxString GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName);
-    virtual wxString GetCreateTableSql(Table* tab, bool dropTable);
-    virtual wxString GetCreateViewSql(View* view, bool dropView);
-    virtual wxString GetAlterTableConstraintSql(Table* tab);
-    virtual wxString GetCreateDatabaseSql(const wxString& dbName);
-    virtual wxString GetDropTableSql(Table* pTab);
-    virtual wxString GetDropViewSql(View* pView);
-    virtual wxString GetDropDatabaseSql(Database* pDb);
-    virtual IDbType* GetDbTypeByName(const wxString& typeName);
+    wxString GetUseDb(const wxString& dbName)override;
+    wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName)override;
+    wxString GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName)override;
+    wxString GetCreateTableSql(Table* tab, bool dropTable)override;
+    wxString GetCreateViewSql(View* view, bool dropView)override;
+    wxString GetAlterTableConstraintSql(Table* tab)override;
+    wxString GetCreateDatabaseSql(const wxString& dbName)override;
+    wxString GetDropTableSql(Table* pTab)override;
+    wxString GetDropViewSql(View* pView)override;
+    wxString GetDropDatabaseSql(Database* pDb)override;
+    IDbType* GetDbTypeByName(const wxString& typeName)override;
 
-    virtual wxArrayString* GetDbTypes();
+    wxArrayString* GetDbTypes()override;
 
     IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type) override;
     void ConvertTable(Table* pTab) override;

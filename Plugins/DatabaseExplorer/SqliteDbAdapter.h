@@ -48,31 +48,31 @@ public:
     SQLiteDbAdapter(const wxString& fileName);
     ~SQLiteDbAdapter() override = default;
     void CloseConnection() override;
-    virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName);
+    DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName) override;
 
     void GetDatabases(DbConnection* dbCon) override;
     void GetTables(Database* db, bool includeViews) override;
     bool GetColumns(Table* pTab) override;
     void GetViews(Database* db) override;
 
-    virtual IDbType* GetDbTypeByName(const wxString& typeName);
-    virtual wxArrayString* GetDbTypes();
+    IDbType* GetDbTypeByName(const wxString& typeName) override;
+    wxArrayString* GetDbTypes() override;
 
     IDbAdapter* Clone() override;
     bool CanConnect() override;
     bool IsConnected() override;
 
-    virtual wxString GetUseDb(const wxString& dbName);
+    wxString GetUseDb(const wxString& dbName) override;
 
-    virtual wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName);
-    virtual wxString GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName);
-    virtual wxString GetCreateTableSql(Table* tab, bool dropTable);
-    virtual wxString GetCreateViewSql(View* view, bool dropView);
-    virtual wxString GetAlterTableConstraintSql(Table* tab);
-    virtual wxString GetCreateDatabaseSql(const wxString& dbName);
-    virtual wxString GetDropTableSql(Table* pTab);
-    virtual wxString GetDropViewSql(View* pView);
-    virtual wxString GetDropDatabaseSql(Database* pDb);
+    wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName) override;
+    wxString GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName) override;
+    wxString GetCreateTableSql(Table* tab, bool dropTable) override;
+    wxString GetCreateViewSql(View* view, bool dropView) override;
+    wxString GetAlterTableConstraintSql(Table* tab) override;
+    wxString GetCreateDatabaseSql(const wxString& dbName) override;
+    wxString GetDropTableSql(Table* pTab) override;
+    wxString GetDropViewSql(View* pView) override;
+    wxString GetDropDatabaseSql(Database* pDb) override;
 
     IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type) override;
     void ConvertTable(Table* pTab) override;

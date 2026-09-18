@@ -102,11 +102,11 @@ protected:
     virtual void SetFirstItemOnScreen(clRowEntry* item);
     void RenderItems(wxDC& dc, long tree_style, const clRowEntry::Vec_t& items);
     void AssignRects(const clRowEntry::Vec_t& items);
-    void OnSize(wxSizeEvent& event);
+    void OnSize(wxSizeEvent& event) override;
     void DoUpdateHeader(clRowEntry* row);
     wxSize GetTextSize(const wxString& label) const;
     virtual void OnMouseScroll(wxMouseEvent& event);
-    virtual bool DoKeyDown(const wxKeyEvent& event);
+    bool DoKeyDown(const wxKeyEvent& event) override;
     virtual void DoMouseScroll(const wxMouseEvent& event);
     clSearchText& GetSearch() { return m_search; }
     const clSearchText& GetSearch() const { return m_search; }
@@ -217,7 +217,7 @@ public:
 
     // Horizontal scrolling implementation
     void ScrollToColumn(int firstColumn) override;
-    void ScrollColumns(int steps, wxDirection direction);
+    void ScrollColumns(int steps, wxDirection direction) override;
 
     //===-----------------------------------------
     //===-----------------------------------------

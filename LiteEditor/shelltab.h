@@ -58,7 +58,7 @@ protected:
     virtual void OnEnter(wxCommandEvent& e);
     virtual void OnUpdateUI(wxUpdateUIEvent& e);
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-    void OnThemeChanged(wxCommandEvent& e);
+    void OnThemeChanged(wxCommandEvent& e) override;
 
     DECLARE_EVENT_TABLE()
 
@@ -86,8 +86,8 @@ public:
 
     void OnDebugStarted(clDebugEvent& event);
     void OnDebugStopped(clDebugEvent& event);
-    virtual void OnProcStarted(wxCommandEvent& e);
-    virtual void OnProcEnded(wxCommandEvent& e);
+    void OnProcStarted(wxCommandEvent& e) override;
+    void OnProcEnded(wxCommandEvent& e) override;
     void OnWorkspaceClosed(clWorkspaceEvent& event);
 };
 

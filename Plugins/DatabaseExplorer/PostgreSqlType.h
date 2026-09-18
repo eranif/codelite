@@ -45,7 +45,7 @@ public:
     bool GetPrimaryKey() override { return m_primaryKey; }
     long GetSize() override { return m_size; }
     long GetSize2() override { return m_size2; }
-    virtual wxString GetTypeName() { return m_typeName; }
+    wxString GetTypeName() override { return m_typeName; }
     bool GetUnique() override { return m_unique; }
     bool HaveAutoIncrement() override { return (m_dbtPropertyFlags & dbtAUTO_INCREMENT); }
     bool HaveNotNull() override { return (m_dbtPropertyFlags & dbtNOT_NULL); }
@@ -59,7 +59,7 @@ public:
     void SetSize(long size) override { m_size = size; }
     void SetSize2(long size) override { m_size2 = size; }
     void SetUnique(bool unique) override { m_unique = unique; }
-    virtual wxString ReturnSql();
+    wxString ReturnSql() override ;
 
     long GetPropertyFlags() override { return m_dbtPropertyFlags; }
     void SetPropertyFlags(long flags) override { m_dbtPropertyFlags = flags; }

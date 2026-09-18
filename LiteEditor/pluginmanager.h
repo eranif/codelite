@@ -64,7 +64,7 @@ class PluginManager : public IManager
 
 private:
     PluginManager();
-    virtual ~PluginManager() = default;
+    ~PluginManager() override = default;
 
 public:
     static PluginManager* Get();

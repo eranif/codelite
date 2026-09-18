@@ -43,17 +43,17 @@ class PSBuildEventsPage : public PSBuildEventsBasePage, public IProjectSettingsP
     ProjectSettingsDlg* m_dlg;
 
 protected:
-    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
+    void OnProjectEnabledUI(wxUpdateUIEvent& event) override;
     // Handlers for PSBuildEventsBasePage events.
-    void OnStcEvtVModified(wxStyledTextEvent& event);
+    void OnStcEvtVModified(wxStyledTextEvent& event) override;
 
 public:
     /** Constructor */
     PSBuildEventsPage(wxWindow* parent, bool preEvents, ProjectSettingsDlg* dlg);
     //// end generated class members
 
-    virtual void Load(BuildConfigPtr buildConf);
-    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+    void Load(BuildConfigPtr buildConf) override;
+    void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) override;
     void Clear() override;
 };
 

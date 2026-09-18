@@ -32,7 +32,7 @@ class WXDLLIMPEXP_SDK ChatAIWindow : public AssistanceAIChatWindowBase
 {
 public:
     ChatAIWindow(wxWindow* parent);
-    virtual ~ChatAIWindow();
+    ~ChatAIWindow() override;
     bool IsDetached() const;
     /**
      * @brief Sends a chat prompt to the AI window.

@@ -78,7 +78,7 @@ protected:
 
 public:
     OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString& name);
-    virtual ~OutputTabWindow();
+    ~OutputTabWindow() override;
 
     virtual void Clear();
     void ScrollToBottom();

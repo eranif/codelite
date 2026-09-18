@@ -75,7 +75,7 @@ public:
                     const wxSize& size = wxDefaultSize,
                     long style = 0);
     clScrolledPanel() = default;
-    virtual ~clScrolledPanel();
+    ~clScrolledPanel() override;
 
     ScrollBar_t* GetHScrollBar() { return m_hsb; }
     ScrollBar_t* GetVScrollBar() { return m_vsb; }

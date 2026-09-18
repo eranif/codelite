@@ -231,7 +231,7 @@ public:
      */
     void SelectBestEnvSet();
 
-    virtual ~clMainFrame();
+    ~clMainFrame() override;
     /**
      * @brief set frame option flag
      * @param set

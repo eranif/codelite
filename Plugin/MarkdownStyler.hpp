@@ -71,7 +71,7 @@ class WXDLLIMPEXP_SDK MarkdownStyler : public clSTCContainerStylerBase
 {
 public:
     MarkdownStyler(wxStyledTextCtrl* ctrl);
-    virtual ~MarkdownStyler();
+    ~MarkdownStyler() override;
     void InitStyles() override;
     void Reset() override;
     wxString GetUrlFromPosition(int pos);

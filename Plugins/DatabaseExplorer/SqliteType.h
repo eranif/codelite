@@ -47,7 +47,7 @@ public:
     long GetPropertyFlags() override { return m_dbtPropertyFlags; }
     long GetSize() override { return 0; }
     long GetSize2() override { return 0; }
-    virtual wxString GetTypeName() { return m_typeName; }
+    wxString GetTypeName() override { return m_typeName; }
     bool GetUnique() override { return false; }
     bool HaveAutoIncrement() override { return (m_dbtPropertyFlags & dbtAUTO_INCREMENT); }
     bool HaveNotNull() override { return (m_dbtPropertyFlags & dbtNOT_NULL); }
@@ -64,7 +64,7 @@ public:
 
     void SetPropertyFlags(long flags) override { m_dbtPropertyFlags = flags; }
 
-    virtual wxString ReturnSql();
+    wxString ReturnSql() override;
 
     IDbType::UNIVERSAL_TYPE GetUniversalType() override;
 

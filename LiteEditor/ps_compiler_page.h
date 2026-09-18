@@ -47,20 +47,20 @@ class PSCompilerPage : public PSCompilerPageBase, public IProjectSettingsPage
     PSGeneralPage* m_gp;
 
 protected:
-    virtual void OnCopyCompilerSettings(wxCommandEvent& event);
-    virtual void OnCompilerNeeded(wxCommandEvent& event);
-    virtual void OnCustomEditorClicked(wxCommandEvent& event);
-    virtual void OnUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnPropertyChanged(wxPropertyGridEvent& event);
-    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
+    void OnCopyCompilerSettings(wxCommandEvent& event) override;
+    void OnCompilerNeeded(wxCommandEvent& event) override;
+    void OnCustomEditorClicked(wxCommandEvent& event) override;
+    void OnUpdateUI(wxUpdateUIEvent& event) override;
+    void OnPropertyChanged(wxPropertyGridEvent& event) override;
+    void OnProjectEnabledUI(wxUpdateUIEvent& event) override;
 
 public:
     /** Constructor */
     PSCompilerPage(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg, PSGeneralPage* gp);
     //// end generated class members
 
-    virtual void Load(BuildConfigPtr buildConf);
-    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+    void Load(BuildConfigPtr buildConf) override;
+    void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) override;
     void Clear() override;
 };
 

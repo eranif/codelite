@@ -22,7 +22,7 @@ using clThemedTextCtrlBase = wxStyledTextCtrl;
 class WXDLLIMPEXP_SDK clThemedTextCtrl : public clThemedTextCtrlBase
 {
 public:
-    virtual ~clThemedTextCtrl();
+    ~clThemedTextCtrl() override;
 
     clThemedTextCtrl() = default;
     clThemedTextCtrl(wxWindow* parent,

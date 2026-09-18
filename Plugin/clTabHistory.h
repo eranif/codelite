@@ -26,7 +26,7 @@ public:
 
     void Push(wxWindow* page)
     {
-        if (page == NULL)
+        if (page == nullptr)
             return;
         Pop(page);
         m_history.insert(m_history.begin(), page);

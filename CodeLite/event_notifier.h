@@ -53,8 +53,8 @@ public:
     static EventNotifier* Get();
     static void Release();
 
-    virtual void AddPendingEvent(const wxEvent& event);
-    virtual bool ProcessEvent(wxEvent& event);
+    void AddPendingEvent(const wxEvent& event) override;
+    bool ProcessEvent(wxEvent& event) override;
 
 #if wxUSE_GUI
     wxFrame* TopFrame();
@@ -147,7 +147,7 @@ public:
 
 private:
     EventNotifier() = default;
-    virtual ~EventNotifier() = default;
+    ~EventNotifier() override = default;
 
     std::unordered_map<wxEventType, std::vector<EventFilterCallbackContainer>> m_eventFilterCallbacks;
 };

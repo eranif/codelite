@@ -87,7 +87,7 @@ protected:
 
 public:
     clBitmapList();
-    virtual ~clBitmapList();
+    ~clBitmapList() override;
     size_t Add(const wxBitmap& bmp, const wxString& name);
     size_t Add(const wxString& bmp_name, int size = wxNOT_FOUND);
     size_t size() const { return m_bitmaps.size(); }
@@ -203,7 +203,7 @@ protected:
 
 private:
     BitmapLoader(wxWindow* win, bool darkTheme);
-    virtual ~BitmapLoader() = default;
+    ~BitmapLoader() override = default;
 
     void AddBitmapInternal(const wxBitmapBundle& bundle, const wxString& base_name);
     void Initialize(bool darkTheme);
@@ -231,7 +231,7 @@ protected:
 
 protected:
     clBitmaps();
-    virtual ~clBitmaps();
+    ~clBitmaps() override;
 
 public:
     static clBitmaps& Get();

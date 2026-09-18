@@ -41,13 +41,13 @@ class WXDLLIMPEXP_SDK clAuiToolBarArt : public wxAuiDefaultToolBarArt
 
 public:
     clAuiToolBarArt();
-    virtual ~clAuiToolBarArt();
-    wxAuiToolBarArt* Clone() { return new clAuiToolBarArt(); }
-    virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
-    virtual void DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
-    virtual void DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect);
-    virtual void DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect);
-    virtual void DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect);
+    ~clAuiToolBarArt() override;
+    wxAuiToolBarArt* Clone() override { return new clAuiToolBarArt(); }
+    void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) override;
+    void DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) override;
+    void DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect) override;
+    void DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect) override;
+    void DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect) override;
     void OnThemeChanged(wxCommandEvent& event);
     static void Finalise(wxAuiToolBar* toobar);
     static void AddTool(wxAuiToolBar* toolbar,

@@ -41,10 +41,10 @@ protected:
 
 public:
     AutoSaveSettings();
-    ~AutoSaveSettings() = default;
+    ~AutoSaveSettings() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     static AutoSaveSettings Load();
     static void Save(const AutoSaveSettings& settings);

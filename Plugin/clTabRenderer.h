@@ -165,7 +165,7 @@ public:
     virtual ~clTabInfo() = default;
 
     void CreateDisabledBitmap();
-    bool IsValid() const { return m_window != NULL; }
+    bool IsValid() const { return m_window != nullptr; }
     void SetBitmap(int bitmap, size_t style);
     void SetLabel(const wxString& label, size_t style);
     void SetActive(bool active, size_t style);

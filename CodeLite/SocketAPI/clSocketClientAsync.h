@@ -78,7 +78,7 @@ protected:
 
 public:
     virtual void AddRequest(const MyRequest& req) { m_queue.Post(req); }
-    virtual void* Entry();
+    void* Entry() override;
 
     /**
      * @brief start the worker thread
@@ -106,7 +106,7 @@ public:
                         const wxString& connectionString,
                         size_t mode,
                         const wxString& keepAliveMessage = "");
-    virtual ~clSocketAsyncThread();
+    ~clSocketAsyncThread() override;
 };
 
 class WXDLLIMPEXP_CL clAsyncSocket : public wxEvtHandler
@@ -120,7 +120,7 @@ public:
 
 public:
     clAsyncSocket(const wxString& connectionString, size_t mode = (kAsyncSocketClient | kAsyncSocketBuffer));
-    virtual ~clAsyncSocket();
+    ~clAsyncSocket() override;
 
     /**
      * @brief connect using connection string

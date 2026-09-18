@@ -10,7 +10,7 @@ class WXDLLIMPEXP_CL DidCloseTextDocumentRequest : public LSP::Notification
 {
 public:
     explicit DidCloseTextDocumentRequest(const wxString& filename);
-    virtual ~DidCloseTextDocumentRequest() = default;
+    ~DidCloseTextDocumentRequest() override = default;
 };
 } // namespace LSP
 #endif // DIDCLOSETEXTDOCUMENTREQUEST_H

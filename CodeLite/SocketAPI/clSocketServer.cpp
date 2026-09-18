@@ -158,7 +158,7 @@ clSocketBase::Ptr_t clSocketServer::WaitForNewConnection(long timeout)
 clSocketBase* clSocketServer::WaitForNewConnectionRaw(long timeout)
 {
     if (SelectRead(timeout) == kTimeout) {
-        return NULL;
+        return nullptr;
     }
     int fd = ::accept(m_socket, 0, 0);
     if (fd < 0) {

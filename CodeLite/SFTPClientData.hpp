@@ -22,7 +22,7 @@ public:
         , accountName(ssh_account)
     {
     }
-    virtual ~SFTPClientData();
+    ~SFTPClientData() override;
 
     void SetLocalPath(const wxString& localPath) { this->localPath = localPath; }
     void SetRemotePath(const wxString& remotePath) { this->remotePath = remotePath; }

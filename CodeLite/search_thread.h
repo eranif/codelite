@@ -167,7 +167,7 @@ public:
     // ctor-dtor, copy constructor and assignment operator
     SearchResult() = default;
 
-    virtual ~SearchResult() = default;
+    ~SearchResult() override = default;
 
     SearchResult(const SearchResult& rhs) { *this = rhs; }
 

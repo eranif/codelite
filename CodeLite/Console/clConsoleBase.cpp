@@ -34,8 +34,8 @@ public:
     {
     }
 
-    virtual ~ConsoleProcess() { m_sink = NULL; }
-    void OnTerminate(int pid, int status)
+    ~ConsoleProcess() override { m_sink = nullptr; }
+    void OnTerminate(int pid, int status) override
     {
         clProcessEvent terminateEvent(wxEVT_TERMINAL_EXIT);
         terminateEvent.SetString(m_uid);

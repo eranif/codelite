@@ -8,7 +8,7 @@
 CxxPreProcessorScanner::CxxPreProcessorScanner(const wxFileName& filename,
                                                size_t options,
                                                std::unordered_set<wxString>& visitedFiles)
-    : m_scanner(NULL)
+    : m_scanner(nullptr)
     , m_filename(filename)
     , m_options(options)
     , m_visitedFiles(visitedFiles)

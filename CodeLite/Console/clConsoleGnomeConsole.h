@@ -21,12 +21,12 @@ protected:
 
 public:
     clConsoleGnomeConsole();
-    virtual ~clConsoleGnomeConsole() = default;
+    ~clConsoleGnomeConsole() override = default;
 
 public:
-    virtual bool Start() override;
-    virtual bool StartForDebugger() override;
-    virtual wxString PrepareCommand() override;
+    bool Start() override;
+    bool StartForDebugger() override;
+    wxString PrepareCommand() override;
 };
 
 #endif // CLCONSOLEGNOMECONSOLE_H

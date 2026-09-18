@@ -54,7 +54,7 @@ public:
      * Construct a DirTraverser with a given file spec
      */
     DirTraverser(const wxString& filespec);
-    virtual ~DirTraverser() = default;
+    ~DirTraverser() override = default;
 
     /**
      * This function is called once a file is found. The traverse of the directories
@@ -65,7 +65,7 @@ public:
      * \param filename name of the file that was found
      * \return one of the values wxDIR_STOP, wxDIR_IGNORE or wxDIR_CONTINUE
      */
-    virtual wxDirTraverseResult OnFile(const wxString& filename);
+    wxDirTraverseResult OnFile(const wxString& filename) override;
 
     /**
      * This function is called once a directory is found. The traverse of the directories
@@ -76,7 +76,7 @@ public:
      * \param dirname name of the directory that was found
      * \return one of the values wxDIR_STOP, wxDIR_IGNORE or wxDIR_CONTINUE
      */
-    virtual wxDirTraverseResult OnDir(const wxString& dirname);
+    wxDirTraverseResult OnDir(const wxString& dirname) override;
 
     void SetExcludeDirs(const wxArrayString& excludeDirs) { this->m_excludeDirs = excludeDirs; }
     const wxArrayString& GetExcludeDirs() const { return m_excludeDirs; }

@@ -9,15 +9,15 @@ class WXDLLIMPEXP_CL clConsoleOSXTerminal : public clConsoleBash
 
 public:
     clConsoleOSXTerminal();
-    virtual ~clConsoleOSXTerminal() = default;
+    ~clConsoleOSXTerminal() override = default;
 
     void SetTerminalApp(const wxString& terminalApp) { this->m_terminalApp = terminalApp; }
     const wxString& GetTerminalApp() const { return m_terminalApp; }
 
 public:
-    virtual bool Start();
-    virtual bool StartForDebugger();
-    virtual wxString PrepareCommand();
+    bool Start() override;
+    bool StartForDebugger() override;
+    wxString PrepareCommand() override;
 };
 
 #endif // CLCONSOLEOSXTERMINAL_H

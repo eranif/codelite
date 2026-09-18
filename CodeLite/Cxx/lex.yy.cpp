@@ -1873,7 +1873,7 @@ yyFlexLexer::yyFlexLexer( std::istream* arg_yyin, std::ostream* arg_yyout )
 {
 	yyin = arg_yyin;
 	yyout = arg_yyout;
-	yy_c_buf_p = 0;
+	yy_c_buf_p = nullptr;
 	yy_init = 1;
 	yy_start = 0;
 	yy_flex_debug = 0;
@@ -1887,9 +1887,9 @@ yyFlexLexer::yyFlexLexer( std::istream* arg_yyin, std::ostream* arg_yyout )
 	yy_more_offset = yy_prev_more_offset = 0;
 
 	yy_start_stack_ptr = yy_start_stack_depth = 0;
-	yy_start_stack = 0;
+	yy_start_stack = nullptr;
 
-	yy_current_buffer = 0;
+	yy_current_buffer = nullptr;
 
 #ifdef YY_USES_REJECT
 
@@ -2044,7 +2044,7 @@ int yyFlexLexer::yy_get_next_buffer()
 			}
 			else
 				/* Can't grow it, we don't own it. */
-				b->yy_ch_buf = 0;
+				b->yy_ch_buf = nullptr;
 
 			if ( ! b->yy_ch_buf )
 				YY_FATAL_ERROR(
@@ -2339,7 +2339,7 @@ void yyFlexLexer::yy_delete_buffer( YY_BUFFER_STATE b )
 		return ;
 
 	if ( b == yy_current_buffer )
-		yy_current_buffer = (YY_BUFFER_STATE) 0;
+		yy_current_buffer = (YY_BUFFER_STATE) nullptr;
 
 	if ( b->yy_is_our_buffer )
 		yy_flex_free( (void *) b->yy_ch_buf );

@@ -27,7 +27,7 @@
 #include <wx/txtstrm.h>
 
 clProcess::clProcess(int id, const wxString& cmdLine, bool redirect)
-    : wxProcess(NULL, id)
+    : wxProcess(nullptr, id)
     , m_pid(-1)
     , m_uid(id)
     , m_cmd(cmdLine)

@@ -36,14 +36,14 @@ wxDEFINE_EVENT(wxEVT_ASYNC_PROCESS_TERMINATED, clProcessEvent);
 
 ProcessReaderThread::ProcessReaderThread()
     : wxThread(wxTHREAD_JOINABLE)
-    , m_notifiedWindow(NULL)
-    , m_process(NULL)
+    , m_notifiedWindow(nullptr)
+    , m_process(nullptr)
 {
     m_suspend.store(false);
     m_is_suspended.store(false);
 }
 
-ProcessReaderThread::~ProcessReaderThread() { m_notifiedWindow = NULL; }
+ProcessReaderThread::~ProcessReaderThread() { m_notifiedWindow = nullptr; }
 
 void* ProcessReaderThread::Entry()
 {
@@ -127,8 +127,8 @@ void* ProcessReaderThread::Entry()
             break;
         }
     }
-    m_process = NULL;
-    return NULL;
+    m_process = nullptr;
+    return nullptr;
 }
 
 void ProcessReaderThread::Stop()

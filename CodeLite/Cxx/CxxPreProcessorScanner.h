@@ -78,7 +78,7 @@ public:
      */
     bool IsNull() const
     {
-        return m_scanner == NULL;
+        return m_scanner == nullptr;
         ;
     }
 

@@ -38,17 +38,17 @@ class WXDLLIMPEXP_CL PHPEntityClass : public PHPEntityBase
     PHPDocVar::List_t m_varPhpDocs; // List of @var defined inside the class body
 
 public:
-    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
-    virtual wxString GetDisplayName() const;
-    virtual bool Is(eEntityType type) const;
-    virtual wxString Type() const;
+    wxString FormatPhpDoc(const CommentConfigData& data) const override;
+    wxString GetDisplayName() const override;
+    bool Is(eEntityType type) const override;
+    wxString Type() const override;
     // Save the class into the database
-    virtual void Store(PHPLookupTable* lookup);
-    virtual void FromResultSet(wxSQLite3ResultSet& res);
-    virtual void PrintStdout(int indent) const;
+    void Store(PHPLookupTable* lookup) override;
+    void FromResultSet(wxSQLite3ResultSet& res) override;
+    void PrintStdout(int indent) const override;
 
-    void FromJSON(const JSONItem& json);
-    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     /**
      * @brief return an array of inheritance (extends, implements and traits)
@@ -56,7 +56,7 @@ public:
     wxArrayString GetInheritanceArray() const;
 
     PHPEntityClass() = default;
-    virtual ~PHPEntityClass() = default;
+    ~PHPEntityClass() override = default;
     void SetExtends(const wxString& extends) { this->m_extends = extends; }
     const wxString& GetExtends() const { return m_extends; }
     void SetImplements(const wxArrayString& implements) { this->m_implements = implements; }

@@ -57,18 +57,18 @@ public:
     /**
      * Destructor.
      */
-    virtual ~ProcessReaderThread();
+    ~ProcessReaderThread() override;
 
     /**
      * Thread execution point.
      */
-    virtual void* Entry();
+    void* Entry() override;
 
     /**
      * Called when the thread exits
      * whether it terminates normally or is stopped with Delete() (but not when it is Kill()'ed!)
      */
-    virtual void OnExit() {}
+    void OnExit() override {}
 
     /**
      * Set the window to be notified when a change was done

@@ -291,7 +291,7 @@ IProcess* WinProcessImpl::Execute(
         // Create a pipe for the child process's STDOUT.
         if (!CreatePipe(&prc->hChildStdoutRd, &prc->hChildStdoutWr, &saAttr, 0)) {
             delete prc;
-            return NULL;
+            return nullptr;
         }
 
         // Create noninheritable read handle and close the inheritable read handle.
@@ -304,7 +304,7 @@ IProcess* WinProcessImpl::Execute(
                                    DUPLICATE_SAME_ACCESS);
         if (!fSuccess) {
             delete prc;
-            return NULL;
+            return nullptr;
         }
         CloseHandle(prc->hChildStdoutRd);
 
@@ -316,7 +316,7 @@ IProcess* WinProcessImpl::Execute(
         // Create a pipe for the child process's STDERR.
         if (!CreatePipe(&prc->hChildStderrRd, &prc->hChildStderrWr, &saAttr, 0)) {
             delete prc;
-            return NULL;
+            return nullptr;
         }
 
         // Create noninheritable read handle and close the inheritable read handle.
@@ -329,7 +329,7 @@ IProcess* WinProcessImpl::Execute(
                                    DUPLICATE_SAME_ACCESS);
         if (!fSuccess) {
             delete prc;
-            return NULL;
+            return nullptr;
         }
         CloseHandle(prc->hChildStderrRd);
 
@@ -341,7 +341,7 @@ IProcess* WinProcessImpl::Execute(
         // Create a pipe for the child process's STDIN.
         if (!CreatePipe(&prc->hChildStdinRd, &prc->hChildStdinWr, &saAttr, 0)) {
             delete prc;
-            return NULL;
+            return nullptr;
         }
 
         // Duplicate the write handle to the pipe so it is not inherited.
@@ -354,7 +354,7 @@ IProcess* WinProcessImpl::Execute(
                                    DUPLICATE_SAME_ACCESS);
         if (!fSuccess) {
             delete prc;
-            return NULL;
+            return nullptr;
         }
         CloseHandle(prc->hChildStdinWr);
     }
@@ -411,7 +411,7 @@ IProcess* WinProcessImpl::Execute(
         int err = GetLastError();
         wxUnusedVar(err);
         wxDELETE(prc);
-        return NULL;
+        return nullptr;
     }
     prc->SetPid(prc->dwProcessId);
     if (!(prc->m_flags & IProcessCreateSync)) {

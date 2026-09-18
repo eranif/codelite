@@ -34,18 +34,18 @@ class WXDLLIMPEXP_CL PHPEntityKeyword : public PHPEntityBase
 {
 public:
     PHPEntityKeyword() = default;
-    virtual ~PHPEntityKeyword() = default;
-    void FromJSON(const JSONItem& json);
-    JSONItem ToJSON() const;
+    ~PHPEntityKeyword() override = default;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
 public:
-    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
-    virtual void FromResultSet(wxSQLite3ResultSet& res);
-    virtual wxString GetDisplayName() const;
-    virtual bool Is(eEntityType type) const;
-    virtual void PrintStdout(int indent) const;
-    virtual void Store(PHPLookupTable* lookup);
-    virtual wxString Type() const;
+    wxString FormatPhpDoc(const CommentConfigData& data) const override;
+    void FromResultSet(wxSQLite3ResultSet& res) override;
+    wxString GetDisplayName() const override;
+    bool Is(eEntityType type) const override;
+    void PrintStdout(int indent) const override;
+    void Store(PHPLookupTable* lookup) override;
+    wxString Type() const override;
 };
 
 #endif // PHPENTITYKEYWORD_H

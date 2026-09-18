@@ -34,11 +34,11 @@
 class WXDLLIMPEXP_CL PHPEntityVariable : public PHPEntityBase
 {
 public:
-    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
-    virtual wxString GetDisplayName() const;
-    virtual bool Is(eEntityType type) const;
-    virtual wxString Type() const;
-    virtual void FromResultSet(wxSQLite3ResultSet& res);
+    wxString FormatPhpDoc(const CommentConfigData& data) const override;
+    wxString GetDisplayName() const override;
+    bool Is(eEntityType type) const override;
+    wxString Type() const override;
+    void FromResultSet(wxSQLite3ResultSet& res) override;
 
 protected:
     wxString m_typeHint;
@@ -54,18 +54,18 @@ public:
      * @return
      */
     wxString GetScope() const;
-    virtual void Store(PHPLookupTable* lookup);
-    virtual void PrintStdout(int indent) const;
+    void Store(PHPLookupTable* lookup) override;
+    void PrintStdout(int indent) const override;
 
-    void FromJSON(const JSONItem& json);
-    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     /**
      * @brief format this variable
      */
     wxString ToFuncArgString() const;
     PHPEntityVariable() = default;
-    virtual ~PHPEntityVariable() = default;
+    ~PHPEntityVariable() override = default;
 
     void SetExpressionHint(const wxString& expressionHint) { this->m_expressionHint = expressionHint; }
     const wxString& GetExpressionHint() const { return m_expressionHint; }
@@ -75,7 +75,7 @@ public:
     void SetDefaultValue(const wxString& defaultValue) { this->m_defaultValue = defaultValue; }
     const wxString& GetDefaultValue() const { return m_defaultValue; }
     wxString GetNameNoDollar() const;
-    virtual wxString ToTooltip() const;
+    wxString ToTooltip() const override;
 
     // Aliases
     void SetIsReference(bool isReference) { SetFlag(kVar_Reference, isReference); }

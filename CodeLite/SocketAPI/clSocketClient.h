@@ -34,7 +34,7 @@ class WXDLLIMPEXP_CL clSocketClient : public clSocketBase
 {
 public:
     clSocketClient() = default;
-    virtual ~clSocketClient() = default;
+    ~clSocketClient() override = default;
 
     /**
      * @brief connect to a remote socket, using unix-domain socket

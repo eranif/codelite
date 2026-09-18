@@ -37,19 +37,19 @@ protected:
     void DoEnsureNamespacePathExists(wxSQLite3Database& db, const wxString& path);
 
 public:
-    void FromJSON(const JSONItem& json);
-    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     wxString GetParentNamespace() const;
-    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
-    virtual wxString GetDisplayName() const;
-    virtual bool Is(eEntityType type) const;
-    virtual wxString Type() const;
-    virtual void FromResultSet(wxSQLite3ResultSet& res);
-    virtual void Store(PHPLookupTable* lookup);
-    virtual void PrintStdout(int indent) const;
+    wxString FormatPhpDoc(const CommentConfigData& data) const override;
+    wxString GetDisplayName() const override;
+    bool Is(eEntityType type) const override;
+    wxString Type() const override;
+    void FromResultSet(wxSQLite3ResultSet& res) override;
+    void Store(PHPLookupTable* lookup) override;
+    void PrintStdout(int indent) const override;
     PHPEntityNamespace() = default;
-    virtual ~PHPEntityNamespace() = default;
+    ~PHPEntityNamespace() override = default;
 
     /**
      * @brief build namespace from 2 strings

@@ -14,7 +14,7 @@ wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_SERVER_READY, clCommandEvent);
 
 clAsyncSocket::clAsyncSocket(const wxString& connectionString, size_t mode)
-    : m_thread(NULL)
+    : m_thread(nullptr)
     , m_mode(mode)
     , m_connectionString(connectionString)
 {
@@ -100,7 +100,7 @@ void* clSocketAsyncThread::ServerMain()
         event.SetString(e.what());
         m_sink->AddPendingEvent(event);
     }
-    return NULL;
+    return nullptr;
 }
 
 void* clSocketAsyncThread::ClientMain()
@@ -145,7 +145,7 @@ void* clSocketAsyncThread::ClientMain()
             }
             if (TestDestroy()) {
                 // We were requested to go down during connect phase
-                return NULL;
+                return nullptr;
             }
             ::wxMilliSleep(500);
         }
@@ -157,7 +157,7 @@ void* clSocketAsyncThread::ClientMain()
         clCommandEvent event(wxEVT_ASYNC_SOCKET_CONNECT_ERROR);
         event.SetString(socket->error());
         m_sink->AddPendingEvent(event);
-        return NULL;
+        return nullptr;
     }
 
     // Notify about connection successful
@@ -169,7 +169,7 @@ void* clSocketAsyncThread::ClientMain()
     } else {
         BufferLoop(socket);
     }
-    return NULL;
+    return nullptr;
 }
 
 void clSocketAsyncThread::MessageLoop(clSocketBase::Ptr_t socket)

@@ -28,7 +28,7 @@ PHPSourceFile::PHPSourceFile(const wxString& content, PHPLookupTable* lookup)
     , m_parseFunctionBody(false)
     , m_depth(0)
     , m_reachedEOF(false)
-    , m_converter(NULL)
+    , m_converter(nullptr)
     , m_lookup(lookup)
 {
     m_scanner = ::phpLexerNew(content, kPhpLexerOpt_ReturnComments);
@@ -39,7 +39,7 @@ PHPSourceFile::PHPSourceFile(const wxFileName& filename, PHPLookupTable* lookup)
     , m_parseFunctionBody(false)
     , m_depth(0)
     , m_reachedEOF(false)
-    , m_converter(NULL)
+    , m_converter(nullptr)
     , m_lookup(lookup)
 {
     // Filename is kept in absolute path
@@ -340,7 +340,7 @@ void PHPSourceFile::OnFunction()
         }
     }
 
-    PHPEntityFunction* func(NULL);
+    PHPEntityFunction* func(nullptr);
     int funcDepth(0);
     if (token.type == kPHP_T_IDENTIFIER) {
         // the function name
@@ -496,7 +496,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
     wxString typeHint;
     wxString defaultValue;
     wxString name;
-    PHPEntityVariable* var(NULL);
+    PHPEntityVariable* var(nullptr);
     bool collectingDefaultValue = false;
     while (NextToken(token)) {
         switch (token.type) {
@@ -551,7 +551,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
                 var->SetDefaultValue(defaultValue);
                 CurrentScope()->AddChild(PHPEntityBase::Ptr_t(var));
             }
-            var = NULL;
+            var = nullptr;
             typeHint.Clear();
             defaultValue.Clear();
             collectingDefaultValue = false;
@@ -914,7 +914,7 @@ const PHPEntityBase* PHPSourceFile::Class()
         }
         pScope = pScope->Parent();
     }
-    return NULL;
+    return nullptr;
 }
 
 int PHPSourceFile::ReadUntilFoundOneOf(int delim1, int delim2, phpLexerToken& token)

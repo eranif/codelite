@@ -50,7 +50,7 @@ TagsStorageSQLite::~TagsStorageSQLite()
     if (m_db) {
         m_db->Close();
         delete m_db;
-        m_db = NULL;
+        m_db = nullptr;
     }
 }
 

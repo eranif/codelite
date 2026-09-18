@@ -39,13 +39,13 @@ class View : public xsSerializable
 {
 
 public:
-    XS_DECLARE_CLONABLE_CLASS(View);
+    XS_DECLARE_CLONABLE_CLASS_OVERRIDE(View);
     /*! \brief Default constructors */
     View();
     View(const View& obj);
     View(IDbAdapter* dbAdapter, const wxString& name, const wxString& parentName, const wxString& select);
     /*! \brief Default destructors */
-    virtual ~View() = default;
+    ~View() override = default;
 
     /*! \brief Set view name */
     void SetName(const wxString& name) { this->m_name = name; }

@@ -33,11 +33,11 @@ class SqliteType : public IDbType
 {
 
 public:
-    XS_DECLARE_CLONABLE_CLASS(SqliteType);
+    XS_DECLARE_CLONABLE_CLASS_OVERRIDE(SqliteType);
     SqliteType();
     SqliteType(const SqliteType& obj);
     SqliteType(const wxString& typeName, long propertyFlags, UNIVERSAL_TYPE universalType);
-    virtual ~SqliteType() = default;
+    ~SqliteType() override = default;
     void InitSerialize();
 
 public:

@@ -34,13 +34,13 @@ class DbConnection : public xsSerializable
 {
 
 public:
-    XS_DECLARE_CLONABLE_CLASS(DbConnection);
+    XS_DECLARE_CLONABLE_CLASS_OVERRIDE(DbConnection);
     /*! \brief Default constructors */
     DbConnection();
     DbConnection(IDbAdapter* dbAdapter, const wxString& serverName);
     DbConnection(const DbConnection& obj);
     /*! \brief Default destructor */
-    virtual ~DbConnection();
+    ~DbConnection() override;
     /*! \brief Return server name */
     wxString GetServerName() { return m_serverName; }
     /*! \brief Load databases from connection */

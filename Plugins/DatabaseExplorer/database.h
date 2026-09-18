@@ -41,13 +41,13 @@ protected:
     IDbAdapter* m_pDbAdapter;
 
 public:
-    XS_DECLARE_CLONABLE_CLASS(Database);
+    XS_DECLARE_CLONABLE_CLASS_OVERRIDE(Database);
     /*! \brief Default consturctors */
     Database();
     Database(const Database& obj);
     Database(IDbAdapter* dbAdapter, const wxString& dbName);
     /*! \brief Default destructor*/
-    virtual ~Database();
+    ~Database() override;
     /*! \brief Refresh all children, if includeViews is true, all view will be load as tables.*/
     void RefreshChildren(bool includeViews);
     /*! \brief Refresh all children details (table columns atc.)  */

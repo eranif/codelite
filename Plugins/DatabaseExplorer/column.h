@@ -46,13 +46,13 @@ public:
     // -------------------------------------------------
     // Constructor
     // -------------------------------------------------
-    XS_DECLARE_CLONABLE_CLASS(Column);
+    XS_DECLARE_CLONABLE_CLASS_OVERRIDE(Column);
     /*! \brief Default constructor*/
     Column();
     Column(const Column& obj);
     Column(const wxString& name, const wxString& parentName, IDbType* type);
     /*! \brief Default destructor */
-    virtual ~Column();
+    ~Column() override;
 
     wxString FormatName()
     {

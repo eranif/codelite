@@ -48,13 +48,13 @@ protected:
     void initSerializable();
 
 public:
-    XS_DECLARE_CLONABLE_CLASS(Table);
+    XS_DECLARE_CLONABLE_CLASS_OVERRIDE(Table);
     /*! \brief Default consturctors */
     Table();
     Table(const Table& obj);
     Table(IDbAdapter* dbAdapter, const wxString& tableName, const wxString& parentName, bool isView);
     /*! \brief Default destructor*/
-    virtual ~Table() = default;
+    ~Table() override = default;
     /*! \brief Return table name */
     wxString GetName() { return this->m_name; }
     /*! \brief Return parent name, usually dbName */

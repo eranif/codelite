@@ -45,6 +45,13 @@ public:                                 \
     DECLARE_DYNAMIC_CLASS(name)         \
     virtual wxObject* Clone();
 
+/*! \brief Same as XS_DECLARE_CLONABLE_CLASS, for a class that derives (directly or indirectly) from a class already
+ * declared with XS_DECLARE_CLONABLE_CLASS / XS_DECLARE_CLONABLE_CLASS_OVERRIDE, so Clone() is marked 'override' */
+#define XS_DECLARE_CLONABLE_CLASS_OVERRIDE(name) \
+public:                                          \
+    DECLARE_DYNAMIC_CLASS(name)                  \
+    wxObject* Clone() override;
+
 /*! \brief Enable RTTI (the same as IMPLEMENT_DYNAMIC_CLASS) and implement xsSerializable::Clone() function */
 #define XS_IMPLEMENT_CLONABLE_CLASS(name, base) \
     IMPLEMENT_DYNAMIC_CLASS(name, base)         \

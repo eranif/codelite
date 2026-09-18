@@ -38,7 +38,7 @@ public:
     /*! \brief Constraint action enum */
     enum constraintAction { restrict, cascade, setNull, noAction };
 
-    XS_DECLARE_CLONABLE_CLASS(Constraint);
+    XS_DECLARE_CLONABLE_CLASS_OVERRIDE(Constraint);
     /*! \brief Default constructors */
     Constraint();
     Constraint(const Constraint& obj);
@@ -48,7 +48,7 @@ public:
                constraintAction onDelete,
                constraintAction onUpdate);
     /*! \brief Default destructors */
-    virtual ~Constraint() = default;
+    ~Constraint() override = default;
 
     /*! \brief Set local column name */
     void SetLocalColumn(const wxString& localColumn) { this->m_localColumn = localColumn; }

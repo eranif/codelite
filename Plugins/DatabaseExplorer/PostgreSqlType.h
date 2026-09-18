@@ -33,11 +33,11 @@ class PostgreSqlType : public IDbType
 {
 
 public:
-    XS_DECLARE_CLONABLE_CLASS(PostgreSqlType);
+    XS_DECLARE_CLONABLE_CLASS_OVERRIDE(PostgreSqlType);
     PostgreSqlType();
     PostgreSqlType(const PostgreSqlType& obj);
     PostgreSqlType(const wxString& typeName, long propertyFlags, UNIVERSAL_TYPE universalType);
-    virtual ~PostgreSqlType() = default;
+    ~PostgreSqlType() override = default;
     void InitSerialize();
 
     bool GetAutoIncrement() override { return m_autoIncrement; }

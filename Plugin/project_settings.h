@@ -86,12 +86,12 @@ public:
     /**
      * Destructor
      */
-    virtual ~ProjectSettings() = default;
+    ~ProjectSettings() override = default;
 
     /**
      * Serialize the object to XML representation
      */
-    wxXmlNode* ToXml() const;
+    wxXmlNode* ToXml() const override;
 
     // enumeration
     /**

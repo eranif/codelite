@@ -58,19 +58,19 @@ struct SAscendingSort {
 //////////////////////////////////////
 // Adapter class to TagsManager
 //////////////////////////////////////
-static TagsManager* gs_TagsManager = NULL;
+static TagsManager* gs_TagsManager = nullptr;
 
 void TagsManagerST::Free()
 {
     if (gs_TagsManager) {
         delete gs_TagsManager;
     }
-    gs_TagsManager = NULL;
+    gs_TagsManager = nullptr;
 }
 
 TagsManager* TagsManagerST::Get()
 {
-    if (gs_TagsManager == NULL)
+    if (gs_TagsManager == nullptr)
         gs_TagsManager = new TagsManager();
 
     return gs_TagsManager;
@@ -82,7 +82,7 @@ TagsManager* TagsManagerST::Get()
 
 TagsManager::TagsManager()
     : wxEvtHandler()
-    , m_lang(NULL)
+    , m_lang(nullptr)
 {
     m_db = std::make_shared<TagsStorageSQLite>();
     m_db->SetSingleSearchLimit(MAX_SEARCH_LIMIT);

@@ -54,7 +54,7 @@ DatabaseLayerPtr SQLiteDbAdapter::GetDatabaseLayer(const wxString& dbName)
 
 IDbType* SQLiteDbAdapter::GetDbTypeByName(const wxString& typeName)
 {
-    IDbType* type = NULL;
+    IDbType* type = nullptr;
     wxString typeNameString = typeName.Upper();
     if (typeNameString == wxT("NULL")) {
         type = new SqliteType(wxT("NULL"), IDbType::dbtNOT_NULL, IDbType::dbtTYPE_OTHER);
@@ -193,7 +193,7 @@ wxString SQLiteDbAdapter::GetCreateTableSql(Table* tab, bool dropTable)
 
     SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
     while (node) {
-        Column* col = NULL;
+        Column* col = nullptr;
         if (node->GetData()->IsKindOf(CLASSINFO(Column)))
             col = (Column*)node->GetData();
         if (col)
@@ -343,7 +343,7 @@ IDbType* SQLiteDbAdapter::ConvertType(IDbType* pType)
 
 IDbType* SQLiteDbAdapter::GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type)
 {
-    IDbType* newType = NULL;
+    IDbType* newType = nullptr;
     switch (type) {
     case IDbType::dbtTYPE_INT:
         newType = GetDbTypeByName(wxT("INTEGER"));

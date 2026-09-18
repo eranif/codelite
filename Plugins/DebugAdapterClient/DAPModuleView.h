@@ -14,7 +14,7 @@ protected:
 
 public:
     DAPModuleView(wxWindow* parent);
-    virtual ~DAPModuleView() = default;
+    ~DAPModuleView() override = default;
 
     void AddModuleEvent(dap::ModuleEvent* event);
 };

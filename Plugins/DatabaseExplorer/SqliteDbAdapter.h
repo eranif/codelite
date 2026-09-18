@@ -46,21 +46,21 @@ class SQLiteDbAdapter : public IDbAdapter
 public:
     SQLiteDbAdapter();
     SQLiteDbAdapter(const wxString& fileName);
-    ~SQLiteDbAdapter() = default;
-    virtual void CloseConnection();
+    ~SQLiteDbAdapter() override = default;
+    void CloseConnection() override;
     virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName);
 
-    virtual void GetDatabases(DbConnection* dbCon);
-    virtual void GetTables(Database* db, bool includeViews);
-    virtual bool GetColumns(Table* pTab);
-    virtual void GetViews(Database* db);
+    void GetDatabases(DbConnection* dbCon) override;
+    void GetTables(Database* db, bool includeViews) override;
+    bool GetColumns(Table* pTab) override;
+    void GetViews(Database* db) override;
 
     virtual IDbType* GetDbTypeByName(const wxString& typeName);
     virtual wxArrayString* GetDbTypes();
 
-    virtual IDbAdapter* Clone();
-    virtual bool CanConnect();
-    virtual bool IsConnected();
+    IDbAdapter* Clone() override;
+    bool CanConnect() override;
+    bool IsConnected() override;
 
     virtual wxString GetUseDb(const wxString& dbName);
 
@@ -74,9 +74,9 @@ public:
     virtual wxString GetDropViewSql(View* pView);
     virtual wxString GetDropDatabaseSql(Database* pDb);
 
-    virtual IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type);
-    virtual void ConvertTable(Table* pTab);
-    virtual IDbType* ConvertType(IDbType* pType);
+    IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type) override;
+    void ConvertTable(Table* pTab) override;
+    IDbType* ConvertType(IDbType* pType) override;
 
 protected:
     wxString m_sFileName;

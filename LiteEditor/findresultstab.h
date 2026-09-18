@@ -68,7 +68,7 @@ protected:
     void BindSearchEvents(wxEvtHandler* binder);
 
     void AppendLine(const wxString& line, bool scroll_to_bottom = true);
-    void Clear();
+    void Clear() override;
     void SaveSearchData();
     void LoadSearch(const History& h);
     virtual void OnFindInFiles(wxCommandEvent& e);
@@ -97,7 +97,7 @@ protected:
 
 public:
     FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name);
-    ~FindResultsTab();
+    ~FindResultsTab() override;
 
     virtual void SetStyles(wxStyledTextCtrl* sci);
     void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope = false);

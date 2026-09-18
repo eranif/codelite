@@ -768,7 +768,7 @@ bool cksum(const std::string& file, size_t* checksum)
     FILE* fp;
 
     fp = fopen(file.c_str(), "rb");
-    if (fp == NULL) {
+    if (fp == nullptr) {
         return false;
     }
 

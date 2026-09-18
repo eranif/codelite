@@ -65,7 +65,7 @@ wxString DumpClass::DumpData()
 int DumpClass::DumpTable(wxTextFile* pFile, Table* pTab)
 {
     int rowCount = 0;
-    if ((pFile->IsOpened()) && (pTab != NULL)) {
+    if ((pFile->IsOpened()) && (pTab != nullptr)) {
 
         wxString cols = wxT("");
         for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {

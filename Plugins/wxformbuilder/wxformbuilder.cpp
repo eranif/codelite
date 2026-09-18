@@ -101,7 +101,7 @@ void wxFormBuilder::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolb
 void wxFormBuilder::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(menu, XRCID("wxfb_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     menu->Append(item);
@@ -139,7 +139,7 @@ wxMenu* wxFormBuilder::CreatePopupMenu()
     // Create the popup menu for the file explorer
     // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(menu, XRCID("wxfb_new_dialog"), _("New wxDialog..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);

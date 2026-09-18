@@ -18,11 +18,11 @@ public:
     wxString GetAccount();
 
 protected:
-    virtual void OnPathChanged(wxCommandEvent& event) override;
-    virtual void OnChoiceWorkspaceType(wxCommandEvent& event) override;
-    virtual void OnBrowse(wxCommandEvent& event) override;
-    virtual void OnRemoteUI(wxUpdateUIEvent& event) override;
-    virtual void OnOKUI(wxUpdateUIEvent& event) override;
+    void OnPathChanged(wxCommandEvent& event) override;
+    void OnChoiceWorkspaceType(wxCommandEvent& event) override;
+    void OnBrowse(wxCommandEvent& event) override;
+    void OnRemoteUI(wxUpdateUIEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
     void SyncPathToAccount();
     void InitialiseDialog();
 };

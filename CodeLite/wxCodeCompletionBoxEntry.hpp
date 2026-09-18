@@ -81,7 +81,7 @@ public:
     using Vec_t = std::vector<wxCodeCompletionBoxEntry::Ptr_t>;
 
 public:
-    wxCodeCompletionBoxEntry(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = NULL)
+    wxCodeCompletionBoxEntry(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = nullptr)
         : m_text(text)
         , m_insertText(text)
         , m_imgIndex(imgId)
@@ -90,7 +90,7 @@ public:
     {
     }
 
-    wxCodeCompletionBoxEntry(const wxString& text, const wxBitmap& bmp, wxClientData* userData = NULL)
+    wxCodeCompletionBoxEntry(const wxString& text, const wxBitmap& bmp, wxClientData* userData = nullptr)
         : m_text(text)
         , m_insertText(text)
         , m_imgIndex(wxNOT_FOUND)
@@ -103,7 +103,7 @@ public:
     wxCodeCompletionBoxEntry(const wxString& text,
                              const wxBitmap& bmp,
                              const wxString& helpText,
-                             wxClientData* userData = NULL)
+                             wxClientData* userData = nullptr)
         : m_text(text)
         , m_comment(helpText)
         , m_insertText(text)
@@ -150,7 +150,7 @@ public:
      * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
      */
     static wxCodeCompletionBoxEntry::Ptr_t
-    New(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = NULL)
+    New(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = nullptr)
     {
         wxCodeCompletionBoxEntry::Ptr_t pEntry(new wxCodeCompletionBoxEntry(text, imgId, userData));
         return pEntry;
@@ -159,7 +159,7 @@ public:
     /**
      * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
      */
-    static wxCodeCompletionBoxEntry::Ptr_t New(const wxString& text, const wxBitmap& bmp, wxClientData* userData = NULL)
+    static wxCodeCompletionBoxEntry::Ptr_t New(const wxString& text, const wxBitmap& bmp, wxClientData* userData = nullptr)
     {
         wxCodeCompletionBoxEntry::Ptr_t pEntry(new wxCodeCompletionBoxEntry(text, bmp, userData));
         return pEntry;
@@ -169,7 +169,7 @@ public:
      * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
      */
     static wxCodeCompletionBoxEntry::Ptr_t
-    New(const wxString& text, const wxString& helpText, const wxBitmap& bmp, wxClientData* userData = NULL)
+    New(const wxString& text, const wxString& helpText, const wxBitmap& bmp, wxClientData* userData = nullptr)
     {
         wxCodeCompletionBoxEntry::Ptr_t pEntry(new wxCodeCompletionBoxEntry(text, bmp, helpText, userData));
         return pEntry;

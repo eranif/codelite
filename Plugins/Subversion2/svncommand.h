@@ -63,7 +63,7 @@ public:
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 
     void ClearAll();
-    bool IsBusy() { return m_process != NULL; }
+    bool IsBusy() { return m_process != nullptr; }
 };
 
 #endif // SVNCOMMAND_H

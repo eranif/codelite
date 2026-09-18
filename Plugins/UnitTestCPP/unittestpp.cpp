@@ -72,7 +72,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 UnitTestPP::UnitTestPP(IManager* manager)
     : IPlugin(manager)
-    , m_proc(NULL)
+    , m_proc(nullptr)
 {
     // Connect the events to us
     wxTheApp->Connect(XRCID("run_unit_tests"),
@@ -123,7 +123,7 @@ void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
     // Create the popup menu for the file explorer
     // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(
         menu, XRCID("unittestpp_new_simple_test"), _("Create new &test..."), wxEmptyString, wxITEM_NORMAL);
@@ -193,7 +193,7 @@ wxMenu* UnitTestPP::CreateEditorPopMenu()
     // Create the popup menu for the file explorer
     // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(
         menu, XRCID("unittestpp_new_simple_test"), _("Create new &test..."), wxEmptyString, wxITEM_NORMAL);
@@ -411,7 +411,7 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
             wxMessageBox(wxString::Format(_("Could not create target file '%s'"), filename.c_str()),
                          wxT("CodeLite"),
                          wxICON_WARNING | wxOK);
-            return NULL;
+            return nullptr;
         }
 
         // since this is a new file, it will most probably will need the include file
@@ -455,7 +455,7 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
             return editor;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 wxFileName UnitTestPP::FindBestSourceFile(ProjectPtr proj, const wxFileName& filename)

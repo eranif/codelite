@@ -44,7 +44,7 @@ struct SvnConsoleCommand {
     bool showConsole;
 
     SvnConsoleCommand()
-        : handler(NULL)
+        : handler(nullptr)
         , printProcessOutput(true)
         , showConsole(false)
     {
@@ -52,7 +52,7 @@ struct SvnConsoleCommand {
     ~SvnConsoleCommand() = default;
     void clean()
     {
-        this->handler = NULL;
+        this->handler = nullptr;
         this->cmd.Clear();
         this->workingDirectory.Clear();
         this->printProcessOutput = true;

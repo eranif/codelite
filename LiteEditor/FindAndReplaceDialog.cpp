@@ -113,8 +113,8 @@ void CenterLine(wxStyledTextCtrl* ctrl, int start_pos, int end_pos)
 
 FindAndReplaceDialog::FindAndReplaceDialog(wxWindow* parent, wxWindowID id)
     : FindAndReplaceDialogFrameBase(parent, id)
-    , m_sci(NULL)
-    , m_lastTextPtr(NULL)
+    , m_sci(nullptr)
+    , m_lastTextPtr(nullptr)
     , m_eventsConnected(false)
     , m_regexType(kRegexNone)
     , m_disableTextUpdateEvent(false)
@@ -706,7 +706,7 @@ void FindAndReplaceDialog::OnReleaseEditor(clFindEvent& e)
 {
     wxStyledTextCtrl* win = e.GetCtrl();
     if (win && win == m_sci) {
-        m_sci = NULL;
+        m_sci = nullptr;
         Show(false);
     }
 }

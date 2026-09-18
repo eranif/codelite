@@ -171,7 +171,7 @@ public:
 public:
     OptionsConfig() = default;
     OptionsConfig(wxXmlNode* node);
-    virtual ~OptionsConfig() = default;
+    ~OptionsConfig() override = default;
 
     void SetOutputTabsDirection(const wxDirection& outputTabsDirection)
     {
@@ -486,7 +486,7 @@ public:
      * Return an XML representation of this object
      * \return XML node
      */
-    wxXmlNode* ToXml() const;
+    wxXmlNode* ToXml() const override;
 };
 
 using OptionsConfigPtr = std::shared_ptr<OptionsConfig>;

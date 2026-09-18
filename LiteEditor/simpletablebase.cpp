@@ -59,7 +59,7 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(
 IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
 {
     if (!ManagerST::Get()->DbgCanInteract())
-        return NULL;
+        return nullptr;
 
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     return dbgr;

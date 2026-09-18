@@ -183,7 +183,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab,
                                        const wxString& classTableName,
                                        const wxString& classUtilName)
 {
-    Constraint* pPK = NULL;
+    Constraint* pPK = nullptr;
     int lastEditParam = 0;
 
     for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
@@ -193,7 +193,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab,
                 pPK = pConstr;
         }
     }
-    Column* pPKCol = NULL;
+    Column* pPKCol = nullptr;
 
     if (pPK) {
         for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
@@ -205,7 +205,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab,
         }
     }
 
-    if ((pPKCol == NULL) && (pTab->IsView() == false)) {
+    if ((pPKCol == nullptr) && (pTab->IsView() == false)) {
         m_textLog->AppendText(wxString::Format(_("Table %s has no primary key defined!\n"), pTab->GetName().c_str()));
         return false;
     }

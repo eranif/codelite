@@ -108,7 +108,7 @@ protected:
      *
      * By suppressing an item(error) is meant add suppression pattern for that error into supp file
      */
-    void SuppressErrors(unsigned int mode, wxDataViewItem* dvItem = NULL);
+    void SuppressErrors(unsigned int mode, wxDataViewItem* dvItem = nullptr);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -65,7 +65,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 QMakePlugin::QMakePlugin(IManager* manager)
     : IPlugin(manager)
-    , m_qmakeProcess(NULL)
+    , m_qmakeProcess(nullptr)
 {
     m_longName = _("Qt's QMake integration with CodeLite");
     m_shortName = wxT("QMakePlugin");
@@ -216,7 +216,7 @@ QMakeTab* QMakePlugin::DoGetQmakeTab(const wxString& config)
 {
     std::map<wxString, QMakeTab*>::iterator iter = m_pages.find(config);
     if (iter == m_pages.end()) {
-        return NULL;
+        return nullptr;
     }
     return iter->second;
 }

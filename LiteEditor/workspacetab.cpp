@@ -62,8 +62,8 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
     : WorkspaceTabBase(parent)
     , m_caption(caption)
     , m_isLinkedToEditor(true)
-    , m_dlg(NULL)
-    , m_view(NULL)
+    , m_dlg(nullptr)
+    , m_view(nullptr)
 {
     long link = EditorConfigST::Get()->GetInteger(wxT("LinkWorkspaceViewToEditor"), 1);
     m_isLinkedToEditor = link ? true : false;
@@ -422,7 +422,7 @@ void WorkspaceTab::OpenProjectSettings(const wxString& project)
     }
 }
 
-void WorkspaceTab::ProjectSettingsDlgClosed() { m_dlg = NULL; }
+void WorkspaceTab::ProjectSettingsDlgClosed() { m_dlg = nullptr; }
 
 void WorkspaceTab::DoGoHome()
 {

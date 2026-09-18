@@ -336,7 +336,7 @@ void GotoDefinitionHandler::ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEven
     if (event.GetId() == XRCID("goto_previous_definition")) {
         event.Enable(editor && editor->CanGotoPreviousDefinition());
     } else {
-        event.Enable(editor != NULL);
+        event.Enable(editor != nullptr);
     }
 }
 

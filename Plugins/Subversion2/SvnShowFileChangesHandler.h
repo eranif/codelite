@@ -39,7 +39,7 @@ class SvnShowFileChangesHandler : public SvnCommandHandler
 
 public:
     SvnShowFileChangesHandler(Subversion2* plugin, int cmdid, wxEvtHandler* owner);
-    virtual ~SvnShowFileChangesHandler() = default;
+    ~SvnShowFileChangesHandler() override = default;
 
 public:
     virtual void Process(const wxString& output);

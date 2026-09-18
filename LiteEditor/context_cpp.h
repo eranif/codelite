@@ -113,7 +113,7 @@ public:
 
 private:
     wxString GetExpression(long pos, bool onlyWord, clEditor* editor) const;
-    bool IsIncludeStatement(const wxString& line, wxString* fileName = NULL, wxString* fileNameUpToCaret = NULL);
+    bool IsIncludeStatement(const wxString& line, wxString* fileName = nullptr, wxString* fileNameUpToCaret = nullptr);
     int FindLineToAddInclude();
     /**
      * @brief add missing implementations. If line_number is provided

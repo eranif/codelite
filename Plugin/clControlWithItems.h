@@ -111,8 +111,8 @@ protected:
     clSearchText& GetSearch() { return m_search; }
     const clSearchText& GetSearch() const { return m_search; }
 
-    void DoPositionHScrollbar();
-    void DoPositionVScrollbar();
+    void DoPositionHScrollbar() override;
+    void DoPositionVScrollbar() override;
 
 public:
     clControlWithItems(wxWindow* parent,
@@ -120,7 +120,7 @@ public:
                        const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize,
                        long style = 0);
-    virtual ~clControlWithItems();
+    ~clControlWithItems() override;
     clControlWithItems() = default;
 
     virtual void SetDefaultFont(const wxFont& font);
@@ -216,7 +216,7 @@ public:
     clColours& GetColours() { return m_colours; }
 
     // Horizontal scrolling implementation
-    void ScrollToColumn(int firstColumn);
+    void ScrollToColumn(int firstColumn) override;
     void ScrollColumns(int steps, wxDirection direction);
 
     //===-----------------------------------------

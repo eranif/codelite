@@ -104,7 +104,7 @@ public:
     CxxLexerToken()
         : lineNumber(0)
         , column(0)
-        , text(NULL)
+        , text(nullptr)
         , type(0)
         , m_owned(false)
     {
@@ -113,7 +113,7 @@ public:
     CxxLexerToken(int tokenType)
         : lineNumber(0)
         , column(0)
-        , text(NULL)
+        , text(nullptr)
         , type(tokenType)
         , m_owned(false)
     {
@@ -178,7 +178,7 @@ public:
     {
         if (m_currentPF) {
             ::fclose(m_currentPF);
-            m_currentPF = NULL;
+            m_currentPF = nullptr;
         }
 
         ClearComment();
@@ -189,7 +189,7 @@ public:
         : m_flags(options)
         , m_commentStartLine(wxNOT_FOUND)
         , m_commentEndLine(wxNOT_FOUND)
-        , m_currentPF(NULL)
+        , m_currentPF(nullptr)
     {
     }
 

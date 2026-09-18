@@ -46,7 +46,7 @@ public:
     wxWindow* PrevPage()
     {
         if (m_history.empty()) {
-            return NULL;
+            return nullptr;
         }
         // return the top of the heap
         return m_history[0];

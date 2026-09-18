@@ -48,8 +48,8 @@ class WXDLLIMPEXP_SDK BuildConfigCommon : public ConfObject
 
 public:
     BuildConfigCommon(wxXmlNode* node, wxString confType = wxT("Configuration"));
-    virtual ~BuildConfigCommon() = default;
-    wxXmlNode* ToXml() const;
+    ~BuildConfigCommon() override = default;
+    wxXmlNode* ToXml() const override;
     BuildConfigCommon* Clone() const;
 
     //--------------------------------

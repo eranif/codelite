@@ -79,7 +79,7 @@ public:
         : m_parent(parent)
         , m_pid(-1)
         , m_hardKill(false)
-        , m_callback(NULL)
+        , m_callback(nullptr)
         , m_flags(0)
     {
     }

@@ -41,7 +41,7 @@ CorrectSpellingDlg::CorrectSpellingDlg(wxWindow* parent)
     : CorrectSpellingDlg_base(parent)
 {
     m_misspelled = wxT("");
-    m_pHs = NULL;
+    m_pHs = nullptr;
     this->Connect(wxEVT_MOVE, wxMoveEventHandler(CorrectSpellingDlg::OnMove));
     m_currentPosition.x = -1;
     m_currentPosition.y = -1;

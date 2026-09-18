@@ -66,7 +66,7 @@ public:
     clDebuggerBreakpoint(const clDebuggerBreakpoint& BI);
     clDebuggerBreakpoint() = default;
     clDebuggerBreakpoint& operator=(const clDebuggerBreakpoint& BI);
-    ~clDebuggerBreakpoint() = default;
+    ~clDebuggerBreakpoint() override = default;
 
     bool IsConditional() { return !conditions.IsEmpty(); }
     double GetId() const
@@ -103,8 +103,8 @@ public:
 
 protected:
     // SerializedObject interface
-    virtual void Serialize(Archive& arch);
-    virtual void DeSerialize(Archive& arch);
+    void Serialize(Archive& arch) override;
+    void DeSerialize(Archive& arch) override;
 };
 using clDebuggerBreakpointVec_t = std::vector<clDebuggerBreakpoint>;
 #endif // CLDEBUGGERBREAKPOINT_HPP

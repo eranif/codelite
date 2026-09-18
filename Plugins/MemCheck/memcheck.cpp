@@ -41,7 +41,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 MemCheckPlugin::MemCheckPlugin(IManager* manager)
     : IPlugin(manager)
-    , m_memcheckProcessor(NULL)
+    , m_memcheckProcessor(nullptr)
 {
     m_terminal.Bind(wxEVT_TERMINAL_COMMAND_EXIT, &MemCheckPlugin::OnProcessTerminated, this);
     m_terminal.Bind(wxEVT_TERMINAL_COMMAND_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);

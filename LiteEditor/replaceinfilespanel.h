@@ -67,9 +67,9 @@ protected:
 
 public:
     ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString& name);
-    virtual ~ReplaceInFilesPanel() = default;
+    ~ReplaceInFilesPanel() override = default;
 
-    virtual void SetStyles(wxStyledTextCtrl* sci);
+    void SetStyles(wxStyledTextCtrl* sci) override;
 };
 
 #endif // __replaceinfilespanel__

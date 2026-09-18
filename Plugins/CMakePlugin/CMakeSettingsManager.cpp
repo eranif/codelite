@@ -82,7 +82,7 @@ CMakeProjectSettingsMap* CMakeSettingsManager::GetProjectSettings(const wxString
         std::map<wxString, CMakeProjectSettingsMap>::iterator it = m_projectSettings.find(project);
 
         if (it == m_projectSettings.end())
-            return NULL;
+            return nullptr;
 
         return &(it->second);
     }
@@ -95,7 +95,7 @@ const CMakeProjectSettingsMap* CMakeSettingsManager::GetProjectSettings(const wx
     std::map<wxString, CMakeProjectSettingsMap>::const_iterator it = m_projectSettings.find(project);
 
     if (it == m_projectSettings.end())
-        return NULL;
+        return nullptr;
 
     return &(it->second);
 }
@@ -117,14 +117,14 @@ CMakeSettingsManager::GetProjectSettings(const wxString& project, const wxString
     } else {
         // Not found
         if (!settings)
-            return NULL;
+            return nullptr;
 
         // Find configuration
         CMakeProjectSettingsMap::iterator it = settings->find(config);
 
         // Not found
         if (it == settings->end())
-            return NULL;
+            return nullptr;
 
         return &(it->second);
     }
@@ -140,14 +140,14 @@ const CMakeProjectSettings* CMakeSettingsManager::GetProjectSettings(const wxStr
 
     // Not found
     if (!settings)
-        return NULL;
+        return nullptr;
 
     // Find configuration
     CMakeProjectSettingsMap::const_iterator it = settings->find(config);
 
     // Not found
     if (it == settings->end())
-        return NULL;
+        return nullptr;
 
     return &(it->second);
 }

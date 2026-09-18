@@ -222,7 +222,7 @@ public:
      *
      * @return If data was loaded.
      */
-    bool LoadData(bool force = false, LoadNotifier* notifier = NULL);
+    bool LoadData(bool force = false, LoadNotifier* notifier = nullptr);
 
     // Private Operations
 private:
@@ -238,7 +238,7 @@ private:
      *
      * @return If data was loaded.
      */
-    bool LoadFromCMake(LoadNotifier* notifier = NULL);
+    bool LoadFromCMake(LoadNotifier* notifier = nullptr);
 
     /**
      * @brief Loads data from SQLite3 database.

@@ -38,7 +38,7 @@ public:
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = "button");
-    virtual ~clThemedButton();
+    ~clThemedButton() override;
 };
 
 #endif // CLTHEMEDBUTTON_H

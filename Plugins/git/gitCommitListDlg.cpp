@@ -74,7 +74,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
 }
 
 /*******************************************************************************/
-GitCommitListDlg::~GitCommitListDlg() { m_git->m_commitListDlg = NULL; }
+GitCommitListDlg::~GitCommitListDlg() { m_git->m_commitListDlg = nullptr; }
 
 /*******************************************************************************/
 void GitCommitListDlg::SetCommitList(const wxString& commits)

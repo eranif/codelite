@@ -14,11 +14,11 @@ TailFrame::TailFrame(wxWindow* parent, Tail* plugin)
 void TailFrame::OnClose(wxCloseEvent& event)
 {
     // Remove us from the view
-    m_plugin->GetView()->SetFrame(NULL);
+    m_plugin->GetView()->SetFrame(nullptr);
 
     // Redock the view
     TailData d = m_plugin->GetView()->GetTailData();
     m_plugin->CallAfter(&Tail::DockTailWindow, d);
-    m_plugin->m_view = NULL;
+    m_plugin->m_view = nullptr;
     event.Skip();
 }

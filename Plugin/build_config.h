@@ -162,8 +162,8 @@ private:
 
 public:
     BuildConfig(wxXmlNode* node);
-    virtual ~BuildConfig() = default;
-    wxXmlNode* ToXml() const;
+    ~BuildConfig() override = default;
+    wxXmlNode* ToXml() const override;
     BuildConfig* Clone() const;
 
     //--------------------------------

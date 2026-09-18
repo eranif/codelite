@@ -71,10 +71,10 @@ public:
     const std::vector<int>& GetCollapsedFolds() const { return m_folds; }
 
     TabInfo();
-    virtual ~TabInfo() = default;
+    ~TabInfo() override = default;
 
-    void Serialize(Archive& arch);
-    void DeSerialize(Archive& arch);
+    void Serialize(Archive& arch) override;
+    void DeSerialize(Archive& arch) override;
 };
 
 #endif // SERIALIZED_OBJECT_H

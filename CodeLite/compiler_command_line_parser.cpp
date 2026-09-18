@@ -36,7 +36,7 @@
 CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, const wxString& workingDirectory)
 {
     m_argc = 0;
-    m_argv = NULL;
+    m_argv = nullptr;
 
     wxString c = cmdline;
 
@@ -167,7 +167,7 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
 CompilerCommandLineParser::~CompilerCommandLineParser()
 {
     StringUtils::FreeArgv(m_argv, m_argc);
-    m_argv = NULL;
+    m_argv = nullptr;
     m_argc = 0;
 }
 

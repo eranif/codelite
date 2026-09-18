@@ -254,14 +254,14 @@ IncludeBlocks: Regroup
 
 Manager::Manager()
     : m_shellProcess(NULL)
-    , m_programProcess(NULL)
+    , m_programProcess(nullptr)
     , m_breakptsmgr(new BreakptMgr)
     , m_isShutdown(false)
     , m_dbgCanInteract(false)
     , m_useTipWin(false)
     , m_tipWinPos(wxNOT_FOUND)
     , m_frameLineno(wxNOT_FOUND)
-    , m_watchDlg(NULL)
+    , m_watchDlg(nullptr)
 {
     Bind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
     Bind(wxEVT_FORCE_RESTART_CODELITE, &Manager::OnForcedRestart, this);
@@ -2099,7 +2099,7 @@ void Manager::OnDebuggerStopped(clDebugEvent& event)
     GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
     if (m_watchDlg) {
         m_watchDlg->Destroy();
-        m_watchDlg = NULL;
+        m_watchDlg = nullptr;
     }
 
     m_debuggerTerminal.Clear();
@@ -2258,7 +2258,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
     GetBreakpointsMgr()->SetExpectingControl(false);
 
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if (dbgr == NULL) {
+    if (dbgr == nullptr) {
         wxLogDebug(wxT("Active debugger not found :/"));
         return;
     }
@@ -2411,7 +2411,7 @@ void Manager::UpdateTypeResolved(const wxString& expr, const wxString& type_name
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     // Sanity
-    if (dbgr == NULL) {
+    if (dbgr == nullptr) {
         return;
     }
     if (dbgr->IsRunning() == false) {
@@ -3073,7 +3073,7 @@ void Manager::DoShowQuickWatchDialog(const DebuggerEventData& event)
     bool useDialog = (event.m_userReason == DBG_USERR_WATCHTABLE || event.m_userReason == DBG_USERR_LOCALS);
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     bool canInteract = (dbgr && dbgr->IsRunning() && DbgCanInteract());
-    DisplayVariableDlg* view = NULL;
+    DisplayVariableDlg* view = nullptr;
 
     if (canInteract) {
         // First see if this type has a user-defined alternative

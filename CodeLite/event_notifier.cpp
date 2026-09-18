@@ -29,11 +29,11 @@
 
 #include <wx/app.h>
 
-static EventNotifier* eventNotifier = NULL;
+static EventNotifier* eventNotifier = nullptr;
 
 EventNotifier* EventNotifier::Get()
 {
-    if (eventNotifier == NULL)
+    if (eventNotifier == nullptr)
         eventNotifier = new EventNotifier();
     return eventNotifier;
 }
@@ -42,7 +42,7 @@ void EventNotifier::Release()
 {
     if (eventNotifier)
         delete eventNotifier;
-    eventNotifier = NULL;
+    eventNotifier = nullptr;
 }
 
 bool EventNotifier::SendCommandEvent(int eventId, void* clientData)

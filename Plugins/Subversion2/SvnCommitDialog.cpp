@@ -58,7 +58,7 @@ public:
 SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
-    , m_process(NULL)
+    , m_process(nullptr)
 {
     // Hide the bug tracker ID
     m_textCtrlBugID->Clear();
@@ -80,7 +80,7 @@ SvnCommitDialog::SvnCommitDialog(
     , m_plugin(plugin)
     , m_url(url)
     , m_repoPath(repoPath)
-    , m_process(NULL)
+    , m_process(nullptr)
 {
     wxString title = GetTitle();
     if (!url.empty()) {

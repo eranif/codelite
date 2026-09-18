@@ -80,5 +80,5 @@ void* clSingleInstanceThread::Entry()
         clDEBUG() << "Failed to create single instance socket:" << e.what() << endl;
         clDEBUG() << "Another instance is already running" << endl;
     }
-    return NULL;
+    return nullptr;
 }

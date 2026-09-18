@@ -153,7 +153,7 @@ void SnipWiz::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 void SnipWiz::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(menu, IDM_SETTINGS, _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     menu->Append(item);
@@ -178,7 +178,7 @@ void SnipWiz::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     if (type == MenuTypeFileView_Folder) {
         // Create the popup menu for the virtual folders
-        wxMenuItem* item(NULL);
+        wxMenuItem* item(nullptr);
 
         item = new wxMenuItem(menu, wxID_SEPARATOR);
         menu->Prepend(item);
@@ -361,7 +361,7 @@ wxMenu* SnipWiz::CreateSubMenu()
 {
     wxMenu* parentMenu = new wxMenu();
 
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     if (!m_clipboard.IsEmpty()) {
         item = new wxMenuItem(parentMenu, IDM_PASTE, _("Paste buffer"), _("Paste buffer"), wxITEM_NORMAL);
         parentMenu->Append(item);
@@ -468,7 +468,7 @@ IEditor* SnipWiz::GetEditor()
     IEditor* editor = m_mgr->GetActiveEditor();
     if (!editor) {
         ::wxMessageBox(noEditor, codeLite, wxICON_WARNING | wxOK);
-        return NULL;
+        return nullptr;
     }
     return editor;
 }

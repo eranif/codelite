@@ -115,7 +115,7 @@ public:
 
     virtual wxString GetExcludeFolders() const;
     clFileSystemWorkspace(bool dummy);
-    virtual ~clFileSystemWorkspace();
+    ~clFileSystemWorkspace() override;
 
     static clFileSystemWorkspace& Get();
 

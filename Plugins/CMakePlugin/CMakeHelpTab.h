@@ -191,36 +191,36 @@ public:
      *
      * @return
      */
-    virtual bool RequestStop() const;
+    bool RequestStop() const override;
 
     /**
      * @brief Loading is started.
      */
-    virtual void Start();
+    void Start() override;
 
     /**
      * @brief Update loading progress.
      *
      * @param value Value is in range [0, 100].
      */
-    virtual void Update(int value);
+    void Update(int value) override;
 
     /**
      * @brief Increase loading progress.
      *
      * @param value
      */
-    virtual void Inc(int value);
+    void Inc(int value) override;
 
     /**
      * @brief Loading is done.
      */
-    virtual void Done();
+    void Done() override;
 
     /**
      * @brief stop the worker thread
      */
-    virtual void Stop();
+    void Stop() override;
 
     // Protected Operations
 protected:

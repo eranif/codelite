@@ -64,7 +64,7 @@ protected:
 
 public:
     ShellTab(wxWindow* parent, wxWindowID id, const wxString& name);
-    virtual ~ShellTab() = default;
+    ~ShellTab() override = default;
 };
 
 class OutputTab : public ShellTab
@@ -77,7 +77,7 @@ protected:
 
 public:
     OutputTab(wxWindow* parent, wxWindowID id, const wxString& name);
-    virtual ~OutputTab();
+    ~OutputTab() override;
 
     /**
      * @brief Windows only. Report a string from a debuggee process which used the "OuptutDebugString" method

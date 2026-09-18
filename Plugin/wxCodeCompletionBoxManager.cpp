@@ -84,7 +84,7 @@ wxCodeCompletionBoxManager::~wxCodeCompletionBoxManager()
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &wxCodeCompletionBoxManager::OnAppActivate, this);
 }
 
-static wxCodeCompletionBoxManager* manager = NULL;
+static wxCodeCompletionBoxManager* manager = nullptr;
 wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 {
     if (!manager) {

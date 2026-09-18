@@ -91,7 +91,7 @@ public:
                const wxSize& size = wxDefaultSize,
                long style = 0);
     clTreeCtrl();
-    virtual ~clTreeCtrl();
+    ~clTreeCtrl() override;
     bool Create(wxWindow* parent,
                 wxWindowID id = wxID_ANY,
                 const wxPoint& pos = wxDefaultPosition,
@@ -236,11 +236,11 @@ public:
                             const wxString& text,
                             int image = -1,
                             int selImage = -1,
-                            wxTreeItemData* data = NULL);
+                            wxTreeItemData* data = nullptr);
     /**
      * @brief Adds the root node to the tree, returning the new item.
      */
-    wxTreeItemId AddRoot(const wxString& text, int image = -1, int selImage = -1, wxTreeItemData* data = NULL);
+    wxTreeItemId AddRoot(const wxString& text, int image = -1, int selImage = -1, wxTreeItemData* data = nullptr);
 
     /**
      * @brief insert item after 'previous'
@@ -250,7 +250,7 @@ public:
                             const wxString& text,
                             int image = -1,
                             int selImage = -1,
-                            wxTreeItemData* data = NULL);
+                            wxTreeItemData* data = nullptr);
     /**
      * @brief return the root item
      */
@@ -321,7 +321,7 @@ public:
     /**
      * @brief return the current indent size
      */
-    virtual int GetIndent() const override;
+    int GetIndent() const override;
 
     /**
      * @brief is the tree has items? (root included)

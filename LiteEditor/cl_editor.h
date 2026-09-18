@@ -583,7 +583,7 @@ public:
     void FindAndSelectV(const wxString& pattern,
                         const wxString& name,
                         int pos = 0,
-                        NavMgr* unused = NULL) override; // The same but returns void, so usable with CallAfter()
+                        NavMgr* unused = nullptr) override; // The same but returns void, so usable with CallAfter()
     void DoFindAndSelectV(const wxArrayString& strings, int pos); // Called with CallAfter()
 
     void RecalcHorizontalScrollbar();

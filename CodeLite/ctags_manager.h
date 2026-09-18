@@ -168,7 +168,7 @@ public:
      * @param tags if tags is set to non NULL, the tags are converted to TagTreePtr
      * @return tag tree
      */
-    TagTreePtr Load(const wxFileName& fileName, TagEntryPtrVector_t* tags = NULL);
+    TagTreePtr Load(const wxFileName& fileName, TagEntryPtrVector_t* tags = nullptr);
 
     /**
      * Open sqlite database.
@@ -261,7 +261,7 @@ public:
      */
     wxString NormalizeFunctionSig(const wxString& sig,
                                   size_t flags = Normalize_Func_Name,
-                                  std::vector<std::pair<int, int>>* paramLen = NULL);
+                                  std::vector<std::pair<int, int>>* paramLen = nullptr);
 
     /**
      * @brief insert functionBody into clsname. This function will search for best location

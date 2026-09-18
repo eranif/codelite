@@ -90,7 +90,7 @@ wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable)
 
     SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
     while (node) {
-        Column* col = NULL;
+        Column* col = nullptr;
         if (node->GetData()->IsKindOf(CLASSINFO(Column)))
             col = (Column*)node->GetData();
         if (col)
@@ -129,7 +129,7 @@ wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable)
 
 IDbType* MySqlDbAdapter::GetDbTypeByName(const wxString& typeName)
 {
-    IDbType* type = NULL;
+    IDbType* type = nullptr;
     if (typeName == wxT("INT")) {
         type = new MySqlType(
             wxT("INT"), IDbType::dbtAUTO_INCREMENT | IDbType::dbtNOT_NULL | IDbType::dbtSIZE, IDbType::dbtTYPE_INT);
@@ -285,7 +285,7 @@ bool MySqlDbAdapter::GetColumns(Table* pTab)
 IDbType* MySqlDbAdapter::parseTypeString(const wxString& typeString)
 {
     static wxRegEx reType(wxT("([a-zA-Z]+)(\\([0-9]+\\))?"));
-    IDbType* type(NULL);
+    IDbType* type(nullptr);
     if (reType.Matches(typeString)) {
         wxString typeName = reType.GetMatch(typeString, 1);
         wxString strSize = reType.GetMatch(typeString, 2);
@@ -389,7 +389,7 @@ wxString MySqlDbAdapter::GetAlterTableConstraintSql(Table* tab)
 
     SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
     while (node) {
-        Constraint* constr = NULL;
+        Constraint* constr = nullptr;
         constr = wxDynamicCast(node->GetData(), Constraint);
         if (constr) {
             if (constr->GetType() == Constraint::foreignKey) {
@@ -501,7 +501,7 @@ IDbType* MySqlDbAdapter::ConvertType(IDbType* pType)
 
 IDbType* MySqlDbAdapter::GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type)
 {
-    IDbType* newType = NULL;
+    IDbType* newType = nullptr;
     switch (type) {
     case IDbType::dbtTYPE_INT:
         newType = GetDbTypeByName(wxT("INT"));

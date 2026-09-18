@@ -158,7 +158,7 @@ static wxString MakeId()
 
 DbgGdb::DbgGdb()
     : m_debuggeePid(wxNOT_FOUND)
-    , m_cliHandler(NULL)
+    , m_cliHandler(nullptr)
     , m_break_at_main(false)
     , m_attachedMode(false)
     , m_goingDown(false)
@@ -216,7 +216,7 @@ DbgCmdHandler* DbgGdb::PopHandler(const wxString& id)
 
     HandlersMap_t::iterator it = m_handlers.find(id);
     if (it == m_handlers.end()) {
-        return NULL;
+        return nullptr;
     }
 
     DbgCmdHandler* cmd = it->second;
@@ -643,7 +643,7 @@ bool DbgGdb::StepInInstruction()
 
 bool DbgGdb::StepOut() { return WriteCommand("-exec-finish", new DbgCmdHandlerAsyncCmd(m_observer, this)); }
 
-bool DbgGdb::IsRunning() { return m_gdbProcess != NULL; }
+bool DbgGdb::IsRunning() { return m_gdbProcess != nullptr; }
 
 bool DbgGdb::Interrupt()
 {
@@ -883,7 +883,7 @@ void DbgGdb::Poke()
             if (GetCliHandler() && GetCliHandler()->GetCommandId() == id) {
                 // probably the "^done" message of the CLI command
                 GetCliHandler()->ProcessOutput(curline);
-                SetCliHandler(NULL); // we are done processing the CLI
+                SetCliHandler(nullptr); // we are done processing the CLI
 
             } else {
                 // strip the id from the line

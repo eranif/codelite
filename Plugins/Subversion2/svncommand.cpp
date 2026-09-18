@@ -36,8 +36,8 @@
 #include <wx/aui/framemanager.h>
 
 SvnCommand::SvnCommand(Subversion2* plugin)
-    : m_process(NULL)
-    , m_handler(NULL)
+    : m_process(nullptr)
+    , m_handler(nullptr)
     , m_plugin(plugin)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnCommand::OnProcessOutput, this);

@@ -32,7 +32,7 @@ XS_IMPLEMENT_CLONABLE_CLASS(Database, xsSerializable);
 Database::Database()
 {
     m_name = wxT("");
-    m_pDbAdapter = NULL;
+    m_pDbAdapter = nullptr;
 }
 
 Database::Database(const Database& obj)

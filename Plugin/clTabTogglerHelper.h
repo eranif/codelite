@@ -62,7 +62,7 @@ public:
                        wxWindow* outputTab,
                        const wxString& workspaceTabName,
                        wxWindow* workspaceTab);
-    virtual ~clTabTogglerHelper();
+    ~clTabTogglerHelper() override;
 
     clTabTogglerHelper& SetOutputTab(wxWindow* outputTab)
     {

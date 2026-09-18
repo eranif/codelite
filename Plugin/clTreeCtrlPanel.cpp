@@ -292,7 +292,7 @@ void clTreeCtrlPanel::DoExpandItem(const wxDataViewItem& parent, bool expand, bo
         return;
 
     m_treeCtrl->DeleteItem(child);
-    cd = NULL;
+    cd = nullptr;
 
     // Get the top level folders
     wxDir dir(folderPath);

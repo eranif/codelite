@@ -46,8 +46,8 @@ DirPicker::DirPicker(wxWindow* parent,
                      const wxSize& size,
                      long style)
     : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER)
-    , m_path(NULL)
-    , m_combo(NULL)
+    , m_path(nullptr)
+    , m_combo(nullptr)
     , m_buttonCaption(buttonCaption)
     , m_dlgCaption(message)
     , m_style(style)

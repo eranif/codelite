@@ -55,7 +55,7 @@ protected:
 
 public:
     clWorkspaceView(wxSimplebook* book);
-    virtual ~clWorkspaceView();
+    ~clWorkspaceView() override;
 
     /**
      * @brief return the default page to show

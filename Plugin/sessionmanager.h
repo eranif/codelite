@@ -80,10 +80,10 @@ public:
     const wxString& GetFindInFilesMask() const { return m_findInFilesMask; }
 
     SessionEntry() = default;
-    virtual ~SessionEntry() = default;
+    ~SessionEntry() override = default;
 
-    void Serialize(Archive& arch);
-    void DeSerialize(Archive& arch);
+    void Serialize(Archive& arch) override;
+    void DeSerialize(Archive& arch) override;
 };
 
 /**
@@ -96,10 +96,10 @@ class WXDLLIMPEXP_SDK TabGroupEntry : public SessionEntry
 
 public:
     TabGroupEntry() = default;
-    virtual ~TabGroupEntry() = default;
+    ~TabGroupEntry() override = default;
 
-    void Serialize(Archive& arch);
-    void DeSerialize(Archive& arch);
+    void Serialize(Archive& arch) override;
+    void DeSerialize(Archive& arch) override;
     void SetTabgroupName(const wxString& tabgroupName) { m_tabgroupName = tabgroupName; }
     const wxString& GetTabgroupName() const { return m_tabgroupName; }
 };
@@ -160,7 +160,7 @@ class WXDLLIMPEXP_SDK SessionManager : public wxEvtHandler
 
 private:
     SessionManager();
-    ~SessionManager() = default;
+    ~SessionManager() override = default;
 
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);

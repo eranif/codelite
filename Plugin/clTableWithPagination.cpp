@@ -13,7 +13,7 @@ clTableWithPagination::clTableWithPagination(
     : wxPanel(parent, wxID_ANY, pos, size, style, name)
     , m_linesPerPage(100)
     , m_currentPage(0)
-    , m_ctrl(NULL)
+    , m_ctrl(nullptr)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     wxBoxSizer* hSizer = new wxBoxSizer(wxHORIZONTAL);

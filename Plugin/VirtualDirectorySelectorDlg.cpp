@@ -53,7 +53,7 @@ public:
         : m_itemType(type)
     {
     }
-    virtual ~MyVdTreeItemData() {}
+    ~MyVdTreeItemData() override {}
 
     bool IsFolder() const { return m_itemType == ProjectItem::TypeVirtualDirectory; }
     bool IsProject() const { return m_itemType == ProjectItem::TypeProject; }

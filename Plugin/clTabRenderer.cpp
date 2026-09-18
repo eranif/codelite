@@ -84,7 +84,7 @@ void clTabInfo::CreateDisabledBitmap()
 
 clTabInfo::clTabInfo(clTabCtrl* tabCtrl)
     : m_tabCtrl(tabCtrl)
-    , m_window(NULL)
+    , m_window(nullptr)
     , m_active(false)
     , m_textX(wxNOT_FOUND)
     , m_textY(wxNOT_FOUND)

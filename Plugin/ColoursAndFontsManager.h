@@ -64,7 +64,7 @@ protected:
 
 private:
     ColoursAndFontsManager();
-    virtual ~ColoursAndFontsManager();
+    ~ColoursAndFontsManager() override;
 
     LexerConf::Ptr_t DoAddLexer(JSONItem json);
     void Clear();

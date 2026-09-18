@@ -47,7 +47,7 @@ class WXDLLIMPEXP_SDK DockablePaneMenuManager : public wxEvtHandler
 
 public:
     DockablePaneMenuManager(wxAuiManager* aui);
-    virtual ~DockablePaneMenuManager() = default;
+    ~DockablePaneMenuManager() override = default;
 
     void AddMenu(const wxString& name);
     void RemoveMenu(const wxString& name);

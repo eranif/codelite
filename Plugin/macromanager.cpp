@@ -162,7 +162,7 @@ const std::unordered_set<wxString> CODELITE_MACROS = {
 
 wxString MacroManager::ExpandNoEnv(const wxString& expression, const wxString& project, const wxString& confToBuild)
 {
-    return DoExpand(expression, NULL, project, false, confToBuild);
+    return DoExpand(expression, nullptr, project, false, confToBuild);
 }
 
 wxString MacroManager::DoExpand(

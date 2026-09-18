@@ -34,7 +34,7 @@ class WXDLLIMPEXP_SDK clSingleChoiceDialog : public clSingleChoiceDialogBase
 
 public:
     clSingleChoiceDialog(wxWindow* parent, const wxArrayString& options, int initialSelection = 0);
-    virtual ~clSingleChoiceDialog();
+    ~clSingleChoiceDialog() override;
     wxString GetSelection() const;
 
 protected:

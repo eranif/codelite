@@ -254,13 +254,13 @@ void clEditorBar::OnButtonActions(wxCommandEvent& event)
     menu.AppendSeparator();
     wxMenuItem *idOpenExplorer, *idOpenShell;
     {
-        idOpenShell = new wxMenuItem(NULL, wxID_ANY, _("Open Shell"), _("Open Shell"));
+        idOpenShell = new wxMenuItem(nullptr, wxID_ANY, _("Open Shell"), _("Open Shell"));
         idOpenShell->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("console"));
         menu.Append(idOpenShell);
     }
 
     {
-        idOpenExplorer = new wxMenuItem(NULL, wxID_ANY, _("Open Containing Folder"), _("Open Containing Folder"));
+        idOpenExplorer = new wxMenuItem(nullptr, wxID_ANY, _("Open Containing Folder"), _("Open Containing Folder"));
         idOpenExplorer->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("folder-yellow"));
         menu.Append(idOpenExplorer);
     }

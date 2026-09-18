@@ -886,7 +886,7 @@ int clTabCtrl::FindPage(wxWindow* page) const
 
 bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
 {
-    wxWindow* nextSelection = NULL;
+    wxWindow* nextSelection = nullptr;
     if (!IsIndexValid(page))
         return false;
     bool deletingSelection = ((int)page == GetSelection());
@@ -930,14 +930,14 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
     }
 
     // Choose a new selection, but only if we are deleting the active tab
-    nextSelection = NULL;
+    nextSelection = nullptr;
     if (deletingSelection) {
         while (!m_history->GetHistory().empty() && !nextSelection) {
             nextSelection = m_history->PrevPage();
             if (!GetTabInfo(nextSelection)) {
                 // The history contains a tab that no longer exists
                 m_history->Pop(nextSelection);
-                nextSelection = NULL;
+                nextSelection = nullptr;
             }
         }
         // It is OK to end up with a null next selection, we will handle it later

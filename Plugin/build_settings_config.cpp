@@ -84,14 +84,14 @@ wxXmlNode* BuildSettingsConfig::GetCompilerNode(const wxString& name) const
             return XmlUtils::FindNodeByName(cmpsNode, wxT("Compiler"), name);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void BuildSettingsConfig::SetCompiler(CompilerPtr cmp)
 {
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Compilers"));
     if (node) {
-        wxXmlNode* oldCmp = NULL;
+        wxXmlNode* oldCmp = nullptr;
         wxXmlNode* child = node->GetChildren();
         while (child) {
             if (child->GetName() == wxT("Compiler") && XmlUtils::ReadString(child, wxT("Name")) == cmp->GetName()) {
@@ -107,7 +107,7 @@ void BuildSettingsConfig::SetCompiler(CompilerPtr cmp)
         node->AddChild(cmp->ToXml());
 
     } else {
-        node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compilers"));
+        node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Compilers"));
         m_doc->GetRoot()->AddChild(node);
         node->AddChild(cmp->ToXml());
     }
@@ -134,7 +134,7 @@ CompilerPtr BuildSettingsConfig::GetFirstCompiler(BuildSettingsConfigCookie& coo
     wxXmlNode* cmps = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Compilers"));
     if (cmps) {
         cookie.parent = cmps;
-        cookie.child = NULL;
+        cookie.child = nullptr;
         return GetNextCompiler(cookie);
     }
     return NULL;
@@ -142,11 +142,11 @@ CompilerPtr BuildSettingsConfig::GetFirstCompiler(BuildSettingsConfigCookie& coo
 
 CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie& cookie)
 {
-    if (cookie.parent == NULL) {
+    if (cookie.parent == nullptr) {
         return NULL;
     }
 
-    if (cookie.child == NULL) {
+    if (cookie.child == nullptr) {
         cookie.child = cookie.parent->GetChildren();
     }
 
@@ -158,8 +158,8 @@ CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie& cook
 
             // incase we don't have more children to iterate
             // reset the parent as well so the next call to GetNextCompiler() will fail
-            if (cookie.child == NULL) {
-                cookie.parent = NULL;
+            if (cookie.child == nullptr) {
+                cookie.parent = nullptr;
             }
             return std::make_shared<Compiler>(n);
         }
@@ -207,7 +207,7 @@ BuilderConfigPtr BuildSettingsConfig::GetBuilderConfig(const wxString& name)
 void BuildSettingsConfig::SaveBuilderConfig(BuilderPtr builder)
 {
     // update configuration file
-    BuilderConfigPtr bsptr(new BuilderConfig(NULL));
+    BuilderConfigPtr bsptr(new BuilderConfig(nullptr));
     bsptr->SetName(builder->GetName());
     bsptr->SetIsActive(builder->IsActive());
     SetBuildSystem(bsptr);
@@ -317,18 +317,18 @@ bool BuildSettingsConfig::SaveXmlFile()
     return XmlUtils::SaveXmlToFile(m_doc.get(), m_fileName.GetFullPath());
 }
 
-static BuildSettingsConfig* gs_buildSettingsInstance = NULL;
+static BuildSettingsConfig* gs_buildSettingsInstance = nullptr;
 void BuildSettingsConfigST::Free()
 {
     if (gs_buildSettingsInstance) {
         delete gs_buildSettingsInstance;
-        gs_buildSettingsInstance = NULL;
+        gs_buildSettingsInstance = nullptr;
     }
 }
 
 BuildSettingsConfig* BuildSettingsConfigST::Get()
 {
-    if (gs_buildSettingsInstance == NULL)
+    if (gs_buildSettingsInstance == nullptr)
         gs_buildSettingsInstance = new BuildSettingsConfig;
     return gs_buildSettingsInstance;
 }

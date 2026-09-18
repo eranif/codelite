@@ -28,7 +28,7 @@ public:
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxChoiceNameStr);
-    virtual ~clThemedChoice();
+    ~clThemedChoice() override;
 };
 
 #endif // CLTHEMEDCHOICE_H

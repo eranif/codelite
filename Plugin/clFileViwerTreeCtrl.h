@@ -80,7 +80,7 @@ public:
             m_index = std::make_unique<clTreeNodeIndex>();
         }
     }
-    virtual ~clTreeCtrlData() = default;
+    ~clTreeCtrlData() override = default;
 
     clTreeNodeIndex* GetIndex() { return m_index.get(); }
 
@@ -149,7 +149,7 @@ public:
                          const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxDefaultSize,
                          long style = wxDV_MULTIPLE | wxDV_ROW_LINES | wxDV_NO_HEADER | wxBORDER_STATIC);
-    virtual ~clFileViewerTreeCtrl() = default;
+    ~clFileViewerTreeCtrl() override = default;
 
     /**
      * @brief the (invisible) root item. Top level folders are direct children of this item

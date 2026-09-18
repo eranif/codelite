@@ -35,10 +35,10 @@ class clTreeCtrlPanelDefaultPage : public clTreeCtrlPanelDefaultPageBase
 {
 public:
     clTreeCtrlPanelDefaultPage(wxWindow* parent);
-    virtual ~clTreeCtrlPanelDefaultPage();
+    ~clTreeCtrlPanelDefaultPage() override;
 
 protected:
-    virtual void OnDefaultPageContextMenu(wxContextMenuEvent& event);
+    void OnDefaultPageContextMenu(wxContextMenuEvent& event) override;
     void OnOpenFolder(wxCommandEvent& event);
     void OnPaint(wxPaintEvent& event);
     void OnColoursChanged(clCommandEvent& event);

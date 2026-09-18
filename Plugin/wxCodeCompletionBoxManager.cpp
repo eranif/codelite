@@ -59,8 +59,8 @@ struct wxCodeCompletionClientData : public wxClientData {
 } // namespace
 
 wxCodeCompletionBoxManager::wxCodeCompletionBoxManager()
-    : m_box(NULL)
-    , m_stc(NULL)
+    : m_box(nullptr)
+    , m_stc(nullptr)
 {
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &wxCodeCompletionBoxManager::OnDismissBox, this);
@@ -213,8 +213,8 @@ void wxCodeCompletionBoxManager::DestroyCCBox()
         }
         m_box->Destroy();
     }
-    m_box = NULL;
-    m_stc = NULL;
+    m_box = nullptr;
+    m_stc = nullptr;
 }
 
 void wxCodeCompletionBoxManager::DestroyCurrent()
@@ -406,7 +406,7 @@ void wxCodeCompletionBoxManager::Free()
     // Destroy the manager, Unbinding all events
     if (manager) {
         delete manager;
-        manager = NULL;
+        manager = nullptr;
     }
 }
 

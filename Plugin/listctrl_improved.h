@@ -48,7 +48,7 @@ public:
                      const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize,
                      long style = wxLC_REPORT);
-    virtual ~ListCtrlImproved();
+    ~ListCtrlImproved() override;
 
     ////////////////////////////////////////////////
     // API

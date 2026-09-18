@@ -15,7 +15,7 @@ protected:
 
 public:
     clInfoBar(wxWindow* parent, wxWindowID winid = wxID_ANY);
-    virtual ~clInfoBar() = default;
+    ~clInfoBar() override = default;
 
     void DisplayMessage(const wxString& message,
                         int flags = wxICON_INFORMATION,

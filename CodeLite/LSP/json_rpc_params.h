@@ -21,7 +21,7 @@ public:
 
 public:
     Params() = default;
-    virtual ~Params() = default;
+    ~Params() override = default;
     bool operator==(const Params&) const = default;
     template <typename T>
     T* As() const
@@ -163,7 +163,7 @@ class WXDLLIMPEXP_CL ExecuteCommandParams : public Params
 
 public:
     ExecuteCommandParams(const wxString& command, const wxString& arguments);
-    ~ExecuteCommandParams() = default;
+    ~ExecuteCommandParams() override = default;
     bool operator==(const ExecuteCommandParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
@@ -181,7 +181,7 @@ class WXDLLIMPEXP_CL CodeActionParams : public Params
 
 public:
     CodeActionParams() = default;
-    virtual ~CodeActionParams() = default;
+    ~CodeActionParams() override = default;
     bool operator==(const CodeActionParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;

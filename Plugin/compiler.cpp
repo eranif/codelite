@@ -360,7 +360,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
 wxXmlNode* Compiler::ToXml() const
 {
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
+    wxXmlNode* node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Compiler"));
     node->AddAttribute(wxT("Name"), m_name);
     node->AddAttribute(wxT("GenerateDependenciesFiles"), BoolToString(m_generateDependenciesFile));
     node->AddAttribute(wxT("ReadObjectsListFromFile"), BoolToString(m_readObjectFilesFromList));
@@ -368,7 +368,7 @@ wxXmlNode* Compiler::ToXml() const
     node->AddAttribute("CompilerFamily", m_compilerFamily);
     node->AddAttribute("IsDefault", BoolToString(m_isDefault));
 
-    wxXmlNode* installPath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "InstallationPath");
+    wxXmlNode* installPath = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "InstallationPath");
     node->AddChild(installPath);
     XmlUtils::SetCDATANodeContent(installPath, m_installationPath);
 
@@ -406,17 +406,17 @@ wxXmlNode* Compiler::ToXml() const
         node->AddChild(child);
     }
 
-    wxXmlNode* options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
+    wxXmlNode* options = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Option"));
     options->AddAttribute(wxT("Name"), wxT("ObjectSuffix"));
     options->AddAttribute(wxT("Value"), m_objectSuffix);
     node->AddChild(options);
 
-    options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
+    options = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Option"));
     options->AddAttribute(wxT("Name"), wxT("DependSuffix"));
     options->AddAttribute(wxT("Value"), m_dependSuffix);
     node->AddChild(options);
 
-    options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
+    options = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Option"));
     options->AddAttribute(wxT("Name"), wxT("PreprocessSuffix"));
     options->AddAttribute(wxT("Value"), m_preprocessSuffix);
     node->AddChild(options);
@@ -442,15 +442,15 @@ wxXmlNode* Compiler::ToXml() const
         node->AddChild(warning);
     }
 
-    wxXmlNode* globalIncludePath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("GlobalIncludePath"));
+    wxXmlNode* globalIncludePath = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("GlobalIncludePath"));
     XmlUtils::SetNodeContent(globalIncludePath, m_globalIncludePath);
     node->AddChild(globalIncludePath);
 
-    wxXmlNode* globalLibPath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("GlobalLibPath"));
+    wxXmlNode* globalLibPath = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("GlobalLibPath"));
     XmlUtils::SetNodeContent(globalLibPath, m_globalLibPath);
     node->AddChild(globalLibPath);
 
-    wxXmlNode* pathVariable = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("PathVariable"));
+    wxXmlNode* pathVariable = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("PathVariable"));
     XmlUtils::SetNodeContent(pathVariable, m_pathVariable);
     node->AddChild(pathVariable);
 

@@ -43,10 +43,10 @@ protected:
 
 public:
     CompilerLocatorCrossGCC() = default;
-    virtual ~CompilerLocatorCrossGCC() = default;
+    ~CompilerLocatorCrossGCC() override = default;
 
 public:
-    virtual bool Locate();
+    bool Locate() override;
     virtual CompilerPtr Locate(const wxString& folder);
 };
 

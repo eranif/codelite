@@ -59,10 +59,10 @@ class WXDLLIMPEXP_SDK SimpleLongValue : public SerializedObject
 
 public:
     SimpleLongValue() = default;
-    ~SimpleLongValue() = default;
+    ~SimpleLongValue() override = default;
 
-    void DeSerialize(Archive& arch);
-    void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     // Setters
     void SetValue(long value) { this->m_value = value; }
@@ -76,10 +76,10 @@ class WXDLLIMPEXP_SDK SimpleStringValue : public SerializedObject
 
 public:
     SimpleStringValue() = default;
-    ~SimpleStringValue() = default;
+    ~SimpleStringValue() override = default;
 
-    void DeSerialize(Archive& arch);
-    void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     void SetValue(const wxString& value) { this->m_value = value; }
     const wxString& GetValue() const { return m_value; }
@@ -91,10 +91,10 @@ class WXDLLIMPEXP_SDK SimpleRectValue : public SerializedObject
 
 public:
     SimpleRectValue() = default;
-    ~SimpleRectValue() = default;
+    ~SimpleRectValue() override = default;
 
-    void DeSerialize(Archive& arch);
-    void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     void SetRect(const wxRect& rect) { this->m_rect = rect; }
     const wxRect& GetRect() const { return m_rect; }
@@ -197,14 +197,14 @@ public:
      * \param name object name
      * \param arch the archived object container
      */
-    virtual bool WriteObject(const wxString& name, SerializedObject* obj);
+    bool WriteObject(const wxString& name, SerializedObject* obj) override;
 
     /**
      * \brief read an archived object from the configuration
      * \param name object to read
      * \param arch [output]
      */
-    virtual bool ReadObject(const wxString& name, SerializedObject* obj);
+    bool ReadObject(const wxString& name, SerializedObject* obj) override;
 
     void SetInstallDir(const wxString& instlDir);
 
@@ -254,7 +254,7 @@ public:
 
 private:
     EditorConfig();
-    virtual ~EditorConfig();
+    ~EditorConfig() override;
 };
 
 class WXDLLIMPEXP_SDK EditorConfigST

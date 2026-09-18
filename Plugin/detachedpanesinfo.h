@@ -39,11 +39,11 @@ protected:
 public:
     DetachedPanesInfo(wxArrayString arr);
     DetachedPanesInfo() = default;
-    virtual ~DetachedPanesInfo() = default;
+    ~DetachedPanesInfo() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     // Getters
     const wxArrayString& GetPanes() const { return m_panes; }

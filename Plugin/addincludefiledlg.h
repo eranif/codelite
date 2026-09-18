@@ -42,7 +42,7 @@ protected:
     void OnTextUpdated(wxCommandEvent& e);
     void OnButtonDown(wxCommandEvent& event);
     void OnButtonUp(wxCommandEvent& event);
-    void OnButtonOK(wxCommandEvent& e);
+    void OnButtonOK(wxCommandEvent& e) override;
     void OnClearCachedPaths(wxCommandEvent& e);
     void UpdateLineToAdd();
 
@@ -52,7 +52,7 @@ protected:
 public:
     /** Constructor */
     AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath, const wxString& text, int lineNo);
-    virtual ~AddIncludeFileDlg();
+    ~AddIncludeFileDlg() override;
     const wxString& GetLineToAdd() const { return m_lineToAdd; }
     int GetLine() const { return m_line; }
 };

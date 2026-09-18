@@ -14,10 +14,10 @@ class WXDLLIMPEXP_SDK PhpOptions : public clConfigItem
 
 public:
     PhpOptions();
-    virtual ~PhpOptions() = default;
+    ~PhpOptions() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     PhpOptions& Load();
     PhpOptions& Save();

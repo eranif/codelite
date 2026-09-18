@@ -16,7 +16,7 @@ public:
                            const wxSize& size = wxDefaultSize,
                            long style = wxSP_3D,
                            const wxString& name = "splitterWindow");
-    virtual ~clThemedSplitterWindow() = default;
+    ~clThemedSplitterWindow() override = default;
     bool Create(wxWindow* parent,
                 wxWindowID id = wxID_ANY,
                 const wxPoint& pos = wxDefaultPosition,

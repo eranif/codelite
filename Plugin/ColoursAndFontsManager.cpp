@@ -1179,7 +1179,7 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
                              "settings.\nContinue?"),
                            "CodeLite",
                            wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT,
-                           NULL) != wxYES) {
+                           nullptr) != wxYES) {
             return false;
         }
     }

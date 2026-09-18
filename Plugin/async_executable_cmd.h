@@ -70,7 +70,7 @@ public:
     //  \param owner the window owner for this action
     AsyncExeCmd(wxEvtHandler* owner);
 
-    virtual ~AsyncExeCmd();
+    ~AsyncExeCmd() override;
     virtual void Execute(const wxString& cmdLine, bool hide = true, bool redirect = true);
 
     wxOutputStream* GetOutputStream()
@@ -78,7 +78,7 @@ public:
         if (m_proc) {
             return m_proc->GetOutputStream();
         }
-        return NULL;
+        return nullptr;
     }
 
     void AppendLine(const wxString& line, bool isErr = false);

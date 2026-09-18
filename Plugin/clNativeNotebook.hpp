@@ -67,7 +67,7 @@ public:
                 long style = 0,
                 const wxString& name = wxNotebookNameStr);
     // dtor
-    virtual ~clNativeNotebook();
+    ~clNativeNotebook() override;
 
     clBitmapList* GetBitmaps() const { return m_bitmaps; }
     int GetPageBitmapIndex(size_t index) const;

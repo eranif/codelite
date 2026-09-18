@@ -6,11 +6,11 @@ class WXDLLIMPEXP_SDK SwitchToWorkspaceDlg : public SwitchToWorkspaceBaseDlg
 {
 public:
     SwitchToWorkspaceDlg(wxWindow* parent);
-    virtual ~SwitchToWorkspaceDlg();
+    ~SwitchToWorkspaceDlg() override;
     wxString GetPath() const;
 
 protected:
-    virtual void OnBrowse(wxCommandEvent& event);
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnBrowse(wxCommandEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
 };
 #endif // SWITCHTOWORKSPACEDLG_H

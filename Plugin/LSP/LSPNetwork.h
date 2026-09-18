@@ -45,7 +45,7 @@ public:
 
 public:
     LSPNetwork() = default;
-    virtual ~LSPNetwork() = default;
+    ~LSPNetwork() override = default;
 
     //===-----------------------------------
     // Interface

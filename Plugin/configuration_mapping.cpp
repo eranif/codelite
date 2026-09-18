@@ -52,7 +52,7 @@ BuildMatrix::BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration)
 
 wxXmlNode* BuildMatrix::ToXml() const
 {
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("BuildMatrix"));
+    wxXmlNode* node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("BuildMatrix"));
     for (const auto& configuration : m_configurationList) {
         node->AddChild(configuration->ToXml());
     }
@@ -165,10 +165,10 @@ WorkspaceConfiguration::WorkspaceConfiguration(wxXmlNode* node)
 
 wxXmlNode* WorkspaceConfiguration::ToXml() const
 {
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("WorkspaceConfiguration"));
+    wxXmlNode* node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("WorkspaceConfiguration"));
     node->AddAttribute(wxT("Name"), m_name);
 
-    wxXmlNode* env = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Environment");
+    wxXmlNode* env = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Environment");
     XmlUtils::SetNodeContent(env, m_environmentVariables);
     node->AddChild(env);
 

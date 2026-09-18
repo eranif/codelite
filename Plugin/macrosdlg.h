@@ -50,7 +50,7 @@ public:
 
 protected:
     // Handlers for MacrosBaseDlg events.
-    void OnItemRightClick(wxListEvent& event);
+    void OnItemRightClick(wxListEvent& event) override;
     void OnCopy(wxCommandEvent& e);
     void Initialize();
     void AddMacro(const wxString& name, const wxString& desc);
@@ -60,7 +60,7 @@ protected:
 public:
     /** Constructor */
     MacrosDlg(wxWindow* parent, int content, ProjectPtr project, IEditor* editor);
-    virtual ~MacrosDlg();
+    ~MacrosDlg() override;
 };
 
 #endif // __macrosdlg__

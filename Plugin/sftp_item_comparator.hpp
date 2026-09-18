@@ -57,7 +57,7 @@ public:
         while (m_path.Replace("//", "/")) {}
     }
 
-    virtual ~clRemoteDirCtrlItemData() = default;
+    ~clRemoteDirCtrlItemData() override = default;
 
     wxString GetBasename() const { return GetFullPath().BeforeLast('/'); }
     wxString GetFullName() const { return GetFullPath().AfterLast('/'); }

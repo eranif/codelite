@@ -16,7 +16,7 @@ class WXDLLIMPEXP_SDK clGotoAnythingManager : public wxEvtHandler
     std::unordered_map<wxString, clGotoEntry> m_actions;
 
     clGotoAnythingManager();
-    virtual ~clGotoAnythingManager();
+    ~clGotoAnythingManager() override;
 
 protected:
     void OnActionSelected(clGotoEvent& e);

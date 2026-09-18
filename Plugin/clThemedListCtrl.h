@@ -21,7 +21,7 @@ public:
                          const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxDefaultSize,
                          long style = 0);
-    virtual ~clThemedListCtrlBase();
+    ~clThemedListCtrlBase() override;
 };
 
 class WXDLLIMPEXP_SDK clThemedListCtrl : public clThemedListCtrlBase
@@ -32,7 +32,7 @@ public:
                      const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize,
                      long style = 0);
-    virtual ~clThemedListCtrl() = default;
+    ~clThemedListCtrl() override = default;
 };
 
 class WXDLLIMPEXP_SDK clThemedOrderedListCtrl : public clThemedListCtrlBase
@@ -45,7 +45,7 @@ public:
                             const wxPoint& pos = wxDefaultPosition,
                             const wxSize& size = wxDefaultSize,
                             long style = 0);
-    virtual ~clThemedOrderedListCtrl() = default;
+    ~clThemedOrderedListCtrl() override = default;
 
     void SetSortedColumn(size_t sortedColumn) { this->m_sortedColumn = sortedColumn; }
     size_t GetSortedColumn() const { return m_sortedColumn; }

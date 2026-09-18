@@ -12,10 +12,10 @@ class clTableLineEditorDlg : public clTableLineEditorBaseDlg
 
 public:
     clTableLineEditorDlg(wxWindow* parent, const wxArrayString& columns, const wxArrayString& data);
-    virtual ~clTableLineEditorDlg() = default;
+    ~clTableLineEditorDlg() override = default;
 
 protected:
-    virtual void OnColumnSelected(wxCommandEvent& event);
+    void OnColumnSelected(wxCommandEvent& event) override;
     void DoItemSelected(int index);
 };
 #endif // CLTABLELINEEDITORDLG_H

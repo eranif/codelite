@@ -46,7 +46,7 @@ public:
                       const wxSize& size = wxDefaultSize,
                       long style = wxTAB_TRAVERSAL | wxNO_BORDER,
                       const wxString& name = "clEnhancedToolBar");
-    virtual ~clEnhancedToolBar() = default;
+    ~clEnhancedToolBar() override = default;
 
     /**
      * @brief add a button that changes its state per click. The initial state is 'button1'

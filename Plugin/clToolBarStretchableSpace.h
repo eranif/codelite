@@ -11,10 +11,10 @@ class WXDLLIMPEXP_SDK clToolBarStretchableSpace : public clToolBarButtonBase
 
 public:
     clToolBarStretchableSpace(clToolBarGeneric* parent);
-    virtual ~clToolBarStretchableSpace() = default;
+    ~clToolBarStretchableSpace() override = default;
 
-    virtual wxSize CalculateSize(wxDC& dc) const;
-    virtual void Render(wxDC& dc, const wxRect& rect);
+    wxSize CalculateSize(wxDC& dc) const override;
+    void Render(wxDC& dc, const wxRect& rect) override;
 
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }

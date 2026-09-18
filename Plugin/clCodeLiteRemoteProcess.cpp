@@ -62,7 +62,7 @@ public:
         , m_process(process)
     {
     }
-    ~CodeLiteRemoteProcess() { m_process = nullptr; }
+    ~CodeLiteRemoteProcess() override { m_process = nullptr; }
 
     // are we using callback?
     bool IsUsingCallback() const { return m_callback != nullptr; }

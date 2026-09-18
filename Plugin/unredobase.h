@@ -79,7 +79,7 @@ class WXDLLIMPEXP_SDK CommandProcessorBase : public wxEvtHandler
 {
 public:
     CommandProcessorBase();
-    virtual ~CommandProcessorBase();
+    ~CommandProcessorBase() override;
 
     bool CanAppend(CLC_types type)
     {

@@ -15,10 +15,10 @@
 class WXDLLIMPEXP_SDK NewProjectDialog : public NewProjectDialogBase
 {
 protected:
-    virtual void OnCompilerChanged(wxCommandEvent& event);
-    virtual void OnOK(wxCommandEvent& event);
-    virtual void OnNameTyped(wxCommandEvent& event);
-    virtual void OnPathSelected(wxFileDirPickerEvent& event);
+    void OnCompilerChanged(wxCommandEvent& event) override;
+    void OnOK(wxCommandEvent& event) override;
+    void OnNameTyped(wxCommandEvent& event) override;
+    void OnPathSelected(wxFileDirPickerEvent& event) override;
     std::list<ProjectPtr> m_list;
     ProjectData m_projectData;
     std::unordered_map<wxString, ProjectPtr> m_projectsMap;
@@ -27,14 +27,14 @@ protected:
 
 protected:
     wxArrayString GetProjectsTypesForCategory(const wxString& category);
-    void OnCategoryChanged(wxCommandEvent& event);
+    void OnCategoryChanged(wxCommandEvent& event) override;
 
 public:
     NewProjectDialog(wxWindow* parent);
-    virtual ~NewProjectDialog();
+    ~NewProjectDialog() override;
     ProjectData GetProjectData() const;
 
 protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnOKUI(wxUpdateUIEvent& event) override;
 };
 #endif // NEWPROJECTDIALOG_H

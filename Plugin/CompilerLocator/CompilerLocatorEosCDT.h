@@ -13,10 +13,10 @@ protected:
 
 public:
     CompilerLocatorEosCDT() = default;
-    virtual ~CompilerLocatorEosCDT() = default;
+    ~CompilerLocatorEosCDT() override = default;
 
 public:
-    virtual bool Locate();
+    bool Locate() override;
     virtual CompilerPtr Locate(const wxString& folder);
 };
 

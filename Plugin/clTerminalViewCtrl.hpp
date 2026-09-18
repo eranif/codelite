@@ -26,7 +26,7 @@ public:
                        const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize,
                        long style = wxDV_MULTIPLE | wxDV_NO_HEADER);
-    virtual ~clTerminalViewCtrl();
+    ~clTerminalViewCtrl() override;
 
     /**
      * @brief Add line of text, with optionally user data

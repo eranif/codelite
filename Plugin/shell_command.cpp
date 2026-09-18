@@ -36,7 +36,7 @@ wxDEFINE_EVENT(wxEVT_BUILD_PROCESS_STARTED, clBuildEvent);
 wxDEFINE_EVENT(wxEVT_BUILD_PROCESS_ENDED, clBuildEvent);
 
 ShellCommand::ShellCommand(const QueueCommand& buildInfo)
-    : m_proc(NULL)
+    : m_proc(nullptr)
     , m_info(buildInfo)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &ShellCommand::OnProcessOutput, this);

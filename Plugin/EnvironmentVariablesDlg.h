@@ -10,19 +10,19 @@ class WXDLLIMPEXP_SDK EnvironmentVariablesDlg : public EnvVarsTableDlgBase
 
 public:
     EnvironmentVariablesDlg(wxWindow* parent);
-    virtual ~EnvironmentVariablesDlg();
+    ~EnvironmentVariablesDlg() override;
 
 protected:
-    virtual void OnCancel(wxCommandEvent& event);
-    virtual void OnClose(wxCloseEvent& event);
+    void OnCancel(wxCommandEvent& event) override;
+    void OnClose(wxCloseEvent& event) override;
     void DoAddPage(const wxString& name, const wxString& content, bool select);
     void DoAddNewSet();
 
 protected:
-    virtual void OnButtonOk(wxCommandEvent& event);
-    virtual void OnDeleteSet(wxCommandEvent& event);
-    virtual void OnDeleteSetUI(wxUpdateUIEvent& event);
-    virtual void OnExport(wxCommandEvent& event);
-    virtual void OnNewSet(wxCommandEvent& event);
+    void OnButtonOk(wxCommandEvent& event) override;
+    void OnDeleteSet(wxCommandEvent& event) override;
+    void OnDeleteSetUI(wxUpdateUIEvent& event) override;
+    void OnExport(wxCommandEvent& event) override;
+    void OnNewSet(wxCommandEvent& event) override;
 };
 #endif // ENVIRONMENTVARIABLESDLG_H

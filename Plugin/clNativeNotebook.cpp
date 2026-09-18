@@ -327,7 +327,7 @@ wxWindow* clNativeNotebook::DoUpdateHistoryPreRemove(wxWindow* page)
             if (GetPageIndex(nextSelection) == wxNOT_FOUND) {
                 // The history contains a tab that no longer exists
                 m_history->Pop(nextSelection);
-                nextSelection = NULL;
+                nextSelection = nullptr;
             }
         }
         // It is OK to end up with a null next selection, we will handle it later

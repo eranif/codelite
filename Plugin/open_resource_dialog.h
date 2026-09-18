@@ -72,7 +72,7 @@ public:
     {
     }
 
-    virtual ~OpenResourceDialogItemData() = default;
+    ~OpenResourceDialogItemData() override = default;
 
     bool IsOk() const;
 };
@@ -98,11 +98,11 @@ class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
     long m_column = wxNOT_FOUND;
 
 protected:
-    virtual void OnEnter(wxCommandEvent& event);
-    virtual void OnEntrySelected(wxDataViewEvent& event);
-    virtual void OnEntryActivated(wxDataViewEvent& event);
-    virtual void OnCheckboxfilesCheckboxClicked(wxCommandEvent& event);
-    virtual void OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event);
+    void OnEnter(wxCommandEvent& event) override;
+    void OnEntrySelected(wxDataViewEvent& event) override;
+    void OnEntryActivated(wxDataViewEvent& event) override;
+    void OnCheckboxfilesCheckboxClicked(wxCommandEvent& event) override;
+    void OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event) override;
     void OnWorkspaceSymbols(LSPEvent& event);
 
     void DoPopulateList();
@@ -122,18 +122,18 @@ protected:
 
 protected:
     // Handlers for OpenResourceDialogBase events.
-    void OnText(wxCommandEvent& event);
+    void OnText(wxCommandEvent& event) override;
     void OnUsePartialMatching(wxCommandEvent& event);
-    void OnKeyDown(wxKeyEvent& event);
-    void OnOK(wxCommandEvent& event);
-    void OnOKUI(wxUpdateUIEvent& event);
+    void OnKeyDown(wxKeyEvent& event) override;
+    void OnOK(wxCommandEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
     void OnTimer(wxTimerEvent& event);
     void GetLineAndColumnFromFilter(const wxString& filter, wxString& modFilter, long& lineNumber, long& column);
 
 public:
     /** Constructor */
     OpenResourceDialog(wxWindow* parent, IManager* manager, const wxString& initialSelection);
-    virtual ~OpenResourceDialog();
+    ~OpenResourceDialog() override;
 
     std::vector<OpenResourceDialogItemData*> GetSelections() const;
     wxArrayString& GetFilters() { return m_filters; }

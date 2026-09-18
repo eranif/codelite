@@ -42,7 +42,7 @@ struct WXDLLIMPEXP_SDK clSelectSymbolDialogEntry {
 
     clSelectSymbolDialogEntry()
         : bmp(wxNullBitmap)
-        , clientData(NULL)
+        , clientData(nullptr)
     {
     }
 
@@ -53,13 +53,13 @@ class WXDLLIMPEXP_SDK clSelectSymbolDialog : public clSelectSymbolDialogBase
 {
 public:
     clSelectSymbolDialog(wxWindow* parent, const clSelectSymbolDialogEntry::List_t& entries);
-    virtual ~clSelectSymbolDialog();
+    ~clSelectSymbolDialog() override;
 
 protected:
     void AddSymbol(const wxString& name,
                    const wxBitmap& bmp = wxNullBitmap,
                    const wxString& help = "",
-                   wxClientData* clientData = NULL);
+                   wxClientData* clientData = nullptr);
     void Initialise(const clSelectSymbolDialogEntry::List_t& entries);
 
 public:
@@ -69,7 +69,7 @@ public:
     wxClientData* GetSelection() const;
 
 protected:
-    virtual void OnItemActivated(wxDataViewEvent& event);
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnItemActivated(wxDataViewEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
 };
 #endif // CLSELECTSYMBOLDIALOG_H

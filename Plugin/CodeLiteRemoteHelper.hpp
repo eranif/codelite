@@ -26,7 +26,7 @@ protected:
 
 public:
     CodeLiteRemoteHelper();
-    virtual ~CodeLiteRemoteHelper();
+    ~CodeLiteRemoteHelper() override;
 
     /**
      * @brief return the remote config for the plugin

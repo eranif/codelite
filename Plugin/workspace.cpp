@@ -154,7 +154,7 @@ bool clCxxWorkspace::CreateWorkspace(const wxString& name, const wxString& path,
     ::wxSetWorkingDirectory(m_fileName.GetPath());
     m_buildMatrix = nullptr;
 
-    wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Workspace"));
+    wxXmlNode* root = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("CodeLite_Workspace"));
     m_doc.SetRoot(root);
     m_doc.GetRoot()->AddAttribute(wxT("Name"), name);
 
@@ -305,7 +305,7 @@ bool clCxxWorkspace::CreateProject(const wxString& name,
     tmp.MakeRelativeTo(m_fileName.GetPath());
 
     // Add an entry to the workspace file
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
+    wxXmlNode* node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Project"));
     node->AddAttribute(wxT("Name"), name);
     node->AddAttribute(wxT("Path"), tmp.GetFullPath(wxPATH_UNIX));
 
@@ -347,7 +347,7 @@ bool clCxxWorkspace::AddProject(const wxString& path, // fullpath
     tmp.MakeRelativeTo(m_fileName.GetPath());
 
     // Add an entry to the workspace file
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
+    wxXmlNode* node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Project"));
     node->AddAttribute(wxT("Name"), proj->GetName());
     node->AddAttribute(wxT("Path"), tmp.GetFullPath(wxPATH_UNIX));
 
@@ -419,7 +419,7 @@ bool clCxxWorkspace::AddProject(const wxString& path, wxString& errMsg)
         // Add an entry to the workspace file
         fn.MakeRelativeTo(m_fileName.GetPath());
 
-        wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
+        wxXmlNode* node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Project"));
         node->AddAttribute(wxT("Name"), fn.GetName());
         node->AddAttribute(wxT("Path"), fn.GetFullPath(wxPATH_UNIX));
         node->AddAttribute(wxT("Active"), m_projects.size() == 1 ? wxT("Yes") : wxT("No"));
@@ -885,12 +885,12 @@ void clCxxWorkspaceST::Free()
     if (gs_Workspace) {
         delete gs_Workspace;
     }
-    gs_Workspace = NULL;
+    gs_Workspace = nullptr;
 }
 
 clCxxWorkspace* clCxxWorkspaceST::Get()
 {
-    if (gs_Workspace == NULL)
+    if (gs_Workspace == nullptr)
         gs_Workspace = new clCxxWorkspace;
     return gs_Workspace;
 }
@@ -949,7 +949,7 @@ void clCxxWorkspace::SetEnvironmentVariables(const wxString& envvars)
         delete node;
     }
 
-    node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Environment"));
+    node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Environment"));
     m_doc.GetRoot()->AddChild(node);
 
     wxString nodeContent = envvars;
@@ -984,7 +984,7 @@ bool clCxxWorkspace::IsVirtualDirectoryExists(const wxString& vdFullPath)
     }
 
     wxXmlNode* vdNode = proj->GetVirtualDir(fixedPath);
-    return vdNode != NULL;
+    return vdNode != nullptr;
 }
 
 wxString clCxxWorkspace::GetPrivateFolder() const
@@ -1313,7 +1313,7 @@ wxXmlNode* clCxxWorkspace::DoGetWorkspaceFolderXmlNode(const wxString& path)
     for (size_t i = 0; i < parts.size(); ++i) {
         parent = XmlUtils::FindNodeByName(parent, "VirtualDirectory", parts.Item(i));
         if (!parent)
-            return NULL;
+            return nullptr;
     }
     return parent;
 }
@@ -1335,7 +1335,7 @@ wxXmlNode* clCxxWorkspace::DoCreateWorkspaceFolder(const wxString& path)
         wxXmlNode* child = XmlUtils::FindNodeByName(parent, "VirtualDirectory", parts.Item(i));
         if (!child) {
             // add this child
-            child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
+            child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "VirtualDirectory");
             child->AddAttribute("Name", parts.Item(i));
             parent->AddChild(child);
         }
@@ -1389,7 +1389,7 @@ void clCxxWorkspace::DeleteWorkspaceFolder(const wxString& path)
     DoLoadWorkspace(m_fileName.GetFullPath(), errMsg);
 }
 
-bool clCxxWorkspace::CreateWorkspaceFolder(const wxString& path) { return (DoCreateWorkspaceFolder(path) != NULL); }
+bool clCxxWorkspace::CreateWorkspaceFolder(const wxString& path) { return (DoCreateWorkspaceFolder(path) != nullptr); }
 
 bool clCxxWorkspace::DoLoadWorkspace(const wxString& fileName, wxString& errMsg)
 {
@@ -1448,7 +1448,7 @@ wxXmlNode* clCxxWorkspace::DoGetProjectXmlNode(const wxString& projectName)
     });
 
     if (iter == xmls.end())
-        return NULL;
+        return nullptr;
     return (*iter);
 }
 
@@ -1485,7 +1485,7 @@ wxArrayString clCxxWorkspace::GetWorkspaceFolders() const
 
 void clCxxWorkspace::DoVisitWorkspaceFolders(wxXmlNode* parent, const wxString& curpath, wxArrayString& paths) const
 {
-    if ((XmlUtils::FindFirstByTagName(parent, "VirtualDirectory") == NULL) && !curpath.IsEmpty()) {
+    if ((XmlUtils::FindFirstByTagName(parent, "VirtualDirectory") == nullptr) && !curpath.IsEmpty()) {
         paths.Add(curpath);
         return;
     }

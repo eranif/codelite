@@ -94,7 +94,7 @@ wxXmlNode* BuildConfigCommon::ToXml() const
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, m_confType);
 
     // create the compile node
-    wxXmlNode* compile = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
+    wxXmlNode* compile = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Compiler"));
     compile->AddAttribute(wxT("Options"), m_compileOptions);
     compile->AddAttribute(wxT("C_Options"), m_cCompileOptions);
     compile->AddAttribute("Assembler", m_assemblerOptions);
@@ -102,42 +102,42 @@ wxXmlNode* BuildConfigCommon::ToXml() const
 
     size_t i = 0;
     for (i = 0; i < m_includePath.GetCount(); i++) {
-        wxXmlNode* option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IncludePath"));
+        wxXmlNode* option = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("IncludePath"));
         option->AddAttribute(wxT("Value"), m_includePath.Item(i));
         compile->AddChild(option);
     }
 
     for (i = 0; i < m_preprocessor.GetCount(); i++) {
-        wxXmlNode* prep = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Preprocessor"));
+        wxXmlNode* prep = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Preprocessor"));
         prep->AddAttribute(wxT("Value"), m_preprocessor.Item(i));
         compile->AddChild(prep);
     }
 
     // add the link node
-    wxXmlNode* link = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Linker"));
+    wxXmlNode* link = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Linker"));
     link->AddAttribute(wxT("Options"), m_linkOptions);
     node->AddChild(link);
 
     for (i = 0; i < m_libPath.GetCount(); i++) {
-        wxXmlNode* option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LibraryPath"));
+        wxXmlNode* option = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("LibraryPath"));
         option->AddAttribute(wxT("Value"), m_libPath.Item(i));
         link->AddChild(option);
     }
 
     for (i = 0; i < m_libs.GetCount(); i++) {
-        wxXmlNode* option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Library"));
+        wxXmlNode* option = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Library"));
         option->AddAttribute(wxT("Value"), m_libs.Item(i));
         link->AddChild(option);
     }
 
     // add the resource compiler node
-    wxXmlNode* resCmp = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("ResourceCompiler"));
+    wxXmlNode* resCmp = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("ResourceCompiler"));
     resCmp->AddAttribute(wxT("Options"), m_resCompileOptions);
     node->AddChild(resCmp);
 
     wxStringTokenizer tok(m_resCmpIncludePath, wxT(";"));
     while (tok.HasMoreTokens()) {
-        wxXmlNode* option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IncludePath"));
+        wxXmlNode* option = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("IncludePath"));
         option->AddAttribute(wxT("Value"), tok.NextToken());
         resCmp->AddChild(option);
     }

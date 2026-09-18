@@ -183,7 +183,7 @@ protected:
     void DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuItemDataIntMap_t& intMap);
 
     clKeyboardManager();
-    virtual ~clKeyboardManager();
+    ~clKeyboardManager() override;
 
 protected:
     void OnStartupCompleted(wxCommandEvent& event);

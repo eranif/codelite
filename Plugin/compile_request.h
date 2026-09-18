@@ -46,10 +46,10 @@ public:
                    bool preprocessOnly = false);
 
     /// dtor
-    virtual ~CompileRequest();
+    ~CompileRequest() override;
 
     // process the request
-    virtual void Process(IManager* manager = NULL);
+    void Process(IManager* manager = nullptr) override;
 
     // setters/getters
     const wxString& GetProjectName() const { return m_info.GetProject(); }

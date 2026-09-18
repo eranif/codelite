@@ -78,10 +78,10 @@ public:
 
 private:
     EnvironmentConfig();
-    virtual ~EnvironmentConfig() = default;
+    ~EnvironmentConfig() override = default;
 
 public:
-    virtual wxString GetRootName();
+    wxString GetRootName() override;
 };
 
 class WXDLLIMPEXP_SDK EnvSetter
@@ -132,7 +132,7 @@ public:
         m_env->ApplyEnv(NULL, projname, buildConfName);
     }
 
-    explicit EnvSetter(EnvironmentConfig* conf, wxStringMap_t* om = NULL)
+    explicit EnvSetter(EnvironmentConfig* conf, wxStringMap_t* om = nullptr)
         : m_env(EnvironmentConfig::Instance())
     {
         wxUnusedVar(conf);
@@ -147,7 +147,7 @@ public:
     }
 
     explicit EnvSetter(const wxString& var, const wxString& value)
-        : m_env(NULL)
+        : m_env(nullptr)
     {
         m_envName = var;
         // keep old value
@@ -159,7 +159,7 @@ public:
     {
         if (m_env) {
             m_env->UnApplyEnv();
-            m_env = NULL;
+            m_env = nullptr;
         }
 
         if (m_restoreOldValue) {

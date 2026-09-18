@@ -297,7 +297,7 @@ protected:
     void UpdateNavigationBar();
 
     Manager();
-    virtual ~Manager();
+    ~Manager() override;
 
     struct CrashInfo {
         size_t times{0};

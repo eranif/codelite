@@ -39,7 +39,7 @@ wxClientData* clSelectSymbolDialog::GetSelection() const
 {
     wxDataViewItem item = m_dvListCtrl->GetSelection();
     if (!item)
-        return NULL;
+        return nullptr;
 
     wxClientData* cd = reinterpret_cast<wxClientData*>(m_dvListCtrl->GetItemData(item));
     return cd;

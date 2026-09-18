@@ -10,11 +10,11 @@ class WXDLLIMPEXP_SDK clToolBarControl : public clToolBarButtonBase
 
 public:
     clToolBarControl(clToolBarGeneric* parent, wxWindow* control);
-    virtual ~clToolBarControl() = default;
+    ~clToolBarControl() override = default;
     wxWindow* GetControl() { return m_ctrl; }
 
 public:
-    virtual wxSize CalculateSize(wxDC& dc) const;
-    void Render(wxDC& dc, const wxRect& rect);
+    wxSize CalculateSize(wxDC& dc) const override;
+    void Render(wxDC& dc, const wxRect& rect) override;
 };
 #endif // CLTOOLBARCONTROL_H

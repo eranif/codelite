@@ -116,7 +116,7 @@ public:
     /**
      * Destructor .
      */
-    virtual ~SymbolTree() = default;
+    ~SymbolTree() override = default;
 
     /**
      * Create tree, usually called after constructing SymbolTree with default constructor.

@@ -143,7 +143,7 @@ protected:
 
 public:
     clCaptionBar(wxWindow* parent, wxTopLevelWindow* topLevelFrame);
-    virtual ~clCaptionBar();
+    ~clCaptionBar() override;
 
     void SetBitmap(const wxBitmap& bitmap);
     void SetCaption(const wxString& caption);

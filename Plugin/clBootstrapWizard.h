@@ -53,18 +53,18 @@ public:
 
 public:
     clBootstrapWizard(wxWindow* parent, bool firstTime);
-    virtual ~clBootstrapWizard();
+    ~clBootstrapWizard() override;
     clBootstrapData GetData();
     wxArrayString GetSelectedPlugins();
     bool IsRestartRequired();
 
 protected:
-    virtual void OnCancelWizard(wxCommandEvent& event);
-    virtual void OnFinish(wxWizardEvent& event);
-    virtual void OnInstallCompiler(wxCommandEvent& event);
-    virtual void OnInstallCompilerUI(wxUpdateUIEvent& event);
-    virtual void OnScanForCompilers(wxCommandEvent& event);
-    virtual void OnThemeSelected(wxCommandEvent& event);
+    void OnCancelWizard(wxCommandEvent& event) override;
+    void OnFinish(wxWizardEvent& event) override;
+    void OnInstallCompiler(wxCommandEvent& event) override;
+    void OnInstallCompilerUI(wxUpdateUIEvent& event) override;
+    void OnScanForCompilers(wxCommandEvent& event) override;
+    void OnThemeSelected(wxCommandEvent& event) override;
 
     void SetSelectedTheme(const wxString& themeName);
     void DoUpdatePreview(const wxString& themeName);

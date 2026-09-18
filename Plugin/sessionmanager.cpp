@@ -201,7 +201,7 @@ bool SessionManager::GetSession(const wxString& workspaceFile,
         if (!doc.Load(sessionFileName.GetFullPath()) || !doc.IsOk())
             return false;
     } else {
-        doc.SetRoot(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag));
+        doc.SetRoot(new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, Tag));
     }
 
     wxXmlNode* const node = doc.GetRoot();
@@ -227,7 +227,7 @@ bool SessionManager::Save(const wxString& name,
     if (name.empty())
         return false;
 
-    wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag);
+    wxXmlNode* child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, Tag);
     child->AddAttribute(wxT("Name"), name);
 
     Archive arch;
@@ -264,7 +264,7 @@ void SessionManager::SetLastSession(const wxString& name)
     }
 
     // set new one
-    wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LastSession"));
+    wxXmlNode* child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("LastSession"));
     m_doc.GetRoot()->AddChild(child);
     XmlUtils::SetNodeContent(child, name);
 

@@ -351,7 +351,7 @@ wxXmlNode* BuildConfig::ToXml() const
         resCmp->AddAttribute("Required", BoolToString(m_isResCmpNeeded));
     }
 
-    wxXmlNode* general = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "General");
+    wxXmlNode* general = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "General");
     general->AddAttribute("OutputFile", m_outputFile);
     general->AddAttribute("IntermediateDirectory", m_intermediateDirectory);
     general->AddAttribute("Command", m_command);
@@ -364,19 +364,19 @@ wxXmlNode* BuildConfig::ToXml() const
     general->AddAttribute("IsEnabled", BoolToString(m_isProjectEnabled));
     node->AddChild(general);
 
-    wxXmlNode* buildSystem = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "BuildSystem");
+    wxXmlNode* buildSystem = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "BuildSystem");
     buildSystem->AddAttribute("Name", m_buildSystem);
     XmlUtils::SetNodeContent(buildSystem, m_buildSystemArguments);
     node->AddChild(buildSystem);
 
-    wxXmlNode* debugger = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Debugger");
+    wxXmlNode* debugger = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Debugger");
     debugger->AddAttribute("IsRemote", BoolToString(m_isDbgRemoteTarget));
     debugger->AddAttribute("RemoteHostName", m_dbgHostName);
     debugger->AddAttribute("RemoteHostPort", m_dbgHostPort);
     debugger->AddAttribute("DebuggerPath", m_debuggerPath);
     debugger->AddAttribute("IsExtended", BoolToString(m_isDbgRemoteExtended));
 
-    wxXmlNode* envNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Environment");
+    wxXmlNode* envNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Environment");
     envNode->AddAttribute("EnvVarSetName", GetEnvVarSet());
     envNode->AddAttribute("DbgSetName", GetDbgEnvSet());
 
@@ -397,7 +397,7 @@ wxXmlNode* BuildConfig::ToXml() const
     node->AddChild(debugger);
 
     // add prebuild commands
-    wxXmlNode* preBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "PreBuild");
+    wxXmlNode* preBuild = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "PreBuild");
     node->AddChild(preBuild);
 
     for (const auto& cmd : m_preBuildCommands) {
@@ -412,7 +412,7 @@ wxXmlNode* BuildConfig::ToXml() const
     }
 
     // add postbuild commands
-    wxXmlNode* postBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "PostBuild");
+    wxXmlNode* postBuild = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "PostBuild");
     node->AddChild(postBuild);
 
     for (const auto& cmd : m_postBuildCommands) {
@@ -427,7 +427,7 @@ wxXmlNode* BuildConfig::ToXml() const
     }
 
     // add postbuild commands
-    wxXmlNode* customBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "CustomBuild");
+    wxXmlNode* customBuild = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "CustomBuild");
     node->AddChild(customBuild);
     customBuild->AddAttribute("Enabled", BoolToString(m_enableCustomBuild));
 
@@ -469,7 +469,7 @@ wxXmlNode* BuildConfig::ToXml() const
     }
 
     // add the additional rules
-    wxXmlNode* additionalCmds = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "AdditionalRules");
+    wxXmlNode* additionalCmds = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "AdditionalRules");
     node->AddChild(additionalCmds);
 
     wxXmlNode* preCmd = new wxXmlNode(additionalCmds, wxXML_ELEMENT_NODE, "CustomPreBuild");
@@ -478,7 +478,7 @@ wxXmlNode* BuildConfig::ToXml() const
     XmlUtils::SetNodeContent(postCmd, m_customPostBuildRule);
 
     // Set the completion flags
-    wxXmlNode* completion = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Completion");
+    wxXmlNode* completion = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Completion");
     node->AddChild(completion);
     completion->AddAttribute("EnableCpp11", BoolToString(m_clangC11));
     completion->AddAttribute("EnableCpp14", BoolToString(m_clangC14));

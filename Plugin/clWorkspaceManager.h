@@ -39,7 +39,7 @@ class WXDLLIMPEXP_SDK clWorkspaceManager : public wxEvtHandler
 
 protected:
     clWorkspaceManager();
-    virtual ~clWorkspaceManager();
+    ~clWorkspaceManager() override;
 
     void OnWorkspaceClosed(clWorkspaceEvent& e);
 
@@ -57,7 +57,7 @@ public:
     /**
      * @brief do we have a workspace opened?
      */
-    bool IsWorkspaceOpened() const { return m_workspace != NULL; }
+    bool IsWorkspaceOpened() const { return m_workspace != nullptr; }
     /**
      * @brief register new workspace type
      * @param workspace

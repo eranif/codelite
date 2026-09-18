@@ -55,7 +55,7 @@ public:
 
 private:
     BuildManager();
-    virtual ~BuildManager();
+    ~BuildManager() override;
 
 public:
     void AddBuilder(BuilderPtr builder);

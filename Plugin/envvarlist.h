@@ -75,7 +75,7 @@ protected:
 
 public:
     EnvVarList();
-    virtual ~EnvVarList() = default;
+    ~EnvVarList() override = default;
 
     void SetActiveSet(const wxString& activeSet)
     {
@@ -104,7 +104,7 @@ public:
     bool IsSetExist(const wxString& setName);
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 };
 #endif // __envvarlist__

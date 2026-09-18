@@ -58,7 +58,7 @@ class WXDLLIMPEXP_SDK clProgressDlg : public clProgressDlgBase
 public:
     /** Constructor */
     clProgressDlg(wxWindow* parent, const wxString& title, const wxString& msg, int maxValue);
-    virtual ~clProgressDlg() = default;
+    ~clProgressDlg() override = default;
 
     //// end generated class members
     bool Update(int value, const wxString& msg);

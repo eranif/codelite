@@ -46,10 +46,15 @@ constexpr float kConfigVersion = 1.0;
 constexpr size_t kToolsResponseToKeep = 5;
 
 constexpr const char* kConfigVersionProperty = "_version";
-static const std::string kSystemMessageAgenticLoop = R"#(You are operating in an autonomous agentic loop. "
+static const wxString kUserSystemMessageId = "kUserSystemMessageId";
+static const wxString kAgentsMd = "AGENTS.md";
+static const wxString kClaudeMd = "CLAUDE.md";
+static const wxString kSystemMessageAgenticLoopId = "kSystemMessageAgenticLoopId";
+static const wxString kSystemMessageAgenticLoop =
+    "You are operating in an autonomous agentic loop. "
     "After every tool result, you MUST continue working toward the original goal. "
     "Do NOT stop and respond to the user until the entire task is fully complete. "
-    "If you have more steps to perform, call the next tool immediately.")#";
+    "If you have more steps to perform, call the next tool immediately.";
 
 wxString TruncateText(const wxString& text, size_t size = 100)
 {
@@ -237,12 +242,16 @@ Manager::~Manager()
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &Manager::OnEditorContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &Manager::OnFileViewFileContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &Manager::OnWorkspaceOpened, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &Manager::OnWorkspaceClosed, this);
 }
 
 void Manager::Initialise()
 {
     m_chatAI = std::make_unique<ChatAI>();
     m_worker_thread_running = std::make_shared<std::atomic_bool>(false);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &Manager::OnWorkspaceOpened, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &Manager::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, [this](wxCommandEvent& e) {
         e.Skip();
@@ -840,15 +849,9 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
 
     m_client->SetCachingPolicy(GetConfig().GetCachePolicy());
     m_client->SetToolInvokeCallback(&Manager::CanRunTool);
-    m_client->ClearSystemMessages();
-    m_client->AddSystemMessage(kSystemMessageAgenticLoop);
 
-    // Apply the user's persisted system prompts.
-    for (const auto& prompt : config.GetSystemPrompts()) {
-        if (!prompt.empty()) {
-            m_client->AddSystemMessage(prompt.ToStdString(wxConvUTF8));
-        }
-    }
+    // Apply system messages
+    ResetSystemMessagesToDefaults();
 
     // Start the worker thread
     m_worker_thread = std::make_unique<std::thread>([this]() { WorkerMain(); });
@@ -923,15 +926,59 @@ void Manager::ClearHistory()
 
 void Manager::ClearSystemMessages()
 {
-    CHECK_PTR_RET(m_client);
-    m_client->ClearSystemMessages();
-    m_client->AddSystemMessage(kSystemMessageAgenticLoop);
+    clDEBUG() << "Clearing system messages" << endl;
+    m_systemMessages.clear();
+    // Note that the client is not affected, the caller must call CommitSystemMessage()
+    // for this change to take place.
 }
 
-void Manager::AddSystemMessage(const wxString& msg)
+void Manager::CommitSystemMessage()
 {
     CHECK_PTR_RET(m_client);
-    m_client->AddSystemMessage(msg.ToStdString(wxConvUTF8));
+    clDEBUG() << "Committing" << m_systemMessages.size() << "system messages" << endl;
+    // build the system message
+    wxString unifiedSystemMessage;
+    for (const auto& [_, msg] : m_systemMessages) {
+        unifiedSystemMessage << msg << "\n";
+    }
+    m_client->ClearSystemMessages();
+    m_client->AddSystemMessage(unifiedSystemMessage.ToStdString(wxConvUTF8));
+}
+
+void Manager::DeleteSystemMessage(const wxString& msgId)
+{
+    m_systemMessages.erase(msgId);
+    // Note that the client is not affected, the caller must call CommitSystemMessage()
+    // for this change to take place.
+}
+
+void Manager::AddSystemMessage(const wxString& msg, const wxString& msgId)
+{
+    if (m_systemMessages.contains(msgId)) {
+        clDEBUG() << "Replacing system message:" << msgId << endl;
+        m_systemMessages.erase(msgId);
+    } else {
+        clDEBUG() << "Inserting system message:" << msgId << endl;
+    }
+    m_systemMessages.insert({msgId, msg});
+    // Note that the client is not affected, the caller must call CommitSystemMessage()
+    // for this change to take place.
+}
+
+void Manager::UpdateUserSystemPrompt()
+{
+    CHECK_PTR_RET(m_client);
+    AddSystemMessage(GetConfig().GetSystemPrompt(), kUserSystemMessageId);
+    CommitSystemMessage();
+}
+
+void Manager::ResetSystemMessagesToDefaults()
+{
+    ClearSystemMessages();
+    AddSystemMessage(kSystemMessageAgenticLoop, kSystemMessageAgenticLoopId);
+    LoadWorkspaceContenxtFiles();
+    AddSystemMessage(GetConfig().GetSystemPrompt(), kUserSystemMessageId);
+    CommitSystemMessage();
 }
 
 std::optional<llm::Conversation> Manager::NewConversation(const wxString& conversation_text,
@@ -1687,8 +1734,46 @@ void Manager::CompleteInitialisation()
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &Manager::OnFileViewFileContextMenu, this);
 }
 
-void Manager::OnWorkspaceOpened(clWorkspaceEvent& event) { event.Skip(); }
-void Manager::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
+void Manager::LoadWorkspaceContenxtFiles()
+{
+    auto agentsMdContent = FileManager::ReadContent(kAgentsMd);
+    if (agentsMdContent) {
+        clDEBUG() << "Successfully loaded AGENTS.md content into the Chat AI context" << endl;
+        AddSystemMessage(*agentsMdContent, kAgentsMd);
+        return;
+    }
+
+    // Try CLAUDE.md
+    agentsMdContent = FileManager::ReadContent(kClaudeMd);
+    if (agentsMdContent) {
+        clDEBUG() << "Successfully loaded CLAUDE.md content into the Chat AI context" << endl;
+        AddSystemMessage(*agentsMdContent, kClaudeMd);
+        return;
+    }
+}
+
+void Manager::OnWorkspaceOpened(clWorkspaceEvent& event)
+{
+    event.Skip();
+    CEHCK_SHUTDOWN_IN_PROGRESS();
+
+    if (!IsAvailable()) {
+        return;
+    }
+    clDEBUG() << "Workspace loaded" << endl;
+    LoadWorkspaceContenxtFiles();
+    CommitSystemMessage();
+}
+
+void Manager::OnWorkspaceClosed(clWorkspaceEvent& event)
+{
+    event.Skip();
+    CEHCK_SHUTDOWN_IN_PROGRESS();
+
+    DeleteSystemMessage(kClaudeMd);
+    DeleteSystemMessage(kAgentsMd);
+    CommitSystemMessage();
+}
 
 bool Manager::StoreCurrentConverstation(const wxString& conversation_text, const wxString& label)
 {
@@ -1827,9 +1912,13 @@ void Manager::AddFilesToContext(const wxArrayString& files)
     }
 
     auto& llm_mgr = llm::Manager::GetInstance();
-    for (const auto& [_, file_content] : files_to_add) {
-        llm_mgr.AddSystemMessage(file_content);
+    for (auto& [filename, file_content] : files_to_add) {
+        filename.Replace("\\", "/");
+        // Key by the full (normalised) path, not just the bare file name, so files that share a
+        // basename in different directories don't overwrite each other's context entry.
+        llm_mgr.AddSystemMessage(file_content, filename);
     }
+    llm_mgr.CommitSystemMessage();
 
     wxString text_message;
     text_message << _("Successfully added the following files to the context:\n\n");

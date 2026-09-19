@@ -260,29 +260,69 @@ public:
     void ClearHistory();
 
     /**
-     * Adds a system message to the active client.
+     * @brief Adds or replaces one entry in the manager's local system-message registry, keyed by @p msgId.
      *
-     * This method belongs to Manager and forwards the message to the associated client
-     * after converting it from wxString to a UTF-8 std::string. If the client pointer
-     * is null, the method returns immediately without performing any action.
+     * Entries are stored in an unordered map, so multiple independent sources (e.g. the built-in agentic-loop
+     * message and the user's own system prompt) can each own a slot and update it without clobbering the others.
+     * If @p msgId already has an entry, it is replaced.
      *
-     * @param msg wxString The system message to add.
-     * @return void This function does not return a value.
+     * This call only updates the manager's local state — it does not touch the active client and has no effect
+     * on an in-progress conversation until CommitSystemMessage() is called.
+     *
+     * @param msg The system message content for this entry.
+     * @param msgId A caller-chosen identifier used to find/replace this entry later. Reuse the same ID to update
+     *              a message you previously added, rather than accumulating duplicates under new IDs.
      */
-    void AddSystemMessage(const wxString& msg);
+    void AddSystemMessage(const wxString& msg, const wxString& msgId);
+
+    void DeleteSystemMessage(const wxString& msgId);
 
     /**
-     * Clears all system messages through the associated client.
+     * @brief Removes every entry from the manager's local system-message registry.
      *
-     * This manager method forwards the request to its underlying client after verifying
-     * that the client pointer is valid.
-     *
-     * @return void
-     *         This function returns nothing.
-     * @throws None
-     *         If the client pointer is null, the function returns early and performs no action.
+     * Like AddSystemMessage(), this only affects local state. The client's active system messages are left
+     * untouched until CommitSystemMessage() is called.
      */
     void ClearSystemMessages();
+
+    /**
+     * @brief Re-applies the user's persisted system prompt to the running client.
+     *
+     * Reads the current value of Config::GetSystemPrompt(), stores it in the local registry under a fixed,
+     * reserved ID (replacing any previous value for that ID), and immediately calls CommitSystemMessage() so
+     * the change takes effect on the active client right away. Unlike AddSystemMessage()/ClearSystemMessages(),
+     * this method does not require a separate commit call.
+     *
+     * Call this after the user edits their system prompt (e.g. via the System Prompt dialog) while a session
+     * is already running, so the new prompt applies without restarting the client.
+     */
+    void UpdateUserSystemPrompt();
+
+    /**
+     * @brief Resets the manager's system-message registry back to its standing defaults and commits them.
+     *
+     * Clears every entry, then re-adds the ones that are derived from current application state rather than
+     * accumulated during the session: the built-in agentic-loop instruction, the open workspace's `AGENTS.md`/
+     * `CLAUDE.md` content (if any), and the user's persisted system prompt — the same set Start() seeds a new
+     * client with. Files added ad hoc via AddFilesToContext() are intentionally NOT restored, since they have
+     * no fixed source to re-derive them from.
+     *
+     * Call this whenever the conversation is reset but the client itself keeps running (e.g. "Clear Session"),
+     * so standing context isn't silently lost until the next full restart.
+     */
+    void ResetSystemMessagesToDefaults();
+
+    /**
+     * @brief Pushes the manager's local system-message registry to the active client.
+     *
+     * Concatenates the content of every entry in the registry (in unspecified order, one per line) into a
+     * single string, clears the client's existing system messages, then adds the concatenated string back as
+     * one system message. No-op if there is no active client.
+     *
+     * Call this after one or more AddSystemMessage()/ClearSystemMessages() calls to make the accumulated
+     * changes visible to the model.
+     */
+    void CommitSystemMessage();
 
     /**
      * @brief Extracts the first non-empty, non-markdown line from a conversation text and builds a Conversation.
@@ -863,6 +903,7 @@ private:
     void OnFileSaved(clCommandEvent& event);
     void OnWorkspaceOpened(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
+    void LoadWorkspaceContenxtFiles();
     std::optional<llm::json> GetConfigAsJSON();
     static CanInvokeToolResult CanRunTool(const std::string& tool_name, assistant::json args);
 
@@ -884,6 +925,7 @@ private:
     TextGenerationPreviewFrame* m_commentGenerationView{nullptr};
     std::atomic_bool m_clientStopInProgress{false};
     std::atomic_size_t m_tokens{0};
+    std::unordered_map<wxString, wxString> m_systemMessages;
 };
 
 /**

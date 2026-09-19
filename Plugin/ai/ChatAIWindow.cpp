@@ -607,7 +607,7 @@ void ChatAIWindow::DoClearOutputView()
         ::wxLaunchDefaultBrowser(url);
     });
     llm::Manager::GetInstance().ClearHistory();
-    llm::Manager::GetInstance().ClearSystemMessages();
+    llm::Manager::GetInstance().ResetSystemMessagesToDefaults();
     UpdateStatusBar();
     HidePromptPanel();
 }

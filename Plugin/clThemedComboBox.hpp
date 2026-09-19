@@ -29,7 +29,7 @@ public:
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxChoiceNameStr);
-    virtual ~clThemedComboBox();
+    ~clThemedComboBox() override;
 };
 
 #endif // CLTHEMEDCOMBOBOX_HPP

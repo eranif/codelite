@@ -57,7 +57,7 @@ protected:
     bool StartProcess(const wxString& cmd, size_t create_flags = IProcessCreateDefault | IProcessWrapInShell);
 
 public:
-    bool IsBusy() const { return m_proc != NULL; }
+    bool IsBusy() const { return m_proc != nullptr; }
 
     void Stop();
 
@@ -68,7 +68,7 @@ public:
     // construct a compiler action
     ShellCommand(const QueueCommand& buildInfo);
 
-    virtual ~ShellCommand() = default;
+    ~ShellCommand() override = default;
     virtual void Process(IManager* manager) = 0;
 
     void AppendLine(const wxString& line);

@@ -64,7 +64,7 @@ protected:
     void DoFlushOutputBuffer();
     void InsertCommandText(const wxString& command);
     wxString GetCommandText();
-    void OnKey(wxKeyEvent& event);
+    void OnKey(wxKeyEvent& event) override;
 
 protected:
     // Handlers for wxTerminalBase events.
@@ -78,19 +78,19 @@ protected:
     void OnSelectAll(wxCommandEvent& event);
 
     // Keys
-    void OnDown(wxKeyEvent& event);
-    void OnUp(wxKeyEvent& event);
-    void OnLeft(wxKeyEvent& event);
-    void OnRight(wxKeyEvent& event);
-    void OnEnter();
-    void OnCtrlC(wxKeyEvent& event);
+    void OnDown(wxKeyEvent& event) override;
+    void OnUp(wxKeyEvent& event) override;
+    void OnLeft(wxKeyEvent& event) override;
+    void OnRight(wxKeyEvent& event) override;
+    void OnEnter() override;
+    void OnCtrlC(wxKeyEvent& event) override;
 
     // Theme
     void OnThemeChanged(wxCommandEvent& event);
 
 public:
     wxTerminal(wxWindow* parent);
-    virtual ~wxTerminal();
+    ~wxTerminal() override;
 
     void Focus() { m_textCtrl->SetFocus(); }
     void SetInteractive(bool interactive) { this->m_interactive = interactive; }

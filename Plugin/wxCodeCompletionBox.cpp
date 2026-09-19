@@ -32,10 +32,10 @@ thread_local bool strip_html_tags = false;
 
 wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject, size_t flags)
     : wxCodeCompletionBoxBase(parent)
-    , m_stc(NULL)
+    , m_stc(nullptr)
     , m_startPos(wxNOT_FOUND)
     , m_eventObject(eventObject)
-    , m_tipWindow(NULL)
+    , m_tipWindow(nullptr)
     , m_flags(flags)
 {
     MSWSetWindowDarkTheme(this);

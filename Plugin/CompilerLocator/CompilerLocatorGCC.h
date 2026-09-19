@@ -33,8 +33,8 @@ class CompilerLocatorGCC : public ICompilerLocator
 {
 public:
     CompilerLocatorGCC() = default;
-    virtual ~CompilerLocatorGCC() = default;
-    virtual bool Locate();
+    ~CompilerLocatorGCC() override = default;
+    bool Locate() override;
     virtual CompilerPtr Locate(const wxString& folder);
 
 protected:

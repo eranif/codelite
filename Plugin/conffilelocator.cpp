@@ -31,11 +31,11 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 
-ConfFileLocator* ConfFileLocator::ms_instance = 0;
+ConfFileLocator* ConfFileLocator::ms_instance = nullptr;
 
 ConfFileLocator* ConfFileLocator::Instance()
 {
-    if (ms_instance == 0) {
+    if (ms_instance == nullptr) {
         ms_instance = new ConfFileLocator();
     }
     return ms_instance;
@@ -46,7 +46,7 @@ void ConfFileLocator::Release()
     if (ms_instance) {
         delete ms_instance;
     }
-    ms_instance = 0;
+    ms_instance = nullptr;
 }
 
 void ConfFileLocator::Initialize(const wxString& installpath, const wxString& startuppath)

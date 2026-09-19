@@ -56,7 +56,7 @@ public:
      */
     clProcess(int id, const wxString& cmdLine, bool redirect = true);
 
-    virtual ~clProcess() = default;
+    ~clProcess() override = default;
 
     /**
      * \return return the process id

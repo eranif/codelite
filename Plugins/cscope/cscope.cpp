@@ -63,7 +63,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 Cscope::Cscope(IManager* manager)
     : IPlugin(manager)
-    , m_topWindow(NULL)
+    , m_topWindow(nullptr)
 {
     m_longName = _("CScope Integration for CodeLite");
     m_shortName = CSCOPE_NAME;
@@ -197,7 +197,7 @@ void Cscope::CreateToolBar(clToolBarGeneric* toolbar)
 void Cscope::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item = new wxMenuItem(menu, XRCID("cscope_find_user_symbol"), _("Find ..."), _("Find ..."), wxITEM_NORMAL);
     menu->Append(item);
 
@@ -334,7 +334,7 @@ wxMenu* Cscope::CreateEditorPopMenu()
     // Create the popup menu for the file explorer
     // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), _("&Find this C symbol"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);

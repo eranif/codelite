@@ -52,7 +52,7 @@ protected:
 
 public:
     TerminalEmulator();
-    virtual ~TerminalEmulator();
+    ~TerminalEmulator() override;
 
     /**
      * @brief terminate the running process

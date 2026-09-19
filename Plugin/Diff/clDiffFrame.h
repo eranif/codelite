@@ -23,7 +23,7 @@ public:
                 bool originSourceControl);
     clDiffFrame(wxWindow* parent);
     clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileName& right, bool isTempFile);
-    virtual ~clDiffFrame() = default;
+    ~clDiffFrame() override = default;
 };
 
 #endif // CLDIFFFRAME_H

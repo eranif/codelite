@@ -14,7 +14,7 @@ struct WordLexerToken {
     char* text;
     int type;
     WordLexerToken()
-        : text(NULL)
+        : text(nullptr)
         , type(0)
     {
     }

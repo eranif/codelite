@@ -6,7 +6,7 @@ class WXDLLIMPEXP_CL clConsoleXfce4Terminal : public clConsoleGnomeTerminal
 {
 public:
     clConsoleXfce4Terminal();
-    virtual ~clConsoleXfce4Terminal() = default;
+    ~clConsoleXfce4Terminal() override = default;
 };
 
 #endif // CLCONSOLEXFCE4TERMINAL_H

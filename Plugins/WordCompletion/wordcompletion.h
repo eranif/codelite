@@ -40,7 +40,7 @@ protected:
 
 public:
     WordCompleter(WordCompletionPlugin* plugin);
-    virtual ~WordCompleter();
+    ~WordCompleter() override;
 };
 
 class WordCompletionPlugin : public IPlugin

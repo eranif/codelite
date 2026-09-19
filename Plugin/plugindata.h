@@ -88,7 +88,7 @@ class WXDLLIMPEXP_SDK PluginInfoArray : public clConfigItem
 
 public:
     PluginInfoArray();
-    virtual ~PluginInfoArray() = default;
+    ~PluginInfoArray() override = default;
 
 public:
     void SetPlugins(const PluginInfo::PluginMap_t& plugins) { this->m_plugins = plugins; }
@@ -99,8 +99,8 @@ public:
     void DisablePlugin(const wxString& plugin);
     const wxArrayString& GetEnabledPlugins() const { return m_enabledPlugins; }
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 };
 
 #endif // __plugindata__

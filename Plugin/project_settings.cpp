@@ -46,9 +46,9 @@ ProjectSettings::ProjectSettings(wxXmlNode* node)
     } else {
         // create new settings with default values
         m_projectType = PROJECT_TYPE_EXECUTABLE;
-        BuildConfig* conf(NULL);
+        BuildConfig* conf(nullptr);
 
-        conf = new BuildConfig(NULL);
+        conf = new BuildConfig(nullptr);
         conf->SetName("Debug");
         conf->SetOutputFileName("$(IntermediateDirectory)/$(ProjectName)");
         conf->SetCommand("./$(ProjectName)");
@@ -72,7 +72,7 @@ ProjectSettings* ProjectSettings::Clone() const
 
 wxXmlNode* ProjectSettings::ToXml() const
 {
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Settings"));
+    wxXmlNode* node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Settings"));
     node->AddAttribute(wxT("Type"), m_projectType);
     node->AddChild(m_globalSettings->ToXml());
     for (const auto& [_, config] : m_configs) {

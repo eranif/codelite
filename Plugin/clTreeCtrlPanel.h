@@ -55,7 +55,7 @@ public:
     };
 
     clTreeCtrlPanel(wxWindow* parent);
-    virtual ~clTreeCtrlPanel();
+    ~clTreeCtrlPanel() override;
 
     /**
      * @brief getter for the toolbar
@@ -169,10 +169,10 @@ protected:
     virtual void OnActiveEditorChanged(wxCommandEvent& event);
     virtual void OnFindInFilesShowing(clFindInFilesEvent& event);
     virtual void OnInitDone(wxCommandEvent& event);
-    virtual void OnContextMenu(wxDataViewEvent& event);
+    void OnContextMenu(wxDataViewEvent& event) override;
     void DoContextMenu(const wxDataViewItem& item);
-    virtual void OnItemActivated(wxDataViewEvent& event);
-    virtual void OnItemExpanding(wxDataViewEvent& event);
+    void OnItemActivated(wxDataViewEvent& event) override;
+    void OnItemExpanding(wxDataViewEvent& event) override;
     virtual void OnCloseFolder(wxCommandEvent& event);
     virtual void OnNewFolder(wxCommandEvent& event);
     virtual void OnNewFile(wxCommandEvent& event);

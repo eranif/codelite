@@ -35,16 +35,16 @@ class SvnSelectLocalRepoDlg : public SvnSelectLocalRepoBase
 
 protected:
     // Handlers for SvnSelectLocalRepoBase events.
-    void OnPathSelected(wxCommandEvent& event);
-    void OnPathActivated(wxCommandEvent& event);
-    void OnMenu(wxMouseEvent& event);
+    void OnPathSelected(wxCommandEvent& event) override;
+    void OnPathActivated(wxCommandEvent& event) override;
+    void OnMenu(wxMouseEvent& event) override;
 
     void OnRemoveEntry(wxCommandEvent& e);
 
 public:
     /** Constructor */
     SvnSelectLocalRepoDlg(wxWindow* parent, Subversion2* plugin, const wxString& curpath);
-    virtual ~SvnSelectLocalRepoDlg() = default;
+    ~SvnSelectLocalRepoDlg() override = default;
     wxString GetPath() const;
 };
 

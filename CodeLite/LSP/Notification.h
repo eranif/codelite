@@ -10,7 +10,7 @@ class WXDLLIMPEXP_CL Notification : public LSP::MessageWithParams
 {
 public:
     Notification();
-    virtual ~Notification() = 0; // Make sure that this class cant be used directly
+    ~Notification() override = 0; // Make sure that this class cant be used directly
 };
 } // namespace LSP
 

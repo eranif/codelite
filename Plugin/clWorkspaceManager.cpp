@@ -8,7 +8,7 @@
 #include <algorithm>
 
 clWorkspaceManager::clWorkspaceManager()
-    : m_workspace(NULL)
+    : m_workspace(nullptr)
 {
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceManager::OnWorkspaceClosed, this);
 }
@@ -32,7 +32,7 @@ void clWorkspaceManager::RegisterWorkspace(IWorkspace* workspace) { m_workspaces
 void clWorkspaceManager::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
-    SetWorkspace(NULL);
+    SetWorkspace(nullptr);
 }
 
 wxArrayString clWorkspaceManager::GetAllWorkspaces() const

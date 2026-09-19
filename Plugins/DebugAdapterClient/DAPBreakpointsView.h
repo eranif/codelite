@@ -25,7 +25,7 @@ private:
     BreakpointClientData* GetItemData(const wxDataViewItem& item);
 
 protected:
-    virtual void OnBreakpointsContextMenu(wxDataViewEvent& event);
+    void OnBreakpointsContextMenu(wxDataViewEvent& event) override;
     void OnBreakpointActivated(wxDataViewEvent& item);
     void OnNewFunctionBreakpoint(wxCommandEvent& event);
     void OnDeleteAllBreakpoints(wxCommandEvent& event);
@@ -33,7 +33,7 @@ protected:
 
 public:
     DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin);
-    virtual ~DAPBreakpointsView();
+    ~DAPBreakpointsView() override;
 
     /**
      * @brief initialise the view by syncing the data with the store

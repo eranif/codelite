@@ -356,7 +356,7 @@ wxTreeItemId clTreeCtrlModel::GetSingleSelection() const
 
 int clTreeCtrlModel::GetItemIndex(clRowEntry* item) const
 {
-    if (item == NULL) {
+    if (item == nullptr) {
         return wxNOT_FOUND;
     }
     if (!m_root) {

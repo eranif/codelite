@@ -39,11 +39,11 @@ class GitFileDiffDlg : public GitFileDiffDlgBase
 {
 public:
     GitFileDiffDlg(wxWindow* parent);
-    virtual ~GitFileDiffDlg() = default;
+    ~GitFileDiffDlg() override = default;
 
 protected:
-    virtual void OnCloseDialog(wxCommandEvent& event);
-    virtual void OnSaveAsPatch(wxCommandEvent& event);
+    void OnCloseDialog(wxCommandEvent& event) override;
+    void OnSaveAsPatch(wxCommandEvent& event) override;
 };
 
 #endif //__GitFileDiffDlg__

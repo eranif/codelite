@@ -23,7 +23,7 @@ protected:
 
 public:
     BreakpointsHelper(dap::Client& client, const DebugSession& session);
-    virtual ~BreakpointsHelper();
+    ~BreakpointsHelper() override;
     /// apply breakpoints. if path is empty, apply all breakpoints, to all the sources
     void ApplyBreakpoints(const wxString& path);
 };

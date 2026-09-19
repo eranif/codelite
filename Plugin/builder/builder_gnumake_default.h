@@ -55,31 +55,31 @@ protected:
 public:
     BuilderGnuMake();
     BuilderGnuMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
-    virtual ~BuilderGnuMake() = default;
+    ~BuilderGnuMake() override = default;
 
     // Implement the Builder Interface
-    virtual bool Export(const wxString& project,
+    bool Export(const wxString& project,
                         const wxString& confToBuild,
                         const wxString& arguments,
                         bool isProjectOnly,
                         bool force,
-                        wxString& errMsg);
-    virtual wxString GetBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
-    virtual wxString GetCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
-    virtual wxString GetPOBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
-    virtual wxString GetPOCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
-    virtual wxString GetSingleFileCmd(const wxString& project,
+                        wxString& errMsg) override;
+    wxString GetBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
+    wxString GetCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
+    wxString GetPOBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
+    wxString GetPOCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
+    wxString GetSingleFileCmd(const wxString& project,
                                       const wxString& confToBuild,
                                       const wxString& arguments,
-                                      const wxString& fileName);
-    virtual wxString GetPreprocessFileCmd(const wxString& project,
+                                      const wxString& fileName) override;
+    wxString GetPreprocessFileCmd(const wxString& project,
                                           const wxString& confToBuild,
                                           const wxString& arguments,
                                           const wxString& fileName,
-                                          wxString& errMsg);
-    virtual wxString
-    GetPORebuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
-    virtual OptimalBuildConfig GetOptimalBuildConfig(const wxString& projectType) const;
+                                          wxString& errMsg) override;
+    wxString
+    GetPORebuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
+    OptimalBuildConfig GetOptimalBuildConfig(const wxString& projectType) const override;
 
 protected:
     virtual wxString MakeDir(const wxString& path);

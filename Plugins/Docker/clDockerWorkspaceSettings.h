@@ -14,12 +14,12 @@ protected:
     wxString m_version;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
 public:
     clDockerWorkspaceSettings();
-    virtual ~clDockerWorkspaceSettings() = default;
+    ~clDockerWorkspaceSettings() override = default;
 
     clDockerBuildableFile::Map_t& GetFiles() { return m_files; }
 

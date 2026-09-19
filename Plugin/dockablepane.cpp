@@ -42,7 +42,7 @@ const wxEventType wxEVT_CMD_DELETE_DOCKPANE = XRCID("delete_dockpane");
 DockablePane::DockablePane(
     wxWindow* parent, PaneId pane_id, const wxString& title, bool initialFloat, const wxSize& size)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, size, wxBORDER_NONE)
-    , m_child(NULL)
+    , m_child(nullptr)
     , m_text(title)
     , m_paneId(static_cast<int>(pane_id))
     , m_notifiedDestroyed(false)

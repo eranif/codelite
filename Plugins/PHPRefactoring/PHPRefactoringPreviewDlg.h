@@ -7,9 +7,9 @@ class PHPRefactoringPreviewDlg : public PHPRefactoringPreviewBaseDlg
 
 public:
     PHPRefactoringPreviewDlg(wxWindow* parent, const wxString& patchContent);
-    virtual ~PHPRefactoringPreviewDlg() = default;
+    ~PHPRefactoringPreviewDlg() override = default;
 
 protected:
-    virtual void OnApplyChanges(wxCommandEvent& event);
+    void OnApplyChanges(wxCommandEvent& event) override;
 };
 #endif // PHPREFACTORINGPREVIEWDLG_H

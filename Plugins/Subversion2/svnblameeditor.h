@@ -46,7 +46,7 @@ public:
                    const wxSize& size = wxDefaultSize,
                    long style = 0,
                    const wxString& name = wxSTCNameStr);
-    virtual ~SvnBlameEditor() = default;
+    ~SvnBlameEditor() override = default;
 
     void SetText(const wxString& text);
     void Initialize();

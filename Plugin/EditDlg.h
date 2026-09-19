@@ -34,7 +34,7 @@ class WXDLLIMPEXP_SDK EditDlg : public EditDlgBase
 {
 public:
     EditDlg(wxWindow* parent, const wxString& text, LexerConf::Ptr_t lexer = nullptr);
-    virtual ~EditDlg();
+    ~EditDlg() override;
 
     wxString GetText() const { return m_stc10->GetText(); }
 

@@ -57,7 +57,7 @@ public:
     clEditEventsHandler(wxTextCtrl* wnd, const wxString& name = wxEmptyString);
     clEditEventsHandler(wxStyledTextCtrl* wnd, const wxString& name = wxEmptyString);
     clEditEventsHandler(wxComboBox* wnd, const wxString& name = wxEmptyString);
-    virtual ~clEditEventsHandler();
+    ~clEditEventsHandler() override;
     void NoUnbind() { m_noUnbind = true; }
     using Ptr_t = std::unique_ptr<clEditEventsHandler>;
 };

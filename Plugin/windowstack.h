@@ -53,7 +53,7 @@ protected:
 
 public:
     WindowStack(wxWindow* parent, wxWindowID id = wxID_ANY, bool useNativeThemeColours = false);
-    virtual ~WindowStack();
+    ~WindowStack() override;
 
     bool Add(wxWindow* win, bool select);
     void Select(wxWindow* win);

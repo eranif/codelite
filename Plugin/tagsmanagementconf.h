@@ -34,11 +34,11 @@ class TagsManagementConf : public SerializedObject
 
 public:
     TagsManagementConf() = default;
-    virtual ~TagsManagementConf() = default;
+    ~TagsManagementConf() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
     void SetFiles(const wxArrayString& files) { this->m_files = files; }
     const wxArrayString& GetFiles() const { return m_files; }
 };

@@ -270,7 +270,7 @@ public:
     {
     }
 
-    virtual ~clDataViewTextBitmap() = default;
+    ~clDataViewTextBitmap() override = default;
 
     void SetText(const wxString& text) { m_text = text; }
     wxString GetText() const { return m_text; }
@@ -317,7 +317,7 @@ public:
 
     clDataViewCheckbox() = default;
 
-    virtual ~clDataViewCheckbox() = default;
+    ~clDataViewCheckbox() override = default;
 
     void SetChecked(bool checked) { this->m_checked = checked; }
     bool IsChecked() const { return m_checked; }
@@ -357,7 +357,7 @@ public:
     }
 
     clDataViewTextWithButton() = default;
-    virtual ~clDataViewTextWithButton() = default;
+    ~clDataViewTextWithButton() override = default;
 
     void SetBitmapIndex(int index) { m_bitmapIndex = index; }
     int GetBitmapIndex() const { return m_bitmapIndex; }
@@ -394,7 +394,7 @@ public:
     }
 
     clDataViewButton() = default;
-    virtual ~clDataViewButton() = default;
+    ~clDataViewButton() override = default;
 
     void SetBitmapIndex(int index) { m_bitmapIndex = index; }
     int GetBitmapIndex() const { return m_bitmapIndex; }
@@ -433,7 +433,7 @@ public:
     }
 
     clDataViewColour() = default;
-    virtual ~clDataViewColour() = default;
+    ~clDataViewColour() override = default;
 
     void SetColour(const wxColour& colour) { this->m_colour = colour; }
     const wxColour& GetColour() const { return m_colour; }
@@ -464,7 +464,7 @@ public:
 
     clDataViewControl() = default;
     // we do not delete the control
-    virtual ~clDataViewControl() = default;
+    ~clDataViewControl() override = default;
 
     void SetControl(wxControl* ctrl) { this->m_ctrl = ctrl; }
     wxControl* GetControl() { return m_ctrl; }

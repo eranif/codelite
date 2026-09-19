@@ -45,12 +45,12 @@ class SpellCheckerSettings : public SpellCheckerSettings_base
 {
 protected:
     // Handlers for SpellCheckerSettings_base events.
-    void OnInitDialog(wxInitDialogEvent& event);
-    void OnLanguageSelected(wxCommandEvent& event);
-    void OnUpdateOk(wxUpdateUIEvent& event);
-    void OnOk(wxCommandEvent& event);
-    void OnDirChanged(wxFileDirPickerEvent& event);
-    void OnClearIgnoreList(wxCommandEvent& event);
+    void OnInitDialog(wxInitDialogEvent& event) override;
+    void OnLanguageSelected(wxCommandEvent& event) override;
+    void OnUpdateOk(wxUpdateUIEvent& event) override;
+    void OnOk(wxCommandEvent& event) override;
+    void OnDirChanged(wxFileDirPickerEvent& event) override;
+    void OnClearIgnoreList(wxCommandEvent& event) override;
 
     void FillLanguageList();
 
@@ -94,7 +94,7 @@ public:
     bool GetIgnoreSymbolsInTagsDatabase() const { return m_ignoreSymbolsInTagsDatabase; }
     /** Constructor */
     SpellCheckerSettings(wxWindow* parent);
-    virtual ~SpellCheckerSettings() = default;
+    ~SpellCheckerSettings() override = default;
 };
 
 #endif // __SpellCheckerSettings__

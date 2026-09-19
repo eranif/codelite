@@ -26,7 +26,7 @@
 #include "buildprocess.h"
 
 BuildProcess::BuildProcess()
-    : m_process(NULL)
+    : m_process(nullptr)
 {
 }
 
@@ -52,9 +52,9 @@ void BuildProcess::Stop()
 {
     if (m_process) {
         delete m_process;
-        m_process = NULL;
+        m_process = nullptr;
     }
     m_fileName.Clear();
 }
 
-bool BuildProcess::IsBusy() { return m_process != NULL; }
+bool BuildProcess::IsBusy() { return m_process != nullptr; }

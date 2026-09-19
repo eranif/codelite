@@ -39,7 +39,7 @@ class WXDLLIMPEXP_SDK clResizableTooltip : public clResizableTooltipBase
 
 public:
     clResizableTooltip(wxEvtHandler* owner);
-    virtual ~clResizableTooltip();
+    ~clResizableTooltip() override;
 
     /**
      * @brief return the event owner for this tooltip
@@ -60,11 +60,11 @@ public:
 protected:
     void DoSetFocus();
 
-    virtual void OnKeyDown(wxTreeEvent& event);
+    void OnKeyDown(wxTreeEvent& event) override;
     /**
      * @brief user is expanding a tree item
      * @param event
      */
-    virtual void OnItemExpanding(wxTreeEvent& event);
+    void OnItemExpanding(wxTreeEvent& event) override;
 };
 #endif // CLRESIZABLETOOLTIP_H

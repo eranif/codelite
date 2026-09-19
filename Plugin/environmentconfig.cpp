@@ -34,7 +34,7 @@
 
 const wxString __NO_SUCH_ENV__ = wxT("__NO_SUCH_ENV__");
 
-static EnvironmentConfig* ms_instance = NULL;
+static EnvironmentConfig* ms_instance = nullptr;
 
 //------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ EnvironmentConfig::EnvironmentConfig()
 
 EnvironmentConfig* EnvironmentConfig::Instance()
 {
-    if (ms_instance == 0) {
+    if (ms_instance == nullptr) {
         ms_instance = new EnvironmentConfig();
     }
     return ms_instance;
@@ -56,7 +56,7 @@ void EnvironmentConfig::Release()
     if (ms_instance) {
         delete ms_instance;
     }
-    ms_instance = 0;
+    ms_instance = nullptr;
 }
 
 wxString EnvironmentConfig::GetRootName() { return wxT("EnvironmentVariables"); }
@@ -96,7 +96,7 @@ bool EnvironmentConfig::Load()
 
 wxString EnvironmentConfig::ExpandVariables(const wxString& in, bool applyEnvironment)
 {
-    EnvSetter* env = NULL;
+    EnvSetter* env = nullptr;
     if (applyEnvironment) {
         env = new EnvSetter();
     }

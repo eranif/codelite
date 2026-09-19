@@ -38,7 +38,7 @@ protected:
 
 public:
     clDockingManager() = default;
-    virtual ~clDockingManager() = default;
+    ~clDockingManager() override = default;
 };
 
 #endif // CLDOCKINGMANAGER_H

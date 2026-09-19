@@ -35,7 +35,7 @@ public:
                             const wxString& message,
                             const wxString& initialValue,
                             int charsToSelect = wxNOT_FOUND);
-    virtual ~clGetTextFromUserDialog();
+    ~clGetTextFromUserDialog() override;
 
     wxString GetValue() const { return m_textCtrl->GetValue(); }
 };

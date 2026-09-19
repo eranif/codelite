@@ -20,7 +20,7 @@ class WXDLLIMPEXP_SDK clLocaleManager : public wxEvtHandler
 
 private:
     clLocaleManager() = default;
-    ~clLocaleManager() = default;
+    ~clLocaleManager() override = default;
 
     void OnScanCompleted(const LocaleParams& params);
 

@@ -346,7 +346,7 @@ bool LocalWorkspace::Create()
     // Load any previous options. If none, create a blank entry
     m_doc.Load(m_fileName.GetFullPath());
     if (!m_doc.IsOk()) {
-        wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Workspace"));
+        wxXmlNode* root = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Workspace"));
         m_doc.SetRoot(root);
     }
     return true;
@@ -527,7 +527,7 @@ void LocalWorkspace::SetParserMacros(const wxString& macros)
         delete optsNode;
     }
 
-    optsNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("WorkspaceParserMacros"));
+    optsNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("WorkspaceParserMacros"));
     m_doc.GetRoot()->AddChild(optsNode);
     SetCDATANodeContent(optsNode, macros);
 }
@@ -557,7 +557,7 @@ void LocalWorkspace::SetCustomData(const wxString& name, const wxString& value)
         delete customNode;
     }
 
-    customNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, name);
+    customNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, name);
     m_doc.GetRoot()->AddChild(customNode);
     SetCDATANodeContent(customNode, value);
 }
@@ -595,7 +595,7 @@ void LocalWorkspace::SetSearchInFilesMask(const wxString& findInFileMask)
         wxDELETE(optsNode);
     }
 
-    optsNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("FindInFilesMask"));
+    optsNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("FindInFilesMask"));
     m_doc.GetRoot()->AddChild(optsNode);
     SetCDATANodeContent(optsNode, findInFileMask);
 }

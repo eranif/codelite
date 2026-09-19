@@ -151,7 +151,7 @@ public:
             if (m_commandId == wxNOT_FOUND) {
                 clLogMessage(wxT("svn: ProcessLoginRequired: passed m_commandId = wxNOT_FOUND"));
 
-            } else if (m_owner == NULL) {
+            } else if (m_owner == nullptr) {
                 clLogMessage(wxT("svn: ProcessLoginRequired: passed NULL m_owner"));
             }
         }

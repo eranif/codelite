@@ -7,7 +7,7 @@
 #include "optionsconfig.h"
 
 clFindResultsStyler::clFindResultsStyler()
-    : m_stc(NULL)
+    : m_stc(nullptr)
     , m_curstate(kStartOfLine)
 {
 }

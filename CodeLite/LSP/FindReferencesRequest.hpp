@@ -12,7 +12,7 @@ class WXDLLIMPEXP_CL FindReferencesRequest : public LSP::Request
 {
 public:
     FindReferencesRequest(const wxString& filename, size_t line, size_t column, bool includeDeclaration);
-    ~FindReferencesRequest() = default;
+    ~FindReferencesRequest() override = default;
     std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 };
 

@@ -46,13 +46,13 @@ public:
                    const wxString& localRepoPath,
                    const wxString& userEnteredRepoPath,
                    const wxString& projectNameHash);
-    virtual ~GitSettingsDlg() = default;
+    ~GitSettingsDlg() override = default;
 
     const wxString GetNewGitRepoPath() const { return m_userEnteredRepoPath; }
 
 protected:
-    virtual void OnLocalRepoUI(wxUpdateUIEvent& event);
-    virtual void OnOK(wxCommandEvent& event);
+    void OnLocalRepoUI(wxUpdateUIEvent& event) override;
+    void OnOK(wxCommandEvent& event) override;
 };
 
 #endif //__gitSettingsDlg__

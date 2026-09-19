@@ -84,7 +84,7 @@ class CscopeDbBuilderThread : public WorkerThread
     friend class Singleton<CscopeDbBuilderThread>;
 
 protected:
-    void ProcessRequest(ThreadRequest* req);
+    void ProcessRequest(ThreadRequest* req) override;
     CScopeResultTable_t* ParseResults(const wxArrayString& output);
 
 protected:
@@ -92,7 +92,7 @@ protected:
 
 public:
     CscopeDbBuilderThread() = default;
-    ~CscopeDbBuilderThread() = default;
+    ~CscopeDbBuilderThread() override = default;
 };
 
 using CScopeThreadST = Singleton<CscopeDbBuilderThread>;

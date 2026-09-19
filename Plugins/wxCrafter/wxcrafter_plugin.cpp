@@ -54,7 +54,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 wxCrafterPlugin::wxCrafterPlugin(IManager* manager)
     : IPlugin(manager)
-    , m_mainFrame(NULL)
+    , m_mainFrame(nullptr)
 {
     /// Initialize wxPG only in plugin mode
     wxPGInitResourceModule();
@@ -241,7 +241,7 @@ wxMenu* wxCrafterPlugin::DoCreateFolderMenu()
     // Create the popup menu for the file explorer
     // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     wxCrafter::ResourceLoader bmps;
     item = new wxMenuItem(menu, XRCID("wxcp_new_form"), _("Add wxWidgets UI Form..."), wxEmptyString, wxITEM_NORMAL);

@@ -49,7 +49,7 @@ public:
 
 public:
     wxCustomStatusBarArt(const wxString& name);
-    virtual ~wxCustomStatusBarArt() = default;
+    ~wxCustomStatusBarArt() override = default;
 
     virtual void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
     virtual void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
@@ -87,7 +87,7 @@ public:
         : m_parent(parent)
     {
     }
-    virtual ~wxCustomStatusBarField() = default;
+    ~wxCustomStatusBarField() override = default;
 
     bool IsAutoWidth() const { return m_flags & AUTO_WIDTH; }
     void SetAutoWidth(bool b) { m_flags |= AUTO_WIDTH; }
@@ -392,7 +392,7 @@ public:
 
 public:
     wxCustomStatusBar(wxWindow* parent, wxWindowID id = wxID_ANY, long style = 0);
-    virtual ~wxCustomStatusBar();
+    ~wxCustomStatusBar() override;
 
     void SetArt(wxCustomStatusBarArt::Ptr_t art);
 

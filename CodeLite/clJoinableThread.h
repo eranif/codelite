@@ -12,7 +12,7 @@ protected:
 
 public:
     clJoinableThread();
-    virtual ~clJoinableThread();
+    ~clJoinableThread() override;
 
     /**
      * Start the thread as joinable thread.

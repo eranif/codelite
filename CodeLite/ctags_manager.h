@@ -299,7 +299,7 @@ private:
     /**
      * Destructor
      */
-    virtual ~TagsManager() = default;
+    ~TagsManager() override = default;
 
     /**
      * @param path

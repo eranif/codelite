@@ -1,7 +1,7 @@
 #include "clMouseCaptureLocker.h"
 
 clMouseCaptureLocker::clMouseCaptureLocker()
-    : m_win(NULL)
+    : m_win(nullptr)
 {
 }
 

@@ -36,7 +36,7 @@ GprofParser::GprofParser()
     lineheader = false;
     primaryline = false;
     nameLen = 0;
-    nameandid = NULL;
+    nameandid = nullptr;
     isdot = false;
     iscycle = false;
     islom = false;

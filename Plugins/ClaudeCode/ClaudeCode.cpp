@@ -57,7 +57,7 @@ void ClaudeCode::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar)
 void ClaudeCode::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item = new wxMenuItem(menu,
                           XRCID("launch_claude_code"),
                           _("Launch Claude Code\tCtrl-Shift-I"),

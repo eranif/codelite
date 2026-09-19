@@ -29,7 +29,7 @@ XS_IMPLEMENT_CLONABLE_CLASS(Column, xsSerializable);
 
 Column::Column()
 {
-    m_pType = NULL;
+    m_pType = nullptr;
     initSerializable();
 }
 
@@ -54,7 +54,7 @@ Column::Column(const wxString& name, const wxString& parentName, IDbType* type)
 
 void Column::Edit(wxString& name, wxString& parentName, IDbType* type)
 {
-    this->m_pType = NULL;
+    this->m_pType = nullptr;
     this->m_name = name;
     this->m_parentName = parentName;
     if (this->m_pType)

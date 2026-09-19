@@ -64,18 +64,18 @@ public:
     /**
      * Destructor.
      */
-    virtual ~WorkerThread();
+    ~WorkerThread() override;
 
     /**
      * Thread execution point.
      */
-    virtual void* Entry();
+    void* Entry() override;
 
     /**
      * Called when the thread exits
      * whether it terminates normally or is stopped with Delete() (but not when it is Kill()'ed!)
      */
-    virtual void OnExit() {}
+    void OnExit() override {}
 
     /**
      * Add a request to the worker thread

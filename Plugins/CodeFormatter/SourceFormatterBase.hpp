@@ -57,7 +57,7 @@ protected:
 
 public:
     SourceFormatterBase() = default;
-    virtual ~SourceFormatterBase() = default;
+    ~SourceFormatterBase() override = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;

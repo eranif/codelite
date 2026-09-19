@@ -48,10 +48,10 @@ public:
 
 public:
     DbConnectionInfo();
-    virtual ~DbConnectionInfo() = default;
+    ~DbConnectionInfo() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     void SetConnectionName(const wxString& connectionName) { this->m_connectionName = connectionName; }
     void SetPassword(const wxString& password) { this->m_password = password; }
@@ -85,7 +85,7 @@ protected:
 
 public:
     DbExplorerSettings();
-    virtual ~DbExplorerSettings() = default;
+    ~DbExplorerSettings() override = default;
 
     void SetRecentFiles(const wxArrayString& recentFiles);
     const wxArrayString& GetRecentFiles() const { return m_recentFiles; }
@@ -98,8 +98,8 @@ public:
 
     void SetSqlHistory(const wxArrayString& sqlHistory) { this->m_sqlHistory = sqlHistory; }
     const wxArrayString& GetSqlHistory() const { return m_sqlHistory; }
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 };
 
 #endif // DBEXPLORERSETTINGS_H

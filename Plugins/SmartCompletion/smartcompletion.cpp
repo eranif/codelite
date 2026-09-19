@@ -44,7 +44,7 @@ void SmartCompletion::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(too
 void SmartCompletion::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(menu, XRCID("smart_completion_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     menu->Append(item);

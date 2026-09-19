@@ -107,7 +107,7 @@ private:
 
 private:
     BookmarkManager();
-    virtual ~BookmarkManager();
+    ~BookmarkManager() override;
 
 protected:
     void OnEditorSettingsChanged(wxCommandEvent& e);

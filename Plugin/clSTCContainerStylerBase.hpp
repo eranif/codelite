@@ -270,7 +270,7 @@ class WXDLLIMPEXP_SDK clSTCContainerStylerBase : public wxEvtHandler
 {
 public:
     clSTCContainerStylerBase(wxStyledTextCtrl* stc);
-    virtual ~clSTCContainerStylerBase();
+    ~clSTCContainerStylerBase() override;
 
     void SetStyleCallback(std::function<void(AccessorBase&)> cb) { m_on_style_callback = std::move(cb); }
 

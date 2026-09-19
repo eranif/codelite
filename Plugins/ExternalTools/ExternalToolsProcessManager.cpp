@@ -26,8 +26,8 @@ class ExtToolsMyProcess : public wxProcess
 {
 public:
     ExtToolsMyProcess() = default;
-    virtual ~ExtToolsMyProcess() = default;
-    void OnTerminate(int pid, int status)
+    ~ExtToolsMyProcess() override = default;
+    void OnTerminate(int pid, int status) override
     {
         ToolsTaskManager::Instance()->ProcessTerminated(pid);
         delete this;
@@ -158,7 +158,7 @@ void ToolsTaskManager::StopAll()
 void ToolsTaskManager::Stop(int pid)
 {
     if (m_tools.find(pid) != m_tools.end()) {
-        ::wxKill(pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
+        ::wxKill(pid, wxSIGKILL, nullptr, wxKILL_CHILDREN);
     }
 }
 

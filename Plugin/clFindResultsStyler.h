@@ -40,7 +40,7 @@ protected:
 public:
     clFindResultsStyler();
     clFindResultsStyler(wxStyledTextCtrl* stc);
-    virtual ~clFindResultsStyler();
+    ~clFindResultsStyler() override;
 
     /**
      * @brief style the control text

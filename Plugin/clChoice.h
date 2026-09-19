@@ -71,7 +71,7 @@ public:
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxChoiceNameStr);
-    virtual ~clChoice();
+    ~clChoice() override;
 
     /**
      * @brief Finds an item whose label matches the given string.

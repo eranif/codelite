@@ -46,16 +46,16 @@ public:
     static wxString DoGetPath(clTreeCtrl* tree, const wxTreeItemId& item, bool validateFolder);
 
 protected:
-    virtual void OnNewVDUI(wxUpdateUIEvent& event);
-    virtual void OnNewVD(wxCommandEvent& event);
+    void OnNewVDUI(wxUpdateUIEvent& event) override;
+    void OnNewVD(wxCommandEvent& event) override;
     void DoBuildTree();
 
 protected:
     // Handlers for VirtualDirectorySelectorBase events.
-    void OnItemSelected(wxTreeEvent& event);
-    void OnButtonOK(wxCommandEvent& event);
-    void OnButtonCancel(wxCommandEvent& event);
-    void OnButtonOkUI(wxUpdateUIEvent& event);
+    void OnItemSelected(wxTreeEvent& event) override;
+    void OnButtonOK(wxCommandEvent& event) override;
+    void OnButtonCancel(wxCommandEvent& event) override;
+    void OnButtonOkUI(wxUpdateUIEvent& event) override;
 
 public:
     /** Constructor */
@@ -63,7 +63,7 @@ public:
                                 clCxxWorkspace* wsp,
                                 const wxString& initialPath = wxEmptyString,
                                 const wxString& projectname = wxEmptyString);
-    ~VirtualDirectorySelectorDlg();
+    ~VirtualDirectorySelectorDlg() override;
     wxString GetVirtualDirectoryPath() const { return m_staticTextPreview->GetLabel(); }
     bool SelectPath(const wxString& path);
     wxTreeItemId FindItemForPath(const wxString& path);

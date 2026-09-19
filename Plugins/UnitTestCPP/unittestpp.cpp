@@ -421,7 +421,7 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
 
     // locate the project
     wxString errMsg;
-    IEditor* editor(NULL);
+    IEditor* editor(nullptr);
 
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
     if (proj) {

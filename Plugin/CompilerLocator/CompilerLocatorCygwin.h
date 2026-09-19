@@ -33,7 +33,7 @@ class WXDLLIMPEXP_SDK CompilerLocatorCygwin : public ICompilerLocator
 {
 public:
     CompilerLocatorCygwin();
-    virtual ~CompilerLocatorCygwin() = default;
+    ~CompilerLocatorCygwin() override = default;
     wxString GetGCCVersion(const wxString& gccBinary);
 
     /**
@@ -49,7 +49,7 @@ private:
     AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& extraArgs = "");
 
 public:
-    virtual bool Locate();
+    bool Locate() override;
     virtual CompilerPtr Locate(const wxString& folder);
 };
 

@@ -52,7 +52,7 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
     m_pNotebook = notebook;
     m_pGlobalParent = parent;
     m_mgr = pManager;
-    m_pPrevPanel = NULL;
+    m_pPrevPanel = nullptr;
     m_SuppressUpdate = false;
 
     MSWSetNativeTheme(m_treeDatabases);

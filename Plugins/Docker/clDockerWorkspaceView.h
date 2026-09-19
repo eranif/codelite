@@ -13,7 +13,7 @@ class clDockerWorkspaceView : public clTreeCtrlPanel
 
 public:
     clDockerWorkspaceView(wxWindow* parent);
-    ~clDockerWorkspaceView();
+    ~clDockerWorkspaceView() override;
 
 protected:
     void DoDockerfileContextMenu(wxMenu* menu, const wxString& dockerfile);
@@ -24,7 +24,7 @@ protected:
     void OnWorkspaceOpened(clWorkspaceEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
     void OnFindInFilesDismissed(clFindInFilesEvent& event);
-    void OnFindInFilesShowing(clFindInFilesEvent& event); // override parent's method
+    void OnFindInFilesShowing(clFindInFilesEvent& event) override; // override parent's method
 };
 
 #endif // CLDOCKERWORKSPACEVIEW_H

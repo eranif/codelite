@@ -10,7 +10,7 @@ class WXDLLIMPEXP_CL InitializedNotification : public Notification
 {
 public:
     InitializedNotification();
-    virtual ~InitializedNotification() = default;
+    ~InitializedNotification() override = default;
 };
 
 } // namespace LSP

@@ -20,8 +20,8 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxSB_VERTICAL);
-    virtual ~clScrollBar() = default;
-    void SetScrollbar(int position, int thumbSize, int range, int pageSize, bool refresh = true);
+    ~clScrollBar() override = default;
+    void SetScrollbar(int position, int thumbSize, int range, int pageSize, bool refresh = true) override;
     bool ShouldShow() const { return (m_thumb_size < m_range_size); }
     /**
      * @brief can we scroll up or left?

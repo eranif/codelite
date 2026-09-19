@@ -172,7 +172,7 @@ public:
 
 public:
     GitEntry();
-    virtual ~GitEntry() = default;
+    ~GitEntry() override = default;
 
 public:
     static GitEntry::GitProperties ReadGitProperties(const wxString& localRepoPath = "");
@@ -249,8 +249,8 @@ public:
     wxString GetProjectUserEnteredRepoPath(const wxString& nameHash);
     void SetProjectUserEnteredRepoPath(const wxString& userEnteredRepoPath, const wxString& nameHash);
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     bool IsShowBlameInfoInStatusBar() const { return m_flags & ShowCommitInfo; }
     void SetDifftool(const wxString& difftool) { this->m_difftool = difftool; }

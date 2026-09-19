@@ -124,7 +124,7 @@ void CallGraph::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     // You can use the below code a snippet:
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item = new wxMenuItem(menu,
                           XRCID("cg_show_callgraph"),
                           _("Show call graph"),
@@ -145,7 +145,7 @@ void CallGraph::CreatePluginMenu(wxMenu* pluginsMenu)
 wxMenu* CallGraph::CreateProjectPopMenu()
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(menu,
                           XRCID("cg_show_callgraph"),

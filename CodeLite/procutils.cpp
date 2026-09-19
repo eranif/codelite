@@ -588,7 +588,7 @@ public:
         , m_output_file(output_file)
     {
     }
-    virtual ~ProcessHelper() = default;
+    ~ProcessHelper() override = default;
 
     // Notify about the process termination
     void OnTerminate(int pid, int status) override

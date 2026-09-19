@@ -31,7 +31,7 @@ OpenTypeVListCtrl::OpenTypeVListCtrl(
 {
 }
 
-wxListItemAttr* OpenTypeVListCtrl::OnGetItemAttr(long item) const { return NULL; }
+wxListItemAttr* OpenTypeVListCtrl::OnGetItemAttr(long item) const { return nullptr; }
 
 int OpenTypeVListCtrl::OnGetItemColumnImage(long item, long column) const
 {

@@ -630,7 +630,7 @@ bool DbgCmdResolveTypeHandler::ProcessOutput(const wxString& line)
     // since the above gdb command yields an output, we use the sync command
     // to get it as well to avoid errors in future calls to the gdb
 
-    m_debugger->WriteCommand(cmd, NULL); // pass in NULL handler so the output of this command will be ignored
+    m_debugger->WriteCommand(cmd, nullptr); // pass in NULL handler so the output of this command will be ignored
 
     // Update the observer
     DebuggerEventData e;

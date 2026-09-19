@@ -259,7 +259,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
 
 wxXmlNode* OptionsConfig::ToXml() const
 {
-    wxXmlNode* n = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Options"));
+    wxXmlNode* n = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Options"));
     n->AddAttribute(wxT("DisplayFoldMargin"), BoolToString(m_displayFoldMargin));
     n->AddAttribute(wxT("UnderlineFoldedLine"), BoolToString(m_underlineFoldLine));
     n->AddAttribute(wxT("FoldStyle"), m_foldStyle);

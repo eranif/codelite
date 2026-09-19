@@ -315,7 +315,7 @@ void DebugAdapterClient::CreatePluginMenu(wxMenu* pluginsMenu)
     // Get the main frame's menubar
     auto mb = m_mgr->GetMenuBar();
     if (mb) {
-        wxMenu* settingsMenu(NULL);
+        wxMenu* settingsMenu(nullptr);
         int menuPos = mb->FindMenu(_("Settings"));
         if (menuPos != wxNOT_FOUND) {
             settingsMenu = mb->GetMenu(menuPos);

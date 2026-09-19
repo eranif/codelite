@@ -63,7 +63,7 @@ public:
     static wxCodeCompletionBoxManager& Get();
 
     wxCodeCompletionBoxManager();
-    virtual ~wxCodeCompletionBoxManager();
+    ~wxCodeCompletionBoxManager() override;
 
     /**
      * @brief uninitialize all event handlers and destroy the CC box manager

@@ -7,12 +7,12 @@ class WXDLLIMPEXP_SDK clToolBarSpacer : public clToolBarButtonBase
 {
 public:
     clToolBarSpacer(clToolBarGeneric* parent);
-    virtual ~clToolBarSpacer() = default;
+    ~clToolBarSpacer() override = default;
 
-    void Render(wxDC& dc, const wxRect& rect);
+    void Render(wxDC& dc, const wxRect& rect) override;
 
 public:
-    virtual wxSize CalculateSize(wxDC& dc) const;
+    wxSize CalculateSize(wxDC& dc) const override;
 };
 
 #endif // CLTOOLBARSPACER_H

@@ -21,12 +21,12 @@ protected:
 
 public:
     clConsoleGnomeTerminal();
-    virtual ~clConsoleGnomeTerminal() = default;
+    ~clConsoleGnomeTerminal() override = default;
 
 public:
-    virtual bool Start();
-    virtual bool StartForDebugger();
-    virtual wxString PrepareCommand();
+    bool Start() override;
+    bool StartForDebugger() override;
+    wxString PrepareCommand() override;
 };
 
 #endif // CLCONSOLEGNOMETERMINAL_H

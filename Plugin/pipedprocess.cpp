@@ -33,7 +33,7 @@
 #include <wx/txtstrm.h>
 
 PipedProcess::PipedProcess(int id, const wxString& cmdLine)
-    : wxProcess(NULL, id)
+    : wxProcess(nullptr, id)
     , m_pid(-1)
     , m_cmd(cmdLine)
 {

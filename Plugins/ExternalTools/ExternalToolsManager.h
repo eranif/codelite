@@ -31,17 +31,17 @@ class ExternalToolsManager : public ExternalToolsManagerBase
 {
 public:
     ExternalToolsManager(wxWindow* parent);
-    virtual ~ExternalToolsManager() = default;
+    ~ExternalToolsManager() override = default;
 
 protected:
-    virtual void OnRefresh(wxCommandEvent& event);
+    void OnRefresh(wxCommandEvent& event) override;
     void DoPopulateTable();
     void DoClear();
 
 protected:
-    virtual void OnKill(wxCommandEvent& event);
-    virtual void OnKillAll(wxCommandEvent& event);
-    virtual void OnKillAllUI(wxUpdateUIEvent& event);
-    virtual void OnKillUI(wxUpdateUIEvent& event);
+    void OnKill(wxCommandEvent& event) override;
+    void OnKillAll(wxCommandEvent& event) override;
+    void OnKillAllUI(wxUpdateUIEvent& event) override;
+    void OnKillUI(wxUpdateUIEvent& event) override;
 };
 #endif // EXTERNALTOOLSMANAGER_H

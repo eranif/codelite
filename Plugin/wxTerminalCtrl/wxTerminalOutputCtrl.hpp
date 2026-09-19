@@ -91,7 +91,7 @@ public:
                                   const wxColour& bg_colour = *wxBLACK,
                                   const wxColour& text_colour = *wxWHITE);
     explicit wxTerminalOutputCtrl(wxWindow* parent, wxWindowID winid = wxNOT_FOUND);
-    virtual ~wxTerminalOutputCtrl();
+    ~wxTerminalOutputCtrl() override;
     void SetInputCtrl(wxTerminalInputCtrl* input_ctrl);
     wxStyledTextCtrl* GetCtrl() { return m_ctrl; }
     void SetSink(wxEvtHandler* sink) { this->m_sink = sink; }

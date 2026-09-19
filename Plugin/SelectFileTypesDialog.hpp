@@ -17,7 +17,7 @@ private:
 
 public:
     SelectFileTypesDialog(wxWindow* parent, const wxArrayString& initial_selection);
-    virtual ~SelectFileTypesDialog();
+    ~SelectFileTypesDialog() override;
 
     /**
      * @brief return the selected items

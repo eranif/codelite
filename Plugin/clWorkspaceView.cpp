@@ -36,7 +36,7 @@ wxWindow* clWorkspaceView::GetPage(const wxString& name) const
     } else if (m_windows.count(name)) {
         return m_windows.find(name)->second;
     }
-    return NULL;
+    return nullptr;
 }
 
 void clWorkspaceView::AddPage(wxWindow* page, const wxString& name, bool addToBook)

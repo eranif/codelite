@@ -46,7 +46,7 @@ BuilderConfig::BuilderConfig(wxXmlNode* node)
 
 wxXmlNode* BuilderConfig::ToXml() const
 {
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("BuildSystem"));
+    wxXmlNode* node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("BuildSystem"));
     node->AddAttribute(wxT("Name"), m_name);
     node->AddAttribute(wxT("ToolPath"), m_toolPath);
     node->AddAttribute(wxT("Options"), m_toolOptions);

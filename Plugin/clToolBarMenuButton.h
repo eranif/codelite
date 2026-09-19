@@ -7,9 +7,9 @@ class WXDLLIMPEXP_SDK clToolBarMenuButton : public clToolBarButtonBase
 {
 public:
     clToolBarMenuButton(clToolBarGeneric* parent, wxWindowID winid, size_t bmpId, const wxString& label = "");
-    virtual ~clToolBarMenuButton() = default;
+    ~clToolBarMenuButton() override = default;
 
 public:
-    virtual wxSize CalculateSize(wxDC& dc) const;
+    wxSize CalculateSize(wxDC& dc) const override;
 };
 #endif // CLTOOLBARMENUBUTTON_H

@@ -40,7 +40,7 @@ protected:
 public:
     DbItem(Database* pDatabase, Table* pTable);
     DbItem(xsSerializable* data);
-    virtual ~DbItem() = default;
+    ~DbItem() override = default;
 
     Database* GetDatabase() { return this->m_pDatabase; }
     Table* GetTable() { return this->m_pTable; }

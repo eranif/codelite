@@ -58,14 +58,14 @@ public:
                              const wxString& cmd,
                              size_t flags = IProcessCreateDefault,
                              const wxString& workingDir = wxEmptyString,
-                             IProcessCallback* cb = NULL);
+                             IProcessCallback* cb = nullptr);
 
     // Create process asynchronously and return a process object
     static IProcess* Execute(wxEvtHandler* parent,
                              const wxArrayString& args,
                              size_t flags = IProcessCreateDefault,
                              const wxString& workingDir = wxEmptyString,
-                             IProcessCallback* cb = NULL);
+                             IProcessCallback* cb = nullptr);
 
     /**
      * @brief read data from stdout and error

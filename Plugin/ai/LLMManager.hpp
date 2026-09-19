@@ -808,7 +808,7 @@ public:
 
 private:
     Manager() = default;
-    ~Manager();
+    ~Manager() override;
 
     void CompleteInitialisation();
 

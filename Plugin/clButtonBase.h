@@ -88,7 +88,7 @@ public:
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = "button");
-    virtual ~clButtonBase();
+    ~clButtonBase() override;
 
 #if !wxUSE_NATIVE_BUTTON
     void SetColours(const clColours& colours);

@@ -86,7 +86,7 @@ wxDEFINE_EVENT(wxEVT_TERMINAL_EXIT_WHEN_DONE, clCommandEvent);
 
 wxTerminal::wxTerminal(wxWindow* parent)
     : wxTerminalBase(parent)
-    , m_process(NULL)
+    , m_process(nullptr)
     , m_exitWhenProcessDies(false)
     , m_exitOnKey(false)
 #if defined(__WXMAC__) || defined(__WXGTK__)
@@ -214,7 +214,7 @@ void wxTerminal::DoProcessCommand(const wxString& command)
         m_process = cmdPrc;
 
     } else {
-        m_process = NULL;
+        m_process = nullptr;
         AddTextWithEOL(wxString() << _("\nFailed to execute command: ") << cmdShell << _("\nWorking directory")
                                   << m_workingDir);
 
@@ -230,11 +230,11 @@ void wxTerminal::KillInferior()
     clCommandEvent event(wxEVT_TERMINAL_KILL_INFERIOR);
     event.SetEventObject(this);
     if (!GetEventHandler()->ProcessEvent(event) && m_process) {
-        wxKill(m_process->GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
+        wxKill(m_process->GetPid(), wxSIGKILL, nullptr, wxKILL_CHILDREN);
     }
 }
 
-bool wxTerminal::IsRunning() { return m_process != NULL; }
+bool wxTerminal::IsRunning() { return m_process != nullptr; }
 
 void wxTerminal::Clear()
 {

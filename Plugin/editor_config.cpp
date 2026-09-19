@@ -228,10 +228,10 @@ void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& no
         delete node;
     }
     // create new entry in the configuration file
-    node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, nodeName);
+    node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, nodeName);
     m_doc->GetRoot()->AddChild(node);
     for (size_t i = 0; i < files.GetCount(); i++) {
-        wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
+        wxXmlNode* child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("File"));
         child->AddAttribute(wxT("Name"), files.Item(i));
         node->AddChild(child);
     }
@@ -438,18 +438,18 @@ void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
 }
 
 // Singleton
-static EditorConfig* gs_EditorConfig = NULL;
+static EditorConfig* gs_EditorConfig = nullptr;
 void EditorConfigST::Free()
 {
     if (gs_EditorConfig) {
         delete gs_EditorConfig;
-        gs_EditorConfig = NULL;
+        gs_EditorConfig = nullptr;
     }
 }
 
 EditorConfig* EditorConfigST::Get()
 {
-    if (gs_EditorConfig == NULL) {
+    if (gs_EditorConfig == nullptr) {
         gs_EditorConfig = new EditorConfig;
     }
     return gs_EditorConfig;

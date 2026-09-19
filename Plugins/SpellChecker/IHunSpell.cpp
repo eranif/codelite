@@ -290,7 +290,7 @@ void IHunSpell::CheckSpelling()
 
     // check for dialog and create if necessary
     if (m_pSpellDlg == nullptr) {
-        m_pSpellDlg = new CorrectSpellingDlg(NULL);
+        m_pSpellDlg = new CorrectSpellingDlg(nullptr);
     }
     m_pSpellDlg->SetPHs(this);
     wxArrayString lines = ::wxStringTokenize(text, "\n", wxTOKEN_RET_EMPTY_ALL);

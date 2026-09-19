@@ -46,7 +46,7 @@ public:
     int GetStyle(const wxColour& fg, const wxColour& bg);
     wxTextAttr GetDefaultStyle() const;
     wxSTCStyleProvider(wxStyledTextCtrl* ctrl);
-    virtual ~wxSTCStyleProvider() = default;
+    ~wxSTCStyleProvider() override = default;
     void Clear();
     void OnIdle(wxIdleEvent& event);
 };

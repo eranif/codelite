@@ -419,7 +419,7 @@ clToolBarButtonBase* clToolBarGeneric::InsertBefore(wxWindowID where, clToolBarB
     ToolVect_t::iterator iter =
         std::find_if(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* b) { return (b->GetId() == where); });
     if (iter == m_buttons.end()) {
-        return NULL;
+        return nullptr;
     }
     m_buttons.insert(iter, button);
     return button;
@@ -430,7 +430,7 @@ clToolBarButtonBase* clToolBarGeneric::InsertAfter(wxWindowID where, clToolBarBu
     ToolVect_t::iterator iter =
         std::find_if(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* b) { return (b->GetId() == where); });
     if (iter == m_buttons.end()) {
-        return NULL;
+        return nullptr;
     }
     ++iter; // can be end()
     m_buttons.insert(iter, button);
@@ -477,7 +477,7 @@ clToolBarButtonBase* clToolBarGeneric::FindById(wxWindowID id) const
     ToolVect_t::const_iterator iter =
         std::find_if(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* b) { return (b->GetId() == id); });
     if (iter == m_buttons.end()) {
-        return NULL;
+        return nullptr;
     }
     return (*iter);
 }
@@ -513,7 +513,7 @@ wxMenu* clToolBarGeneric::FindMenuById(wxWindowID buttonID) const
 {
     clToolBarButtonBase* button = FindById(buttonID);
     if (!button) {
-        return NULL;
+        return nullptr;
     }
     return button->GetMenu();
 }

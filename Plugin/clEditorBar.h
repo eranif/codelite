@@ -66,14 +66,14 @@ private:
 
 public:
     clEditorBar(wxWindow* parent);
-    virtual ~clEditorBar();
+    ~clEditorBar() override;
     void SetScopes(const wxString& filename, const clEditorBar::ScopeEntry::vec_t& entries);
     void UpdateScopesForCurrentEditor(const std::vector<LSP::SymbolInformation>& symbols);
     bool ShouldShow() const { return m_shouldShow; }
     void DoShow(bool s);
-    void SetLabel(const wxString& text);
+    void SetLabel(const wxString& text) override;
     void ClearLabel() { SetLabel(wxEmptyString); }
-    wxString GetLabel() const;
+    wxString GetLabel() const override;
     /**
      * @brief Get the text of the current scope at the editor's cursor position.
      *
@@ -88,9 +88,9 @@ public:
     std::optional<wxString> GetCurrentScopeText() const;
 
 protected:
-    virtual void OnButtonActions(wxCommandEvent& event);
-    virtual void OnButtonBookmarks(wxCommandEvent& event);
-    virtual void OnButtonScope(wxCommandEvent& event);
+    void OnButtonActions(wxCommandEvent& event) override;
+    void OnButtonBookmarks(wxCommandEvent& event) override;
+    void OnButtonScope(wxCommandEvent& event) override;
     void OnMarkerChanged(clCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& e);
     void OnThemeChanged(clCommandEvent& e);

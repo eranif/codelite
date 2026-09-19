@@ -148,7 +148,7 @@ void MemCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::CreatePluginMenu()"));
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item =
         new wxMenuItem(menu, XRCID("memcheck_check_active_project"), _("&Run MemCheck"), wxEmptyString, wxITEM_NORMAL);
@@ -177,7 +177,7 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
         // items for the file view/Project context menu
         if (!menu->FindItem(XRCID("memcheck_MenuTypeFileView_Project"))) {
             wxMenu* subMenu = new wxMenu();
-            wxMenuItem* item(NULL);
+            wxMenuItem* item(nullptr);
 
             item = new wxMenuItem(
                 subMenu, XRCID("memcheck_check_popup_project"), _("&Run MemCheck"), wxEmptyString, wxITEM_NORMAL);
@@ -464,14 +464,14 @@ wxString MemCheckPlugin::PrepareCommand(const wxString& projectName, wxString& w
 
     // expand variables
     wxString cmd = bldConf->GetCommand();
-    cmd = MacroManager::Instance()->Expand(cmd, NULL, projectName);
+    cmd = MacroManager::Instance()->Expand(cmd, nullptr, projectName);
 
     wxString cmdArgs = bldConf->GetCommandArguments();
-    cmdArgs = MacroManager::Instance()->Expand(cmdArgs, NULL, projectName);
+    cmdArgs = MacroManager::Instance()->Expand(cmdArgs, nullptr, projectName);
 
     // Execute command & cmdArgs
     wd = bldConf->GetWorkingDirectory();
-    wd = MacroManager::Instance()->Expand(wd, NULL, projectName);
+    wd = MacroManager::Instance()->Expand(wd, nullptr, projectName);
 
     wxFileName workingDir(wd, "");
     if (workingDir.IsRelative()) {

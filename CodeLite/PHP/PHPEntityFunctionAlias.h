@@ -37,20 +37,20 @@ class WXDLLIMPEXP_CL PHPEntityFunctionAlias : public PHPEntityBase
     PHPEntityBase::Ptr_t m_func;
 
 public:
-    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
-    virtual wxString GetDisplayName() const;
-    virtual void PrintStdout(int indent) const;
-    virtual wxString Type() const;
+    wxString FormatPhpDoc(const CommentConfigData& data) const override;
+    wxString GetDisplayName() const override;
+    void PrintStdout(int indent) const override;
+    wxString Type() const override;
     PHPEntityFunctionAlias() = default;
-    virtual ~PHPEntityFunctionAlias() = default;
+    ~PHPEntityFunctionAlias() override = default;
 
-    void FromJSON(const JSONItem& json);
-    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
 public:
-    virtual bool Is(eEntityType type) const;
-    virtual void Store(PHPLookupTable* lookup);
-    virtual void FromResultSet(wxSQLite3ResultSet& res);
+    bool Is(eEntityType type) const override;
+    void Store(PHPLookupTable* lookup) override;
+    void FromResultSet(wxSQLite3ResultSet& res) override;
 
     void SetScope(const wxString& scope) { this->m_scope = scope; }
     const wxString& GetScope() const { return m_scope; }

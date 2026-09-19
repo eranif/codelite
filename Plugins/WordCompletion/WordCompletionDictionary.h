@@ -49,7 +49,7 @@ private:
 
 public:
     WordCompletionDictionary();
-    virtual ~WordCompletionDictionary();
+    ~WordCompletionDictionary() override;
 
     /**
      * @brief this function is called by the word completion thread when parsing phase is done

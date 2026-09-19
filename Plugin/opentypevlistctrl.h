@@ -42,15 +42,15 @@ public:
                       const wxPoint& pos = wxDefaultPosition,
                       const wxSize& size = wxDefaultSize,
                       long style = wxTAB_TRAVERSAL);
-    virtual ~OpenTypeVListCtrl() = default;
+    ~OpenTypeVListCtrl() override = default;
 
 public:
     void SetItems(const std::vector<TagEntryPtr>& tags) { m_tags = tags; }
 
-    virtual wxListItemAttr* OnGetItemAttr(long item) const;
-    virtual int OnGetItemColumnImage(long item, long column) const;
-    virtual int OnGetItemImage(long item) const;
-    virtual wxString OnGetItemText(long item, long column) const;
+    wxListItemAttr* OnGetItemAttr(long item) const override;
+    int OnGetItemColumnImage(long item, long column) const override;
+    int OnGetItemImage(long item) const override;
+    wxString OnGetItemText(long item, long column) const override;
     int FindMatch(const wxString& word);
     TagEntryPtr GetTagAt(long item);
 };

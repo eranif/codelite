@@ -26,7 +26,7 @@
 
 WorkerThread::WorkerThread()
     : wxThread(wxTHREAD_JOINABLE)
-    , m_notifiedWindow(NULL)
+    , m_notifiedWindow(nullptr)
 {
 }
 

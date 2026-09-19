@@ -16,6 +16,6 @@ public:
     ~clCustomiseToolBarDlg() override;
 
 protected:
-    virtual void OnOK(wxCommandEvent& event) override;
+    void OnOK(wxCommandEvent& event) override;
 };
 #endif // CLCUSTOMISETOOLBARDLG_H

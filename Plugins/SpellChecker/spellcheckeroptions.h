@@ -42,10 +42,10 @@ class SpellCheckerOptions : public SerializedObject
 {
 public:
     SpellCheckerOptions();
-    virtual ~SpellCheckerOptions() = default;
+    ~SpellCheckerOptions() override = default;
 
-    void DeSerialize(Archive& arch);
-    void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     void SetDictionaryPath(const wxString& dictionaryPath) { this->m_dictionaryPath = dictionaryPath; }
     void SetDictionaryFileName(const wxString& dictionary) { this->m_dictionary = dictionary; }

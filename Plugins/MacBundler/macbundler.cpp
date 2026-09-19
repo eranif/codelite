@@ -209,7 +209,7 @@ public:
         WindowAttrManager::Load(this);
     }
 
-    virtual ~BundleConfigDialog() = default;
+    ~BundleConfigDialog() override = default;
 
     void onOk(wxCommandEvent& evt)
     {

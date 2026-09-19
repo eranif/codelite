@@ -19,7 +19,7 @@ class WXDLLIMPEXP_SDK clProfileHandler : public wxEvtHandler
 
 protected:
     clProfileHandler();
-    virtual ~clProfileHandler();
+    ~clProfileHandler() override;
 
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnWorkspaceLoaded(clWorkspaceEvent& e);

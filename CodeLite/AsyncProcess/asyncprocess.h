@@ -83,7 +83,7 @@ public:
         , m_flags(0)
     {
     }
-    virtual ~IProcess() = default;
+    ~IProcess() override = default;
 
     // Handle process exit code. This is done this way this
     // under Linux / Mac the exit code is returned only after the signal child has been

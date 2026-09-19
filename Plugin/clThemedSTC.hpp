@@ -31,7 +31,7 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
                 const wxString& name = wxSTCNameStr);
-    virtual ~clThemedSTC() = default;
+    ~clThemedSTC() override = default;
 };
 
 #endif // CLTHEMEDSTC_HPP

@@ -29,7 +29,7 @@ protected:
 
 public:
     clGenericSTCStyler(wxStyledTextCtrl* stc);
-    virtual ~clGenericSTCStyler();
+    ~clGenericSTCStyler() override;
 
     using Ptr_t = std::shared_ptr<clGenericSTCStyler>;
     /**

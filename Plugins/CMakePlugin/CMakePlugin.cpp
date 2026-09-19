@@ -232,7 +232,7 @@ void CMakePlugin::UnPlug()
 
 void CMakePlugin::OnSettings(wxCommandEvent& event)
 {
-    CMakeSettingsDialog dlg(NULL, this);
+    CMakeSettingsDialog dlg(nullptr, this);
 
     // Set original value
     dlg.SetCMakePath(m_configuration->GetProgramPath());
@@ -284,7 +284,7 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
     wxFileName projectFile = p->GetFileName();
     projectFile.SetFullName(CMAKELISTS_FILE);
     if (projectFile.FileExists()) {
-        wxMenuItem* item = new wxMenuItem(NULL, XRCID("cmake_open_cmake"), _("Open CMakeLists.txt"));
+        wxMenuItem* item = new wxMenuItem(nullptr, XRCID("cmake_open_cmake"), _("Open CMakeLists.txt"));
         item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("cmake"));
         menu->Insert(settingsPos, item);
     }
@@ -316,7 +316,7 @@ void CMakePlugin::OnCMakeTerminated(clProcessEvent& event)
     m_mgr->AppendOutputTabText(kOutputTab_Build, event.GetOutput());
     IProcess* process = event.GetProcess();
     wxDELETE(process);
-    event.SetProcess(NULL);
+    event.SetProcess(nullptr);
     m_mgr->AppendOutputTabText(kOutputTab_Build, "==== Done ====\n");
 }
 
@@ -394,7 +394,7 @@ void CMakePlugin::OnWorkspaceContextMenu(clContextMenuEvent& event)
 
     menu->AppendSeparator();
     if (workspaceFile.FileExists()) {
-        wxMenuItem* item = new wxMenuItem(NULL, XRCID("cmake_open_active_project_cmake"), _("Open CMakeLists.txt"));
+        wxMenuItem* item = new wxMenuItem(nullptr, XRCID("cmake_open_active_project_cmake"), _("Open CMakeLists.txt"));
         item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("cmake"));
         menu->Append(item);
     }

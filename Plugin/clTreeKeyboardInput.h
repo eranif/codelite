@@ -46,7 +46,7 @@ protected:
 
 public:
     clTreeKeyboardInput(clTreeCtrl* tree);
-    virtual ~clTreeKeyboardInput();
+    ~clTreeKeyboardInput() override;
 };
 
 #endif // CLTREEKEYBOARDINPUT_H

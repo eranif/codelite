@@ -41,7 +41,7 @@ class GitView : public GitConsoleBase
 {
 public:
     GitView(wxWindow* parent, GitPlugin* git);
-    virtual ~GitView();
+    ~GitView() override;
     void AddText(const wxString& text);
     void AddLine(const wxString& line);
     void PrintPrompt();
@@ -66,18 +66,18 @@ public:
 
 protected:
     wxString GetIndent() const { return wxString(' ', (m_indent * 4)); }
-    virtual void OnUnversionedFileActivated(wxDataViewEvent& event);
-    virtual void OnUnversionedFileContextMenu(wxDataViewEvent& event);
-    virtual void OnUpdateUI(wxUpdateUIEvent& event);
+    void OnUnversionedFileActivated(wxDataViewEvent& event) override;
+    void OnUnversionedFileContextMenu(wxDataViewEvent& event) override;
+    void OnUpdateUI(wxUpdateUIEvent& event) override;
     virtual void OnAddUnversionedFilesUI(wxUpdateUIEvent& event);
     virtual void OnResetFileUI(wxUpdateUIEvent& event);
     virtual void OnStclogStcChange(wxStyledTextEvent& event);
     virtual void OnApplyPatch(wxCommandEvent& event);
-    virtual void OnFileActivated(wxDataViewEvent& event);
+    void OnFileActivated(wxDataViewEvent& event) override;
     virtual void OnItemSelectedUI(wxUpdateUIEvent& event);
     virtual void OnResetFile(wxCommandEvent& event);
     virtual void OnAddUnstagedFiles(wxCommandEvent& event);
-    virtual void OnContextMenu(wxDataViewEvent& event);
+    void OnContextMenu(wxDataViewEvent& event) override;
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);

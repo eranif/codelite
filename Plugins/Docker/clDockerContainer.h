@@ -22,7 +22,7 @@ protected:
 
 public:
     clDockerContainer() = default;
-    virtual ~clDockerContainer() = default;
+    ~clDockerContainer() override = default;
 
     void SetCommand(const wxString& command) { this->m_command = command; }
     void SetCreated(const wxString& created) { this->m_created = created; }

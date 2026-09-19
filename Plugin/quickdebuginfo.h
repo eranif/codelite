@@ -50,11 +50,11 @@ class WXDLLIMPEXP_SDK QuickDebugInfo : public SerializedObject
 
 public:
     QuickDebugInfo();
-    ~QuickDebugInfo() = default;
+    ~QuickDebugInfo() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     void SetArguments(const wxString& arguments) { this->m_arguments = arguments; }
     void SetExeFilepaths(const wxArrayString& exeFilepaths) { this->m_exeFilepaths = exeFilepaths; }

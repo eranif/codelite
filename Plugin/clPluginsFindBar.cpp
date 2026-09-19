@@ -216,7 +216,7 @@ clPluginsFindBar::~clPluginsFindBar()
 
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, [&](wxCommandEvent& event) {
         event.Skip();
-        this->SetEditor(NULL);
+        this->SetEditor(nullptr);
     });
 
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, [&](wxCommandEvent& event) {
@@ -227,7 +227,7 @@ clPluginsFindBar::~clPluginsFindBar()
             this->SetEditor(editor->GetCtrl());
             return;
         }
-        SetEditor(NULL);
+        SetEditor(nullptr);
     });
 }
 

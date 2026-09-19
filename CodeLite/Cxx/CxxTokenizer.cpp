@@ -222,7 +222,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
 CppLexerUserData* CxxTokenizer::GetUserData() const
 {
     if (!m_scanner)
-        return NULL;
+        return nullptr;
     return ::LexerGetUserData(m_scanner);
 }
 

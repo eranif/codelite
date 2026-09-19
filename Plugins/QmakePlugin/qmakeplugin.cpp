@@ -105,7 +105,7 @@ void QMakePlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     // You can use the below code a snippet:
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item =
         new wxMenuItem(menu, XRCID("new_qmake_project"), _("New qmake based project..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);

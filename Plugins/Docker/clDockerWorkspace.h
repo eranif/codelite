@@ -58,7 +58,7 @@ protected:
 
 public:
     clDockerWorkspace(bool bindEvents, Docker* plugin, clDockerDriver::Ptr_t driver);
-    virtual ~clDockerWorkspace();
+    ~clDockerWorkspace() override;
 
     clDockerWorkspaceView* GetView() { return m_view; }
 

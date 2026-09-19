@@ -29,8 +29,8 @@
 CppScanner::CppScanner()
     : m_curr(0)
 {
-    m_data = NULL;
-    m_pcurr = NULL;
+    m_data = nullptr;
+    m_pcurr = nullptr;
     m_keepComments = 0;
     m_returnWhite = 0;
     m_comment = wxEmptyString;
@@ -66,8 +66,8 @@ void CppScanner::Reset()
 {
     if (m_data) {
         free(m_data);
-        m_data = NULL;
-        m_pcurr = NULL;
+        m_data = nullptr;
+        m_pcurr = nullptr;
         m_curr = 0;
     }
 

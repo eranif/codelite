@@ -47,7 +47,7 @@ class ToolInfo : public SerializedObject
 
 public:
     ToolInfo();
-    ~ToolInfo() = default;
+    ~ToolInfo() override = default;
 
     enum {
         kCallOnFileSave = (1 << 0),
@@ -65,8 +65,8 @@ protected:
     }
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     void SetId(const wxString& id) { this->m_id = id; }
     void SetPath(const wxString& path) { this->m_path = path; }
@@ -97,13 +97,13 @@ class ExternalToolsData : public SerializedObject
 
 public:
     ExternalToolsData() = default;
-    virtual ~ExternalToolsData() = default;
+    ~ExternalToolsData() override = default;
 
     const std::vector<ToolInfo>& GetTools() const;
     void SetTools(const std::vector<ToolInfo>& tools);
 
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 };
 
 #endif // __externaltoolsdata__

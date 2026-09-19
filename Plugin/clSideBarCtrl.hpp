@@ -123,7 +123,7 @@ public:
                   const wxPoint& pos = wxDefaultPosition,
                   const wxSize& size = wxDefaultSize,
                   long style = 0);
-    virtual ~clSideBarCtrl();
+    ~clSideBarCtrl() override;
 
     /// Return the toolbar
     inline SideBarToolBar* GetToolBar()

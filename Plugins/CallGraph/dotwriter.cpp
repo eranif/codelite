@@ -45,7 +45,7 @@ DotWriter::DotWriter()
     dlabel = wxT("");
     graph = wxT("");
     // m_OutputString = wxT("");
-    mlines = NULL;
+    mlines = nullptr;
     dwcn = 0;
     dwce = 0;
     dwtn = 0;
@@ -92,7 +92,7 @@ void DotWriter::WriteToDotLanguage()
     bool is_node = false;
     wxArrayInt index_pl_nodes;
 
-    if (mlines == NULL)
+    if (mlines == nullptr)
         return;
 
     graph = wxT("graph [ranksep=\"0.25\", fontname=") + fontname + wxT(", nodesep=\"0.125\"];");

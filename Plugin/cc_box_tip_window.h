@@ -53,19 +53,19 @@ protected:
 
 public:
     CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip_html_tags);
-    virtual ~CCBoxTipWindow() = default;
+    ~CCBoxTipWindow() override = default;
 
     /**
      * @brief position the tip next to 'win' and show it
      * if focusEditor is NOT null, the editor will gain the focus once
      * the tip is shown
      */
-    void PositionRelativeTo(wxWindow* win, wxPoint caretPos, int start_position, IEditor* focusEdior = NULL);
+    void PositionRelativeTo(wxWindow* win, wxPoint caretPos, int start_position, IEditor* focusEdior = nullptr);
 
     /**
      * @brief position and show the tip at a given location
      */
-    void PositionAt(const wxPoint& pt, IEditor* focusEdior = NULL);
+    void PositionAt(const wxPoint& pt, IEditor* focusEdior = nullptr);
 
     int GetEditorStartPosition() const { return m_editorStartPosition; }
 };

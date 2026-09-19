@@ -10,7 +10,7 @@ class WXDLLIMPEXP_CL clConsoleKitty : public clConsoleBase
 
 public:
     clConsoleKitty();
-    virtual ~clConsoleKitty() = default;
+    ~clConsoleKitty() override = default;
 
 public:
     bool Start() override;

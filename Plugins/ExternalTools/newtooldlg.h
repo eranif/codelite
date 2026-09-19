@@ -35,21 +35,21 @@ class NewToolDlg : public NewToolBase
     IManager* m_mgr;
 
 protected:
-    virtual void OnButtonOkUI(wxUpdateUIEvent& event);
-    virtual void OnIdSelected(wxCommandEvent& event);
+    void OnButtonOkUI(wxUpdateUIEvent& event) override;
+    void OnIdSelected(wxCommandEvent& event) override;
     // Handlers for NewToolBase events.
-    void OnButtonBrowsePath(wxCommandEvent& event);
-    void OnButtonBrowseWD(wxCommandEvent& event);
-    void OnButtonHelp(wxCommandEvent& event);
-    void OnButtonOk(wxCommandEvent& event);
-    void OnButtonCancel(wxCommandEvent& event);
-    void OnButtonBrowseIcon16(wxCommandEvent& event);
-    void OnButtonBrowseIcon24(wxCommandEvent& event);
+    void OnButtonBrowsePath(wxCommandEvent& event) override;
+    void OnButtonBrowseWD(wxCommandEvent& event) override;
+    void OnButtonHelp(wxCommandEvent& event) override;
+    void OnButtonOk(wxCommandEvent& event) override;
+    void OnButtonCancel(wxCommandEvent& event) override;
+    void OnButtonBrowseIcon16(wxCommandEvent& event) override;
+    void OnButtonBrowseIcon24(wxCommandEvent& event) override;
 
 public:
     /** Constructor */
     NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data);
-    virtual ~NewToolDlg() = default;
+    ~NewToolDlg() override = default;
 
     wxString GetPath() const { return m_textCtrlPath->GetValue(); }
     wxString GetWorkingDirectory() const { return m_textCtrlWd->GetValue(); }

@@ -22,7 +22,7 @@ protected:
 
 public:
     wxTerminalColourHandler() = default;
-    ~wxTerminalColourHandler();
+    ~wxTerminalColourHandler() override;
 
     void Append(const wxString& buffer, wxString* window_title);
     void SetCtrl(wxTerminalOutputCtrl* ctrl);

@@ -40,12 +40,12 @@ public:
                       std::set<wxString> listEnvVar,
                       BuildConfigPtr le_conf,
                       bool* showDlg);
-    virtual ~EnvVarImporterDlg();
+    ~EnvVarImporterDlg() override;
 
 protected:
-    virtual void OnImport(wxCommandEvent& event);
-    virtual void OnContinue(wxCommandEvent& event);
-    virtual void OnSkip(wxCommandEvent& event);
+    void OnImport(wxCommandEvent& event) override;
+    void OnContinue(wxCommandEvent& event) override;
+    void OnSkip(wxCommandEvent& event) override;
 
 private:
     BuildConfigPtr le_conf;

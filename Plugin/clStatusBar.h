@@ -76,7 +76,7 @@ protected:
 
 public:
     clStatusBar(wxWindow* parent, IManager* mgr);
-    virtual ~clStatusBar();
+    ~clStatusBar() override;
 
     /**
      * @brief clear all text fields from the status bar

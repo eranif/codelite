@@ -24,7 +24,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 AutoSave::AutoSave(IManager* manager)
     : IPlugin(manager)
-    , m_timer(NULL)
+    , m_timer(nullptr)
 {
     m_longName = _("Automatically save modified source files");
     m_shortName = wxT("AutoSave");

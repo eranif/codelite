@@ -89,7 +89,7 @@ protected:
 
 public:
     SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin);
-    virtual ~SvnConsole() = default;
+    ~SvnConsole() override = default;
 
     void Execute(const wxString& cmd,
                  const wxString& workingDirectory,

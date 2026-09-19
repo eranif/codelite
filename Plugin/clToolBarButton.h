@@ -11,9 +11,9 @@ public:
                     wxWindowID winid,
                     size_t bitmapId = INVALID_BITMAP_ID,
                     const wxString& label = "");
-    virtual ~clToolBarButton() = default;
+    ~clToolBarButton() override = default;
 
 public:
-    virtual wxSize CalculateSize(wxDC& dc) const;
+    wxSize CalculateSize(wxDC& dc) const override;
 };
 #endif // CLTOOLBARBUTTON_H

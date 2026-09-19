@@ -62,7 +62,7 @@ public:
     {
         if (m_wxcWidget) {
             delete m_wxcWidget;
-            m_wxcWidget = NULL;
+            m_wxcWidget = nullptr;
         }
     }
 };
@@ -144,9 +144,9 @@ protected:
 
     void DoInsertBefore(const wxTreeItemId& sourceItem,
                         const wxTreeItemId& targetItem,
-                        wxcWidget* sourceItemData = NULL,
+                        wxcWidget* sourceItemData = nullptr,
                         bool insertBefore = true);
-    void DoAppendItem(const wxTreeItemId& sourceItem, const wxTreeItemId& targetItem, wxcWidget* sourceItemData = NULL);
+    void DoAppendItem(const wxTreeItemId& sourceItem, const wxTreeItemId& targetItem, wxcWidget* sourceItemData = nullptr);
     void DoChangeOrInsertIntoSizer(int id);
     wxArrayString GetCustomControlsUsed() const;
     wxTreeItemId DoFindItemByWxcWidget(wxcWidget* widget, const wxTreeItemId& item) const;

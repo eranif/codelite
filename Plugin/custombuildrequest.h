@@ -45,11 +45,11 @@ protected:
 
 public:
     CustomBuildRequest(const QueueCommand& buildInfo, const wxString& fileName);
-    virtual ~CustomBuildRequest() = default;
+    ~CustomBuildRequest() override = default;
 
 public:
     // process the request
-    virtual void Process(IManager* manager = NULL);
+    void Process(IManager* manager = nullptr) override;
 
     // setters/getters
     const wxString& GetProjectName() const { return m_info.GetProject(); }

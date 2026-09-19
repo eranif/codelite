@@ -10,7 +10,7 @@ struct SvnShowDiffChunkUI : public wxClientData {
         : m_chunk(chunk)
     {
     }
-    virtual ~SvnShowDiffChunkUI() = default;
+    ~SvnShowDiffChunkUI() override = default;
 };
 
 SvnShowRecentChangesDlg::SvnShowRecentChangesDlg(wxWindow* parent, const SvnShowDiffChunk::List_t& changes)

@@ -64,7 +64,7 @@ void ICompilerLocator::ScanUninstRegKeys()
                 continue;
 
             size_t subkeys = 0;
-            regKey.GetKeyInfo(&subkeys, NULL, NULL, NULL);
+            regKey.GetKeyInfo(&subkeys, nullptr, nullptr, nullptr);
             wxString keyName;
             long keyIndex = 0;
             regKey.GetFirstKey(keyName, keyIndex);

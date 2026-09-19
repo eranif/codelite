@@ -19,7 +19,7 @@ public:
                      const wxSize& size = wxDefaultSize,
                      long style = 0);
     clThemedTreeCtrl() = default;
-    virtual ~clThemedTreeCtrl();
+    ~clThemedTreeCtrl() override;
     bool Create(wxWindow* parent,
                 wxWindowID id = wxID_ANY,
                 const wxPoint& pos = wxDefaultPosition,

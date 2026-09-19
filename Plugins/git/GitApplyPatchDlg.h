@@ -31,7 +31,7 @@ class GitApplyPatchDlg : public GitApplyPatchDlgBase
 {
 public:
     GitApplyPatchDlg(wxWindow* parent);
-    virtual ~GitApplyPatchDlg() = default;
+    ~GitApplyPatchDlg() override = default;
 
     wxString GetExtraFlags() const { return m_textCtrlExtraFlags->GetValue().Trim(); }
     wxString GetPatchFile() const { return m_filePickerPatchFile->GetPath().Trim(); }

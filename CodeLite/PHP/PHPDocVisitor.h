@@ -40,7 +40,7 @@ class WXDLLIMPEXP_CL PHPDocVisitor : public PHPEntityVisitor
 
 public:
     PHPDocVisitor(PHPSourceFile& sourceFile, const std::vector<phpLexerToken>& comments);
-    virtual ~PHPDocVisitor() = default;
+    ~PHPDocVisitor() override = default;
 
 public:
     virtual void OnEntity(PHPEntityBase::Ptr_t entity);

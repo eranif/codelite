@@ -18,7 +18,7 @@ public:
     };
 
     explicit DocumentSymbolsRequest(const wxString& filename, size_t context);
-    virtual ~DocumentSymbolsRequest() = default;
+    ~DocumentSymbolsRequest() override = default;
     std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 
 private:

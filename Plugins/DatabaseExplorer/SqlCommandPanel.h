@@ -92,7 +92,7 @@ protected:
 
 public:
     SQLCommandPanel(wxWindow* parent, IDbAdapter* dbAdapter, const wxString& dbName, const wxString& dbTable);
-    virtual ~SQLCommandPanel();
+    ~SQLCommandPanel() override;
     virtual void OnExecuteClick(wxCommandEvent& event);
     virtual void OnScintilaKeyDown(wxKeyEvent& event);
 

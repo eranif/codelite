@@ -11,7 +11,7 @@ class FormatterPage : public clPropertiesPage
 
 public:
     FormatterPage(wxWindow* parent);
-    virtual ~FormatterPage() = default;
+    ~FormatterPage() override = default;
 
     void Clear() override;
     void Load(std::shared_ptr<GenericFormatter> formatter);

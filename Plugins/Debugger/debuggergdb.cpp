@@ -360,7 +360,7 @@ bool DbgGdb::Run(const wxString& args, const wxString& comm)
         // add handler for this command
         wxString setArgsCommands;
         setArgsCommands << "-exec-arguments " << args;
-        if (!WriteCommand(setArgsCommands, NULL)) {
+        if (!WriteCommand(setArgsCommands, nullptr)) {
             return false;
         }
         return WriteCommand("-exec-run ", new DbgCmdHandlerExecRun(m_observer, this));
@@ -585,7 +585,7 @@ bool DbgGdb::SetIgnoreLevel(double bid, const int ignorecount)
 
     wxString command("-break-after ");
     command << bid << " " << ignorecount;
-    return WriteCommand(command, NULL);
+    return WriteCommand(command, nullptr);
 }
 
 bool DbgGdb::SetEnabledState(double bid, const bool enable)
@@ -599,7 +599,7 @@ bool DbgGdb::SetEnabledState(double bid, const bool enable)
         command = "-break-enable ";
     }
     command << bid;
-    return WriteCommand(command, NULL);
+    return WriteCommand(command, nullptr);
 }
 
 bool DbgGdb::SetCondition(const clDebuggerBreakpoint& bp)
@@ -629,7 +629,7 @@ bool DbgGdb::SetCommands(const clDebuggerBreakpoint& bp)
 
     // If we really wanted, we could get the output (for bp 3) of "commands 3"
     // but as that's not very informative, and we're only faking the command-list anyway, don't bother
-    return WriteCommand(command, NULL);
+    return WriteCommand(command, nullptr);
 }
 
 bool DbgGdb::Continue() { return WriteCommand("-exec-continue", new DbgCmdHandlerAsyncCmd(m_observer, this)); }
@@ -746,7 +746,7 @@ bool DbgGdb::RemoveBreak(double bid)
 {
     wxString command;
     command << "-break-delete " << bid;
-    return WriteCommand(command, NULL);
+    return WriteCommand(command, nullptr);
 }
 
 bool DbgGdb::FilterMessage(const wxString& msg)
@@ -993,7 +993,7 @@ bool DbgGdb::EvaluateExpressionToString(const wxString& expression, const wxStri
     command.clear();
     command << "-var-set-format " << watchName << " " << format;
     // first create the expression
-    res = WriteCommand(command, NULL);
+    res = WriteCommand(command, nullptr);
     if (!res) {
         // probably gdb is down
         return false;
@@ -1041,7 +1041,7 @@ bool DbgGdb::SelectThread(long threadId)
 {
     wxString command;
     command << "-thread-select " << threadId;
-    return WriteCommand(command, NULL);
+    return WriteCommand(command, nullptr);
 }
 
 void DbgGdb::OnProcessEnd(clProcessEvent& e)
@@ -1228,7 +1228,7 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
     if (m_info.breakAtWinMain) {
         // Set a breakpoint at WinMain
         // Use a temporary one, so that it isn't duplicated in future sessions
-        WriteCommand(breakinsertcmd + "-t main", NULL);
+        WriteCommand(breakinsertcmd + "-t main", nullptr);
         // Flag that we've done this. DbgFindMainBreakpointIdHandler::ProcessOutput uses this
         // to decide whether or not to 'continue' after setting BPs after main()
         SetShouldBreakAtMain(true);
@@ -1238,7 +1238,7 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
 
     // Enable python based pretty printing?
     if (sessionInfo.enablePrettyPrinting) {
-        WriteCommand("-enable-pretty-printing", NULL);
+        WriteCommand("-enable-pretty-printing", nullptr);
     }
 
     // Add the additional search paths
@@ -1250,7 +1250,7 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
             path.Prepend('"').Append('"');
         }
         dirCmd << "-environment-directory " << path;
-        WriteCommand(dirCmd, NULL);
+        WriteCommand(dirCmd, nullptr);
     }
     return true;
 }
@@ -1310,7 +1310,7 @@ bool DbgGdb::DeleteVariableObject(const wxString& name)
 {
     wxString cmd;
     cmd << "-var-delete " << name;
-    return WriteCommand(cmd, NULL);
+    return WriteCommand(cmd, nullptr);
 }
 
 bool DbgGdb::EvaluateVariableObject(const wxString& name, int userReason)
@@ -1411,7 +1411,7 @@ bool DbgGdb::SetVariableObjectDisplayFormat(const wxString& name, DisplayFormat 
     }
 
     cmd << "-var-set-format " << WrapSpaces(name) << " " << df;
-    return WriteCommand(cmd, NULL);
+    return WriteCommand(cmd, nullptr);
 }
 
 bool DbgGdb::UpdateVariableObject(const wxString& name, int userReason)
@@ -1623,7 +1623,7 @@ void DbgGdb::EnableRecording(bool b)
     if (b) {
         WriteCommand("target record-full", new DbgCmdRecordHandler(m_observer, this));
     } else {
-        WriteCommand("record stop", NULL);
+        WriteCommand("record stop", nullptr);
 
         // If recording is OFF, disable the reverse-debugging switch
         SetIsRecording(false);

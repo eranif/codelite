@@ -61,8 +61,8 @@ public:
     };
 
 protected:
-    virtual void OnSelectionActivated(wxDataViewEvent& event);
-    virtual void OnSelectionChanged(wxDataViewEvent& event);
+    void OnSelectionActivated(wxDataViewEvent& event) override;
+    void OnSelectionChanged(wxDataViewEvent& event) override;
     wxCodeCompletionBoxEntry::Vec_t m_allEntries;
     wxCodeCompletionBoxEntry::Vec_t m_entries;
     wxCodeCompletionBox::BmpVec_t m_bitmaps;
@@ -105,20 +105,20 @@ public:
      */
     static wxBitmap GetBitmap(TagEntryPtr tag);
 
-    virtual ~wxCodeCompletionBox();
+    ~wxCodeCompletionBox() override;
     /**
      * @brief construct a code completion box
      * @param parent the parent window
      * @param eventObject will be passed as the eventObject of the various clCodeCompletionEvent
      * events fired from this object
      */
-    wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject = NULL, size_t flags = 0);
+    wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject = nullptr, size_t flags = 0);
 
     /**
      * @brief reset the code completion box clearing it from all its content and preparing it
      * for a new usage
      */
-    void Reset(wxEvtHandler* eventObject = NULL, size_t flags = 0);
+    void Reset(wxEvtHandler* eventObject = nullptr, size_t flags = 0);
 
     /**
      * @brief show the completion box

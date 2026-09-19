@@ -14,7 +14,7 @@ CodeLite 18.2.0 ships with a built-in chat interface that connects to any langua
 
 ### New Endpoint
 
-- Open **AI → Add New Endpoint** from the main menu.
+- Open **Chat AI → Add New Endpoint** from the main menu.
 
    ![Menu – Add New Endpoint](/assets/menu-new-endpoint.png)
 
@@ -31,7 +31,7 @@ Some endpoints support multiple models. For example, when working with Anthropic
 
 To add multiple models:
 
-- Open the AI settings file from the main menu bar: **AI** → **Open Setting File**
+- Open the AI settings file from the main menu bar: **Chat AI** → **Open Settings File...**
 - Locate the endpoint section you want to modify
 - If you do not already have a `models` entry, add one so it resembles the following:
 
@@ -75,14 +75,16 @@ the command executes immediately without sending anything to the model.
 
 | Command | What it does |
 |---------|-------------|
-| `/clear` | Clears the chat output view and resets the full conversation history (including system messages). The model starts fresh on the next prompt. |
+| `/clear` | Clears the chat output view and resets the conversation history, discarding anything added via `/context`. Standing [system prompt](#system-prompt) context is kept. |
 | `/context` | Opens a file picker to load one or more files into the model's system context. On a remote workspace the remote file browser is shown instead. Supported file types include Markdown and any plain-text file. |
-| `/save` | Prompts you for a name and saves the current conversation to CodeLite's session store, where it can be reloaded later via **AI → Load Session**. |
+| `/save` | Prompts you for a name and saves the current conversation to CodeLite's session store, where it can be reloaded later via **Chat AI → Load Session**. |
 
 ### `/clear`
 
-Wipes the chat output window and calls `ClearHistory()` + `ClearSystemMessages()` on the active session.
-Use this when you want to start a completely new conversation without any memory of the previous exchange.
+Wipes the chat output window and resets the conversation history. System context is reset back to its
+standing defaults rather than wiped entirely: the built-in agentic-loop instruction, the open workspace's
+`AGENTS.md`/`CLAUDE.md` content (see [System Prompt](#system-prompt) below), and your persisted system
+prompt are all kept. Anything added ad hoc during the session via `/context` is discarded.
 
 > **Note:** `/clear` is permanent — there is no undo. Save the session first with `/save` if you want to keep it.
 
@@ -101,8 +103,39 @@ directly from the SSH host without downloading them first.
 ### `/save`
 
 Saves the current conversation under a name you choose. Saved sessions are stored per-endpoint and can be
-reloaded at any time from the **AI → Load Session** menu entry (or the toolbar button).
+reloaded at any time from the **Chat AI → Load Session** menu entry (or the toolbar button).
 This is useful for bookmarking a long debugging session or preserving a generated design document.
+
+---
+
+## System Prompt
+
+**New in CodeLite 18.5.0**
+
+Chat AI keeps a small set of "standing" system messages that are always sent to the model alongside your
+conversation, on top of whatever you add with `/context`. Unlike `/context` files, these survive `/clear`
+(see above) and are re-applied automatically whenever a session starts:
+
+- A built-in instruction that keeps the model working autonomously through multi-step tool use instead of
+  stopping after a single tool result.
+- The open workspace's `AGENTS.md` file (or `CLAUDE.md` if there's no `AGENTS.md`), loaded automatically as
+  soon as the workspace opens — a convenient way to give the model project-specific instructions without
+  running `/context` by hand every time.
+- Your own **persisted system prompt** — free-form text applied to every agent session, on every endpoint.
+
+### Editing Your System Prompt
+
+- Open **Chat AI → Edit System Prompt...** from the main menu.
+- Type or edit the prompt text and click **Close** to save it.
+
+The default system prompt asks the model to keep answers concise and to write in simple (B2-level) English;
+edit or clear it to change that behavior. Changes apply to the currently running session immediately — you
+don't need to restart the client.
+
+!!! Note
+    This is different from the per-operation prompts in the [Prompt Store](#codelite-prompt-store) (e.g. the
+    prompt used for "Generate Commit Message"). The system prompt here applies to *every* agent conversation,
+    regardless of which operation triggered it.
 
 ---
 
@@ -255,8 +288,8 @@ To add an external MCP server, navigate to the menu bar and select one of the fo
 
 | Server Type | Menu Path |
 |-------------|-----------|
-| Local MCP Server | `AI` → `Add New Local MCP Server` |
-| SSE MCP Server | `AI` → `Add New SSE MCP Server` |
+| Local MCP Server | `Chat AI` → `Tools` → `Add New Local MCP Server` |
+| SSE MCP Server | `Chat AI` → `Tools` → `Add New SSE MCP Server` |
 
 ---
 
@@ -315,7 +348,7 @@ Place the cursor inside a function, press ++ctrl+shift+m++, and the model writes
 ## Getting Help
 
 - Open the chat box (++ctrl+shift+h++) and ask any question or ask the model to perform tasks for you.
-- For endpoint-specific issues, use **AI → Settings** to view or edit the stored URLs and tokens.
+- For endpoint-specific issues, use **Chat AI → Open Settings File...** to view or edit the stored URLs and tokens.
 
 ---
 

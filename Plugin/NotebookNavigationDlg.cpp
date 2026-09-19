@@ -41,10 +41,11 @@ NotebookNavigationDlg::~NotebookNavigationDlg()
     m_dvListCtrl->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlg::OnItemActivated, this);
     m_dvListCtrl->Unbind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
 
-    m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
-        TabData* cd = (TabData*)d;
-        wxDELETE(cd);
-    });
+    for (int row = 0; row < m_dvListCtrl->GetItemCount(); ++row) {
+        TabData* d = (TabData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(row));
+        wxDELETE(d);
+    }
+    m_dvListCtrl->DeleteAllItems();
 }
 
 void NotebookNavigationDlg::CloseDialog()
@@ -82,7 +83,7 @@ void NotebookNavigationDlg::FinalizeCtor()
     m_dvListCtrl->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
     m_dvListCtrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlg::OnItemActivated, this);
 
-    m_dvListCtrl->CallAfter(&clThemedListCtrl::SetFocus);
+    m_dvListCtrl->CallAfter(&wxDataViewListCtrl::SetFocus);
     WindowAttrManager::Load(this);
     CentreOnParent();
 }
@@ -167,6 +168,76 @@ void NotebookNavigationDlg::SelectPrev()
             item = m_dvListCtrl->RowToItem(row);
             m_dvListCtrl->Select(item);
             m_dvListCtrl->EnsureVisible(item);
+        }
+    }
+}
+
+template <typename Book>
+void NotebookNavigationDlg::Initialise(Book* book)
+{
+    clTab::Vec_t allTabs;
+    clGetManager()->GetAllTabs(allTabs);
+    std::map<void*, clTab> tabsInfoMap;
+    for (size_t i = 0; i < allTabs.size(); ++i) {
+        tabsInfoMap.insert(std::make_pair((void*)allTabs.at(i).window, allTabs.at(i)));
+    }
+    clTabHistory::Ptr_t history = book->GetHistory();
+    const std::vector<wxWindow*>& windows = history->GetHistory();
+    // Populate the list
+    for (size_t i = 0; i < windows.size(); ++i) {
+        int index = book->GetPageIndex(windows[i]);
+        if (index != wxNOT_FOUND) {
+            wxString label = book->GetPageText(index);
+            wxBitmap bmp = book->GetPageBitmap(index);
+
+            wxVector<wxVariant> cols;
+            TabData* d = new TabData;
+            d->bmp = bmp;
+            d->label = label;
+            d->index = index;
+
+            // add extra info
+            std::map<void*, clTab>::iterator iter = tabsInfoMap.find(windows[i]);
+            bool isModified = false;
+            if (iter != tabsInfoMap.end()) {
+                d->isFile = iter->second.isFile;
+                d->filename = iter->second.filename;
+                isModified = iter->second.isModified;
+            }
+
+            // Prepare the display item
+            wxString text;
+            if (d->isFile && d->filename.GetDirCount()) {
+                wxFileName fn(d->filename.GetFullName());
+                fn.AppendDir(d->filename.GetDirs().Last());
+                text << fn.GetFullPath();
+            } else {
+                text << d->label;
+            }
+
+            // If the tab has a bitmap - use it, otherwise try to match one by file name.
+            // If no match is found, fall back to the "placeholder" icon.
+            wxBitmap bmpForFile = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
+            wxString fullname = d->filename.GetFullName();
+            if (!fullname.empty() && FileExtManager::GetType(fullname) != FileExtManager::TypeOther) {
+                // No match
+                bmpForFile = clGetManager()->GetStdIcons()->GetBitmapForFile(d->filename.GetFullName(), false);
+            }
+
+            // If the tab is modified, prepend the "disk save" indicator to the text
+            if (isModified) {
+                text.Prepend(L"\U0001F4BE ");
+            }
+
+            // Column 0 ("Icon") is a bitmap column
+            wxVariant colIcon;
+            colIcon << wxBitmapBundle(bmpForFile);
+            // Column 1 ("Text") is a plain text column
+            wxVariant colPath = text;
+
+            cols.push_back(colIcon);
+            cols.push_back(colPath);
+            m_dvListCtrl->AppendItem(cols, (wxUIntPtr)d);
         }
     }
 }

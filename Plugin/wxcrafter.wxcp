@@ -2068,8 +2068,7 @@
                         "wxDV_ROW_LINES",
                         "wxDV_SINGLE",
                         "wxWANTS_CHARS",
-                        "wxTAB_TRAVERSAL",
-                        "wxBORDER_STATIC"
+                        "wxTAB_TRAVERSAL"
                       ],
                       "m_sizerFlags": [
                         "wxEXPAND"
@@ -2133,12 +2132,12 @@
                         {
                           "type": "string",
                           "m_label": "Class Name:",
-                          "m_value": "clThemedListCtrl"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
                           "m_label": "Include File:",
-                          "m_value": "clThemedListCtrl.h"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
@@ -2182,7 +2181,7 @@
                             {
                               "type": "string",
                               "m_label": "Name:",
-                              "m_value": "Modified"
+                              "m_value": "Icon"
                             },
                             {
                               "type": "string",
@@ -2192,7 +2191,7 @@
                             {
                               "type": "choice",
                               "m_label": "Column Type",
-                              "m_selection": 2,
+                              "m_selection": 0,
                               "m_options": [
                                 "bitmap",
                                 "check",
@@ -2258,7 +2257,7 @@
                             {
                               "type": "choice",
                               "m_label": "Column Type",
-                              "m_selection": 3,
+                              "m_selection": 2,
                               "m_options": [
                                 "bitmap",
                                 "check",

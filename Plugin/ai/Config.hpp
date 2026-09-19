@@ -238,6 +238,26 @@ public:
         return m_prompts.contains(prompt.ToStdString(wxConvUTF8));
     }
 
+    /**
+     * @brief Returns the persisted system prompts that are applied to every new agent session.
+     */
+    std::vector<wxString> GetSystemPrompts() const;
+
+    /**
+     * @brief Appends a persisted system prompt. Duplicates (exact match) are ignored.
+     */
+    void AddSystemPrompt(const wxString& prompt);
+
+    /**
+     * @brief Removes the persisted system prompt at the given index. No-op if out of range.
+     */
+    void DeleteSystemPrompt(size_t index);
+
+    /**
+     * @brief Replaces the entire list of persisted system prompts.
+     */
+    void SetSystemPrompts(std::vector<wxString> prompts);
+
     void AddTrustedTool(const wxString& toolname, const wxString& pattern, bool persist);
     void DeleteTrustedTool(const wxString& toolname);
     void DeleteAllTrustedTools();
@@ -262,5 +282,6 @@ private:
     std::atomic_bool m_enableTools{true};
     std::map<std::string, bool> m_toolStates GUARDED_BY(m_mutex);
     wxString m_cachingPolicy GUARDED_BY(m_mutex){llm::kCacheAuto};
+    std::vector<std::string> m_systemPrompts GUARDED_BY(m_mutex);
 };
 } // namespace llm

@@ -154,32 +154,32 @@ std::optional<wxString> MakeLabelFromText(const wxString& text)
 static const wxString kDefaultSettings = R"#({
   "_version": 1.0,
   "endpoints": {
-      "https://ollama.com": {
-          "active": true,
-          "auto_compact_threshold": 50000,
-          "context_size": 256000,
-          "http_headers": {
-            "Authorization": "Bearer ${OLLAMA_KEY}"
-          },
-          "max_tokens": 64000,
-          "model": "gemma4:cloud",
-          "models": [
-            "gemma4:cloud",
-            "gpt-oss:120b-cloud"
-          ],
-          "type": "ollama"
-        }
-    },
-    "history_size": 1000,
-    "keep_alive": "24h",
-    "log_level": "warn",
-    "mcp_servers": {},
-    "server_timeout": {
-        "connect_msecs": 500,
-        "read_msecs": 300000,
-        "write_msecs": 300000
-    },
-    "stream": true
+    "https://ollama.com": {
+      "active": true,
+      "auto_compact_threshold": 50000,
+      "context_size": 256000,
+      "http_headers": {
+        "Authorization": "Bearer ${OLLAMA_KEY}"
+      },
+      "max_tokens": 64000,
+      "model": "gemma4:cloud",
+      "models": [
+        "gemma4:cloud",
+        "gpt-oss:120b-cloud"
+      ],
+      "type": "ollama"
+    }
+  },
+  "history_size": 1000,
+  "keep_alive": "24h",
+  "log_level": "warn",
+  "mcp_servers": {},
+  "server_timeout": {
+    "connect_msecs": 500,
+    "read_msecs": 300000,
+    "write_msecs": 300000
+  },
+  "stream": true
 }
 )#";
 
@@ -842,6 +842,13 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
     m_client->SetToolInvokeCallback(&Manager::CanRunTool);
     m_client->ClearSystemMessages();
     m_client->AddSystemMessage(kSystemMessageAgenticLoop);
+
+    // Apply the user's persisted system prompts.
+    for (const auto& prompt : config.GetSystemPrompts()) {
+        if (!prompt.empty()) {
+            m_client->AddSystemMessage(prompt.ToStdString(wxConvUTF8));
+        }
+    }
 
     // Start the worker thread
     m_worker_thread = std::make_unique<std::thread>([this]() { WorkerMain(); });

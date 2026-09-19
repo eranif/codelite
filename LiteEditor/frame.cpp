@@ -31,6 +31,7 @@
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CustomControls/PromptEditorDlg.hpp"
+#include "ai/SystemPromptDialog.hpp"
 #include "Debugger/DebuggerToolBar.h"
 #include "Debugger/debuggermanager.h"
 #include "FileManager.hpp"
@@ -596,6 +597,7 @@ EVT_MENU(XRCID("manage_plugins"), clMainFrame::OnManagePlugins)
 // AI menu
 //-------------------------------------------------------
 EVT_MENU(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditor)
+EVT_MENU(XRCID("ai_system_prompt"), clMainFrame::OnAiSystemPrompt)
 EVT_MENU(XRCID("ai_settings"), clMainFrame::OnAiSettings)
 EVT_MENU(XRCID("ai_global_settings"), clMainFrame::OnAiGlobalSettings)
 EVT_MENU(XRCID("ai_show_chat_window"), clMainFrame::OnAiShowChatBox)
@@ -605,6 +607,7 @@ EVT_MENU(XRCID("ai_new_sse_mcp_server"), clMainFrame::OnAiAddNewSseMCPServer)
 EVT_MENU(XRCID("ai_reset_permissions"), clMainFrame::OnAiResetPermissions)
 EVT_MENU(XRCID("ai_change_active_endpoint"), clMainFrame::OnAiChooseEndpoint)
 EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiAvailableUI)
+EVT_UPDATE_UI(XRCID("ai_system_prompt"), clMainFrame::OnAiAvailableUI)
 EVT_UPDATE_UI(XRCID("ai_show_chat_window"), clMainFrame::OnAiAvailableUI)
 EVT_UPDATE_UI(XRCID("ai_change_active_endpoint"), clMainFrame::OnAiAvailableUI)
 
@@ -6250,6 +6253,32 @@ void clMainFrame::OnAiPromptEditor(wxCommandEvent& e)
     wxUnusedVar(e);
     PromptEditorDlg dlg(this);
     dlg.ShowModal();
+}
+
+void clMainFrame::OnAiSystemPrompt(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    auto& config = llm::Manager::GetInstance().GetConfig();
+
+    wxString content;
+    for (const auto& prompt : config.GetSystemPrompts()) {
+        if (!content.empty()) {
+            content << "\n\n";
+        }
+        content << prompt;
+    }
+
+    SystemPromptDialog dlg(this, content);
+    if (dlg.ShowModal() == wxID_OK) {
+        wxString value = dlg.GetValue();
+        value.Trim().Trim(false);
+        if (value.empty()) {
+            config.SetSystemPrompts({});
+        } else {
+            config.SetSystemPrompts({value});
+        }
+        config.Save(false);
+    }
 }
 
 void clMainFrame::OnAiShowChatBox(wxCommandEvent& e)

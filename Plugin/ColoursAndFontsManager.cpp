@@ -440,6 +440,8 @@ std::optional<LexerConf::Ptr_t> ColoursAndFontsManager::GetLexerForFileType(File
         return GetLexer("rust");
     case FileExtManager::TypeJava:
         return GetLexer("java");
+    case FileExtManager::TypeMarkdown:
+        return GetLexer("makrdown");
     case FileExtManager::TypeWorkspaceDocker:
     case FileExtManager::TypeWorkspaceFileSystem:
     case FileExtManager::TypeWorkspaceNodeJS:

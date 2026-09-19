@@ -714,6 +714,9 @@
       <object class="wxMenuItem" name="ai_prompt_editor">
         <label>Open Prompt &amp;Editor...</label>
       </object>
+      <object class="wxMenuItem" name="ai_system_prompt">
+        <label>Edit &amp;System Prompt...</label>
+      </object>
       <object class="wxMenuItem" name="ai_configure_endpoint">
         <label>Add New &amp;Endpoint...</label>
       </object>

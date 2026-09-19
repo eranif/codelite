@@ -41,6 +41,10 @@ static const std::map<std::string, std::string> kDefaultPromptTable = {
     {kPromptGenerateCodeReview, PROMPT_GIT_CODE_REVIEW},
 };
 
+constexpr const char* kDefaultSystemPrompt =
+    "Answer concisely and briefly. Use B2-level English: simple vocabulary, short sentences, no rare words or "
+    "idioms.";
+
 Config::Config() {}
 
 Config::~Config() {}
@@ -93,6 +97,8 @@ clStatus Config::Load()
         m_persistingTrustedTools = ReadValue(json, "trusted_tools", decltype(m_persistingTrustedTools){});
         m_enableTools = ReadValue<bool>(json, "enable_tools", true);
         m_toolStates = ReadValue(json, "tool_states", decltype(m_toolStates){});
+        m_systemPrompts =
+            ReadValue(json, "system_prompts", decltype(m_systemPrompts){std::string{kDefaultSystemPrompt}});
 
     } catch (const std::exception& e) {
         wxString errmsg;
@@ -137,6 +143,7 @@ void Config::Save(bool save_prompts)
     j["caching_policy"] = m_cachingPolicy.ToStdString(wxConvUTF8);
     j["trusted_tools"] = m_persistingTrustedTools;
     j["tool_states"] = m_toolStates;
+    j["system_prompts"] = m_systemPrompts;
 
     wxString content = wxString::FromUTF8(j.dump(2));
     if (FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8)) {
@@ -196,6 +203,46 @@ wxString Config::GetFullPath()
 
 bool Config::IsBuiltInPrompt(const wxString& prompt) const
 { return builtin_prompts.contains(prompt.ToStdString(wxConvUTF8)); }
+
+std::vector<wxString> Config::GetSystemPrompts() const
+{
+    std::scoped_lock lk{m_mutex};
+    std::vector<wxString> result;
+    result.reserve(m_systemPrompts.size());
+    for (const auto& prompt : m_systemPrompts) {
+        result.push_back(wxString::FromUTF8(prompt));
+    }
+    return result;
+}
+
+void Config::AddSystemPrompt(const wxString& prompt)
+{
+    std::scoped_lock lk{m_mutex};
+    std::string utf8 = prompt.ToStdString(wxConvUTF8);
+    if (std::ranges::find(m_systemPrompts, utf8) != m_systemPrompts.end()) {
+        return;
+    }
+    m_systemPrompts.push_back(std::move(utf8));
+}
+
+void Config::DeleteSystemPrompt(size_t index)
+{
+    std::scoped_lock lk{m_mutex};
+    if (index >= m_systemPrompts.size()) {
+        return;
+    }
+    m_systemPrompts.erase(m_systemPrompts.begin() + index);
+}
+
+void Config::SetSystemPrompts(std::vector<wxString> prompts)
+{
+    std::scoped_lock lk{m_mutex};
+    m_systemPrompts.clear();
+    m_systemPrompts.reserve(prompts.size());
+    for (const auto& prompt : prompts) {
+        m_systemPrompts.push_back(prompt.ToStdString(wxConvUTF8));
+    }
+}
 
 void Config::AddTrustedTool(const wxString& toolname, const wxString& pattern, bool persist)
 {

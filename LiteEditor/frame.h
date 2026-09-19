@@ -655,6 +655,7 @@ protected:
     void OnCppContextMenu(wxCommandEvent& e);
 
     void OnAiPromptEditor(wxCommandEvent& e);
+    void OnAiSystemPrompt(wxCommandEvent& e);
     void OnAiSettings(wxCommandEvent& e);
     void OnAiGlobalSettings(wxCommandEvent& e);
     void OnAiShowChatBox(wxCommandEvent& e);

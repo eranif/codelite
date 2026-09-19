@@ -151,6 +151,38 @@ std::optional<wxString> MakeLabelFromText(const wxString& text)
     return std::nullopt;
 }
 
+static const wxString kDefaultSettings = R"#({
+  "_version": 1.0,
+  "endpoints": {
+      "https://ollama.com": {
+          "active": true,
+          "auto_compact_threshold": 50000,
+          "context_size": 256000,
+          "http_headers": {
+            "Authorization": "Bearer ${OLLAMA_KEY1}"
+          },
+          "max_tokens": 64000,
+          "model": "gemma4:cloud",
+          "models": [
+            "gemma4:cloud",
+            "gpt-oss:120b-cloud"
+          ],
+          "type": "ollama"
+        }
+    },
+    "history_size": 1000,
+    "keep_alive": "24h",
+    "log_level": "warn",
+    "mcp_servers": {},
+    "server_timeout": {
+        "connect_msecs": 500,
+        "read_msecs": 300000,
+        "write_msecs": 300000
+    },
+    "stream": true
+}
+)#";
+
 } // namespace
 
 constexpr const char* kPlaceHolderEditorSelection = "{{current_selection}}";

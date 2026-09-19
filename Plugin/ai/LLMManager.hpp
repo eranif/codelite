@@ -29,38 +29,6 @@
 
 constexpr const char* kAssistantConfigFile = "assistant.json";
 
-inline static const wxString kDefaultSettings = R"#({
-  "_version": 1.0,
-  "endpoints": {
-      "https://ollama.com": {
-          "active": true,
-          "auto_compact_threshold": 50000,
-          "context_size": 256000,
-          "http_headers": {
-            "Authorization": "Bearer ${OLLAMA_KEY}"
-          },
-          "max_tokens": 64000,
-          "model": "gemma4:cloud",
-          "models": [
-            "gemma4:cloud",
-            "gpt-oss:120b-cloud"
-          ],
-          "type": "ollama"
-        }
-    },
-    "history_size": 1000,
-    "keep_alive": "24h",
-    "log_level": "warn",
-    "mcp_servers": {},
-    "server_timeout": {
-        "connect_msecs": 500,
-        "read_msecs": 300000,
-        "write_msecs": 300000
-    },
-    "stream": true
-}
-)#";
-
 INITIALISE_MODULE_LOG(LLOG, "LLM", "assistant.log")
 #define LLOG_ERROR() LLOG().SetCurrentLogLevel(FileLogger::Error) << LLOG().Prefix()
 #define LLOG_DEBUG() LLOG().SetCurrentLogLevel(FileLogger::Dbg) << LLOG().Prefix()

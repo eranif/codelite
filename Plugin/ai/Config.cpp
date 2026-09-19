@@ -204,13 +204,13 @@ wxString Config::GetFullPath()
 bool Config::IsBuiltInPrompt(const wxString& prompt) const
 { return builtin_prompts.contains(prompt.ToStdString(wxConvUTF8)); }
 
-std::vector<wxString> Config::GetSystemPrompts() const
+wxString Config::GetSystemPrompt() const
 {
     std::scoped_lock lk{m_mutex};
-    std::vector<wxString> result;
+    wxString result;
     result.reserve(m_systemPrompts.size());
     for (const auto& prompt : m_systemPrompts) {
-        result.push_back(wxString::FromUTF8(prompt));
+        result << wxString::FromUTF8(prompt) << "\n\n";
     }
     return result;
 }

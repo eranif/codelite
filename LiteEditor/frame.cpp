@@ -31,7 +31,6 @@
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CustomControls/PromptEditorDlg.hpp"
-#include "ai/SystemPromptDialog.hpp"
 #include "Debugger/DebuggerToolBar.h"
 #include "Debugger/debuggermanager.h"
 #include "FileManager.hpp"
@@ -50,6 +49,7 @@
 #include "ai/NewLLMEndpointWizard.hpp"
 #include "ai/NewLocalMCPDlg.hpp"
 #include "ai/NewSseMCPDlg.hpp"
+#include "ai/SystemPromptDialog.hpp"
 #include "app.h"
 #include "autoversion.h"
 #include "batchbuilddlg.h"
@@ -6260,15 +6260,7 @@ void clMainFrame::OnAiSystemPrompt(wxCommandEvent& e)
     wxUnusedVar(e);
     auto& config = llm::Manager::GetInstance().GetConfig();
 
-    wxString content;
-    for (const auto& prompt : config.GetSystemPrompts()) {
-        if (!content.empty()) {
-            content << "\n\n";
-        }
-        content << prompt;
-    }
-
-    SystemPromptDialog dlg(this, content);
+    SystemPromptDialog dlg(this, config.GetSystemPrompt());
     if (dlg.ShowModal() == wxID_OK) {
         wxString value = dlg.GetValue();
         value.Trim().Trim(false);
@@ -6278,6 +6270,8 @@ void clMainFrame::OnAiSystemPrompt(wxCommandEvent& e)
             config.SetSystemPrompts({value});
         }
         config.Save(false);
+        // Apply the change to the active client (if there is one)
+        llm::Manager::GetInstance().UpdateUserSystemPrompt();
     }
 }
 

@@ -241,7 +241,7 @@ public:
     /**
      * @brief Returns the persisted system prompts that are applied to every new agent session.
      */
-    std::vector<wxString> GetSystemPrompts() const;
+    wxString GetSystemPrompt() const;
 
     /**
      * @brief Appends a persisted system prompt. Duplicates (exact match) are ignored.

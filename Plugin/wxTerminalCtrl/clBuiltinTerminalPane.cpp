@@ -729,7 +729,7 @@ void clBuiltinTerminalPane::OnThemeChanged(clCommandEvent& event)
 
 std::optional<wxTerminalTheme> clBuiltinTerminalPane::FromTOML(const wxFileName& filepath)
 {
-    clDEBUG() << "   > Importing Alacritty Theme (TOML) file:" << filepath << endl;
+    clTRACE() << "   > Importing Alacritty Theme (TOML) file:" << filepath << endl;
     std::string filename = filepath.GetFullPath().ToStdString(wxConvUTF8);
 
     clINIParser ini_parser;

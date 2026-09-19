@@ -3020,45 +3020,8 @@ void Manager::DbgRestoreWatches()
 
 void Manager::DoRestartCodeLite([[maybe_unused]] bool force)
 {
-    wxString restartCodeLiteCommand;
-    wxString workingDirectory;
-    CodeLiteApp* app = dynamic_cast<CodeLiteApp*>(wxTheApp);
-
-#if defined(__WXMSW__) || defined(__WXGTK__)
-#ifdef __WXMSW__
-    // We only support force restarts on Windows
-    if (!force) {
-        CodeLiteApp::SetRestartCodeLite(false);
-        return;
-    }
-#endif
-
-    restartCodeLiteCommand << clStandardPaths::Get().GetExecutablePath();
-    // Restore the original working dir and any parameters
-    for (int i = 1; i < wxTheApp->argc; ++i) {
-        wxString cmdArg = wxTheApp->argv[i];
-        StringUtils::WrapWithQuotes(cmdArg);
-        restartCodeLiteCommand << wxT(" ") << cmdArg;
-    }
-    workingDirectory = GetOriginalCwd();
-
-#else // OSX
-
-    // on OSX, we use the open command
-    wxFileName bundlePath(clStandardPaths::Get().GetBinFolder(), "");
-    bundlePath.RemoveLastDir(); // MacOS
-    bundlePath.RemoveLastDir(); // Contents
-    wxString bundlePathStr = bundlePath.GetPath();
-    StringUtils::WrapWithQuotes(bundlePathStr);
-    restartCodeLiteCommand << "sleep 2 && open " << bundlePathStr;
-    ProcUtils::WrapInShell(restartCodeLiteCommand);
-#endif
-
-    // Fire an exit event (the restart takes place just before CodeLite exits)
-    wxCommandEvent event(wxEVT_MENU, wxID_EXIT);
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-    CodeLiteApp::SetRestartCodeLite(true);
-    CodeLiteApp::SetRestartCommand(restartCodeLiteCommand, workingDirectory);
+    ::clMessageBox(
+        _("A restart is required for changes to take effect"), "CodeLite", wxICON_INFORMATION | wxOK | wxCENTER);
 }
 
 void Manager::OnRestart(clCommandEvent& event) { DoRestartCodeLite(false); }

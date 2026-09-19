@@ -1640,7 +1640,7 @@ void Manager::CompleteInitialisation()
     m_commentGenerationView->Hide();
 
     clKeyboardManager::Get()->AddAccelerator(
-        _("AI"),
+        _("Chat AI"),
         {{"lsp_document_scope", _("Generate an AI-powered comment for the current function"), "Ctrl-Shift-M"}});
 
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnGenerateDocString, this, XRCID("lsp_document_scope"));

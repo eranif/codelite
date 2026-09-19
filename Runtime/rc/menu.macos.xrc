@@ -705,9 +705,8 @@
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
     </object>
     <!-- AI menu -->
-    <!-- AI menu -->
     <object class="wxMenu" name="ai_menu">
-      <label>AI</label>
+      <label>Chat AI</label>
       <style>wxMENU_TEAROFF</style>
       <object class="wxMenuItem" name="ai_show_chat_window">
         <label>Open &amp;Chat Window\tCtrl-Shift-H</label>

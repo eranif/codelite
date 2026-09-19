@@ -49,10 +49,12 @@ protected:
     wxString DoGetReplaceWith(const SearchResult& res) const;
 
     // Event handlers
-    virtual void OnSearchStart(wxCommandEvent& e);
-    virtual void OnSearchMatch(wxCommandEvent& e);
-    virtual void OnSearchEnded(wxCommandEvent& e);
-    virtual void OnMarginClick(wxStyledTextEvent& e);
+    void OnSearchStart(wxCommandEvent& e) override;
+    void OnSearchMatch(wxCommandEvent& e) override;
+    void OnSearchEnded(wxCommandEvent& e) override;
+    void OnMarginClick(wxStyledTextEvent& e) override;
+    void OnHoldOpenUpdateUI(wxUpdateUIEvent& e) override;
+    void OnMouseDClick(wxStyledTextEvent& e) override;
 
     virtual void OnMarkAll(wxCommandEvent& e);
     virtual void OnUnmarkAll(wxCommandEvent& e);
@@ -62,8 +64,6 @@ protected:
     virtual void OnUnmarkAllUI(wxUpdateUIEvent& e);
     virtual void OnReplaceUI(wxUpdateUIEvent& e);
     virtual void OnReplaceWithComboUI(wxUpdateUIEvent& e);
-    virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-    virtual void OnMouseDClick(wxStyledTextEvent& e);
 
 public:
     ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString& name);

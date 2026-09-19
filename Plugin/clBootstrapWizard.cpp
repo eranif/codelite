@@ -209,10 +209,6 @@ void clBootstrapWizard::OnScanForCompilers(wxCommandEvent& event)
             m_dvListCtrlCompilers->AppendItem(cols);
         }
 
-        if (!detector.FoundMinGWCompiler()) {
-            CompilersDetectorManager::MSWSuggestToDownloadMinGW(true);
-        }
-
     } else {
         // nothing found on this machine, offer to download
         CompilersDetectorManager::MSWSuggestToDownloadMinGW(true);

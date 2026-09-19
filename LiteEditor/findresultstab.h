@@ -77,13 +77,13 @@ protected:
     virtual void OnSearchMatch(wxCommandEvent& e);
     virtual void OnSearchEnded(wxCommandEvent& e);
     virtual void OnSearchCancel(wxCommandEvent& e);
-    virtual void OnClearAll(wxCommandEvent& e);
-    virtual void OnRepeatOutput(wxCommandEvent& e);
+    void OnClearAll(wxCommandEvent& e) override;
+    void OnRepeatOutput(wxCommandEvent& e) override;
 
-    virtual void OnClearAllUI(wxUpdateUIEvent& e);
+    void OnClearAllUI(wxUpdateUIEvent& e) override;
     virtual void OnRecentSearchesUI(wxUpdateUIEvent& e);
-    virtual void OnRepeatOutputUI(wxUpdateUIEvent& e);
-    virtual void OnMouseDClick(wxStyledTextEvent& e);
+    void OnRepeatOutputUI(wxUpdateUIEvent& e) override;
+    void OnMouseDClick(wxStyledTextEvent& e) override;
 
     virtual void OnStopSearch(wxCommandEvent& e);
     virtual void OnStopSearchUI(wxUpdateUIEvent& e);
@@ -91,7 +91,7 @@ protected:
     virtual void OnStyleNeeded(wxStyledTextEvent& e);
     SearchData* GetSearchData();
     void DoOpenSearchResult(const SearchResult& result, wxStyledTextCtrl* sci, int markerLine);
-    void OnThemeChanged(wxCommandEvent& e);
+    void OnThemeChanged(wxCommandEvent& e) override;
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     DECLARE_EVENT_TABLE()
 

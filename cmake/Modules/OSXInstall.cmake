@@ -138,10 +138,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
     message(STATUS "wxWidgets lib is: ${WX_DYLIB}")
     # wxWidgets libraries are copied by run_install_name_tool.py based on actual binary dependencies
     # Copy Terminal.app launcher script
-    file(
-      COPY ${CL_SRC_ROOT}/Runtime/osx-terminal.sh
-      DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
-      FILE_PERMISSIONS ${EXE_PERM})
 
     # folders
     install(

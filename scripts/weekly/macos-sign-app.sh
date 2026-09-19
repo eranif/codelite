@@ -95,20 +95,14 @@ find "$APP_NAME" -type f \( -name "*.dylib" -o -name "*.so" \) | while read -r b
   codesign --force --options runtime --timestamp --sign "$SIGNING_ID" "$binary"
 done
 
-# 2.1 Scripts
-echo "Signing dylibs..."
-find "$APP_NAME" -type f  -name "*.sh" | while read -r binary; do
-  codesign --force --options runtime --timestamp --sign "$SIGNING_ID" "$binary"
-done
-
 # 3. Any other Mach-O executables (helpers, SharedSupport tools).
 echo "Signing nested executables..."
-while IFS= read -r -d '' binary; do
+find "$APP_NAME/Contents" -type f -perm +111 ! -name "*.dylib" ! -name "*.so" | while read -r binary; do
   # Only sign actual Mach-O files (skip shell scripts, etc.).
   if file "$binary" | grep -q "Mach-O"; then
     codesign --force --options runtime --timestamp --sign "$SIGNING_ID" "$binary"
   fi
-done < <(find "$APP_NAME/Contents" -type f -perm +111 ! -name "*.dylib" ! -name "*.so" -print0)
+done
 
 # 4. Finally, the app bundle itself (outer signature) — with a timestamp.
 echo "Signing app: $APP_NAME"
@@ -186,4 +180,4 @@ rm -f "$DIST_ZIP_FILE"
 echo ditto -c -k --keepParent --sequesterRsrc "$APP_NAME" "$DIST_ZIP_FILE"
 ditto -c -k --keepParent --sequesterRsrc "$APP_NAME" "$DIST_ZIP_FILE"
 
-echo "$DIST_ZIP_FILE"
+echo $(readlink -f "$DIST_ZIP_FILE")

@@ -159,7 +159,7 @@ static const wxString kDefaultSettings = R"#({
           "auto_compact_threshold": 50000,
           "context_size": 256000,
           "http_headers": {
-            "Authorization": "Bearer ${OLLAMA_KEY1}"
+            "Authorization": "Bearer ${OLLAMA_KEY}"
           },
           "max_tokens": 64000,
           "model": "gemma4:cloud",

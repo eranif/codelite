@@ -44,7 +44,7 @@ public:
 
 public:
     RemoteFileInfo();
-    virtual ~RemoteFileInfo() = default;
+    ~RemoteFileInfo() override = default;
 
     void SetAccount(const SSHAccountInfo& account) { this->m_account = account; }
     const SSHAccountInfo& GetAccount() const { return m_account; }

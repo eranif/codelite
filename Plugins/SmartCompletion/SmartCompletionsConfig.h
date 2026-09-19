@@ -9,8 +9,8 @@
 class SmartCompletionsConfig : public clConfigItem
 {
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     enum eOptions {
         kEnabled = (1 << 0),
@@ -24,7 +24,7 @@ protected:
 
 public:
     SmartCompletionsConfig();
-    virtual ~SmartCompletionsConfig() = default;
+    ~SmartCompletionsConfig() override = default;
 
     SmartCompletionsConfig& Load();
     SmartCompletionsConfig& Save();

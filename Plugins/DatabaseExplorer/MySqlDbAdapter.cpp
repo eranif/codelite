@@ -345,7 +345,7 @@ void MySqlDbAdapter::GetTables(Database* db, bool includeViews)
             // DatabaseResultSet *tabulky = dbLayer->RunQueryWithResults(wxString::Format(wxT("SHOW TABLES IN `%s`"),
             // db->getName().c_str()) );
 
-            DatabaseResultSet* tabulky = NULL;
+            DatabaseResultSet* tabulky = nullptr;
             if (!includeViews) {
                 tabulky = dbLayer->RunQueryWithResults(
                     wxString::Format(wxT("SELECT * FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = '%s' AND "

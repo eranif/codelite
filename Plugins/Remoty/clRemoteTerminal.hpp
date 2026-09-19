@@ -19,7 +19,7 @@ public:
 
 public:
     clRemoteTerminal(const SSHAccountInfo& account);
-    ~clRemoteTerminal();
+    ~clRemoteTerminal() override;
 
     bool Start();
     void Stop();

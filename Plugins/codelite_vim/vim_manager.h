@@ -27,7 +27,7 @@ class VimManager : public wxEvtHandler
 public:
     /*ctr-distr ... */
     VimManager(IManager* manager, VimSettings& settings);
-    virtual ~VimManager();
+    ~VimManager() override;
     void SettingsUpdated();
 
 protected:

@@ -53,7 +53,7 @@ private:
 
 public:
     // int GetInsertionType(int controlId, int targetControlId) const
-    int GetInsertionType(int controlId, int targetControlId, bool allowPrompt, wxcWidget* selectedWidget = NULL) const;
+    int GetInsertionType(int controlId, int targetControlId, bool allowPrompt, wxcWidget* selectedWidget = nullptr) const;
     bool CanPaste(wxcWidget* source, wxcWidget* target) const;
 
     void Register(wxcWidget* obj, const wxString& bmpname, int id = -1);

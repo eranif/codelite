@@ -119,7 +119,7 @@ void MemCheckSettingsDialog::OnDelSupp(wxCommandEvent& event)
 
 void MemCheckSettingsDialog::OnSuppListRightDown(wxMouseEvent& event)
 {
-    wxMenuItem* menuItem(NULL);
+    wxMenuItem* menuItem(nullptr);
     wxMenu menu;
 
     int index = m_listBoxSuppFiles->HitTest(event.GetPosition());

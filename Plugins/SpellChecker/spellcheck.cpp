@@ -118,11 +118,11 @@ SpellCheck::~SpellCheck()
 // ------------------------------------------------------------
 void SpellCheck::Init()
 {
-    m_topWin = NULL;
+    m_topWin = nullptr;
     m_pEngine = nullptr;
     m_longName = _("CodeLite spell-checker");
     m_shortName = s_plugName;
-    m_sepItem = NULL;
+    m_sepItem = nullptr;
     m_topWin = wxTheApp;
     m_pEngine = new IHunSpell();
     m_currentWspPath = wxEmptyString;
@@ -172,7 +172,7 @@ void SpellCheck::CreateToolBar(clToolBarGeneric* toolbar)
 void SpellCheck::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* pMenu = new wxMenu();
-    wxMenuItem* pItem(NULL);
+    wxMenuItem* pItem(nullptr);
 
     pItem = new wxMenuItem(pMenu, IDM_SETTINGS, _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     pMenu->Append(pItem);

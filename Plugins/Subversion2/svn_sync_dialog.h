@@ -38,8 +38,8 @@ private:
     void UpdateUrl(const wxString& rootDir);
 
 protected:
-    virtual void OnOkUI(wxUpdateUIEvent& event);
-    virtual void OnButtonOK(wxCommandEvent& event);
+    void OnOkUI(wxUpdateUIEvent& event) override;
+    void OnButtonOK(wxCommandEvent& event) override;
 
 public:
     /** Constructor */
@@ -48,7 +48,7 @@ public:
                   const wxString& rootDir,
                   bool excludeBin,
                   const wxString& excludeExtensions);
-    virtual ~SvnSyncDialog() = default;
+    ~SvnSyncDialog() override = default;
 
     const wxString& GetRootDir() const { return m_rootDir; }
     const wxString& GetExcludeExtensions() const { return m_excludeExtensions; }

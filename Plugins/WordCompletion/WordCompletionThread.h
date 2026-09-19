@@ -41,8 +41,8 @@ protected:
 
 public:
     WordCompletionThread(WordCompletionDictionary* dict);
-    ~WordCompletionThread() = default;
-    virtual void ProcessRequest(ThreadRequest* request);
+    ~WordCompletionThread() override = default;
+    void ProcessRequest(ThreadRequest* request) override;
 
     /**
      * @brief parse 'buffer' and return set of words to complete

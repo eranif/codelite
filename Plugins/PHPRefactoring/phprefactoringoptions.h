@@ -10,10 +10,10 @@ class PHPRefactoringOptions : public clConfigItem
 
 public:
     PHPRefactoringOptions();
-    virtual ~PHPRefactoringOptions() = default;
+    ~PHPRefactoringOptions() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     PHPRefactoringOptions& Load();
     PHPRefactoringOptions& Save();

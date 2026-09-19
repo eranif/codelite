@@ -46,7 +46,7 @@ class swBase : public wxObject
 
 public:
     swBase() = default;
-    virtual ~swBase() = default;
+    ~swBase() override = default;
 
     virtual void Serialize(wxSerialize& ar) { wxUnusedVar(ar); }
 };
@@ -97,7 +97,7 @@ public:
     void DeleteAll();
 
     swStringSet() = default;
-    virtual ~swStringSet();
+    ~swStringSet() override;
 
     void Serialize(wxSerialize& ar);
 
@@ -145,7 +145,7 @@ public:
     void DeleteSnippetKey(const wxString& key);
 
     swStringDb();
-    virtual ~swStringDb();
+    ~swStringDb() override;
     void Serialize(wxSerialize& ar);
 
 protected:

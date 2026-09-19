@@ -45,7 +45,7 @@ public:
     ~SvnStatusHandler() override = default;
 
 public:
-    virtual void Process(const wxString& output);
+    void Process(const wxString& output) override;
 };
 
 #endif // SVNSTATUSHANDLER_H

@@ -11,7 +11,7 @@ class DapSettingsPage : public clPropertiesPage
 
 public:
     DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const DapEntry& entry);
-    virtual ~DapSettingsPage() = default;
+    ~DapSettingsPage() override = default;
 };
 
 #endif // DAPSETTINGSPAGE_HPP

@@ -14,10 +14,10 @@ class LintOptions : public clConfigItem
 
 public:
     LintOptions();
-    virtual ~LintOptions() = default;
+    ~LintOptions() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     LintOptions& Load();
     LintOptions& Save();

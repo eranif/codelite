@@ -96,7 +96,7 @@ public:
         : IProcess(handler)
     {
     }
-    ~MockProcess() = default;
+    ~MockProcess() override = default;
 
     // Stop notifying the parent window about input/output from the process
     // this is useful when we wish to terminate the process onExit but we don't want
@@ -208,12 +208,12 @@ GitPlugin::GitPlugin(IManager* manager)
     , m_pathGITExecutable(wxT("git"))
     , m_pathGITKExecutable(wxT("gitk"))
     , m_bActionRequiresTreUpdate(false)
-    , m_process(NULL)
-    , m_eventHandler(NULL)
-    , m_pluginToolbar(NULL)
-    , m_pluginMenu(NULL)
-    , m_commitListDlg(NULL)
-    , m_commandProcessor(NULL)
+    , m_process(nullptr)
+    , m_eventHandler(nullptr)
+    , m_pluginToolbar(nullptr)
+    , m_pluginMenu(nullptr)
+    , m_commitListDlg(nullptr)
+    , m_commandProcessor(nullptr)
 {
     m_longName = _("GIT plugin");
     m_shortName = wxT("Git");
@@ -290,7 +290,7 @@ void GitPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar);
 void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     m_pluginMenu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     BitmapLoader* bmps = m_mgr->GetStdIcons();
     item = new wxMenuItem(m_pluginMenu, XRCID("git_pull"), _("Pull remote changes"));
@@ -2441,7 +2441,7 @@ void GitPlugin::OnCommandEnded(clCommandEvent& event)
 {
     m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_OUTPUT, &GitPlugin::OnCommandOutput, this);
     m_commandProcessor->Unbind(wxEVT_COMMAND_PROCESSOR_ENDED, &GitPlugin::OnCommandEnded, this);
-    m_commandProcessor = NULL;
+    m_commandProcessor = nullptr;
 
     // Perform a tree refresh
     CHECK_VIEW_SHOWN();

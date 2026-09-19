@@ -29,7 +29,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 PHPLint::PHPLint(IManager* manager)
     : IPlugin(manager)
-    , m_process(NULL)
+    , m_process(nullptr)
 {
     m_longName = _("Run code style checking on PHP source files");
     m_shortName = wxT("PHPLint");
@@ -53,7 +53,7 @@ void PHPLint::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 void PHPLint::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item = new wxMenuItem(menu, 2005, _("Lint Current Source"), _("Lint Current Source"), wxITEM_NORMAL);
     menu->Append(item);
     menu->AppendSeparator();

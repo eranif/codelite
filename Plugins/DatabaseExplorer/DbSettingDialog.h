@@ -53,7 +53,7 @@ protected:
 
 public:
     DbSettingDialog(DbViewerPanel* parent, wxWindow* pWindowParent);
-    virtual ~DbSettingDialog() = default;
+    ~DbSettingDialog() override = default;
 
 protected:
     void DoSaveSqliteHistory();
@@ -72,15 +72,15 @@ protected:
     virtual void OnCancelClick(wxCommandEvent& event);
     virtual void OnMySqlOkClick(wxCommandEvent& event);
     virtual void OnSqliteOkClick(wxCommandEvent& event);
-    virtual void OnHistoryClick(wxCommandEvent& event);
-    virtual void OnHistoryDClick(wxCommandEvent& event);
+    void OnHistoryClick(wxCommandEvent& event) override;
+    void OnHistoryDClick(wxCommandEvent& event) override;
     virtual void OnPgOkClick(wxCommandEvent& event);
-    virtual void OnPgHistoryClick(wxCommandEvent& event);
-    virtual void OnPgHistoryDClick(wxCommandEvent& event);
-    virtual void OnItemActivated(wxListEvent& event);
-    virtual void OnItemKeyDown(wxListEvent& event);
-    virtual void OnItemSelected(wxListEvent& event);
-    virtual void OnDlgOK(wxCommandEvent& event);
+    void OnPgHistoryClick(wxCommandEvent& event) override;
+    void OnPgHistoryDClick(wxCommandEvent& event) override;
+    void OnItemActivated(wxListEvent& event) override;
+    void OnItemKeyDown(wxListEvent& event) override;
+    void OnItemSelected(wxListEvent& event) override;
+    void OnDlgOK(wxCommandEvent& event) override;
 
     void LoadHistory();
 };

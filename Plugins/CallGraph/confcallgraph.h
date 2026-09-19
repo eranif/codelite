@@ -66,11 +66,11 @@ public:
     /**
      * @brief Default destructor.
      */
-    virtual ~ConfCallGraph() = default;
+    ~ConfCallGraph() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
     //
     //
     //

@@ -59,7 +59,7 @@ public:
     void SetSize(long size) override { m_size = size; }
     void SetSize2(long size) override { m_size2 = size; }
     void SetUnique(bool unique) override { m_unique = unique; }
-    wxString ReturnSql() override ;
+    wxString ReturnSql() override;
 
     long GetPropertyFlags() override { return m_dbtPropertyFlags; }
     void SetPropertyFlags(long flags) override { m_dbtPropertyFlags = flags; }

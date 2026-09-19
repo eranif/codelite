@@ -35,10 +35,10 @@ class LogDialog : public _LogDialog
 
 public:
     LogDialog(wxWindow* parent);
-    virtual ~LogDialog() = default;
+    ~LogDialog() override = default;
 
-    virtual void OnCloseClick(wxCommandEvent& event);
-    virtual void OnCloseUI(wxUpdateUIEvent& event);
+    void OnCloseClick(wxCommandEvent& event) override;
+    void OnCloseUI(wxUpdateUIEvent& event) override;
 
     /*! \brief Enable close button. */
     void EnableClose(bool enable) { m_canClose = enable; }

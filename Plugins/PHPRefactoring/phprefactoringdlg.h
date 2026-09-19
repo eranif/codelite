@@ -10,7 +10,7 @@ class PHPRefactoringDlg : public PHPRefactoringBaseDlg
 
 public:
     PHPRefactoringDlg(wxWindow* parent);
-    virtual ~PHPRefactoringDlg() = default;
+    ~PHPRefactoringDlg() override = default;
 
 protected:
     void InitDialog();

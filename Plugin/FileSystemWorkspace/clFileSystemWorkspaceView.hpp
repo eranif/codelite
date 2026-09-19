@@ -25,9 +25,9 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspaceView : public clTreeCtrlPanel
     wxArrayString m_selectedFolders;
 
 protected:
-    void OnFolderDropped(clCommandEvent& event);
+    void OnFolderDropped(clCommandEvent& event) override;
     void OnContextMenu(clContextMenuEvent& event);
-    void OnCloseFolder(wxCommandEvent& event);
+    void OnCloseFolder(wxCommandEvent& event) override;
     void OnSettings(wxCommandEvent& event);
     void OnAddIncludePath(wxCommandEvent& event);
     void OnCreateCompileFlagsFile(wxCommandEvent& event);
@@ -40,7 +40,7 @@ protected:
     void OnProgramStopped(clExecuteEvent& event);
     void OnBuildActiveProjectDropdown(wxAuiToolBarEvent& event);
     void OnFindInFilesDismissed(clFindInFilesEvent& event);
-    void OnFindInFilesShowing(clFindInFilesEvent& event);
+    void OnFindInFilesShowing(clFindInFilesEvent& event) override;
     void OnExcludePath(wxCommandEvent& event);
     void OnThemeChanged(clCommandEvent& event);
 
@@ -49,7 +49,7 @@ protected:
 
 public:
     clFileSystemWorkspaceView(wxWindow* parent, const wxString& viewName);
-    virtual ~clFileSystemWorkspaceView();
+    ~clFileSystemWorkspaceView() override;
     void UpdateConfigs(const wxArrayString& configs, const wxString& selectedConfig);
 };
 

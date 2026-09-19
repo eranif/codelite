@@ -84,7 +84,7 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if (thePlugin == 0) {
+    if (thePlugin == nullptr) {
         thePlugin = new DatabaseExplorer(manager);
     }
     return thePlugin;
@@ -133,7 +133,7 @@ void DatabaseExplorer::CreatePluginMenu(wxMenu* pluginsMenu)
 
     // You can use the below code a snippet:
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item = new wxMenuItem(menu, XRCID("dbe_about"), _("About..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     item = new wxMenuItem(menu, XRCID("wxEVT_EXECUTE_SQL"), _("Execute SQL"), wxEmptyString, wxITEM_NORMAL);

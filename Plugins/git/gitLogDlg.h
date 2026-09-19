@@ -41,7 +41,7 @@ class GitLogDlg : public wxDialog
 
 public:
     GitLogDlg(wxWindow* parent, const wxString title);
-    virtual ~GitLogDlg() = default;
+    ~GitLogDlg() override = default;
 };
 
 #endif //__gitLogDlg__

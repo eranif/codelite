@@ -24,7 +24,7 @@ protected:
 
 public:
     DAPTextView(wxWindow* parent);
-    virtual ~DAPTextView();
+    ~DAPTextView() override;
 
     wxStyledTextCtrl* GetCtrl() { return m_stcTextView; }
 

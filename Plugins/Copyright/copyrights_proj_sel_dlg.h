@@ -36,8 +36,8 @@ class clCxxWorkspace;
 class CopyrightsProjectSelDlg : public CopyrightsProjectSelBaseDlg
 {
 protected:
-    void OnUnCheckAll(wxCommandEvent& e);
-    void OnCheckAll(wxCommandEvent& e);
+    void OnUnCheckAll(wxCommandEvent& e) override;
+    void OnCheckAll(wxCommandEvent& e) override;
 
 public:
     /** Constructor */

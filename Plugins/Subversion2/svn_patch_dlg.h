@@ -43,7 +43,7 @@ public:
     PatchDlg(wxWindow* parent);
     //// end generated class members
 
-    virtual ~PatchDlg();
+    ~PatchDlg() override;
 
     wxFilePickerCtrl* GetFilePicker() const { return m_filePicker; }
 

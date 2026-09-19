@@ -19,7 +19,7 @@ struct VariableClientData : public wxTreeItemData {
         , value(v)
     {
     }
-    virtual ~VariableClientData() = default;
+    ~VariableClientData() override = default;
 };
 
 struct ThreadInfo {
@@ -66,7 +66,7 @@ class DAPMainView : public DAPMainViewBase
 {
 public:
     DAPMainView(wxWindow* parent, DebugAdapterClient* plugin);
-    virtual ~DAPMainView();
+    ~DAPMainView() override;
 
     void UpdateThreads(int activeThreadId, dap::ThreadsResponse* response);
     void UpdateFrames(int threadId, dap::StackTraceResponse* response);

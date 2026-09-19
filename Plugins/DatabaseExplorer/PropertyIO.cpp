@@ -41,7 +41,7 @@ xsPropertyIO::AddPropertyNode(wxXmlNode* parent, const wxString& name, const wxS
         parent->AddChild(child);
         return child;
     }
-    return NULL;
+    return nullptr;
 }
 
 void xsPropertyIO::AppendPropertyType(xsProperty* source, wxXmlNode* target)
@@ -921,7 +921,7 @@ void xsListSerializablePropIO::Write(xsProperty* property, wxXmlNode* target)
         SerializableList::compatibility_iterator listNode = list.GetFirst();
         while (listNode) {
             xsSerializable* object = listNode->GetData();
-            newNode->AddChild(object->SerializeObject(NULL));
+            newNode->AddChild(object->SerializeObject(nullptr));
 
             listNode = listNode->GetNext();
         }
@@ -980,7 +980,7 @@ void xsDynObjPropIO::Write(xsProperty* property, wxXmlNode* target)
 
     if (object && object->IsKindOf(CLASSINFO(xsSerializable))) {
         wxXmlNode* newNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("property"));
-        newNode->AddChild(object->SerializeObject(NULL));
+        newNode->AddChild(object->SerializeObject(nullptr));
 
         target->AddChild(newNode);
         AppendPropertyType(property, newNode);
@@ -1033,7 +1033,7 @@ void xsDynNCObjPropIO::Write(xsProperty* property, wxXmlNode* target)
 
     if (object && object->IsKindOf(CLASSINFO(xsSerializable))) {
         wxXmlNode* newNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("property"));
-        newNode->AddChild(object->SerializeObject(NULL));
+        newNode->AddChild(object->SerializeObject(nullptr));
 
         target->AddChild(newNode);
         AppendPropertyType(property, newNode);
@@ -1080,7 +1080,7 @@ void xsStaticObjPropIO::Read(xsProperty* property, wxXmlNode* source)
 void xsStaticObjPropIO::Write(xsProperty* property, wxXmlNode* target)
 {
     wxXmlNode* newNode = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("property"));
-    newNode->AddChild((*((xsSerializable*)property->m_pSourceVariable)).SerializeObject(NULL));
+    newNode->AddChild((*((xsSerializable*)property->m_pSourceVariable)).SerializeObject(nullptr));
 
     target->AddChild(newNode);
     AppendPropertyType(property, newNode);

@@ -53,6 +53,6 @@ class CppCheckSettingsDialog : public CppCheckSettingsDialogBase
 {
 public:
     CppCheckSettingsDialog(wxWindow* parent);
-    virtual ~CppCheckSettingsDialog();
+    ~CppCheckSettingsDialog() override;
 };
 #endif // CPPCHECH_SETTINGS_DLG_H_INCLUDED

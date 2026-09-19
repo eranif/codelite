@@ -50,7 +50,7 @@ class GitCommitDlg : public GitCommitDlgBase
 {
 public:
     GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir);
-    virtual ~GitCommitDlg();
+    ~GitCommitDlg() override;
 
     void AppendCommitMessage(const wxString& message);
     void ClearCommitMessage();
@@ -67,15 +67,15 @@ public:
     bool IsSignedOffBy() const { return m_checkBoxSignedOff->IsChecked(); }
 
 protected:
-    virtual void OnAmendClicked(wxCommandEvent& event);
+    void OnAmendClicked(wxCommandEvent& event) override;
     virtual void OnGenerate(wxCommandEvent& event);
     virtual void OnGenerateUI(wxUpdateUIEvent& event);
     virtual void OnCommitHistory(wxCommandEvent& event);
     virtual void OnToggleCheckAll(wxCommandEvent& event);
-    virtual void OnCommitOK(wxCommandEvent& event);
+    void OnCommitOK(wxCommandEvent& event) override;
 
 private:
-    void OnChangeFile(wxDataViewEvent& e);
+    void OnChangeFile(wxDataViewEvent& e) override;
 
     GitPlugin* m_plugin{nullptr};
     wxString m_workingDir;

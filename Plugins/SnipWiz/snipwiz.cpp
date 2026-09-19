@@ -102,7 +102,7 @@ static int GetEOLByOS()
 SnipWiz::SnipWiz(IManager* manager)
     : IPlugin(manager)
 {
-    m_topWin = NULL;
+    m_topWin = nullptr;
     m_longName = _("Snippet wizard");
     m_shortName = plugName;
     m_topWin = m_mgr->GetTheApp();

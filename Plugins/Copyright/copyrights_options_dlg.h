@@ -41,8 +41,8 @@ class CopyrightsOptionsDlg : public CopyrightsOptionsBaseDlg
 
 protected:
     // Handlers for CopyrightsOptionsBaseDlg events.
-    void OnSelectFile(wxCommandEvent& event);
-    void OnButtonSave(wxCommandEvent& event);
+    void OnSelectFile(wxCommandEvent& event) override;
+    void OnButtonSave(wxCommandEvent& event) override;
 
 public:
     /** Constructor */

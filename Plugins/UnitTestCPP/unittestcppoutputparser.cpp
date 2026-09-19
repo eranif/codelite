@@ -41,8 +41,8 @@ UnitTestCppOutputParser::UnitTestCppOutputParser(const wxArrayString& output)
 
 void UnitTestCppOutputParser::Parse(TestSummary* summary)
 {
-    CompilerPtr compilerVC(new Compiler(NULL, Compiler::kRegexVC));
-    CompilerPtr compilerGcc(new Compiler(NULL, Compiler::kRegexGNU));
+    CompilerPtr compilerVC(new Compiler(nullptr, Compiler::kRegexVC));
+    CompilerPtr compilerGcc(new Compiler(nullptr, Compiler::kRegexGNU));
 
     const Compiler::CmpListInfoPattern& gnuErrors = compilerGcc->GetErrPatterns();
     const Compiler::CmpListInfoPattern& vcErrors = compilerVC->GetErrPatterns();

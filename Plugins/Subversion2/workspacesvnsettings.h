@@ -36,11 +36,11 @@ class WorkspaceSvnSettings : public clConfigItem
 public:
     WorkspaceSvnSettings(const wxFileName& fn);
     WorkspaceSvnSettings();
-    virtual ~WorkspaceSvnSettings() = default;
+    ~WorkspaceSvnSettings() override = default;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     WorkspaceSvnSettings& Load();
     void Save();

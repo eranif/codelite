@@ -53,7 +53,7 @@ public:
     /*! \brief Constructor. */
     xsPropertyIO() { ; }
     /*! \brief Destructor. */
-    virtual ~xsPropertyIO() { ; }
+    ~xsPropertyIO() override { ; }
 
     /*!
      * \brief Read content of the property XML node and store it to given property object.

@@ -79,7 +79,7 @@ public:
     /**
      * @brief Destructor.
      */
-    virtual ~CMakeConfiguration() { Flush(); }
+    ~CMakeConfiguration() override { Flush(); }
 
     // Public Accessors
 public:

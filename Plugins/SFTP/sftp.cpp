@@ -163,7 +163,7 @@ void SFTP::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 void SFTP::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
 
     item = new wxMenuItem(menu,
                           wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER,
@@ -181,7 +181,7 @@ void SFTP::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     if (type == MenuTypeFileView_Workspace) {
         // Create the popup menu for the virtual folders
-        wxMenuItem* item(NULL);
+        wxMenuItem* item(nullptr);
 
         wxMenu* sftpMenu = new wxMenu();
         item = new wxMenuItem(

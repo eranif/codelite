@@ -69,7 +69,7 @@ class DbViewerPanel : public _DbViewerPanel
     std::unordered_set<DbExplorerFrame*> m_frames;
 
 protected:
-    virtual void OnContextMenu(wxTreeEvent& event);
+    void OnContextMenu(wxTreeEvent& event) override;
 
 private:
     xsSerializable* m_pConnections;
@@ -88,7 +88,7 @@ private:
 
 public:
     DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pManager);
-    virtual ~DbViewerPanel();
+    ~DbViewerPanel() override;
     void SetDbAdapter(IDbAdapter* dbAdapter) { m_pDbAdapter = dbAdapter; }
 
     void AddDbConnection(DbConnection* pDbCon) { m_pConnections->AddChild(pDbCon); }
@@ -97,12 +97,12 @@ public:
 
     virtual void OnConnectClick(wxCommandEvent& event);
     virtual void OnConnectUI(wxUpdateUIEvent& event);
-    virtual void OnItemActivate(wxTreeEvent& event);
+    void OnItemActivate(wxTreeEvent& event) override;
     virtual void OnRefreshClick(wxCommandEvent& event);
     virtual void OnRefreshUI(wxUpdateUIEvent& event);
-    virtual void OnItemSelectionChange(wxTreeEvent& event);
-    virtual void OnDnDStart(wxTreeEvent& event);
-    virtual void OnItemRightClick(wxTreeEvent& event);
+    void OnItemSelectionChange(wxTreeEvent& event) override;
+    void OnDnDStart(wxTreeEvent& event) override;
+    void OnItemRightClick(wxTreeEvent& event) override;
     virtual void OnToolCloseClick(wxCommandEvent& event);
     virtual void OnToolCloseUI(wxUpdateUIEvent& event);
     virtual void OnShowThumbnail(wxCommandEvent& e);

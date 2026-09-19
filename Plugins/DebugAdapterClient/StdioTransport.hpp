@@ -16,7 +16,7 @@ private:
 
 public:
     StdioTransport() = default;
-    virtual ~StdioTransport() = default;
+    ~StdioTransport() override = default;
 
     /**
      * @brief return a buffer from the network with a given timeout

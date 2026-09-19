@@ -79,7 +79,7 @@ public:
     {
     }
 
-    virtual ~ExternalToolData() = default;
+    ~ExternalToolData() override = default;
 };
 
 class IManager;
@@ -107,18 +107,18 @@ private:
 
 protected:
     // Handlers for ExternalToolBaseDlg events.
-    void OnItemActivated(wxDataViewEvent& event);
-    void OnButtonNew(wxCommandEvent& event);
-    void OnButtonNewUI(wxUpdateUIEvent& event);
-    void OnButtonEdit(wxCommandEvent& event);
-    void OnButtonEditUI(wxUpdateUIEvent& event);
-    void OnButtonDelete(wxCommandEvent& event);
-    void OnButtonDeleteUI(wxUpdateUIEvent& event);
+    void OnItemActivated(wxDataViewEvent& event) override;
+    void OnButtonNew(wxCommandEvent& event) override;
+    void OnButtonNewUI(wxUpdateUIEvent& event) override;
+    void OnButtonEdit(wxCommandEvent& event) override;
+    void OnButtonEditUI(wxUpdateUIEvent& event) override;
+    void OnButtonDelete(wxCommandEvent& event) override;
+    void OnButtonDeleteUI(wxUpdateUIEvent& event) override;
 
 public:
     /** Constructor */
     ExternalToolDlg(wxWindow* parent, IManager* mgr);
-    virtual ~ExternalToolDlg() = default;
+    ~ExternalToolDlg() override = default;
     std::vector<ToolInfo> GetTools();
     void SetTools(const std::vector<ToolInfo>& tools);
 };

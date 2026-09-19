@@ -35,11 +35,11 @@ class ContinuousBuildConf : public SerializedObject
 
 public:
     ContinuousBuildConf();
-    virtual ~ContinuousBuildConf() = default;
+    ~ContinuousBuildConf() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
     void SetEnabled(bool enabled) { this->m_enabled = enabled; }
     void SetParallelProcesses(size_t parallelProcesses) { this->m_parallelProcesses = parallelProcesses; }
     bool GetEnabled() const { return m_enabled; }

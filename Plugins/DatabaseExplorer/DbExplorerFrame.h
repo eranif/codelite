@@ -12,6 +12,6 @@ protected:
 
 public:
     DbExplorerFrame(wxWindow* parent, wxWindow* page, const wxString& label, DbViewerPanel* viewer);
-    virtual ~DbExplorerFrame();
+    ~DbExplorerFrame() override;
 };
 #endif // DBEXPLORERFRAME_H

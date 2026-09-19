@@ -74,10 +74,10 @@ public:
     {
     }
 
-    virtual ~SvnSettingsData() = default;
+    ~SvnSettingsData() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch)
+    void DeSerialize(Archive& arch) override
     {
         arch.Read(wxT("m_executable"), m_executable);
         arch.Read(wxT("m_ignoreFilePattern"), m_ignoreFilePattern);
@@ -94,7 +94,7 @@ public:
         arch.Read(wxT("m_commitDlgHSashPos"), m_commitDlgHSashPos);
     }
 
-    virtual void Serialize(Archive& arch)
+    void Serialize(Archive& arch) override
     {
         arch.Write(wxT("m_executable"), m_executable);
         arch.Write(wxT("m_ignoreFilePattern"), m_ignoreFilePattern);

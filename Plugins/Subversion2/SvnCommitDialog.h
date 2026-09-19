@@ -56,7 +56,7 @@ public:
                     const wxString& url,
                     Subversion2* plugin,
                     const wxString& repoPath);
-    virtual ~SvnCommitDialog();
+    ~SvnCommitDialog() override;
 
     wxString GetMesasge();
     wxArrayString GetPaths();
@@ -72,7 +72,7 @@ protected:
     void DoCommonInit();
 
 protected:
-    virtual void OnFileSelected(wxCommandEvent& event);
+    void OnFileSelected(wxCommandEvent& event) override;
     void OnProcessOutput(clProcessEvent& e);
     void OnProcessTerminatd(clProcessEvent& e);
 };

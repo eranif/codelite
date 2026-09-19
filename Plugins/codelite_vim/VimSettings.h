@@ -9,11 +9,11 @@ class VimSettings : public clConfigItem
 
 public:
     VimSettings();
-    virtual ~VimSettings() = default;
+    ~VimSettings() override = default;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     VimSettings& Load();
     VimSettings& Save();

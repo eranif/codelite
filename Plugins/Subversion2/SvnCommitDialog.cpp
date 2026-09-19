@@ -50,7 +50,7 @@ public:
         : m_data(data.c_str())
     {
     }
-    virtual ~CommitMessageStringData() = default;
+    ~CommitMessageStringData() override = default;
 
     const wxString& GetData() const { return m_data; }
 };

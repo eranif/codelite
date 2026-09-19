@@ -49,7 +49,7 @@ void PHPRefactoring::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(tool
 void PHPRefactoring::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item = new wxMenuItem(menu, wxID_SETTINGS, _("Options..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("PHP Refactoring"), menu);

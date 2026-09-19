@@ -30,12 +30,12 @@ private:
     }
 
 public:
-    virtual ~LanguageServerConfig() = default;
+    ~LanguageServerConfig() override = default;
     LanguageServerConfig& Load();
     LanguageServerConfig& Save();
     static LanguageServerConfig& Get();
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
     LanguageServerConfig& SetFlags(size_t flags)
     {
         this->m_flags = flags;

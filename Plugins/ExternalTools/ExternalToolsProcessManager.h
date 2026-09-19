@@ -82,7 +82,7 @@ public:
 
 private:
     ToolsTaskManager();
-    virtual ~ToolsTaskManager();
+    ~ToolsTaskManager() override;
 };
 
 #endif // EXTERNALTOOLSPROCESSMANAGER_H

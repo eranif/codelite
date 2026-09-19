@@ -36,11 +36,11 @@ class CopyrightsConfigData : public SerializedObject
 
 public:
     CopyrightsConfigData();
-    virtual ~CopyrightsConfigData() = default;
+    ~CopyrightsConfigData() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     // Setters
     void SetFileMasking(const wxString& fileMasking) { this->m_fileMasking = fileMasking; }

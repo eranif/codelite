@@ -6,7 +6,7 @@
 class CMakeBuilder : public Builder
 {
 public:
-    virtual OptimalBuildConfig GetOptimalBuildConfig(const wxString& projectType) const;
+    OptimalBuildConfig GetOptimalBuildConfig(const wxString& projectType) const override;
     static wxString GetWorkspaceBuildFolder(bool wrapWithQuotes);
     static wxString GetProjectBuildFolder(const wxString& project, bool wrapWithQuotes);
 
@@ -15,7 +15,7 @@ private:
 
 public:
     CMakeBuilder();
-    virtual ~CMakeBuilder() = default;
+    ~CMakeBuilder() override = default;
     /**
      * Export the build system specific file (e.g. GNU makefile, Ant file etc)
      * to allow users to invoke them manually from the command line
@@ -23,24 +23,24 @@ public:
      * \param errMsg output
      * \return true on success, false otherwise.
      */
-    virtual bool Export(const wxString& project,
+    bool Export(const wxString& project,
                         const wxString& confToBuild,
                         const wxString& arguments,
                         bool isProjectOnly,
                         bool force,
-                        wxString& errMsg);
+                        wxString& errMsg) override;
 
     /**
      * Return the command that should be executed for performing the clean
      * task
      */
-    virtual wxString GetCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
+    wxString GetCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
 
     /**
      * Return the command that should be executed for performing the build
      * task for a given project
      */
-    virtual wxString GetBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
+    wxString GetBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
 
     //-----------------------------------------------------------------
     // Project Only API
@@ -49,13 +49,13 @@ public:
      * Return the command that should be executed for performing the clean
      * task - for the project only (excluding dependencies)
      */
-    virtual wxString GetPOCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
+    wxString GetPOCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
 
     /**
      * Return the command that should be executed for performing the build
      * task for a given project - for the project only (excluding dependencies)
      */
-    virtual wxString GetPOBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
+    wxString GetPOBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
 
     /**
      * \brief create a command to execute for compiling single source file
@@ -64,10 +64,10 @@ public:
      * \param errMsg [output]
      * \return the command
      */
-    virtual wxString GetSingleFileCmd(const wxString& project,
+    wxString GetSingleFileCmd(const wxString& project,
                                       const wxString& confToBuild,
                                       const wxString& arguments,
-                                      const wxString& fileName);
+                                      const wxString& fileName) override;
 
     /**
      * \brief create a command to execute for preprocessing single source file
@@ -76,11 +76,11 @@ public:
      * \param errMsg [output]
      * \return the command
      */
-    virtual wxString GetPreprocessFileCmd(const wxString& project,
+    wxString GetPreprocessFileCmd(const wxString& project,
                                           const wxString& confToBuild,
                                           const wxString& arguments,
                                           const wxString& fileName,
-                                          wxString& errMsg);
+                                          wxString& errMsg) override;
 
     /**
      * @brief return the 'rebuild' command
@@ -88,8 +88,8 @@ public:
      * @param confToBuild
      * @return
      */
-    virtual wxString
-    GetPORebuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments);
+    wxString
+    GetPORebuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
 };
 
 #endif // CMAKEBUILDER_H

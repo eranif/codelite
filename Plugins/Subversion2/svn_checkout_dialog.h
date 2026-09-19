@@ -41,15 +41,15 @@ class SvnCheckoutDialog : public SvnCheckoutDialogBase
 
 protected:
     // Handlers for SvnCheckoutDialogBase events.
-    void OnBrowseDirectory(wxCommandEvent& event);
-    void OnOkUI(wxUpdateUIEvent& event);
+    void OnBrowseDirectory(wxCommandEvent& event) override;
+    void OnOkUI(wxUpdateUIEvent& event) override;
 
-    virtual void OnOK(wxCommandEvent& event);
+    void OnOK(wxCommandEvent& event) override;
 
 public:
     /** Constructor */
     SvnCheckoutDialog(wxWindow* parent, Subversion2* plugin);
-    virtual ~SvnCheckoutDialog();
+    ~SvnCheckoutDialog() override;
 
     wxString GetURL();
     wxString GetTargetDir();

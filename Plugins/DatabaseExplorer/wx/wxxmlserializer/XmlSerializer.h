@@ -112,7 +112,7 @@ public:
     /*! \brief Copy constructor. */
     xsSerializable(const xsSerializable& obj);
     /*! \brief Destructor. */
-    ~xsSerializable();
+    ~xsSerializable() override;
 
     // public functions
 
@@ -459,7 +459,7 @@ public:
     /*! \brief Copy constructor. */
     wxXmlSerializer(const wxXmlSerializer& obj);
     /*! \brief Destructor. */
-    virtual ~wxXmlSerializer();
+    ~wxXmlSerializer() override;
 
     // public member data accessors
     /*!
@@ -666,7 +666,7 @@ public:
     wxXmlSerializer& operator<<(xsSerializable* obj)
     {
         if (obj)
-            this->AddItem((xsSerializable*)NULL, obj);
+            this->AddItem((xsSerializable*)nullptr, obj);
         return *this;
     }
     /*!
@@ -677,7 +677,7 @@ public:
     wxXmlSerializer& operator<<(SerializableList& src)
     {
         for (SerializableList::iterator it = src.begin(); it != src.end(); ++it)
-            this->AddItem((xsSerializable*)NULL, *it);
+            this->AddItem((xsSerializable*)nullptr, *it);
         return *this;
     }
     /*!
@@ -738,7 +738,7 @@ public:
     /*! \brief Default constructor */
     xsProperty()
     {
-        m_pSourceVariable = NULL;
+        m_pSourceVariable = nullptr;
         m_sDataType = wxT("Undefined");
         m_sFieldName = wxT("Undefined");
         m_sDefaultValueStr = wxT("");
@@ -1188,7 +1188,7 @@ public:
         ;
     }
 
-    ~xsProperty() { ; }
+    ~xsProperty() override { ; }
 
     // public functions
     /**

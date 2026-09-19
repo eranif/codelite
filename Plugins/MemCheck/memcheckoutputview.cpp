@@ -496,7 +496,7 @@ void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
     GetStatusOfErrors(unmarked, marked);
 
     const wxDataViewItem& dataItem = event.GetItem();
-    wxMenuItem* menuItem(NULL);
+    wxMenuItem* menuItem(nullptr);
     wxMenu menu;
 
     menuItem = menu.Append(XRCID("memcheck_jump_to_location"), _("Jump to location"));

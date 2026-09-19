@@ -322,7 +322,7 @@ wxThread::ExitCode CMakeHelpTab::Entry()
     // Load data
     cmake->LoadData(m_force, this);
 
-    return static_cast<wxThread::ExitCode>(0);
+    return static_cast<wxThread::ExitCode>(nullptr);
 }
 
 /* ************************************************************************ */

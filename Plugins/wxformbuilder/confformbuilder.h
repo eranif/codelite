@@ -36,11 +36,11 @@ class ConfFormBuilder : public SerializedObject
 
 public:
     ConfFormBuilder();
-    virtual ~ConfFormBuilder() = default;
+    ~ConfFormBuilder() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     void SetCommand(const wxString& command) { this->m_command = command; }
     void SetFbPath(const wxString& fbPath) { this->m_fbPath = fbPath; }

@@ -82,14 +82,14 @@ public:
     void FinishDiff(wxString output, wxFileName fileBeingDiffed);
 
 protected:
-    virtual void OnUnversionedItemActivated(wxDataViewEvent& event);
-    virtual void OnUnversionedItemsContextMenu(wxDataViewEvent& event);
-    virtual void OnViewUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnContextMenu(wxDataViewEvent& event);
-    virtual void OnSciStcChange(wxStyledTextEvent& event);
-    virtual void OnCharAdded(wxStyledTextEvent& event);
-    virtual void OnKeyDown(wxKeyEvent& event);
-    virtual void OnUpdateUI(wxStyledTextEvent& event);
+    void OnUnversionedItemActivated(wxDataViewEvent& event) override;
+    void OnUnversionedItemsContextMenu(wxDataViewEvent& event) override;
+    void OnViewUpdateUI(wxUpdateUIEvent& event) override;
+    void OnContextMenu(wxDataViewEvent& event) override;
+    void OnSciStcChange(wxStyledTextEvent& event) override;
+    void OnCharAdded(wxStyledTextEvent& event) override;
+    void OnKeyDown(wxKeyEvent& event) override;
+    void OnUpdateUI(wxStyledTextEvent& event) override;
     void CreatGUIControls();
     void ClearAll();
     void DoAddChangedFiles(const wxString& status, const wxArrayString& files);
@@ -115,7 +115,7 @@ protected:
     void OnChangeRootDir(wxCommandEvent& event);
     void OnCloseView(wxCommandEvent& event);
     void OnTreeMenu(wxTreeEvent& event);
-    void OnItemActivated(wxDataViewEvent& event);
+    void OnItemActivated(wxDataViewEvent& event) override;
 
     // IDE Events
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
@@ -168,7 +168,7 @@ protected:
 public:
     /** Constructor */
     SubversionView(wxWindow* parent, Subversion2* plugin);
-    virtual ~SubversionView();
+    ~SubversionView() override;
 
     SvnConsole* GetSubversionConsole() { return m_subversionConsole; }
     void DisconnectEvents();

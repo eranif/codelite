@@ -25,7 +25,7 @@ protected:
 
 public:
     wxTerminalAnsiRendererSTC(wxStyledTextCtrl* ctrl);
-    virtual ~wxTerminalAnsiRendererSTC();
+    ~wxTerminalAnsiRendererSTC() override;
 
     void Clear() override;
     /// Makes an audible noise

@@ -165,7 +165,7 @@ void CodeFormatter::CreateToolBar(clToolBarGeneric* toolbar)
 void CodeFormatter::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item = new wxMenuItem(
         menu, XRCID("format_source"), _("Format Current Source"), _("Format Current Source"), wxITEM_NORMAL);
     menu->Append(item);

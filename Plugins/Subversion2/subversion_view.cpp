@@ -113,9 +113,9 @@ public:
         , m_filename(filename)
     {
     }
-    ~DiffCmdHandler() = default;
+    ~DiffCmdHandler() override = default;
 
-    virtual void OnProcessOutput(const wxString& str)
+    void OnProcessOutput(const wxString& str) override
     {
         m_output << str;
         wxArrayString lines = ::wxStringTokenize(m_output, "\n", wxTOKEN_STRTOK);
@@ -128,7 +128,7 @@ public:
      * @brief the process has terminated, delete the instance and
      * ourself
      */
-    virtual void OnProcessTerminated() { delete this; }
+    void OnProcessTerminated() override { delete this; }
 
     const wxFileName& GetFilename() const { return m_filename; }
 };
@@ -801,7 +801,7 @@ void SubversionView::OnCleanup(wxCommandEvent& event)
     wxString command;
     command << m_plugin->GetSvnExeName() << wxT(" cleanup ");
     m_plugin->GetConsole()->Execute(
-        command, DoGetCurRepoPath(), new SvnDefaultCommandHandler(m_plugin, wxNOT_FOUND, NULL));
+        command, DoGetCurRepoPath(), new SvnDefaultCommandHandler(m_plugin, wxNOT_FOUND, nullptr));
 }
 
 void SubversionView::OnStop(wxCommandEvent& event)

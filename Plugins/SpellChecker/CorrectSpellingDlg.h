@@ -48,13 +48,13 @@ class CorrectSpellingDlg : public CorrectSpellingDlg_base
 {
 protected:
     // Handlers for CorrectSpellingDlg_base events.
-    void OnInitDialog(wxInitDialogEvent& event);
-    void OnSuggestionSelected(wxCommandEvent& event);
-    void OnChangeClick(wxCommandEvent& event);
-    void OnIgnoreClick(wxCommandEvent& event);
-    void OnDblClickSuggestions(wxCommandEvent& event);
-    void OnAddClick(wxCommandEvent& event);
-    void OnSuggestClick(wxCommandEvent& event);
+    void OnInitDialog(wxInitDialogEvent& event) override;
+    void OnSuggestionSelected(wxCommandEvent& event) override;
+    void OnChangeClick(wxCommandEvent& event) override;
+    void OnIgnoreClick(wxCommandEvent& event) override;
+    void OnDblClickSuggestions(wxCommandEvent& event) override;
+    void OnAddClick(wxCommandEvent& event) override;
+    void OnSuggestClick(wxCommandEvent& event) override;
     void OnMove(wxMoveEvent& event);
 
     wxString m_misspelled;
@@ -64,7 +64,7 @@ protected:
 public:
     /** Constructor */
     CorrectSpellingDlg(wxWindow* parent);
-    virtual ~CorrectSpellingDlg();
+    ~CorrectSpellingDlg() override;
 
     void SetPHs(IHunSpell* pHs) { this->m_pHs = pHs; }
     wxString GetMisspelled() const { return m_misspelled; }

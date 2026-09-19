@@ -20,6 +20,6 @@ private:
 
 public:
     DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsStore& store);
-    virtual ~DapDebuggerSettingsDlg() = default;
+    ~DapDebuggerSettingsDlg() override = default;
 };
 #endif // DAPDEBUGGERSETTINGSDLG_H

@@ -6,12 +6,12 @@ class GitUserEmailDialog : public GitUserEmailDialogBase
 {
 public:
     GitUserEmailDialog(wxWindow* parent);
-    virtual ~GitUserEmailDialog() = default;
+    ~GitUserEmailDialog() override = default;
 
     wxString GetEmail() const { return m_textCtrlEmail->GetValue(); }
     wxString GetUsername() const { return m_textCtrlName->GetValue(); }
 
 protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnOKUI(wxUpdateUIEvent& event) override;
 };
 #endif // GITUSEREMAILDIALOG_H

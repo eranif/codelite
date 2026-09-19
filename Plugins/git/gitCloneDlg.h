@@ -32,10 +32,10 @@ class gitCloneDlg : public gitCloneDlgBaseClass
 {
 public:
     gitCloneDlg(wxWindow* parent);
-    virtual ~gitCloneDlg() = default;
+    ~gitCloneDlg() override = default;
 
 protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnOKUI(wxUpdateUIEvent& event) override;
 
 public:
     wxString GetCloneURL() const;

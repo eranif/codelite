@@ -42,7 +42,7 @@ protected:
 
 public:
     GitBlamePage(wxWindow* parent, const wxString& fullpath);
-    virtual ~GitBlamePage();
+    ~GitBlamePage() override;
 
     void ParseBlameOutput(const wxString& blame);
 };

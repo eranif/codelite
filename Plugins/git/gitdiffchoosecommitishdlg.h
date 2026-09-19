@@ -33,7 +33,7 @@ class GitDiffChooseCommitishDlg : public GitDiffChooseCommitishDlgBase
 {
 public:
     GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin* plugin);
-    virtual ~GitDiffChooseCommitishDlg();
+    ~GitDiffChooseCommitishDlg() override;
 
     wxString GetFirstCommit() const { return m_textFirst->GetValue() + GetAncestorSetting(m_spinCtrl1); }
     wxString GetSecondCommit() const { return m_textSecond->GetValue() + GetAncestorSetting(m_spinCtrl2); }
@@ -50,25 +50,25 @@ protected:
 
     wxString GetAncestorSetting(wxSpinCtrl* spin) const; // Returns any '~5' setting
 
-    virtual void OnBranch1Changed(wxCommandEvent& event);
+    void OnBranch1Changed(wxCommandEvent& event) override;
     virtual void OnBranch2Changed(wxCommandEvent& event);
-    virtual void OnRadioBranch1Selected(wxCommandEvent& event);
-    virtual void OnRadioBranch2Selected(wxCommandEvent& event);
-    virtual void OnRadioCommit1Selected(wxCommandEvent& event);
-    virtual void OnRadioCommit2Selected(wxCommandEvent& event);
-    virtual void OnRadioTag1Selected(wxCommandEvent& event);
-    virtual void OnRadioTag2Selected(wxCommandEvent& event);
-    virtual void OnRadioUser1Selected(wxCommandEvent& event);
-    virtual void OnRadioUser2Selected(wxCommandEvent& event);
-    virtual void OnUpdateUIBranch1(wxUpdateUIEvent& event);
-    virtual void OnUpdateUIBranch2(wxUpdateUIEvent& event);
-    virtual void OnUpdateUICommit1(wxUpdateUIEvent& event);
-    virtual void OnUpdateUICommit2(wxUpdateUIEvent& event);
-    virtual void OnUpdateUICommitish1(wxUpdateUIEvent& event);
-    virtual void OnUpdateUICommitish2(wxUpdateUIEvent& event);
-    virtual void OnUpdateUITags1(wxUpdateUIEvent& event);
-    virtual void OnUpdateUITags2(wxUpdateUIEvent& event);
-    virtual void OnTextFirstUI(wxUpdateUIEvent& event);
-    virtual void OnTextSecondUI(wxUpdateUIEvent& event);
+    void OnRadioBranch1Selected(wxCommandEvent& event) override;
+    void OnRadioBranch2Selected(wxCommandEvent& event) override;
+    void OnRadioCommit1Selected(wxCommandEvent& event) override;
+    void OnRadioCommit2Selected(wxCommandEvent& event) override;
+    void OnRadioTag1Selected(wxCommandEvent& event) override;
+    void OnRadioTag2Selected(wxCommandEvent& event) override;
+    void OnRadioUser1Selected(wxCommandEvent& event) override;
+    void OnRadioUser2Selected(wxCommandEvent& event) override;
+    void OnUpdateUIBranch1(wxUpdateUIEvent& event) override;
+    void OnUpdateUIBranch2(wxUpdateUIEvent& event) override;
+    void OnUpdateUICommit1(wxUpdateUIEvent& event) override;
+    void OnUpdateUICommit2(wxUpdateUIEvent& event) override;
+    void OnUpdateUICommitish1(wxUpdateUIEvent& event) override;
+    void OnUpdateUICommitish2(wxUpdateUIEvent& event) override;
+    void OnUpdateUITags1(wxUpdateUIEvent& event) override;
+    void OnUpdateUITags2(wxUpdateUIEvent& event) override;
+    void OnTextFirstUI(wxUpdateUIEvent& event) override;
+    void OnTextSecondUI(wxUpdateUIEvent& event) override;
 };
 #endif // GITDIFFCHOOSECOMMITISHDLG_H

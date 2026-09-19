@@ -81,13 +81,13 @@ public:
     /*! \brief Format text file */
     void FormatFile(wxString& content, const wxFileName& filename);
 
-    virtual void OnCancelClick(wxCommandEvent& event);
+    void OnCancelClick(wxCommandEvent& event) override;
 
     /*! \brief Function for generating classes for all tables. It call GenerateClass() function for each table. */
-    virtual void OnGenerateClick(wxCommandEvent& event);
-    virtual void OnBtnBrowseClick(wxCommandEvent& event);
+    void OnGenerateClick(wxCommandEvent& event) override;
+    void OnBtnBrowseClick(wxCommandEvent& event) override;
 
-    virtual ~ClassGenerateDialog();
+    ~ClassGenerateDialog() override;
 
 protected:
     TemplateMap m_mapTemplateFiles;

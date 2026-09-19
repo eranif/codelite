@@ -42,11 +42,11 @@ private:
 
 public:
     WordCompletionSettings();
-    virtual ~WordCompletionSettings() = default;
+    ~WordCompletionSettings() override = default;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     void SetComparisonMethod(int comparisonMethod) { this->m_comparisonMethod = comparisonMethod; }
     int GetComparisonMethod() const { return m_comparisonMethod; }

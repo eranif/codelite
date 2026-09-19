@@ -2935,7 +2935,7 @@ bool VimCommand::save_current_cmd() { return m_saveCommand; }
 
 void VimCommand::IssueCommand()
 {
-    if (m_ctrl == NULL)
+    if (m_ctrl == nullptr)
         return;
     m_ctrl->BeginUndoAction();
     for (int i = 0; i < this->getNumRepeat(); ++i) {
@@ -2947,7 +2947,7 @@ void VimCommand::IssueCommand()
 
 void VimCommand::RepeatIssueCommand(wxString buf)
 {
-    if (m_ctrl == NULL)
+    if (m_ctrl == nullptr)
         return;
 
     m_ctrl->BeginUndoAction();

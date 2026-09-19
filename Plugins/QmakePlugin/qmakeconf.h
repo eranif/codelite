@@ -33,7 +33,7 @@ class QmakeConf : public wxFileConfig
 {
 public:
     QmakeConf(const wxString& confPath);
-    virtual ~QmakeConf();
+    ~QmakeConf() override;
     wxArrayString GetAllConfigurations() const;
 };
 #endif // __qmakeconf__

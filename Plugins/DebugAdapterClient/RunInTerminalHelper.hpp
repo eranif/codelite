@@ -19,7 +19,7 @@ protected:
 
 public:
     RunInTerminalHelper();
-    virtual ~RunInTerminalHelper();
+    ~RunInTerminalHelper() override;
 
     /**
      * @brief run process, return its process id

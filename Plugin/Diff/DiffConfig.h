@@ -57,11 +57,11 @@ protected:
 
 public:
     DiffConfig();
-    virtual ~DiffConfig() = default;
+    ~DiffConfig() override = default;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     DiffConfig& SetViewMode(int mode)
     {

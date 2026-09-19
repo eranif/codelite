@@ -9,7 +9,7 @@ struct PHPScannerCollectWhitespace {
     bool m_oldState;
 
     PHPScannerCollectWhitespace(PHPScanner_t scanner)
-        : m_userdata(NULL)
+        : m_userdata(nullptr)
         , m_oldState(false)
     {
         m_userdata = ::phpLexerGetUserData(scanner);
@@ -28,7 +28,7 @@ struct PHPScannerCollectWhitespace {
 };
 
 PHPFormatterBuffer::PHPFormatterBuffer(const wxString& buffer, const PHPFormatterOptions& options)
-    : m_scanner(NULL)
+    : m_scanner(nullptr)
     , m_options(options)
     , m_openTagWithEcho(false)
     , m_forDepth(0)

@@ -82,7 +82,7 @@ public:
     /**
      * @brief Destructor.
      */
-    virtual ~CMakeSettingsDialog();
+    ~CMakeSettingsDialog() override;
 
     // Public Accessors
 public:

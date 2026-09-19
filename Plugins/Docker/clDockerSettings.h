@@ -29,11 +29,11 @@ public:
     bool HasFlag(int flag) const { return (m_flags & flag); }
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     clDockerSettings();
-    virtual ~clDockerSettings() = default;
+    ~clDockerSettings() override = default;
 
     void Load();
     void Save();

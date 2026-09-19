@@ -54,7 +54,7 @@ public:
     {
     }
 
-    virtual ~SvnTreeData() {}
+    ~SvnTreeData() override {}
 
     void SetType(const SvnNodeType& type) { this->m_type = type; }
     const SvnNodeType& GetType() const { return m_type; }

@@ -71,7 +71,7 @@ swStringSet::~swStringSet() { DeleteAll(); }
 // save list
 void swStringSet::Serialize(wxSerialize& ar)
 {
-    swString* pObj = NULL;
+    swString* pObj = nullptr;
     wxUint32 size;
     wxString classname;
 
@@ -93,7 +93,7 @@ void swStringSet::Serialize(wxSerialize& ar)
             ar >> key;
             ar >> classname;
             pObj = wxDynamicCast(::wxCreateDynamicObject(classname), swString);
-            if (pObj != NULL) {
+            if (pObj != nullptr) {
                 pObj->Serialize(ar);
                 m_list[key] = pObj;
             }
@@ -118,7 +118,7 @@ void swStringSet::DeleteAll()
 void swStringSet::DeleteKey(const wxString& key)
 {
 
-    swString* pObj = NULL;
+    swString* pObj = nullptr;
     swStringList::iterator it = m_list.find(key);
     if (it == m_list.end())
         return;
@@ -131,14 +131,14 @@ void swStringSet::DeleteKey(const wxString& key)
 // return string found for key
 wxString swStringSet::GetString(const wxString& key)
 {
-    swString* pObj = NULL;
+    swString* pObj = nullptr;
 
     swStringList::iterator it = m_list.find(key);
     if (it == m_list.end()) {
         return wxEmptyString;
     } else {
         pObj = wxDynamicCast(m_list[key], swString);
-        if (pObj != NULL)
+        if (pObj != nullptr)
             return pObj->m_string;
         else
             return wxEmptyString;
@@ -149,7 +149,7 @@ wxString swStringSet::GetString(const wxString& key)
 // writes string with key
 bool swStringSet::SetString(const wxString& key, const wxString& value)
 {
-    swString* pObj = NULL;
+    swString* pObj = nullptr;
 
     swStringList::iterator it = m_list.find(key);
 
@@ -211,10 +211,10 @@ void swStringDb::DeleteAll()
 //------------------------------------------------------------
 void swStringDb::DeleteKey(const wxString& set, const wxString& key)
 {
-    swStringSet* pSet = NULL;
+    swStringSet* pSet = nullptr;
 
     pSet = m_list[set];
-    if (pSet != NULL)
+    if (pSet != nullptr)
         pSet->DeleteKey(key);
     // if set is empty, remove it
     if (pSet->m_list.size() == 0) {
@@ -227,10 +227,10 @@ void swStringDb::DeleteKey(const wxString& set, const wxString& key)
 //------------------------------------------------------------
 wxString swStringDb::GetString(const wxString& set, const wxString& key)
 {
-    swStringSet* pSet = NULL;
+    swStringSet* pSet = nullptr;
 
     pSet = m_list[set];
-    if (pSet != NULL)
+    if (pSet != nullptr)
         return pSet->GetString(key);
     else
         return wxEmptyString;
@@ -239,10 +239,10 @@ wxString swStringDb::GetString(const wxString& set, const wxString& key)
 //------------------------------------------------------------
 bool swStringDb::SetString(const wxString& set, const wxString& key, const wxString& value)
 {
-    swStringSet* pSet = NULL;
+    swStringSet* pSet = nullptr;
 
     pSet = m_list[set];
-    if (pSet == NULL)
+    if (pSet == nullptr)
         pSet = new swStringSet;
 
     pSet->SetString(key, value);
@@ -331,7 +331,7 @@ void swStringDb::Serialize(wxSerialize& ar)
             ar >> key;
             ar >> classname;
             auto pObj = wxDynamicCast(::wxCreateDynamicObject(classname), swStringSet);
-            if (pObj != NULL) {
+            if (pObj != nullptr) {
                 pObj->Serialize(ar);
                 m_list[key] = pObj;
             }

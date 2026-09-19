@@ -59,8 +59,8 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
     : IPlugin(manager)
-    , topWin(NULL)
-    , m_parentMenu(NULL)
+    , topWin(nullptr)
+    , m_parentMenu(nullptr)
 {
     ToolsTaskManager::Instance(); // Ensure that we allocate the process manager
     m_longName = _("A plugin that allows user to launch external tools from within CodeLite");
@@ -225,7 +225,7 @@ void ExternalToolsPlugin::DoCreatePluginMenu()
         }
 
         wxMenu* menu = new wxMenu();
-        wxMenuItem* item(NULL);
+        wxMenuItem* item(nullptr);
         item = new wxMenuItem(
             menu, XRCID("external_tools_settings"), _("Configure external tools..."), wxEmptyString, wxITEM_NORMAL);
         menu->Append(item);

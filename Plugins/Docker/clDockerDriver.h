@@ -48,7 +48,7 @@ protected:
 public:
     using Ptr_t = std::shared_ptr<clDockerDriver>;
     clDockerDriver(Docker* plugin);
-    virtual ~clDockerDriver();
+    ~clDockerDriver() override;
     void Build(const wxFileName& filepath, const clDockerWorkspaceSettings& settings);
     void Run(const wxFileName& filepath, const clDockerWorkspaceSettings& settings);
 

@@ -37,7 +37,7 @@ public:
     ~SvnDefaultCommandHandler() override = default;
 
 public:
-    virtual void Process(const wxString& output);
+    void Process(const wxString& output) override;
 };
 
 #endif // SVN_DEFAULT_COMMAND_HANDLER_H

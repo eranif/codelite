@@ -98,42 +98,42 @@ protected:
      *
      * @param event
      */
-    virtual void OnChangeTopic(wxCommandEvent& event);
+    void OnChangeTopic(wxCommandEvent& event) override;
 
     /**
      * @brief On item insert into editor.
      *
      * @param event
      */
-    virtual void OnInsert(wxCommandEvent& event);
+    void OnInsert(wxCommandEvent& event) override;
 
     /**
      * @brief On item search.
      *
      * @param event
      */
-    virtual void OnSearch(wxCommandEvent& event);
+    void OnSearch(wxCommandEvent& event) override;
 
     /**
      * @brief On item search cancel.
      *
      * @param event
      */
-    virtual void OnSearchCancel(wxCommandEvent& event);
+    void OnSearchCancel(wxCommandEvent& event) override;
 
     /**
      * @brief On item select.
      *
      * @param event
      */
-    virtual void OnSelect(wxCommandEvent& event);
+    void OnSelect(wxCommandEvent& event) override;
 
     /**
      * @brief On CMake help data reload.
      *
      * @param event
      */
-    virtual void OnReload(wxCommandEvent& event);
+    void OnReload(wxCommandEvent& event) override;
 
     /**
      * @brief Notify about loading start.
@@ -168,7 +168,7 @@ protected:
      *
      * @param event
      */
-    virtual void OnUpdateUi(wxUpdateUIEvent& event);
+    void OnUpdateUi(wxUpdateUIEvent& event) override;
 
     // Public Operations
 public:
@@ -229,7 +229,7 @@ protected:
      *
      * @return Exit code.
      */
-    virtual wxThread::ExitCode Entry();
+    wxThread::ExitCode Entry() override;
 
     /**
      * @brief Loads data from CMake object into UI objects.

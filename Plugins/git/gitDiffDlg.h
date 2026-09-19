@@ -54,22 +54,22 @@ class GitDiffDlg : public GitDiffDlgBase
 
 public:
     GitDiffDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* plugin);
-    ~GitDiffDlg();
+    ~GitDiffDlg() override;
 
 private:
-    void OnChangeFile(wxCommandEvent& e);
+    void OnChangeFile(wxCommandEvent& e) override;
 
     DECLARE_EVENT_TABLE();
 
 protected:
-    virtual void OnOptionsChanged(wxCommandEvent& event);
+    void OnOptionsChanged(wxCommandEvent& event) override;
     wxString PrepareCommand() const;
     void CreateDiff();
     void SetDiff(const wxString& diff);
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
 
-    virtual void OnChoseCommits(wxCommandEvent& event);
+    void OnChoseCommits(wxCommandEvent& event) override;
 };
 
 #endif //__gitDiffDlg__

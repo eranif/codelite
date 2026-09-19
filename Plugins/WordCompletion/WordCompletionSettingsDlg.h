@@ -33,11 +33,11 @@ class WordCompletionSettingsDlg : public WordCompletionSettingsBaseDlg
 
 public:
     WordCompletionSettingsDlg(wxWindow* parent);
-    virtual ~WordCompletionSettingsDlg() = default;
+    ~WordCompletionSettingsDlg() override = default;
 
 protected:
-    virtual void OnOk(wxCommandEvent& event);
-    virtual void OnOkUI(wxUpdateUIEvent& event);
-    virtual void OnValueChanged(wxPropertyGridEvent& event);
+    void OnOk(wxCommandEvent& event) override;
+    void OnOkUI(wxUpdateUIEvent& event) override;
+    void OnValueChanged(wxPropertyGridEvent& event) override;
 };
 #endif // WORDCOMPLETIONSETTINGSDLG_H

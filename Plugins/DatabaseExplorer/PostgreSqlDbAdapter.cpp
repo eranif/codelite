@@ -466,7 +466,7 @@ void PostgreSqlDbAdapter::GetTables(Database* db, bool includeViews)
             // db->getName().c_str()) ); DatabaseResultSet *tabulky =
             // dbLayer->RunQueryWithResults(wxString::Format(wxT("SELECT * FROM `INFORMATION_SCHEMA`.`TABLES` WHERE
             // `TABLE_SCHEMA` = '%s' AND `TABLE_TYPE` = 'BASE TABLE'"), db->getName().c_str()) );
-            DatabaseResultSet* tabulky = NULL;
+            DatabaseResultSet* tabulky = nullptr;
             if (includeViews) {
                 tabulky = dbLayer->RunQueryWithResults(
                     wxString::Format(wxT("SELECT * FROM information_schema.tables WHERE table_schema = 'public' AND "

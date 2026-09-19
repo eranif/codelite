@@ -46,7 +46,7 @@ class GitCommitListDlg : public GitCommitListDlgBase
 {
 public:
     GitCommitListDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* git);
-    virtual ~GitCommitListDlg();
+    ~GitCommitListDlg() override;
 
     void SetCommitList(const wxString& commits);
     void Display();

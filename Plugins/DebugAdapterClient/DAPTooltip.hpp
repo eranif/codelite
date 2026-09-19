@@ -19,7 +19,7 @@ public:
                const wxString& result,
                const wxString& type,
                int variableReference);
-    virtual ~DAPTooltip() = default;
+    ~DAPTooltip() override = default;
     void UpdateChildren(int varId, dap::VariablesResponse* response);
 };
 

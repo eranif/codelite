@@ -19,7 +19,7 @@ protected:
 
 public:
     DAPWatchesView(wxWindow* parent, DebugAdapterClient* plugin);
-    virtual ~DAPWatchesView() = default;
+    ~DAPWatchesView() override = default;
 
     void Clear();
 

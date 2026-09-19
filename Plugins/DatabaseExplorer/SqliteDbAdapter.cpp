@@ -266,7 +266,7 @@ void SQLiteDbAdapter::GetTables(Database* db, bool includeViews)
             return;
         // TODO:SQL:
 
-        DatabaseResultSet* tabulky = NULL;
+        DatabaseResultSet* tabulky = nullptr;
         if (includeViews) {
             tabulky = dbLayer->RunQueryWithResults(wxString::Format(
                 wxT("SELECT * FROM '%s'.sqlite_master WHERE type='table' OR type='view'"), db->GetName().c_str()));

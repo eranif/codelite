@@ -30,6 +30,7 @@ nav:
       - PHP (via plugin): workspaces/php.md
       - Node.js (via plugin): workspaces/nodejs.md
   - Plugins:
+      - Claude Code: plugins/claude_code.md
       - Language Server Protocol: plugins/lsp.md
       - Debug Adapter Client: plugins/dap.md
       - CMake: plugins/cmake.md

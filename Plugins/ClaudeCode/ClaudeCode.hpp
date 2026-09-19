@@ -56,8 +56,6 @@ protected:
     void OnPageClosing(wxNotifyEvent& event);
     void OnShowClaudeCode(wxCommandEvent& event);
     void OnAllPagesClosed(wxCommandEvent& event);
-    void OnPageChanged(wxCommandEvent& event);
-    bool IsClaudeTerminalVisible() const;
 
     ClaudeCodePage* m_claudeCodePage{nullptr};
     std::shared_ptr<std::function<void()>> m_showClaudeCode;

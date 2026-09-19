@@ -241,7 +241,7 @@ void clAuiBook::OnPageClosing(wxAuiNotebookEvent& event)
 
     wxBookCtrlEvent eventClosing(wxEVT_BOOK_PAGE_CLOSING);
     eventClosing.SetEventObject(this);
-    eventClosing.SetSelection(GetSelection());
+    eventClosing.SetSelection(event.GetSelection());
     GetEventHandler()->ProcessEvent(eventClosing);
     if (!eventClosing.IsAllowed()) {
         // Vetoed

@@ -11,14 +11,6 @@
 #include "clSFTPManager.hpp"
 #endif
 
-namespace
-{
-/// While Claude Code waits for the user, the tab label alternates between these two markers.
-const wxString kAttentionMarkerOn = wxT("● ");  // black circle
-const wxString kAttentionMarkerOff = wxT("○ "); // white circle
-constexpr int kBlinkIntervalMs = 500;
-} // namespace
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new ClaudeCode(manager); }
 
@@ -43,14 +35,12 @@ ClaudeCode::ClaudeCode(IManager* manager)
         "claude-code", _("Launch Claude Code for the Current Workspace"), m_showClaudeCode);
     EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &ClaudeCode::OnAllPagesClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &ClaudeCode::OnPageChanged, this);
 }
 
 ClaudeCode::~ClaudeCode()
 {
     EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &ClaudeCode::OnAllPagesClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &ClaudeCode::OnPageChanged, this);
 }
 
 void ClaudeCode::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -155,22 +145,4 @@ void ClaudeCode::OnShowClaudeCode(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     ShowClaudeTerminal();
-}
-
-void ClaudeCode::OnPageChanged(wxCommandEvent& event) { event.Skip(); }
-
-bool ClaudeCode::IsClaudeTerminalVisible() const
-{
-    if (!m_claudeCodePage) {
-        return false;
-    }
-
-    auto book = clGetManager()->GetMainNotebook();
-    int index = book->FindPage(m_claudeCodePage);
-    if (index == wxNOT_FOUND || index != book->GetSelection()) {
-        return false;
-    }
-
-    auto* frame = EventNotifier::Get()->TopFrame();
-    return frame && frame->IsActive();
 }

@@ -282,7 +282,8 @@ void MainBook::OnMouseDClick(wxBookCtrlEvent& e)
 void MainBook::OnPageClosing(wxBookCtrlEvent& e)
 {
     e.Skip();
-    clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(e.GetSelection()));
+    auto win = m_book->GetPage(e.GetSelection());
+    clEditor* editor = dynamic_cast<clEditor*>(win);
     if (editor) {
         if (AskUserToSave(editor)) {
             SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
@@ -301,7 +302,8 @@ void MainBook::OnPageClosing(wxBookCtrlEvent& e)
 
         // Unknown type, ask the plugins - maybe they know about this type
         wxNotifyEvent closeEvent(wxEVT_NOTIFY_PAGE_CLOSING);
-        closeEvent.SetClientData(m_book->GetPage(e.GetSelection()));
+        closeEvent.SetClientData(win);
+        closeEvent.SetEventObject(this);
         EventNotifier::Get()->ProcessEvent(closeEvent);
         if (!closeEvent.IsAllowed()) {
             e.Veto();

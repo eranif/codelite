@@ -230,6 +230,16 @@ void PluginManager::Load()
                 continue;
             }
 
+            // One-time migration: force-enable the ClaudeCode plugin for existing users so it
+            // is loaded automatically after upgrading, without overriding a later manual disable.
+            if (pluginInfo->GetName() == "ClaudeCode") {
+                bool forceLoadClaudeCode = clConfig::Get().Read("plugins/load-claude-code-on-first-time", true);
+                if (forceLoadClaudeCode) {
+                    m_pluginsData.EnablePlugin(pluginInfo->GetName());
+                    clConfig::Get().Write("plugins/load-claude-code-on-first-time", false);
+                }
+            }
+
             // Can we load it?
             if (!m_pluginsData.CanLoad(*pluginInfo)) {
                 clDEBUG() << "Plugin:" << pluginInfo->GetName() << " is not enabled" << endl;

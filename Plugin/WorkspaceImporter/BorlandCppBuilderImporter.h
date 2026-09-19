@@ -34,7 +34,7 @@
 class BorlandCppBuilderImporter : public GenericImporter
 {
 public:
-    virtual bool OpenWorkspace(const wxString& filename, const wxString& defaultCompiler);
+    bool OpenWorkspace(const wxString& filename, const wxString& defaultCompiler) override;
     bool isSupportedWorkspace() override;
     GenericWorkspacePtr PerformImport() override;
 

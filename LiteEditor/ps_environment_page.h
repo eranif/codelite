@@ -42,18 +42,18 @@ class PSEnvironmentPage : public PSEnvironmentBasePage, public IProjectSettingsP
     ProjectSettingsDlg* m_dlg;
 
 protected:
-    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
+    void OnProjectEnabledUI(wxUpdateUIEvent& event) override;
     // Handlers for PSEnvironmentBasePage events.
-    void OnCmdEvtVModified(wxCommandEvent& event);
-    void OnStcEvtVModified(wxStyledTextEvent& event);
+    void OnCmdEvtVModified(wxCommandEvent& event) override;
+    void OnStcEvtVModified(wxStyledTextEvent& event) override;
 
 public:
     /** Constructor */
     PSEnvironmentPage(wxWindow* parent, ProjectSettingsDlg* dlg);
     //// end generated class members
 
-    virtual void Load(BuildConfigPtr buildConf);
-    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+    void Load(BuildConfigPtr buildConf) override;
+    void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) override;
     void Clear() override;
 };
 

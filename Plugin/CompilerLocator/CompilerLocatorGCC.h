@@ -35,7 +35,7 @@ public:
     CompilerLocatorGCC() = default;
     ~CompilerLocatorGCC() override = default;
     bool Locate() override;
-    virtual CompilerPtr Locate(const wxString& folder);
+    CompilerPtr Locate(const wxString& folder) override;
 
 protected:
     void AddTools(CompilerPtr compiler, const wxFileName& gcc);

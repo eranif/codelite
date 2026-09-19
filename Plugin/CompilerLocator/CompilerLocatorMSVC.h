@@ -43,11 +43,12 @@ public:
     CompilerLocatorMSVC();
     ~CompilerLocatorMSVC() override = default;
     bool Locate() override;
-    virtual CompilerPtr Locate(const wxString& folder) { return NULL; }
+    CompilerPtr Locate(const wxString& folder) override { return nullptr; }
 
 protected:
-    void
-    CheckUninstRegKey(const wxString& displayName, const wxString& installFolder, const wxString& displayVersion) override;
+    void CheckUninstRegKey(const wxString& displayName,
+                           const wxString& installFolder,
+                           const wxString& displayVersion) override;
     void AddTools(const wxString& name,
                   const wxString& platform,
                   const wxFileName& installPath,

@@ -47,28 +47,28 @@ class PSCustomBuildPage : public PSCustomBuildBasePage, public IProjectSettingsP
     StringManager m_stringManager;
 
 protected:
-    virtual void OnEnableTableUI(wxUpdateUIEvent& event);
-    virtual void OnTargetActivated(wxDataViewEvent& event);
-    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
+    void OnEnableTableUI(wxUpdateUIEvent& event) override;
+    void OnTargetActivated(wxDataViewEvent& event) override;
+    void OnProjectEnabledUI(wxUpdateUIEvent& event) override;
     // Handlers for PSCustomBuildBasePage events.
-    void OnCustomBuildEnabled(wxCommandEvent& event);
-    void OnCustomBuildEnabledUI(wxUpdateUIEvent& event);
-    void OnCmdEvtVModified(wxCommandEvent& event);
-    void OnBrowseCustomBuildWD(wxCommandEvent& event);
-    void OnNewTarget(wxCommandEvent& event);
-    void OnEditTarget(wxCommandEvent& event);
-    void OnEditTargetUI(wxUpdateUIEvent& event);
-    void OnDeleteTarget(wxCommandEvent& event);
-    void OnDeleteTargetUI(wxUpdateUIEvent& event);
-    void OnCustomBuildCBEnabledUI(wxUpdateUIEvent& event);
+    void OnCustomBuildEnabled(wxCommandEvent& event) override;
+    void OnCustomBuildEnabledUI(wxUpdateUIEvent& event) override;
+    void OnCmdEvtVModified(wxCommandEvent& event) override;
+    void OnBrowseCustomBuildWD(wxCommandEvent& event) override;
+    void OnNewTarget(wxCommandEvent& event) override;
+    void OnEditTarget(wxCommandEvent& event) override;
+    void OnEditTargetUI(wxUpdateUIEvent& event) override;
+    void OnDeleteTarget(wxCommandEvent& event) override;
+    void OnDeleteTargetUI(wxUpdateUIEvent& event) override;
+    void OnCustomBuildCBEnabledUI(wxUpdateUIEvent& event) override;
 
 public:
     /** Constructor */
     PSCustomBuildPage(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg);
     //// end generated class members
 
-    virtual void Load(BuildConfigPtr buildConf);
-    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+    void Load(BuildConfigPtr buildConf) override;
+    void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) override;
     void Clear() override;
 
 protected:

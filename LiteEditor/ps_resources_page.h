@@ -42,18 +42,18 @@ class PSResourcesPage : public PSResourcesPageBase, public IProjectSettingsPage
     ProjectSettingsDlg* m_dlg;
 
 protected:
-    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
-    virtual void OnResourcesEnabledUI(wxUpdateUIEvent& event);
-    virtual void OnCustomEditorClicked(wxCommandEvent& event);
-    virtual void OnValueChanged(wxPropertyGridEvent& event);
+    void OnProjectEnabledUI(wxUpdateUIEvent& event) override;
+    void OnResourcesEnabledUI(wxUpdateUIEvent& event) override;
+    void OnCustomEditorClicked(wxCommandEvent& event) override;
+    void OnValueChanged(wxPropertyGridEvent& event) override;
 
 public:
     /** Constructor */
     PSResourcesPage(wxWindow* parent, ProjectSettingsDlg* dlg);
     //// end generated class members
 
-    virtual void Load(BuildConfigPtr buildConf);
-    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+    void Load(BuildConfigPtr buildConf) override;
+    void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) override;
     void Clear() override;
 };
 

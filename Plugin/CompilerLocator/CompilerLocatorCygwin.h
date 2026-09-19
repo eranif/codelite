@@ -50,7 +50,7 @@ private:
 
 public:
     bool Locate() override;
-    virtual CompilerPtr Locate(const wxString& folder);
+    CompilerPtr Locate(const wxString& folder) override;
 };
 
 #endif // COMPILERLOCATORCYGWIN_H

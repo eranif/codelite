@@ -13,6 +13,6 @@ public:
     ~PHPRefactoringDlg() override = default;
 
 protected:
-    void InitDialog();
+    void InitDialog() override;
 };
 #endif // PHPREFACTORINGDLG_H

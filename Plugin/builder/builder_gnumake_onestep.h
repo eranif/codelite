@@ -56,9 +56,9 @@ public:
             virtual wxString GetPORebuildCommand(const wxString &project, const wxString &confToBuild);
     */
 protected:
-    virtual void CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text);
+    void CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text) override;
     virtual void CreateLinkTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text, wxString& targetName);
-    virtual void CreateFileTargets(ProjectPtr proj, const wxString& confToBuild, wxString& text);
+    void CreateFileTargets(ProjectPtr proj, const wxString& confToBuild, wxString& text) override;
 
 private:
     void CreateTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text);

@@ -42,17 +42,17 @@ class PSDebuggerPage : public PSDebuggerPageBase, public IProjectSettingsPage
     ProjectSettingsDlg* m_dlg;
 
 protected:
-    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
-    virtual void OnItemActivated(wxDataViewEvent& event);
-    virtual void OnAddDebuggerSearchPath(wxCommandEvent& event);
-    virtual void OnDeleteDebuggerSearchPath(wxCommandEvent& event);
-    virtual void OnDeleteDebuggerSearchPathUI(wxUpdateUIEvent& event);
-    virtual void OnBrowseForDebuggerPath(wxCommandEvent& event);
+    void OnProjectEnabledUI(wxUpdateUIEvent& event) override;
+    void OnItemActivated(wxDataViewEvent& event) override;
+    void OnAddDebuggerSearchPath(wxCommandEvent& event) override;
+    void OnDeleteDebuggerSearchPath(wxCommandEvent& event) override;
+    void OnDeleteDebuggerSearchPathUI(wxUpdateUIEvent& event) override;
+    void OnBrowseForDebuggerPath(wxCommandEvent& event) override;
 
     // Handlers for PSDebuggerPageBase events.
-    void OnCmdEvtVModified(wxCommandEvent& event);
-    void OnStcEvtVModified(wxStyledTextEvent& event);
-    void OnRemoteDebugUI(wxUpdateUIEvent& event);
+    void OnCmdEvtVModified(wxCommandEvent& event) override;
+    void OnStcEvtVModified(wxStyledTextEvent& event) override;
+    void OnRemoteDebugUI(wxUpdateUIEvent& event) override;
     void DoAddPath(const wxString& path);
 
 public:
@@ -60,8 +60,8 @@ public:
     PSDebuggerPage(wxWindow* parent, ProjectSettingsDlg* dlg);
     //// end generated class members
 
-    virtual void Load(BuildConfigPtr buildConf);
-    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+    void Load(BuildConfigPtr buildConf) override;
+    void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) override;
     void Clear() override;
 };
 

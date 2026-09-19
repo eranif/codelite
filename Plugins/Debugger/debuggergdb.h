@@ -109,8 +109,8 @@ public:
     ~DbgGdb() override;
 
     //------ IDebugger ---------
-    virtual bool Start(const DebugSessionInfo& si, clEnvList_t* env_list);
-    virtual bool Attach(const DebugSessionInfo& si, clEnvList_t* env_list);
+    bool Start(const DebugSessionInfo& si, clEnvList_t* env_list) override;
+    bool Attach(const DebugSessionInfo& si, clEnvList_t* env_list) override;
     bool Run(const wxString& args, const wxString& comm) override;
     bool Stop() override;
     bool Break(const clDebuggerBreakpoint& bp) override;

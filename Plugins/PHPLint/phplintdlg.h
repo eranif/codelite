@@ -13,6 +13,6 @@ public:
     ~PHPLintDlg() override = default;
 
 protected:
-    void InitDialog();
+    void InitDialog() override;
 };
 #endif // PHPLINTDLG_H

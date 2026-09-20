@@ -75,7 +75,7 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
         topWin->Connect(wxXmlResource::GetXRCID(winid.c_str()),
                         wxEVT_COMMAND_MENU_SELECTED,
                         wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool),
-                        NULL,
+                        nullptr,
                         this);
     }
 
@@ -131,7 +131,7 @@ void ExternalToolsPlugin::UnPlug()
         topWin->Disconnect(wxXmlResource::GetXRCID(winid.c_str()),
                            wxEVT_COMMAND_MENU_SELECTED,
                            wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool),
-                           NULL,
+                           nullptr,
                            this);
     }
     // now that all the event handlers have been disconneted, kill all the running tools

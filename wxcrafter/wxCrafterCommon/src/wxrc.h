@@ -132,10 +132,10 @@ public:
         file.Write(wxT("public:\n"));
 
         if (m_ancestorClassNames.size() == 1) {
-            file.Write(m_className + wxT("(") + *m_ancestorClassNames.begin() + wxT(" *parent=NULL){\n") +
+            file.Write(m_className + wxT("(") + *m_ancestorClassNames.begin() + wxT(" *parent=nullptr){\n") +
                        wxT("  InitWidgetsFromXRC((wxWindow *)parent);\n") wxT(" }\n") wxT("};\n"));
         } else {
-            file.Write(m_className + wxT("(){\n") + wxT("  InitWidgetsFromXRC(NULL);\n") wxT(" }\n") wxT("};\n"));
+            file.Write(m_className + wxT("(){\n") + wxT("  InitWidgetsFromXRC(nullptr);\n") wxT(" }\n") wxT("};\n"));
 
             for (const auto& ancestorClassName : m_ancestorClassNames) {
                 file.Write(m_className + wxT("(") + ancestorClassName + wxT(" *parent){\n") +

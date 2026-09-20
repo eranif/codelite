@@ -63,7 +63,7 @@ LocalsTable::LocalsTable(wxWindow* parent)
     m_LIST_CHILDREN = LIST_LOCAL_CHILDREN;
 
     EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(LocalsTable::OnStackSelected), NULL, this);
+        wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(LocalsTable::OnStackSelected), nullptr, this);
 }
 
 void LocalsTable::UpdateLocals(const LocalVariables& locals) { DoUpdateLocals(locals, DbgTreeItemData::Locals); }
@@ -374,7 +374,7 @@ void LocalsTable::OnRefresh(wxCommandEvent& event)
     }
 }
 
-void LocalsTable::OnRefreshUI(wxUpdateUIEvent& event) { event.Enable(DoGetDebugger() != NULL); }
+void LocalsTable::OnRefreshUI(wxUpdateUIEvent& event) { event.Enable(DoGetDebugger() != nullptr); }
 
 void LocalsTable::OnItemRightClick(wxTreeEvent& event)
 {

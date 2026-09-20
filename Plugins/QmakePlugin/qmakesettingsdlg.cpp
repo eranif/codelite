@@ -104,12 +104,12 @@ void QMakeSettingsDlg::OnRightDown(wxMouseEvent& event)
         menu.Connect(XRCID("rename_qmake"),
                      wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(QMakeSettingsDlg::OnRename),
-                     NULL,
+                     nullptr,
                      this);
         menu.Connect(XRCID("delete_qmake"),
                      wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(QMakeSettingsDlg::OnDelete),
-                     NULL,
+                     nullptr,
                      this);
 
         m_notebook->PopupMenu(&menu);

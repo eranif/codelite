@@ -80,7 +80,7 @@ void BreakptPropertiesDlg::EnterBPData(const clDebuggerBreakpoint& bp)
     // as SetSelection(1) causes a wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING event, which is vetoed
     m_choicebook->Disconnect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING,
                              wxChoicebookEventHandler(BreakptPropertiesDlg::OnPageChanging),
-                             NULL,
+                             nullptr,
                              this);
     if (its_a_breakpt) {
         m_choicebook->SetSelection(0);
@@ -89,7 +89,7 @@ void BreakptPropertiesDlg::EnterBPData(const clDebuggerBreakpoint& bp)
     }
     m_choicebook->Connect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING,
                           wxChoicebookEventHandler(BreakptPropertiesDlg::OnPageChanging),
-                          NULL,
+                          nullptr,
                           this);
 
     m_checkDisable->SetValue(!bp.is_enabled);

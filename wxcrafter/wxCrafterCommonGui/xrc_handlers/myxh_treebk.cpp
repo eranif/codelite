@@ -30,7 +30,7 @@
 
 MYwxTreebookXmlHandler::MYwxTreebookXmlHandler()
     : wxXmlResourceHandler()
-    , m_tbk(NULL)
+    , m_tbk(nullptr)
     , m_isInside(false)
 {
     XRC_ADD_STYLE(wxBK_DEFAULT);
@@ -90,7 +90,7 @@ wxObject* MYwxTreebookXmlHandler::DoCreateResource()
 
     //    else ( m_class == wxT("treebookpage") )
     wxXmlNode* n = GetParamNode(wxT("object"));
-    wxWindow* wnd = NULL;
+    wxWindow* wnd = nullptr;
 
     if (!n)
         n = GetParamNode(wxT("object_ref"));
@@ -98,7 +98,7 @@ wxObject* MYwxTreebookXmlHandler::DoCreateResource()
     if (n) {
         bool old_ins = m_isInside;
         m_isInside = false;
-        wxObject* item = CreateResFromNode(n, m_tbk, NULL);
+        wxObject* item = CreateResFromNode(n, m_tbk, nullptr);
         m_isInside = old_ins;
         wnd = wxDynamicCast(item, wxWindow);
     }
@@ -111,7 +111,7 @@ wxObject* MYwxTreebookXmlHandler::DoCreateResource()
         if (HasParam(wxT("bitmap"))) {
             wxBitmap bmp = GetBitmap(wxT("bitmap"), wxART_OTHER);
             wxImageList* imgList = m_tbk->GetImageList();
-            if (imgList == NULL) {
+            if (imgList == nullptr) {
                 imgList = new wxImageList(bmp.GetWidth(), bmp.GetHeight());
                 m_tbk->AssignImageList(imgList);
             }

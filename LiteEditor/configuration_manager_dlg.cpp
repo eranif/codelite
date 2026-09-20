@@ -195,7 +195,7 @@ void ConfigurationManagerDlg::OnButtonNew(wxCommandEvent& event)
                 return;
             }
 
-            WorkspaceConfigurationPtr conf(new WorkspaceConfiguration(NULL));
+            WorkspaceConfigurationPtr conf(new WorkspaceConfiguration(nullptr));
             conf->SetName(value);
             conf->SetConfigMappingList(GetCurrentSettings());
             matrix->SetConfiguration(conf);

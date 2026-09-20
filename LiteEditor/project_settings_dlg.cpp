@@ -78,7 +78,7 @@ ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent,
     SetName("ProjectSettingsDlg");
 
     EventNotifier::Get()->Connect(
-        wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
+        wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &ProjectSettingsDlg::OnWorkspaceClosed, this);
 
     // No effects plz
@@ -114,7 +114,7 @@ ProjectSettingsDlg::~ProjectSettingsDlg()
     m_workspaceTab->ProjectSettingsDlgClosed();
 
     EventNotifier::Get()->Disconnect(
-        wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
+        wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &ProjectSettingsDlg::OnWorkspaceClosed, this);
     PluginManager::Get()->UnHookProjectSettingsTab(m_treebook, m_projectName, wxEmptyString /* all tabs */);
 }
@@ -196,7 +196,7 @@ void ProjectSettingsDlg::LoadValues(const wxString& configName)
     for (size_t i = 0; i < pageCount; i++) {
         wxWindow* page = m_treebook->GetPage(i);
         if (!page)
-            continue; // NULL page ...
+            continue; // nullptr page ...
         IProjectSettingsPage* p = dynamic_cast<IProjectSettingsPage*>(page);
         if (p) {
             GlobalSettingsPanel* globalPage = dynamic_cast<GlobalSettingsPanel*>(page);
@@ -544,7 +544,7 @@ bool IProjectSettingsPage::PopupAddOptionCheckDlg(wxString& v,
                                                   const wxString& title,
                                                   const Compiler::CmpCmdLineOptions& options)
 {
-    AddOptionCheckDlg dlg(NULL, title, options, v);
+    AddOptionCheckDlg dlg(nullptr, title, options, v);
     if (dlg.ShowModal() == wxID_OK) {
         v = dlg.GetValue();
         return true;

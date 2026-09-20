@@ -98,5 +98,5 @@ MenuEventHandlerPtr MenuManager::GetHandler(int id)
     HandlesrHash::iterator iter = m_handlers.find(id);
     if (iter != m_handlers.end())
         return iter->second;
-    return NULL;
+    return nullptr;
 }

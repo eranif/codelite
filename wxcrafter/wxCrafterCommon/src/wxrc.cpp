@@ -108,7 +108,7 @@ static bool NodeContainsFilename(wxXmlNode* node)
 
     // wxBitmapButton:
     wxXmlNode* parent = node->GetParent();
-    if (parent != NULL && parent->GetAttribute(wxT("class"), wxT("")) == wxT("wxBitmapButton") &&
+    if (parent != nullptr && parent->GetAttribute(wxT("class"), wxT("")) == wxT("wxBitmapButton") &&
         (name == wxT("focus") || name == wxT("disabled") || name == wxT("hover") || name == wxT("selected")))
         return true;
 
@@ -120,7 +120,7 @@ static bool NodeContainsFilename(wxXmlNode* node)
     }
 
     // URLs in wxHtmlWindow:
-    if (name == wxT("url") && parent != NULL && parent->GetAttribute(wxT("class"), wxT("")) == wxT("wxHtmlWindow")) {
+    if (name == wxT("url") && parent != nullptr && parent->GetAttribute(wxT("class"), wxT("")) == wxT("wxHtmlWindow")) {
         // FIXME: this is wrong for e.g. http:// URLs
         return true;
     }
@@ -132,7 +132,7 @@ static bool NodeContainsFilename(wxXmlNode* node)
 clStatus wxcXmlResourceCmp::FindFilesInXML(wxXmlNode* node, wxArrayString& flist, const wxString& inputPath)
 {
     // Is 'node' XML node element?
-    if (node == NULL)
+    if (node == nullptr)
         return {};
     if (node->GetType() != wxXML_ELEMENT_NODE)
         return {};
@@ -390,7 +390,7 @@ ExtractedStrings wxcXmlResourceCmp::FindStrings(const wxString& filename, wxXmlN
     ExtractedStrings arr;
 
     wxXmlNode* n = node;
-    if (n == NULL)
+    if (n == nullptr)
         return arr;
     n = n->GetChildren();
 

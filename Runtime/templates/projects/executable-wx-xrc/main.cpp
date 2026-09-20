@@ -38,7 +38,7 @@ bool MainApp::OnInit()
     if (!wxXmlResource::Get()->Load("./gui.xrc"))
         return false;
 
-    SetTopWindow(new MainFrame(NULL));
+    SetTopWindow(new MainFrame(nullptr));
     GetTopWindow()->Show();
 
     // true == enter the main loop

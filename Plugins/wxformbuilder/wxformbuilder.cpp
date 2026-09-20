@@ -69,30 +69,30 @@ wxFormBuilder::wxFormBuilder(IManager* manager)
     m_topWin->Connect(XRCID("wxfb_new_dialog"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxFormBuilder::OnNewDialog),
-                      NULL,
+                      nullptr,
                       this);
     m_topWin->Connect(XRCID("wxfb_new_dialog_with_buttons"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxFormBuilder::OnNewDialogWithButtons),
-                      NULL,
+                      nullptr,
                       this);
     m_topWin->Connect(XRCID("wxfb_new_frame"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxFormBuilder::OnNewFrame),
-                      NULL,
+                      nullptr,
                       this);
     m_topWin->Connect(XRCID("wxfb_new_panel"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxFormBuilder::OnNewPanel),
-                      NULL,
+                      nullptr,
                       this);
     m_topWin->Connect(XRCID("wxfb_open"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxFormBuilder::OpenWithWxFb),
-                      NULL,
+                      nullptr,
                       this);
     EventNotifier::Get()->Connect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxFormBuilder::OnOpenFile), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxFormBuilder::OnOpenFile), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &wxFormBuilder::OnShowFileContextMenu, this);
 }
 
@@ -111,7 +111,7 @@ void wxFormBuilder::CreatePluginMenu(wxMenu* pluginsMenu)
     m_topWin->Connect(XRCID("wxfb_settings"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxFormBuilder::OnSettings),
-                      NULL,
+                      nullptr,
                       this);
 }
 

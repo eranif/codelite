@@ -173,7 +173,7 @@ wxXmlNode* WorkspaceConfiguration::ToXml() const
     node->AddChild(env);
 
     for (const auto& item : m_mappingList) {
-        wxXmlNode* projNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
+        wxXmlNode* projNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Project"));
         projNode->AddAttribute(wxT("Name"), item.m_project);
         projNode->AddAttribute(wxT("ConfigName"), item.m_name);
         node->AddChild(projNode);

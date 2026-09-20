@@ -110,7 +110,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     wxWindow* editorBook = m_mgr->GetEditorPaneNotebook();
 
     EventNotifier::Get()->Connect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
     m_dbViewerPanel = new DbViewerPanel(m_mgr->BookGet(PaneId::SIDE_BAR), editorBook, m_mgr);
@@ -140,7 +140,7 @@ void DatabaseExplorer::CreatePluginMenu(wxMenu* pluginsMenu)
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("Database Explorer"), menu);
     m_mgr->GetTheApp()->Connect(
-        XRCID("dbe_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DatabaseExplorer::OnAbout), NULL, this);
+        XRCID("dbe_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DatabaseExplorer::OnAbout), nullptr, this);
 }
 
 void DatabaseExplorer::HookPopupMenu(wxMenu* menu, MenuType type)
@@ -158,7 +158,7 @@ void DatabaseExplorer::OnExecuteSQL(wxCommandEvent& event)
 void DatabaseExplorer::UnPlug()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
     if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_dbViewerPanel)) {
         // failed to delete, delete it manually

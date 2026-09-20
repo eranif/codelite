@@ -44,7 +44,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(MyWxRibbonXmlHandler, wxXmlResourceHandler);
 
 MyWxRibbonXmlHandler::MyWxRibbonXmlHandler()
     : wxXmlResourceHandler()
-    , m_isInside(NULL)
+    , m_isInside(nullptr)
 {
     XRC_ADD_STYLE(wxRIBBON_BAR_SHOW_PAGE_LABELS);
     XRC_ADD_STYLE(wxRIBBON_BAR_SHOW_PAGE_ICONS);
@@ -167,7 +167,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_tool()
 
     if (GetBool("separator")) {
         buttonBar->AddSeparator();
-        return NULL;
+        return nullptr;
     }
 
     // FIXME: The code below uses wxXmlNode directly but this can't be done
@@ -176,7 +176,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_tool()
     //        would be to virtualize GetChildren() and GetNext() methods via
     //        wxXmlResourceHandler, just as we already do for many others.
     // check whether we have dropdown tag inside
-    wxMenu* menu = NULL; // menu for drop down items
+    wxMenu* menu = nullptr; // menu for drop down items
     wxXmlNode* const nodeDropdown = GetParamNode("dropdown");
     if (nodeDropdown) {
         if (kind == wxRIBBON_BUTTON_NORMAL)
@@ -187,7 +187,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_tool()
         // menus)
         wxXmlNode* const nodeMenu = nodeDropdown->GetChildren();
         if (nodeMenu) {
-            wxObject* res = CreateResFromNode(nodeMenu, NULL);
+            wxObject* res = CreateResFromNode(nodeMenu, nullptr);
             menu = wxDynamicCast(res, wxMenu);
             if (!menu) {
                 ReportError(nodeMenu, "drop-down tool contents can only be a wxMenu");
@@ -206,7 +206,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_tool()
     if (GetBool(wxT("disabled")))
         buttonBar->EnableTool(GetID(), false);
 
-    return NULL; // nothing to return
+    return nullptr; // nothing to return
 }
 
 wxObject* MyWxRibbonXmlHandler::Handle_button()
@@ -224,7 +224,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_button()
     //        would be to virtualize GetChildren() and GetNext() methods via
     //        wxXmlResourceHandler, just as we already do for many others.
     // check whether we have dropdown tag inside
-    wxMenu* menu = NULL; // menu for drop down items
+    wxMenu* menu = nullptr; // menu for drop down items
     wxXmlNode* const nodeDropdown = GetParamNode("dropdown");
     if (nodeDropdown) {
         if (kind == wxRIBBON_BUTTON_NORMAL)
@@ -235,7 +235,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_button()
         // menus)
         wxXmlNode* const nodeMenu = nodeDropdown->GetChildren();
         if (nodeMenu) {
-            wxObject* res = CreateResFromNode(nodeMenu, NULL);
+            wxObject* res = CreateResFromNode(nodeMenu, nullptr);
             menu = wxDynamicCast(res, wxMenu);
             if (!menu) {
                 ReportError(nodeMenu, "drop-down tool contents can only be a wxMenu");
@@ -261,7 +261,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_button()
     if (GetBool(wxT("disabled")))
         buttonBar->EnableButton(GetID(), false);
 
-    return NULL; // nothing to return
+    return nullptr; // nothing to return
 }
 
 wxObject* MyWxRibbonXmlHandler::Handle_control()
@@ -328,11 +328,11 @@ wxObject* MyWxRibbonXmlHandler::Handle_gallery()
 wxObject* MyWxRibbonXmlHandler::Handle_galleryitem()
 {
     wxRibbonGallery* gallery = wxStaticCast(m_parent, wxRibbonGallery);
-    wxCHECK(gallery, NULL);
+    wxCHECK(gallery, nullptr);
 
     gallery->Append(GetBitmap(), GetID());
 
-    return NULL; // nothing to return
+    return nullptr; // nothing to return
 }
 
 wxObject* MyWxRibbonXmlHandler::Handle_panel()

@@ -21,7 +21,7 @@
 PHPEditorContextMenu* PHPEditorContextMenu::ms_instance = 0;
 
 PHPEditorContextMenu::PHPEditorContextMenu()
-    : m_manager(NULL)
+    : m_manager(nullptr)
 {
 }
 
@@ -34,17 +34,17 @@ PHPEditorContextMenu::~PHPEditorContextMenu()
                          wxID_FIND_REFERENCES,
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(PHPEditorContextMenu::OnPopupClicked),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(wxID_ADD_DOXY_COMMENT,
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(PHPEditorContextMenu::OnInsertDoxyComment),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(wxID_GENERATE_GETTERS_SETTERS,
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(PHPEditorContextMenu::OnGenerateSettersGetters),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Unbind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentLine, this, XRCID("comment_line"));
     wxTheApp->Unbind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentSelection, this, XRCID("comment_selection"));
@@ -60,17 +60,17 @@ void PHPEditorContextMenu::ConnectEvents()
                       wxID_FIND_REFERENCES,
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(PHPEditorContextMenu::OnPopupClicked),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(wxID_ADD_DOXY_COMMENT,
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(PHPEditorContextMenu::OnInsertDoxyComment),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(wxID_GENERATE_GETTERS_SETTERS,
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(PHPEditorContextMenu::OnGenerateSettersGetters),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Bind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentLine, this, XRCID("comment_line"));
     wxTheApp->Bind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentSelection, this, XRCID("comment_selection"));
@@ -345,7 +345,7 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
         // determine the scope name at the current position
         // Parse until the current position
         wxString text = editor->GetTextRange(0, editor->GetCurrentPosition());
-        PHPSourceFile sourceFile(text, NULL);
+        PHPSourceFile sourceFile(text, nullptr);
         sourceFile.SetParseFunctionBody(true);
         sourceFile.SetFilename(editor->GetFileName());
         sourceFile.Parse();

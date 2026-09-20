@@ -465,7 +465,7 @@ TagEntryPtr TagEntry::ReplaceSimpleMacro()
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool TagEntry::IsTemplateFunction() const

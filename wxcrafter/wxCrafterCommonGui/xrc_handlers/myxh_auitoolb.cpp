@@ -25,7 +25,7 @@
 MyWxAuiToolBarXmlHandler::MyWxAuiToolBarXmlHandler()
     : wxXmlResourceHandler()
     , m_isInside(false)
-    , m_toolbar(NULL)
+    , m_toolbar(nullptr)
 {
     XRC_ADD_STYLE(wxAUI_TB_TEXT);
     XRC_ADD_STYLE(wxAUI_TB_NO_TOOLTIPS);
@@ -44,7 +44,7 @@ wxObject* MyWxAuiToolBarXmlHandler::DoCreateResource()
 {
     if (m_class == wxT("tool")) {
         if (!m_toolbar) {
-            return NULL;
+            return nullptr;
         }
 
         wxItemKind kind = wxITEM_NORMAL;
@@ -70,14 +70,14 @@ wxObject* MyWxAuiToolBarXmlHandler::DoCreateResource()
 
         wxAuiToolBarItem* tool = m_toolbar->FindTool(GetID());
         wxXmlNode* const nodeDropdown = GetParamNode("dropdown"); // The new official wx xh_auitoolb.cpp uses "dropdown"
-        if (tool && (GetBool("hasdropdown") || (nodeDropdown != NULL))) {
+        if (tool && (GetBool("hasdropdown") || (nodeDropdown != nullptr))) {
             // From the official wx3.1 handler
             // also check for the menu specified inside dropdown (it is
             // optional and may be absent for e.g. dynamically-created menus)
-            wxMenu* menu = NULL; // menu for drop down items
+            wxMenu* menu = nullptr; // menu for drop down items
             wxXmlNode* const nodeMenu = nodeDropdown->GetChildren();
             if (nodeMenu) {
-                wxObject* res = CreateResFromNode(nodeMenu, NULL);
+                wxObject* res = CreateResFromNode(nodeMenu, nullptr);
                 menu = wxDynamicCast(res, wxMenu);
             }
             tool->SetHasDropDown(true);
@@ -85,7 +85,7 @@ wxObject* MyWxAuiToolBarXmlHandler::DoCreateResource()
                 tool->SetUserData(m_menuHandler.RegisterMenu(m_toolbar, GetID(), menu));
             }
         }
-        return m_toolbar; // must return non-NULL
+        return m_toolbar; // must return non-nullptr
     }
 
     else if (m_class == wxS("label")) {
@@ -140,7 +140,7 @@ wxObject* MyWxAuiToolBarXmlHandler::DoCreateResource()
         if (!children_node)
             children_node = GetParamNode(wxT("object_ref"));
 
-        if (children_node == NULL)
+        if (children_node == nullptr)
             return toolbar;
 
         m_isInside = true;
@@ -151,18 +151,18 @@ wxObject* MyWxAuiToolBarXmlHandler::DoCreateResource()
         while (n) {
             if ((n->GetType() == wxXML_ELEMENT_NODE) &&
                 (n->GetName() == wxT("object") || n->GetName() == wxT("object_ref"))) {
-                wxObject* created = CreateResFromNode(n, toolbar, NULL);
+                wxObject* created = CreateResFromNode(n, toolbar, nullptr);
                 wxControl* control = wxDynamicCast(created, wxControl);
                 if (!IsOfClass(n, wxT("tool")) && !IsOfClass(n, wxT("label")) && !IsOfClass(n, wxT("separator")) &&
                     !IsOfClass(n, wxT("space")) && // == AddStretchSpacer()
-                    control != NULL)
+                    control != nullptr)
                     toolbar->AddControl(control);
             }
             n = n->GetNext();
         }
 
         m_isInside = false;
-        m_toolbar = NULL;
+        m_toolbar = nullptr;
 
         toolbar->Realize();
         return toolbar;
@@ -181,11 +181,11 @@ void MyWxAuiToolBarXmlHandler::MenuHandler::OnDropDown(wxAuiToolBarEvent& event)
 {
     if (event.IsDropDownClicked()) {
         wxAuiToolBar* toobar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
-        if (toobar != NULL) {
+        if (toobar != nullptr) {
             wxAuiToolBarItem* item = toobar->FindTool(event.GetId());
-            if (item != NULL) {
+            if (item != nullptr) {
                 wxMenu* const menu = m_menus[item->GetUserData()];
-                if (menu != NULL) {
+                if (menu != nullptr) {
                     wxPoint pt = event.GetItemRect().GetBottomLeft();
                     pt.y++;
                     toobar->PopupMenu(menu, pt);

@@ -470,7 +470,7 @@ void* phpLexerNew(const wxFileName& filename, size_t options )
     
     FILE* fp = ::fopen(fn.GetFullPath().mb_str().data(), "rb");
     if(!fp) {
-        return NULL;
+        return nullptr;
     }
     yyscan_t scanner;
     phplex_init(&scanner);
@@ -501,7 +501,7 @@ void phpLexerDestroy(void** scanner)
     php_delete_buffer(YY_CURRENT_BUFFER, *scanner);
 
     phplex_destroy(*scanner);
-    *scanner = NULL;
+    *scanner = nullptr;
 }
 
 void phpLexerUnget(void* scanner)

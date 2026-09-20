@@ -46,19 +46,19 @@ private:
 
 public:
     UnixProcessImpl(wxEvtHandler* parent);
-    virtual ~UnixProcessImpl();
+    ~UnixProcessImpl() override;
 
     static IProcess* Execute(wxEvtHandler* parent,
                              const wxArrayString& args,
                              size_t flags,
                              const wxString& workingDirectory = wxEmptyString,
-                             IProcessCallback* cb = NULL);
+                             IProcessCallback* cb = nullptr);
 
     static IProcess* Execute(wxEvtHandler* parent,
                              const wxString& cmd,
                              size_t flags,
                              const wxString& workingDirectory = wxEmptyString,
-                             IProcessCallback* cb = NULL);
+                             IProcessCallback* cb = nullptr);
 
     void SetReadHandle(int readHandle) { this->m_readHandle = readHandle; }
     void SetWriteHandler(int writeHandler) { this->m_writeHandle = writeHandler; }

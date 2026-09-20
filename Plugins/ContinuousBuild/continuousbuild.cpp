@@ -64,14 +64,14 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
 
     // add our page to the output pane notebook
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_view, CONT_BUILD);
-    m_tabHelper.reset(new clTabTogglerHelper(CONT_BUILD, m_view, "", NULL));
+    m_tabHelper.reset(new clTabTogglerHelper(CONT_BUILD, m_view, "", nullptr));
 
     m_topWin = m_mgr->GetTheApp();
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
+        wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_FILE_SAVE_BY_BUILD_END, wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
+        wxEVT_FILE_SAVE_BY_BUILD_END, wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), nullptr, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &ContinuousBuild::OnBuildProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &ContinuousBuild::OnBuildProcessEnded, this);
 }
@@ -98,11 +98,11 @@ void ContinuousBuild::UnPlug()
     }
     m_view = nullptr;
 
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
+        wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_FILE_SAVE_BY_BUILD_END, wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
+        wxEVT_FILE_SAVE_BY_BUILD_END, wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), nullptr, this);
 }
 
 void ContinuousBuild::OnFileSaved(clCommandEvent& e)
@@ -204,7 +204,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
     event.SetToolchain(bldConf->GetCompilerType());
     EventNotifier::Get()->AddPendingEvent(event);
 
-    EnvSetter env(NULL, NULL, projectName, bldConf->GetName());
+    EnvSetter env(nullptr, nullptr, projectName, bldConf->GetName());
     clDEBUG() << "Continuous build:" << cmd << endl;
     if (!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this))
         return;

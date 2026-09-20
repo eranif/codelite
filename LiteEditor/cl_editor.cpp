@@ -135,8 +135,8 @@ bool clEditor::m_ccInitialized = false;
 #define wxSTC_MARK_BOOKMARK wxSTC_MARK_LEFTRECT
 #endif
 
-wxPrintData* g_printData = NULL;
-wxPageSetupDialogData* g_pageSetupData = NULL;
+wxPrintData* g_printData = nullptr;
+wxPageSetupDialogData* g_pageSetupData = nullptr;
 
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
@@ -512,7 +512,7 @@ clEditor::clEditor(wxWindow* parent)
     m_timerHighlightMarkers = new wxTimer(this);
     m_timerHighlightMarkers->Start(100, true);
 
-    Connect(m_timerHighlightMarkers->GetId(), wxEVT_TIMER, wxTimerEventHandler(clEditor::OnTimer), NULL, this);
+    Connect(m_timerHighlightMarkers->GetId(), wxEVT_TIMER, wxTimerEventHandler(clEditor::OnTimer), nullptr, this);
 
     ms_bookmarkShapes[wxT("Small Rectangle")] = wxSTC_MARK_SMALLRECT;
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
@@ -522,7 +522,7 @@ clEditor::clEditor(wxWindow* parent)
 
     SetSyntaxHighlight();
     CmdKeyClear(wxT('D'), wxSTC_KEYMOD_CTRL); // clear Ctrl+D because we use it for something else
-    Connect(wxEVT_STC_DWELLSTART, wxStyledTextEventHandler(clEditor::OnDwellStart), NULL, this);
+    Connect(wxEVT_STC_DWELLSTART, wxStyledTextEventHandler(clEditor::OnDwellStart), nullptr, this);
 
     // Initialise the breakpt-marker array
     FillBPtoMarkerArray();
@@ -541,11 +541,11 @@ clEditor::clEditor(wxWindow* parent)
 
     m_deltas = new EditorDeltasHolder;
     EventNotifier::Get()->Connect(
-        wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(clEditor::OnHighlightWordChecked), NULL, this);
+        wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(clEditor::OnHighlightWordChecked), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(clEditor::OnFileFormatStarting), NULL, this);
+        wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(clEditor::OnFileFormatStarting), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(clEditor::OnFileFormatDone), NULL, this);
+        wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(clEditor::OnFileFormatDone), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clEditor::OnColoursAndFontsUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditor::OnActiveEditorChanged, this);
     Bind(wxEVT_COMMAND_MENU_SELECTED,
@@ -573,11 +573,11 @@ clEditor::~clEditor()
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
 
     EventNotifier::Get()->Disconnect(
-        wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(clEditor::OnHighlightWordChecked), NULL, this);
+        wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(clEditor::OnHighlightWordChecked), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(clEditor::OnFileFormatStarting), NULL, this);
+        wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(clEditor::OnFileFormatStarting), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(clEditor::OnFileFormatDone), NULL, this);
+        wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(clEditor::OnFileFormatDone), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clEditor::OnColoursAndFontsUpdated, this);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,
            wxCommandEventHandler(clEditor::OnChangeActiveBookmarkType),
@@ -586,7 +586,7 @@ clEditor::~clEditor()
            XRCID("BookmarkTypes[end]"));
 
     // free the timer
-    Disconnect(m_timerHighlightMarkers->GetId(), wxEVT_TIMER, wxTimerEventHandler(clEditor::OnTimer), NULL, this);
+    Disconnect(m_timerHighlightMarkers->GetId(), wxEVT_TIMER, wxTimerEventHandler(clEditor::OnTimer), nullptr, this);
     m_timerHighlightMarkers->Stop();
     wxDELETE(m_timerHighlightMarkers);
 
@@ -1615,8 +1615,8 @@ void clEditor::OnMarginClick(wxStyledTextEvent& event)
                 BreakptMgr* bpm = ManagerST::Get()->GetBreakpointsMgr();
                 bpm->DragBreakpoint(this, nLine, bm);
 
-                Connect(wxEVT_MOTION, wxMouseEventHandler(myDragImage::OnMotion), NULL, bpm->GetDragImage());
-                Connect(wxEVT_LEFT_UP, wxMouseEventHandler(myDragImage::OnEndDrag), NULL, bpm->GetDragImage());
+                Connect(wxEVT_MOTION, wxMouseEventHandler(myDragImage::OnMotion), nullptr, bpm->GetDragImage());
+                Connect(wxEVT_LEFT_UP, wxMouseEventHandler(myDragImage::OnEndDrag), nullptr, bpm->GetDragImage());
 
             } else {
                 GotoPos(event.GetPosition());
@@ -3944,7 +3944,7 @@ void clEditor::AddDebuggerContextMenu(wxMenu* menu)
     item = new wxMenuItem(menu, wxNewId(), menuItemText);
     menu->Prepend(item);
     menu->Connect(
-        item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clEditor::OnDbgAddWatch), NULL, this);
+        item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clEditor::OnDbgAddWatch), nullptr, this);
     m_dynItems.push_back(item);
 
     menuItemText.Clear();
@@ -4889,7 +4889,7 @@ wxMenu* clEditor::DoCreateDebuggerWatchMenu(const wxString& word)
     DebuggerCmdDataVec cmds = preDefTypes.GetCmds();
 
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     wxString menuItemText;
 
     for (DebuggerCmdData cmd : cmds) {
@@ -4899,7 +4899,7 @@ wxMenu* clEditor::DoCreateDebuggerWatchMenu(const wxString& word)
         item = new wxMenuItem(menu, wxNewId(), menuItemText);
         menu->Prepend(item);
         Connect(
-            item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clEditor::OnDbgCustomWatch), NULL, this);
+            item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clEditor::OnDbgCustomWatch), nullptr, this);
         m_customCmds[item->GetId()] = cmd.GetCommand();
     }
 
@@ -5710,7 +5710,7 @@ void clEditor::CenterLineIfNeeded(int line, bool force)
 void clEditor::Print()
 {
 #if wxUSE_PRINTING_ARCHITECTURE
-    if (g_printData == NULL) {
+    if (g_printData == nullptr) {
         g_printData = new wxPrintData();
         wxPrintPaperType* paper = wxThePrintPaperDatabase->FindPaperType(wxPAPER_A4);
         g_printData->SetPaperId(paper->GetId());
@@ -5747,7 +5747,7 @@ void clEditor::Print()
 void clEditor::PageSetup()
 {
 #if wxUSE_PRINTING_ARCHITECTURE
-    if (g_printData == NULL) {
+    if (g_printData == nullptr) {
         g_printData = new wxPrintData();
         wxPrintPaperType* paper = wxThePrintPaperDatabase->FindPaperType(wxPAPER_A4);
         g_printData->SetPaperId(paper->GetId());

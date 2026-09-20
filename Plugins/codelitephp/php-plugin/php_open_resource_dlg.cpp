@@ -96,7 +96,7 @@ void OpenResourceDlg::DoInitialize()
 
     SetName("OpenResourceDlg");
     WindowAttrManager::Load(this);
-    SetSelectedItem(NULL);
+    SetSelectedItem(nullptr);
 }
 
 OpenResourceDlg::~OpenResourceDlg()

@@ -368,14 +368,14 @@ ProjectPtr clCxxWorkspace::FindProjectByName(const wxString& projName, wxString&
 {
     if (!m_doc.IsOk()) {
         errMsg = wxT("No workspace open");
-        return NULL;
+        return nullptr;
     }
 
     ProjectMap_t::const_iterator iter = m_projects.find(projName);
     if (iter == m_projects.end()) {
         errMsg = wxT("Invalid project name '");
         errMsg << projName << wxT("'");
-        return NULL;
+        return nullptr;
     }
     return iter->second;
 }
@@ -445,7 +445,7 @@ bool clCxxWorkspace::AddProject(const wxString& path, wxString& errMsg)
 ProjectPtr clCxxWorkspace::DoAddProject(ProjectPtr proj)
 {
     if (!proj) {
-        return NULL;
+        return nullptr;
     }
 
     m_projects.insert(std::make_pair(proj->GetName(), proj));
@@ -467,7 +467,7 @@ ProjectPtr clCxxWorkspace::DoAddProject(const wxString& path, const wxString& pr
     if (!proj->Load(projectFile.GetFullPath())) {
         errMsg = wxT("Corrupted project file '");
         errMsg << projectFile.GetFullPath() << wxT("'");
-        return NULL;
+        return nullptr;
     }
 
     // Add an entry to the projects map
@@ -834,7 +834,7 @@ BuildConfigPtr clCxxWorkspace::GetProjBuildConf(const wxString& projectName, con
 {
     BuildMatrixPtr matrix = GetBuildMatrix();
     if (!matrix) {
-        return NULL;
+        return nullptr;
     }
 
     wxString projConf(confName);
@@ -853,7 +853,7 @@ BuildConfigPtr clCxxWorkspace::GetProjBuildConf(const wxString& projectName, con
             return settings->GetBuildConfiguration(projConf, true);
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void clCxxWorkspace::ReloadWorkspace()
@@ -1106,7 +1106,7 @@ ProjectPtr clCxxWorkspace::GetProject(const wxString& name) const
 {
     clCxxWorkspace::ProjectMap_t::const_iterator iter = m_projects.find(name);
     if (iter == m_projects.end()) {
-        return NULL;
+        return nullptr;
     }
     return iter->second;
 }
@@ -1246,7 +1246,7 @@ void clCxxWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 WorkspaceConfigurationPtr clCxxWorkspace::GetSelectedConfig() const
 {
     if (!GetBuildMatrix())
-        return NULL;
+        return nullptr;
     wxString buildConf = GetBuildMatrix()->GetSelectedConfigurationName();
     return GetBuildMatrix()->GetConfigurationByName(buildConf);
 }

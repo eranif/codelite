@@ -14,13 +14,13 @@ END_STORE_TABLE()
 		istream.OpenFromQuery( *c, wxdba::SQL(wxT("SELECT * FROM %%classTableName%% WHERE %%pkName%% = (:d)")) << val );
 		if( !istream.GetNext(c) ) {
 			delete c;
-			c = NULL;
+			c = nullptr;
 		}
 		istream.Destroy();
 		
 		return c;
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -120,7 +120,7 @@ int %%classUtilName%%::Add(wxdba::SQLArchive &ar
 			%%classUtilsAddParametersWithoutPK%%			
 			)
 {
-	if( ar.IsOpen() && (ar.GetIdFetcher() != NULL) ) {
+	if( ar.IsOpen() && (ar.GetIdFetcher() != nullptr) ) {
 		%%classItemName%% c;
 		%%classUtilsAddSetDebeaParams%%
 		
@@ -142,7 +142,7 @@ int %%classUtilName%%::Edit(wxdba::SQLArchive &ar
 			%%classUtilsAddParameters%%			
 			)
 {
-	if( ar.IsOpen() && (ar.GetIdFetcher() != NULL) ) {
+	if( ar.IsOpen() && (ar.GetIdFetcher() != nullptr) ) {
 		%%classItemName%% *c = %%classItemName%%::GetBy%%pkName%%(ar, %%pkName%%);
 		if( c ) {
 			%%classUtilsEditDebeaStatement%%

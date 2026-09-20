@@ -18,14 +18,14 @@
 
 namespace
 {
-wxcPGChoiceAndButtonEditor* gChoiceButtonEditor = NULL;
+wxcPGChoiceAndButtonEditor* gChoiceButtonEditor = nullptr;
 // a list of properties that if changed, there is no need to refresh the view
 std::unordered_set<wxString> DO_NOT_NOTIFY_SET = {PROP_SUBCLASS_INCLUDE, PROP_SUBCLASS_NAME, PROP_SUBCLASS_STYLE};
 } // namespace
 
 PropertiesListView::PropertiesListView(wxWindow* win)
     : wxPanel(win, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxBORDER_NONE)
-    , m_wxcWidget(NULL)
+    , m_wxcWidget(nullptr)
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
@@ -109,7 +109,7 @@ void PropertiesListView::Construct(wxcWidget* wb)
             continue;
         }
 
-        wxPGProperty* pgProp = NULL;
+        wxPGProperty* pgProp = nullptr;
         if (property->GetType() == PT_CATEGORY) {
             pgProp = m_pg->Append(new wxPropertyCategory(property->GetValue()));
 
@@ -273,14 +273,14 @@ void PropertiesListView::DoClear()
     m_pg->Clear();
     m_pgMgr->SetDescription("", "");
     m_properties.clear();
-    m_wxcWidget = NULL;
+    m_wxcWidget = nullptr;
 }
 
 void PropertiesListView::OnCellChanged(wxPropertyGridEvent& e)
 {
     wxPGProperty* pgp = e.GetProperty();
     if (m_type == Type_Project_Metadata) {
-        wxPGProperty* p = NULL;
+        wxPGProperty* p = nullptr;
 
         p = m_pg->GetProperty(_("Output Directory"));
         if (p) {

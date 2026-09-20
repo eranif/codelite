@@ -40,14 +40,14 @@ PreviewFrame::PreviewFrame(wxWindow* parent, const TopLevelWinWrapper& fw)
         Layout();
     }
 
-    EventNotifier::Get()->Connect(wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewFrame::OnClosePreview), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewFrame::OnClosePreview), nullptr, this);
 }
 
 PreviewFrame::~PreviewFrame()
 {
     wxcAuiManager::Get().UnInit(this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewFrame::OnClosePreview), NULL, this);
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewFrame::OnClosePreview), nullptr, this);
     wxCommandEvent event(wxEVT_PREVIEW_CLOSED);
     EventNotifier::Get()->AddPendingEvent(event);
 }

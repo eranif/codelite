@@ -143,7 +143,7 @@ int clSocketBase::SelectRead(long seconds)
     fd_set readfds;
     FD_ZERO(&readfds);
     FD_SET(m_socket, &readfds);
-    int rc = select(m_socket + 1, &readfds, NULL, NULL, &tv);
+    int rc = select(m_socket + 1, &readfds, nullptr, nullptr, &tv);
     if (rc == 0) {
         // timeout
         return kTimeout;
@@ -231,12 +231,12 @@ std::string clSocketBase::error(const int errorCode)
     LPSTR messageBuffer = nullptr;
     size_t size =
         FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                       NULL,
+                       nullptr,
                        errorCode,
                        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                        (LPSTR)&messageBuffer,
                        0,
-                       NULL);
+                       nullptr);
 
     std::string message(messageBuffer, size);
 
@@ -318,7 +318,7 @@ void clSocketBase::WriteMessage(const wxString& message)
     char msglen[11];
     memset(msglen, 0, sizeof(msglen));
     sprintf(msglen, "%010d", len);
-    // send it without the NULL byte
+    // send it without the nullptr byte
     if (::send(m_socket, msglen, sizeof(msglen) - 1, 0) < 0) {
         throw clSocketException("Send error: " + error(errno));
     }
@@ -370,7 +370,7 @@ int clSocketBase::SelectWriteMS(long milliSeconds)
     FD_ZERO(&write_set);
     FD_SET(m_socket, &write_set);
     errno = 0;
-    int rc = select(m_socket + 1, NULL, &write_set, NULL, &tv);
+    int rc = select(m_socket + 1, nullptr, &write_set, nullptr, &tv);
     if (rc == 0) {
         // timeout
         return kTimeout;
@@ -401,7 +401,7 @@ int clSocketBase::SelectWrite(long seconds)
     FD_ZERO(&write_set);
     FD_SET(m_socket, &write_set);
     errno = 0;
-    int rc = select(m_socket + 1, NULL, &write_set, NULL, &tv);
+    int rc = select(m_socket + 1, nullptr, &write_set, nullptr, &tv);
     if (rc == 0) {
         // timeout
         return kTimeout;
@@ -433,7 +433,7 @@ int clSocketBase::SelectReadMS(long milliSeconds)
     fd_set readfds;
     FD_ZERO(&readfds);
     FD_SET(m_socket, &readfds);
-    int rc = select(m_socket + 1, &readfds, NULL, NULL, &tv);
+    int rc = select(m_socket + 1, &readfds, nullptr, nullptr, &tv);
     if (rc == 0) {
         // timeout
         return kTimeout;

@@ -123,7 +123,7 @@ public:
     /**
      * Return the currently selected debugger. The debugger is selected
      * based on previous call to SetActiveDebugger(). If no active debugger is
-     * set, this function may return NULL
+     * set, this function may return nullptr
      */
     IDebugger* GetActiveDebugger();
 

@@ -9,10 +9,10 @@
 
 DesignerContainerPanel::DesignerContainerPanel(wxWindow* parent)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL | wxBORDER_RAISED)
-    , m_mainPanel(NULL)
+    , m_mainPanel(nullptr)
     , m_height(-1)
     , m_width(-1)
-    , m_caption(NULL)
+    , m_caption(nullptr)
 {
     Bind(wxEVT_SIZE, &DesignerContainerPanel::OnSize, this);
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
@@ -31,7 +31,7 @@ void DesignerContainerPanel::EnableCaption(const wxString& caption, const wxStri
 
 void DesignerContainerPanel::SetMenuBar(MenuBar* mb)
 {
-    mb->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerContainerPanel::OnRightDown), NULL, this);
+    mb->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerContainerPanel::OnRightDown), nullptr, this);
 
     // Make sure that the caption is on top of the menu bar
     GetSizer()->Insert(m_caption ? 1 : 0, mb, 0, wxEXPAND);
@@ -40,15 +40,15 @@ void DesignerContainerPanel::SetMenuBar(MenuBar* mb)
 
 void DesignerContainerPanel::SetStatusBar(wxStatusBar* mb)
 {
-    mb->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DesignerContainerPanel::OnLeftDown), NULL, this);
-    mb->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerContainerPanel::OnRightDown), NULL, this);
+    mb->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DesignerContainerPanel::OnLeftDown), nullptr, this);
+    mb->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerContainerPanel::OnRightDown), nullptr, this);
     GetSizer()->Add(mb, 0, wxEXPAND);
     m_height += mb->GetSize().GetHeight();
 }
 
 void DesignerContainerPanel::SetToolbar(ToolBar* tb)
 {
-    tb->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerContainerPanel::OnRightDown), NULL, this);
+    tb->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerContainerPanel::OnRightDown), nullptr, this);
     GetSizer()->Add(tb, 0, wxEXPAND);
     m_height += tb->GetSize().GetHeight();
 }

@@ -68,7 +68,7 @@ bool Importer::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const
         }
 
         bool alreadyParented(false);
-        wxcWidget* wrapper = ParseNode(toplevelnode, NULL, alreadyParented);
+        wxcWidget* wrapper = ParseNode(toplevelnode, nullptr, alreadyParented);
         if (wrapper) {
             toplevels.push_back(wrapper);
         }
@@ -81,16 +81,16 @@ bool Importer::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const
 
 wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyParented) const
 {
-    wxcWidget* wrapper = NULL;
+    wxcWidget* wrapper = nullptr;
     wxXmlNode* sizeritemnode = node;
-    wxXmlNode* buttonnode = NULL;
-    wxXmlNode* booknode = NULL;
+    wxXmlNode* buttonnode = nullptr;
+    wxXmlNode* booknode = nullptr;
 
     wxString tag = node->GetName();
-    wxCHECK_MSG(tag == wxT("object"), NULL, wxT("Passed a node that isn't an object"));
+    wxCHECK_MSG(tag == wxT("object"), nullptr, wxT("Passed a node that isn't an object"));
 
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
-    wxCHECK_MSG(!classname.empty(), NULL, wxT("Object node doesn't have a 'class' attribute"));
+    wxCHECK_MSG(!classname.empty(), nullptr, wxT("Object node doesn't have a 'class' attribute"));
 
     if (classname == wxT("sizeritem")) {
         // See the ImportFromXRC comment. Replace node with the contained object node
@@ -98,7 +98,7 @@ wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& 
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if (!node) {
             // I don't think this can happen, but...
-            return NULL;
+            return nullptr;
         }
 
         // Read the class of the new node
@@ -112,7 +112,7 @@ wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& 
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if (!node) {
             // I don't think this can happen, but...
-            return NULL;
+            return nullptr;
         }
 
         // Read the class of the new node
@@ -123,7 +123,7 @@ wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& 
         buttonnode = node;
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if (!node) {
-            return NULL;
+            return nullptr;
         }
 
         classname = XmlUtils::ReadString(node, wxT("class"));
@@ -135,10 +135,10 @@ wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& 
     int Id = wxcWidget::StringToId(classname);
     if (Id == wxNOT_FOUND) {
         wxLogWarning(wxString::Format(_("Can't import unknown class %s in from wxSmith"), classname));
-        return NULL;
+        return nullptr;
     }
 
-    if ((Id == ID_WXPANEL) && (parentwrapper == NULL)) {
+    if ((Id == ID_WXPANEL) && (parentwrapper == nullptr)) {
         Id = ID_WXPANEL_TOPLEVEL;
     }
 
@@ -153,7 +153,7 @@ wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& 
     }
 
     wrapper = wxcWidget::Create(Id);
-    wxCHECK_MSG(wrapper, NULL, wxT("Failed to create a wrapper"));
+    wxCHECK_MSG(wrapper, nullptr, wxT("Failed to create a wrapper"));
 
     wrapper->LoadPropertiesFromwxSmith(node);
 
@@ -163,7 +163,7 @@ wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& 
     if (booknode) {
         // For book pages, extract any info from the <foobookpage> node
         NotebookPageWrapper* nbwrapper = dynamic_cast<NotebookPageWrapper*>(wrapper);
-        wxCHECK_MSG(nbwrapper, NULL, wxT("A booknode which has no NotebookPageWrapper"));
+        wxCHECK_MSG(nbwrapper, nullptr, wxT("A booknode which has no NotebookPageWrapper"));
         GetBookitemContents(booknode, nbwrapper, depth);
 
         // If this is a treebook subpage, it needs to be parented by a page, not the book
@@ -171,7 +171,7 @@ wxcWidget* Importer::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& 
         // NB I can't find a way to create a subpage in wxSmith, but just maybe...
         if (depth) {
             NotebookBaseWrapper* nb = dynamic_cast<NotebookBaseWrapper*>(parentwrapper);
-            wxCHECK_MSG(nb, NULL, wxT("treebookpage 'parent' not a book"));
+            wxCHECK_MSG(nb, nullptr, wxT("treebookpage 'parent' not a book"));
 
             wxcWidget* item = nb->GetChildPageAtDepth(depth - 1);
             if (item) {

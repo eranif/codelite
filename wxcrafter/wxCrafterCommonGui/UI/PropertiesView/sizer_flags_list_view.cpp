@@ -7,8 +7,8 @@
 #include "wxgui_helpers.h"
 
 SizerFlagsListView::SizerFlagsListView()
-    : m_wxcWidget(NULL)
-    , m_flags(NULL)
+    : m_wxcWidget(nullptr)
+    , m_flags(nullptr)
 {
 }
 
@@ -77,7 +77,7 @@ void SizerFlagsListView::Changed(wxPropertyGrid* pg, wxPropertyGridEvent& e)
 void SizerFlagsListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
 {
     pg->Clear();
-    m_flags = NULL;
+    m_flags = nullptr;
     m_wxcWidget = wb;
     CHECK_POINTER(m_wxcWidget);
 
@@ -89,7 +89,7 @@ void SizerFlagsListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
     pg->Append(new wxIntProperty(_("Proportion"), wxPG_LABEL, m_wxcWidget->SizerItem().GetProportion()));
     pg->Append(new wxIntProperty(_("Border"), wxPG_LABEL, m_wxcWidget->SizerItem().GetBorder()));
 
-    wxPGProperty* gbCategory(NULL);
+    wxPGProperty* gbCategory(nullptr);
     if (m_wxcWidget->IsGridBagSizerItem()) {
         pg->Append(new wxPropertyCategory(_("GridBagSizer")));
         pg->Append(new wxStringProperty(_("wxGBPosition"), wxPG_LABEL, m_wxcWidget->GetGbPos()));

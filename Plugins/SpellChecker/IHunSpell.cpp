@@ -190,7 +190,7 @@ IHunSpell::~IHunSpell()
 bool IHunSpell::InitEngine()
 {
     // check if we are already initialized
-    if (m_pSpell != NULL)
+    if (m_pSpell != nullptr)
         return true;
 
     m_ignoreList = CustomDictionary(0,
@@ -232,11 +232,11 @@ bool IHunSpell::InitEngine()
 // ------------------------------------------------------------
 void IHunSpell::CloseEngine()
 {
-    if (m_pSpell != NULL) {
+    if (m_pSpell != nullptr) {
         Hunspell_destroy(m_pSpell);
         SaveUserDict(m_userDictPath + s_userDict);
     }
-    m_pSpell = NULL;
+    m_pSpell = nullptr;
 }
 // ------------------------------------------------------------
 bool IHunSpell::CheckWord(const wxString& word) const

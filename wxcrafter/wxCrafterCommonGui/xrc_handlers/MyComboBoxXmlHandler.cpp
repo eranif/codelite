@@ -24,7 +24,7 @@ wxObject* MyComboBoxXmlHandler::DoCreateResource()
 
         // need to build the list of strings from children
         m_insideBox = true;
-        CreateChildrenPrivately(NULL, GetParamNode(wxT("content")));
+        CreateChildrenPrivately(nullptr, GetParamNode(wxT("content")));
 
         XRC_MAKE_INSTANCE(control, wxComboBox)
 
@@ -60,7 +60,7 @@ wxObject* MyComboBoxXmlHandler::DoCreateResource()
             str = wxGetTranslation(str, m_resource->GetDomain());
         strList.Add(str);
 
-        return NULL;
+        return nullptr;
     }
 }
 

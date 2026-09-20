@@ -405,7 +405,7 @@ wxXmlNode* BuildConfig::ToXml() const
             continue;
         }
 
-        wxXmlNode* command = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Command");
+        wxXmlNode* command = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Command");
         command->AddAttribute("Enabled", BoolToString(cmd.GetEnabled()));
         XmlUtils::SetNodeContent(command, cmd.GetCommand());
         preBuild->AddChild(command);
@@ -420,7 +420,7 @@ wxXmlNode* BuildConfig::ToXml() const
             continue;
         }
 
-        wxXmlNode* command = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Command");
+        wxXmlNode* command = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, "Command");
         command->AddAttribute("Enabled", BoolToString(cmd.GetEnabled()));
         XmlUtils::SetNodeContent(command, cmd.GetCommand());
         postBuild->AddChild(command);

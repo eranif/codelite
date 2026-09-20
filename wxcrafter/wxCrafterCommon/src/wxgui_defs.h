@@ -11,7 +11,7 @@ class wxcWidget;
         return;
 #define CHECK_POINTER_RET_NULL(d) \
     if (!d)                       \
-        return NULL;
+        return nullptr;
 #define CHECK_POINTER_RET_FALSE(d) \
     if (!d)                        \
         return false;

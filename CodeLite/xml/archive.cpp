@@ -127,7 +127,7 @@ bool Archive::Write(const wxString& name, std::vector<TabInfo>& _vTabInfoArr)
 
     // add an entry for each wxString in the array
     for (auto& tabInfo : _vTabInfoArr) {
-        wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfo"));
+        wxXmlNode* child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("TabInfo"));
         Archive arch;
         arch.SetXmlNode(child);
         tabInfo.Serialize(arch);
@@ -147,7 +147,7 @@ bool Archive::Write(const wxString& name, std::vector<int>& _vInt)
 
     // add an entry for each int in the vector
     for (const auto n : _vInt) {
-        wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IntVectorItem"));
+        wxXmlNode* child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("IntVectorItem"));
         node->AddChild(child);
         child->AddAttribute(wxT("Value"), wxString::Format(wxT("%i"), n));
     }
@@ -166,7 +166,7 @@ bool Archive::Write(const wxString& name, const StringMap& str_map)
 
     // add an entry for each wxString in the array
     for (const auto& [key, value] : str_map) {
-        wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
+        wxXmlNode* child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("MapEntry"));
         node->AddChild(child);
         child->AddAttribute(wxT("Key"), key);
         child->AddAttribute(wxT("Value"), value);
@@ -548,7 +548,7 @@ bool Archive::Write(const wxString& name, const wxStringMap_t& stringMap)
 
     // add an entry for each wxString in the array
     for (const auto& [key, value] : stringMap) {
-        wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
+        wxXmlNode* child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("MapEntry"));
         node->AddChild(child);
         child->AddAttribute(wxT("Key"), key);
         XmlUtils::SetNodeContent(child, value);
@@ -618,7 +618,7 @@ bool Archive::Write(const wxString& name, const wxStringSet_t& s)
 
     // add an entry for each wxString in the array
     for (const auto& text : s) {
-        wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SetEntry"));
+        wxXmlNode* child = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("SetEntry"));
         node->AddChild(child);
         XmlUtils::SetNodeContent(child, text);
     }

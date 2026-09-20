@@ -142,7 +142,7 @@ void PHPDocComment::ProcessMethods()
         }
         strBuffer << " {} ";
 
-        PHPSourceFile buffer(strBuffer, NULL);
+        PHPSourceFile buffer(strBuffer, nullptr);
         buffer.SetTypeAbsoluteConverter(&m_sourceFile);
         buffer.Parse();
 

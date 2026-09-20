@@ -165,7 +165,7 @@ public:
      * load all symbols of fileName from the database and return them
      * to user as tree
      * @param path file's symbols
-     * @param tags if tags is set to non NULL, the tags are converted to TagTreePtr
+     * @param tags if tags is set to non nullptr, the tags are converted to TagTreePtr
      * @return tag tree
      */
     TagTreePtr Load(const wxFileName& fileName, TagEntryPtrVector_t* tags = nullptr);
@@ -252,7 +252,7 @@ public:
     /**
      * @brief return normalize function signature. This function strips any default values or variable
      * name from the signature. The return value for signature like this: wxT("int value, const std::string &str = "",
-     * void *data = NULL"), is "int, const std::string&, void *"
+     * void *data = nullptr"), is "int, const std::string&, void *"
      * and by setting the  includeVarNames to true, it will also returns the variables names
      * @param sig signature
      * @param includeVarNames set to true if the stripped signature should include the variables names. By default it is
@@ -321,7 +321,7 @@ private:
 
 public:
     /**
-     * @brief return true if the file is binary (by searching for NULL chars)
+     * @brief return true if the file is binary (by searching for nullptr chars)
      * @param filepath file to examine
      * @return return true if the file is binary
      */

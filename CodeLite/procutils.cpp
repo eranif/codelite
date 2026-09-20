@@ -149,7 +149,7 @@ std::set<unsigned long> ProcUtils::GetProcTree(long pid)
             HANDLE hProcess = ::OpenProcess(SYNCHRONIZE | PROCESS_TERMINATE | PROCESS_QUERY_INFORMATION,
                                             FALSE, // not inheritable
                                             (DWORD)pid);
-            if (hProcess != NULL) {
+            if (hProcess != nullptr) {
                 CloseHandle(hProcess);
                 // don't kill the process, just keep its ID
                 parentsMap.insert(pe.th32ProcessID);
@@ -259,7 +259,7 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
     int nof_procs;
     wxString cmd;
 
-    if (!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
+    if (!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, nullptr, O_RDONLY, nullptr)))
         return wxEmptyString;
 
     if (!(ki = kvm_getprocs(kvd, KERN_PROC_PID, pid, &nof_procs))) {
@@ -355,7 +355,7 @@ std::vector<ProcessEntry> ProcUtils::GetProcessList()
     struct kinfo_proc* ki;
     int nof_procs, i;
 
-    if (!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
+    if (!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, nullptr, O_RDONLY, nullptr)))
         return {};
 
     if (!(ki = kvm_getprocs(kvd, KERN_PROC_PROC, 0, &nof_procs))) {

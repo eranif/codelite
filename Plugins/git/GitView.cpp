@@ -194,7 +194,7 @@ GitView::GitView(wxWindow* parent, GitPlugin* git)
     m_deleteBmp = m_bitmapLoader->LoadBitmap("minus");
 
     EventNotifier::Get()->Connect(
-        wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitView::OnConfigurationChanged), NULL, this);
+        wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitView::OnConfigurationChanged), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &GitView::OnWorkspaceClosed, this);
     clConfig conf("git.conf");
     GitEntry data;
@@ -288,7 +288,7 @@ GitView::GitView(wxWindow* parent, GitPlugin* git)
 GitView::~GitView()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitView::OnConfigurationChanged), NULL, this);
+        wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitView::OnConfigurationChanged), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &GitView::OnWorkspaceClosed, this);
     m_toolbar->Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitView::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitView::OnGitRebaseDropdown, this, XRCID("git_rebase"));

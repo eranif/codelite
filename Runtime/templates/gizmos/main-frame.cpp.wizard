@@ -22,7 +22,7 @@ IMPLEMENT_APP($(AppName));
 
 bool $(AppName)::OnInit()
 {
-	SetTopWindow( new  $(MainFrameName)( NULL ) );
+	SetTopWindow( new  $(MainFrameName)( nullptr ) );
 	GetTopWindow()->Show();
 	
 	// true = enter the main loop

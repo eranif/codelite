@@ -31,7 +31,7 @@ public:
      * Fortran, Batch, Makefile, Properties, CSS, PHP, VB/VBScript, TCL, YAML, JSON, Rust, Assembly,
      * LISP, D, Erlang, R, and Markdown.
      *
-     * @param ctrl Pointer to the wxStyledTextCtrl to check. If NULL, returns false.
+     * @param ctrl Pointer to the wxStyledTextCtrl to check. If nullptr, returns false.
      * @param pos The position in the text to check. If -1 (default), uses the current cursor position.
      * @return true if the position is within a comment according to the active lexer, false otherwise.
      */

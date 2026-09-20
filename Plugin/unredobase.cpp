@@ -86,7 +86,7 @@ void CommandProcessorBase::ProcessOpenCommand()
 
 CLCommand::Ptr_t CommandProcessorBase::GetOpenCommand()
 {
-    CLCommand::Ptr_t command(NULL);
+    CLCommand::Ptr_t command(nullptr);
 
     size_t size = GetCommands().size();
     if (size && GetCommands().at(size - 1)->IsOpen()) {
@@ -242,7 +242,7 @@ void CommandProcessorBase::PrepareLabelledStatesMenu(wxMenu* editmenu)
 
 void CommandProcessorBase::PopulateLabelledStatesMenu(wxMenu* menu)
 {
-    wxCHECK_RET(menu, "NULL menu");
+    wxCHECK_RET(menu, "nullptr menu");
 
     for (size_t n = menu->GetMenuItemCount(); n > 0;
          --n) { // We need to delete any items left over from a previous call
@@ -271,14 +271,14 @@ void CommandProcessorBase::PopulateLabelledStatesMenu(wxMenu* menu)
 
 void CommandProcessorBase::UnBindLabelledStatesMenu(wxMenu* menu)
 {
-    wxCHECK_RET(menu, "NULL menu");
+    wxCHECK_RET(menu, "nullptr menu");
     CallAfter(&CommandProcessorBase::DoUnBindLabelledStatesMenu,
               menu); // We can't Unbind yet: the event won't have been caught
 }
 
 void CommandProcessorBase::DoUnBindLabelledStatesMenu(wxMenu* menu)
 {
-    wxCHECK_RET(menu, "NULL menu");
+    wxCHECK_RET(menu, "nullptr menu");
     menu->Unbind(
         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnLabelledStatesMenuItem), this);
 }
@@ -336,7 +336,7 @@ void CommandProcessorBase::OnRedoDropdownItem(wxCommandEvent& event)
 
 CLCommand::Ptr_t CommandProcessorBase::GetActiveCommand() const
 {
-    CLCommand::Ptr_t command(NULL);
+    CLCommand::Ptr_t command(nullptr);
 
     if (GetCurrentCommand() == -1) {
         command = GetInitialCommand();

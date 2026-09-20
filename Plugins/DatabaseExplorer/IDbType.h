@@ -39,7 +39,7 @@ public:
 
     /*! \brief Basic dbType parameter */
     enum PROPERTY {
-        /*! \brief Enable parameter Not NULL */
+        /*! \brief Enable parameter Not nullptr */
         dbtNOT_NULL = 1,
         /*! \brief Enable parameter SIZE*/
         dbtSIZE = 2,

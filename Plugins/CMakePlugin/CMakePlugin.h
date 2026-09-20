@@ -169,7 +169,7 @@ public:
      *
      * @param parent Parent window.
      *
-     * @return CodeLite tool bar or NULL.
+     * @return CodeLite tool bar or nullptr.
      */
     void CreateToolBar(clToolBarGeneric* toolbar) override;
 

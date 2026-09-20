@@ -50,10 +50,10 @@
     return
 #define CHECK_PHP_WORKSPACE_RET_NULL()  \
     if (!PHPWorkspace::Get()->IsOpen()) \
-    return NULL
+    return nullptr
 #define CHECK_PHP_WORKSPACE_RET_FALSE() \
     if (!PHPWorkspace::Get()->IsOpen()) \
-    return NULL
+    return nullptr
 
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
@@ -212,7 +212,7 @@ public:
      * @brief return list of files from the entire workspace
      * note that files are returned as fullpath
      */
-    void GetWorkspaceFiles(wxStringSet_t& workspaceFiles, wxProgressDialog* progress = NULL) const;
+    void GetWorkspaceFiles(wxStringSet_t& workspaceFiles, wxProgressDialog* progress = nullptr) const;
     /**
      * @brief return the active project name
      */

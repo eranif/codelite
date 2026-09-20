@@ -55,7 +55,7 @@ void MacrosDlg::OnItemRightClick(wxListEvent& event)
 {
     m_item = event.m_itemIndex;
     wxMenu menu;
-    menu.Append(XRCID("copy_macro"), _("Copy macro name"), NULL);
+    menu.Append(XRCID("copy_macro"), _("Copy macro name"), nullptr);
     PopupMenu(&menu);
 }
 

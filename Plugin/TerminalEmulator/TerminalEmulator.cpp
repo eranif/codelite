@@ -28,7 +28,7 @@ public:
         }
     }
 
-    virtual ~MyProcess() { m_parent = NULL; }
+    virtual ~MyProcess() { m_parent = nullptr; }
     void OnTerminate(int pid, int status)
     {
         if (m_parent) {
@@ -48,7 +48,7 @@ public:
 };
 
 TerminalEmulator::TerminalEmulator()
-    : m_process(NULL)
+    : m_process(nullptr)
     , m_pid(wxNOT_FOUND)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &TerminalEmulator::OnProcessOutput, this);
@@ -61,7 +61,7 @@ TerminalEmulator::~TerminalEmulator()
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &TerminalEmulator::OnProcessTerminated, this);
     for (wxProcess* proc : m_myProcesses) {
         MyProcess* myproc = dynamic_cast<MyProcess*>(proc);
-        myproc->m_parent = NULL;
+        myproc->m_parent = nullptr;
     }
 }
 
@@ -106,13 +106,13 @@ void TerminalEmulator::Terminate()
             m_process->Terminate();
         }
         if (m_pid != wxNOT_FOUND) {
-            wxKill(m_pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
+            wxKill(m_pid, wxSIGKILL, nullptr, wxKILL_CHILDREN);
             m_pid = wxNOT_FOUND;
         }
     }
 }
 
-bool TerminalEmulator::IsRunning() const { return (m_process != NULL) || (m_pid != wxNOT_FOUND); }
+bool TerminalEmulator::IsRunning() const { return (m_process != nullptr) || (m_pid != wxNOT_FOUND); }
 
 void TerminalEmulator::OnProcessOutput(clProcessEvent& event)
 {
@@ -147,5 +147,5 @@ bool TerminalEmulator::ExecuteNoConsole(const wxString& commandToRun, const wxSt
 #endif
     clLogMessage("TerminalEmulator::ExecuteNoConsole: " + command);
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateWithHiddenConsole, workingDirectory);
-    return m_process != NULL;
+    return m_process != nullptr;
 }

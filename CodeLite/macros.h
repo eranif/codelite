@@ -39,38 +39,38 @@
 //-------------------------------------------------------
 
 #define ConnectChoice(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(fn), nullptr, this);
 
 #define ConnectButton(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(fn), nullptr, this);
 
 #define ConnectListBoxDClick(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(fn), nullptr, this);
 
 #define ConnectCheckBox(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(fn), nullptr, this);
 
 #define ConnectListCtrlItemSelected(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(fn), nullptr, this);
 
 #define ConnectListCtrlItemActivated(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(fn), nullptr, this);
 
-#define ConnectKeyDown(ctrl, fn) ctrl->Connect(ctrl->GetId(), wxEVT_KEY_DOWN, wxKeyEventHandler(fn), NULL, this);
+#define ConnectKeyDown(ctrl, fn) ctrl->Connect(ctrl->GetId(), wxEVT_KEY_DOWN, wxKeyEventHandler(fn), nullptr, this);
 
-#define ConnectCharEvent(ctrl, fn) ctrl->Connect(ctrl->GetId(), wxEVT_CHAR, wxKeyEventHandler(fn), NULL, this);
+#define ConnectCharEvent(ctrl, fn) ctrl->Connect(ctrl->GetId(), wxEVT_CHAR, wxKeyEventHandler(fn), nullptr, this);
 
 #define ConnectCmdTextEntered(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(fn), nullptr, this);
 
 #define ConnectCmdTextUpdated(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(fn), nullptr, this);
 
 #define ConnectCombo(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler(fn), nullptr, this);
 
 #define ConnectCheckList(ctrl, fn) \
-    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler(fn), NULL, this);
+    ctrl->Connect(ctrl->GetId(), wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler(fn), nullptr, this);
 
 #define TrimString(str)        \
     {                          \
@@ -138,7 +138,7 @@
     return false
 #define CHECK_PTR_RET_NULL(p) \
     if (!p)                   \
-    return NULL
+    return nullptr
 
 #define CHECK_PTR_RET_EMPTY_STRING(p) \
     if (!p)                           \
@@ -157,7 +157,7 @@
     return false
 #define CHECK_COND_RET_NULL(p) \
     if (!(p))                  \
-    return NULL
+    return nullptr
 #define CHECK_COND_RET_EMPTY_STRING(p) \
     if (!(p))                          \
     return wxEmptyString
@@ -170,7 +170,7 @@
     return false
 #define CHECK_ITEM_RET_NULL(item) \
     if (!item.IsOk())             \
-    return NULL
+    return nullptr
 #define CHECK_ITEM_RET_EMPTY_STRING(item) \
     if (!item.IsOk())                     \
     return wxEmptyString

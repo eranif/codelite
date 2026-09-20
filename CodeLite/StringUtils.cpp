@@ -646,7 +646,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
     }
 
     char** argv = new char*[A.size() + 1];
-    argv[A.size()] = NULL;
+    argv[A.size()] = nullptr;
     for (size_t i = 0; i < A.size(); ++i) {
         argv[i] = strdup(A[i].mb_str(wxConvUTF8).data());
     }

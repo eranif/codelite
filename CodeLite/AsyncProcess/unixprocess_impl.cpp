@@ -94,21 +94,17 @@ extern char* strdup();  /* Duplicate a string */
 
 #endif /* __STDC__ */
 
-#ifndef NULL
-#define NULL 0
-#endif
-
 #ifndef EOS
 #define EOS '\0'
 #endif
 
-#define INITIAL_MAXARGC 8 /* Number of args + NULL in initial argv */
+#define INITIAL_MAXARGC 8 /* Number of args + nullptr in initial argv */
 
 static void freeargv(char** vector)
 {
     char** scan;
-    if (vector != NULL) {
-        for (scan = vector; *scan != NULL; scan++) {
+    if (vector != nullptr) {
+        for (scan = vector; *scan != nullptr; scan++) {
             free(*scan);
         }
         delete[] vector;
@@ -150,10 +146,10 @@ void UnixProcessImpl::Cleanup()
         m_thr->Stop();
         delete m_thr;
     }
-    m_thr = NULL;
+    m_thr = nullptr;
 
     if (GetPid() != wxNOT_FOUND) {
-        wxKill(GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM, NULL, wxKILL_CHILDREN);
+        wxKill(GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM, nullptr, wxKILL_CHILDREN);
         // The Zombie cleanup is done in app.cpp in ::ChildTerminatedSignalHandler() signal handler
         int status(0);
         waitpid(-1, &status, WNOHANG);
@@ -215,7 +211,7 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr, std::string& raw_b
 
     buff.Clear();
     int maxFd = wxMax(GetStderrHandle(), GetReadHandle());
-    int rc = select(maxFd + 1, &rs, NULL, NULL, &timeout);
+    int rc = select(maxFd + 1, &rs, nullptr, nullptr, &timeout);
     errCode = errno;
     if (rc == 0) {
         // timeout
@@ -399,7 +395,7 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent,
         // restore the working directory
         wxSetWorkingDirectory(curdir);
 
-        return NULL;
+        return nullptr;
 
     } else {
         //===-------------------------------------------------------
@@ -484,7 +480,7 @@ void UnixProcessImpl::StartReaderThread()
 
 void UnixProcessImpl::Terminate()
 {
-    wxKill(GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM, NULL, wxKILL_CHILDREN);
+    wxKill(GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM, nullptr, wxKILL_CHILDREN);
     int status(0);
     // The real cleanup is done inside ::ChildTerminatedSignalHandler() signal handler (app.cpp)
     waitpid(-1, &status, WNOHANG);
@@ -509,9 +505,9 @@ void UnixProcessImpl::Detach()
         m_thr->Stop();
         delete m_thr;
     }
-    m_thr = NULL;
+    m_thr = nullptr;
 }
 
-void UnixProcessImpl::Signal(wxSignal sig) { wxKill(GetPid(), sig, NULL, wxKILL_CHILDREN); }
+void UnixProcessImpl::Signal(wxSignal sig) { wxKill(GetPid(), sig, nullptr, wxKILL_CHILDREN); }
 
 #endif // #if defined(__WXMAC )||defined(__WXGTK__)

@@ -45,7 +45,7 @@ protected:
     void DoDrawSurroundingMarker(wxWindow* win);
     void DoMarkSizeritem(wxSizerItem* szitem, wxWindow* container);
     void ClearStaleOutlines() const;
-    void MarkOutline(wxDC& dc, wxRect* rect = NULL) const;
+    void MarkOutline(wxDC& dc, wxRect* rect = nullptr) const;
     void MarkBorders(wxDC& dc) const;
     void DoMarkBorders(wxDC& dc, wxRect rr, int bdrwidth, int flags) const;
     wxPoint GetOutlineOffset() const; // Needed for pages in a wxNotebook with top/left tabs

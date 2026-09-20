@@ -202,7 +202,7 @@ void SvnConsole::DoProcessNextCommand()
     om.insert(std::make_pair("LC_ALL", "C"));
 
     bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
-    EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
+    EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : nullptr);
 
     clDEBUG() << "Running svn command:" << cmdShell << clEndl;
 

@@ -31,7 +31,7 @@ s_char [^"\\\n]|{escape_sequence}
 #include <list>
 #include "Cxx/include_finder.h"
 
-static std::vector<IncludeStatement>* pIncludes = NULL;
+static std::vector<IncludeStatement>* pIncludes = nullptr;
 static std::string currentFile;
 
 %}
@@ -85,7 +85,7 @@ static std::string currentFile;
 <<EOF>> {
 	if ( YY_CURRENT_BUFFER->yy_input_file ) {
 		fclose( YY_CURRENT_BUFFER->yy_input_file );
-		YY_CURRENT_BUFFER->yy_input_file = NULL;
+		YY_CURRENT_BUFFER->yy_input_file = nullptr;
 	}
 
 	yy_delete_buffer    ( YY_CURRENT_BUFFER    );
@@ -104,7 +104,7 @@ int IncludeFinder( const char* filePath, std::vector<IncludeStatement> &includes
 	inclf_lineno = 1;
 
 	FILE* fp = fopen(filePath, "r");
-	if ( fp == NULL ) {
+	if ( fp == nullptr ) {
 		return -1;
 	}
 
@@ -116,7 +116,7 @@ int IncludeFinder( const char* filePath, std::vector<IncludeStatement> &includes
 	yy_delete_buffer    ( YY_CURRENT_BUFFER    );
 
 	// Cleanup
-	pIncludes = NULL;
+	pIncludes = nullptr;
 	currentFile.clear();
 	return rc;
 }

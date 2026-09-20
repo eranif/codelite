@@ -50,7 +50,7 @@ MenuBar::MenuBar(wxWindow* parent, wxMenuBar* mb)
     wxMemoryDC memDc(bmp);
 
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    memDc.GetTextExtent(wxT("Tp"), &width, &m_controlHeight, NULL, NULL, &font);
+    memDc.GetTextExtent(wxT("Tp"), &width, &m_controlHeight, nullptr, nullptr, &font);
 
     m_controlHeight += 2 * MARGIN_Y;
     SetSizeHints(-1, m_controlHeight);
@@ -117,7 +117,7 @@ void MenuBar::OnPaint(wxPaintEvent& e)
     size_t count = m_menus.size();
     for (size_t i = 0; i < count; i++) {
         wxString menuTitle = m_menus.at(i).label;
-        dc.GetTextExtent(menuTitle, &width, &height, NULL, NULL, &font);
+        dc.GetTextExtent(menuTitle, &width, &height, nullptr, nullptr, &font);
 
         wxRect labelRect(posx, 0, MARGIN_X + width + MARGIN_X, m_controlHeight);
         dc.SetFont(font);

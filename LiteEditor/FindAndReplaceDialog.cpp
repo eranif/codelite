@@ -201,7 +201,7 @@ FindAndReplaceDialog::FindAndReplaceDialog(wxWindow* parent, wxWindowID id)
     wxTheApp->Bind(wxEVT_MENU, &FindAndReplaceDialog::OnFindNext, this, XRCID("find_next"));
 
     EventNotifier::Get()->Bind(wxEVT_FINDBAR_RELEASE_EDITOR, &FindAndReplaceDialog::OnReleaseEditor, this);
-    Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(FindAndReplaceDialog::OnQuickFindCommandEvent), NULL, this);
+    Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(FindAndReplaceDialog::OnQuickFindCommandEvent), nullptr, this);
 
     // Initialize the list with the history
     m_findHistory.Set(clConfig::Get().GetQuickFindSearchItems());

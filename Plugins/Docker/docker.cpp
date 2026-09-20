@@ -39,7 +39,7 @@ Docker::Docker(IManager* manager)
 
     m_outputView = new DockerOutputPane(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_driver);
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_outputView, _("Docker"));
-    m_tabToggler.reset(new clTabTogglerHelper(_("Docker"), m_outputView, "", NULL));
+    m_tabToggler.reset(new clTabTogglerHelper(_("Docker"), m_outputView, "", nullptr));
 }
 
 void Docker::CreateToolBar(clToolBarGeneric* toolbar)

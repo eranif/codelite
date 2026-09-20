@@ -270,7 +270,7 @@ void CMakeHelpTab::ShowTopic(int topic)
 
     switch (topic) {
     default:
-        m_data = NULL;
+        m_data = nullptr;
         break;
 
     case 0:
@@ -396,7 +396,7 @@ void CMakeHelpTab::Done() { AddPendingEvent(wxThreadEvent(EVT_THREAD_DONE)); }
 void CMakeHelpTab::Stop()
 {
     if (GetThread() && GetThread()->IsAlive()) {
-        GetThread()->Delete(NULL, wxTHREAD_WAIT_BLOCK);
+        GetThread()->Delete(nullptr, wxTHREAD_WAIT_BLOCK);
 
     } else if (GetThread()) {
         GetThread()->Wait(wxTHREAD_WAIT_BLOCK);

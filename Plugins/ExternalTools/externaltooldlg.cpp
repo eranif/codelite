@@ -44,7 +44,7 @@ void ExternalToolDlg::OnItemActivated(wxDataViewEvent& event) { DoEditEntry(even
 
 void ExternalToolDlg::OnButtonNew(wxCommandEvent& event)
 {
-    NewToolDlg dlg(this, m_mgr, NULL);
+    NewToolDlg dlg(this, m_mgr, nullptr);
     if (dlg.ShowModal() == wxID_OK) {
         DoUpdateEntry(wxDataViewItem(nullptr),
                       dlg.GetToolId(),

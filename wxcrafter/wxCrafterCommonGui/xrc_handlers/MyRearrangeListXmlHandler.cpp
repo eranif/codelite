@@ -30,7 +30,7 @@ wxObject* MyRearrangeListXmlHandler::DoCreateResource()
     if (m_class == wxT("wxRearrangeList")) {
         // need to build the list of strings from children
         m_insideBox = true;
-        CreateChildrenPrivately(NULL, GetParamNode(wxT("content")));
+        CreateChildrenPrivately(nullptr, GetParamNode(wxT("content")));
 
         wxArrayInt order;
         for (size_t i = 0; i < strList.GetCount(); ++i) {
@@ -82,6 +82,6 @@ wxObject* MyRearrangeListXmlHandler::DoCreateResource()
         if (m_resource->GetFlags() & wxXRC_USE_LOCALE)
             str = wxGetTranslation(str, m_resource->GetDomain());
         strList.Add(str);
-        return NULL;
+        return nullptr;
     }
 }

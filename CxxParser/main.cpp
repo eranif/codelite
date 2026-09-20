@@ -125,12 +125,12 @@ char* loadFile(const char* fileName)
 {
     FILE* fp;
     long len;
-    char* buf = NULL;
+    char* buf = nullptr;
 
     fp = fopen(fileName, "rb");
     if (!fp) {
         printf("failed to open file 'test.h': %s\n", strerror(errno));
-        return NULL;
+        return nullptr;
     }
 
     // read the whole file
@@ -145,7 +145,7 @@ char* loadFile(const char* fileName)
     if (bytes != len) {
         fclose(fp);
         printf("failed to read from file 'test.h': %s\n", strerror(errno));
-        return NULL;
+        return nullptr;
     }
 
     buf[len] = 0; // make it null terminated string

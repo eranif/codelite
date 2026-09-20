@@ -8,9 +8,9 @@
 #include <wx/wupdlock.h>
 
 StylesSheetListView::StylesSheetListView()
-    : m_wxcWidget(NULL)
-    , m_controlFlags(NULL)
-    , m_windowFlags(NULL)
+    : m_wxcWidget(nullptr)
+    , m_controlFlags(nullptr)
+    , m_windowFlags(nullptr)
 {
 }
 
@@ -65,8 +65,8 @@ void StylesSheetListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
         }
     }
 
-    m_controlFlags = NULL;
-    m_windowFlags = NULL;
+    m_controlFlags = nullptr;
+    m_windowFlags = nullptr;
     if (controlStyles.IsEmpty() == false) {
         m_controlFlags = (wxFlagsProperty*)pg->Append(
             new wxFlagsProperty(wb->GetWxClassName(), wxPG_LABEL, controlStyles, controlStylesInt, controlStylesValue));
@@ -85,8 +85,8 @@ void StylesSheetListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
 void StylesSheetListView::Clear(wxPropertyGrid* pg)
 {
     pg->Clear();
-    m_controlFlags = NULL;
-    m_windowFlags = NULL;
+    m_controlFlags = nullptr;
+    m_windowFlags = nullptr;
 }
 
 void StylesSheetListView::Changed(wxPropertyGrid* pg, wxPropertyGridEvent& e)

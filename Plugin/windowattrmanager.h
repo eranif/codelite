@@ -49,7 +49,7 @@ public:
      * @brief load windows' size and position from the disk
      * @param win window to work on
      * @param name the windows' name
-     * @param conf conf configuration tool to use. If set to NULL the default EditorConfigST will be used
+     * @param conf conf configuration tool to use. If set to nullptr the default EditorConfigST will be used
      */
     static void Load(wxTopLevelWindow* win);
 };

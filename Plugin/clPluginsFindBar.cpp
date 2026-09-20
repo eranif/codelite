@@ -186,7 +186,7 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     wxTheApp->Bind(wxEVT_MENU, &clPluginsFindBar::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
 
     EventNotifier::Get()->Bind(wxEVT_FINDBAR_RELEASE_EDITOR, &clPluginsFindBar::OnReleaseEditor, this);
-    Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(clPluginsFindBar::OnQuickFindCommandEvent), NULL, this);
+    Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(clPluginsFindBar::OnQuickFindCommandEvent), nullptr, this);
 
     // Initialize the list with the history
     m_searchHistory.SetItems(clConfig::Get().GetQuickFindSearchItems());

@@ -45,7 +45,7 @@
 CompilerMainPage::CompilerMainPage(wxWindow* parent)
     : CompilerMainPageBase(parent)
     , m_isDirty(false)
-    , m_compiler(NULL)
+    , m_compiler(nullptr)
     , m_selectedCmpOption(-1)
     , m_selectedLnkOption(-1)
 {

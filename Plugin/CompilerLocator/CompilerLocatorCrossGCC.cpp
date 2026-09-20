@@ -82,7 +82,7 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
             continue;
         }
 
-        CompilerPtr compiler(new Compiler(NULL));
+        CompilerPtr compiler(new Compiler(nullptr));
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
 
         // get the compiler version
@@ -95,7 +95,7 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
     }
 
     if (m_compilers.empty()) {
-        return NULL;
+        return nullptr;
     } else {
         return *m_compilers.begin();
     }

@@ -163,13 +163,13 @@ void SnipWiz::CreatePluginMenu(wxMenu* pluginsMenu)
     pluginsMenu->Append(wxID_ANY, _("SnipWiz"), menu);
 
     m_topWin->Connect(
-        IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnSettings), NULL, this);
+        IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnSettings), nullptr, this);
     m_topWin->Connect(
-        IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnClassWizard), NULL, this);
+        IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnClassWizard), nullptr, this);
 
     m_topWin->Connect(
-        IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuExpandSwitch), NULL, this);
-    m_topWin->Connect(IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuPaste), NULL, this);
+        IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuExpandSwitch), nullptr, this);
+    m_topWin->Connect(IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuPaste), nullptr, this);
     AttachDynMenus();
 }
 
@@ -195,14 +195,14 @@ void SnipWiz::HookPopupMenu(wxMenu* menu, MenuType type)
 void SnipWiz::UnPlug()
 {
     m_topWin->Disconnect(
-        IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnSettings), NULL, this);
+        IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnSettings), nullptr, this);
     m_topWin->Disconnect(
-        IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnClassWizard), NULL, this);
+        IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnClassWizard), nullptr, this);
 
     m_topWin->Disconnect(
-        IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuExpandSwitch), NULL, this);
+        IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuExpandSwitch), nullptr, this);
     m_topWin->Disconnect(
-        IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuPaste), NULL, this);
+        IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnMenuPaste), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &SnipWiz::OnFolderContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &SnipWiz::OnEditorContextMenu, this);
     DetachDynMenus();
@@ -422,7 +422,7 @@ void SnipWiz::DetachDynMenus()
                          IDM_ADDSTART + m_snippets.GetCount() - 1,
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(SnipWiz::OnMenuSnippets),
-                         NULL,
+                         nullptr,
                          this);
 }
 //------------------------------------------------------------
@@ -433,7 +433,7 @@ void SnipWiz::AttachDynMenus()
                       IDM_ADDSTART + m_snippets.GetCount() - 1,
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(SnipWiz::OnMenuSnippets),
-                      NULL,
+                      nullptr,
                       this);
 }
 //------------------------------------------------------------

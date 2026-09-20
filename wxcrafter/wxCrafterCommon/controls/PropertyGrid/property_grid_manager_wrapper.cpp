@@ -38,7 +38,7 @@ PropertyGridManagerWrapper::PropertyGridManagerWrapper()
     RegisterEvent("wxEVT_PG_HIGHLIGHTED",
                   "wxPropertyGridEvent",
                   _("Respond to wxEVT_PG_HIGHLIGHTED event, which occurs when mouse moves over a property. Event's "
-                    "property is NULL if hovered area does not belong to any property."));
+                    "property is nullptr if hovered area does not belong to any property."));
     RegisterEvent(
         "wxEVT_PG_RIGHT_CLICK",
         "wxPropertyGridEvent",

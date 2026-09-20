@@ -88,14 +88,14 @@ CallGraph::CallGraph(IManager* manager)
     m_shortName = wxT("CallGraph");
 
     m_mgr->GetTheApp()->Connect(
-        XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnSettings), NULL, this);
+        XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnSettings), nullptr, this);
     m_mgr->GetTheApp()->Connect(
-        XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnAbout), NULL, this);
+        XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnAbout), nullptr, this);
 
     m_mgr->GetTheApp()->Connect(XRCID("cg_show_callgraph"),
                                 wxEVT_COMMAND_TOOL_CLICKED,
                                 wxCommandEventHandler(CallGraph::OnShowCallGraph),
-                                NULL,
+                                nullptr,
                                 this);
 }
 
@@ -104,14 +104,14 @@ CallGraph::CallGraph(IManager* manager)
 CallGraph::~CallGraph()
 {
     m_mgr->GetTheApp()->Disconnect(
-        XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnSettings), NULL, this);
+        XRCID("cg_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnSettings), nullptr, this);
     m_mgr->GetTheApp()->Disconnect(
-        XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnAbout), NULL, this);
+        XRCID("cg_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CallGraph::OnAbout), nullptr, this);
 
     m_mgr->GetTheApp()->Disconnect(XRCID("cg_show_callgraph"),
                                    wxEVT_COMMAND_TOOL_CLICKED,
                                    wxCommandEventHandler(CallGraph::OnShowCallGraph),
-                                   NULL,
+                                   nullptr,
                                    this);
 }
 

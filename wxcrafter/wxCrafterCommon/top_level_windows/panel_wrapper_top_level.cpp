@@ -66,7 +66,7 @@ wxString PanelWrapperTopLevel::DesignerXRC(bool forPreviewDialog) const
     return text;
 }
 
-bool PanelWrapperTopLevel::IsTopWindow() const { return GetParent() == NULL; }
+bool PanelWrapperTopLevel::IsTopWindow() const { return GetParent() == nullptr; }
 
 wxString PanelWrapperTopLevel::BaseCtorDecl() const
 {

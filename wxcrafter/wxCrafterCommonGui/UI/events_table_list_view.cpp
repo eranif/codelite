@@ -26,14 +26,14 @@ EventsTableListView::EventsTableListView(wxWindow* parent)
           wxDefaultPosition,
           wxDefaultSize,
           wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION | GetControlBorder())
-    , m_eventsDb(NULL)
+    , m_eventsDb(nullptr)
 {
-    Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsTableListView::OnPropertyChanged), NULL, this);
+    Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsTableListView::OnPropertyChanged), nullptr, this);
 }
 
 EventsTableListView::~EventsTableListView()
 {
-    Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsTableListView::OnPropertyChanged), NULL, this);
+    Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsTableListView::OnPropertyChanged), nullptr, this);
 }
 
 void EventsTableListView::Construct(EventsEditorPane* dlg, wxcWidget* control, const EventsDatabase& events)

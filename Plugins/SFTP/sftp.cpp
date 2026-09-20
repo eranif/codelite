@@ -90,22 +90,22 @@ SFTP::SFTP(IManager* manager)
     m_shortName = wxT("SFTP");
 
     wxTheApp->Connect(
-        wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), NULL, this);
-    wxTheApp->Connect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
+        wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), nullptr, this);
+    wxTheApp->Connect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), nullptr, this);
     wxTheApp->Connect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING,
                       wxEVT_MENU,
                       wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
                       wxEVT_MENU,
                       wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
                       wxEVT_UPDATE_UI,
                       wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI),
-                      NULL,
+                      nullptr,
                       this);
 
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &SFTP::OnWorkspaceOpened, this);
@@ -219,22 +219,22 @@ void SFTP::UnPlug()
 
     SFTPWorkerThread::Release();
     wxTheApp->Disconnect(
-        wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), NULL, this);
-    wxTheApp->Disconnect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
+        wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), nullptr, this);
+    wxTheApp->Disconnect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), nullptr, this);
     wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING,
                          wxEVT_MENU,
                          wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
                          wxEVT_MENU,
                          wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
                          wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI),
-                         NULL,
+                         nullptr,
                          this);
 
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &SFTP::OnWorkspaceOpened, this);

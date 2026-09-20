@@ -51,7 +51,7 @@ public:
 
 clSFTP::clSFTP(clSSH::Ptr_t ssh)
     : m_ssh(ssh)
-    , m_sftp(NULL)
+    , m_sftp(nullptr)
     , m_connected(false)
 {
 }
@@ -96,7 +96,7 @@ void clSFTP::Initialize()
         return;
 
     m_sftp = sftp_new(m_ssh->GetSession());
-    if (m_sftp == NULL) {
+    if (m_sftp == nullptr) {
         throw clException(wxString() << "Error allocating SFTP session: " << ssh_get_error(m_ssh->GetSession()));
     }
 
@@ -115,7 +115,7 @@ void clSFTP::Close()
     }
 
     m_connected = false;
-    m_sftp = NULL;
+    m_sftp = nullptr;
 }
 
 void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath)
@@ -162,7 +162,7 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
 
     auto cb = tmpRemoteFile.mb_str(wxConvUTF8);
     file = sftp_open(m_sftp, cb.data(), access_type, 0644);
-    if (file == NULL) {
+    if (file == nullptr) {
         throw clException(
             wxString() << _("Can't open file: ") << tmpRemoteFile << ". " << ssh_get_error(m_ssh->GetSession()),
             sftp_get_error(m_sftp));
@@ -276,7 +276,7 @@ SFTPAttribute::Ptr_t clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& bu
     }
 
     sftp_file file = sftp_open(m_sftp, remotePath.mb_str(wxConvUTF8).data(), O_RDONLY, 0);
-    if (file == NULL) {
+    if (file == nullptr) {
         throw clException(
             wxString() << _("Failed to open remote file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()),
             sftp_get_error(m_sftp));

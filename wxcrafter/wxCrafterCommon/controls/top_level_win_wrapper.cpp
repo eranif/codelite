@@ -123,7 +123,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
                     << _("This means that only base class code will be generated\nTo fix this, select the toplevel "
                          "entry from the tree-view and provide an Inherited class name and file name");
 
-            wxRichMessageDialog dlg(NULL, message, "wxCrafter", wxOK | wxOK_DEFAULT | wxCENTER | wxICON_WARNING);
+            wxRichMessageDialog dlg(nullptr, message, "wxCrafter", wxOK | wxOK_DEFAULT | wxCENTER | wxICON_WARNING);
             dlg.SetOKLabel(_("OK, continue with code generation"));
             dlg.ShowCheckBox(_("Don't show this message again"));
 
@@ -273,13 +273,13 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
         baseCpp << "    this->Connect("
                 << "wxID_ANY, "
                 << "wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(" << GetName()
-                << "::" << DEFAULT_AUI_DROPDOWN_FUNCTION << "), NULL, this);\n";
+                << "::" << DEFAULT_AUI_DROPDOWN_FUNCTION << "), nullptr, this);\n";
 
         // We need to disconnect it too
         dtorCode << "    this->Disconnect("
                  << "wxID_ANY, "
                  << "wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(" << GetName()
-                 << "::" << DEFAULT_AUI_DROPDOWN_FUNCTION << "), NULL, this);\n";
+                 << "::" << DEFAULT_AUI_DROPDOWN_FUNCTION << "), nullptr, this);\n";
     }
 
     baseCpp << "}\n\n"

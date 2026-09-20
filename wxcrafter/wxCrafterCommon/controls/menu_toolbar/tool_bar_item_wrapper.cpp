@@ -97,7 +97,7 @@ wxString ToolBarItemWrapper::CppCtorCode() const
                  << wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH)) << wxT(", ") << disabledBmp
                  << ", " << wxCrafter::ToolTypeToWX(toolType) << ", "
                  << wxString(wxCrafter::UNDERSCORE(PropertyString(PROP_TOOLTIP))) << wxT(", ")
-                 << wxString(wxCrafter::UNDERSCORE(PropertyString(PROP_HELP))) << wxT(", ") << "NULL";
+                 << wxString(wxCrafter::UNDERSCORE(PropertyString(PROP_HELP))) << wxT(", ") << "nullptr";
 
     wxString functionName = wxT("AddTool");
 
@@ -132,7 +132,7 @@ wxString ToolBarItemWrapper::CppCtorCode() const
                 if (menu && menu->GetType() == ID_WXMENU) {
                     // Add each of the wxcWidget menu's children to the generated menu
                     wxcWidget* me = menu->GetParent();
-                    menu->SetParent(NULL); // Allow menu code to be emitted here; there's code to prevent this if the
+                    menu->SetParent(nullptr); // Allow menu code to be emitted here; there's code to prevent this if the
                                            // parent's a dropdown
                     wxString menucode;
                     for (auto child : menu->GetChildren()) {

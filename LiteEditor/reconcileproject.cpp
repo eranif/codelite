@@ -222,7 +222,7 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
             if (!bFileAllocated) {
                 wxVector<wxVariant> cols;
                 cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(filename)));
-                m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)NULL);
+                m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)nullptr);
             }
         }
     }
@@ -447,7 +447,7 @@ void ReconcileProjectDlg::OnUndoSelectedFiles(wxCommandEvent& event)
 
             wxVector<wxVariant> cols;
             cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(fn.GetFullName())));
-            m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)NULL);
+            m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)nullptr);
         }
     }
 
@@ -471,7 +471,7 @@ void ReconcileProjectDlg::OnUndoSelectedFiles(wxCommandEvent& event)
     for (size_t i = 0; i < allfiles.GetCount(); ++i) {
         wxVector<wxVariant> cols;
         cols.push_back(::MakeIconText(allfiles.Item(i), GetBitmap(allfiles.Item(i))));
-        m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)NULL);
+        m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)nullptr);
     }
 }
 
@@ -588,7 +588,7 @@ void ReconcileProjectDlg::OnDVLCContextMenu(wxDataViewEvent& event)
     menu.Connect(wxID_DELETE,
                  wxEVT_COMMAND_MENU_SELECTED,
                  wxCommandEventHandler(ReconcileProjectDlg::OnDeleteSelectedNewFiles),
-                 NULL,
+                 nullptr,
                  this);
     m_dvListCtrl1Unassigned->PopupMenu(&menu);
 }

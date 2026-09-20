@@ -45,7 +45,7 @@
 BuildSettingsDialog::BuildSettingsDialog(
     wxWindow* parent, size_t selected_page, int id, wxString title, wxPoint pos, wxSize size, int style)
     : AdvancedDlgBase(parent)
-    , m_rightclickMenu(NULL)
+    , m_rightclickMenu(nullptr)
 {
     m_compilersPage = new CompilerMainPage(m_notebook);
     m_notebook->AddPage(m_compilersPage, _("Compilers"), true);

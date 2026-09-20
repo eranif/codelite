@@ -286,7 +286,7 @@ bool BuilderGNUMakeClassic::Export(const wxString& project,
                 // path
                 customWd.Trim().Trim(false);
                 if (customWd.empty() == false) {
-                    customWdCmd << wxT("@cd \"") << ExpandVariables(customWd, dependProj, NULL) << wxT("\" && ");
+                    customWdCmd << wxT("@cd \"") << ExpandVariables(customWd, dependProj, nullptr) << wxT("\" && ");
                 } else {
                     customWdCmd << GetCdCmd(wspfile, fn);
                 }
@@ -423,7 +423,7 @@ bool BuilderGNUMakeClassic::Export(const wxString& project,
                 // path
                 customWd.Trim().Trim(false);
                 if (customWd.empty() == false) {
-                    customWdCmd << wxT("@cd \"") << ExpandVariables(customWd, dependProj, NULL) << wxT("\" && ");
+                    customWdCmd << wxT("@cd \"") << ExpandVariables(customWd, dependProj, nullptr) << wxT("\" && ");
                 } else {
                     customWdCmd << GetCdCmd(wspfile, fn);
                 }

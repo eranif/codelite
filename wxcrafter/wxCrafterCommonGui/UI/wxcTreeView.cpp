@@ -45,9 +45,9 @@ wxcTreeView::wxcTreeView(wxWindow* parent)
         m_splitter347->SetSashPosition(treeviewSashPos);
 
     EventNotifier::Get()->Connect(
-        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved), NULL, this);
+        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcTreeView::OnProjectClosed), NULL, this);
+        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcTreeView::OnProjectClosed), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &wxcTreeView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &wxcTreeView::OnWorkspaceClosed, this);
 }
@@ -58,9 +58,9 @@ wxcTreeView::~wxcTreeView()
     wxcSettings::Get().Save();
 
     EventNotifier::Get()->Disconnect(
-        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved), NULL, this);
+        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcTreeView::OnProjectClosed), NULL, this);
+        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcTreeView::OnProjectClosed), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &wxcTreeView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &wxcTreeView::OnWorkspaceClosed, this);
 }

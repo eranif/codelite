@@ -157,7 +157,7 @@ LONG WINAPI CodeLiteUnhandledExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
     // Get the executable path for the debug command
     wxString exePath;
     wxChar buf[MAX_PATH];
-    if (GetModuleFileNameW(NULL, buf, MAX_PATH) > 0) {
+    if (GetModuleFileNameW(nullptr, buf, MAX_PATH) > 0) {
         exePath = buf;
     } else {
         exePath = wxT("codelite.exe");
@@ -165,7 +165,7 @@ LONG WINAPI CodeLiteUnhandledExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
 
     // Create the dump file
     HANDLE hFile =
-        CreateFileW(dumpFileName.wc_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        CreateFileW(dumpFileName.wc_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
     if (hFile != INVALID_HANDLE_VALUE) {
         MINIDUMP_EXCEPTION_INFORMATION mdei;
@@ -178,7 +178,7 @@ LONG WINAPI CodeLiteUnhandledExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
                                                  MiniDumpWithThreadInfo | MiniDumpWithUnloadedModules);
 
         BOOL success =
-            MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, dumpType, &mdei, NULL, NULL);
+            MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, dumpType, &mdei, nullptr, nullptr);
 
         CloseHandle(hFile);
 
@@ -223,13 +223,13 @@ void EnableDebugPriv()
 
     OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken);
 
-    LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid);
+    LookupPrivilegeValue(nullptr, SE_DEBUG_NAME, &luid);
 
     tkp.PrivilegeCount = 1;
     tkp.Privileges[0].Luid = luid;
     tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
-    AdjustTokenPrivileges(hToken, false, &tkp, sizeof(tkp), NULL, NULL);
+    AdjustTokenPrivileges(hToken, false, &tkp, sizeof(tkp), nullptr, nullptr);
 
     CloseHandle(hToken);
 }
@@ -314,8 +314,8 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
      wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_PARAM,
-     NULL,
-     NULL,
+     nullptr,
+     nullptr,
      "Input file",
      wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},
@@ -428,7 +428,7 @@ IMPLEMENT_APP(CodeLiteApp)
 extern void InitXmlResource();
 CodeLiteApp::CodeLiteApp()
     : m_pMainFrame(nullptr)
-    , m_singleInstance(NULL)
+    , m_singleInstance(nullptr)
     , m_pluginLoadPolicy(PP_All)
     , m_startedInDebuggerMode(false)
 {

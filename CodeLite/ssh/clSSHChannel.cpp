@@ -61,7 +61,7 @@ public:
                 break;
             }
         }
-        return NULL;
+        return nullptr;
     }
 };
 
@@ -108,7 +108,7 @@ void clSSHChannel::Open()
     int rc = ssh_channel_open_session(m_channel);
     if (rc != SSH_OK) {
         ssh_channel_free(m_channel);
-        m_channel = NULL;
+        m_channel = nullptr;
         throw clException(BuildError("ssh_channel_open_session error."));
     }
 }
@@ -121,7 +121,7 @@ void clSSHChannel::Close()
     if (IsOpen()) {
         ssh_channel_close(m_channel);
         ssh_channel_free(m_channel);
-        m_channel = NULL;
+        m_channel = nullptr;
     }
 
     if (m_hadErrors) {

@@ -88,7 +88,7 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
     // calculate the location to place the string
     wxCoord xx, yy;
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    dc.GetTextExtent(m_msg, &xx, &yy, NULL, NULL, &f);
+    dc.GetTextExtent(m_msg, &xx, &yy, nullptr, nullptr, &f);
 
     wxCoord txtYCoord = (rect.GetHeight() - yy) / 2;
     wxCoord txtXCoord = (rect.GetWidth() - xx) / 2; // text in the middle

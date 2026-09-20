@@ -119,7 +119,7 @@ void SvnBlameEditor::SetText(const wxString& text)
         line = line.AfterFirst(wxT(' '));
 
         wxString marginText = wxString::Format(wxT("% 8s: %s"), revision.c_str(), author.c_str());
-        wxWindow::GetTextExtent(marginText, &xx, &yy, NULL, NULL, &font);
+        wxWindow::GetTextExtent(marginText, &xx, &yy, nullptr, nullptr, &font);
 
         marginWidth = wxMax(marginWidth, xx);
         AppendText(line);
@@ -152,7 +152,7 @@ void SvnBlameEditor::OnContextMenu(wxContextMenuEvent& event)
         menu.Connect(XRCID("svn_highlight_revision"),
                      wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(SvnBlameEditor::OnHighlightRevision),
-                     NULL,
+                     nullptr,
                      this);
 
         PopupMenu(&menu);

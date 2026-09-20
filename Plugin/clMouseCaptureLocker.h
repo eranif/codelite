@@ -41,7 +41,7 @@ public:
     /**
      * @brief capture the mouse (if not captured)
      * If this class already captured some other window mouse, release it before
-     * capturing the mouse for the new window. If passing NULL, release any window captured by
+     * capturing the mouse for the new window. If passing nullptr, release any window captured by
      * this class and do nothing
      */
     void CaptureMouse(wxWindow* win);

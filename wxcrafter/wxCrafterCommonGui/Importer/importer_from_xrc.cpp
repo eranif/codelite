@@ -58,7 +58,7 @@ bool Importer::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const
         }
 
         bool alreadyParented(false);
-        wxcWidget* wrapper = ParseNode(toplevelnode, NULL, alreadyParented);
+        wxcWidget* wrapper = ParseNode(toplevelnode, nullptr, alreadyParented);
         if (wrapper) {
             toplevels.push_back(wrapper);
         }

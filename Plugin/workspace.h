@@ -115,7 +115,7 @@ private:
 
     // return the wxXmlNode instance for the give path
     // the path is separated by "/"
-    // return NULL if no such virtual directory exists
+    // return nullptr if no such virtual directory exists
     wxXmlNode* DoGetWorkspaceFolderXmlNode(const wxString& path);
 
     /**
@@ -279,7 +279,7 @@ public:
      * Find a project by name
      * \param projName project name
      * \param errMsg [output] incase an error, report the error to the caller
-     * \returns ProjectPtr or NULL if no match was found
+     * \returns ProjectPtr or nullptr if no match was found
      */
     ProjectPtr FindProjectByName(const wxString& projName, wxString& errMsg) const;
 

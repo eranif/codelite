@@ -39,7 +39,7 @@ MySqlDbAdapter::MySqlDbAdapter()
     this->m_userName = wxT("");
     this->m_password = wxT("");
     this->m_adapterType = atMYSQL;
-    this->m_pDbLayer = NULL;
+    this->m_pDbLayer = nullptr;
 }
 MySqlDbAdapter::MySqlDbAdapter(const wxString& serverName, const wxString& userName, const wxString& password)
 {
@@ -47,7 +47,7 @@ MySqlDbAdapter::MySqlDbAdapter(const wxString& serverName, const wxString& userN
     this->m_userName = userName;
     this->m_password = password;
     this->m_adapterType = atMYSQL;
-    this->m_pDbLayer = NULL;
+    this->m_pDbLayer = nullptr;
 }
 
 void MySqlDbAdapter::CloseConnection()

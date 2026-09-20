@@ -155,7 +155,7 @@ public:
     /**
      * @brief search a stc control for 'findwhat'. Use kSearchForward to indicate searching forward, pass 0
      * for backward.
-     * 'This' is used internally, so pass it NULL
+     * 'This' is used internally, so pass it nullptr
      */
     static bool
     Search(wxStyledTextCtrl* ctrl, const wxString& findwhat, size_t search_flags, clPluginsFindBar* This = nullptr);

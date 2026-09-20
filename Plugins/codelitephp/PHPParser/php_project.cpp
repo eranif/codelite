@@ -53,7 +53,7 @@ public:
 
         // Scan and collect the files
         clCommandEvent event(wxEVT_PHP_PROJECT_FILES_SYNC_END);
-        FilesCollector collector(event.GetStrings(), m_projectData.includes, m_projectData.excludes, NULL);
+        FilesCollector collector(event.GetStrings(), m_projectData.includes, m_projectData.excludes, nullptr);
         collector.Collect(m_projectData.directory);
 
         // Notify about sync completed
@@ -61,7 +61,7 @@ public:
         m_owner->AddPendingEvent(event);
 
         clDEBUG() << "Scanning files for project:" << m_projectData.projectName << "... is completed" << clEndl;
-        return NULL;
+        return nullptr;
     }
 
     void Start()
@@ -208,7 +208,7 @@ void PHPProject::SynchWithFileSystem()
 {
     m_files.Clear();
     // Call GetFiles so the m_files will get populated again
-    GetFiles(NULL);
+    GetFiles(nullptr);
 }
 
 void PHPProject::FilesDeleted(const wxArrayString& files, bool notify)

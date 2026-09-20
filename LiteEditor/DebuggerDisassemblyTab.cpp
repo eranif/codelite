@@ -61,20 +61,20 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
 
     m_stc->SetYCaretPolicy(wxSTC_CARET_SLOP, 30);
     EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_DISASSEMBLE_OUTPUT, clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), NULL, this);
+        wxEVT_DEBUGGER_DISASSEMBLE_OUTPUT, clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_DISASSEMBLE_CURLINE, clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), NULL, this);
+        wxEVT_DEBUGGER_DISASSEMBLE_CURLINE, clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_QUERY_FILELINE, clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);
+        wxEVT_DEBUGGER_QUERY_FILELINE, clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_LIST_REGISTERS, clCommandEventHandler(DebuggerDisassemblyTab::OnShowRegisters), NULL, this);
+        wxEVT_DEBUGGER_LIST_REGISTERS, clCommandEventHandler(DebuggerDisassemblyTab::OnShowRegisters), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &DebuggerDisassemblyTab::OnDebuggerStopped, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED,
                                   wxCommandEventHandler(DebuggerDisassemblyTab::OnAllBreakpointsDeleted),
-                                  NULL,
+                                  nullptr,
                                   this);
     EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEventHandler(DebuggerDisassemblyTab::OnRefreshView), NULL, this);
+        wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEventHandler(DebuggerDisassemblyTab::OnRefreshView), nullptr, this);
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("Assembly");
     if (lex) {
         lex->Apply(m_stc, true);
@@ -84,20 +84,20 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
 DebuggerDisassemblyTab::~DebuggerDisassemblyTab()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_DEBUGGER_DISASSEMBLE_OUTPUT, clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), NULL, this);
+        wxEVT_DEBUGGER_DISASSEMBLE_OUTPUT, clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_DEBUGGER_DISASSEMBLE_CURLINE, clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), NULL, this);
+        wxEVT_DEBUGGER_DISASSEMBLE_CURLINE, clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_DEBUGGER_QUERY_FILELINE, clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);
+        wxEVT_DEBUGGER_QUERY_FILELINE, clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &DebuggerDisassemblyTab::OnDebuggerStopped, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED,
                                      wxCommandEventHandler(DebuggerDisassemblyTab::OnAllBreakpointsDeleted),
-                                     NULL,
+                                     nullptr,
                                      this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_DEBUGGER_LIST_REGISTERS, clCommandEventHandler(DebuggerDisassemblyTab::OnShowRegisters), NULL, this);
+        wxEVT_DEBUGGER_LIST_REGISTERS, clCommandEventHandler(DebuggerDisassemblyTab::OnShowRegisters), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEventHandler(DebuggerDisassemblyTab::OnRefreshView), NULL, this);
+        wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEventHandler(DebuggerDisassemblyTab::OnRefreshView), nullptr, this);
 }
 
 void DebuggerDisassemblyTab::OnOutput(clCommandEvent& e)

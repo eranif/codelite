@@ -76,16 +76,16 @@ QMakePlugin::QMakePlugin(IManager* manager)
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &QMakePlugin::OnQmakeTerminated, this);
     // Connect items
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(QMakePlugin::OnBuildStarting), NULL, this);
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), nullptr, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(QMakePlugin::OnBuildStarting), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_GET_PROJECT_BUILD_CMD, clBuildEventHandler(QMakePlugin::OnGetBuildCommand), NULL, this);
+        wxEVT_GET_PROJECT_BUILD_CMD, clBuildEventHandler(QMakePlugin::OnGetBuildCommand), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_GET_PROJECT_CLEAN_CMD, clBuildEventHandler(QMakePlugin::OnGetCleanCommand), NULL, this);
+        wxEVT_GET_PROJECT_CLEAN_CMD, clBuildEventHandler(QMakePlugin::OnGetCleanCommand), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+        wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile), nullptr, this);
 }
 
 QMakePlugin::~QMakePlugin() { delete m_conf; }
@@ -118,17 +118,17 @@ void QMakePlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     wxTheApp->Connect(XRCID("new_qmake_project"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject),
-                      NULL,
+                      nullptr,
                       (wxEvtHandler*)this);
     wxTheApp->Connect(XRCID("qmake_settings"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(QMakePlugin::OnSettings),
-                      NULL,
+                      nullptr,
                       (wxEvtHandler*)this);
     wxTheApp->Connect(XRCID("qmake_run_qmake"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(QMakePlugin::OnExportMakefile),
-                      NULL,
+                      nullptr,
                       this);
 }
 
@@ -145,31 +145,31 @@ void QMakePlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 void QMakePlugin::UnPlug()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_BUILD_STARTING, clBuildEventHandler(QMakePlugin::OnBuildStarting), NULL, this);
+        wxEVT_BUILD_STARTING, clBuildEventHandler(QMakePlugin::OnBuildStarting), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_GET_PROJECT_BUILD_CMD, clBuildEventHandler(QMakePlugin::OnGetBuildCommand), NULL, this);
+        wxEVT_GET_PROJECT_BUILD_CMD, clBuildEventHandler(QMakePlugin::OnGetBuildCommand), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_GET_PROJECT_CLEAN_CMD, clBuildEventHandler(QMakePlugin::OnGetCleanCommand), NULL, this);
+        wxEVT_GET_PROJECT_CLEAN_CMD, clBuildEventHandler(QMakePlugin::OnGetCleanCommand), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+        wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile), nullptr, this);
     wxTheApp->Disconnect(XRCID("new_qmake_project"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject),
-                         NULL,
+                         nullptr,
                          (wxEvtHandler*)this);
     wxTheApp->Disconnect(XRCID("qmake_settings"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(QMakePlugin::OnSettings),
-                         NULL,
+                         nullptr,
                          (wxEvtHandler*)this);
     wxTheApp->Disconnect(XRCID("qmake_run_qmake"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(QMakePlugin::OnExportMakefile),
-                         NULL,
+                         nullptr,
                          this);
 }
 
@@ -243,7 +243,7 @@ void QMakePlugin::DoUnHookAllTabs(wxBookCtrlBase* book)
 
 void QMakePlugin::OnSettings(wxCommandEvent& event)
 {
-    QMakeSettingsDlg dlg(NULL, m_mgr, m_conf);
+    QMakeSettingsDlg dlg(nullptr, m_mgr, m_conf);
     dlg.ShowModal();
 }
 
@@ -562,7 +562,7 @@ void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
             }
             om.insert({"PATH", updatedPath});
 
-            EnvSetter envGuard(NULL, &om, project, config);
+            EnvSetter envGuard(nullptr, &om, project, config);
             m_mgr->ClearOutputTab(kOutputTab_Build);
             m_mgr->ShowOutputPane(_("Build"));
             m_mgr->AppendOutputTabText(kOutputTab_Build, wxString() << "-- " << qmake_exe_line << "\n");

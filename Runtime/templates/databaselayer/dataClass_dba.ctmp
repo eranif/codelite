@@ -14,13 +14,13 @@ END_STORE_TABLE()
 		istream.openFromQuery( *c, dba::SQL("SELECT * FROM %%classTableName%% WHERE %%pkName%% = (:d)") << val );
 		if( !istream.getNext(c) ) {
 			delete c;
-			c = NULL;
+			c = nullptr;
 		}
 		istream.destroy();
 		
 		return c;
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -101,7 +101,7 @@ int %%classUtilName%%::Add(dba::SQLArchive &ar
 			%%classUtilsAddParametersWithoutPK%%			
 			)
 {
-	if( ar.isOpen() && (ar.getIdFetcher() != NULL) ) {
+	if( ar.isOpen() && (ar.getIdFetcher() != nullptr) ) {
 		%%classItemName%% c;
 		%%classUtilsAddSetDebeaParams%%
 		
@@ -123,7 +123,7 @@ int %%classUtilName%%::Edit(dba::SQLArchive &ar
 			%%classUtilsAddParameters%%			
 			)
 {
-	if( ar.isOpen() && (ar.getIdFetcher() != NULL) ) {
+	if( ar.isOpen() && (ar.getIdFetcher() != nullptr) ) {
 		%%classItemName%% *c = %%classItemName%%::GetBy%%pkName%%(ar, %%pkName%%);
 		if( c ) {
 			%%classUtilsEditDebeaStatement%%

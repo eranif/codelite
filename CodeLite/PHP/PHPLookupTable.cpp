@@ -189,7 +189,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const w
         // namespace
         return DoFindMemberOf(parentDbId, exactName, true);
     }
-    return PHPEntityBase::Ptr_t(NULL);
+    return PHPEntityBase::Ptr_t(nullptr);
 }
 
 PHPEntityBase::Ptr_t PHPLookupTable::FindScope(const wxString& fullname)
@@ -366,7 +366,7 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
         if (!source.GetDefines().empty()) {
             PHPEntityBase::Map_t nsMap;
             for (const auto& pDefine : source.GetDefines()) {
-                PHPEntityBase::Ptr_t pNamespace(NULL);
+                PHPEntityBase::Ptr_t pNamespace(nullptr);
 
                 wxString nameSpaceName, shortName;
                 DoSplitFullname(pDefine->GetFullName(), nameSpaceName, shortName);
@@ -485,14 +485,14 @@ PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName,
             DoFixVarsDocComment(matches, parentDbId);
 
             if (matches.empty() || matches.size() > 1) {
-                return PHPEntityBase::Ptr_t(NULL);
+                return PHPEntityBase::Ptr_t(nullptr);
             } else {
                 return (*matches.begin());
             }
         } else if (matches.size() > 1) {
             // we found more than 1 match in the function table
-            // return NULL
-            return PHPEntityBase::Ptr_t(NULL);
+            // return nullptr
+            return PHPEntityBase::Ptr_t(nullptr);
         } else {
             // exactly one match was found in the function table
             // return it
@@ -502,7 +502,7 @@ PHPLookupTable::DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName,
     } catch (const wxSQLite3Exception& e) {
         clWARNING() << "PHPLookupTable::DoFindMemberOf" << e.GetMessage() << endl;
     }
-    return PHPEntityBase::Ptr_t(NULL);
+    return PHPEntityBase::Ptr_t(nullptr);
 }
 
 void PHPLookupTable::DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
@@ -531,7 +531,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(const wxString& fullname, ePhpS
         wxString sql;
 
         // limit by 2 for performance reason
-        // we will return NULL incase the number of matches is greater than 1...
+        // we will return nullptr incase the number of matches is greater than 1...
         sql << "SELECT * from SCOPE_TABLE WHERE FULLNAME='" << fullname << "'";
         if (scopeType != kPhpScopeTypeAny) {
             sql << " AND SCOPE_TYPE = " << static_cast<int>(scopeType);
@@ -540,12 +540,12 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(const wxString& fullname, ePhpS
 
         wxSQLite3Statement st = m_db.PrepareStatement(sql);
         wxSQLite3ResultSet res = st.ExecuteQuery();
-        PHPEntityBase::Ptr_t match(NULL);
+        PHPEntityBase::Ptr_t match(nullptr);
 
         while (res.NextRow()) {
             if (match) {
                 // only one match
-                return PHPEntityBase::Ptr_t(NULL);
+                return PHPEntityBase::Ptr_t(nullptr);
             }
 
             int scopeType = res.GetInt("SCOPE_TYPE", 1);
@@ -563,7 +563,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(const wxString& fullname, ePhpS
     } catch (const wxSQLite3Exception& e) {
         clWARNING() << "PHPLookupTable::FindScope" << e.GetMessage() << endl;
     }
-    return PHPEntityBase::Ptr_t(NULL);
+    return PHPEntityBase::Ptr_t(nullptr);
 }
 
 PHPEntityBase::Ptr_t PHPLookupTable::FindClass(const wxString& fullname)
@@ -578,7 +578,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(wxLongLong id, ePhpScopeType sc
         wxString sql;
 
         // limit by 2 for performance reason
-        // we will return NULL incase the number of matches is greater than 1...
+        // we will return nullptr incase the number of matches is greater than 1...
         sql << "SELECT * from SCOPE_TABLE WHERE ID=" << id;
         if (scopeType != kPhpScopeTypeAny) {
             sql << " AND SCOPE_TYPE = " << static_cast<int>(scopeType);
@@ -589,7 +589,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(wxLongLong id, ePhpScopeType sc
         wxSQLite3ResultSet res = st.ExecuteQuery();
 
         if (res.NextRow()) {
-            PHPEntityBase::Ptr_t match(NULL);
+            PHPEntityBase::Ptr_t match(nullptr);
             int scopeType = res.GetInt("SCOPE_TYPE", 1);
             if (scopeType == kPhpScopeTypeNamespace) {
                 // namespace
@@ -604,7 +604,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::DoFindScope(wxLongLong id, ePhpScopeType sc
     } catch (const wxSQLite3Exception& e) {
         clWARNING() << "PHPLookupTable::DoFindScope" << e.GetMessage() << endl;
     }
-    return PHPEntityBase::Ptr_t(NULL);
+    return PHPEntityBase::Ptr_t(nullptr);
 }
 
 PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t flags, const wxString& nameHint)
@@ -720,7 +720,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::NewEntity(const wxString& tableName, ePhpSc
     } else if (tableName == "SCOPE_TABLE" && scopeType == kPhpScopeTypeClass) {
         return PHPEntityBase::Ptr_t(new PHPEntityClass());
     } else {
-        return PHPEntityBase::Ptr_t(NULL);
+        return PHPEntityBase::Ptr_t(nullptr);
     }
 }
 
@@ -981,7 +981,7 @@ void PHPLookupTable::UpdateFileLastParsedTimestamp(const wxFileName& filename)
         wxSQLite3Statement st = m_db.PrepareStatement(
             "REPLACE INTO FILES_TABLE (ID, FILE_NAME, LAST_UPDATED) VALUES (NULL, :FILE_NAME, :LAST_UPDATED)");
         st.Bind(st.GetParamIndex(":FILE_NAME"), filename.GetFullPath());
-        st.Bind(st.GetParamIndex(":LAST_UPDATED"), (wxLongLong)time(NULL));
+        st.Bind(st.GetParamIndex(":LAST_UPDATED"), (wxLongLong)time(nullptr));
         st.ExecuteUpdate();
 
     } catch (const wxSQLite3Exception& e) {
@@ -1045,18 +1045,18 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindFunction(const wxString& fullname)
         wxString sql;
 
         // limit by 2 for performance reason
-        // we will return NULL incase the number of matches is greater than 1...
+        // we will return nullptr incase the number of matches is greater than 1...
         sql << "SELECT * from FUNCTION_TABLE WHERE FULLNAME='" << fullname << "'";
         sql << " LIMIT 2";
 
         wxSQLite3Statement st = m_db.PrepareStatement(sql);
         wxSQLite3ResultSet res = st.ExecuteQuery();
-        PHPEntityBase::Ptr_t match(NULL);
+        PHPEntityBase::Ptr_t match(nullptr);
 
         while (res.NextRow()) {
             if (match) {
                 // only one match
-                return PHPEntityBase::Ptr_t(NULL);
+                return PHPEntityBase::Ptr_t(nullptr);
             }
 
             match = std::make_shared<PHPEntityFunction>();
@@ -1067,7 +1067,7 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindFunction(const wxString& fullname)
     } catch (const wxSQLite3Exception& e) {
         clWARNING() << "PHPLookupTable::FindFunction" << e.GetMessage() << endl;
     }
-    return PHPEntityBase::Ptr_t(NULL);
+    return PHPEntityBase::Ptr_t(nullptr);
 }
 
 PHPEntityBase::List_t PHPLookupTable::FindGlobalFunctionAndConsts(size_t flags, const wxString& nameHint)
@@ -1351,7 +1351,7 @@ size_t PHPLookupTable::FindFunctionsByFile(const wxFileName& filename, PHPEntity
     try {
 
         // limit by 2 for performance reason
-        // we will return NULL incase the number of matches is greater than 1...
+        // we will return nullptr incase the number of matches is greater than 1...
         // SELECT * from FUNCTION_TABLE WHERE
         sql << "SELECT * from FUNCTION_TABLE WHERE FILE_NAME='" << filename.GetFullPath()
             << "' order by LINE_NUMBER ASC";

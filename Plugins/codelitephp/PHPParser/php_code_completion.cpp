@@ -53,11 +53,11 @@ struct _SAscendingSort {
 };
 ///////////////////////////////////////////////////////////////////
 
-PHPCodeCompletion* PHPCodeCompletion::m_instance = NULL;
+PHPCodeCompletion* PHPCodeCompletion::m_instance = nullptr;
 
 PHPCodeCompletion::PHPCodeCompletion()
-    : m_manager(NULL)
-    , m_typeInfoTooltip(NULL)
+    : m_manager(nullptr)
+    , m_typeInfoTooltip(nullptr)
 {
     EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE, &PHPCodeCompletion::OnRetagWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &PHPCodeCompletion::OnRetagWorkspace, this);
@@ -113,7 +113,7 @@ void PHPCodeCompletion::Release()
     if (m_instance) {
         delete m_instance;
     }
-    m_instance = NULL;
+    m_instance = nullptr;
 }
 
 void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries, PHPExpression::Ptr_t expr)
@@ -204,7 +204,7 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
         t->SetTypename("");
 
     } else if (entry->Is(kEntityTypeFunction) || entry->Is(kEntityTypeFunctionAlias)) {
-        PHPEntityFunction* func = NULL;
+        PHPEntityFunction* func = nullptr;
         if (entry->Is(kEntityTypeFunctionAlias)) {
             func = entry->Cast<PHPEntityFunctionAlias>()->GetFunc()->Cast<PHPEntityFunction>();
         } else {
@@ -501,7 +501,7 @@ void PHPCodeCompletion::OnRetagWorkspace(wxCommandEvent& event)
 PHPEntityBase::Ptr_t PHPCodeCompletion::DoGetPHPEntryUnderTheAtPos(IEditor* editor, int pos, bool forFunctionCalltip)
 {
     if (!PHPWorkspace::Get()->IsOpen()) {
-        return PHPEntityBase::Ptr_t(NULL);
+        return PHPEntityBase::Ptr_t(nullptr);
     }
     pos = editor->GetCtrl()->WordEndPosition(pos, true);
 
@@ -666,7 +666,7 @@ void PHPCodeCompletion::DoSelectInEditor(IEditor* editor, const wxString& what, 
 {
     if (editor) {
         editor->GetCtrl()->ClearSelections();
-        editor->FindAndSelectV(what, what, from, NULL);
+        editor->FindAndSelectV(what, what, from, nullptr);
     }
 }
 
@@ -918,7 +918,7 @@ void PHPCodeCompletion::OnActiveEditorChanged(wxCommandEvent& e)
     wxString text = editor->GetTextRange(0, editor->GetLength());
 
     auto parse_callback = [=](const wxString& text) {
-        PHPSourceFile source(text, NULL);
+        PHPSourceFile source(text, nullptr);
         source.SetParseFunctionBody(false);
         source.SetFilename(editor->GetFileName());
         source.Parse();

@@ -68,7 +68,7 @@ bool clConsoleGnomeTerminal::StartForDebugger()
     // generate a random value to differentiate this instance of CodeLite
     // from other instances
 
-    time_t curtime = time(NULL);
+    time_t curtime = time(nullptr);
     int randomSeed = (curtime % 947);
     wxString secondsToSleep;
 

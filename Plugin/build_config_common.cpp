@@ -91,7 +91,7 @@ BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
 
 wxXmlNode* BuildConfigCommon::ToXml() const
 {
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, m_confType);
+    wxXmlNode* node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, m_confType);
 
     // create the compile node
     wxXmlNode* compile = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Compiler"));

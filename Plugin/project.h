@@ -609,7 +609,7 @@ public:
 
     /**
      * \brief return Tree representation of all virtual folders of this project
-     * \return tree node. return NULL if no virtual folders exist
+     * \return tree node. return nullptr if no virtual folders exist
      */
     TreeNode<wxString, VisualWorkspaceNode>* GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode>* workspace);
 

@@ -129,7 +129,7 @@ CompilerPtr CompilersDetectorManager::Locate(const wxString& folder)
             return comp;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool CompilersDetectorManager::FoundMinGWCompiler() const

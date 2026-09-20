@@ -85,7 +85,7 @@ void WordLexerDestroy(WordScanner_t* scanner)
     struct yyguts_t * yyg = (struct yyguts_t*)(*scanner);
     yy_delete_buffer(YY_CURRENT_BUFFER, *scanner);
     yylex_destroy(*scanner);
-    *scanner = NULL;
+    *scanner = nullptr;
 }
 
 WordScanner_t WordLexerNew(const wxString& buffer)

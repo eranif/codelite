@@ -10,15 +10,15 @@ FilePickerCtrl::FilePickerCtrl(wxWindow* parent, const wxString& projectPath, co
     , m_bmpPath(value)
     , m_projectPath(projectPath)
 {
-    this->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FilePickerCtrl::OnTextEnter), NULL, this);
-    this->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(FilePickerCtrl::OnMouseLeft), NULL, this);
+    this->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FilePickerCtrl::OnTextEnter), nullptr, this);
+    this->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(FilePickerCtrl::OnMouseLeft), nullptr, this);
     wxTextCtrl::ChangeValue(value);
 }
 
 FilePickerCtrl::~FilePickerCtrl()
 {
-    this->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FilePickerCtrl::OnTextEnter), NULL, this);
-    this->Disconnect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(FilePickerCtrl::OnMouseLeft), NULL, this);
+    this->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FilePickerCtrl::OnTextEnter), nullptr, this);
+    this->Disconnect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(FilePickerCtrl::OnMouseLeft), nullptr, this);
 }
 
 void FilePickerCtrl::OnTextEnter(wxCommandEvent& e) { DoNotify(); }

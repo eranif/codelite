@@ -154,10 +154,10 @@ public:
     /**
      * @brief sync the projec with the file system. But do this in a background thread
      * Once this function is done, it fires an event wxEVT_PHP_PROJECT_FILES_SYNCED
-     * @owner owner the class that will receive the start/end events. If no provided (i.e. NULL is passed)
+     * @owner owner the class that will receive the start/end events. If no provided (i.e. nullptr is passed)
      * the current project object will receive them
      */
-    void SyncWithFileSystemAsync(wxEvtHandler* owner = NULL);
+    void SyncWithFileSystemAsync(wxEvtHandler* owner = nullptr);
 };
 
 wxDECLARE_EVENT(wxEVT_PHP_PROJECT_FILES_SYNC_START, clCommandEvent);

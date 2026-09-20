@@ -63,15 +63,15 @@ bool clProgressDlg::Pulse(const wxString& msg)
 #else  // UNIX
 
 clProgressDlg::clProgressDlg(wxWindow* parent, const wxString& title, const wxString& msg, int maxValue)
-    : wxProgressDialog(title, msg, maxValue, NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE)
+    : wxProgressDialog(title, msg, maxValue, nullptr, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE)
 {
     SetSizeHints(400, -1);
     GetSizer()->Fit(this);
     CenterOnScreen();
 }
 
-bool clProgressDlg::Update(int value, const wxString& msg) { return wxProgressDialog::Update(value, msg, NULL); }
+bool clProgressDlg::Update(int value, const wxString& msg) { return wxProgressDialog::Update(value, msg, nullptr); }
 
-bool clProgressDlg::Pulse(const wxString& msg) { return wxProgressDialog::Pulse(msg, NULL); }
+bool clProgressDlg::Pulse(const wxString& msg) { return wxProgressDialog::Pulse(msg, nullptr); }
 #endif // #if wxUSE_GUI
 #endif

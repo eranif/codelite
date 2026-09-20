@@ -54,71 +54,71 @@ MemCheckPlugin::MemCheckPlugin(IManager* manager)
     m_mgr->GetTheApp()->Connect(MemCheckOutputViewBase::ID_TOOL_STOP_PROCESS,
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(MemCheckPlugin::OnStopProcess),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(MemCheckOutputViewBase::ID_TOOL_STOP_PROCESS,
                                 wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(MemCheckPlugin::OnStopProcessUI),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_active_project"),
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(MemCheckPlugin::OnCheckActiveProject),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_active_project"),
                                 wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_project"),
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(MemCheckPlugin::OnCheckPopupProject),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_project"),
                                 wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_editor"),
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(MemCheckPlugin::OnCheckPopupEditor),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_editor"),
                                 wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_import"),
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(MemCheckPlugin::OnImportLog),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_import"),
                                 wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_settings"),
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(MemCheckPlugin::OnSettings),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_settings"),
                                 wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                NULL,
+                                nullptr,
                                 (wxEvtHandler*)this);
 
-    // EventNotifier::Get()->Connect( wxEVT_INIT_DONE, wxCommandEventHandler(MemCheckPlugin::OnInitDone), NULL, this);
+    // EventNotifier::Get()->Connect( wxEVT_INIT_DONE, wxCommandEventHandler(MemCheckPlugin::OnInitDone), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &MemCheckPlugin::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &MemCheckPlugin::OnWorkspaceClosed, this);
 
@@ -213,59 +213,59 @@ void MemCheckPlugin::UnPlug()
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"),
                                    wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(MemCheckPlugin::OnCheckActiveProject),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"),
                                    wxEVT_UPDATE_UI,
                                    wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_project"),
                                    wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(MemCheckPlugin::OnCheckPopupProject),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_project"),
                                    wxEVT_UPDATE_UI,
                                    wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_editor"),
                                    wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(MemCheckPlugin::OnCheckPopupEditor),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_editor"),
                                    wxEVT_UPDATE_UI,
                                    wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_import"),
                                    wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(MemCheckPlugin::OnImportLog),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_import"),
                                    wxEVT_UPDATE_UI,
                                    wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_settings"),
                                    wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(MemCheckPlugin::OnSettings),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_settings"),
                                    wxEVT_UPDATE_UI,
                                    wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
 
-    // EventNotifier::Get()->Disconnect( wxEVT_INIT_DONE, wxCommandEventHandler(MemCheckPlugin::OnInitDone), NULL,
+    // EventNotifier::Get()->Disconnect( wxEVT_INIT_DONE, wxCommandEventHandler(MemCheckPlugin::OnInitDone), nullptr,
     // this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &MemCheckPlugin::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MemCheckPlugin::OnWorkspaceClosed, this);

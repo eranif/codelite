@@ -40,7 +40,7 @@ std::string DumpCurrentThreadStack()
     // Set symbol options
     SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES);
 
-    if (!SymInitialize(process, NULL, TRUE)) {
+    if (!SymInitialize(process, nullptr, TRUE)) {
         ss << "Failed to initialize symbols (error: " << GetLastError() << ")" << std::endl;
         return ss.str();
     }
@@ -69,10 +69,10 @@ std::string DumpCurrentThreadStack()
                        thread,
                        &stackFrame,
                        &context,
-                       NULL,
+                       nullptr,
                        SymFunctionTableAccess64,
                        SymGetModuleBase64,
-                       NULL)) {
+                       nullptr)) {
 
         DWORD64 address = stackFrame.AddrPC.Offset;
 

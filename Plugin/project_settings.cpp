@@ -90,7 +90,7 @@ BuildConfigPtr ProjectSettings::GetBuildConfiguration(const wxString& configName
 
     std::map<wxString, BuildConfigPtr>::const_iterator iter = m_configs.find(confName);
     if (iter == m_configs.end()) {
-        return NULL;
+        return nullptr;
     }
     BuildConfigPtr buildConf = iter->second;
     if (!merge) {
@@ -145,7 +145,7 @@ BuildConfigPtr ProjectSettings::GetFirstBuildConfiguration(ProjectSettingsCookie
         cookie.iter++;
         return conf;
     }
-    return NULL;
+    return nullptr;
 }
 
 BuildConfigPtr ProjectSettings::GetNextBuildConfiguration(ProjectSettingsCookie& cookie) const
@@ -155,7 +155,7 @@ BuildConfigPtr ProjectSettings::GetNextBuildConfiguration(ProjectSettingsCookie&
         cookie.iter++;
         return conf;
     }
-    return NULL;
+    return nullptr;
 }
 
 void ProjectSettings::SetBuildConfiguration(const BuildConfigPtr bc)

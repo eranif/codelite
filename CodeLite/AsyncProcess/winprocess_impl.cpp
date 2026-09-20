@@ -91,14 +91,14 @@ bool WriteStdin(const T& buffer, HANDLE hStdin, HANDLE hProcess)
 
     // Make the pipe to non-blocking mode
     dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
-    SetNamedPipeHandleState(hStdin, &dwMode, NULL, NULL);
+    SetNamedPipeHandleState(hStdin, &dwMode, nullptr, nullptr);
     DWORD bytesLeft = buffer.length();
     long offset = 0;
     static constexpr int max_retry_count = 100;
     size_t retryCount = 0;
     while (bytesLeft > 0 && (retryCount < max_retry_count)) {
         DWORD dwWritten = 0;
-        if (!WriteFile(hStdin, buffer.c_str() + offset, bytesLeft, &dwWritten, NULL)) {
+        if (!WriteFile(hStdin, buffer.c_str() + offset, bytesLeft, &dwWritten, nullptr)) {
             int errorCode = GetLastError();
             LOG_IF_DEBUG { clDEBUG() << ">> WriteStdin: (WriteFile) error:" << errorCode << endl; }
             return false;
@@ -220,7 +220,7 @@ HRESULT PrepareStartupInformation(HPCON hpc, STARTUPINFOEX* psi)
 
     // Discover the size required for the list
     SIZE_T bytesRequired;
-    InitializeProcThreadAttributeList(NULL, 1, 0, &bytesRequired);
+    InitializeProcThreadAttributeList(nullptr, 1, 0, &bytesRequired);
 
     // Allocate memory to represent the list
     si.lpAttributeList = (PPROC_THREAD_ATTRIBUTE_LIST)HeapAlloc(GetProcessHeap(), 0, bytesRequired);
@@ -236,7 +236,7 @@ HRESULT PrepareStartupInformation(HPCON hpc, STARTUPINFOEX* psi)
 
     // Set the pseudoconsole information into the list
     if (!UpdateProcThreadAttribute(
-            si.lpAttributeList, 0, PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE, hpc, sizeof(hpc), NULL, NULL)) {
+            si.lpAttributeList, 0, PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE, hpc, sizeof(hpc), nullptr, nullptr)) {
         HeapFree(GetProcessHeap(), 0, si.lpAttributeList);
         return HRESULT_FROM_WIN32(GetLastError());
     }
@@ -275,7 +275,7 @@ IProcess* WinProcessImpl::Execute(
     // Set the bInheritHandle flag so pipe handles are inherited.
     saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
     saAttr.bInheritHandle = TRUE;
-    saAttr.lpSecurityDescriptor = NULL;
+    saAttr.lpSecurityDescriptor = nullptr;
     WinProcessImpl* prc = new WinProcessImpl(parent);
     prc->m_callback = cb;
     prc->m_flags = flags;
@@ -393,14 +393,14 @@ IProcess* WinProcessImpl::Execute(
     LOG_IF_TRACE { clDEBUG1() << "Running process:" << cmd << endl; }
     BOOL ret = FALSE;
     {
-        ret = CreateProcess(NULL,
+        ret = CreateProcess(nullptr,
                             cmd.wchar_str(),   // shell line execution command
-                            NULL,              // process security attributes
-                            NULL,              // primary thread security attributes
+                            nullptr,              // process security attributes
+                            nullptr,              // primary thread security attributes
                             TRUE,              // handles are inherited
                             creationFlags,     // creation flags
-                            NULL,              // use parent's environment
-                            NULL,              // CD to tmp dir
+                            nullptr,              // use parent's environment
+                            nullptr,              // CD to tmp dir
                             &siStartInfo,      // STARTUPINFO pointer
                             &prc->piProcInfo); // receives PROCESS_INFORMATION
     }
@@ -425,14 +425,14 @@ IProcess* WinProcessImpl::Execute(
 WinProcessImpl::WinProcessImpl(wxEvtHandler* parent)
     : IProcess(parent)
 {
-    hChildStdinRd = NULL;
-    hChildStdinWrDup = NULL;
-    hChildStdoutWr = NULL;
-    hChildStdoutRdDup = NULL;
-    hChildStderrWr = NULL;
-    hChildStderrRdDup = NULL;
-    piProcInfo.hProcess = NULL;
-    piProcInfo.hThread = NULL;
+    hChildStdinRd = nullptr;
+    hChildStdinWrDup = nullptr;
+    hChildStdoutWr = nullptr;
+    hChildStdoutRdDup = nullptr;
+    hChildStderrWr = nullptr;
+    hChildStderrRdDup = nullptr;
+    piProcInfo.hProcess = nullptr;
+    piProcInfo.hThread = nullptr;
 }
 
 WinProcessImpl::~WinProcessImpl() { Cleanup(); }
@@ -538,7 +538,7 @@ void WinProcessImpl::Cleanup()
         m_thr->Stop();
         delete m_thr;
     }
-    m_thr = NULL;
+    m_thr = nullptr;
 
     // terminate the process
     if (IsAlive()) {
@@ -574,8 +574,8 @@ void WinProcessImpl::Cleanup()
     hChildStderrWr = INVALID_HANDLE_VALUE;
     hChildStdinWrDup = INVALID_HANDLE_VALUE;
     hChildStderrRdDup = INVALID_HANDLE_VALUE;
-    piProcInfo.hProcess = NULL;
-    piProcInfo.hThread = NULL;
+    piProcInfo.hProcess = nullptr;
+    piProcInfo.hThread = nullptr;
 }
 
 void WinProcessImpl::StartReaderThread()
@@ -601,11 +601,11 @@ bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff, std::string& ra
     // Make the pipe to non-blocking mode
     dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
     dwTimeout = 100;
-    SetNamedPipeHandleState(pipe, &dwMode, NULL, &dwTimeout);
+    SetNamedPipeHandleState(pipe, &dwMode, nullptr, &dwTimeout);
 
     bool read_something = false;
     while (true) {
-        BOOL bRes = ReadFile(pipe, m_buffer, BUFFER_SIZE - 1, &dwRead, NULL);
+        BOOL bRes = ReadFile(pipe, m_buffer, BUFFER_SIZE - 1, &dwRead, nullptr);
         if (bRes && (dwRead > 0)) {
             wxString tmpBuff;
             tmpBuff.reserve(dwRead * 2); // make enough room for the conversion
@@ -654,9 +654,9 @@ void WinProcessImpl::Detach()
         m_thr->Stop();
         delete m_thr;
     }
-    m_thr = NULL;
+    m_thr = nullptr;
 }
 
-void WinProcessImpl::Signal(wxSignal sig) { wxKill(GetPid(), sig, NULL, wxKILL_CHILDREN); }
+void WinProcessImpl::Signal(wxSignal sig) { wxKill(GetPid(), sig, nullptr, wxKILL_CHILDREN); }
 
 #endif //__WXMSW__

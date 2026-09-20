@@ -115,7 +115,7 @@ public:
     /**
      * @brief return a PHPLocation::Ptr_t for the declaration of the
      * expression in the given editor
-     * @return a valid PHPLocation or NULL
+     * @return a valid PHPLocation or nullptr
      */
     PHPLocation::Ptr_t FindDefinition(IEditor* editor);
 

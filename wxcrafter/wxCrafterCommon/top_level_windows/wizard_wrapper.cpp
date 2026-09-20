@@ -69,7 +69,7 @@ wxString WizardWrapper::BaseCtorDecl() const
          << wxCrafter::UNDERSCORE(PropertyString(PROP_TITLE)) << wxT(", ")
          << wxT("const wxBitmap& bmp = wxNullBitmap, ") << wxT("const wxPoint& pos = wxDefaultPosition, ")
          << wxT("long style = ") << StyleFlags(wxT("wxDEFAULT_DIALOG_STYLE")) << wxT(");\n") << wxT("    ")
-         << wxT("wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; "
+         << wxT("wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return nullptr; "
                 "}\n");
     return code;
 }

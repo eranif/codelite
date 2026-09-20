@@ -147,14 +147,14 @@ bool clMakeGeneratorApp::OnInit()
             Notice(wxString() << "Instead, here is the command line to use:");
             wxString command;
             wxString workingDirectory = MacroManager::Instance()->Expand(
-                bldConf->GetCustomBuildWorkingDir(), NULL, m_project, bldConf->GetName());
+                bldConf->GetCustomBuildWorkingDir(), nullptr, m_project, bldConf->GetName());
             if (wxFileName::DirExists(workingDirectory) == false) {
                 Info(wxString() << "-- Creating build directory: " << workingDirectory);
                 wxFileName::Mkdir(workingDirectory, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
             }
             command << "cd " << workingDirectory << " && "
                     << MacroManager::Instance()->Expand(
-                           bldConf->GetCustomBuildCmd(), NULL, m_project, bldConf->GetName());
+                           bldConf->GetCustomBuildCmd(), nullptr, m_project, bldConf->GetName());
             Out(command);
             if (m_executeCommand) {
                 CallAfter(&clMakeGeneratorApp::DoExecCommand, command);

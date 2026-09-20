@@ -45,7 +45,7 @@ DebuggerAsciiViewer::DebuggerAsciiViewer(wxWindow* parent)
     : DebuggerAsciiViewerBase(parent)
 {
     EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerAsciiViewer::OnThemeColourChanged), NULL, this);
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerAsciiViewer::OnThemeColourChanged), nullptr, this);
     LexerConf::Ptr_t cpp_lexer = EditorConfigST::Get()->GetLexer("C++");
     if (cpp_lexer) {
         cpp_lexer->Apply(m_textView);
@@ -107,7 +107,7 @@ DebuggerAsciiViewer::DebuggerAsciiViewer(wxWindow* parent)
 
         // Set wrap mode on
         m_textView->SetWrapMode(wxSTC_WRAP_WORD);
-        // Use NULL lexer
+        // Use nullptr lexer
         m_textView->SetLexer(wxSTC_LEX_CPP);
         m_textView->SetMarginMask(4, wxSTC_MASK_FOLDERS);
 
@@ -119,12 +119,12 @@ DebuggerAsciiViewer::DebuggerAsciiViewer(wxWindow* parent)
     m_textView->SetReadOnly(true);
 
     wxTheApp->Connect(
-        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), NULL, this);
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), nullptr, this);
     wxTheApp->Connect(
-        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), NULL, this);
-    wxTheApp->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), nullptr, this);
+    wxTheApp->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), nullptr, this);
     wxTheApp->Connect(
-        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), nullptr, this);
 }
 
 bool DebuggerAsciiViewer::IsFocused()
@@ -195,14 +195,14 @@ void DebuggerAsciiViewer::OnEdit(wxCommandEvent& e)
 DebuggerAsciiViewer::~DebuggerAsciiViewer()
 {
     wxTheApp->Disconnect(
-        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), NULL, this);
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), NULL, this);
-    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), nullptr, this);
+    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), NULL, this);
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerAsciiViewer::OnThemeColourChanged), NULL, this);
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerAsciiViewer::OnThemeColourChanged), nullptr, this);
 }
 
 void DebuggerAsciiViewer::OnThemeColourChanged(wxCommandEvent& e)

@@ -112,7 +112,7 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
         }
     }
 
-    EnvSetter envGuard(clGetManager()->GetEnv(), NULL, projectName, configName);
+    EnvSetter envGuard(clGetManager()->GetEnv(), nullptr, projectName, configName);
     clDEBUG() << "Running command:" << command << clEndl;
 
     int pid = wxNOT_FOUND;
@@ -151,7 +151,7 @@ void ToolsTaskManager::ProcessTerminated(int pid)
 void ToolsTaskManager::StopAll()
 {
     for (const auto& p : m_tools) {
-        ::wxKill(p.second.m_pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
+        ::wxKill(p.second.m_pid, wxSIGKILL, nullptr, wxKILL_CHILDREN);
     }
 }
 

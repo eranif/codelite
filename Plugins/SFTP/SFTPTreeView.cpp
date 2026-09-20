@@ -129,7 +129,7 @@ void SFTPTreeView::OnGotoLocationUI(wxUpdateUIEvent& event) { event.Enable(m_vie
 
 void SFTPTreeView::ManageBookmarks()
 {
-    SFTPManageBookmarkDlg dlg(NULL, m_account.GetBookmarks());
+    SFTPManageBookmarkDlg dlg(nullptr, m_account.GetBookmarks());
     if (dlg.ShowModal() == wxID_OK) {
         m_account.SetBookmarks(dlg.GetBookmarks());
         SFTPSettings settings;

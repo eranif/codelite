@@ -221,7 +221,7 @@ public:
     // return the current editor
     /**
      * @brief return the active editor
-     * @return pointer to the current editor, or NULL incase the active editor is not of type clEditor or no active
+     * @return pointer to the current editor, or nullptr incase the active editor is not of type clEditor or no active
      * editor open
      */
     virtual IEditor* GetActiveEditor() = 0;
@@ -477,7 +477,7 @@ public:
     /**
      * @brief search for loaded plugin by its name, if the plugin is loaded returns its pointer
      * @param pluginName plugin to search
-     * @return pointer to the plugin or NULL if it is not loaded
+     * @return pointer to the plugin or nullptr if it is not loaded
      */
     virtual IPlugin* GetPlugin(const wxString& pluginName) = 0;
 
@@ -505,7 +505,7 @@ public:
      * @brief return tag at caret in active editor (if ambiguous, user will get a selection dialog)
      * @param scoped whether to do scope-aware lookup
      * @param impl whether to return declaration (false) or definition (true)
-     * @return the found tag or NULL
+     * @return the found tag or nullptr
      */
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) = 0;
 

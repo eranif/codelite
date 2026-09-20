@@ -53,9 +53,9 @@ END_EVENT_TABLE()
 
 ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
     : OutputTabWindow(parent, id, name)
-    , m_inputSizer(NULL)
-    , m_input(NULL)
-    , m_cmd(NULL)
+    , m_inputSizer(nullptr)
+    , m_input(nullptr)
+    , m_cmd(nullptr)
 {
     m_inputSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -63,10 +63,10 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
     m_inputSizer->Add(text, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 0);
 
     m_input =
-        new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxTE_PROCESS_ENTER);
+        new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxTE_PROCESS_ENTER);
     m_input->SetMinSize(wxSize(200, -1));
-    m_input->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(ShellTab::OnEnter), NULL, this);
-    m_input->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ShellTab::OnKeyDown), NULL, this);
+    m_input->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(ShellTab::OnEnter), nullptr, this);
+    m_input->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ShellTab::OnKeyDown), nullptr, this);
 
     m_inputSizer->Add(m_input, 1, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
 
@@ -140,7 +140,7 @@ void ShellTab::OnProcEnded(wxCommandEvent& e)
         return;
     }
     AppendText(e.GetString());
-    m_cmd = NULL;
+    m_cmd = nullptr;
 }
 
 void ShellTab::OnSendInput(wxCommandEvent& e)
@@ -374,7 +374,7 @@ void ShellTab::OnThemeChanged(wxCommandEvent& e)
 
 OutputTab::OutputTab(wxWindow* parent, wxWindowID id, const wxString& name)
     : ShellTab(parent, id, name)
-    , m_thread(NULL)
+    , m_thread(nullptr)
     , m_outputDebugStringActive(false)
 {
     m_inputSizer->Show(false);

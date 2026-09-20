@@ -60,7 +60,7 @@ public:                                          \
         if (m_fClone)                           \
             return new name(*this);             \
         else                                    \
-            return NULL;                        \
+            return nullptr;                        \
     }
 
 class xsProperty;
@@ -118,52 +118,52 @@ public:
 
     /*!
      * \brief Get serializable parent object.
-     * \return Pointer to serializable parent object if exists, otherwise NULL
+     * \return Pointer to serializable parent object if exists, otherwise nullptr
      */
     inline xsSerializable* GetParent() { return m_pParentItem; }
     /*!
      * \brief Get parent data manager (instance of wxXmlSerializer).
-     * \return Pointer to parent data manager if set, otherwise NULL
+     * \return Pointer to parent data manager if set, otherwise nullptr
      */
     inline wxXmlSerializer* GetParentManager() { return m_pParentManager; }
     /*!
      * \brief Get first serializable child object.
-     * \return Pointer to child object if exists, otherwise NULL
+     * \return Pointer to child object if exists, otherwise nullptr
      */
     xsSerializable* GetFirstChild();
     /*!
      * \brief Get first serializable child object of given type.
-     * \param type Child object type (can be NULL for any type)
-     * \return Pointer to child object if exists, otherwise NULL
+     * \param type Child object type (can be nullptr for any type)
+     * \return Pointer to child object if exists, otherwise nullptr
      */
     xsSerializable* GetFirstChild(wxClassInfo* type);
     /*!
      * \brief Get last serializable child object.
-     * \return Pointer to child object if exists, otherwise NULL
+     * \return Pointer to child object if exists, otherwise nullptr
      */
     xsSerializable* GetLastChild();
     /*!
      * \brief Get last serializable child object of given type.
-     * \param type Child object type (can be NULL for any type)
-     * \return Pointer to child object if exists, otherwise NULL
+     * \param type Child object type (can be nullptr for any type)
+     * \return Pointer to child object if exists, otherwise nullptr
      */
     xsSerializable* GetLastChild(wxClassInfo* type);
     /*!
      * \brief Get next serializable sibling object.
-     * \return Pointer to sibling object if exists, otherwise NULL
+     * \return Pointer to sibling object if exists, otherwise nullptr
      */
     xsSerializable* GetSibbling();
     /*!
      * \brief Get next serializable sibling object of given type.
-     * \param type Child object type (can be NULL for any type)
-     * \return Pointer to sibling object if exists, otherwise NULL
+     * \param type Child object type (can be nullptr for any type)
+     * \return Pointer to sibling object if exists, otherwise nullptr
      */
     xsSerializable* GetSibbling(wxClassInfo* type);
     /*!
      * \brief Get child item with given ID if exists.
      * \param id ID of searched child item
      * \param recursive If TRUE then the child shape will be searched recursively
-     * \return Pointer to first child with given ID if present, otherwise NULL
+     * \return Pointer to first child with given ID if present, otherwise nullptr
      */
     xsSerializable* GetChild(long id, bool recursive = xsNORECURSIVE);
 
@@ -179,13 +179,13 @@ public:
     inline SerializableList& GetChildrenList() { return m_lstChildItems; }
     /*!
      * \brief Get children of given type.
-     * \param type Child object type (if NULL then all children are returned)
+     * \param type Child object type (if nullptr then all children are returned)
      * \param list Reference to a list where all found child objects will be appended
      */
     void GetChildren(wxClassInfo* type, SerializableList& list);
     /*!
      * \brief Get all children of given type recursively (i.e. children of children of .... ).
-     * \param type Get only children of given type (if NULL then all children are returned)
+     * \param type Get only children of given type (if nullptr then all children are returned)
      * \param list Reference to a list where all found child objects will be appended
      * \param mode Search mode. User can choose Depth-First-Search or Breadth-First-Search algorithm (BFS is default)
      * \sa SEARCHMODE
@@ -212,14 +212,14 @@ public:
     inline void SetParentManager(wxXmlSerializer* parent) { m_pParentManager = parent; }
     /*!
      * \brief Add serializable child object to this object.
-     * \param child Pointer to added child object (must NOT be NULL)
+     * \param child Pointer to added child object (must NOT be nullptr)
      * \return Pointer to to the added child object
      */
     xsSerializable* AddChild(xsSerializable* child);
     /*!
      * \brief Insert serializable child object to this object at given position.
      * \param pos Zero-based position
-     * \param child Pointer to added child object (must NOT be NULL)
+     * \param child Pointer to added child object (must NOT be nullptr)
      * \return Pointer to to the added child object
      */
     xsSerializable* InsertChild(size_t pos, xsSerializable* child);
@@ -235,7 +235,7 @@ public:
 
     /*!
      * \brief Assign this object as a child to given parent object.
-     * \param parent Pointer to new parent object (must NOT be NULL)
+     * \param parent Pointer to new parent object (must NOT be nullptr)
      */
     void Reparent(xsSerializable* parent);
 
@@ -280,7 +280,7 @@ public:
     void RemoveProperty(xsProperty* property);
     /*!
      * \brief Get serialized property of given name.
-     * \return Pointer to the property object if exists, otherwise NULL
+     * \return Pointer to the property object if exists, otherwise nullptr
      * \sa xsProperty
      */
     xsProperty* GetProperty(const wxString& field);
@@ -323,7 +323,7 @@ public:
     // overloaded operators
     /*!
      * \brief Add serializable child object to this object.
-     * \param child Pointer to added child object (should NOT be NULL)
+     * \param child Pointer to added child object (should NOT be nullptr)
      * \return Pointer to added object
      */
     xsSerializable* operator<<(xsSerializable* child);
@@ -498,7 +498,7 @@ public:
     /*!
      * \brief Get serializable object with given ID.
      * \param id Object ID
-     * \return Pointer to serializable object if exists, otherwise NULL
+     * \return Pointer to serializable object if exists, otherwise nullptr
      */
     xsSerializable* GetItem(long id);
     /*!
@@ -547,7 +547,7 @@ public:
     xsSerializable* AddItem(long parentId, xsSerializable* item);
     /*!
      * \brief Add serializable object to the serializer.
-     * \param parent Pointer to parent serializable object (if NULL then the object
+     * \param parent Pointer to parent serializable object (if nullptr then the object
      * is added directly to the root item)
      * \param item Added serializable object
      * \return Pointer to added item
@@ -647,7 +647,7 @@ public:
     /*!
      * \brief Get property I/O handler for given datatype.
      * \param datatype String ID of data type
-     * \return Pointer to I/O handler suitable for given data type if exists, otherwise NULL
+     * \return Pointer to I/O handler suitable for given data type if exists, otherwise nullptr
      */
     inline static xsPropertyIO* GetPropertyIOHandler(const wxString& datatype)
     {

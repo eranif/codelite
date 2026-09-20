@@ -40,22 +40,22 @@ MemCheckOutputView::MemCheckOutputView(wxWindow* parent, MemCheckPlugin* plugin,
     m_searchMenu->Connect(XRCID("memcheck_search_string"),
                           wxEVT_COMMAND_MENU_SELECTED,
                           wxCommandEventHandler(MemCheckOutputView::OnFilterErrors),
-                          NULL,
+                          nullptr,
                           this);
     m_searchMenu->Connect(XRCID("memcheck_search_string"),
                           wxEVT_UPDATE_UI,
                           wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI),
-                          NULL,
+                          nullptr,
                           this);
     m_searchMenu->Connect(XRCID("memcheck_search_nonworkspace"),
                           wxEVT_COMMAND_MENU_SELECTED,
                           wxCommandEventHandler(MemCheckOutputView::OnSearchNonworkspace),
-                          NULL,
+                          nullptr,
                           this);
     m_searchMenu->Connect(XRCID("memcheck_search_nonworkspace"),
                           wxEVT_UPDATE_UI,
                           wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI),
-                          NULL,
+                          nullptr,
                           this);
 }
 
@@ -64,22 +64,22 @@ MemCheckOutputView::~MemCheckOutputView()
     m_searchMenu->Disconnect(XRCID("memcheck_search_string"),
                              wxEVT_COMMAND_MENU_SELECTED,
                              wxCommandEventHandler(MemCheckOutputView::OnFilterErrors),
-                             NULL,
+                             nullptr,
                              this);
     m_searchMenu->Disconnect(XRCID("memcheck_search_string"),
                              wxEVT_UPDATE_UI,
                              wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI),
-                             NULL,
+                             nullptr,
                              this);
     m_searchMenu->Disconnect(XRCID("memcheck_search_nonworkspace"),
                              wxEVT_COMMAND_MENU_SELECTED,
                              wxCommandEventHandler(MemCheckOutputView::OnSearchNonworkspace),
-                             NULL,
+                             nullptr,
                              this);
     m_searchMenu->Disconnect(XRCID("memcheck_search_nonworkspace"),
                              wxEVT_UPDATE_UI,
                              wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI),
-                             NULL,
+                             nullptr,
                              this);
 }
 
@@ -265,7 +265,7 @@ void MemCheckOutputView::AddTree(const wxDataViewItem& parentItem, MemCheckError
         m_dataViewCtrlErrorsModel->AppendItem(
             errorItem,
             cols,
-            ((location.line > 0 && !location.file.IsEmpty()) ? new MemCheckErrorLocationReferrer(location) : NULL));
+            ((location.line > 0 && !location.file.IsEmpty()) ? new MemCheckErrorLocationReferrer(location) : nullptr));
     }
 }
 
@@ -973,7 +973,7 @@ void MemCheckOutputView::OnListCtrlErrorsMouseMotion(wxMouseEvent& event)
 {
     event.Skip();
     int flags = wxLIST_HITTEST_ONITEM;
-    long item = m_listCtrlErrors->HitTest(event.GetPosition(), flags, NULL);
+    long item = m_listCtrlErrors->HitTest(event.GetPosition(), flags, nullptr);
 
     if (item != m_lastToolTipItem) {
         m_lastToolTipItem = item;

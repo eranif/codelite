@@ -42,12 +42,12 @@ class TreeNode
 public:
     /**
      * Constructor, constructs a tree node with key and data.
-     * If parent is left NULL, node is assumed to be root.
+     * If parent is left nullptr, node is assumed to be root.
      * \param key Node key, must have operator =, <
      * \param data Node data, this class must have operator=
      * \param parent Parent node
      */
-    TreeNode(const TKey& key, const TData& data, TreeNode* parent = NULL);
+    TreeNode(const TKey& key, const TData& data, TreeNode* parent = nullptr);
 
     /**
      * Destructor, deletes this node and all its children.
@@ -101,7 +101,7 @@ public:
      * Check if this node is root.
      * \return true if node is root
      */
-    bool IsRoot() const { return m_parent == NULL; };
+    bool IsRoot() const { return m_parent == nullptr; };
 
     //----------------------------------------------
     // Operations
@@ -134,7 +134,7 @@ public:
     /**
      * Find a node by a key.
      * \param key Node key
-     * \return node, or NULL if non exist
+     * \return node, or nullptr if non exist
      */
     TreeNode* Find(const TKey& key);
 
@@ -194,9 +194,9 @@ TreeNode<TKey, TData>* TreeNode<TKey, TData>::Remove(const TKey& key)
 {
     TreeNode* node = Find(key);
     if (node) {
-        if (NULL == node->m_parent) {
+        if (nullptr == node->m_parent) {
             // Cant remove root
-            return NULL;
+            return nullptr;
         }
 
         typename std::map<TreeNode*, TreeNode*>::iterator iter = node->m_parent->m_children.find(node);
@@ -204,7 +204,7 @@ TreeNode<TKey, TData>* TreeNode<TKey, TData>::Remove(const TKey& key)
             node->m_parent->m_children.erase(iter);
         return node;
     }
-    return NULL;
+    return nullptr;
 }
 
 template <class TKey, class TData>
@@ -227,7 +227,7 @@ TreeNode<TKey, TData>* TreeNode<TKey, TData>::Find(const TKey& key)
         if (node)
             return node;
     }
-    return NULL;
+    return nullptr;
 }
 
 template <class TKey, class TData>
@@ -255,7 +255,7 @@ template <class TKey, class TData>
 TreeNode<TKey, TData>* TreeNode<TKey, TData>::Next()
 {
     if (!HasMore())
-        return NULL;
+        return nullptr;
     TreeNode* nextElem = m_pos->second;
     m_pos++;
     return nextElem;
@@ -288,7 +288,7 @@ public:
     {
         if (m_pos < m_children.size())
             return m_children[m_pos];
-        return NULL;
+        return nullptr;
     }
 };
 
@@ -308,7 +308,7 @@ TreeWalker<TKey, TData>::~TreeWalker()
 template <class TKey, class TData>
 void TreeWalker<TKey, TData>::GetChildren(TreeNode<TKey, TData>* node)
 {
-    if (node == NULL)
+    if (node == nullptr)
         return;
     for (auto& [_, child] : node->GetChildren()) {
         m_children.push_back(child);

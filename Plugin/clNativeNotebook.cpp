@@ -479,7 +479,7 @@ void clNativeNotebook::Initialise(long style)
     // Add the "+" button if needed
     if (m_bookStyle & kNotebook_NewButton) {
         // Create a GtkToolItem
-        GtkToolItem* button = gtk_tool_button_new(NULL, "+");
+        GtkToolItem* button = gtk_tool_button_new(nullptr, "+");
         gtk_box_pack_end(GTK_BOX(box), GTK_WIDGET(button), false, true, 2);
         gtk_widget_show_all(GTK_WIDGET(button));
         g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_new_clicked), this);
@@ -767,7 +767,7 @@ void clNativeNotebook::GTKActionButtonMenuClicked(GtkToolItem* button)
 #if defined(__WXGTK20__) && !defined(__WXGTK3__)
     gtk_widget_size_request(GTK_WIDGET(button), &req);
 #else
-    gtk_widget_get_preferred_size(GTK_WIDGET(button), NULL, &req);
+    gtk_widget_get_preferred_size(GTK_WIDGET(button), nullptr, &req);
 #endif
     width = req.width;
     height = req.height;

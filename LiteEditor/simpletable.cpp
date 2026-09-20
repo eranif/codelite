@@ -56,76 +56,76 @@ WatchesTable::WatchesTable(wxWindow* parent)
     // Load the right click menu
     m_rclickMenu = clXmlResource::Get().LoadMenu(wxT("dbg_watch_rmenu"));
     Connect(
-        XRCID("del_expr"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnDeleteWatch), NULL, this);
+        XRCID("del_expr"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnDeleteWatch), nullptr, this);
     Connect(XRCID("del_expr_all"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnDeleteAll),
-            NULL,
+            nullptr,
             this);
     Connect(XRCID("edit_expr"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnMenuEditExpr),
-            NULL,
+            nullptr,
             this);
     Connect(XRCID("copy_value"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnMenuCopyValue),
-            NULL,
+            nullptr,
             this);
     Connect(XRCID("add_watch"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnNewWatch_Internal),
-            NULL,
+            nullptr,
             this);
     Connect(XRCID("copy_both"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnMenuCopyBoth),
-            NULL,
+            nullptr,
             this);
 
     Connect(XRCID("watches_df_natural"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
+            nullptr,
             this);
     Connect(XRCID("watches_df_hex"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
+            nullptr,
             this);
     Connect(XRCID("watches_df_bin"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
+            nullptr,
             this);
     Connect(XRCID("watches_df_octal"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
+            nullptr,
             this);
     Connect(XRCID("watches_df_decimal"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
+            nullptr,
             this);
 
     // UI events
-    Connect(XRCID("edit_expr"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WatchesTable::OnMenuEditExprUI), NULL, this);
-    Connect(XRCID("del_expr"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WatchesTable::OnDeleteWatchUI), NULL, this);
+    Connect(XRCID("edit_expr"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WatchesTable::OnMenuEditExprUI), nullptr, this);
+    Connect(XRCID("del_expr"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WatchesTable::OnDeleteWatchUI), nullptr, this);
 
     EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEventHandler(WatchesTable::OnTypeResolveError), NULL, this);
+        wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEventHandler(WatchesTable::OnTypeResolveError), nullptr, this);
     SetDropTarget(new WatchDropTarget(this));
 }
 
 WatchesTable::~WatchesTable()
 {
     EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEventHandler(WatchesTable::OnTypeResolveError), NULL, this);
+        wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEventHandler(WatchesTable::OnTypeResolveError), nullptr, this);
 
     if (m_rclickMenu) {
         delete m_rclickMenu;
-        m_rclickMenu = NULL;
+        m_rclickMenu = nullptr;
     }
 
     Clear();

@@ -14,15 +14,15 @@ wxcEditManager::wxcEditManager()
     : m_isModified(false)
 {
     EventNotifier::Get()->Connect(
-        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcEditManager::OnProjectSaved), NULL, this);
+        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcEditManager::OnProjectSaved), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(wxcEditManager::OnProjectLoaded), NULL, this);
+        wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(wxcEditManager::OnProjectLoaded), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcEditManager::OnProjectClosed), NULL, this);
+        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcEditManager::OnProjectClosed), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_PROJECT_METADATA_MODIFIED, wxCommandEventHandler(wxcEditManager::OnProjectMetadataChanged), NULL, this);
+        wxEVT_PROJECT_METADATA_MODIFIED, wxCommandEventHandler(wxcEditManager::OnProjectMetadataChanged), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_PROPERTIES_MODIFIED, wxCommandEventHandler(wxcEditManager::OnPropertyChanged), NULL, this);
+        wxEVT_PROPERTIES_MODIFIED, wxCommandEventHandler(wxcEditManager::OnPropertyChanged), nullptr, this);
 }
 
 wxcEditManager& wxcEditManager::Get()

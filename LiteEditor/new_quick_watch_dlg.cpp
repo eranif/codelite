@@ -56,7 +56,7 @@ static void DoNothing(wxShowEvent& event)
 
 DisplayVariableDlg::DisplayVariableDlg(wxWindow* parent)
     : clResizableTooltip(parent)
-    , m_debugger(NULL)
+    , m_debugger(nullptr)
 {
     Hide();
     Centre();
@@ -264,17 +264,17 @@ void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
     menu.Connect(XRCID("tip_add_watch"),
                  wxEVT_COMMAND_MENU_SELECTED,
                  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection),
-                 NULL,
+                 nullptr,
                  this);
     menu.Connect(XRCID("tip_copy_value"),
                  wxEVT_COMMAND_MENU_SELECTED,
                  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection),
-                 NULL,
+                 nullptr,
                  this);
     menu.Connect(XRCID("edit_item"),
                  wxEVT_COMMAND_MENU_SELECTED,
                  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection),
-                 NULL,
+                 nullptr,
                  this);
 
     m_treeCtrl->PopupMenu(&menu);

@@ -71,13 +71,13 @@ clEditorTipWindow::clEditorTipWindow(wxStyledTextCtrl* parent)
     m_font = ColoursAndFontsManager::Get().GetFixedFont(true);
     Hide();
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
+        wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), nullptr, this);
 }
 
 clEditorTipWindow::~clEditorTipWindow()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
+        wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), nullptr, this);
 }
 
 void clEditorTipWindow::OnEraseBg(wxEraseEvent& e) { wxUnusedVar(e); }
@@ -209,7 +209,7 @@ void clEditorTipWindow::AddCallTip(clCallTipPtr tip)
 clCallTipPtr clEditorTipWindow::GetTip()
 {
     if (m_tips.empty())
-        return NULL;
+        return nullptr;
 
     return m_tips.at(m_tips.size() - 1).tip;
 }

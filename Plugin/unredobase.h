@@ -113,7 +113,7 @@ public:
     }
 
     CLCommand::Ptr_t GetOpenCommand();
-    bool HasOpenCommand() { return (GetOpenCommand() != NULL); }
+    bool HasOpenCommand() { return (GetOpenCommand() != nullptr); }
 
     virtual void CloseOpenCommand();
 

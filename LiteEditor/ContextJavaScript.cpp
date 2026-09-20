@@ -171,7 +171,7 @@ int ContextJavaScript::DoGetCalltipParameterIndex() { return ContextBase::DoGetC
 
 wxMenu* ContextJavaScript::GetMenu() { return ContextBase::GetMenu(); }
 
-TagEntryPtr ContextJavaScript::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
+TagEntryPtr ContextJavaScript::GetTagAtCaret(bool scoped, bool impl) { return nullptr; }
 
 bool ContextJavaScript::IsCommentOrString(long pos)
 {

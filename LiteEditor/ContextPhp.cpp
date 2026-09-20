@@ -214,7 +214,7 @@ int ContextPhp::DoGetCalltipParameterIndex() { return ContextBase::DoGetCalltipP
 
 wxMenu* ContextPhp::GetMenu() { return ContextBase::GetMenu(); }
 
-TagEntryPtr ContextPhp::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
+TagEntryPtr ContextPhp::GetTagAtCaret(bool scoped, bool impl) { return nullptr; }
 
 bool ContextPhp::IsCommentOrString(long pos)
 {

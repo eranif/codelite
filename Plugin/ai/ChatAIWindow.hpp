@@ -115,8 +115,11 @@ protected:
     bool CurrentEndpointHasHistory() const;
     void OnCharAdded(wxStyledTextEvent& event);
     void OnSelection(wxStyledTextEvent& event);
-    void OnAutoScroll(wxCommandEvent& event);
-    void OnAutoScrollUI(wxUpdateUIEvent& event);
+    void OnJumpToBottom(wxCommandEvent& event);
+    void OnJumpToBottomUI(wxUpdateUIEvent& event);
+    /// Returns true if the output view's last line is currently visible,
+    /// i.e. the view is scrolled all the way down.
+    bool IsScrolledToBottom() const;
     void OnSize(wxSizeEvent& event);
     void OnBusyUI(wxUpdateUIEvent& event);
     void OnDetachView(wxCommandEvent& event);
@@ -191,7 +194,6 @@ private:
 #if wxCHECK_VERSION(3, 3, 0)
     wxActivityIndicator* m_activityIndicator{nullptr};
 #endif
-    bool m_autoScroll{true};
     std::shared_ptr<llm::CancellationToken> m_cancel_token{nullptr};
     std::unique_ptr<clEditEventsHandler> m_inputEditHelper;
     std::unique_ptr<clEditEventsHandler> m_outputEditHelper;

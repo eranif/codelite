@@ -163,12 +163,8 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     clAuiToolBarArt::AddTool(
         m_toolbar, XRCID("wxID_SETTINGS"), _("Options"), images->LoadBitmap("cog"), wxEmptyString, wxITEM_DROPDOWN);
 
-    clAuiToolBarArt::AddTool(m_toolbar,
-                             XRCID("auto_scroll"),
-                             _("Enable auto scrolling"),
-                             images->LoadBitmap("link_editor"),
-                             wxEmptyString,
-                             wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("auto_scroll"), _("Jump to latest"), images->LoadBitmap("down"), wxEmptyString, wxITEM_NORMAL);
     m_toolbar->AddSeparator();
 
     clAuiToolBarArt::AddTool(m_toolbar, wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
@@ -222,14 +218,14 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     Bind(wxEVT_MENU, &ChatAIWindow::OnRestartClient, this, wxID_REFRESH);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSend, this, wxID_EXECUTE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
-    Bind(wxEVT_MENU, &ChatAIWindow::OnAutoScroll, this, XRCID("auto_scroll"));
+    Bind(wxEVT_MENU, &ChatAIWindow::OnJumpToBottom, this, XRCID("auto_scroll"));
     Bind(wxEVT_MENU, &ChatAIWindow::OnDetachView, this, XRCID("detach_view"));
 
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnDetachViewUI, this, XRCID("detach_view"));
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_EXECUTE);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnClearOutputViewUI, this, wxID_CLEAR);
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnJumpToBottomUI, this, XRCID("auto_scroll"));
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
     m_stcInput->Bind(wxEVT_STC_CHARADDED, &ChatAIWindow::OnCharAdded, this);
@@ -814,6 +810,10 @@ void ChatAIWindow::AppendOutput(const wxString& text, bool clear)
 {
     CHECK_COND_RET(!text.empty());
 
+    // Snapshot this *before* the new text is inserted: once inserted, the view
+    // will no longer look "at the bottom" even if the user never scrolled.
+    bool wasAtBottom = IsScrolledToBottom();
+
     m_stcOutput->SetReadOnly(false);
     if (clear) {
         m_stcOutput->ClearAll();
@@ -823,7 +823,7 @@ void ChatAIWindow::AppendOutput(const wxString& text, bool clear)
     m_stcOutput->AppendText(text);
     m_stcOutput->SetReadOnly(true);
 
-    if (m_autoScroll) {
+    if (wasAtBottom) {
         ScrollToEnd();
     }
 }
@@ -831,11 +831,21 @@ void ChatAIWindow::AppendOutput(const wxString& text, bool clear)
 void ChatAIWindow::StyleOutput()
 {
     m_markdownStyler->StyleText();
-    if (m_autoScroll) {
+    if (IsScrolledToBottom()) {
         ScrollToEnd();
     } else {
         m_stcOutput->ClearSelections();
     }
+}
+
+bool ChatAIWindow::IsScrolledToBottom() const
+{
+    // Word-wrap is enabled on m_stcOutput, so document line counts and visible
+    // line counts don't correspond 1:1. Check the last character's on-screen
+    // position instead, which is wrap-agnostic.
+    wxPoint pt = m_stcOutput->PointFromPosition(m_stcOutput->GetLastPosition());
+    int lineHeight = m_stcOutput->TextHeight(0);
+    return pt.y < (m_stcOutput->GetClientSize().GetHeight() + lineHeight);
 }
 
 void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
@@ -857,9 +867,9 @@ void ChatAIWindow::LoadGlobalConfig()
     llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
 }
 
-void ChatAIWindow::OnAutoScroll(wxCommandEvent& event) { m_autoScroll = event.IsChecked(); }
+void ChatAIWindow::OnJumpToBottom(wxCommandEvent& event) { ScrollToEnd(); }
 
-void ChatAIWindow::OnAutoScrollUI(wxUpdateUIEvent& event) { event.Check(m_autoScroll); }
+void ChatAIWindow::OnJumpToBottomUI(wxUpdateUIEvent& event) { event.Enable(!IsScrolledToBottom()); }
 
 void ChatAIWindow::OnBusyUI(wxUpdateUIEvent& event)
 {

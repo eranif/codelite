@@ -1958,10 +1958,10 @@
                                       "m_noBody": false
                                     },
                                     {
-                                      "m_description": "Painting has just been done.\nUseful when you want to update some other widgets based on a change in Scintilla\nbut want to have the paint occur first to appear more responsive",
+                                      "m_description": "Update UI",
                                       "m_eventClass": "wxStyledTextEvent",
-                                      "m_eventName": "wxEVT_STC_PAINTED",
-                                      "m_functionNameAndSignature": "OnLeftStcPainted(wxStyledTextEvent& event)",
+                                      "m_eventName": "wxEVT_STC_UPDATEUI",
+                                      "m_functionNameAndSignature": "OnLeftUpdateUI(wxStyledTextEvent& event)",
                                       "m_noBody": false
                                     }
                                   ],
@@ -2930,17 +2930,17 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Painting has just been done.\nUseful when you want to update some other widgets based on a change in Scintilla\nbut want to have the paint occur first to appear more responsive",
-                                      "m_eventClass": "wxStyledTextEvent",
-                                      "m_eventName": "wxEVT_STC_PAINTED",
-                                      "m_functionNameAndSignature": "OnRightStcPainted(wxStyledTextEvent& event)",
-                                      "m_noBody": false
-                                    },
-                                    {
                                       "m_description": "Process a wxEVT_MOUSEWHEEL event",
                                       "m_eventClass": "wxMouseEvent",
                                       "m_eventName": "wxEVT_MOUSEWHEEL",
                                       "m_functionNameAndSignature": "OnMouseWheel(wxMouseEvent& event)",
+                                      "m_noBody": false
+                                    },
+                                    {
+                                      "m_description": "Update UI",
+                                      "m_eventClass": "wxStyledTextEvent",
+                                      "m_eventName": "wxEVT_STC_UPDATEUI",
+                                      "m_functionNameAndSignature": "OnRightUpdateUI(wxStyledTextEvent& event)",
                                       "m_noBody": false
                                     }
                                   ],

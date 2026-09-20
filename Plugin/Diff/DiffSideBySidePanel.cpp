@@ -471,49 +471,38 @@ void DiffSideBySidePanel::UpdateViews(const wxString& left, const wxString& righ
     m_stcRight->SetEditable(false);
 }
 
-void DiffSideBySidePanel::OnLeftStcPainted(wxStyledTextEvent& event)
-{
-    wxUnusedVar(event);
-    int rightFirstLine = m_stcRight->GetFirstVisibleLine();
-    int leftFirsLine = m_stcLeft->GetFirstVisibleLine();
-    if (rightFirstLine != leftFirsLine) {
-        m_stcRight->SetFirstVisibleLine(leftFirsLine);
-    }
-
-    int rightScrollPos = m_stcRight->GetXOffset();
-    int leftScrollPos = m_stcLeft->GetXOffset();
-    if (leftScrollPos != rightScrollPos) {
-        m_stcRight->SetXOffset(leftScrollPos);
-    }
-}
-
-void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
-{
-    wxUnusedVar(event);
-    int rightFirstLine = m_stcRight->GetFirstVisibleLine();
-    int leftFirsLine = m_stcLeft->GetFirstVisibleLine();
-    if (rightFirstLine != leftFirsLine) {
-        m_stcLeft->SetFirstVisibleLine(rightFirstLine);
-    }
-
-    int rightScrollPos = m_stcRight->GetXOffset();
-    int leftScrollPos = m_stcLeft->GetXOffset();
-    if (leftScrollPos != rightScrollPos) {
-        m_stcLeft->SetXOffset(rightScrollPos);
-    }
-}
-
-void DiffSideBySidePanel::OnLeftStcUpdateUI(wxStyledTextEvent& event)
+void DiffSideBySidePanel::OnLeftUpdateUI(wxStyledTextEvent& event)
 {
     event.Skip();
-    if (m_config.IsOverviewBarShown()) {
-        // This makes the Overview bar's 'Where are we?' marker react to scrolling
-        if (m_config.IsSingleViewMode()) {
-            m_panelOverviewL->Refresh();
-        } else if (m_config.IsSplitHorizontal()) {
-            m_panelOverviewFull->Refresh();
-        } else {
-            m_panelOverviewR->Refresh();
+    if (event.GetUpdated() & (wxSTC_UPDATE_V_SCROLL | wxSTC_UPDATE_H_SCROLL)) {
+        int rightFirstLine = m_stcRight->GetFirstVisibleLine();
+        int leftFirsLine = m_stcLeft->GetFirstVisibleLine();
+        if (rightFirstLine != leftFirsLine) {
+            m_stcRight->SetFirstVisibleLine(leftFirsLine);
+        }
+
+        int rightScrollPos = m_stcRight->GetXOffset();
+        int leftScrollPos = m_stcLeft->GetXOffset();
+        if (leftScrollPos != rightScrollPos) {
+            m_stcRight->SetXOffset(leftScrollPos);
+        }
+    }
+}
+
+void DiffSideBySidePanel::OnRightUpdateUI(wxStyledTextEvent& event)
+{
+    event.Skip();
+    if (event.GetUpdated() & (wxSTC_UPDATE_V_SCROLL | wxSTC_UPDATE_H_SCROLL)) {
+        int rightFirstLine = m_stcRight->GetFirstVisibleLine();
+        int leftFirsLine = m_stcLeft->GetFirstVisibleLine();
+        if (rightFirstLine != leftFirsLine) {
+            m_stcLeft->SetFirstVisibleLine(rightFirstLine);
+        }
+
+        int rightScrollPos = m_stcRight->GetXOffset();
+        int leftScrollPos = m_stcLeft->GetXOffset();
+        if (leftScrollPos != rightScrollPos) {
+            m_stcLeft->SetXOffset(rightScrollPos);
         }
     }
 }
@@ -633,10 +622,14 @@ void DiffSideBySidePanel::OnNextDiffUI(wxUpdateUIEvent& event) { event.Enable(Ca
 void DiffSideBySidePanel::OnPrevDiffUI(wxUpdateUIEvent& event) { event.Enable(CanPrevDiff()); }
 
 void DiffSideBySidePanel::OnCopyLeftToRightUI(wxUpdateUIEvent& event)
-{ event.Enable(!IsRightReadOnly() && !m_config.IsSingleViewMode()); }
+{
+    event.Enable(!IsRightReadOnly() && !m_config.IsSingleViewMode());
+}
 
 void DiffSideBySidePanel::OnCopyRightToLeftUI(wxUpdateUIEvent& event)
-{ event.Enable(!IsLeftReadOnly() && !m_config.IsSingleViewMode()); }
+{
+    event.Enable(!IsLeftReadOnly() && !m_config.IsSingleViewMode());
+}
 
 void DiffSideBySidePanel::OnCopyLeftToRight(wxCommandEvent& event)
 {
@@ -790,7 +783,9 @@ void DiffSideBySidePanel::OnSaveChanges(wxCommandEvent& event)
 }
 
 void DiffSideBySidePanel::OnSaveChangesUI(wxUpdateUIEvent& event)
-{ event.Enable((m_stcLeft->IsModified() || m_stcRight->IsModified()) && !m_config.IsSingleViewMode()); }
+{
+    event.Enable((m_stcLeft->IsModified() || m_stcRight->IsModified()) && !m_config.IsSingleViewMode());
+}
 
 bool DiffSideBySidePanel::CanNextDiff()
 {

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DIFFSIDEBYSIDEPANEL_H
-#define DIFFSIDEBYSIDEPANEL_H
+#pragma once
 
 #include "DiffConfig.h"
 #include "DiffUI.hpp"
@@ -88,104 +87,6 @@ public:
         kSavePaths = (1 << 5),
     };
 
-protected:
-    Markers_t m_leftRedMarkers;
-    Markers_t m_leftGreenMarkers;
-    Markers_t m_leftPlaceholdersMarkers;
-
-    Markers_t m_rightGreenMarkers;
-    Markers_t m_rightRedMarkers;
-    Markers_t m_rightPlaceholdersMarkers;
-
-    wxArrayInt m_overviewPanelMarkers;
-
-    bool m_darkTheme;
-
-    std::vector<std::pair<int, int>> m_sequences; // start-line - end-line pairs
-    int m_cur_sequence;
-
-    size_t m_flags = 0;
-    DiffConfig m_config;
-    bool m_storeFilepaths;
-    clToolBar* m_toolbar;
-    clPluginsFindBar* m_findBar = nullptr;
-    FileInfo m_left;
-    FileInfo m_right;
-
-protected:
-    void OnBrowseLeftFile(wxCommandEvent& event) override;
-    void OnBrowseRightFile(wxCommandEvent& event) override;
-    void OnMouseWheel(wxMouseEvent& event) override;
-    void OnLeftPickerUI(wxUpdateUIEvent& event) override;
-    void OnRightPickerUI(wxUpdateUIEvent& event) override;
-    void OnPanelOverviewEraseBackground(wxEraseEvent& event) override;
-    void OnPanelOverviewLeftDown(wxMouseEvent& event) override;
-    void OnLeftStcPainted(wxStyledTextEvent& event) override;
-    void OnRightStcPainted(wxStyledTextEvent& event) override;
-
-    void OnSingleUI(wxUpdateUIEvent& event);
-    void OnSingleView(wxCommandEvent& event);
-    void OnMenuCopyLeft2Right(wxCommandEvent& event);
-    void OnMenuCopyRight2Left(wxCommandEvent& event);
-    void OnCopyAllMenu(wxCommandEvent& event);
-    void OnViewMenu(wxCommandEvent& event);
-    void OnPreferences(wxCommandEvent& event);
-
-protected:
-    wxString DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const;
-    bool IsLeftReadOnly() const { return m_flags & kLeftReadOnly; }
-    bool IsRightReadOnly() const { return m_flags & kRightReadOnly; }
-    bool IsDeleteLeftOnExit() const { return m_flags & kDeleteLeftOnExit; }
-    bool IsDeleteRightOnExit() const { return m_flags & kDeleteRightOnExit; }
-    bool IsOriginSourceControl() const { return m_flags & kOriginSourceControl; }
-
-public:
-    void OnRefreshDiffUI(wxUpdateUIEvent& event);
-    void OnHorizontal(wxCommandEvent& event);
-    void OnHorizontalUI(wxUpdateUIEvent& event);
-    void OnVertical(wxCommandEvent& event);
-    void OnVerticalUI(wxUpdateUIEvent& event);
-    void OnCopyFileFromRight(wxCommandEvent& event);
-    void OnCopyFileLeftToRight(wxCommandEvent& event);
-    void OnSaveChanges(wxCommandEvent& event);
-    void OnFind(wxCommandEvent& event);
-    void OnSaveChangesUI(wxUpdateUIEvent& event);
-    void OnCopyLeftToRight(wxCommandEvent& event);
-    void OnCopyRightToLeft(wxCommandEvent& event);
-    void OnCopyLeftToRightUI(wxUpdateUIEvent& event);
-    void OnCopyRightToLeftUI(wxUpdateUIEvent& event);
-    void OnNextDiffUI(wxUpdateUIEvent& event);
-    void OnPrevDiffUI(wxUpdateUIEvent& event);
-    void OnNextDiffSequence(wxCommandEvent& event);
-    void OnPrevDiffSequence(wxCommandEvent& event);
-    void OnRefreshDiff(wxCommandEvent& event);
-    void OnLeftStcUpdateUI(wxStyledTextEvent& event);
-    void OnIgnoreWhitespaceClicked(wxCommandEvent& event);
-    void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event);
-    void OnShowLinenosClicked(wxCommandEvent& event);
-    void OnShowLinenosUI(wxUpdateUIEvent& event);
-    void OnShowOverviewBarClicked(wxCommandEvent& event);
-    void OnShowOverviewBarUI(wxUpdateUIEvent& event);
-    void OnPageClosing(wxNotifyEvent& event);
-
-    void PrepareViews();
-    void UpdateViews(const wxString& left, const wxString& right);
-    void DoClean();
-    void DoDrawSequenceMarkers(int firstLine, int lastLine, wxStyledTextCtrl* ctrl);
-    void DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
-    void DoCopyFileContent(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
-    void DoGetPositionsToCopy(wxStyledTextCtrl* stc,
-                              int& startPos,
-                              int& endPos,
-                              int& placeHolderMarkerFirstLine,
-                              int& placeHolderMarkerLastLine);
-    void DoSave(wxStyledTextCtrl* stc, const wxFileName& fn);
-
-    bool CanNextDiff();
-    bool CanPrevDiff();
-    void DefineMarkers(wxStyledTextCtrl* ctrl);
-
-public:
     explicit DiffSideBySidePanel(wxWindow* parent);
     ~DiffSideBySidePanel() override;
 
@@ -225,5 +126,95 @@ public:
      * @brief returns whether find bar has focus
      */
     bool HasFindBarFocus() const { return m_findBar->HasFocus(); }
+
+protected:
+    void OnCopyFileFromRight(wxCommandEvent& event);
+    void OnCopyFileLeftToRight(wxCommandEvent& event);
+    void OnBrowseLeftFile(wxCommandEvent& event) override;
+    void OnBrowseRightFile(wxCommandEvent& event) override;
+    void OnMouseWheel(wxMouseEvent& event) override;
+    void OnLeftPickerUI(wxUpdateUIEvent& event) override;
+    void OnRightPickerUI(wxUpdateUIEvent& event) override;
+    void OnPanelOverviewEraseBackground(wxEraseEvent& event) override;
+    void OnPanelOverviewLeftDown(wxMouseEvent& event) override;
+    void OnSingleUI(wxUpdateUIEvent& event);
+    void OnSingleView(wxCommandEvent& event);
+    void OnMenuCopyLeft2Right(wxCommandEvent& event);
+    void OnMenuCopyRight2Left(wxCommandEvent& event);
+    void OnCopyAllMenu(wxCommandEvent& event);
+    void OnViewMenu(wxCommandEvent& event);
+    void OnPreferences(wxCommandEvent& event);
+    wxString DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const;
+    bool IsLeftReadOnly() const { return m_flags & kLeftReadOnly; }
+    bool IsRightReadOnly() const { return m_flags & kRightReadOnly; }
+    bool IsDeleteLeftOnExit() const { return m_flags & kDeleteLeftOnExit; }
+    bool IsDeleteRightOnExit() const { return m_flags & kDeleteRightOnExit; }
+    bool IsOriginSourceControl() const { return m_flags & kOriginSourceControl; }
+    void OnLeftUpdateUI(wxStyledTextEvent& event) override;
+    void OnRightUpdateUI(wxStyledTextEvent& event) override;
+    void OnRefreshDiffUI(wxUpdateUIEvent& event);
+    void OnHorizontal(wxCommandEvent& event);
+    void OnHorizontalUI(wxUpdateUIEvent& event);
+    void OnVertical(wxCommandEvent& event);
+    void OnVerticalUI(wxUpdateUIEvent& event);
+    void OnSaveChanges(wxCommandEvent& event);
+    void OnFind(wxCommandEvent& event);
+    void OnSaveChangesUI(wxUpdateUIEvent& event);
+    void OnCopyLeftToRight(wxCommandEvent& event);
+    void OnCopyRightToLeft(wxCommandEvent& event);
+    void OnCopyLeftToRightUI(wxUpdateUIEvent& event);
+    void OnCopyRightToLeftUI(wxUpdateUIEvent& event);
+    void OnNextDiffUI(wxUpdateUIEvent& event);
+    void OnPrevDiffUI(wxUpdateUIEvent& event);
+    void OnNextDiffSequence(wxCommandEvent& event);
+    void OnPrevDiffSequence(wxCommandEvent& event);
+    void OnRefreshDiff(wxCommandEvent& event);
+    void OnIgnoreWhitespaceClicked(wxCommandEvent& event);
+    void OnIgnoreWhitespaceUI(wxUpdateUIEvent& event);
+    void OnShowLinenosClicked(wxCommandEvent& event);
+    void OnShowLinenosUI(wxUpdateUIEvent& event);
+    void OnShowOverviewBarClicked(wxCommandEvent& event);
+    void OnShowOverviewBarUI(wxUpdateUIEvent& event);
+    void OnPageClosing(wxNotifyEvent& event);
+
+    void PrepareViews();
+    void UpdateViews(const wxString& left, const wxString& right);
+    void DoClean();
+    void DoDrawSequenceMarkers(int firstLine, int lastLine, wxStyledTextCtrl* ctrl);
+    void DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
+    void DoCopyFileContent(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
+    void DoGetPositionsToCopy(wxStyledTextCtrl* stc,
+                              int& startPos,
+                              int& endPos,
+                              int& placeHolderMarkerFirstLine,
+                              int& placeHolderMarkerLastLine);
+    void DoSave(wxStyledTextCtrl* stc, const wxFileName& fn);
+
+    bool CanNextDiff();
+    bool CanPrevDiff();
+    void DefineMarkers(wxStyledTextCtrl* ctrl);
+    Markers_t m_leftRedMarkers;
+    Markers_t m_leftGreenMarkers;
+    Markers_t m_leftPlaceholdersMarkers;
+
+    Markers_t m_rightGreenMarkers;
+    Markers_t m_rightRedMarkers;
+    Markers_t m_rightPlaceholdersMarkers;
+
+    wxArrayInt m_overviewPanelMarkers;
+
+    bool m_darkTheme;
+
+    std::vector<std::pair<int, int>> m_sequences; // start-line - end-line pairs
+    int m_cur_sequence;
+
+    size_t m_flags = 0;
+    DiffConfig m_config;
+    bool m_storeFilepaths;
+    clToolBar* m_toolbar;
+    clPluginsFindBar* m_findBar = nullptr;
+    FileInfo m_left;
+    FileInfo m_right;
+
+    friend class clDiffFrame;
 };
-#endif // DIFFSIDEBYSIDEPANEL_H

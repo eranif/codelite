@@ -13,6 +13,7 @@
 [submodule "hunspell"]
 	path = submodules/hunspell
 	url = https://github.com/hunspell/hunspell.git
+	ignore = all
 [submodule "submodules/lexilla"]
 	path = submodules/lexilla
 	url = https://github.com/eranif/lexilla.git
@@ -37,12 +38,14 @@
 [submodule "wx-config-msys2"]
 	path = submodules/wx-config-msys2
 	url = https://github.com/eranif/wx-config-msys2.git
+	ignore = all
 [submodule "yaml-cpp"]
 	path = submodules/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
 [submodule "zlib"]
 	path = submodules/zlib
 	url = https://github.com/madler/zlib
+	ignore = all
 [submodule "submodules/wxTerminalEmulator"]
 	path = submodules/wxTerminalEmulator
 	url = https://github.com/eranif/wxTerminalEmulator.git

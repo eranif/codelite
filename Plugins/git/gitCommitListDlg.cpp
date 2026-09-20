@@ -232,7 +232,9 @@ void GitCommitListDlg::DoLoadCommits(const wxString& filter)
 
     if (m_dvListCtrlCommitList->GetItemCount() > 0) {
         // Choose the first entry, this will trigger an event.
-        m_dvListCtrlCommitList->Select(m_dvListCtrlCommitList->RowToItem(0));
+        auto item = m_dvListCtrlCommitList->RowToItem(0);
+        m_dvListCtrlCommitList->Select(item);
+        UpdateSelection(item);
     }
 }
 

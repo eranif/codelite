@@ -68,7 +68,7 @@ void PSDebuggerPage::Load(BuildConfigPtr buildConf)
     for (size_t i = 0; i < searchPaths.GetCount(); ++i) {
         wxVector<wxVariant> cols;
         cols.push_back(searchPaths.Item(i));
-        m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)NULL);
+        m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)nullptr);
     }
 }
 
@@ -129,7 +129,7 @@ void PSDebuggerPage::OnAddDebuggerSearchPath(wxCommandEvent& event)
     if (!path.IsEmpty()) {
         wxVector<wxVariant> cols;
         cols.push_back(path);
-        m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)NULL);
+        m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)nullptr);
         m_dlg->SetIsDirty(true);
     }
 }
@@ -173,7 +173,7 @@ void PSDebuggerPage::DoAddPath(const wxString& path)
 {
     wxVector<wxVariant> cols;
     cols.push_back(path);
-    m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)NULL);
+    m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)nullptr);
     m_dlg->SetIsDirty(true);
 }
 

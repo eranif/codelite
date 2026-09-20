@@ -59,8 +59,8 @@ END_EVENT_TABLE()
 OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString& name)
     : wxPanel(parent, id)
     , m_name(name)
-    , m_tb(NULL)
-    , m_sci(NULL)
+    , m_tb(nullptr)
+    , m_sci(nullptr)
     , m_outputScrolls(true)
     , m_autoAppear(true)
     , m_autoAppearErrors(false)
@@ -69,27 +69,27 @@ OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString
     m_styler = std::make_unique<clFindResultsStyler>();
     CreateGUIControls();
     wxTheApp->Connect(
-        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), nullptr, this);
     wxTheApp->Connect(
-        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
-    wxTheApp->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
-    wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
+        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), nullptr, this);
+    wxTheApp->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), nullptr, this);
+    wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), NULL, this);
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), nullptr, this);
 }
 
 OutputTabWindow::~OutputTabWindow()
 {
     m_styler.reset();
     EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), NULL, this);
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
-    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
+        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), nullptr, this);
+    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), nullptr, this);
 }
 
 void OutputTabWindow::DefineMarker(wxStyledTextCtrl* sci, int marker, int markerType, wxColor fore, wxColor back)

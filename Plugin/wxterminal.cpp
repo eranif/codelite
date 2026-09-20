@@ -90,7 +90,7 @@ wxTerminal::wxTerminal(wxWindow* parent)
     , m_exitWhenProcessDies(false)
     , m_exitOnKey(false)
 #if defined(__WXMAC__) || defined(__WXGTK__)
-    , m_dummyProcess(NULL)
+    , m_dummyProcess(nullptr)
 #endif
     , m_interactive(false)
     , m_history(new clTerminalHistory())
@@ -247,7 +247,7 @@ void wxTerminal::Clear()
 #if defined(__WXGTK__) || defined(__WXMAC__)
 wxString wxTerminal::StartTTY()
 {
-    m_process = NULL;
+    m_process = nullptr;
     // Open the master side of a pseudo terminal
     int master = ::posix_openpt(O_RDWR | O_NOCTTY);
     if (master < 0) {

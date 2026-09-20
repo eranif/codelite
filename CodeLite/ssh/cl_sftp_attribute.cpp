@@ -30,7 +30,7 @@
 #include <libssh/sftp.h>
 
 SFTPAttribute::SFTPAttribute(SFTPAttribute_t attr)
-    : m_attributes(NULL)
+    : m_attributes(nullptr)
     , m_permissions(0)
 {
     Assign(attr);
@@ -50,7 +50,7 @@ void SFTPAttribute::DoClear()
     if (m_attributes) {
         sftp_attributes_free(m_attributes);
     }
-    m_attributes = NULL;
+    m_attributes = nullptr;
     m_name.Clear();
     m_flags = 0;
     m_size = 0;

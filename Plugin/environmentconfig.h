@@ -117,7 +117,7 @@ public:
         if (buildConf) {
             buildConfName = buildConf->GetName();
         }
-        m_env->ApplyEnv(NULL, projname, buildConfName);
+        m_env->ApplyEnv(nullptr, projname, buildConfName);
     }
 
     explicit EnvSetter(Project* proj)
@@ -129,7 +129,7 @@ public:
         if (buildConf) {
             buildConfName = buildConf->GetName();
         }
-        m_env->ApplyEnv(NULL, projname, buildConfName);
+        m_env->ApplyEnv(nullptr, projname, buildConfName);
     }
 
     explicit EnvSetter(EnvironmentConfig* conf, wxStringMap_t* om = nullptr)

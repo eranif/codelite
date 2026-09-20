@@ -36,7 +36,7 @@ WX_DEFINE_LIST(%%classItemName%%List);
 
 %%classColName%%* %%classColName%%::Get(DatabaseLayer* pDbLayer)
 {
-	%%classColName%%* pCol = NULL;
+	%%classColName%%* pCol = nullptr;
 	if (pDbLayer) {
 		if (pDbLayer->IsOpen()) {
 			PreparedStatement* pStatement = pDbLayer->PrepareStatement(wxT("SELECT * FROM %%classTableName%%"));
@@ -70,7 +70,7 @@ void %%classColName%%::Fill(wxGrid* pGrid)
 
 %%classColName%%* %%classColName%%::Get(DatabaseLayer* pDbLayer, const wxString& condition)
 {		
-	%%classColName%%* pCol = NULL;
+	%%classColName%%* pCol = nullptr;
 	if (pDbLayer){
 		if (pDbLayer->IsOpen()) {
 			PreparedStatement* pStatement = pDbLayer->PrepareStatement(wxT("SELECT * FROM %%classTableName%% WHERE ") + condition);

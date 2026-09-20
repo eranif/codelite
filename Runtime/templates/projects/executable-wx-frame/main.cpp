@@ -22,7 +22,7 @@ IMPLEMENT_APP(MainApp);
 
 bool MainApp::OnInit()
 {
-	SetTopWindow( new MainFrame( NULL ) );
+	SetTopWindow( new MainFrame( nullptr ) );
 	GetTopWindow()->Show();
 	
 	// true = enter the main loop

@@ -302,10 +302,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
     }
 
     // Locate the requested theme
-    LexerConf::Ptr_t firstLexer(NULL);
-    LexerConf::Ptr_t defaultLexer(NULL);
-    LexerConf::Ptr_t defaultDarkLexer(NULL);
-    LexerConf::Ptr_t defaultLightLexer(NULL);
+    LexerConf::Ptr_t firstLexer(nullptr);
+    LexerConf::Ptr_t defaultLexer(nullptr);
+    LexerConf::Ptr_t defaultDarkLexer(nullptr);
+    LexerConf::Ptr_t defaultLightLexer(nullptr);
 
     // assume that the text theme is always up to date and exist
     // based on that information, extract the active theme

@@ -207,7 +207,7 @@ void DbViewerPanel::RefreshDbView()
                         rootID, pDatabase->GetName(), img_database, img_database, new DbItem(pDatabase));
                     m_treeDatabases->Expand(rootID);
                     wxTreeItemId idFolder =
-                        m_treeDatabases->AppendItem(dbID, _("Tables"), img_folder, img_folder, NULL);
+                        m_treeDatabases->AppendItem(dbID, _("Tables"), img_folder, img_folder, nullptr);
 
                     // ----------------------------- load tables ----------------------------------
                     SerializableList::compatibility_iterator tabNode = pDatabase->GetFirstChildNode();
@@ -218,7 +218,7 @@ void DbViewerPanel::RefreshDbView()
                                                                              pTable->GetName(),
                                                                              img_table,
                                                                              img_table,
-                                                                             new DbItem(pTable)); // NULL);
+                                                                             new DbItem(pTable)); // nullptr);
 
                             ///////////////////////////////////////////////////////////
                             // Add the columns
@@ -237,7 +237,7 @@ void DbViewerPanel::RefreshDbView()
                     }
                     // ----------------------------------------------------------------------------
 
-                    idFolder = m_treeDatabases->AppendItem(dbID, _("Views"), img_folder, img_folder, NULL);
+                    idFolder = m_treeDatabases->AppendItem(dbID, _("Views"), img_folder, img_folder, nullptr);
 
                     // ----------------------------- load views ----------------------------------
                     tabNode = pDatabase->GetFirstChildNode();
@@ -248,7 +248,7 @@ void DbViewerPanel::RefreshDbView()
                                                         pView->GetName(),
                                                         img_find,
                                                         img_find,
-                                                        new DbItem(pView)); // NULL);
+                                                        new DbItem(pView)); // nullptr);
                         }
                         tabNode = tabNode->GetNext();
                     }
@@ -607,7 +607,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 
 bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
 {
-    DatabaseLayerPtr pDbLayer(NULL);
+    DatabaseLayerPtr pDbLayer(nullptr);
     LogDialog dialog(this); // TODO:Doresit parenta
     dialog.Show();
 
@@ -797,7 +797,7 @@ void DbViewerPanel::OnContextMenu(wxTreeEvent& event)
     }
 
     if (c > 0) {
-        menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&DbViewerPanel::OnPopupClick, NULL, this);
+        menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&DbViewerPanel::OnPopupClick, nullptr, this);
         PopupMenu(&menu);
     }
 }

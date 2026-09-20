@@ -240,7 +240,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
     clDEBUG() << "   > Importing Eclipse XML file:" << theme_file << ". Language:" << langName << endl;
     wxXmlDocument doc;
     if (!doc.Load(theme_file.GetFullPath()))
-        return NULL;
+        return nullptr;
 
     m_themeName = doc.GetRoot()->GetAttribute("name");
     LexerConf::Ptr_t lexer(new LexerConf());

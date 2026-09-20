@@ -45,7 +45,7 @@ wxString NORMAL_LAYOUT = wxT("default.layout");
 
 PerspectiveManager::PerspectiveManager()
     : m_active(NORMAL_LAYOUT)
-    , m_aui(NULL)
+    , m_aui(nullptr)
 {
     wxString active = EditorConfigST::Get()->GetString(wxT("ActivePerspective"));
     if (active.IsEmpty() == false) {
@@ -270,7 +270,7 @@ void PerspectiveManager::DisconnectEvents()
         m_aui->GetFrame()->Unbind(wxEVT_AUI_PANE_BUTTON, &PerspectiveManager::OnPaneClosing, this);
         m_aui->GetFrame()->Unbind(wxEVT_AUI_RENDER, &PerspectiveManager::OnAuiRender, this);
     }
-    m_aui = NULL;
+    m_aui = nullptr;
 }
 
 void PerspectiveManager::OnAuiRender(wxAuiManagerEvent& event)

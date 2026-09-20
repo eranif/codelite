@@ -200,7 +200,7 @@ void PHPDebugPane::OnXDebugSessionEnded(XDebugEvent& e)
     e.Skip();
     // Clear the stacktrace view
     m_dvListCtrlStackTrace->DeleteAllItems();
-    m_console->SetTerminal(NULL);
+    m_console->SetTerminal(nullptr);
 }
 
 void PHPDebugPane::OnXDebugSessionStarted(XDebugEvent& e)

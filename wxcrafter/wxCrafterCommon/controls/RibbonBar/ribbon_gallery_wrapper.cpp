@@ -16,7 +16,7 @@ RibbonGalleryWrapper::RibbonGalleryWrapper()
     RegisterEvent("wxEVT_COMMAND_RIBBONGALLERY_HOVER_CHANGED",
                   "wxRibbonGalleryEvent",
                   _("Triggered when the item being hovered over by the user changes. The item in the event will be the "
-                    "new item being hovered, or NULL if there is no longer an item being hovered. Note that the ID is "
+                    "new item being hovered, or nullptr if there is no longer an item being hovered. Note that the ID is "
                     "that of the gallery, not of the item."));
     RegisterEventCommand(
         "wxEVT_COMMAND_BUTTON_CLICKED", _("Triggered when the \"extension\" button of the gallery is pressed"));

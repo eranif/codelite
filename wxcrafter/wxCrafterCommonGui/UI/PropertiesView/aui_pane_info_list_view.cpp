@@ -5,7 +5,7 @@
 #include "wxgui_defs.h"
 
 AuiPaneInfoListView::AuiPaneInfoListView()
-    : m_wxcWidget(NULL)
+    : m_wxcWidget(nullptr)
 {
 }
 

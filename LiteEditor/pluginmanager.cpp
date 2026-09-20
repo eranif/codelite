@@ -509,7 +509,7 @@ TagEntryPtr PluginManager::GetTagAtCaret(bool scoped, bool impl)
 {
     clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if (!editor)
-        return NULL;
+        return nullptr;
     return editor->GetContext()->GetTagAtCaret(scoped, impl);
 }
 

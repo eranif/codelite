@@ -94,7 +94,7 @@ public:
     virtual ~clSSH();
 
     bool IsConnected() const { return m_connected; }
-    bool IsCommandRunning() const { return m_channel != NULL; }
+    bool IsCommandRunning() const { return m_channel != nullptr; }
 
     /**
      * @brief send a message that should be ignored. This is useful for implemeting keep-alive

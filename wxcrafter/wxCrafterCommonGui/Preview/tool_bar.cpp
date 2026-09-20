@@ -7,7 +7,7 @@ extern const wxEventType wxEVT_PREVIEW_BAR_SELECTED;
 
 ToolBar::ToolBar(wxWindow* parent)
     : wxPanel(parent)
-    , m_wxtb(NULL)
+    , m_wxtb(nullptr)
 
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
@@ -17,7 +17,7 @@ ToolBar::ToolBar(wxWindow* parent)
 void ToolBar::AddToolbar(wxToolBar* tb)
 {
     GetSizer()->Add(tb, 0, wxEXPAND);
-    Connect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ToolBar::OnClick), NULL, this);
+    Connect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ToolBar::OnClick), nullptr, this);
     m_wxtb = tb;
 }
 

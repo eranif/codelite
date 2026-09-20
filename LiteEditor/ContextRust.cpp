@@ -124,7 +124,7 @@ int ContextRust::DoGetCalltipParameterIndex() { return ContextBase::DoGetCalltip
 
 wxMenu* ContextRust::GetMenu() { return ContextBase::GetMenu(); }
 
-TagEntryPtr ContextRust::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
+TagEntryPtr ContextRust::GetTagAtCaret(bool scoped, bool impl) { return nullptr; }
 
 bool ContextRust::IsCommentOrString(long pos)
 {

@@ -46,7 +46,7 @@
 
 CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     : CscopeTabBase(parent)
-    , m_table(NULL)
+    , m_table(nullptr)
     , m_mgr(mgr)
 {
     m_styler = std::make_unique<clFindResultsStyler>(m_stc);
@@ -66,13 +66,13 @@ CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     SetMessage(_("Ready"), 0);
 
     Clear(); // To make the Clear button UpdateUI work initially
-    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), nullptr, this);
 }
 
 CscopeTab::~CscopeTab()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL, this);
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), nullptr, this);
 }
 
 void CscopeTab::Clear()

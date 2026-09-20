@@ -32,7 +32,7 @@ wxString WizardPageWrapper::CppCtorCode() const
 
     wxString code;
     code << GetName() << wxT(" = new ") << GetRealClassName() << wxT("(") << GetWindowParent() << wxT(", ")
-         << wxT("NULL, ") << wxT("NULL, ") << wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH))
+         << wxT("nullptr, ") << wxT("nullptr, ") << wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH))
          << wxT(");\n");
     code << wxT("m_pages.push_back(") << GetName() << wxT(");\n");
 

@@ -37,7 +37,7 @@ PostgreSqlDbAdapter::PostgreSqlDbAdapter()
     this->m_userName = wxT("");
     this->m_password = wxT("");
     this->m_adapterType = atPOSTGRES;
-    this->m_pDbLayer = NULL;
+    this->m_pDbLayer = nullptr;
 }
 PostgreSqlDbAdapter::PostgreSqlDbAdapter(const wxString& serverName,
                                          const int port,
@@ -51,7 +51,7 @@ PostgreSqlDbAdapter::PostgreSqlDbAdapter(const wxString& serverName,
     this->m_password = password;
     this->m_defaultDb = defaultDb;
     this->m_adapterType = atPOSTGRES;
-    this->m_pDbLayer = NULL;
+    this->m_pDbLayer = nullptr;
 }
 
 void PostgreSqlDbAdapter::CloseConnection()

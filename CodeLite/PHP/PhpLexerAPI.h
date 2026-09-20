@@ -115,7 +115,7 @@ public:
         if (m_fp) {
             ::fclose(m_fp);
         }
-        m_fp = NULL;
+        m_fp = nullptr;
         m_insidePhp = false;
         ClearComment();
         m_rawStringLabel.clear();
@@ -127,7 +127,7 @@ public:
         , m_commentStartLine(wxNOT_FOUND)
         , m_commentEndLine(wxNOT_FOUND)
         , m_insidePhp(false)
-        , m_fp(NULL)
+        , m_fp(nullptr)
     {
     }
 

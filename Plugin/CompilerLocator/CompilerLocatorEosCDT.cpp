@@ -25,7 +25,7 @@ CompilerPtr CompilerLocatorEosCDT::Locate(const wxString& folder)
     m_compilers.clear();
     wxString foundPath;
     if (!CheckExists(folder, foundPath)) {
-        return NULL;
+        return nullptr;
     }
 
     m_compilers.push_back(CreateCompiler(foundPath));
@@ -70,7 +70,7 @@ bool CompilerLocatorEosCDT::CheckExists(const wxString& path, wxString& foundPat
 CompilerPtr CompilerLocatorEosCDT::CreateCompiler(const wxString& path) const
 {
 
-    CompilerPtr compiler(new Compiler(NULL));
+    CompilerPtr compiler(new Compiler(nullptr));
     compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
 
     // get the compiler version

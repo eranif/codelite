@@ -26,6 +26,6 @@ void wxcAuiManager::Add(wxWindow* win, wxAuiManager* aui)
 wxAuiManager* wxcAuiManager::Find(wxWindow* win) const
 {
     if (m_auiMgrMap.count(win) == 0)
-        return NULL;
+        return nullptr;
     return m_auiMgrMap.find(win)->second;
 }

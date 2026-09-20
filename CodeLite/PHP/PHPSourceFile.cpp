@@ -620,7 +620,7 @@ void PHPSourceFile::ParseFunctionBody()
     // when we reach the current depth-1 -> leave
     int exitDepth = m_depth - 1;
     phpLexerToken token;
-    PHPEntityBase::Ptr_t var(NULL);
+    PHPEntityBase::Ptr_t var(nullptr);
     while (NextToken(token)) {
         switch (token.type) {
         case '{':

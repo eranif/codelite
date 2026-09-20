@@ -57,7 +57,7 @@ CompilerPtr CompilerLocatorGCC::Locate(const wxString& folder)
     }
 
     if (found) {
-        CompilerPtr compiler(new Compiler(NULL));
+        CompilerPtr compiler(new Compiler(nullptr));
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
 
         // get the compiler version
@@ -69,7 +69,7 @@ CompilerPtr CompilerLocatorGCC::Locate(const wxString& folder)
         AddTools(compiler, gcc);
         return compiler;
     }
-    return NULL;
+    return nullptr;
 }
 
 bool CompilerLocatorGCC::Locate()
@@ -110,7 +110,7 @@ bool CompilerLocatorGCC::Locate()
     for (const auto& vt : map) {
         // add this compiler
         const wxFileName& gcc = vt.first;
-        CompilerPtr compiler(new Compiler(NULL));
+        CompilerPtr compiler(new Compiler(nullptr));
         compiler->SetName(gcc.GetFullPath());
         compiler->SetGenerateDependenciesFile(true);
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
@@ -123,7 +123,7 @@ bool CompilerLocatorGCC::Locate()
     wxFileName xcodeGcc("/Applications/Xcode.app/Contents/Developer/usr/bin", "gcc");
     if (xcodeGcc.FileExists()) {
         // add this compiler
-        CompilerPtr compiler(new Compiler(NULL));
+        CompilerPtr compiler(new Compiler(nullptr));
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
         compiler->SetName("GCC ( XCode )");
         m_compilers.push_back(compiler);

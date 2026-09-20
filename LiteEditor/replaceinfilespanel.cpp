@@ -167,7 +167,7 @@ void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci, MatchInfo_t::iter
     if (!sci || begin == end)
         return;
     bool ok = true;
-    if (dynamic_cast<clEditor*>(sci) == NULL) {
+    if (dynamic_cast<clEditor*>(sci) == nullptr) {
         // it's a temp editor, check if we have any changes to save
         wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
         if (sci->GetModify() &&
@@ -495,7 +495,7 @@ void ReplaceInFilesPanel::OnMouseDClick(wxStyledTextEvent& e)
     } else {
         MatchInfo_t::const_iterator m = m_matchInfo.find(clickedLine);
         if (m != m_matchInfo.end()) {
-            DoOpenSearchResult(m->second, NULL, m->first);
+            DoOpenSearchResult(m->second, nullptr, m->first);
         }
     }
 }

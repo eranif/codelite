@@ -41,7 +41,7 @@ bool WSImporter::Import(wxString& errMsg)
                 if (!clCxxWorkspaceST::Get()->CreateWorkspace(gworskspace->name, gworskspace->path, errMsgLocal))
                     return false;
 
-                clCxxWorkspace* clWorkspace = NULL;
+                clCxxWorkspace* clWorkspace = nullptr;
                 WorkspaceConfiguration::ConfigMappingList cmlDebug;
                 WorkspaceConfiguration::ConfigMappingList cmlRelease;
 
@@ -67,16 +67,16 @@ bool WSImporter::Import(wxString& errMsg)
                         return false;
 
                     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(project->name, errMsg);
-                    ProjectSettingsPtr le_settings(new ProjectSettings(NULL));
+                    ProjectSettingsPtr le_settings(new ProjectSettings(nullptr));
 
                     le_settings->RemoveConfiguration(wxT("Debug"));
                     le_settings->SetProjectType(projectType);
 
-                    if (clWorkspace == NULL)
+                    if (clWorkspace == nullptr)
                         clWorkspace = proj->GetWorkspace();
 
                     for (GenericProjectCfgPtr cfg : project->cfgs) {
-                        BuildConfigPtr le_conf(new BuildConfig(NULL));
+                        BuildConfigPtr le_conf(new BuildConfig(nullptr));
 
                         wxString outputFileName = wxT("");
 
@@ -213,7 +213,7 @@ bool WSImporter::Import(wxString& errMsg)
 
                                 if (listEnvVar.size() > 0) {
                                     EnvVarImporterDlg envVarImporterDlg(
-                                        NULL, project->name, cfg->name, listEnvVar, le_conf, &showDlg);
+                                        nullptr, project->name, cfg->name, listEnvVar, le_conf, &showDlg);
                                     envVarImporterDlg.ShowModal();
                                 }
                             }

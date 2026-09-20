@@ -122,7 +122,7 @@ void ContextBase::PrependMenuItem(wxMenu* menu, const wxString& text, wxObjectEv
 
     item = new wxMenuItem(menu, eventId, text);
     menu->Prepend(item);
-    menu->Connect(eventId, wxEVT_COMMAND_MENU_SELECTED, func, NULL, this);
+    menu->Connect(eventId, wxEVT_COMMAND_MENU_SELECTED, func, nullptr, this);
 }
 
 void ContextBase::PrependMenuItem(wxMenu* menu, const wxString& text, int id)

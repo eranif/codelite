@@ -295,7 +295,7 @@ bool BuilderNMake::Export(const wxString& project,
                 // path
                 customWd.Trim().Trim(false);
                 if (customWd.empty() == false) {
-                    customWdCmd << "@cd \"" << ExpandVariables(customWd, dependProj, NULL) << "\" && ";
+                    customWdCmd << "@cd \"" << ExpandVariables(customWd, dependProj, nullptr) << "\" && ";
                 } else {
                     customWdCmd << GetCdCmd(wspfile, fn);
                 }
@@ -433,7 +433,7 @@ bool BuilderNMake::Export(const wxString& project,
                 // path
                 customWd.Trim().Trim(false);
                 if (customWd.empty() == false) {
-                    customWdCmd << "@cd \"" << ExpandVariables(customWd, dependProj, NULL) << "\" && ";
+                    customWdCmd << "@cd \"" << ExpandVariables(customWd, dependProj, nullptr) << "\" && ";
                 } else {
                     customWdCmd << GetCdCmd(wspfile, fn);
                 }

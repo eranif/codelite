@@ -92,7 +92,7 @@ std::string MSWGetStackTrace(HANDLE threadHandle, DWORD threadId)
 
     static bool symInitialized = false;
     if (!symInitialized) {
-        if (!SymInitialize(process, NULL, TRUE)) {
+        if (!SymInitialize(process, nullptr, TRUE)) {
             ss << "Failed to initialize symbols (error: " << GetLastError() << ")" << std::endl;
             ResumeThread(threadHandle);
             return ss.str();
@@ -130,10 +130,10 @@ std::string MSWGetStackTrace(HANDLE threadHandle, DWORD threadId)
                        threadHandle,
                        &stackFrame,
                        &context,
-                       NULL,
+                       nullptr,
                        SymFunctionTableAccess64,
                        SymGetModuleBase64,
-                       NULL)) {
+                       nullptr)) {
 
         if (stackFrame.AddrPC.Offset == 0) {
             break; // End of stack

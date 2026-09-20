@@ -72,6 +72,6 @@ void DefineCustomControlWizard::OnNewEvent(wxCommandEvent& event)
         wxVector<wxVariant> cols;
         cols.push_back(dlg.GetEventType());
         cols.push_back(dlg.GetEventClass());
-        m_dvListCtrlEvents->AppendItem(cols, (wxUIntPtr)NULL);
+        m_dvListCtrlEvents->AppendItem(cols, (wxUIntPtr)nullptr);
     }
 }

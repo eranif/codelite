@@ -88,7 +88,7 @@ void WorkerThread::Stop()
     QueuePut(m_mutex, m_Q, m_cv, nullptr); // Make sure that the thread wakes up
 
     if (IsAlive()) {
-        Delete(NULL, wxTHREAD_WAIT_BLOCK);
+        Delete(nullptr, wxTHREAD_WAIT_BLOCK);
 
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);

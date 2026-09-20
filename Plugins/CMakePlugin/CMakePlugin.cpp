@@ -138,8 +138,8 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 CMakePlugin::CMakePlugin(IManager* manager)
     : IPlugin(manager)
-    , m_configuration(NULL)
-    , m_cmake(NULL)
+    , m_configuration(nullptr)
+    , m_cmake(nullptr)
 {
     m_longName = _("CMake integration with CodeLite");
     m_shortName = "CMakePlugin";
@@ -438,7 +438,7 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
     wxString pathvar;
     pathvar << fnCxx.GetPath() << clPATH_SEPARATOR << "$PATH";
     om["PATH"] = pathvar;
-    EnvSetter es(NULL, &om, p->GetName(), buildConf->GetName());
+    EnvSetter es(nullptr, &om, p->GetName(), buildConf->GetName());
 #else
     EnvSetter es(p);
 #endif

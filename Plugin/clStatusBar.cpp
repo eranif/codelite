@@ -172,7 +172,7 @@ void clStatusBar::OnThemeChanged(wxCommandEvent& event)
 void clStatusBar::DoUpdateColour()
 {
     IEditor* editor = m_mgr->GetActiveEditor();
-    wxCustomStatusBarArt::Ptr_t art(NULL);
+    wxCustomStatusBarArt::Ptr_t art(nullptr);
     if (editor) {
         wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
         if (DrawingUtils::IsDark(bgColour)) {

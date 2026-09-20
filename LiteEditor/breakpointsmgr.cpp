@@ -116,7 +116,7 @@ bool BreakptMgr::AddBreakpoint(const clDebuggerBreakpoint& bp)
 // Add a breakpoint using the 'Properties' dialog
 void BreakptMgr::AddBreakpoint()
 {
-    BreakptPropertiesDlg dlg(NULL);
+    BreakptPropertiesDlg dlg(nullptr);
     dlg.SetTitle(_("Create a breakpoint or watchpoint"));
 
     clEditor* const editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
@@ -625,7 +625,7 @@ void BreakptMgr::EditBreakpoint(int index, bool& bpExist)
     }
 
     clDebuggerBreakpoint bp = m_bps.at(index);
-    BreakptPropertiesDlg dlg(NULL);
+    BreakptPropertiesDlg dlg(nullptr);
     wxString title;
     if (bp.bp_type == BP_type_watchpt) {
         title = _("Properties for watchpoint ");
@@ -1042,8 +1042,8 @@ void myDragImage::OnEndDrag(wxMouseEvent& event)
     Hide();
     EndDrag();
     editor->SetCursor(oldcursor);
-    editor->Disconnect(wxEVT_MOTION, wxMouseEventHandler(myDragImage::OnMotion), NULL, this);
-    editor->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(myDragImage::OnEndDrag), NULL, this);
+    editor->Disconnect(wxEVT_MOTION, wxMouseEventHandler(myDragImage::OnMotion), nullptr, this);
+    editor->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(myDragImage::OnEndDrag), nullptr, this);
 
     // If the cursor is within spitting distance of the bp margin, assume it's a genuine drop
     wxPoint pt = event.GetPosition();

@@ -12,40 +12,40 @@ EventsEditorPane::EventsEditorPane(wxWindow* parent, wxcWidget* control)
 {
     DoInitialize();
     EventNotifier::Get()->Connect(
-        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(EventsEditorPane::OnWidgetSelected), NULL, this);
+        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(EventsEditorPane::OnWidgetSelected), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_UPDATE_EVENTSEDITORPANE, wxCommandEventHandler(EventsEditorPane::OnUpdatePanes), NULL, this);
+        wxEVT_UPDATE_EVENTSEDITORPANE, wxCommandEventHandler(EventsEditorPane::OnUpdatePanes), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(EventsEditorPane::OnProjectClosed), NULL, this);
+        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(EventsEditorPane::OnProjectClosed), nullptr, this);
     m_controlEventsTable->Connect(
-        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), NULL, this);
+        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), nullptr, this);
     m_inheritedEventsTable->Connect(
-        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), NULL, this);
+        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), nullptr, this);
     m_controlEventsTable->Connect(
-        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), NULL, this);
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), nullptr, this);
     m_inheritedEventsTable->Connect(
-        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), NULL, this);
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), nullptr, this);
 }
 
 EventsEditorPane::~EventsEditorPane()
 {
 
     EventNotifier::Get()->Disconnect(
-        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(EventsEditorPane::OnWidgetSelected), NULL, this);
+        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(EventsEditorPane::OnWidgetSelected), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_UPDATE_EVENTSEDITORPANE, wxCommandEventHandler(EventsEditorPane::OnUpdatePanes), NULL, this);
+        wxEVT_UPDATE_EVENTSEDITORPANE, wxCommandEventHandler(EventsEditorPane::OnUpdatePanes), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(EventsEditorPane::OnProjectClosed), NULL, this);
+        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(EventsEditorPane::OnProjectClosed), nullptr, this);
 
     m_controlEventsTable->Disconnect(
-        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), NULL, this);
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), nullptr, this);
     m_controlEventsTable->Disconnect(
-        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), NULL, this);
+        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), nullptr, this);
 
     m_inheritedEventsTable->Disconnect(
-        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), NULL, this);
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), nullptr, this);
     m_inheritedEventsTable->Disconnect(
-        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), NULL, this);
+        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), nullptr, this);
 }
 
 void EventsEditorPane::DoInitialize()
@@ -126,7 +126,7 @@ void EventsEditorPane::OnProjectClosed(wxCommandEvent& e)
 
 void EventsEditorPane::Clear()
 {
-    m_control = NULL;
+    m_control = nullptr;
     m_controlEventsTable->GetGrid()->Clear();
     m_inheritedEventsTable->GetGrid()->Clear();
     m_staticTextEventsPaneTitle->SetLabel("");

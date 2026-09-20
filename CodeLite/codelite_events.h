@@ -37,7 +37,7 @@
 //  will not change when we move an event up or down in this file...
 // ------------------------------------------------------------------------
 
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_INIT_DONE, wxCommandEvent);
 
 // wxCommandEvent::GetString() will return the node name modified
@@ -57,16 +57,16 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_CREATE_NEW, clWorkspace
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEvent);
 
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_VIEW_INIT_DONE, wxCommandEvent);
 
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_VIEW_REFRESHED, wxCommandEvent);
 
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_EXP_INIT_DONE, wxCommandEvent);
 
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_EXP_REFRESHED, wxCommandEvent);
 
 // clientData is the wxTreeItemId*
@@ -139,21 +139,21 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandE
 // clientData is closing editor (IEditor*)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_CLOSING, wxCommandEvent);
 
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ALL_EDITORS_CLOSING, wxCommandEvent);
 
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ALL_EDITORS_CLOSED, wxCommandEvent);
 
 // This event is sent when the user clicks inside an editor
 // this event can not be Veto()
-// clientData is NULL. You may query the clicked editor by calling to
+// clientData is nullptr. You may query the clicked editor by calling to
 // IManager::GetActiveEditor()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_CLICKED, wxCommandEvent);
 
 // User dismissed the Editor's settings dialog with
 // Apply or OK (Settings | Editor)
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEvent);
 
 // This event is sent from plugins to the application to tell it to reload
@@ -278,11 +278,11 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_STARTING, clDebugEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_STARTED, clDebugEvent);
 
 // sent just before the debugger stops
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_ENDING, clDebugEvent);
 
 // sent after the debugger stopped
-// clientData is NULL
+// clientData is nullptr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_ENDED, clDebugEvent);
 
 // Debugger is requesting to open a file and set the marker at a given position

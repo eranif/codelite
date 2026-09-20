@@ -326,7 +326,7 @@ void SQLCommandPanel::OnTemplatesBtnClick(wxAuiToolBarEvent& event)
     menu.Append(XRCID("IDR_SQLCOMMAND_DELETE"),
                 _("Insert DELETE SQL template"),
                 _("Insert DELETE SQL statement template into editor."));
-    menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, NULL, this);
+    menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, nullptr, this);
 
     wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
     if (auibar) {

@@ -62,7 +62,7 @@ wxTreeListCtrl* MyTreeListCtrl::HandleListCtrl()
 
     // This is a one ugly hack: connect our newly created list control
     // to the designer panel
-    // list->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(DesignerPanel::OnTreeListCtrlFocus), NULL,
+    // list->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(DesignerPanel::OnTreeListCtrlFocus), nullptr,
     // GUICraftMainPanel::m_MainPanel->GetDesignerPanel());
     return list;
 }

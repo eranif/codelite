@@ -38,13 +38,13 @@ BookmarkManager::BookmarkManager()
     wxCommandEvent dummy;
     OnEditorSettingsChanged(dummy);
     EventNotifier::Get()->Connect(
-        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(BookmarkManager::OnEditorSettingsChanged), NULL, this);
+        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(BookmarkManager::OnEditorSettingsChanged), nullptr, this);
 }
 
 BookmarkManager::~BookmarkManager()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(BookmarkManager::OnEditorSettingsChanged), NULL, this);
+        wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(BookmarkManager::OnEditorSettingsChanged), nullptr, this);
 }
 
 BookmarkManager& BookmarkManager::Get()

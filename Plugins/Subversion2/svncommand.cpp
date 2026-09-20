@@ -64,7 +64,7 @@ bool SvnCommand::Execute(const wxString& command,
     om.insert(std::make_pair("LC_ALL", "C"));
 
     bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
-    EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
+    EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : nullptr);
 
     m_process = CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell, workingDirectory);
     if (!m_process) {

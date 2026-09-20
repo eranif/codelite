@@ -82,25 +82,25 @@ WorkspaceTab::~WorkspaceTab()
     wxTheApp->Disconnect(XRCID("show_in_workspace"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(WorkspaceTab::OnShowFile),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(
-        XRCID("show_in_workspace"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), NULL, this);
+        XRCID("show_in_workspace"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), nullptr, this);
 
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WorkspaceTab::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WorkspaceTab::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_ADDED, clCommandEventHandler(WorkspaceTab::OnProjectAdded), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_ADDED, clCommandEventHandler(WorkspaceTab::OnProjectAdded), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_PROJ_REMOVED, clCommandEventHandler(WorkspaceTab::OnProjectRemoved), NULL, this);
+        wxEVT_PROJ_REMOVED, clCommandEventHandler(WorkspaceTab::OnProjectRemoved), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), NULL, this);
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_EDITOR_CLOSING, wxCommandEventHandler(WorkspaceTab::OnEditorClosing), NULL, this);
+        wxEVT_EDITOR_CLOSING, wxCommandEventHandler(WorkspaceTab::OnEditorClosing), nullptr, this);
 
     wxTheApp->Disconnect(XRCID("configuration_manager"),
                          wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(WorkspaceTab::OnProjectSettingsUI),
-                         NULL,
+                         nullptr,
                          this);
 
     EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTED, &WorkspaceTab::OnBuildStarted, this);
@@ -172,24 +172,24 @@ void WorkspaceTab::ConnectEvents()
     wxTheApp->Connect(XRCID("show_in_workspace"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(WorkspaceTab::OnShowFile),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(
-        XRCID("show_in_workspace"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), NULL, this);
+        XRCID("show_in_workspace"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &WorkspaceTab::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WorkspaceTab::OnWorkspaceClosed, this);
 
-    EventNotifier::Get()->Connect(wxEVT_PROJ_ADDED, clCommandEventHandler(WorkspaceTab::OnProjectAdded), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_PROJ_ADDED, clCommandEventHandler(WorkspaceTab::OnProjectAdded), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_PROJ_REMOVED, clCommandEventHandler(WorkspaceTab::OnProjectRemoved), NULL, this);
+        wxEVT_PROJ_REMOVED, clCommandEventHandler(WorkspaceTab::OnProjectRemoved), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), NULL, this);
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_EDITOR_CLOSING, wxCommandEventHandler(WorkspaceTab::OnEditorClosing), NULL, this);
+        wxEVT_EDITOR_CLOSING, wxCommandEventHandler(WorkspaceTab::OnEditorClosing), nullptr, this);
     wxTheApp->Connect(XRCID("configuration_manager"),
                       wxEVT_UPDATE_UI,
                       wxUpdateUIEventHandler(WorkspaceTab::OnProjectSettingsUI),
-                      NULL,
+                      nullptr,
                       this);
     m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnCollapseAll, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
     m_toolbar580->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnCollapseAllUI, this, XRCID("ID_TOOL_COLLAPSE_ALL"));

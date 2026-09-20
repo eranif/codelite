@@ -28,7 +28,7 @@ bool $(AppName)::OnInit()
 	wxImage::AddHandler( new wxXPMHandler );
 	wxImage::AddHandler( new wxGIFHandler );
 
-	wxFrame* frame = new $(MainFrameName)(NULL,
+	wxFrame* frame = new $(MainFrameName)(nullptr,
                                    wxID_ANY,
                                    wxT("$(ProjectName)"),
                                    wxDefaultPosition,

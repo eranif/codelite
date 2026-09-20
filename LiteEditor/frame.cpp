@@ -760,7 +760,7 @@ IEditor* GetIEditorFromEvent(MainBook* book, wxEvent& event)
 }
 } // namespace
 
-clMainFrame* clMainFrame::m_theFrame = NULL;
+clMainFrame* clMainFrame::m_theFrame = nullptr;
 bool clMainFrame::m_initCompleted = false;
 
 clMainFrame::clMainFrame(
@@ -809,34 +809,34 @@ clMainFrame::~clMainFrame()
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
     Unbind(wxEVT_CHILD_FOCUS, &clMainFrame::OnChildFocus, this);
     wxTheApp->Disconnect(
-        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
     wxTheApp->Disconnect(wxID_SELECTALL,
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(
-        wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+        wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+        wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+        wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), nullptr, this);
     wxTheApp->Disconnect(
-        wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+        wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), nullptr, this);
     EventNotifier::Get()->Unbind(
         wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_PROCESS_ENDED, &clMainFrame::OnBuildEnded, this);
-    EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clMainFrame::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), nullptr, this);
     EventNotifier::Get()->Unbind(
         wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged), this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
@@ -856,7 +856,7 @@ clMainFrame::~clMainFrame()
         m_mainToolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
     }
     EventNotifier::Get()->Disconnect(
-        wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
+        wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), nullptr, this);
     wxDELETE(m_timer);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
 
@@ -934,37 +934,37 @@ void clMainFrame::Construct()
 
     // connect common edit events
     wxTheApp->Connect(
-        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
     wxTheApp->Connect(
-        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
     wxTheApp->Connect(wxID_SELECTALL,
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(
-        wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+        wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
 
     wxTheApp->Connect(
-        wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+        wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), nullptr, this);
     wxTheApp->Connect(
-        wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+        wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), nullptr, this);
     wxTheApp->Connect(
-        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+        wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), nullptr, this);
     wxTheApp->Connect(
-        wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
+        wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), nullptr, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
     Bind(wxEVT_CHILD_FOCUS, &clMainFrame::OnChildFocus, this);
     EventNotifier::Get()->Bind(
         wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified, this);
-    EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_PROCESS_ENDED, &clMainFrame::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clMainFrame::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), nullptr, this);
     EventNotifier::Get()->Bind(
         wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged), this);
     EventNotifier::Get()->Bind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
@@ -982,7 +982,7 @@ void clMainFrame::Construct()
         m_mainToolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
     }
 
-    EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), nullptr, this);
 
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
@@ -1036,7 +1036,7 @@ void clMainFrame::PostConstruct()
 
 void clMainFrame::Initialize(bool loadLastSession)
 {
-    m_theFrame = new clMainFrame(NULL,
+    m_theFrame = new clMainFrame(nullptr,
                                  wxID_ANY,
                                  "CodeLite",
                                  wxDefaultPosition,
@@ -1329,7 +1329,7 @@ void clMainFrame::CreateGUIControls()
 
 #ifdef __WXMAC__
     // remove the "Show menu bar"
-    wxMenu* view = NULL;
+    wxMenu* view = nullptr;
     wxMenuItem* item = m_mainMenuBar->FindItem(XRCID("show_menu_bar"), &view);
     if (item && view) {
         view->Remove(item);
@@ -1360,7 +1360,7 @@ void clMainFrame::CreateGUIControls()
     CreateRecentlyOpenedWorkspacesMenu();
 
     // Connect to Edit menu, so that its labelled-state submenu can be added on the fly when necessary
-    wxMenu* editmenu = NULL;
+    wxMenu* editmenu = nullptr;
     wxMenuItem* menuitem = GetMainMenuBar()->FindItem(wxID_UNDO, &editmenu);
     if (menuitem && editmenu) {
         editmenu->Bind(wxEVT_MENU_OPEN, wxMenuEventHandler(clMainFrame::OnEditMenuOpened), this);
@@ -1484,7 +1484,7 @@ void clMainFrame::CreateGUIControls()
                                ID_MENU_CUSTOM_TARGET_MAX,
                                wxEVT_COMMAND_MENU_SELECTED,
                                wxCommandEventHandler(clMainFrame::OnBuildCustomTarget),
-                               NULL,
+                               nullptr,
                                this);
     }
 
@@ -1666,7 +1666,7 @@ void clMainFrame::DoCreateToolBar(int toolSize)
     // create the bookmark toolbar
     //----------------------------------------------
     add_main_toolbar_item(m_mainToolbar, "toggle_bookmark", _("Toggle Bookmark"), "bookmark", toolSize);
-    // m_mainToolbar->Bind(wxEVT_TOOL, BookmarkManager::Get().CreateBookmarksSubmenu(NULL), this,
+    // m_mainToolbar->Bind(wxEVT_TOOL, BookmarkManager::Get().CreateBookmarksSubmenu(nullptr), this,
     // XRCID("toggle_bookmark"));
     add_main_toolbar_item(m_mainToolbar, "previous_bookmark", _("Previous Bookmark"), "back", toolSize);
     add_main_toolbar_item(m_mainToolbar, "next_bookmark", _("Next Bookmark"), "forward", toolSize);
@@ -1747,7 +1747,7 @@ void clMainFrame::Bootstrap()
     if (!clConfig::Get().Read(kConfigBootstrapCompleted, false)) {
         clConfig::Get().Write(kConfigBootstrapCompleted, true);
         if (StartSetupWizard(true)) {
-            EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
+            EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, nullptr);
             return;
         }
     }
@@ -1762,7 +1762,7 @@ void clMainFrame::Bootstrap()
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
         EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
     }
-    EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
+    EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, nullptr);
 
     // and finally, find the best window to give focus to
     codelite_initialised = true;
@@ -3053,7 +3053,7 @@ void clMainFrame::CreateRecentlyOpenedFilesMenu()
     FileHistory& hs = GetMainBook()->GetRecentlyOpenedFilesClass();
     GetMainBook()->GetRecentlyOpenedFiles(files);
 
-    wxMenu* menu = NULL;
+    wxMenu* menu = nullptr;
     wxMenuItem* item = GetMainMenuBar()->FindItem(XRCID("recent_files"), &menu);
     if (item && menu) {
         wxMenu* submenu = item->GetSubMenu();
@@ -3075,7 +3075,7 @@ void clMainFrame::CreateRecentlyOpenedWorkspacesMenu()
     FileHistory& hs = ManagerST::Get()->GetRecentlyOpenedWorkspacesClass();
     ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
 
-    wxMenu* menu = NULL;
+    wxMenu* menu = nullptr;
     wxMenuItem* item = GetMainMenuBar()->FindItem(XRCID("recent_workspaces"), &menu);
     if (item && menu) {
         wxMenu* submenu = item->GetSubMenu();
@@ -3530,7 +3530,7 @@ void clMainFrame::CompleteInitialization()
     DebuggerMgr::Get().LoadDebuggers(ManagerST::Get());
 
     // Connect some system events
-    m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(clMainFrame::OnDockablePaneClosed), NULL, this);
+    m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(clMainFrame::OnDockablePaneClosed), nullptr, this);
 
     // Use the main frame size to determine the best size height & width
     wxRect frameSize = GetClientRect();
@@ -3601,7 +3601,7 @@ void clMainFrame::CompleteInitialization()
     sigaddset(&child_set, SIGCHLD);
 
     // make sure SIGCHILD is not blocked
-    sigprocmask(SIG_UNBLOCK, &child_set, NULL);
+    sigprocmask(SIG_UNBLOCK, &child_set, nullptr);
 
     // Start the Zombie Reaper thread
     m_zombieReaper.Start();
@@ -3865,7 +3865,7 @@ void clMainFrame::OnFileCloseUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
     auto win = GetWindowFromEvent(GetMainBook(), event);
-    event.Enable(win != NULL);
+    event.Enable(win != nullptr);
 }
 
 void clMainFrame::OnConvertEol(wxCommandEvent& e)

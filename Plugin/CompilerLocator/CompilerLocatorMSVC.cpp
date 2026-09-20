@@ -95,7 +95,7 @@ void CompilerLocatorMSVC::AddTools(const wxString& name,
                                    const wxFileName& fnVCvars,
                                    const wxFileName& fnIdeFolder)
 {
-    CompilerPtr compiler(new Compiler(NULL, Compiler::kRegexVC));
+    CompilerPtr compiler(new Compiler(nullptr, Compiler::kRegexVC));
     compiler->SetCompilerFamily(COMPILER_FAMILY_VC);
     compiler->SetName(name);
     compiler->SetInstallationPath(installPath.GetPath());

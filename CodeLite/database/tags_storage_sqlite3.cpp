@@ -871,7 +871,7 @@ TagEntryPtr TagsStorageSQLite::GetTagsByNameLimitOne(const wxString& name)
 {
     try {
         if (name.IsEmpty())
-            return NULL;
+            return nullptr;
 
         std::vector<TagEntryPtr> tags;
         wxString sql;
@@ -883,12 +883,12 @@ TagEntryPtr TagsStorageSQLite::GetTagsByNameLimitOne(const wxString& name)
         if (tags.size() == 1)
             return tags.at(0);
         else
-            return NULL;
+            return nullptr;
 
     } catch (const wxSQLite3Exception& e) {
         clDEBUG() << e.GetMessage() << endl;
     }
-    return NULL;
+    return nullptr;
 }
 
 const wxString& TagsStorageSQLite::GetVersion() const

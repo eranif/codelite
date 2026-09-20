@@ -112,7 +112,7 @@ bool SaveTabGroupDlg::GetChoices(wxArrayInt& intArr) const
 
 void SaveTabGroupDlg::OnCheckAll(wxCommandEvent& WXUNUSED(event))
 {
-    if (m_ListTabs == NULL)
+    if (m_ListTabs == nullptr)
         return;
 
     for (unsigned int n = 0; n < m_ListTabs->GetCount(); ++n) {
@@ -124,7 +124,7 @@ void SaveTabGroupDlg::OnCheckAllUpdateUI(wxUpdateUIEvent& event) { event.Enable(
 
 void SaveTabGroupDlg::OnClearAll(wxCommandEvent& WXUNUSED(event))
 {
-    if (m_ListTabs == NULL)
+    if (m_ListTabs == nullptr)
         return;
 
     for (unsigned int n = 0; n < m_ListTabs->GetCount(); ++n) {

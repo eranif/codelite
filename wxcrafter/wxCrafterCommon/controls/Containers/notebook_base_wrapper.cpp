@@ -82,7 +82,7 @@ NotebookPageWrapper* NotebookBaseWrapper::GetSelection() const
             return sel;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void NotebookBaseWrapper::SetSelection(wxcWidget* page)
@@ -119,7 +119,7 @@ NotebookPageWrapper* NotebookBaseWrapper::DoGetSelection(NotebookPageWrapper* pa
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 int NotebookBaseWrapper::GetPageIndex(const NotebookPageWrapper* page) const
@@ -165,7 +165,7 @@ NotebookPageWrapper* NotebookBaseWrapper::GetLastPage() const
 
 wxcWidget* NotebookBaseWrapper::GetChildPageAtDepth(size_t targetlevel)
 {
-    wxcWidget* target = NULL;
+    wxcWidget* target = nullptr;
 
     NotebookPageWrapper* page = GetLastPage(); // Find the last page of the book
     if (page) {
@@ -192,5 +192,5 @@ NotebookBaseWrapper::DoGetChildPageAtDepth(NotebookPageWrapper* page, size_t tar
         }
     }
 
-    return NULL;
+    return nullptr;
 }

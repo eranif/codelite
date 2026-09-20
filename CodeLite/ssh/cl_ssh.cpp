@@ -148,8 +148,8 @@ void clSSH::Open(int seconds)
 bool clSSH::AuthenticateServer(wxString& message)
 {
     int state;
-    unsigned char* hash = NULL;
-    char* hexa = NULL;
+    unsigned char* hash = nullptr;
+    char* hexa = nullptr;
 
     message.Clear();
 
@@ -161,7 +161,7 @@ bool clSSH::AuthenticateServer(wxString& message)
     }
 #else
     size_t hlen = 0;
-    ssh_key key = NULL;
+    ssh_key key = nullptr;
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0, 8, 0)
     ssh_get_server_publickey(m_session, &key);
 #else
@@ -220,7 +220,7 @@ bool clSSH::AuthenticateServer(wxString& message)
 void clSSH::AcceptServerAuthentication()
 {
     if (!m_session) {
-        throw clException("NULL SSH session");
+        throw clException("nullptr SSH session");
     }
 #if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0, 8, 0)
     ssh_session_update_known_hosts(m_session);
@@ -241,7 +241,7 @@ bool clSSH::LoginAuthNone(bool throwExc)
 {
     clDEBUG() << "Trying to ssh using `ssh_userauth_none`" << endl;
     if (!m_session) {
-        THROW_OR_FALSE("NULL SSH session");
+        THROW_OR_FALSE("nullptr SSH session");
     }
 
     int rc;
@@ -258,12 +258,12 @@ bool clSSH::LoginAuthNone(bool throwExc)
 bool clSSH::LoginPassword(bool throwExc)
 {
     if (!m_session) {
-        THROW_OR_FALSE("NULL SSH session");
+        THROW_OR_FALSE("nullptr SSH session");
     }
 
     int rc;
     // interactive keyboard method failed, try another method
-    rc = ssh_userauth_password(m_session, NULL, GetPassword().mb_str().data());
+    rc = ssh_userauth_password(m_session, nullptr, GetPassword().mb_str().data());
     if (rc == SSH_AUTH_SUCCESS) {
         return true;
 
@@ -279,11 +279,11 @@ bool clSSH::LoginPassword(bool throwExc)
 bool clSSH::LoginInteractiveKBD(bool throwExc)
 {
     if (!m_session) {
-        THROW_OR_FALSE("NULL SSH session");
+        THROW_OR_FALSE("nullptr SSH session");
     }
 
     int rc;
-    rc = ssh_userauth_kbdint(m_session, NULL, NULL);
+    rc = ssh_userauth_kbdint(m_session, nullptr, nullptr);
     if (rc == SSH_AUTH_INFO) {
         while (rc == SSH_AUTH_INFO) {
             const char *name, *instruction;
@@ -312,7 +312,7 @@ bool clSSH::LoginInteractiveKBD(bool throwExc)
                     }
                 }
             }
-            rc = ssh_userauth_kbdint(m_session, NULL, NULL);
+            rc = ssh_userauth_kbdint(m_session, nullptr, nullptr);
         }
         return true; // success
     }
@@ -363,7 +363,7 @@ wxString RunOnMain(std::function<wxString()> callback)
 bool clSSH::LoginPublicKey(bool throwExc)
 {
     if (!m_session) {
-        THROW_OR_FALSE("NULL SSH session");
+        THROW_OR_FALSE("nullptr SSH session");
     }
 
     int rc;
@@ -426,8 +426,8 @@ void clSSH::Close()
     }
 
     m_connected = false;
-    m_session = NULL;
-    m_channel = NULL;
+    m_session = nullptr;
+    m_channel = nullptr;
 }
 
 void clSSH::Login()
@@ -537,7 +537,7 @@ void clSSH::DoCloseChannel()
         ssh_channel_send_eof(m_channel);
         ssh_channel_free(m_channel);
     }
-    m_channel = NULL;
+    m_channel = nullptr;
 }
 
 void clSSH::DoOpenChannel()

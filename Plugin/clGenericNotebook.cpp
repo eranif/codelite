@@ -588,14 +588,14 @@ int clTabCtrl::GetSelection() const
 clTabInfo::Ptr_t clTabCtrl::GetTabInfo(size_t index)
 {
     if (!IsIndexValid(index))
-        return clTabInfo::Ptr_t(NULL);
+        return clTabInfo::Ptr_t(nullptr);
     return m_tabs.at(index);
 }
 
 clTabInfo::Ptr_t clTabCtrl::GetTabInfo(size_t index) const
 {
     if (!IsIndexValid(index))
-        return clTabInfo::Ptr_t(NULL);
+        return clTabInfo::Ptr_t(nullptr);
     return m_tabs.at(index);
 }
 
@@ -606,7 +606,7 @@ clTabInfo::Ptr_t clTabCtrl::GetTabInfo(wxWindow* page)
         if (tab->GetWindow() == page)
             return tab;
     }
-    return clTabInfo::Ptr_t(NULL);
+    return clTabInfo::Ptr_t(nullptr);
 }
 
 bool clTabCtrl::SetPageText(size_t page, const wxString& text)
@@ -642,7 +642,7 @@ clTabInfo::Ptr_t clTabCtrl::GetActiveTabInfo()
             return m_tabs.at(i);
         }
     }
-    return clTabInfo::Ptr_t(NULL);
+    return clTabInfo::Ptr_t(nullptr);
 }
 
 void clTabCtrl::AddPage(clTabInfo::Ptr_t tab) { InsertPage(m_tabs.size(), tab); }

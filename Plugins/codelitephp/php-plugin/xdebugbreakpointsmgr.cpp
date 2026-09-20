@@ -21,7 +21,7 @@ XDebugBreakpointsMgr::XDebugBreakpointsMgr()
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), nullptr, this);
 }
 
 XDebugBreakpointsMgr::~XDebugBreakpointsMgr()
@@ -31,7 +31,7 @@ XDebugBreakpointsMgr::~XDebugBreakpointsMgr()
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), nullptr, this);
 }
 
 bool XDebugBreakpointsMgr::HasBreakpoint(const wxString& filename, int line) const

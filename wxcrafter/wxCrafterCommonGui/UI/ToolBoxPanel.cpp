@@ -64,7 +64,7 @@ void ToolBoxPanel::OnCustomControl(wxRibbonToolBarEvent& event)
         for (const auto& p : controls) {
             menu.Append(p.second.GetControlId(), iter->first);
             menu.Connect(p.second.GetControlId(), wxEVT_COMMAND_MENU_SELECTED,
-                wxCommandEventHandler(ToolBoxPanel::OnMenuSelection), NULL, this);
+                wxCommandEventHandler(ToolBoxPanel::OnMenuSelection), nullptr, this);
         }
         menu.AppendSeparator();
     }

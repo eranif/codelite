@@ -169,7 +169,7 @@ int OpenTypeVListCtrl::FindMatch(const wxString& word)
 TagEntryPtr OpenTypeVListCtrl::GetTagAt(long item)
 {
     if (item >= (long)m_tags.size()) {
-        return NULL;
+        return nullptr;
     }
     return m_tags.at(item);
 }

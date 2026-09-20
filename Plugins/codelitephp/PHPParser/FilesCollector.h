@@ -44,7 +44,7 @@ public:
     FilesCollector(wxArrayString& filesAndFolders,
                    const wxString& filespec,
                    const wxString& excludeFolders = "",
-                   wxProgressDialog* progress = NULL);
+                   wxProgressDialog* progress = nullptr);
     virtual ~FilesCollector() = default;
 
     /**

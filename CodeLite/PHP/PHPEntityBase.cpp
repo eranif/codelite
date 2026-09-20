@@ -39,7 +39,7 @@ PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrep
             return iter->second;
         }
     }
-    return PHPEntityBase::Ptr_t(NULL);
+    return PHPEntityBase::Ptr_t(nullptr);
 }
 
 void PHPEntityBase::StoreRecursive(PHPLookupTable* lookup)
@@ -86,7 +86,7 @@ void PHPEntityBase::RemoveChild(PHPEntityBase::Ptr_t child)
     if (iter != m_children.end()) {
         m_children.erase(iter);
     }
-    child->m_parent = NULL;
+    child->m_parent = nullptr;
 }
 
 JSONItem PHPEntityBase::BaseToJSON(const wxString& entityType) const

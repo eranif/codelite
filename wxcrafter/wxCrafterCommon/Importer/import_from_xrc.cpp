@@ -130,14 +130,14 @@ void ProcessButtonNode(const wxXmlNode* node, wxcWidget* wrapper)
 
 wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyParented)
 {
-    wxcWidget* wrapper = NULL;
+    wxcWidget* wrapper = nullptr;
 
     // XRC for some reason treats sizeritems as an object! We'll deal with that below, but cache node first
     // BTW, wxSpacer is an exception: it's called <spacer> but looks like a sizeritem with no contained object
     // BTW2, the buttons in a wxStdButtonSizer are also an exception: each is wrapped in a <button> node that behaves
     // like sizeritem, so treat it as such
     wxXmlNode* sizeritemnode = node;
-    wxXmlNode* buttonnode = NULL;
+    wxXmlNode* buttonnode = nullptr;
 
     // For notebooks, both XRC and JSON store their pages as sibling children of the book
     // XRC stores them in a <notebookpage> 'wrapper', similar to the sizeritem ones
@@ -155,13 +155,13 @@ wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyPar
     //          Subpage 6 depth 1
     //      Subpage 7 depth 0
     //  SomeOtherControl
-    wxXmlNode* booknode = NULL;
+    wxXmlNode* booknode = nullptr;
 
     wxString tag = node->GetName();
-    wxCHECK_MSG(tag == wxT("object"), NULL, wxT("Passed a node that isn't an object"));
+    wxCHECK_MSG(tag == wxT("object"), nullptr, wxT("Passed a node that isn't an object"));
 
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
-    wxCHECK_MSG(!classname.empty(), NULL, wxT("Object node doesn't have a 'class' attribute"));
+    wxCHECK_MSG(!classname.empty(), nullptr, wxT("Object node doesn't have a 'class' attribute"));
 
     if (classname == wxT("sizeritem")) {
         // See the above comment. Replace node with the contained object node
@@ -169,7 +169,7 @@ wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyPar
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if (!node) {
             // I don't think this can happen, but...
-            return NULL;
+            return nullptr;
         }
 
         // Read the class of the new node
@@ -183,7 +183,7 @@ wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyPar
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if (!node) {
             // I don't think this can happen, but...
-            return NULL;
+            return nullptr;
         }
 
         // Read the class of the new node
@@ -194,7 +194,7 @@ wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyPar
         buttonnode = node;
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if (!node) {
-            return NULL;
+            return nullptr;
         }
 
         classname = XmlUtils::ReadString(node, wxT("class"));
@@ -206,10 +206,10 @@ wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyPar
     int Id = wxcWidget::StringToId(classname);
     if (Id == wxNOT_FOUND) {
         wxLogWarning(wxString::Format(_("Can't import unknown class %s from XRC"), classname));
-        return NULL;
+        return nullptr;
     }
 
-    if ((Id == ID_WXPANEL) && (parentwrapper == NULL)) {
+    if ((Id == ID_WXPANEL) && (parentwrapper == nullptr)) {
         Id = ID_WXPANEL_TOPLEVEL;
     }
 
@@ -246,7 +246,7 @@ wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyPar
     }
 
     wrapper = wxcWidget::Create(Id);
-    wxCHECK_MSG(wrapper, NULL, wxT("Failed to create a wrapper"));
+    wxCHECK_MSG(wrapper, nullptr, wxT("Failed to create a wrapper"));
 
     wrapper->LoadPropertiesFromXRC(node);
 
@@ -256,14 +256,14 @@ wxcWidget* ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, bool& alreadyPar
     if (booknode) {
         // For book pages, extract any info from the <foobookpage> node
         NotebookPageWrapper* nbwrapper = dynamic_cast<NotebookPageWrapper*>(wrapper);
-        wxCHECK_MSG(nbwrapper, NULL, wxT("A booknode which has no NotebookPageWrapper"));
+        wxCHECK_MSG(nbwrapper, nullptr, wxT("A booknode which has no NotebookPageWrapper"));
         GetBookitemContents(booknode, nbwrapper, depth);
 
         // If this is a treebook subpage, it needs to be parented by a page, not the book
         // depth will only be >0 in that situation
         if (depth) {
             NotebookBaseWrapper* nb = dynamic_cast<NotebookBaseWrapper*>(parentwrapper);
-            wxCHECK_MSG(nb, NULL, wxT("treebookpage 'parent' not a book"));
+            wxCHECK_MSG(nb, nullptr, wxT("treebookpage 'parent' not a book"));
 
             wxcWidget* item = nb->GetChildPageAtDepth(depth - 1);
             if (item) {

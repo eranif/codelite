@@ -356,7 +356,7 @@ void XDebugManager::AddHandler(XDebugCommandHandler::Ptr_t handler)
 
 XDebugCommandHandler::Ptr_t XDebugManager::PopHandler(int transactionId)
 {
-    XDebugCommandHandler::Ptr_t handler(NULL);
+    XDebugCommandHandler::Ptr_t handler(nullptr);
     if (m_handlers.count(transactionId)) {
         handler = m_handlers[transactionId];
         m_handlers.erase(transactionId);
@@ -540,7 +540,7 @@ void XDebugManager::DoRefreshDebuggerViews(int requestedStack)
     // Locals are updated automatically
 }
 
-static XDebugManager* s_xdebugManager = NULL;
+static XDebugManager* s_xdebugManager = nullptr;
 XDebugManager& XDebugManager::Get()
 {
     if (!s_xdebugManager) {
@@ -637,7 +637,7 @@ void XDebugManager::OnDeleteBreakpoint(PHPEvent& e)
     m_breakpointsMgr.DeleteBreakpoint(filename, line);
 }
 
-bool XDebugManager::IsDebugSessionRunning() const { return PHPWorkspace::Get()->IsOpen() && (m_readerThread != NULL); }
+bool XDebugManager::IsDebugSessionRunning() const { return PHPWorkspace::Get()->IsOpen() && (m_readerThread != nullptr); }
 
 void XDebugManager::OnBreakpointItemActivated(PHPEvent& e)
 {

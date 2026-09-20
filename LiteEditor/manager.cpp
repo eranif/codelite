@@ -253,7 +253,7 @@ IncludeBlocks: Regroup
 //---------------------------------------------------------------
 
 Manager::Manager()
-    : m_shellProcess(NULL)
+    : m_shellProcess(nullptr)
     , m_programProcess(nullptr)
     , m_breakptsmgr(new BreakptMgr)
     , m_isShutdown(false)
@@ -269,10 +269,10 @@ Manager::Manager()
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
 
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), nullptr, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), nullptr, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), nullptr, this);
+    EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_DISMISSED, &Manager::OnFindInFilesDismissed, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &Manager::OnFindInFilesShowing, this);
 
@@ -303,10 +303,10 @@ Manager::~Manager()
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
 
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), nullptr, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), nullptr, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), nullptr, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &Manager::OnFindInFilesDismissed, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &Manager::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
@@ -783,13 +783,13 @@ ProjectPtr Manager::GetProject(const wxString& name) const
     projectName.Trim().Trim(false);
 
     if (projectName.IsEmpty())
-        return NULL;
+        return nullptr;
 
     wxString errMsg;
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(name, errMsg);
     if (!proj) {
         clLogMessage(errMsg);
-        return NULL;
+        return nullptr;
     }
     return proj;
 }
@@ -1306,7 +1306,7 @@ ProjectSettingsPtr Manager::GetProjectSettings(const wxString& projectName) cons
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(projectName, errMsg);
     if (!proj) {
         clLogMessage(errMsg);
-        return NULL;
+        return nullptr;
     }
 
     return proj->GetSettings();
@@ -1356,14 +1356,14 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 
     // expand variables
     wxString cmd = bldConf->GetCommand();
-    cmd = MacroManager::Instance()->Expand(cmd, NULL, projectName);
+    cmd = MacroManager::Instance()->Expand(cmd, nullptr, projectName);
 
     wxString cmdArgs = bldConf->GetCommandArguments();
-    cmdArgs = MacroManager::Instance()->Expand(cmdArgs, NULL, projectName);
+    cmdArgs = MacroManager::Instance()->Expand(cmdArgs, nullptr, projectName);
 
     // Execute command & cmdArgs
     wd = bldConf->GetWorkingDirectory();
-    wd = MacroManager::Instance()->Expand(wd, NULL, projectName);
+    wd = MacroManager::Instance()->Expand(wd, nullptr, projectName);
 
     wxFileName workingDir(wd, "");
     if (workingDir.IsRelative()) {
@@ -1542,7 +1542,7 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     ProjectPtr proj;
 
     {
-        EnvSetter env1(NULL, NULL, projectName, wxEmptyString);
+        EnvSetter env1(nullptr, nullptr, projectName, wxEmptyString);
         execLine = GetProjectExecutionCommand(projectName, wd, true);
         proj = GetProject(projectName);
     }
@@ -1551,7 +1551,7 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
 
     // Build the working directory
     // Expand macros
-    wd = MacroManager::Instance()->Expand(wd, NULL, projectName);
+    wd = MacroManager::Instance()->Expand(wd, nullptr, projectName);
     wd = wd.Trim().Trim(false);
     if (!wd.IsEmpty()) {
         wxFileName projectWd(wd, "");
@@ -1572,7 +1572,7 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     if (bldConf) {
         configName = bldConf->GetName();
     }
-    EnvSetter env{NULL, NULL, projectName, configName};
+    EnvSetter env{nullptr, nullptr, projectName, configName};
 
     wxString dummy;
     execLine = GetProjectExecutionCommand(projectName, dummy, false);
@@ -1894,7 +1894,7 @@ void Manager::DbgStart(long attachPid)
     dbgr->SetDebuggerInformation(dinfo);
 
     // Apply the environment variables before starting
-    EnvSetter env(NULL, NULL, proj ? proj->GetName() : wxString(), bldConf ? bldConf->GetName() : wxString());
+    EnvSetter env(nullptr, nullptr, proj ? proj->GetName() : wxString(), bldConf ? bldConf->GetName() : wxString());
 
     if (!bldConf && attachPid == wxNOT_FOUND) {
         wxString errmsg;
@@ -1920,8 +1920,8 @@ void Manager::DbgStart(long attachPid)
         wd = bldConf->GetWorkingDirectory();
 
         // Expand variables before passing them to the debugger
-        wd = MacroManager::Instance()->Expand(wd, NULL, proj->GetName());
-        exepath = MacroManager::Instance()->Expand(exepath, NULL, proj->GetName());
+        wd = MacroManager::Instance()->Expand(wd, nullptr, proj->GetName());
+        exepath = MacroManager::Instance()->Expand(exepath, nullptr, proj->GetName());
     }
 
     wxString dbgname = dinfo.path;
@@ -2675,7 +2675,7 @@ void Manager::CompileFile(const wxString& projectName, const wxString& fileName,
         m_shellProcess = new CustomBuildRequest(info, fileName);
         break;
     default:
-        m_shellProcess = NULL;
+        m_shellProcess = nullptr;
         break;
     }
     m_shellProcess->Process(PluginManager::Get());
@@ -3193,7 +3193,7 @@ void Manager::OnBuildStarting(clBuildEvent& event)
     strDeletedCompilers.RemoveLast(); // remove last \n
 
     // Prompt the user and suggest an alternative
-    CompilersModifiedDlg dlg(NULL, deletedCompilers);
+    CompilersModifiedDlg dlg(nullptr, deletedCompilers);
     if (dlg.ShowModal() != wxID_OK) {
         event.Skip(false);
         wxString message;

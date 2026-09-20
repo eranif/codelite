@@ -34,7 +34,7 @@ DECLARE_APP(MainApp)
 class MainFrame : public wxFrame
 {
 public:
-    MainFrame(wxWindow *parent = NULL);
+    MainFrame(wxWindow *parent = nullptr);
     ~MainFrame();
     
 private:

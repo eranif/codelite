@@ -121,7 +121,7 @@ CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
     if (found) {
         return AddCompiler(clang.GetPath());
     }
-    return NULL;
+    return nullptr;
 }
 
 void CompilerLocatorCLANG::AddTool(CompilerPtr compiler,
@@ -195,7 +195,7 @@ void CompilerLocatorCLANG::CheckUninstRegKey(const wxString& displayName,
 
 CompilerPtr CompilerLocatorCLANG::AddCompiler(const wxFileName& clang)
 {
-    CompilerPtr compiler(new Compiler(NULL));
+    CompilerPtr compiler(new Compiler(nullptr));
     compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
     compiler->SetGenerateDependenciesFile(true);
     compiler->SetName(clang.GetFullPath());

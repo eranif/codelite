@@ -569,7 +569,7 @@ public:
     /**
      * @brief return the Windowed parent i.e. an actual window that can be the parent when constructing
      * this object
-     * @return parent name or the "NULL" string
+     * @return parent name or the "nullptr" string
      */
     wxString GetWindowParent() const;
 
@@ -752,9 +752,9 @@ protected:
      * @brief when generating the connect code (for events)
      * decide whether to use:
      *
-     * w->Connect(EVT_NAME, Handler, NULL, this);
+     * w->Connect(EVT_NAME, Handler, nullptr, this);
      * <b>OR</b>
-     * w->Connect(<b><i>ID</i></b>, EVT_NAME, Handler, NULL, this);
+     * w->Connect(<b><i>ID</i></b>, EVT_NAME, Handler, nullptr, this);
      */
     virtual bool UseIdInConnect() const { return false; }
     /**

@@ -296,7 +296,7 @@ size_t wxCustomStatusBar::DoGetFieldsWidth()
 wxCustomStatusBarField::Ptr_t wxCustomStatusBar::GetField(size_t index)
 {
     if (index >= m_fields.size())
-        return wxCustomStatusBarField::Ptr_t(NULL);
+        return wxCustomStatusBarField::Ptr_t(nullptr);
     return m_fields.at(index);
 }
 

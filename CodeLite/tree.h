@@ -66,10 +66,10 @@ public:
      * Add child node to the tree.
      * \param key New node key
      * \param data New node data
-     * \param parent New node parent, if left NULL parent is set to root
+     * \param parent New node parent, if left nullptr parent is set to root
      * \return newly added node
      */
-    TreeNode<TKey, TData>* AddChild(const TKey& key, const TData& data, TreeNode<TKey, TData>* parent = NULL);
+    TreeNode<TKey, TData>* AddChild(const TKey& key, const TData& data, TreeNode<TKey, TData>* parent = nullptr);
 
     /**
      * Returns tree root.
@@ -97,7 +97,7 @@ public:
                  std::vector<std::pair<TKey, TData>>& deletedItems,
                  std::vector<std::pair<TKey, TData>>& modifiedItems,
                  std::vector<std::pair<TKey, TData>>& newItems,
-                 TreeNode<TKey, TData>* fromNode = NULL);
+                 TreeNode<TKey, TData>* fromNode = nullptr);
 };
 
 template <typename TKey, typename TData>
@@ -117,16 +117,16 @@ TreeNode<TKey, TData>* Tree<TKey, TData>::Find(const TKey& key)
 {
     typename std::map<TKey, TreeNode<TKey, TData>*>::const_iterator iter = m_nodes.find(key);
     if (iter == m_nodes.end())
-        return NULL;
+        return nullptr;
     return iter->second;
 }
 
 template <typename TKey, typename TData>
 TreeNode<TKey, TData>*
-Tree<TKey, TData>::AddChild(const TKey& key, const TData& data, TreeNode<TKey, TData>* parent /*NULL*/)
+Tree<TKey, TData>::AddChild(const TKey& key, const TData& data, TreeNode<TKey, TData>* parent /*nullptr*/)
 {
     TreeNode<TKey, TData>* parentNode;
-    (parent == NULL) ? parentNode = m_root : parentNode = parent;
+    (parent == nullptr) ? parentNode = m_root : parentNode = parent;
     TreeNode<TKey, TData>* node = parentNode->AddChild(key, data);
     m_nodes[key] = node;
     return node;
@@ -137,7 +137,7 @@ TreeNode<TKey, TData>* Tree<TKey, TData>::Remove(const TKey& key)
 {
     typename std::map<TKey, TreeNode<TKey, TData>*>::const_iterator iter = m_nodes.find(key);
     if (iter == m_nodes.end())
-        return NULL;
+        return nullptr;
 
     // Remove from the map all sub-nodes of the tree
     TreeWalker<TKey, TData> walker(iter->second);
@@ -174,7 +174,7 @@ void Tree<TKey, TData>::Compare(Tree* targetTree,
 
     TreeNode<TKey, TData>* node;
 
-    fromNode == NULL ? node = GetRoot() : node = fromNode;
+    fromNode == nullptr ? node = GetRoot() : node = fromNode;
     TreeWalker<TKey, TData> sourceTreeWalker(node);
     TreeWalker<TKey, TData> targetTreeWalker(targetTree->GetRoot());
 
@@ -183,7 +183,7 @@ void Tree<TKey, TData>::Compare(Tree* targetTree,
             continue;
 
         TreeNode<TKey, TData>* node = targetTree->Find(sourceTreeWalker.GetNode()->GetKey());
-        if (node == NULL) {
+        if (node == nullptr) {
             // Item does not exist in target tree which means it must been deleted
             std::pair<TKey, TData> itemPair;
 
@@ -207,7 +207,7 @@ void Tree<TKey, TData>::Compare(Tree* targetTree,
         if (targetTreeWalker.GetNode()->IsRoot())
             continue;
 
-        if (Find(targetTreeWalker.GetNode()->GetKey()) == NULL) {
+        if (Find(targetTreeWalker.GetNode()->GetKey()) == nullptr) {
             // Node from target tree does not exist in this tree
             // which means that this node is new
             // Data was modified

@@ -45,7 +45,7 @@ MODEL_NAME::~MODEL_NAME()
 
 unsigned int MODEL_NAME::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
 {
-    if (item.GetID() == NULL) {
+    if (item.GetID() == nullptr) {
         // Root
         for (size_t i=0; i<m_data.size(); ++i) {
             children.Add(wxDataViewItem(m_data.at(i)));
@@ -79,14 +79,14 @@ wxString MODEL_NAME::GetColumnType(unsigned int col) const
 wxDataViewItem MODEL_NAME::GetParent(const wxDataViewItem& item) const
 {
     if (IsEmpty()) {
-        return wxDataViewItem(NULL);
+        return wxDataViewItem(nullptr);
     }
     
     MODEL_NAME_Item* node = reinterpret_cast<MODEL_NAME_Item*>(item.m_pItem);
     if (node) {
         return wxDataViewItem(node->GetParent());
     }
-    return wxDataViewItem(NULL);
+    return wxDataViewItem(nullptr);
 }
 
 bool MODEL_NAME::IsContainer(const wxDataViewItem& item) const
@@ -166,7 +166,7 @@ wxDataViewItemArray MODEL_NAME::AppendItems(const wxDataViewItem &parent, const 
 {
     wxDataViewItemArray items;
     for (size_t i = 0; i < data.size(); ++i) {
-        items.push_back(DoAppendItem(parent, data.at(i), false, NULL));
+        items.push_back(DoAppendItem(parent, data.at(i), false, nullptr));
     }
     ItemsAdded(parent, items);
     return items;
@@ -190,7 +190,7 @@ void MODEL_NAME::DeleteItem(const wxDataViewItem& item)
         ItemDeleted(parentItem, item);
 
         // this will also remove it from its model parent children list
-        if (parent == NULL) {
+        if (parent == nullptr) {
             // root item, remove it from the roots array
             wxVector<MODEL_NAME_Item*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
             if (where != m_data.end()) {
@@ -241,7 +241,7 @@ wxClientData* MODEL_NAME::GetClientObject(const wxDataViewItem& item) const
     if (node) {
         return node->GetClientObject();
     }
-    return NULL;
+    return nullptr;
 }
 
 void MODEL_NAME::SetClientObject(const wxDataViewItem& item, wxClientData *data)

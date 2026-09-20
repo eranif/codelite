@@ -83,7 +83,7 @@ protected:
     virtual wxDataViewItem DoAppendItem(const wxDataViewItem& parent,
                                         const wxVector<wxVariant>& data,
                                         bool isContainer,
-                                        wxClientData* clientData = NULL);
+                                        wxClientData* clientData = nullptr);
     virtual wxDataViewItem DoInsertItem(const wxDataViewItem& insertBeforeMe,
                                         const wxVector<wxVariant>& data,
                                         bool isContainer,

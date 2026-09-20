@@ -31,8 +31,8 @@ PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent)
                  wxDefaultPosition,
                  wxDefaultSize,
                  wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
-    , m_editor(NULL)
-    , m_manager(NULL)
+    , m_editor(nullptr)
+    , m_manager(nullptr)
 {
     MSWSetNativeTheme(this);
 }
@@ -44,7 +44,7 @@ void PHPFileLayoutTree::Construct()
         return;
 
     wxString text = m_editor->GetTextRange(0, m_editor->GetLength());
-    PHPSourceFile source(text, NULL);
+    PHPSourceFile source(text, nullptr);
     source.SetParseFunctionBody(false);
     source.SetFilename(m_editor->GetFileName());
     source.Parse();

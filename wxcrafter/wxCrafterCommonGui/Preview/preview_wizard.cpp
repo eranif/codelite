@@ -35,13 +35,13 @@ PreviewWizard::PreviewWizard(wxWindow* parent, const WizardWrapper& dw)
 
     Center();
     EventNotifier::Get()->Connect(
-        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewWizard::OnClosePreview), NULL, this);
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewWizard::OnClosePreview), nullptr, this);
 }
 
 PreviewWizard::~PreviewWizard()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewWizard::OnClosePreview), NULL, this);
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewWizard::OnClosePreview), nullptr, this);
 
     wxCommandEvent event(wxEVT_PREVIEW_CLOSED);
     EventNotifier::Get()->AddPendingEvent(event);

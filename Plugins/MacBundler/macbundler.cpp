@@ -189,16 +189,16 @@ public:
         sizer->Add(subsizer, 0, wxEXPAND | wxALL, 10);
 
         okBtn->Connect(
-            okBtn->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BundleConfigDialog::onOk), NULL, this);
+            okBtn->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BundleConfigDialog::onOk), nullptr, this);
         cancelBtn->Connect(cancelBtn->GetId(),
                            wxEVT_COMMAND_BUTTON_CLICKED,
                            wxCommandEventHandler(BundleConfigDialog::onCancel),
-                           NULL,
+                           nullptr,
                            this);
         m_info_plist_cb->Connect(m_info_plist_cb->GetId(),
                                  wxEVT_COMMAND_CHECKBOX_CLICKED,
                                  wxCommandEventHandler(BundleConfigDialog::onPlistCheckboxPressed),
-                                 NULL,
+                                 nullptr,
                                  this);
 
         this->SetSizerAndFit(sizer);
@@ -558,7 +558,7 @@ void MacBundler::CreatePluginMenu(wxMenu* pluginsMenu)
     m_mgr->GetTheApp()->Connect(item->GetId(),
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(MacBundler::onBundleInvoked_active),
-                                NULL,
+                                nullptr,
                                 this);
 
     pluginsMenu->Append(wxID_ANY, _("MacBundler"), menu);
@@ -566,7 +566,7 @@ void MacBundler::CreatePluginMenu(wxMenu* pluginsMenu)
     /*
             // You can use the below code a snippet:
             wxMenu *menu = new wxMenu();
-            wxMenuItem *item(NULL);
+            wxMenuItem *item(nullptr);
             item = new wxMenuItem(menu, XRCID("new_plugin"), _("New CodeLite Plugin Wizard..."), wxEmptyString,
        wxITEM_NORMAL);
             menu->Append(item);
@@ -588,7 +588,7 @@ void MacBundler::HookPopupMenu(wxMenu* menu, MenuType type)
             m_mgr->GetTheApp()->Connect(XRCID("MACBUNDLER_PROJECT_MENU"),
                                         wxEVT_COMMAND_MENU_SELECTED,
                                         wxCommandEventHandler(MacBundler::onBundleInvoked_selected),
-                                        NULL,
+                                        nullptr,
                                         this);
         }
     }

@@ -30,8 +30,8 @@ wxDEFINE_EVENT(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, clCommandEvent);
 
 PHPWorkspace::PHPWorkspace()
-    : m_manager(NULL)
-    , m_projectSyncOwner(NULL)
+    : m_manager(nullptr)
+    , m_projectSyncOwner(nullptr)
 {
     SetWorkspaceType(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
     Bind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspace::OnProjectSyncEnd, this);
@@ -367,7 +367,7 @@ PHPProject::Ptr_t PHPWorkspace::GetActiveProject() const { return GetProject(Get
 PHPProject::Ptr_t PHPWorkspace::GetProject(const wxString& project) const
 {
     if (!HasProject(project)) {
-        return PHPProject::Ptr_t(NULL);
+        return PHPProject::Ptr_t(nullptr);
     }
     return m_projects.find(project)->second;
 }
@@ -495,7 +495,7 @@ PHPProject::Ptr_t PHPWorkspace::GetProjectForFile(const wxFileName& filename) co
         if (project->HasFile(filename))
             return project;
     }
-    return PHPProject::Ptr_t(NULL);
+    return PHPProject::Ptr_t(nullptr);
 }
 
 bool PHPWorkspace::AddProject(const wxFileName& projectFile, wxString& errmsg)

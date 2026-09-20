@@ -63,19 +63,19 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager)
     m_shortName = "wxCrafter";
 
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &wxCrafterPlugin::OnToggleView, this);
-    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(wxCrafterPlugin::OnInitDone), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(wxCrafterPlugin::OnInitDone), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_SHOW_WXCRAFTER_DESIGNER, wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner), NULL, this);
+        wxEVT_SHOW_WXCRAFTER_DESIGNER, wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxCrafterPlugin::OnOpenFile), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxCrafterPlugin::OnOpenFile), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(wxCrafterPlugin::OnProjectModified), NULL, this);
+        wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(wxCrafterPlugin::OnProjectModified), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED, wxCommandEventHandler(wxCrafterPlugin::OnProjectSynched), NULL, this);
+        wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED, wxCommandEventHandler(wxCrafterPlugin::OnProjectSynched), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &wxCrafterPlugin::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Connect(XRCID("save_file"), wxCommandEventHandler(wxCrafterPlugin::OnSave), NULL, this);
+    EventNotifier::Get()->Connect(XRCID("save_file"), wxCommandEventHandler(wxCrafterPlugin::OnSave), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_SAVE_ALL_EDITORS, clCommandEventHandler(wxCrafterPlugin::OnSaveAll), NULL, this);
+        wxEVT_SAVE_ALL_EDITORS, clCommandEventHandler(wxCrafterPlugin::OnSaveAll), nullptr, this);
 
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &wxCrafterPlugin::OnFileContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_VIRTUAL_FOLDER, &wxCrafterPlugin::OnVirtualFolderContextMenu, this);
@@ -85,43 +85,43 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager)
     wxTheApp->Connect(XRCID("open_wxcp_project"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxCrafterPlugin::OnOpenProject),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(XRCID("close_wxcp_project"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxCrafterPlugin::OnCloseProject),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(XRCID("save_wxcp_project"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxCrafterPlugin::OnSaveProject),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(XRCID("open_wxcp_project"),
                       wxEVT_UPDATE_UI,
                       wxUpdateUIEventHandler(wxCrafterPlugin::OnOpenProjectUI),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(XRCID("close_wxcp_project"),
                       wxEVT_UPDATE_UI,
                       wxUpdateUIEventHandler(wxCrafterPlugin::OnCloseProjectUI),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(XRCID("save_wxcp_project"),
                       wxEVT_UPDATE_UI,
                       wxUpdateUIEventHandler(wxCrafterPlugin::OnSaveProjectUI),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Connect(XRCID("wxcp_new_form"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxCrafterPlugin::OnNewForm),
-                      NULL,
+                      nullptr,
                       this);
     wxTheApp->Bind(wxEVT_MENU, &wxCrafterPlugin::OnReGenerateForProject, this, XRCID("wxcp_generate_all_project"));
     wxTheApp->Connect(XRCID("ID_SHOW_DESIGNER"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner),
-                      NULL,
+                      nullptr,
                       (wxEvtHandler*)this);
 
     clKeyboardManager::Get()->AddAccelerator(
@@ -139,18 +139,18 @@ void wxCrafterPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_PAGE_MODIFIED_UPDATE_UI, &wxCrafterPlugin::OnSaveUI, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &wxCrafterPlugin::OnToggleView, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_SHOW_WXCRAFTER_DESIGNER, wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(wxCrafterPlugin::OnInitDone), NULL, this);
+        wxEVT_SHOW_WXCRAFTER_DESIGNER, wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner), nullptr, this);
+    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(wxCrafterPlugin::OnInitDone), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxCrafterPlugin::OnOpenFile), NULL, this);
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxCrafterPlugin::OnOpenFile), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(wxCrafterPlugin::OnProjectModified), NULL, this);
+        wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(wxCrafterPlugin::OnProjectModified), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED, wxCommandEventHandler(wxCrafterPlugin::OnProjectSynched), NULL, this);
+        wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED, wxCommandEventHandler(wxCrafterPlugin::OnProjectSynched), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &wxCrafterPlugin::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Disconnect(XRCID("save_file"), wxCommandEventHandler(wxCrafterPlugin::OnSave), NULL, this);
+    EventNotifier::Get()->Disconnect(XRCID("save_file"), wxCommandEventHandler(wxCrafterPlugin::OnSave), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_SAVE_ALL_EDITORS, clCommandEventHandler(wxCrafterPlugin::OnSaveAll), NULL, this);
+        wxEVT_SAVE_ALL_EDITORS, clCommandEventHandler(wxCrafterPlugin::OnSaveAll), nullptr, this);
 
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &wxCrafterPlugin::OnFileContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_VIRTUAL_FOLDER, &wxCrafterPlugin::OnVirtualFolderContextMenu, this);
@@ -160,44 +160,44 @@ void wxCrafterPlugin::UnPlug()
     wxTheApp->Disconnect(XRCID("open_wxcp_project"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(wxCrafterPlugin::OnOpenProject),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(XRCID("close_wxcp_project"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(wxCrafterPlugin::OnCloseProject),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(XRCID("save_wxcp_project"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(wxCrafterPlugin::OnSaveProject),
-                         NULL,
+                         nullptr,
                          this);
     // Connect the events to us
     wxTheApp->Disconnect(XRCID("ID_SHOW_DESIGNER"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner),
-                         NULL,
+                         nullptr,
                          (wxEvtHandler*)this);
 
     wxTheApp->Disconnect(XRCID("open_wxcp_project"),
                          wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(wxCrafterPlugin::OnOpenProjectUI),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(XRCID("close_wxcp_project"),
                          wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(wxCrafterPlugin::OnCloseProjectUI),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(XRCID("save_wxcp_project"),
                          wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(wxCrafterPlugin::OnSaveProjectUI),
-                         NULL,
+                         nullptr,
                          this);
     wxTheApp->Disconnect(XRCID("wxcp_new_form"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(wxCrafterPlugin::OnNewForm),
-                         NULL,
+                         nullptr,
                          this);
 
     m_mainFrame->Destroy();
@@ -348,7 +348,7 @@ void wxCrafterPlugin::DoInitDone()
         wxTheApp->Connect(XRCID("ID_SHOW_DESIGNER"),
                           wxEVT_COMMAND_MENU_SELECTED,
                           wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner),
-                          NULL,
+                          nullptr,
                           (wxEvtHandler*)this);
     }
     m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_mgr);

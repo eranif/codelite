@@ -155,7 +155,7 @@ void DebuggerCallstackView::OnMenu(wxDataViewEvent& event)
     menu.Connect(XRCID("stack_copy_backtrace"),
                  wxEVT_COMMAND_MENU_SELECTED,
                  wxCommandEventHandler(DebuggerCallstackView::OnCopyBacktrace),
-                 NULL,
+                 nullptr,
                  this);
     m_dvListCtrl->PopupMenu(&menu);
 }

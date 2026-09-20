@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 
     DWORD tickStart = ::GetTickCount();
     // Start the child process.
-    CreateProcess(NULL, TEXT(cmdline), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+    CreateProcess(nullptr, TEXT(cmdline), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi);
 
     // Wait until child process exits.
     WaitForSingleObject(pi.hProcess, INFINITE);

@@ -137,13 +137,13 @@ CompilerPtr BuildSettingsConfig::GetFirstCompiler(BuildSettingsConfigCookie& coo
         cookie.child = nullptr;
         return GetNextCompiler(cookie);
     }
-    return NULL;
+    return nullptr;
 }
 
 CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie& cookie)
 {
     if (cookie.parent == nullptr) {
-        return NULL;
+        return nullptr;
     }
 
     if (cookie.child == nullptr) {
@@ -165,7 +165,7 @@ CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie& cook
         }
         cookie.child = cookie.child->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 bool BuildSettingsConfig::IsCompilerExist(const wxString& name) const { return m_compilers.count(name); }
@@ -201,7 +201,7 @@ BuilderConfigPtr BuildSettingsConfig::GetBuilderConfig(const wxString& name)
     if (node) {
         return std::make_shared<BuilderConfig>(node);
     }
-    return NULL;
+    return nullptr;
 }
 
 void BuildSettingsConfig::SaveBuilderConfig(BuilderPtr builder)

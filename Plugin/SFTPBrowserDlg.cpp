@@ -84,7 +84,7 @@ public:
 SFTPBrowserDlg::SFTPBrowserDlg(
     wxWindow* parent, const wxString& title, const wxString& filter, size_t flags, const wxString& selectedAccount)
     : SFTPBrowserBaseDlg(parent)
-    , m_sftp(NULL)
+    , m_sftp(nullptr)
     , m_filter(filter)
     , m_flags(flags)
 {
@@ -292,7 +292,7 @@ void SFTPBrowserDlg::OnOKUI(wxUpdateUIEvent& event)
 SFTPBrowserEntryClientData* SFTPBrowserDlg::DoGetItemData(const wxDataViewItem& item) const
 {
     if (!item.IsOk()) {
-        return NULL;
+        return nullptr;
     }
     SFTPBrowserEntryClientData* cd = reinterpret_cast<SFTPBrowserEntryClientData*>(m_dataview->GetItemData(item));
     return cd;

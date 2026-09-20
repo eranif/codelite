@@ -105,7 +105,7 @@ void SideBar::CreateGUIControls()
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxWindow::GetTextExtent(WorkspaceLabel(), &xx, &yy, NULL, NULL, &fnt);
+    wxWindow::GetTextExtent(WorkspaceLabel(), &xx, &yy, nullptr, nullptr, &fnt);
 
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
 
@@ -213,7 +213,7 @@ void SideBar::SaveWorkspaceViewTabOrder() const
 
 bool SideBar::IsTabVisible(int flag)
 {
-    wxWindow* win(NULL);
+    wxWindow* win(nullptr);
     wxString title;
 
     switch (flag) {

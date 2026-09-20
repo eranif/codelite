@@ -318,7 +318,7 @@ void MainBook::OnPageClosed(wxBookCtrlEvent& e)
 
     // any editors left open?
     clEditor* editor = nullptr;
-    for (size_t i = 0; i < m_book->GetPageCount() && editor == NULL; i++) {
+    for (size_t i = 0; i < m_book->GetPageCount() && editor == nullptr; i++) {
         editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
     }
 
@@ -1590,7 +1590,7 @@ void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
     std::vector<clEditor*> editorsTmp;
     for (clEditor* editor : editors) {
         IEditor* ieditor = dynamic_cast<IEditor*>(editor);
-        if (ieditor->GetClientData("sftp") == NULL) {
+        if (ieditor->GetClientData("sftp") == nullptr) {
             editorsTmp.push_back(editor);
         }
     }

@@ -52,7 +52,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     // add log view
     m_logView = new LanguageServerLogView(m_mgr->BookGet(PaneId::BOTTOM_BAR));
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("Language Server"));
-    m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
+    m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", nullptr));
 
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);

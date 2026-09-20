@@ -241,7 +241,7 @@ void wxcWidget::DeleteAllChildren()
 
 wxString wxcWidget::GetWindowParent() const
 {
-    wxString parentName = "NULL";
+    wxString parentName = "nullptr";
     const NotebookPageWrapper* nbPage = dynamic_cast<const NotebookPageWrapper*>(this);
 
     const wxcWidget* pParent = m_parent;
@@ -1433,7 +1433,7 @@ wxString wxcWidget::SizeAsString() const
         size = "-1, -1";
     }
     size.Prepend("wxSize(").Append(")");
-    if (!parentStr.IsEmpty() && (parentStr != "NULL")) {
+    if (!parentStr.IsEmpty() && (parentStr != "nullptr")) {
         wxString dlgUnits;
         dlgUnits << "wxDLG_UNIT(" << parentStr << ", " << size << ")";
         size.swap(dlgUnits);

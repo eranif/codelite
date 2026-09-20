@@ -112,7 +112,7 @@ void DebuggerPane::CreateGUIControls()
     // Calculate the widthest tab (the one with the 'Call Stack' label)
     int xx, yy;
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxWindow::GetTextExtent(_("Breakpoints"), &xx, &yy, NULL, NULL, &fnt);
+    wxWindow::GetTextExtent(_("Breakpoints"), &xx, &yy, nullptr, nullptr, &fnt);
 
     // load list of detached panes
     wxArrayString detachedPanes;

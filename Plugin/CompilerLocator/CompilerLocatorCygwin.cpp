@@ -71,7 +71,7 @@ void CompilerLocatorCygwin::AddTools(const wxString& binFolder, const wxString& 
     masterPath.RemoveLastDir();
 
     // Create an empty compiler
-    CompilerPtr compiler(new Compiler(NULL));
+    CompilerPtr compiler(new Compiler(nullptr));
     compiler->SetCompilerFamily(COMPILER_FAMILY_CYGWIN);
     compiler->SetGenerateDependenciesFile(true);
     compiler->SetName(name);
@@ -165,11 +165,11 @@ CompilerPtr CompilerLocatorCygwin::Locate(const wxString& folder)
     }
 
     if (binFolder.IsEmpty())
-        return NULL;
+        return nullptr;
 
     wxArrayString suffixes = GetSuffixes(binFolder);
     if (suffixes.IsEmpty())
-        return NULL;
+        return nullptr;
 
     for (size_t i = 0; i < suffixes.GetCount(); ++i) {
         gcc.SetFullName("gcc-" + suffixes.Item(i) + ".exe");

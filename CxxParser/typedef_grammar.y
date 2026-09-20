@@ -27,7 +27,7 @@ void syncParser();
 static std::string typedef_consumBracketsContent(char openBrace);
 static void typedef_consumeDefaultValue(char c1, char c2);
 
-static  VariableList *           gs_vars = NULL;
+static  VariableList *           gs_vars = nullptr;
 static  std::vector<std::string> gs_names;
 static  bool                     g_isUsedWithinFunc = false;
 static  std::string              s_tmpString;
@@ -381,7 +381,7 @@ void typedef_consumeDefaultValue(char c1, char c2)
 
 void do_clean_up()
 {
-	gs_vars = NULL;
+	gs_vars = nullptr;
 
     // restore settings
 	setUseIgnoreMacros(true);

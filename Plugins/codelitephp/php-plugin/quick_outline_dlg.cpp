@@ -17,7 +17,7 @@ PHPQuickOutlineDlg::PHPQuickOutlineDlg(wxWindow* parent, IEditor* editor, IManag
     m_treeCtrlLayout->Construct();
 
     m_treeCtrlLayout->Connect(
-        wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPQuickOutlineDlg::OnItemActivated), NULL, this);
+        wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPQuickOutlineDlg::OnItemActivated), nullptr, this);
     m_treeCtrlLayout->SetFocus();
     m_treeCtrlLayout->Bind(wxEVT_KEY_DOWN, &PHPQuickOutlineDlg::OnKeyDown, this);
     SetName("PHPQuickOutlineDlg");

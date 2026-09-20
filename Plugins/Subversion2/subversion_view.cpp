@@ -153,12 +153,12 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     CreatGUIControls();
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &SubversionView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &SubversionView::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(SubversionView::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(SubversionView::OnFileSaved), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(SubversionView::OnFileAdded), NULL, this);
+        wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(SubversionView::OnFileAdded), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_RENAMED, &SubversionView::OnFileRenamed, this);
     EventNotifier::Get()->Connect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), nullptr, this);
 
     EventNotifier::Get()->Bind(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, &SubversionView::OnAppActivated, this);
 
@@ -263,29 +263,29 @@ void SubversionView::CreatGUIControls()
     tb->Connect(XRCID("clear_svn_output"),
                 wxEVT_COMMAND_MENU_SELECTED,
                 wxCommandEventHandler(SubversionView::OnClearOuptut),
-                NULL,
+                nullptr,
                 this);
     tb->Connect(
-        XRCID("svn_stop"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnStop), NULL, this);
+        XRCID("svn_stop"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnStop), nullptr, this);
     tb->Connect(XRCID("svn_cleanup"),
                 wxEVT_COMMAND_MENU_SELECTED,
                 wxCommandEventHandler(SubversionView::OnCleanup),
-                NULL,
+                nullptr,
                 this);
     tb->Connect(XRCID("svn_info"),
                 wxEVT_COMMAND_MENU_SELECTED,
                 wxCommandEventHandler(SubversionView::OnShowSvnInfo),
-                NULL,
+                nullptr,
                 this);
     tb->Connect(XRCID("svn_refresh"),
                 wxEVT_COMMAND_MENU_SELECTED,
                 wxCommandEventHandler(SubversionView::OnRefreshView),
-                NULL,
+                nullptr,
                 this);
     tb->Connect(XRCID("svn_settings"),
                 wxEVT_COMMAND_MENU_SELECTED,
                 wxCommandEventHandler(SubversionView::OnSettings),
-                NULL,
+                nullptr,
                 this);
     tb->Bind(wxEVT_UPDATE_UI, &SubversionView::OnViewUpdateUI, this, XRCID("svn_update"));
     tb->Bind(wxEVT_UPDATE_UI, &SubversionView::OnViewUpdateUI, this, XRCID("svn_refresh"));
@@ -315,7 +315,7 @@ void SubversionView::BuildTree(const wxString& root)
 
     wxString command;
     command << m_plugin->GetSvnExeName() << wxT(" status");
-    m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL), m_plugin);
+    m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, nullptr), m_plugin);
 }
 
 void SubversionView::OnWorkspaceLoaded(clWorkspaceEvent& event)
@@ -1088,12 +1088,12 @@ void SubversionView::DisconnectEvents()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &SubversionView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &SubversionView::OnWorkspaceClosed, this);
 
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(SubversionView::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(SubversionView::OnFileSaved), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(SubversionView::OnFileAdded), NULL, this);
+        wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(SubversionView::OnFileAdded), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_RENAMED, &SubversionView::OnFileRenamed, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, &SubversionView::OnAppActivated, this);
     wxTheApp->Unbind(wxEVT_MENU, &SubversionView::OnCommit, this, XRCID("svn_commit"));
     wxTheApp->Unbind(wxEVT_MENU, &SubversionView::OnCommit, this, XRCID("svn_file_commit"));

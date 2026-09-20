@@ -124,7 +124,7 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
 bool PHPExecutor::RunScript(const wxString& script, wxString& php_output)
 {
     wxString errmsg;
-    auto [php, cmd] = DoGetCLICommand(script, PHPProject::Ptr_t(NULL), errmsg);
+    auto [php, cmd] = DoGetCLICommand(script, PHPProject::Ptr_t(nullptr), errmsg);
     if (cmd.IsEmpty()) {
         ::wxMessageBox(errmsg, wxT("CodeLite"), wxOK | wxICON_INFORMATION, wxTheApp->GetTopWindow());
         return false;

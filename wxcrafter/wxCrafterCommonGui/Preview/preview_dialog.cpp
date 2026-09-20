@@ -41,14 +41,14 @@ PreviewDialog::PreviewDialog(wxWindow* parent, const DialogWrapper& dw)
 
     Layout();
     EventNotifier::Get()->Connect(
-        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewDialog::OnClosePreview), NULL, this);
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewDialog::OnClosePreview), nullptr, this);
 }
 
 PreviewDialog::~PreviewDialog()
 {
     wxcAuiManager::Get().UnInit(this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewDialog::OnClosePreview), NULL, this);
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewDialog::OnClosePreview), nullptr, this);
 
     wxCommandEvent event(wxEVT_PREVIEW_CLOSED);
     EventNotifier::Get()->AddPendingEvent(event);

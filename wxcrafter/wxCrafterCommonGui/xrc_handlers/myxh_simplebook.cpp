@@ -9,7 +9,7 @@
 MyWxSimplebookXmlHandler::MyWxSimplebookXmlHandler()
     : wxXmlResourceHandler()
     , m_isInside(false)
-    , m_notebook(NULL)
+    , m_notebook(nullptr)
 {
     AddWindowStyles();
 }
@@ -25,7 +25,7 @@ wxObject* MyWxSimplebookXmlHandler::DoCreateResource()
         if (n) {
             bool old_ins = m_isInside;
             m_isInside = false;
-            wxObject* item = CreateResFromNode(n, m_notebook, NULL);
+            wxObject* item = CreateResFromNode(n, m_notebook, nullptr);
             m_isInside = old_ins;
             wxWindow* wnd = wxDynamicCast(item, wxWindow);
 
@@ -38,7 +38,7 @@ wxObject* MyWxSimplebookXmlHandler::DoCreateResource()
             return wnd;
         } else {
             wxLogError(wxT("Error in resource: no control within notebook's <page> tag."));
-            return NULL;
+            return nullptr;
         }
     }
 

@@ -147,7 +147,7 @@ void TagsManager::DoFindByNameAndScope(const wxString& name, const wxString& sco
         std::vector<std::pair<wxString, int>> derivationList;
         derivationList.push_back({scope, 0});
         std::unordered_set<wxString> visited;
-        GetDerivationList(scope, NULL, derivationList, visited, 1);
+        GetDerivationList(scope, nullptr, derivationList, visited, 1);
         wxArrayString paths;
         for (size_t i = 0; i < derivationList.size(); i++) {
             wxString path_;
@@ -336,7 +336,7 @@ void TagsManager::GetFiles(const wxString& partialName, std::vector<FileEntryPtr
 TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int lineno)
 {
     if (!GetDatabase()) {
-        return NULL;
+        return nullptr;
     }
 
     if (!IsFileCached(fileName.GetFullPath())) {
@@ -496,7 +496,7 @@ bool TagsManager::IsBinaryFile(const wxString& filepath, const TagsOptionsData& 
         // examine up to maxTextToExamine first chars in the file and search for '\0'
         while (fread(buffer, sizeof(char), sizeof(buffer), fp) == 1 && textLen < maxTextToExamine) {
             textLen++;
-            // if we found a NULL, return true
+            // if we found a nullptr, return true
             if (buffer[0] == 0) {
                 fclose(fp);
                 return true;
@@ -553,7 +553,7 @@ void TagsManager::GetScopesByScopeName(const wxString& scopeName, wxArrayString&
     wxString _scopeName = DoReplaceMacros(scopeName);
     derivationList.push_back({_scopeName, 0});
     std::unordered_set<wxString> visited;
-    GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
+    GetDerivationList(_scopeName, nullptr, derivationList, visited, 1);
 
     for (auto [tmpScope, _] : derivationList) {
         tmpScope = DoReplaceMacros(tmpScope);

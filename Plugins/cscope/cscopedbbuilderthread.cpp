@@ -105,7 +105,7 @@ CScopeResultTable_t* CscopeDbBuilderThread::ParseResults(const wxArrayString& ou
 
         // insert the result
         CScopeResultTable_t::const_iterator iter = results->find(data.GetFile());
-        std::vector<CscopeEntryData>* vec(NULL);
+        std::vector<CscopeEntryData>* vec(nullptr);
         if (iter != results->end()) {
             // this file already exist, append the result
             vec = iter->second;

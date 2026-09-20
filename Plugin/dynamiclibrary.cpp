@@ -32,7 +32,7 @@
 
 clDynamicLibrary::clDynamicLibrary()
 #if defined(__WXMAC__) || defined(__WXGTK__)
-    : m_dllhandle(NULL)
+    : m_dllhandle(nullptr)
 #endif
 {
 }
@@ -42,7 +42,7 @@ clDynamicLibrary::~clDynamicLibrary()
 #if defined(__WXMAC__) || defined(__WXGTK__)
     if (m_dllhandle) {
         dlclose(m_dllhandle);
-        m_dllhandle = NULL;
+        m_dllhandle = nullptr;
     }
 #endif
 }
@@ -77,7 +77,7 @@ void clDynamicLibrary::Detach()
 #else
     if (m_dllhandle) {
         dlclose(m_dllhandle);
-        m_dllhandle = NULL;
+        m_dllhandle = nullptr;
     }
 #endif
 }

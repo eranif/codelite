@@ -76,7 +76,7 @@ void SvnSelectLocalRepoDlg::OnMenu(wxMouseEvent& event)
         menu.Connect(wxID_DELETE,
                      wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(SvnSelectLocalRepoDlg::OnRemoveEntry),
-                     NULL,
+                     nullptr,
                      this);
         m_listBoxPaths->PopupMenu(&menu);
     }

@@ -39,7 +39,7 @@ public:
     virtual ~MODEL_NAME_Item() {
         if (m_clientData) {
             delete m_clientData;
-            m_clientData = NULL;
+            m_clientData = nullptr;
         }
         m_data.clear();
 
@@ -99,7 +99,7 @@ public:
     }
 
     bool IsRoot() const {
-        return m_parent == NULL;
+        return m_parent == nullptr;
     }
 
     // Setters / Getters
@@ -189,7 +189,7 @@ public:
 
 protected:
     // Helpers
-    virtual wxDataViewItem DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData = NULL);
+    virtual wxDataViewItem DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData = nullptr);
     virtual wxDataViewItem DoInsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData);
     virtual void DoChangeItemType(const wxDataViewItem& item, bool changeToContainer);
 
@@ -198,7 +198,7 @@ public:
      * @brief Append a line to the model
      * clientData will be owned by the model once added (i.e. the clientData must be allocated on the heap and it will be freed by the model)
      */
-    virtual wxDataViewItem AppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, wxClientData *clientData = NULL);
+    virtual wxDataViewItem AppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, wxClientData *clientData = nullptr);
 
     /**
      * @brief Append a lines to the model
@@ -223,7 +223,7 @@ public:
     /**
      * @brief insert an item into the model before 'insertBeforeMe' item. Return the newly inserted item on success
      */
-    virtual wxDataViewItem InsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, wxClientData *clientData = NULL);
+    virtual wxDataViewItem InsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, wxClientData *clientData = nullptr);
 
     /**
      * @brief clear the control and delete all its content

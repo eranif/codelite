@@ -8,8 +8,8 @@
 #include <wx/tokenzr.h>
 
 static const wxCmdLineEntryDesc cmdLineDesc[] = {{wxCMD_LINE_PARAM,
-                                                  NULL,
-                                                  NULL,
+                                                  nullptr,
+                                                  nullptr,
                                                   "Directory name",
                                                   wxCMD_LINE_VAL_STRING,
                                                   wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},

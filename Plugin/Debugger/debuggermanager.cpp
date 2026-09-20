@@ -40,7 +40,7 @@
 #include <wx/msgdlg.h>
 
 //---------------------------------------------------------
-static DebuggerMgr* ms_instance = NULL;
+static DebuggerMgr* ms_instance = nullptr;
 
 wxDEFINE_EVENT(wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_DEBUGGER_QUERY_LOCALS, clCommandEvent);
@@ -77,7 +77,7 @@ DebuggerMgr& DebuggerMgr::Get()
 void DebuggerMgr::Free()
 {
     delete ms_instance;
-    ms_instance = NULL;
+    ms_instance = nullptr;
 }
 
 bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
@@ -193,14 +193,14 @@ IDebugger* DebuggerMgr::GetActiveDebugger()
             SetActiveDebugger(iter->first);
             return iter->second;
         }
-        return NULL;
+        return nullptr;
     }
 
     auto iter = m_debuggers.find(m_activeDebuggerName);
     if (iter != m_debuggers.end()) {
         return iter->second;
     }
-    return NULL;
+    return nullptr;
 }
 
 void DebuggerMgr::SetActiveDebugger(const wxString& name) { m_activeDebuggerName = name; }

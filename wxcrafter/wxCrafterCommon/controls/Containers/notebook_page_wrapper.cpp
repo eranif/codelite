@@ -213,7 +213,7 @@ void NotebookPageWrapper::SetParent(wxcWidget* parent)
     }
 }
 
-bool NotebookPageWrapper::IsChoicebookPage() const { return (dynamic_cast<ChoiceBookWrapper*>(GetParent()) != NULL); }
+bool NotebookPageWrapper::IsChoicebookPage() const { return (dynamic_cast<ChoiceBookWrapper*>(GetParent()) != nullptr); }
 
 bool NotebookPageWrapper::IsTreebookPage() const
 {
@@ -221,12 +221,12 @@ bool NotebookPageWrapper::IsTreebookPage() const
     // Find the first parent of type Notebook
     NotebookBaseWrapper* book = GetNotebook();
     if (book) {
-        isTreebookPage = (dynamic_cast<TreeBookWrapper*>(book) != NULL);
+        isTreebookPage = (dynamic_cast<TreeBookWrapper*>(book) != nullptr);
     }
 
     if (!isTreebookPage) {
         NotebookPageWrapper* parent = dynamic_cast<NotebookPageWrapper*>(GetParent());
-        isTreebookPage = (parent != NULL);
+        isTreebookPage = (parent != nullptr);
     }
     return isTreebookPage;
 }
@@ -290,7 +290,7 @@ NotebookBaseWrapper* NotebookPageWrapper::GetNotebook() const
     }
 
     if (!parent)
-        return NULL;
+        return nullptr;
 
     return dynamic_cast<NotebookBaseWrapper*>(parent);
 }
@@ -341,7 +341,7 @@ wxString NotebookPageWrapper::DoTreebookCppCtorCode() const
         int parentIndex = parentPage->GetPageIndex();
         if (parentIndex != wxNOT_FOUND) {
             code << book->GetName() << wxT("->InsertSubPage(") << parentIndex << wxT(", ")
-                 << (isNullPage ? wxString("NULL") : GetName()) << wxT(", ") << Label() << wxT(", ")
+                 << (isNullPage ? wxString("nullptr") : GetName()) << wxT(", ") << Label() << wxT(", ")
                  << PropertyBool(PROP_SELECTED) << wxT(", ")
                  << (bHasBitmap && !imgIndex.IsEmpty() ? imgIndex : wxT("wxNOT_FOUND")) << wxT(");\n");
 
@@ -352,7 +352,7 @@ wxString NotebookPageWrapper::DoTreebookCppCtorCode() const
         }
     } else {
         // top level page
-        code << book->GetName() << wxT("->AddPage(") << (isNullPage ? wxString("NULL") : GetName()) << wxT(", ")
+        code << book->GetName() << wxT("->AddPage(") << (isNullPage ? wxString("nullptr") : GetName()) << wxT(", ")
              << Label() << wxT(", ") << PropertyBool(PROP_SELECTED) << wxT(", ")
              << (bHasBitmap && !imgIndex.IsEmpty() ? imgIndex : wxT("wxNOT_FOUND")) << wxT(");\n");
 

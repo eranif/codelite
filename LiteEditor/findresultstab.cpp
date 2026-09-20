@@ -61,11 +61,11 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
     , m_searchInProgress(false)
 {
     BindSearchEvents(this);
-    m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindResultsTab::OnStyleNeeded), NULL, this);
+    m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindResultsTab::OnStyleNeeded), nullptr, this);
     wxTheApp->Connect(XRCID("find_in_files"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(FindResultsTab::OnFindInFiles),
-                      NULL,
+                      nullptr,
                       this);
     m_tb->Bind(wxEVT_TOOL_DROPDOWN, &FindResultsTab::OnRecentSearches, this, XRCID("recent_searches"));
     m_tb->Bind(wxEVT_UPDATE_UI, &FindResultsTab::OnRecentSearchesUI, this, XRCID("recent_searches"));
@@ -81,13 +81,13 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
     Connect(XRCID("stop_search"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(FindResultsTab::OnStopSearch),
-            NULL,
+            nullptr,
             this);
-    Connect(XRCID("stop_search"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindResultsTab::OnStopSearchUI), NULL, this);
+    Connect(XRCID("stop_search"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindResultsTab::OnStopSearchUI), nullptr, this);
     m_tb->Realize();
 
     EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL, this);
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), nullptr, this);
 
     // Use the same eventhandler for editor config changes too e.g. show/hide whitespace
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &FindResultsTab::OnThemeChanged, this);
@@ -98,11 +98,11 @@ FindResultsTab::~FindResultsTab()
 {
     UnbindSearchEvents(this);
     EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL, this);
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), nullptr, this);
     wxTheApp->Disconnect(XRCID("find_in_files"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(FindResultsTab::OnFindInFiles),
-                         NULL,
+                         nullptr,
                          this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &FindResultsTab::OnWorkspaceClosed, this);
 }

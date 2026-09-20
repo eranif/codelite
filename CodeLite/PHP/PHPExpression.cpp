@@ -186,7 +186,7 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wxString& sourceFileName)
 {
     if (m_expression.empty())
-        return PHPEntityBase::Ptr_t(NULL);
+        return PHPEntityBase::Ptr_t(nullptr);
 
     m_sourceFile.reset(new PHPSourceFile(m_text, &lookpTable));
     m_sourceFile->SetParseFunctionBody(true);
@@ -233,8 +233,8 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
     }
 
     // Now, use the lookup table
-    PHPEntityBase::Ptr_t currentToken(NULL);
-    PHPEntityBase::Ptr_t parentToken(NULL);
+    PHPEntityBase::Ptr_t currentToken(nullptr);
+    PHPEntityBase::Ptr_t parentToken(nullptr);
     for (Part& part : m_parts) {
         if (!currentToken) {
             // first token
@@ -310,7 +310,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
         }
 
         if (!currentToken) {
-            // return NULL
+            // return nullptr
             return currentToken;
         }
         parentToken = currentToken;
@@ -320,12 +320,12 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
 
 wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sourceFile)
 {
-    if (depth > 5 || sourceFile == NULL) {
+    if (depth > 5 || sourceFile == nullptr) {
         // avoid infinite recursion, by limiting the nest level to 5
         return "";
     }
 
-    // Use the provided sourceFile if 'm_sourceFile' is NULL
+    // Use the provided sourceFile if 'm_sourceFile' is nullptr
     if (!m_sourceFile) {
         m_sourceFile = sourceFile;
     }

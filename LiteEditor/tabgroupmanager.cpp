@@ -115,7 +115,7 @@ bool TabgroupManager::DoAddItemToTabgroup(wxXmlDocument& doc,
     }
 
     // If previousnode is valid, insert the new tab after it
-    wxXmlNode* previousnode = NULL;
+    wxXmlNode* previousnode = nullptr;
     if (!nextitemfilepath.IsEmpty()) {
         previousnode = FindTabgroupItem(doc, filepath, nextitemfilepath);
     }

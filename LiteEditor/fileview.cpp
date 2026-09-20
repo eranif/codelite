@@ -204,11 +204,11 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     Bind(wxEVT_TREE_ITEM_ACTIVATED, &FileViewTree::OnItemActivated, this);
     Bind(wxEVT_TREE_KEY_DOWN, &FileViewTree::OnTreeKeyDown, this);
     EventNotifier::Get()->Connect(
-        wxEVT_REBUILD_WORKSPACE_TREE, wxCommandEventHandler(FileViewTree::OnBuildTree), NULL, this);
+        wxEVT_REBUILD_WORKSPACE_TREE, wxCommandEventHandler(FileViewTree::OnBuildTree), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_BUILD_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), NULL, this);
+        wxEVT_CMD_BUILD_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
+        wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &FileViewTree::OnActiveProjectChanged, this);
@@ -229,11 +229,11 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
 FileViewTree::~FileViewTree()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_REBUILD_WORKSPACE_TREE, wxCommandEventHandler(FileViewTree::OnBuildTree), NULL, this);
+        wxEVT_REBUILD_WORKSPACE_TREE, wxCommandEventHandler(FileViewTree::OnBuildTree), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_BUILD_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), NULL, this);
+        wxEVT_CMD_BUILD_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
+        wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &FileViewTree::OnActiveProjectChanged, this);
@@ -1080,7 +1080,7 @@ void FileViewTree::OnLocalPrefs(wxCommandEvent& event)
     }
 
     wxXmlNode* lwsnode = clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetLocalWorkspaceOptionsNode();
-    // Don't check lwsnode: it'll be NULL if there are currently no local workspace options
+    // Don't check lwsnode: it'll be nullptr if there are currently no local workspace options
 
     // Start by getting the global settings
     OptionsConfigPtr higherOptions = EditorConfigST::Get()->GetOptions();
@@ -1104,7 +1104,7 @@ void FileViewTree::OnLocalPrefs(wxCommandEvent& event)
     }
 
     wxXmlNode* lpnode = clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetLocalProjectOptionsNode(GetItemText(item));
-    // Don't check lpnode: it'll be NULL if there are currently no local project options
+    // Don't check lpnode: it'll be nullptr if there are currently no local project options
     // Merge any local workspace options with the global ones inside 'higherOptions'
     LocalOptionsConfig wsOC(higherOptions, lwsnode);
 
@@ -1646,7 +1646,7 @@ void FileViewTree::DoImportFolder(ProjectPtr proj,
     proj->BeginTransaction();
     {
         // Create a progress dialog
-        clProgressDlg* prgDlg = new clProgressDlg(NULL, _("Importing files ..."), "", (int)files.GetCount());
+        clProgressDlg* prgDlg = new clProgressDlg(nullptr, _("Importing files ..."), "", (int)files.GetCount());
 
         // get list of files
         for (size_t i = 0; i < files.GetCount(); i++) {
@@ -1719,7 +1719,7 @@ void FileViewTree::RedefineProjFiles(ProjectPtr proj, const wxString& path, std:
     proj->BeginTransaction();
     {
         // Create a progress dialog
-        clProgressDlg* prgDlg = new clProgressDlg(NULL, _("Importing files ..."), "", (int)files.size());
+        clProgressDlg* prgDlg = new clProgressDlg(nullptr, _("Importing files ..."), "", (int)files.size());
 
         proj->ClearAllVirtDirs();
 
@@ -2084,7 +2084,7 @@ ProjectPtr FileViewTree::GetSelectedProject() const
     wxArrayTreeItemIds selections;
     size_t count = GetSelections(selections);
     if (count == 0) {
-        return NULL;
+        return nullptr;
     }
 
     // Return the first item which is of type "TypeProject"
@@ -2101,7 +2101,7 @@ ProjectPtr FileViewTree::GetSelectedProject() const
     while (item.IsOk() && (item != GetRootItem())) {
         FilewViewTreeItemData* itemData = dynamic_cast<FilewViewTreeItemData*>(GetItemData(item));
         if (!itemData) {
-            return NULL;
+            return nullptr;
         } else if (itemData->GetData().GetKind() == ProjectItem::TypeProject) {
             // Found a project
             return clCxxWorkspaceST::Get()->GetProject(GetItemText(item));
@@ -2110,7 +2110,7 @@ ProjectPtr FileViewTree::GetSelectedProject() const
     }
 
     // No project was found
-    return NULL;
+    return nullptr;
 }
 
 void FileViewTree::OnBuildTree(wxCommandEvent& e)
@@ -2458,7 +2458,7 @@ void FileViewTree::OnOpenFileExplorerFromFilePath(wxCommandEvent& e)
 
 void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projectName, bool usedByFileView)
 {
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
     wxBitmap bmpBuild = bmpLoader->LoadBitmap("toolbars/16/build/build");
     wxBitmap bmpClean = bmpLoader->LoadBitmap("toolbars/16/build/clean");
@@ -2497,7 +2497,7 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
     if (bldConf && bldConf->IsCustomBuild() && !bldConf->GetCustomTargets().empty()) {
         menu.AppendSeparator();
-        wxMenuItem* item = NULL;
+        wxMenuItem* item = nullptr;
         // append the custom build targets
         const BuildConfig::StringMap_t& targets = bldConf->GetCustomTargets();
         if (!targets.empty()) {

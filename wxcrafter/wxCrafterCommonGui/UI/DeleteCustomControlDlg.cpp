@@ -61,6 +61,6 @@ void DeleteCustomControlDlg::DoPopulate()
         wxVector<wxVariant> cols;
         cols.push_back(false); // do not delete
         cols.push_back(p.second.GetClassName());
-        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)NULL);
+        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)nullptr);
     }
 }

@@ -29,7 +29,7 @@ std::string var_consumBracketsContent(char openBrace);
 void var_consumeDefaultValue(char c1, char c2);
 void var_consumeDefaultValueIfNeeded();
 
-static  VariableList *        gs_vars = NULL;
+static  VariableList *        gs_vars = nullptr;
 static  std::vector<Variable> gs_names;
 static  bool                  g_isUsedWithinFunc = false;
 static  std::string           s_tmpString;
@@ -667,7 +667,7 @@ void var_consumeDefaultValue(char c1, char c2)
 
 void clean_up()
 {
-    gs_vars = NULL;
+    gs_vars = nullptr;
 
     // restore settings
     setUseIgnoreMacros(true);

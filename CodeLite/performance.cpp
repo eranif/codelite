@@ -35,7 +35,7 @@
 #include <wx/msw/wrapwin.h> // includes windows.h
 
 #if 0
-static FILE* dbgFile(NULL);
+static FILE* dbgFile(nullptr);
 static std::string output = "";
 static std::vector<std::pair<DWORD, DWORD> > tickCounts;
 #endif

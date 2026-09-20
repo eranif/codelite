@@ -70,7 +70,7 @@ public:
 TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY)
 {
-    m_node = NULL;
+    m_node = nullptr;
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     m_tree = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HIDE_ROOT);
     m_tree->SetDropTarget(new MyDropTarget(this));
@@ -92,28 +92,28 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
     wxAcceleratorTable accel(1, entries);
     m_tree->SetAcceleratorTable(accel);
 
-    m_tree->AddRoot(wxT("Tab Groups"), -1, -1, NULL);
+    m_tree->AddRoot(wxT("Tab Groups"), -1, -1, nullptr);
 
-    m_tree->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(TabgroupsPane::OnItemActivated), NULL, this);
-    m_tree->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(TabgroupsPane::OnItemRtClick), NULL, this);
+    m_tree->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(TabgroupsPane::OnItemActivated), nullptr, this);
+    m_tree->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(TabgroupsPane::OnItemRtClick), nullptr, this);
     m_tree->Connect(
-        wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnBeginLabelEdit), NULL, this);
-    m_tree->Connect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnEndLabelEdit), NULL, this);
-    m_tree->Connect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(TabgroupsPane::OnBeginDrag), NULL, this);
-    m_tree->Connect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(TabgroupsPane::OnEndDrag), NULL, this);
+        wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnBeginLabelEdit), nullptr, this);
+    m_tree->Connect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnEndLabelEdit), nullptr, this);
+    m_tree->Connect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(TabgroupsPane::OnBeginDrag), nullptr, this);
+    m_tree->Connect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(TabgroupsPane::OnEndDrag), nullptr, this);
     // Context menu:
     Connect(TGM_ID_Add,
             TGM_ID_RemoveItem,
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(TabgroupsPane::OnContextMenu),
-            NULL,
+            nullptr,
             this);
     // Shortcuts:
-    m_tree->Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCopy), NULL, this);
-    m_tree->Connect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnPaste), NULL, this);
-    m_tree->Connect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCut), NULL, this);
+    m_tree->Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCopy), nullptr, this);
+    m_tree->Connect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnPaste), nullptr, this);
+    m_tree->Connect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCut), nullptr, this);
     m_tree->Connect(
-        wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), NULL, this);
+        wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), nullptr, this);
 
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &TabgroupsPane::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &TabgroupsPane::OnInitDone, this);
@@ -122,29 +122,29 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
 TabgroupsPane::~TabgroupsPane()
 {
     m_tree->Disconnect(
-        wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(TabgroupsPane::OnItemActivated), NULL, this);
-    m_tree->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(TabgroupsPane::OnItemRtClick), NULL, this);
+        wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(TabgroupsPane::OnItemActivated), nullptr, this);
+    m_tree->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(TabgroupsPane::OnItemRtClick), nullptr, this);
     m_tree->Disconnect(
-        wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnBeginLabelEdit), NULL, this);
+        wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnBeginLabelEdit), nullptr, this);
     m_tree->Disconnect(
-        wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnEndLabelEdit), NULL, this);
-    m_tree->Disconnect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(TabgroupsPane::OnBeginDrag), NULL, this);
-    m_tree->Disconnect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(TabgroupsPane::OnEndDrag), NULL, this);
+        wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(TabgroupsPane::OnEndLabelEdit), nullptr, this);
+    m_tree->Disconnect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(TabgroupsPane::OnBeginDrag), nullptr, this);
+    m_tree->Disconnect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(TabgroupsPane::OnEndDrag), nullptr, this);
     // Context menu:
     Disconnect(TGM_ID_Add,
                TGM_ID_RemoveItem,
                wxEVT_COMMAND_MENU_SELECTED,
                wxCommandEventHandler(TabgroupsPane::OnContextMenu),
-               NULL,
+               nullptr,
                this);
     // Shortcuts:
     m_tree->Disconnect(
-        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCopy), NULL, this);
+        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCopy), nullptr, this);
     m_tree->Disconnect(
-        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnPaste), NULL, this);
-    m_tree->Disconnect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCut), NULL, this);
+        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnPaste), nullptr, this);
+    m_tree->Disconnect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnCut), nullptr, this);
     m_tree->Disconnect(
-        wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), NULL, this);
+        wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TabgroupsPane::OnDelete), nullptr, this);
 
     delete m_node;
 
@@ -482,7 +482,7 @@ void TabgroupsPane::AddTabgroupItem()
 
 void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId()*/)
 {
-    if (m_node == NULL) {
+    if (m_node == nullptr) {
         return; // The data to be pasted should have been stored here, so...
     }
 
@@ -708,7 +708,7 @@ void TabgroupsPane::CopyTabgroupItem(wxTreeItemId itemtocopy /*= wxTreeItemId()*
 
     wxString itemfilepath = data->GetFilepath();
     wxXmlNode* node = TabGroupsManager::Get()->FindTabgroupItem(doc, filepath, itemfilepath);
-    wxCHECK_RET(node != NULL, wxT("Failed to find the tab-item to be copied :/"));
+    wxCHECK_RET(node != nullptr, wxT("Failed to find the tab-item to be copied :/"));
 
     // All is well, so store the data in m_node and m_copieditem_filepath
     delete m_node;
@@ -802,7 +802,7 @@ void TabgroupsPane::AddFile(const wxString& filename)
     wxXmlNode* oldnode = m_node;
 
     m_copieditem_filepath = filename;
-    m_node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfo"));
+    m_node = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("TabInfo"));
     wxXmlNode* fp = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("wxString"));
     fp->AddAttribute(wxT("Value"), filename);
     fp->AddAttribute(wxT("Name"), wxT("FileName"));

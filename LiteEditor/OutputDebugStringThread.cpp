@@ -12,7 +12,7 @@ OutputDebugStringThread::OutputDebugStringThread()
     , m_hDBMonBuffer(INVALID_HANDLE_VALUE)
     , m_hEventBufferReady(INVALID_HANDLE_VALUE)
     , m_hEventDataReady(INVALID_HANDLE_VALUE)
-    , m_pDBBuffer(NULL)
+    , m_pDBBuffer(nullptr)
 #endif
     , m_collecting(false)
 {
@@ -23,20 +23,20 @@ OutputDebugStringThread::OutputDebugStringThread()
     // ---------------------------------------------------------
     m_hDBWinMutex = ::OpenMutex(MUTEX_ALL_ACCESS, FALSE, L"DBWinMutex");
 
-    if (m_hDBWinMutex == NULL) {
+    if (m_hDBWinMutex == nullptr) {
         clWARNING() << "Failed to open mutex: 'DBWinMutex'." << GetLastError() << clEndl;
         return;
     }
 
     m_hEventBufferReady = ::OpenEvent(EVENT_ALL_ACCESS, FALSE, L"DBWIN_BUFFER_READY");
 
-    if (m_hEventBufferReady == NULL) {
-        m_hEventBufferReady = ::CreateEvent(NULL,
+    if (m_hEventBufferReady == nullptr) {
+        m_hEventBufferReady = ::CreateEvent(nullptr,
                                             FALSE, // auto-reset
                                             TRUE,  // initial state: signaled
                                             L"DBWIN_BUFFER_READY");
 
-        if (m_hEventBufferReady == NULL) {
+        if (m_hEventBufferReady == nullptr) {
             clWARNING() << "Failed to create event: 'DBWIN_BUFFER_READY'." << GetLastError() << clEndl;
             return;
         }
@@ -45,13 +45,13 @@ OutputDebugStringThread::OutputDebugStringThread()
     // ---------------------------------------------------------
     m_hEventDataReady = ::OpenEvent(SYNCHRONIZE, FALSE, L"DBWIN_DATA_READY");
 
-    if (m_hEventDataReady == NULL) {
-        m_hEventDataReady = ::CreateEvent(NULL,
+    if (m_hEventDataReady == nullptr) {
+        m_hEventDataReady = ::CreateEvent(nullptr,
                                           FALSE, // auto-reset
                                           FALSE, // initial state: nonsignaled
                                           L"DBWIN_DATA_READY");
 
-        if (m_hEventDataReady == NULL) {
+        if (m_hEventDataReady == nullptr) {
             clWARNING() << "Failed to create event: 'DBWIN_DATA_READY'." << GetLastError() << clEndl;
             return;
         }
@@ -62,11 +62,11 @@ OutputDebugStringThread::OutputDebugStringThread()
     wxString DBWIN_BUFFER = L"DBWIN_BUFFER";
     m_hDBMonBuffer = ::OpenFileMapping(FILE_MAP_READ, FALSE, DBWIN_BUFFER.c_str());
 
-    if (m_hDBMonBuffer == NULL) {
+    if (m_hDBMonBuffer == nullptr) {
         m_hDBMonBuffer = ::CreateFileMapping(
-            INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(struct dbwin_buffer), DBWIN_BUFFER.c_str());
+            INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, sizeof(struct dbwin_buffer), DBWIN_BUFFER.c_str());
 
-        if (m_hDBMonBuffer == NULL) {
+        if (m_hDBMonBuffer == nullptr) {
             clWARNING() << "Failed to CreateFileMapping:" << DBWIN_BUFFER << "." << GetLastError() << clEndl;
             return;
         }
@@ -74,7 +74,7 @@ OutputDebugStringThread::OutputDebugStringThread()
 
     m_pDBBuffer = (struct dbwin_buffer*)::MapViewOfFile(m_hDBMonBuffer, SECTION_MAP_READ, 0, 0, 0);
 
-    if (m_pDBBuffer == NULL) {
+    if (m_pDBBuffer == nullptr) {
         clWARNING() << "Failed to MapViewOfFile:" << DBWIN_BUFFER << "." << GetLastError() << clEndl;
         return;
     }
@@ -84,28 +84,28 @@ OutputDebugStringThread::OutputDebugStringThread()
 OutputDebugStringThread::~OutputDebugStringThread()
 {
 #ifdef __WXMSW__
-    if (m_hDBWinMutex != NULL) {
+    if (m_hDBWinMutex != nullptr) {
         CloseHandle(m_hDBWinMutex);
-        m_hDBWinMutex = NULL;
+        m_hDBWinMutex = nullptr;
     }
 
-    if (m_hDBMonBuffer != NULL) {
+    if (m_hDBMonBuffer != nullptr) {
         ::UnmapViewOfFile(m_pDBBuffer);
         CloseHandle(m_hDBMonBuffer);
-        m_hDBMonBuffer = NULL;
+        m_hDBMonBuffer = nullptr;
     }
 
-    if (m_hEventBufferReady != NULL) {
+    if (m_hEventBufferReady != nullptr) {
         CloseHandle(m_hEventBufferReady);
-        m_hEventBufferReady = NULL;
+        m_hEventBufferReady = nullptr;
     }
 
-    if (m_hEventDataReady != NULL) {
+    if (m_hEventDataReady != nullptr) {
         CloseHandle(m_hEventDataReady);
-        m_hEventDataReady = NULL;
+        m_hEventDataReady = nullptr;
     }
 
-    m_pDBBuffer = NULL;
+    m_pDBBuffer = nullptr;
 #endif
 }
 
@@ -137,7 +137,7 @@ void* OutputDebugStringThread::Entry()
         }
     }
 #endif
-    return NULL;
+    return nullptr;
 }
 
 void OutputDebugStringThread::Stop()
@@ -145,7 +145,7 @@ void OutputDebugStringThread::Stop()
     // Notify the thread to exit and
     // wait for it
     if (IsAlive()) {
-        Delete(NULL, wxTHREAD_WAIT_BLOCK);
+        Delete(nullptr, wxTHREAD_WAIT_BLOCK);
 
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);

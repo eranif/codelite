@@ -67,7 +67,7 @@ class TabgroupsPane : public wxPanel
     };
 
 public:
-    TabgroupsPane() { m_node = NULL; }
+    TabgroupsPane() { m_node = nullptr; }
     TabgroupsPane(wxWindow* parent, const wxString& caption);
     ~TabgroupsPane();
     void DisplayTabgroups(bool isGlobal = false);

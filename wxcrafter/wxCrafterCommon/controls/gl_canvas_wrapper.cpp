@@ -93,7 +93,7 @@ wxString GLCanvasWrapper::CppCtorCode() const
         bufferSize++; // terminator
         attrList << "int *" << AttrName << " = new int[ " << bufferSize << " ];\n";
     } else {
-        attrList << "int *" << AttrName << " = NULL;\n";
+        attrList << "int *" << AttrName << " = nullptr;\n";
     }
 
     int idx = 0;

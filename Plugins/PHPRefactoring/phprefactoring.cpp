@@ -64,7 +64,7 @@ void PHPRefactoring::CreatePluginMenu(wxMenu* pluginsMenu)
     wxTheApp->Connect(wxID_RENAME_CLASS_AND_NAMESPACES,
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(PHPRefactoring::OnRenameClassAndNamespaces),
-                      NULL,
+                      nullptr,
                       this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &PHPRefactoring::OnEditorContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &PHPRefactoring::OnPhpSettingsChanged, this);
@@ -83,7 +83,7 @@ void PHPRefactoring::UnPlug()
     wxTheApp->Disconnect(wxID_RENAME_CLASS_AND_NAMESPACES,
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(PHPRefactoring::OnRenameClassAndNamespaces),
-                         NULL,
+                         nullptr,
                          this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &PHPRefactoring::OnEditorContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_SETTINGS_CHANGED, &PHPRefactoring::OnPhpSettingsChanged, this);

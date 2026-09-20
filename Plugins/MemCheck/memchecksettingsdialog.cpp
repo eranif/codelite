@@ -137,12 +137,12 @@ void MemCheckSettingsDialog::OnSuppListRightDown(wxMouseEvent& event)
     menu.Connect(XRCID("memcheck_add_supp"),
                  wxEVT_COMMAND_MENU_SELECTED,
                  wxCommandEventHandler(MemCheckSettingsDialog::OnAddSupp),
-                 NULL,
+                 nullptr,
                  (wxEvtHandler*)this);
     menu.Connect(XRCID("memcheck_del_supp"),
                  wxEVT_COMMAND_MENU_SELECTED,
                  wxCommandEventHandler(MemCheckSettingsDialog::OnDelSupp),
-                 NULL,
+                 nullptr,
                  (wxEvtHandler*)this);
     PopupMenu(&menu);
 }

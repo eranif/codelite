@@ -78,20 +78,20 @@ UnitTestPP::UnitTestPP(IManager* manager)
     wxTheApp->Connect(XRCID("run_unit_tests"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(UnitTestPP::OnRunUnitTests),
-                      NULL,
+                      nullptr,
                       (wxEvtHandler*)this);
     wxTheApp->Connect(XRCID("run_unit_tests"),
                       wxEVT_UPDATE_UI,
                       wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI),
-                      NULL,
+                      nullptr,
                       (wxEvtHandler*)this);
 
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(UnitTestPP::OnRunProject), NULL, this);
+        wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(UnitTestPP::OnRunProject), nullptr, this);
 
     m_outputPage = new UnitTestsPage(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_mgr);
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_outputPage, _("UnitTest++"));
-    m_tabHelper.reset(new clTabTogglerHelper(_("UnitTest++"), m_outputPage, "", NULL));
+    m_tabHelper.reset(new clTabTogglerHelper(_("UnitTest++"), m_outputPage, "", nullptr));
 
     m_longName = _("A Unit test plugin based on the UnitTest++ framework");
     m_shortName = "UnitTestPP";
@@ -148,17 +148,17 @@ void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
     wxTheApp->Connect(XRCID("unittestpp_new_simple_test"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(UnitTestPP::OnNewSimpleTest),
-                      NULL,
+                      nullptr,
                       (wxEvtHandler*)this);
     wxTheApp->Connect(XRCID("unittestpp_new_class_test"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(UnitTestPP::OnNewClassTest),
-                      NULL,
+                      nullptr,
                       (wxEvtHandler*)this);
     wxTheApp->Connect(XRCID("mark_project_as_ut"),
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(UnitTestPP::OnMarkProjectAsUT),
-                      NULL,
+                      nullptr,
                       (wxEvtHandler*)this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &UnitTestPP::OnEditorContextMenu, this);
 }
@@ -171,13 +171,13 @@ void UnitTestPP::UnPlug()
     wxTheApp->Disconnect(XRCID("run_unit_tests"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(UnitTestPP::OnRunUnitTests),
-                         NULL,
+                         nullptr,
                          (wxEvtHandler*)this);
 
     wxTheApp->Disconnect(XRCID("run_unit_tests"),
                          wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI),
-                         NULL,
+                         nullptr,
                          (wxEvtHandler*)this);
 
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &UnitTestPP::OnProcessRead, this);
@@ -437,7 +437,7 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
                 if (editor && editor->GetFileName() == fn) {
                     return editor;
                 } else {
-                    return NULL;
+                    return nullptr;
                 }
             }
         }

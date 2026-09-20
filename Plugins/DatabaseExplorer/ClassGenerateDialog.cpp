@@ -329,8 +329,8 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab,
                                           pPKCol->GetName().c_str())
                       << "\n";
                 hFile << wxT("{") << "\n";
-                hFile << wxT("\tDatabaseResultSet* resSet = NULL;") << "\n";
-                hFile << wxT("\tPreparedStatement* pStatement = NULL;") << "\n";
+                hFile << wxT("\tDatabaseResultSet* resSet = nullptr;") << "\n";
+                hFile << wxT("\tPreparedStatement* pStatement = nullptr;") << "\n";
                 hFile << wxT("\tif (pDbLayer){") << "\n";
                 hFile << wxT("\t\tif (pDbLayer->IsOpen()){") << "\n";
 
@@ -352,7 +352,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab,
                       << "\n";
                 hFile << wxT("\t\tpStatement->Close();") << "\n";
                 hFile << wxT("\t\t}") << "\n";
-                hFile << wxT("\treturn NULL;") << "\n";
+                hFile << wxT("\treturn nullptr;") << "\n";
 
                 hFile << wxT("}") << "\n";
             }
@@ -474,7 +474,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab,
                                           pPKCol->GetName().c_str())
                       << "\n";
             else
-                hFile << wxT("\t\tPreparedStatement* pStatement = NULL;") << "\n";
+                hFile << wxT("\t\tPreparedStatement* pStatement = nullptr;") << "\n";
 
         } else if (str.Contains(wxT("%%classUtilsEditDebeaStatement%%"))) {
             for (auto node = pTab->GetFirstChildNode(); node; node = node->GetNext()) {
@@ -493,7 +493,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab,
                                           pPKCol->GetName().c_str())
                       << "\n";
             else
-                hFile << wxT("\t\tPreparedStatement* pStatement = NULL;") << "\n";
+                hFile << wxT("\t\tPreparedStatement* pStatement = nullptr;") << "\n";
 
         } else if (str.Contains(wxT("%%classUtilsPKSetParams%%"))) {
             if (pPKCol)

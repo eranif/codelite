@@ -10,8 +10,8 @@
 MyWxPropGridXmlHandler::MyWxPropGridXmlHandler()
     : wxXmlResourceHandler()
     , m_isInside(false)
-    , m_pgmgr(NULL)
-    , m_propertyParent(NULL)
+    , m_pgmgr(nullptr)
+    , m_propertyParent(nullptr)
 {
     XRC_ADD_STYLE(wxPG_AUTO_SORT);
     XRC_ADD_STYLE(wxPG_HIDE_CATEGORIES);
@@ -42,7 +42,7 @@ wxObject* MyWxPropGridXmlHandler::DoCreateResource()
 
         m_pgmgr = pg;
         m_pgmgr->AddPage("Settings");
-        m_propertyParent = NULL;
+        m_propertyParent = nullptr;
         m_isInside = true;
         CreateChildren(m_pgmgr, true /*only this handler*/);
 
@@ -87,7 +87,7 @@ void MyWxPropGridXmlHandler::HandlePgProperty(wxPGProperty* parent)
 
     wxArrayString items = GetArray(GetParamNode("content"));
 
-    wxPGProperty* prop = NULL;
+    wxPGProperty* prop = nullptr;
     if (proptype == "wxIntProperty") {
         long v;
         value.ToLong(&v);

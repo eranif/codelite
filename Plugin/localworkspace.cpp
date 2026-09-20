@@ -162,7 +162,7 @@ LocalOptionsConfig::LocalOptionsConfig()
     // All the members are validVars, which auto-set to invalid, so no need to do anything here
 }
 
-wxXmlNode* LocalOptionsConfig::ToXml(wxXmlNode* parent /*=NULL*/, const wxString& nodename /*=wxT("Options")*/) const
+wxXmlNode* LocalOptionsConfig::ToXml(wxXmlNode* parent /*=nullptr*/, const wxString& nodename /*=wxT("Options")*/) const
 {
     wxXmlNode* n = new wxXmlNode(parent, wxXML_ELEMENT_NODE, nodename);
 
@@ -272,7 +272,7 @@ bool LocalWorkspace::SetWorkspaceOptions(LocalOptionsConfigPtr opts)
         m_doc.GetRoot()->RemoveChild(oldOptions);
         delete oldOptions;
     }
-    m_doc.GetRoot()->AddChild(opts->ToXml(NULL, wxT("LocalWorkspaceOptions")));
+    m_doc.GetRoot()->AddChild(opts->ToXml(nullptr, wxT("LocalWorkspaceOptions")));
     return SaveXmlFile();
 }
 
@@ -299,7 +299,7 @@ bool LocalWorkspace::SetProjectOptions(LocalOptionsConfigPtr opts, const wxStrin
         project->RemoveChild(oldOptions);
         delete oldOptions;
     }
-    project->AddChild(opts->ToXml(NULL, wxT("Options")));
+    project->AddChild(opts->ToXml(nullptr, wxT("Options")));
     return SaveXmlFile();
 }
 
@@ -625,7 +625,7 @@ bool LocalWorkspace::SetFolderColours(const FolderColour::Map_t& vdColours)
     FolderColour::SortToList(vdColours, coloursList);
 
     for (const FolderColour& vdc : coloursList) {
-        wxXmlNode* folderNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualFolder"));
+        wxXmlNode* folderNode = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("VirtualFolder"));
         folderNode->AddAttribute("Path", vdc.GetPath());
         folderNode->AddAttribute("Colour", vdc.GetColour().GetAsString(wxC2S_HTML_SYNTAX));
         coloursNode->AddChild(folderNode);
@@ -699,7 +699,7 @@ bool LocalWorkspace::SetPinnedProjects(const wxArrayString& projects)
     root->AddChild(node);
 
     for (const wxString& project : projects) {
-        wxXmlNode* p = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
+        wxXmlNode* p = new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Project"));
         p->AddAttribute("Name", project);
         node->AddChild(p);
     }

@@ -14,7 +14,7 @@ XDebugComThread::~XDebugComThread() { Stop(); }
 void XDebugComThread::Stop()
 {
     if (IsAlive()) {
-        Delete(NULL, wxTHREAD_WAIT_BLOCK);
+        Delete(nullptr, wxTHREAD_WAIT_BLOCK);
 
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
@@ -43,7 +43,7 @@ void* XDebugComThread::Entry()
             if ((m_waitForConnTimeout > 0) && (retry > m_waitForConnTimeout)) {
                 // Don't wait any longer for XDebug
                 m_xdebugMgr->CallAfter(&XDebugManager::XDebugNotConnecting);
-                return NULL;
+                return nullptr;
             }
             client = m_server.WaitForNewConnection(1);
             ++retry;
@@ -66,7 +66,7 @@ void* XDebugComThread::Entry()
         } else {
             // Something bad happened
             m_xdebugMgr->CallAfter(&XDebugManager::OnCommThreadTerminated);
-            return NULL;
+            return nullptr;
         }
 
         // The main loop: request-reply mode
@@ -89,11 +89,11 @@ void* XDebugComThread::Entry()
     } catch (const clSocketException& e) {
         clDEBUG() << "XDebugComThread caught an exception:" << e.what() << endl;
         m_xdebugMgr->CallAfter(&XDebugManager::OnCommThreadTerminated);
-        return NULL;
+        return nullptr;
     }
 
     m_xdebugMgr->CallAfter(&XDebugManager::OnCommThreadTerminated);
-    return NULL;
+    return nullptr;
 }
 
 bool XDebugComThread::DoReadReply(std::string& reply, clSocketBase::Ptr_t client)

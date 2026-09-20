@@ -6,9 +6,9 @@
 #include "macros.h"
 
 clAuiCaptionEnabler::clAuiCaptionEnabler()
-    : m_aui(NULL)
-    , m_window(NULL)
-    , m_timer(NULL)
+    : m_aui(nullptr)
+    , m_window(nullptr)
+    , m_timer(nullptr)
     , m_captionAdded(false)
     , m_ensureCaptionsVisible(false)
 { EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiCaptionEnabler::OnEditorSettingsChanged, this); }

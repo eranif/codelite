@@ -2,7 +2,7 @@
 #if wxUSE_GUI
 TerminalEmulatorUI::TerminalEmulatorUI(wxWindow* parent)
     : TerminalEmulatorUIBase(parent)
-    , m_terminal(NULL)
+    , m_terminal(nullptr)
 {
 }
 
@@ -24,7 +24,7 @@ void TerminalEmulatorUI::OnProcessExit(clCommandEvent& e)
     e.Skip();
     if (m_terminal) {
         DoUnBindTerminal(m_terminal);
-        m_terminal = NULL;
+        m_terminal = nullptr;
     }
 }
 

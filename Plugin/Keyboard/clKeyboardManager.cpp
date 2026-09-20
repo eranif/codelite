@@ -105,10 +105,10 @@ clKeyboardManager::~clKeyboardManager()
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clKeyboardManager::OnStartupCompleted, this);
 }
 
-static clKeyboardManager* m_mgr = NULL;
+static clKeyboardManager* m_mgr = nullptr;
 clKeyboardManager* clKeyboardManager::Get()
 {
-    if (NULL == m_mgr) {
+    if (nullptr == m_mgr) {
         m_mgr = new clKeyboardManager();
     }
     return m_mgr;
@@ -119,7 +119,7 @@ void clKeyboardManager::Release()
     if (m_mgr) {
         delete m_mgr;
     }
-    m_mgr = NULL;
+    m_mgr = nullptr;
 }
 
 void clKeyboardManager::DoGetFrames(wxFrame* parent, clKeyboardManager::FrameList_t& frames)

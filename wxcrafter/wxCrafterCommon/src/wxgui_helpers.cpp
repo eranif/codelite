@@ -1286,7 +1286,7 @@ void wxCrafter::WrapInIfBlock(const wxString& preprocessorCondition, wxString& c
     codeblock.Prepend(topBlock).Append(bottomBlock);
 }
 
-static wxWindow* sTopFrame = NULL;
+static wxWindow* sTopFrame = nullptr;
 wxWindow* wxCrafter::TopFrame()
 {
     if (!sTopFrame) {
@@ -1405,7 +1405,7 @@ void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
         prefix << "#undef WXC_FROM_DIP\n";
         prefix << "#endif\n";
         prefix << wxCrafter::WX31_BLOCK_START();
-        prefix << "#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)\n";
+        prefix << "#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, nullptr)\n";
         prefix << "#else\n";
         prefix << "#define WXC_FROM_DIP(x) x\n";
         prefix << "#endif\n\n";

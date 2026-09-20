@@ -143,7 +143,7 @@ void CleanRequest::Process(IManager* manager)
     }
 
     // apply environment settings
-    EnvSetter env(NULL, &om, proj->GetName(), m_info.GetConfiguration());
+    EnvSetter env(nullptr, &om, proj->GetName(), m_info.GetConfiguration());
     if (!StartProcess(cmd, IProcessCreateDefault | IProcessWrapInShell)) {
         // remove environment settings applied
         wxString message;

@@ -320,20 +320,20 @@ MainFrame::MainFrame(wxWindow* parent, IManager* manager)
     SetIcons(icons);
 
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(MainFrame::OnProjectModified), NULL, this);
+        wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(MainFrame::OnProjectModified), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED, wxCommandEventHandler(MainFrame::OnProjectSynched), NULL, this);
+        wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED, wxCommandEventHandler(MainFrame::OnProjectSynched), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(MainFrame::OnProjectLoaded), NULL, this);
+        wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(MainFrame::OnProjectLoaded), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(MainFrame::OnProjectClosed), NULL, this);
+        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(MainFrame::OnProjectClosed), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &MainFrame::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, wxCommandEventHandler(MainFrame::OnCodeLiteGotFocus), NULL, this);
+        wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, wxCommandEventHandler(MainFrame::OnCodeLiteGotFocus), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED, wxCommandEventHandler(MainFrame::OnCodeEditorSelected), NULL, this);
+        wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED, wxCommandEventHandler(MainFrame::OnCodeEditorSelected), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), NULL, this);
+        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), nullptr, this);
     EventNotifier::Get()->Connect(wxEVT_BITMAP_CODE_GENERATION_DONE,
                                   wxCommandEventHandler(MainFrame::OnBitmapCodeGenerationCompleted),
                                   nullptr,
@@ -381,20 +381,20 @@ MainFrame::MainFrame(wxWindow* parent, IManager* manager)
 MainFrame::~MainFrame()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(MainFrame::OnProjectModified), NULL, this);
+        wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(MainFrame::OnProjectModified), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED, wxCommandEventHandler(MainFrame::OnProjectSynched), NULL, this);
+        wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED, wxCommandEventHandler(MainFrame::OnProjectSynched), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(MainFrame::OnProjectLoaded), NULL, this);
+        wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(MainFrame::OnProjectLoaded), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(MainFrame::OnProjectClosed), NULL, this);
+        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(MainFrame::OnProjectClosed), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MainFrame::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, wxCommandEventHandler(MainFrame::OnCodeLiteGotFocus), NULL, this);
+        wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, wxCommandEventHandler(MainFrame::OnCodeLiteGotFocus), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED, wxCommandEventHandler(MainFrame::OnCodeEditorSelected), NULL, this);
+        wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED, wxCommandEventHandler(MainFrame::OnCodeEditorSelected), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), NULL, this);
+        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(MainFrame::OnPageClosing), nullptr, this);
     EventNotifier::Get()->Disconnect(wxEVT_BITMAP_CODE_GENERATION_DONE,
                                      wxCommandEventHandler(MainFrame::OnBitmapCodeGenerationCompleted),
                                      nullptr,
@@ -709,7 +709,7 @@ wxTextCtrl* MainFrame::GetActiveTextCtrl()
     if (focusWin) {
         return dynamic_cast<wxTextCtrl*>(focusWin);
     }
-    return NULL;
+    return nullptr;
 }
 void MainFrame::OnImportFB(wxCommandEvent&)
 {
@@ -943,7 +943,7 @@ wxStyledTextCtrl* MainFrame::GetActiveSTC()
     if (focusWin) {
         return dynamic_cast<wxStyledTextCtrl*>(focusWin);
     }
-    return NULL;
+    return nullptr;
 }
 
 void MainFrame::OnGenerateCode(wxCommandEvent& event)
@@ -986,7 +986,7 @@ void MainFrame::OnCodeEditorSelected(wxCommandEvent& e)
         // if the dialog was show, close it
         if (m_findReplaceDialog) {
             m_findReplaceDialog->Destroy();
-            m_findReplaceDialog = NULL;
+            m_findReplaceDialog = nullptr;
             needToDisplayAgain = true;
         }
 
@@ -1097,7 +1097,7 @@ bool MainFrame::DoFindText(wxStyledTextCtrl* stc, const wxFindReplaceData& frd, 
 void MainFrame::OnFindUI(wxUpdateUIEvent& event)
 {
     wxStyledTextCtrl* stc = m_wxcView->GetPreviewEditor();
-    event.Enable(stc != NULL);
+    event.Enable(stc != nullptr);
 }
 
 void MainFrame::OnBatchGenerateCode(wxCommandEvent& event)

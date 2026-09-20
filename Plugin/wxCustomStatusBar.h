@@ -415,7 +415,7 @@ public:
 
     /**
      * @brief return pointer to the field at given index
-     * if index is out of bounds, return NULL
+     * if index is out of bounds, return nullptr
      */
     wxCustomStatusBarField::Ptr_t GetField(size_t index);
 

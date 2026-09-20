@@ -26,7 +26,7 @@ void func_consumeFuncArgList();
 int cl_func_parse();
 void cl_func_error(char *string);
 
-static FunctionList *g_funcs = NULL;
+static FunctionList *g_funcs = nullptr;
 static clFunction curr_func;
 
 //---------------------------------------------
@@ -413,7 +413,7 @@ void get_functions(const std::string &in, FunctionList &li, const std::map<std::
 
 	//call tghe main parsing routine
 	cl_func_parse();
-	g_funcs = NULL;
+	g_funcs = nullptr;
 
 	//do the lexer cleanup
 	cl_scope_lex_clean();

@@ -113,5 +113,5 @@ RibbonPageWrapper* RibbonBarWrapper::GetSelection() const
             return p;
         }
     }
-    return NULL;
+    return nullptr;
 }

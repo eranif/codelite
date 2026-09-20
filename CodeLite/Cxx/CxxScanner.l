@@ -432,7 +432,7 @@ void* LexerNew(const wxString& content, size_t options )
     CppLexerUserData *userData = new CppLexerUserData(options);
 
     // keep the file pointer (and make sure we close it at the end)
-    userData->SetCurrentPF(NULL);
+    userData->SetCurrentPF(nullptr);
     yyg->yyextra_r = userData;
 
     wxCharBuffer cb = content.mb_str(wxConvUTF8);
@@ -451,7 +451,7 @@ void* LexerNew(const wxFileName& filename, size_t options )
 
     FILE* fp = ::fopen(fn.GetFullPath().mb_str(wxConvUTF8).data(), "rb");
     if(!fp) {
-        return NULL;
+        return nullptr;
     }
     yyscan_t scanner;
     yylex_init(&scanner);
@@ -475,7 +475,7 @@ void LexerDestroy(void** scanner)
     yy_delete_buffer(YY_CURRENT_BUFFER, *scanner);
 
     yylex_destroy(*scanner);
-    *scanner = NULL;
+    *scanner = nullptr;
 }
 
 void LexerUnget(void* scanner)
@@ -519,7 +519,7 @@ bool LexerNext(void* scanner, CxxLexerToken& token)
         }
 
     } else {
-        token.SetText(NULL);
+        token.SetText(nullptr);
         token.SetLineNumber(0);
         token.SetColumn(0);
     }

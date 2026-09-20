@@ -78,7 +78,7 @@
     return
 #define CHECK_JS_RETURN_NULL() \
     if (IsJavaScript())        \
-    return NULL
+    return nullptr
 
 static bool IsSource(const wxString& ext)
 {
@@ -121,7 +121,7 @@ static const TagEntryPtr* GetLastFunctionTagEntry(const std::vector<TagEntryPtr>
 
 #define VALIDATE_WORKSPACE_NULL()     \
     if (!IS_CXX_WORKSPACE_OPENED()) { \
-        return NULL;                  \
+        return nullptr;               \
     }
 
 struct SFileSort {
@@ -161,7 +161,7 @@ ContextCpp::ContextCpp(clEditor* container)
     Initialize();
     SetName("c++");
     EventNotifier::Get()->Connect(
-        wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
+        wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclarationFound, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
 }
@@ -170,7 +170,7 @@ ContextCpp::ContextCpp()
     : ContextBase("c++")
 {
     EventNotifier::Get()->Connect(
-        wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
+        wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclarationFound, this);
 }
@@ -178,7 +178,7 @@ ContextCpp::ContextCpp()
 ContextCpp::~ContextCpp()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
+        wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), nullptr, this);
 }
 
 std::shared_ptr<ContextBase> ContextCpp::NewInstance(clEditor* container)
@@ -1909,7 +1909,7 @@ void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
 
 wxMenu* ContextCpp::GetMenu()
 {
-    wxMenu* menu = NULL;
+    wxMenu* menu = nullptr;
     if (!IsJavaScript()) {
         // load the context menu from the resource manager
         menu = clXmlResource::Get().LoadMenu("editor_right_click");

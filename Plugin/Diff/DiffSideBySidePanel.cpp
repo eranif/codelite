@@ -158,7 +158,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
         m_splitter->SplitHorizontally(m_splitterPageLeft, m_splitterPageRight);
     }
     EventNotifier::Get()->Connect(
-        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
+        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), nullptr, this);
 
     Connect(ID_COPY_LEFT_TO_RIGHT,
             wxEVT_COMMAND_MENU_SELECTED,
@@ -199,7 +199,7 @@ DiffSideBySidePanel::~DiffSideBySidePanel()
     wxFileName::Rmdir(tpath, wxPATH_RMDIR_RECURSIVE);
 
     EventNotifier::Get()->Disconnect(
-        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
+        wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), nullptr, this);
 }
 
 void DiffSideBySidePanel::Diff()

@@ -95,7 +95,7 @@ public:
     void Stop()
     {
         if (IsAlive()) {
-            Delete(NULL, wxTHREAD_WAIT_BLOCK);
+            Delete(nullptr, wxTHREAD_WAIT_BLOCK);
 
         } else {
             Wait(wxTHREAD_WAIT_BLOCK);

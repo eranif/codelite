@@ -36,7 +36,7 @@
 SFTPWorkerThread* SFTPWorkerThread::ms_instance = nullptr;
 
 SFTPWorkerThread::SFTPWorkerThread()
-    : m_sftp(NULL)
+    : m_sftp(nullptr)
     , m_plugin(nullptr)
 {
 }

@@ -42,7 +42,7 @@ void clZipReader::Extract(const wxString& filename, const wxString& directory)
     if (!m_zip) {
         return;
     }
-    wxZipEntry* entry(NULL);
+    wxZipEntry* entry(nullptr);
     entry = m_zip->GetNextEntry();
     while (entry) {
         if (::wxMatchWild(filename, entry->GetName())) {
@@ -59,7 +59,7 @@ void clZipReader::ExtractAll(const wxString& directory)
         return;
     }
 
-    wxZipEntry* entry(NULL);
+    wxZipEntry* entry(nullptr);
     wxString basedir = directory;
     if (basedir.IsEmpty()) {
         basedir = ".";
@@ -105,7 +105,7 @@ void clZipReader::ExtractAll(std::unordered_map<wxString, Entry>& buffers)
     if (!m_zip) {
         return;
     }
-    wxZipEntry* entry(NULL);
+    wxZipEntry* entry(nullptr);
 
     entry = m_zip->GetNextEntry();
     while (entry) {

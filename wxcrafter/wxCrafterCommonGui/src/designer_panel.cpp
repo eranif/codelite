@@ -59,7 +59,7 @@ class HiddenFrame : public wxFrame
 {
 public:
     HiddenFrame()
-        : wxFrame(NULL, wxID_ANY, wxT(""))
+        : wxFrame(nullptr, wxID_ANY, wxT(""))
     {
         Hide();
     }
@@ -87,10 +87,10 @@ END_EVENT_TABLE()
 DesignerPanel::DesignerPanel(wxWindow* parent, wxWindowID id, const wxPoint& position, const wxSize& size, long style)
     : wxScrolledWindow(parent, wxID_ANY, position, size, style)
     , m_constructing(true)
-    , m_hintedWin(NULL)
-    , m_parentWin(NULL)
-    , m_hintedSizeritem(NULL)
-    , m_hintedContainer(NULL)
+    , m_hintedWin(nullptr)
+    , m_parentWin(nullptr)
+    , m_hintedSizeritem(nullptr)
+    , m_hintedContainer(nullptr)
 {
     this->SetScrollRate(5, 5);
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
@@ -107,26 +107,26 @@ DesignerPanel::DesignerPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos
     }
     SetBackgroundColour(bgColour);
     EventNotifier::Get()->Connect(
-        wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(DesignerPanel::OnUpdatePreview), NULL, this);
+        wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(DesignerPanel::OnUpdatePreview), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(DesignerPanel::OnClearPreview), NULL, this);
+        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(DesignerPanel::OnClearPreview), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_WXGUI_PROJECT_LOADED, wxCommandEventHandler(DesignerPanel::OnLoadPreview), NULL, this);
+        wxEVT_WXGUI_PROJECT_LOADED, wxCommandEventHandler(DesignerPanel::OnLoadPreview), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(DesignerPanel::OnHighlightControl), NULL, this);
+        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(DesignerPanel::OnHighlightControl), nullptr, this);
     GetSizer()->Layout();
 }
 
 DesignerPanel::~DesignerPanel()
 {
     EventNotifier::Get()->Disconnect(
-        wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(DesignerPanel::OnUpdatePreview), NULL, this);
+        wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(DesignerPanel::OnUpdatePreview), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(DesignerPanel::OnClearPreview), NULL, this);
+        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(DesignerPanel::OnClearPreview), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_WXGUI_PROJECT_LOADED, wxCommandEventHandler(DesignerPanel::OnLoadPreview), NULL, this);
+        wxEVT_WXGUI_PROJECT_LOADED, wxCommandEventHandler(DesignerPanel::OnLoadPreview), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(DesignerPanel::OnHighlightControl), NULL, this);
+        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(DesignerPanel::OnHighlightControl), nullptr, this);
 }
 
 void DesignerPanel::OnUpdatePreview(wxCommandEvent& e)
@@ -282,16 +282,16 @@ void DesignerPanel::RecurseConnectEvents(wxWindow* pclComponent)
         name.Trim();
         m_windows.insert(std::make_pair(name, pclComponent));
         pclComponent->Connect(
-            wxID_ANY, wxEVT_LEFT_DOWN, wxMouseEventHandler(DesignerPanel::OnMouseLeftDown), (wxObject*)NULL, this);
+            wxID_ANY, wxEVT_LEFT_DOWN, wxMouseEventHandler(DesignerPanel::OnMouseLeftDown), (wxObject*)nullptr, this);
 
         pclComponent->Connect(
-            wxID_ANY, wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerPanel::OnMouseLeftDown), (wxObject*)NULL, this);
+            wxID_ANY, wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerPanel::OnMouseLeftDown), (wxObject*)nullptr, this);
 
         pclComponent->Connect(
-            wxID_ANY, wxEVT_SET_FOCUS, wxFocusEventHandler(DesignerPanel::OnControlFocus), (wxObject*)NULL, this);
+            wxID_ANY, wxEVT_SET_FOCUS, wxFocusEventHandler(DesignerPanel::OnControlFocus), (wxObject*)nullptr, this);
         // Now, for container windows e.g. panels, grab the opportunity to identify all contained sizers/spacers
         StoreSizersRecursively(pclComponent->GetSizer(),
-                               pclComponent); // For non-containers this will harmlessly pass NULL
+                               pclComponent); // For non-containers this will harmlessly pass nullptr
 
         wxWindowList::compatibility_iterator pclNode = pclComponent->GetChildren().GetFirst();
         while (pclNode) {
@@ -307,13 +307,13 @@ void DesignerPanel::RecurseDisconnectEvents(wxWindow* pclComponent)
 {
     if (pclComponent) {
         pclComponent->Disconnect(
-            wxID_ANY, wxEVT_LEFT_DOWN, wxMouseEventHandler(DesignerPanel::OnMouseLeftDown), (wxObject*)NULL, this);
+            wxID_ANY, wxEVT_LEFT_DOWN, wxMouseEventHandler(DesignerPanel::OnMouseLeftDown), (wxObject*)nullptr, this);
 
         pclComponent->Disconnect(
-            wxID_ANY, wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerPanel::OnMouseLeftDown), (wxObject*)NULL, this);
+            wxID_ANY, wxEVT_RIGHT_DOWN, wxMouseEventHandler(DesignerPanel::OnMouseLeftDown), (wxObject*)nullptr, this);
 
         pclComponent->Disconnect(
-            wxID_ANY, wxEVT_SET_FOCUS, wxFocusEventHandler(DesignerPanel::OnControlFocus), (wxObject*)NULL, this);
+            wxID_ANY, wxEVT_SET_FOCUS, wxFocusEventHandler(DesignerPanel::OnControlFocus), (wxObject*)nullptr, this);
         wxWindowList::compatibility_iterator pclNode = pclComponent->GetChildren().GetFirst();
         while (pclNode) {
             wxWindow* pclChild = pclNode->GetData();
@@ -395,7 +395,7 @@ void DesignerPanel::DoMarkSizeritem(wxSizerItem* szitem, wxWindow* container)
 
 void DesignerPanel::DoDrawSurroundingMarker(wxWindow* win)
 {
-    // NULL provided, remark the current selection
+    // nullptr provided, remark the current selection
     if (!win && m_parentWin && m_hintedWin) {
         wxClientDC dc(m_parentWin);
         dc.SetPen(*wxRED_PEN);
@@ -425,7 +425,7 @@ void DesignerPanel::DoDrawSurroundingMarker(wxWindow* win)
     }
 }
 
-void DesignerPanel::MarkOutline(wxDC& dc, wxRect* rect /*=NULL*/) const
+void DesignerPanel::MarkOutline(wxDC& dc, wxRect* rect /*=nullptr*/) const
 {
     wxRect rr;
     if (!rect) {
@@ -542,10 +542,10 @@ void DesignerPanel::DoClear()
     GetSizer()->Add(m_mainPanel, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
     m_xrcLoaded.Clear();
-    m_hintedWin = NULL;
-    m_parentWin = NULL;
-    m_hintedSizeritem = NULL;
-    m_hintedContainer = NULL;
+    m_hintedWin = nullptr;
+    m_parentWin = nullptr;
+    m_hintedSizeritem = nullptr;
+    m_hintedContainer = nullptr;
     m_windows.clear();
 }
 
@@ -610,7 +610,7 @@ void DesignerPanel::DoLoadXRC(int topLeveWinType)
 {
     m_windows.clear();
     m_sizeritems.clear();
-    wxPanel* panel = NULL;
+    wxPanel* panel = nullptr;
     wxString caption;
     wxString styleString;
     wxString bmpIcon;

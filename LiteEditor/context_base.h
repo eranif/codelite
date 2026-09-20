@@ -134,7 +134,7 @@ public:
     virtual bool IsAtLineComment() const { return false; }
     virtual void AutoIndent(const wxChar&);
     virtual void AutoAddComment();
-    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) { return NULL; }
+    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) { return nullptr; }
     virtual void SemicolonShift() {}
     virtual int DoGetCalltipParameterIndex();
 

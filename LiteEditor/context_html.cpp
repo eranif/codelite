@@ -199,7 +199,7 @@ int ContextHtml::DoGetCalltipParameterIndex() { return ContextBase::DoGetCalltip
 
 wxMenu* ContextHtml::GetMenu() { return ContextBase::GetMenu(); }
 
-TagEntryPtr ContextHtml::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
+TagEntryPtr ContextHtml::GetTagAtCaret(bool scoped, bool impl) { return nullptr; }
 
 bool ContextHtml::IsCommentOrString(long pos)
 {

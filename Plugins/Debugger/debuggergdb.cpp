@@ -54,8 +54,8 @@
 // On Windows lower than XP, the function DebugBreakProcess does not exist
 // so we need to bind it dynamically
 using DBG_BREAK_PROC_FUNC_PTR = BOOL(WINAPI*)(HANDLE);
-DBG_BREAK_PROC_FUNC_PTR DebugBreakProcessFunc = NULL;
-HINSTANCE Kernel32Dll = NULL;
+DBG_BREAK_PROC_FUNC_PTR DebugBreakProcessFunc = nullptr;
+HINSTANCE Kernel32Dll = nullptr;
 
 // define a dummy control handler
 static BOOL CtrlHandler(DWORD fdwCtrlType)
@@ -190,7 +190,7 @@ DbgGdb::DbgGdb()
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &DbgGdb::OnDataRead, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &DbgGdb::OnProcessEnd, this);
-    EventNotifier::Get()->Connect(wxEVT_GDB_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_GDB_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), nullptr, this);
 }
 
 DbgGdb::~DbgGdb()
@@ -198,10 +198,10 @@ DbgGdb::~DbgGdb()
 #ifdef __WXMSW__
     if (Kernel32Dll) {
         FreeLibrary(Kernel32Dll);
-        Kernel32Dll = NULL;
+        Kernel32Dll = nullptr;
     }
 #endif
-    EventNotifier::Get()->Disconnect(wxEVT_GDB_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_GDB_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), nullptr, this);
 }
 
 void DbgGdb::RegisterHandler(const wxString& id, DbgCmdHandler* cmd) { m_handlers[id] = cmd; }
@@ -275,7 +275,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
 
     } else {
         // set the environment variables
-        EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
+        EnvSetter env(m_env, nullptr, m_debuggeeProjectName, wxEmptyString);
 
         wxString dbgExeName;
         if (!DoLocateGdbExecutable(si.debuggerPath, dbgExeName, si)) {
@@ -1565,7 +1565,7 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
 bool DbgGdb::Attach(const DebugSessionInfo& si, clEnvList_t* env_list)
 {
     // set the environment variables
-    EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
+    EnvSetter env(m_env, nullptr, m_debuggeeProjectName, wxEmptyString);
 
     wxString dbgExeName;
     if (!DoLocateGdbExecutable(si.debuggerPath, dbgExeName, si)) {

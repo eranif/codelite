@@ -494,8 +494,8 @@ wxString FileUtils::RealPath(const wxString& filepath, bool forced)
             return filepath;
         }
 #endif
-        char* buf = realpath(filepath.mb_str(wxConvUTF8), NULL);
-        if (buf != NULL) {
+        char* buf = realpath(filepath.mb_str(wxConvUTF8), nullptr);
+        if (buf != nullptr) {
             wxString result(buf, wxConvUTF8);
             free(buf);
             return result;
@@ -940,7 +940,7 @@ bool FileUtils::MakeRelativeIfSensible(wxFileName& fn, const wxString& reference
         char buf[4096];
         int len = readlink(fn.GetFullPath().mb_str(wxConvUTF8), buf, WXSIZEOF(buf) - sizeof(char));
         if (len != -1) {
-            buf[len] = '\0'; // readlink() doesn't NULL-terminate the buffer
+            buf[len] = '\0'; // readlink() doesn't nullptr-terminate the buffer
             fn.Assign(wxString(buf, wxConvUTF8, len));
         }
     }

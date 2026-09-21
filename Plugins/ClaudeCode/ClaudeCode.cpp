@@ -7,10 +7,6 @@
 #include "globals.h"
 #include "open_resource_dialog.h"
 
-#if USE_SFTP
-#include "clSFTPManager.hpp"
-#endif
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new ClaudeCode(manager); }
 

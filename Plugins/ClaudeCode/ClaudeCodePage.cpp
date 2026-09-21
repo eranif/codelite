@@ -1,10 +1,13 @@
 #include "ClaudeCodePage.hpp"
 
 #include "ColoursAndFontsManager.h"
-#include "clSFTPManager.hpp"
 #include "globals.h"
 #include "open_resource_dialog.h"
 #include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
+
+#if USE_SFTP
+#include "clSFTPManager.hpp"
+#endif
 
 #include <wx/sizer.h>
 

@@ -57,7 +57,7 @@ public:
         : m_pane(pane)
     {
     }
-    virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data)
+    bool OnDropText(wxCoord x, wxCoord y, const wxString& data) override
     {
         static wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}\\{(.*?)\\}", wxRE_ADVANCED);
         if (re.Matches(data)) {

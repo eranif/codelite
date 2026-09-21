@@ -28,8 +28,8 @@ public:
         }
     }
 
-    virtual ~MyProcess() { m_parent = nullptr; }
-    void OnTerminate(int pid, int status)
+    ~MyProcess() override { m_parent = nullptr; }
+    void OnTerminate(int pid, int status) override
     {
         if (m_parent) {
             clCommandEvent terminateEvent(wxEVT_TERMINAL_COMMAND_EXIT);

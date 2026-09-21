@@ -33,9 +33,9 @@ public:
         , m_wantStderr(false)
     {
     }
-    virtual ~clSSHChannelReader() = default;
+    ~clSSHChannelReader() override = default;
 
-    void* Entry()
+    void* Entry() override
     {
         while (!TestDestroy()) {
             // Poll the channel for output

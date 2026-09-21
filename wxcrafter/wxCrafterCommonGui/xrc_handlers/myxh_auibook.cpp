@@ -31,7 +31,7 @@ public:
         m_sz = size;
     }
 
-    virtual ~MyAuiBook() = default;
+    ~MyAuiBook() override = default;
     void Resize() { SetSizeHints(m_sz); }
 };
 

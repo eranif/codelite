@@ -39,8 +39,8 @@ public:
     {
     }
 
-    virtual ~PHPProjectSyncThread() = default;
-    void* Entry()
+    ~PHPProjectSyncThread() override = default;
+    void* Entry() override
     {
         clDEBUG() << "Scanning files for project:" << m_projectData.projectName << "..." << clEndl;
 

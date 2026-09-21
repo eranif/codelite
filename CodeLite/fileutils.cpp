@@ -178,7 +178,7 @@ bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMB
 {
     wxFFile fp(fn.GetFullPath(), "rb");
     if (!fp.IsOpened()) {
-        clERROR() << "failed to open file:" << fn << "for read-binary" << endl;
+        clDEBUG() << "failed to open file:" << fn << "for read-binary" << endl;
         return false;
     }
 
@@ -189,7 +189,7 @@ bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMB
 
     if (fp.Length() > (100 << 20)) {
         // File is too big
-        clERROR() << "input file:" << fn << "exceeds the maximum file size of:" << (100 << 20) << "bytes" << endl;
+        clWARNING() << "input file:" << fn << "exceeds the maximum file size of:" << (100 << 20) << "bytes" << endl;
         return false;
     }
 

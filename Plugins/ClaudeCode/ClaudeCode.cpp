@@ -93,10 +93,12 @@ void ClaudeCode::ShowClaudeTerminal()
     }
 
     std::optional<wxString> claude_exec{std::nullopt};
-    if (workspace->IsRemote())
+    std::optional<SSHAccountInfo> sshAccount{std::nullopt};
+    if (workspace->IsRemote()) {
         // On remote machines, always use the claude executable defined by the PATH
         claude_exec = "claude";
-    else {
+        sshAccount = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
+    } else {
         // On local executions, use the configured claude executable first if one is not set, locate using
         // the environment variables.
         auto configured_claude_exec = clConfig::Get().Read(kClaudeCodeExecutable, wxString{});
@@ -112,17 +114,11 @@ void ClaudeCode::ShowClaudeTerminal()
     }
 
     // Define the working directory & the ssh account (if a remote workspace)
-    std::optional<SSHAccountInfo> sshAccount{std::nullopt};
     m_claudeCodePage = new ClaudeCodePage(clGetManager()->GetMainNotebook(), sshAccount);
     clGetManager()->GetMainNotebook()->AddPage(m_claudeCodePage, _("Claude Code"), true);
     CHECK_PTR_RET(m_claudeCodePage);
 
-    wxString workdingDirectory;
-    workdingDirectory = workspace->GetDir();
-    if (workspace->IsRemote()) {
-        sshAccount = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
-    }
-    m_claudeCodePage->StartClaudeCode(*claude_exec, workdingDirectory);
+    m_claudeCodePage->StartClaudeCode(*claude_exec, workspace->GetDir());
 }
 
 void ClaudeCode::OnPageClosing(wxNotifyEvent& event)

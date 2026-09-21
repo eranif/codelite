@@ -15,16 +15,16 @@ protected:
     
 public:
     MainApp();
-    virtual ~MainApp();
+    ~MainApp() override;
     
     /**
      * @brief intialize the application
      */
-    virtual bool OnInit();
+    bool OnInit() override;
     /**
      * @brief perform cleanup before exiting
      */
-    virtual int OnExit();
+    int OnExit() override;
 };
 
 DECLARE_APP(MainApp)

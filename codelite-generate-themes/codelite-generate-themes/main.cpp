@@ -78,9 +78,9 @@ class MainApp : public wxApp
 {
 public:
     MainApp() = default;
-    virtual ~MainApp() = default;
+    ~MainApp() override = default;
 
-    virtual bool OnInit()
+    bool OnInit() override
     {
 
 #ifdef __WXMSW__

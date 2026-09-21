@@ -192,7 +192,7 @@ public:
      * @brief do the actual drop action
      * we support both text and file names
      */
-    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult defaultDragResult)
+    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult defaultDragResult) override
     {
         if (!GetData()) {
             return wxDragError;
@@ -298,8 +298,8 @@ public:
         }
     }
 
-    bool OnDrop(wxCoord x, wxCoord y) { return true; }
-    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult) { return m_stc->DoDragOver(x, y, defResult); }
+    bool OnDrop(wxCoord x, wxCoord y) override { return true; }
+    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult) override { return m_stc->DoDragOver(x, y, defResult); }
 };
 
 bool IsWordChar(const wxChar& ch)

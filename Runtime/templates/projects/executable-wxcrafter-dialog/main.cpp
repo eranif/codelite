@@ -8,9 +8,9 @@ class MainApp : public wxApp
 {
 public:
     MainApp() = default;
-    virtual ~MainApp() = default;
+    ~MainApp() override = default;
 
-    virtual bool OnInit()
+    bool OnInit() override
     {
         // Add the common image handlers
         wxImage::AddHandler(new wxPNGHandler);

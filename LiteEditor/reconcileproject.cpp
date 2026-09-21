@@ -75,7 +75,7 @@ public:
         , m_virtualFolder(vd)
     {
     }
-    virtual ~ReconcileFileItemData() = default;
+    ~ReconcileFileItemData() override = default;
     void SetFilename(const wxString& filename) { this->m_filename = filename; }
     void SetVirtualFolder(const wxString& virtualFolder) { this->m_virtualFolder = virtualFolder; }
     const wxString& GetFilename() const { return m_filename; }

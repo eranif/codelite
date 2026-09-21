@@ -43,7 +43,7 @@ public:
     ~PHPDocVisitor() override = default;
 
 public:
-    virtual void OnEntity(PHPEntityBase::Ptr_t entity);
+    void OnEntity(PHPEntityBase::Ptr_t entity) override;
 };
 
 #endif // PHPDOCVISITOR_H

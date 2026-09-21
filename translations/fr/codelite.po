@@ -9943,7 +9943,7 @@ msgstr "'XDebug' ne s'est pas connecté en temps voulu"
 #: build-release/Plugin/VirtualDirectorySelectorBase.cpp:62
 #: build-release/Plugins/Subversion2/subversion2_ui.cpp:794
 msgid "OK"
-msgstr "VU"
+msgstr "OK"
 
 #: Plugins/codelitephp/php-plugin/XDebugManager.cpp:733
 msgid "Run XDebug Test"
@@ -14504,7 +14504,7 @@ msgstr "Par défaut, les onglets de ce groupe seront ajoutés aux onglets actuel
 #: build-release/Plugin/renamefilebasedlg.cpp:110
 #: build-release/Plugins/CallGraph/uisettings.cpp:178
 msgid "&Ok"
-msgstr "&Vu"
+msgstr "&Ok"
 
 #: build-release/LiteEditor/tabgroupbasedlgs.cpp:128
 msgid "Select which tabs you want to be in the group"
@@ -15433,7 +15433,7 @@ msgstr "Activer l'achèvement du serveur de langages"
 
 #: build-release/Plugin/lsp_UI.cpp:69
 msgid "Scan..."
-msgstr "Scranner..."
+msgstr "Scanner..."
 
 #: build-release/Plugin/lsp_UI.cpp:70
 msgid "Scan for installed Language Servers"

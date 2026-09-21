@@ -40,7 +40,9 @@ void TextDocumentIdentifier::FromJSON(const JSONItem& json)
 }
 
 nlohmann::json TextDocumentIdentifier::ToJSON() const
-{ return nlohmann::json{{"uri", GetPathAsURI().ToStdString(wxConvUTF8)}}; }
+{
+    return nlohmann::json{{"uri", GetPathAsURI().ToStdString(wxConvUTF8)}};
+}
 
 //===----------------------------------------------------------------------------------
 // VersionedTextDocumentIdentifier
@@ -140,7 +142,9 @@ void TextEdit::FromJSON(const JSONItem& json)
 }
 
 nlohmann::json TextEdit::ToJSON() const
-{ return nlohmann::json{{"newText", m_newText.ToStdString(wxConvUTF8)}, {"range", m_range.ToJSON()}}; }
+{
+    return nlohmann::json{{"newText", m_newText.ToStdString(wxConvUTF8)}, {"range", m_range.ToJSON()}};
+}
 
 void ParameterInformation::FromJSON(const JSONItem& json)
 {
@@ -221,7 +225,9 @@ void MarkupContent::FromJSON(const JSONItem& json)
 }
 
 nlohmann::json MarkupContent::ToJSON() const
-{ return nlohmann::json{{"kind", m_kind.ToStdString(wxConvUTF8)}, {"value", m_value.ToStdString(wxConvUTF8)}}; }
+{
+    return nlohmann::json{{"kind", m_kind.ToStdString(wxConvUTF8)}, {"value", m_value.ToStdString(wxConvUTF8)}};
+}
 
 void Hover::FromJSON(const JSONItem& json)
 {
@@ -230,7 +236,9 @@ void Hover::FromJSON(const JSONItem& json)
 }
 
 nlohmann::json Hover::ToJSON() const
-{ return nlohmann::json{{"contents", m_contents.ToJSON()}, {"range", m_range.ToJSON()}}; }
+{
+    return nlohmann::json{{"contents", m_contents.ToJSON()}, {"range", m_range.ToJSON()}};
+}
 
 ///===------------------------------------------------------------------------
 /// Diagnostic

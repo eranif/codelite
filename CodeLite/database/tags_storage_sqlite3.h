@@ -113,10 +113,7 @@ class WXDLLIMPEXP_CL clSqliteDB : public wxSQLite3Database
     std::unordered_map<wxString, wxSQLite3Statement> m_statements;
 
 public:
-    clSqliteDB()
-        : wxSQLite3Database()
-    {
-    }
+    clSqliteDB() {}
 
     void Close()
     {

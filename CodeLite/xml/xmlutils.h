@@ -25,11 +25,11 @@
 #ifndef XMLUTILS_H
 #define XMLUTILS_H
 
+#include "clXmlDocument.hpp"
 #include "codelite_exports.h"
 #include "serialized_object.h"
 
 #include <wx/xml/xml.h>
-#include "clXmlDocument.hpp"
 
 /// A collection of XML utils
 class WXDLLIMPEXP_CL XmlUtils

@@ -270,7 +270,7 @@ public:
      * @param str The input string to convert
      * @return A new string with all characters converted to lowercase
      */
-    static inline std::string Lowercase(const std::string& str)
+    static std::string Lowercase(const std::string& str)
     {
         std::string result = str;
         std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c) { return std::tolower(c); });
@@ -281,7 +281,7 @@ public:
      * Converts a string to lowercase in-place.
      * @param str The string to convert (modified in-place)
      */
-    static inline void LowercaseInPlace(std::string& str)
+    static void LowercaseInPlace(std::string& str)
     {
         std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
     }

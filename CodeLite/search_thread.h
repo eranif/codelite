@@ -84,7 +84,7 @@ private:
         if (set) {
             m_flags |= option;
         } else {
-            m_flags &= ~(option);
+            m_flags &= ~option;
         }
     }
 

@@ -52,7 +52,7 @@ struct WXDLLIMPEXP_CL clFileFinderMatch {
     {
     }
 
-    inline OrderedJSON ToJson() const
+    OrderedJSON ToJson() const
     {
         return {{"line", line}, {"column", col}, {"text", matched_line.ToStdString(wxConvUTF8)}};
     }

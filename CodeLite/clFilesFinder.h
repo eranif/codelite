@@ -49,7 +49,7 @@ struct WXDLLIMPEXP_CL clFilesFinderMatch {
     {
     }
 
-    inline OrderedJSON ToJson() const
+    OrderedJSON ToJson() const
     {
         OrderedJSON j = OrderedJSON::object();
         j["filepath"] = m_filepath.ToStdString(wxConvUTF8);

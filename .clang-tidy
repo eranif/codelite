@@ -1,0 +1,2 @@
+---
+Checks: modernize-use-override,modernize-use-nullptr,readability-redundant-*,-readability-redundant-access-specifiers

@@ -299,7 +299,10 @@ public:
     }
 
     bool OnDrop(wxCoord x, wxCoord y) override { return true; }
-    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult) override { return m_stc->DoDragOver(x, y, defResult); }
+    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult) override
+    {
+        return m_stc->DoDragOver(x, y, defResult);
+    }
 };
 
 bool IsWordChar(const wxChar& ch)
@@ -4898,8 +4901,11 @@ wxMenu* clEditor::DoCreateDebuggerWatchMenu(const wxString& word)
                      << wxT("'");
         item = new wxMenuItem(menu, wxNewId(), menuItemText);
         menu->Prepend(item);
-        Connect(
-            item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clEditor::OnDbgCustomWatch), nullptr, this);
+        Connect(item->GetId(),
+                wxEVT_COMMAND_MENU_SELECTED,
+                wxCommandEventHandler(clEditor::OnDbgCustomWatch),
+                nullptr,
+                this);
         m_customCmds[item->GetId()] = cmd.GetCommand();
     }
 
@@ -6248,6 +6254,8 @@ void clEditor::OnActiveEditorChanged(wxCommandEvent& event)
     event.Skip();
     m_lastIdlePosition = wxNOT_FOUND; // reset the idle position
     IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
     if (editor->GetCtrl() != this) {
         return;
     }

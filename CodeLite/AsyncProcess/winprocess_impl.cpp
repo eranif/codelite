@@ -395,12 +395,12 @@ IProcess* WinProcessImpl::Execute(
     {
         ret = CreateProcess(nullptr,
                             cmd.wchar_str(),   // shell line execution command
-                            nullptr,              // process security attributes
-                            nullptr,              // primary thread security attributes
+                            nullptr,           // process security attributes
+                            nullptr,           // primary thread security attributes
                             TRUE,              // handles are inherited
                             creationFlags,     // creation flags
-                            nullptr,              // use parent's environment
-                            nullptr,              // CD to tmp dir
+                            nullptr,           // use parent's environment
+                            nullptr,           // CD to tmp dir
                             &siStartInfo,      // STARTUPINFO pointer
                             &prc->piProcInfo); // receives PROCESS_INFORMATION
     }

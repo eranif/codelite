@@ -36,10 +36,10 @@
 struct WXDLLIMPEXP_CL PPToken {
     enum { IsFunctionLike = 0x00000001, IsValid = 0x00000002, IsOverridable = 0x00000004 };
 
-    int line = 0;         // line where found
-    wxString name;        // preprocessor name
-    wxString replacement; // un processed replacement
-    wxArrayString args;   // for function like macros, contains the argument's names
+    int line = 0;                 // line where found
+    wxString name;                // preprocessor name
+    wxString replacement;         // un processed replacement
+    wxArrayString args;           // for function like macros, contains the argument's names
     size_t flags = IsOverridable; // PP token flags
     wxString fileName;
 

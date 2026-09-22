@@ -1,10 +1,10 @@
 #include "SemanticTokensRequest.hpp"
 
+#include "BlockTimer.hpp"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "file_logger.h"
 #include "json_rpc_params.h"
-#include "BlockTimer.hpp"
 
 #include <vector>
 
@@ -16,7 +16,8 @@ LSP::SemanticTokensRequest::SemanticTokensRequest(const wxString& filename)
     m_params->As<SemanticTokensParams>()->SetTextDocument(filename);
 }
 
-std::optional<LSPEvent> LSP::SemanticTokensRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::SemanticTokensRequest::OnResponse(const LSP::ResponseMessage& response,
+                                                               wxEvtHandler* owner)
 {
     __PERF_IF_ENABLED(BlockTimer timer{"SemanticTokensRequest->OnResponse"})
     // build set of classes, locals so we can colour them

@@ -36,7 +36,7 @@ public:
         std::optional<int> end_line{std::nullopt};
         wxString signature;
 
-        inline wxString to_string() const
+        wxString to_string() const
         {
             wxString s;
             s << name << signature << ". Line:" << line << ", EndLine:" << end_line.value_or(-1);
@@ -136,7 +136,7 @@ public:
          * otherwise it is inferred from the next symbol in the list.
          */
         std::optional<int> end_line{std::nullopt};
-        inline wxString to_string() const { return symbol.to_string(); }
+        wxString to_string() const { return symbol.to_string(); }
     };
 
     /**

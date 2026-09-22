@@ -81,8 +81,7 @@ TagsManager* TagsManagerST::Get()
 //------------------------------------------------------------------------------
 
 TagsManager::TagsManager()
-    : wxEvtHandler()
-    , m_lang(nullptr)
+    : m_lang(nullptr)
 {
     m_db = std::make_shared<TagsStorageSQLite>();
     m_db->SetSingleSearchLimit(MAX_SEARCH_LIMIT);

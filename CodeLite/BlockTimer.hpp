@@ -72,7 +72,7 @@ public:
         wxString message;
         size_t level{0};
 
-        inline wxString to_string() const
+        wxString to_string() const
         {
             wxString as_str;
             as_str.reserve(256);

@@ -39,7 +39,6 @@
 // Tags database class implementation
 //-------------------------------------------------
 TagsStorageSQLite::TagsStorageSQLite()
-    : ITagsStorage()
 {
     m_db = new clSqliteDB();
     SetUseCache(true);

@@ -94,8 +94,7 @@ SearchData& SearchData::Copy(const SearchData& other)
 //----------------------------------------------------------------
 
 SearchThread::SearchThread()
-    : WorkerThread()
-    , m_reExpr(wxT(""))
+    : m_reExpr(wxT(""))
 {
     m_stopWatch.Start();
 }

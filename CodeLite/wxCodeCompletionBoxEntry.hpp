@@ -159,7 +159,8 @@ public:
     /**
      * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
      */
-    static wxCodeCompletionBoxEntry::Ptr_t New(const wxString& text, const wxBitmap& bmp, wxClientData* userData = nullptr)
+    static wxCodeCompletionBoxEntry::Ptr_t
+    New(const wxString& text, const wxBitmap& bmp, wxClientData* userData = nullptr)
     {
         wxCodeCompletionBoxEntry::Ptr_t pEntry(new wxCodeCompletionBoxEntry(text, bmp, userData));
         return pEntry;

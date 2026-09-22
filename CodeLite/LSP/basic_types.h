@@ -260,7 +260,9 @@ public:
 
     Location(const wxString& uri, const Range& range)
         : m_range(range)
-    { URI::FromString(uri, &m_uri); }
+    {
+        URI::FromString(uri, &m_uri);
+    }
 
     Location() = default;
     ~Location() override = default;
@@ -303,7 +305,9 @@ public:
         : m_languageId(langId)
         , m_text(text)
         , m_version(version)
-    { URI::FromString(uri, &m_uri); }
+    {
+        URI::FromString(uri, &m_uri);
+    }
 
     TextDocumentItem() = default;
     ~TextDocumentItem() override = default;

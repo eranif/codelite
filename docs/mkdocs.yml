@@ -73,6 +73,7 @@ nav:
       - Install Rust: misc/install_rust.md
       - cc-wrapper: misc/cc_wrapper.md
   - Release Notes:
+      - CodeLite v19.0.0: release_notes/v19_0_0.md
       - CodeLite v18.5.0: release_notes/v18_5_0.md
       - CodeLite v18.4.0: release_notes/v18_4_0.md
       - CodeLite v18.3.0: release_notes/v18_3_0.md

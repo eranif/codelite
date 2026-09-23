@@ -897,7 +897,11 @@ bool clBuiltinTerminalPane::OpenLink(const wxString& linkText)
 {
     clDEBUG() << "Text clicked inside terminal:" << linkText << endl;
     if (linkText.StartsWith("http://") || linkText.StartsWith("https://")) {
-        ::wxLaunchDefaultBrowser(linkText);
+        wxString fixedText = linkText;
+        // Since "." is included in URLs, trim it.
+        while (fixedText.EndsWith("."))
+            fixedText.RemoveLast();
+        ::wxLaunchDefaultBrowser(fixedText);
         return true;
     }
 

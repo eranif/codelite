@@ -259,7 +259,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxWindow* parent,
     wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(parent, shellCommand, env, workingDirectory);
     ctrl->EnsureStarted();
     ctrl->SetBufferSize(m_terminalSettings.m_scrollBackLines);
-    ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!`");
+    ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&*!`");
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
 
     // wxTerminalViewCtrl's own wxEVT_CHAR_HOOK handler (bound in its constructor, above) swallows

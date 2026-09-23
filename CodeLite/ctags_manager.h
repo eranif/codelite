@@ -168,7 +168,7 @@ public:
      * @param tags if tags is set to non nullptr, the tags are converted to TagTreePtr
      * @return tag tree
      */
-    TagTreePtr Load(const wxFileName& fileName, TagEntryPtrVector_t* tags = nullptr);
+    TagTreePtr Load(const wxFileName& fileName, const TagEntryPtrVector_t* tags = nullptr);
 
     /**
      * Open sqlite database.

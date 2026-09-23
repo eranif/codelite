@@ -301,9 +301,7 @@ TreeWalker<TKey, TData>::TreeWalker(TreeNode<TKey, TData>* node)
 }
 
 template <class TKey, class TData>
-TreeWalker<TKey, TData>::~TreeWalker()
-{
-}
+TreeWalker<TKey, TData>::~TreeWalker() = default;
 
 template <class TKey, class TData>
 void TreeWalker<TKey, TData>::GetChildren(TreeNode<TKey, TData>* node)

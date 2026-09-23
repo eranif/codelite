@@ -24,8 +24,8 @@ public:
     Variable m_realType;
 
 public:
-    clTypedef() {}
-    ~clTypedef() {}
+    clTypedef() = default;
+    ~clTypedef() = default;
 
     void print() const
     {

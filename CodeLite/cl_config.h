@@ -52,7 +52,7 @@ public:
     {
     }
 
-    virtual ~clConfigItem() {}
+    virtual ~clConfigItem() = default;
 
     const wxString& GetName() const { return m_name; }
 

@@ -330,9 +330,7 @@ wxString TemplateHelper::GetPath() const
 static Language* gs_Language = nullptr;
 void LanguageST::Free()
 {
-    if (gs_Language) {
-        delete gs_Language;
-    }
+    delete gs_Language;
     gs_Language = nullptr;
 }
 

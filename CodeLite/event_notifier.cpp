@@ -40,8 +40,7 @@ EventNotifier* EventNotifier::Get()
 
 void EventNotifier::Release()
 {
-    if (eventNotifier)
-        delete eventNotifier;
+    delete eventNotifier;
     eventNotifier = nullptr;
 }
 

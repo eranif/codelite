@@ -11,7 +11,7 @@ public:
     ClaudeCodePage(wxBookCtrlBase* parent, const std::optional<SSHAccountInfo>& sshAccount);
     ~ClaudeCodePage() override;
 
-    inline wxTerminalViewCtrl* GetTerminal() { return m_terminal; }
+    wxTerminalViewCtrl* GetTerminal() { return m_terminal; }
     void StartClaudeCode(const wxString& claudeExecutable, const wxString& workingDirectory = wxEmptyString);
 
 protected:

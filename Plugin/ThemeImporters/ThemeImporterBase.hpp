@@ -157,7 +157,9 @@ protected:
     }
 
     void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const Property& prop)
-    { AddProperty(lexer, wxString() << id, name, prop); }
+    {
+        AddProperty(lexer, wxString() << id, name, prop);
+    }
 
     void AddProperty(LexerConf::Ptr_t lexer,
                      int id,
@@ -167,7 +169,9 @@ protected:
                      bool bold = false,
                      bool italic = false,
                      bool isEOLFilled = false)
-    { AddProperty(lexer, wxString() << id, name, colour, bgColour, bold, italic, isEOLFilled); }
+    {
+        AddProperty(lexer, wxString() << id, name, colour, bgColour, bold, italic, isEOLFilled);
+    }
 
     void AddProperty(LexerConf::Ptr_t lexer,
                      int id,

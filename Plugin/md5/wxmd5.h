@@ -64,12 +64,12 @@ public:
     // Other Methods
     void SetText(const wxString& szText);
 
-    const wxString GetDigest();
+    wxString GetDigest();
 
     // Static Methods
-    static const wxString GetDigest(const wxString& szText);
-    static const wxString GetDigest(const wxFileName& filename);
-    static const wxString GetDigest(const std::string& str);
+    static wxString GetDigest(const wxString& szText);
+    static wxString GetDigest(const wxFileName& filename);
+    static wxString GetDigest(const std::string& str);
 };
 
 #endif // _WXMD5_H__

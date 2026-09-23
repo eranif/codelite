@@ -261,8 +261,8 @@ FunctionResult ReadFileContent(const assistant::json& args)
         }
 
         wxString logmsg;
-        logmsg << "Successfully read file: " << filepath << " (lines " << effective_from_line << "-" << (end_idx)
-               << "). " << partial_content.size() << " bytes.";
+        logmsg << "Successfully read file: " << filepath << " (lines " << effective_from_line << "-" << end_idx << "). "
+               << partial_content.size() << " bytes.";
         llm.PrintMessage(logmsg, IconType::kSuccess);
         return Ok(partial_content);
     };
@@ -497,9 +497,11 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     VERIFY_WORKER_THREAD();
 
     // Mandatory fields
-    ASSIGN_FUNC_ARG_OR_RETURN(const std::string root_dir, ::assistant::GetFunctionArg<std::string>(args, "root_folder"));
+    ASSIGN_FUNC_ARG_OR_RETURN(
+        const std::string root_dir, ::assistant::GetFunctionArg<std::string>(args, "root_folder"));
     ASSIGN_FUNC_ARG_OR_RETURN(const std::string find_what, ::assistant::GetFunctionArg<std::string>(args, "find_what"));
-    ASSIGN_FUNC_ARG_OR_RETURN(const std::string file_pattern, ::assistant::GetFunctionArg<std::string>(args, "file_pattern"));
+    ASSIGN_FUNC_ARG_OR_RETURN(
+        const std::string file_pattern, ::assistant::GetFunctionArg<std::string>(args, "file_pattern"));
 
     // Parse file patterns (semi-colon separated list)
     const wxString file_patterns_str = wxString::FromUTF8(file_pattern);

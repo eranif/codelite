@@ -23,7 +23,7 @@ protected:
 public:
     using Ptr_t = std::shared_ptr<CompileCommandsGenerator>;
     CompileCommandsGenerator();
-    virtual ~CompileCommandsGenerator();
+    ~CompileCommandsGenerator() override;
 
     void GenerateCompileCommands();
 };

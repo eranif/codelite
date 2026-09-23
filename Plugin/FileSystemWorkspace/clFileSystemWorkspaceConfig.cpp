@@ -143,7 +143,9 @@ wxString clFileSystemWorkspaceConfig::GetCompileFlagsAsString() const
 }
 
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
-{ return clFileSystemWorkspaceConfig::Ptr_t(new clFileSystemWorkspaceConfig(*this)); }
+{
+    return clFileSystemWorkspaceConfig::Ptr_t(new clFileSystemWorkspaceConfig(*this));
+}
 
 static wxArrayString GetExtraFlags(CompilerPtr compiler)
 {

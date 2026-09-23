@@ -1979,7 +1979,7 @@ bool clProjectFolder::Rename(Project* project, const wxString& newName)
 
 clProjectFolder::Ptr_t clProjectFolder::AddFolder(Project* project, const wxString& name)
 {
-    wxString fullpath = GetFullpath().IsEmpty() ? (name) : (GetFullpath() + ":" + name);
+    wxString fullpath = GetFullpath().IsEmpty() ? name : (GetFullpath() + ":" + name);
     if (project->m_virtualFoldersTable.count(fullpath)) {
         return project->m_virtualFoldersTable[fullpath];
     }
@@ -1994,13 +1994,13 @@ clProjectFolder::Ptr_t clProjectFolder::AddFolder(Project* project, const wxStri
 
 bool clProjectFolder::IsFolderExists(Project* project, const wxString& name) const
 {
-    wxString fullpath = GetFullpath().IsEmpty() ? (name) : (GetFullpath() + ":" + name);
+    wxString fullpath = GetFullpath().IsEmpty() ? name : (GetFullpath() + ":" + name);
     return (project->m_virtualFoldersTable.count(fullpath) > 0);
 }
 
 clProjectFolder::Ptr_t clProjectFolder::GetChild(Project* project, const wxString& name) const
 {
-    wxString fullpath = GetFullpath().IsEmpty() ? (name) : (GetFullpath() + ":" + name);
+    wxString fullpath = GetFullpath().IsEmpty() ? name : (GetFullpath() + ":" + name);
     if (project->m_virtualFoldersTable.count(fullpath)) {
         return project->m_virtualFoldersTable[fullpath];
     }
@@ -2029,7 +2029,7 @@ void clProjectFolder::GetSubfolders(wxArrayString& folders, bool recursive) cons
         while (child) {
             if (child->GetName() == "VirtualDirectory") {
                 wxString name = child->GetAttribute("Name", "");
-                wxString childpath = prefix.IsEmpty() ? (name) : (prefix + ":" + name);
+                wxString childpath = prefix.IsEmpty() ? name : (prefix + ":" + name);
                 foldersV.push_back(childpath);
                 if (recursive) {
                     q.push({child, childpath});

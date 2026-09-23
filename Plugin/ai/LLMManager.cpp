@@ -46,11 +46,11 @@ constexpr float kConfigVersion = 1.0;
 constexpr size_t kToolsResponseToKeep = 5;
 
 constexpr const char* kConfigVersionProperty = "_version";
-static const wxString kUserSystemMessageId = "kUserSystemMessageId";
-static const wxString kAgentsMd = "AGENTS.md";
-static const wxString kClaudeMd = "CLAUDE.md";
-static const wxString kSystemMessageAgenticLoopId = "kSystemMessageAgenticLoopId";
-static const wxString kSystemMessageAgenticLoop =
+const wxString kUserSystemMessageId = "kUserSystemMessageId";
+const wxString kAgentsMd = "AGENTS.md";
+const wxString kClaudeMd = "CLAUDE.md";
+const wxString kSystemMessageAgenticLoopId = "kSystemMessageAgenticLoopId";
+const wxString kSystemMessageAgenticLoop =
     "You are operating in an autonomous agentic loop. "
     "After every tool result, you MUST continue working toward the original goal. "
     "Do NOT stop and respond to the user until the entire task is fully complete. "
@@ -64,7 +64,7 @@ wxString TruncateText(const wxString& text, size_t size = 100)
     return text;
 }
 
-static std::atomic_bool busy_cusrsor{false};
+std::atomic_bool busy_cusrsor{false};
 /**
  * @brief RAII wrapper for managing a wxBusyCursor instance with thread-safe activation.
  *
@@ -156,7 +156,7 @@ std::optional<wxString> MakeLabelFromText(const wxString& text)
     return std::nullopt;
 }
 
-static const wxString kDefaultSettings = R"#({
+const wxString kDefaultSettings = R"#({
   "_version": 1.0,
   "endpoints": {
     "https://ollama.com": {

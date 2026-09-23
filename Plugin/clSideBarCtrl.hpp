@@ -77,8 +77,8 @@ public:
     SideBarToolBarContainer(wxWindow* parent, int orientation, long tb_style);
     ~SideBarToolBarContainer() override = default;
 
-    inline SideBarToolBar* GetToolBar() { return m_toolbar; }
-    inline SideBarToolBar* GetButtonsToolBar() { return m_buttonsBar; }
+    SideBarToolBar* GetToolBar() { return m_toolbar; }
+    SideBarToolBar* GetButtonsToolBar() { return m_buttonsBar; }
 
     std::optional<ActionButtonData> GetActionButtonData(int tool_id)
     {
@@ -126,7 +126,7 @@ public:
     ~clSideBarCtrl() override;
 
     /// Return the toolbar
-    inline SideBarToolBar* GetToolBar()
+    SideBarToolBar* GetToolBar()
     {
         if (m_buttonsBar) {
             return m_buttonsBar->GetToolBar();

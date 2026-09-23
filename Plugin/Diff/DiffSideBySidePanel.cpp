@@ -44,6 +44,7 @@
 #include "clSFTPManager.hpp"
 #endif
 
+#include <algorithm>
 #include <wx/filedlg.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
@@ -610,9 +611,7 @@ void DiffSideBySidePanel::DoDrawSequenceMarkers(int firstLine, int lastLine, wxS
 
     // Make sure that the seq lines are visible
     int visibleLine = firstLine - 5;
-    if (visibleLine < 0) {
-        visibleLine = 0;
-    }
+    visibleLine = std::max(visibleLine, 0);
 
     ctrl->ScrollToLine(visibleLine);
 }

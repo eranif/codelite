@@ -170,17 +170,17 @@ public:
     ~clPropertiesPageEvent() override = default;
     wxEvent* Clone() const override { return new clPropertiesPageEvent(*this); }
 
-    inline const LineData* GetLineKind() const { return m_lineData; }
-    inline void SetLineData(const LineData* kind) { m_lineData = kind; }
+    const LineData* GetLineKind() const { return m_lineData; }
+    void SetLineData(const LineData* kind) { m_lineData = kind; }
 
-    inline void SetPage(clPropertiesPage* page) { this->m_page = page; }
-    inline clPropertiesPage* GetPage() { return m_page; }
+    void SetPage(clPropertiesPage* page) { this->m_page = page; }
+    clPropertiesPage* GetPage() { return m_page; }
 
-    inline void SetItem(const wxDataViewItem& item) { this->m_item = item; }
-    inline const wxDataViewItem& GetItem() const { return m_item; }
+    void SetItem(const wxDataViewItem& item) { this->m_item = item; }
+    const wxDataViewItem& GetItem() const { return m_item; }
 
-    inline void SetLabel(const wxString& label) { this->m_label = label; }
-    inline const wxString& GetLabel() const { return m_label; }
+    void SetLabel(const wxString& label) { this->m_label = label; }
+    const wxString& GetLabel() const { return m_label; }
 
 private:
     const LineData* m_lineData{nullptr};

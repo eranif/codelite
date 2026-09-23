@@ -39,7 +39,7 @@ PromptEditorDlg::PromptEditorDlg(wxWindow* parent)
     ::clSetDialogBestSizeAndPosition(*this);
 }
 
-PromptEditorDlg::~PromptEditorDlg() {}
+PromptEditorDlg::~PromptEditorDlg() = default;
 
 void PromptEditorDlg::LoadPrompts()
 {

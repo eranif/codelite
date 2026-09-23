@@ -9,12 +9,12 @@
 class WXDLLIMPEXP_SDK LSPClangdDetector : public LSPDetector
 {
 protected:
-    virtual bool DoLocate();
+    bool DoLocate() override;
     void ConfigureFile(const wxFileName& clangdExe);
 
 public:
     LSPClangdDetector();
-    virtual ~LSPClangdDetector() = default;
+    ~LSPClangdDetector() override = default;
 };
 
 #endif // LSPCLANGDDETECTOR_HPP

@@ -98,7 +98,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     }
 }
 
-FSConfigPage::~FSConfigPage() {}
+FSConfigPage::~FSConfigPage() = default;
 
 void FSConfigPage::OnDelete(wxCommandEvent& event)
 {
@@ -127,7 +127,9 @@ void FSConfigPage::OnEditTarget(wxCommandEvent& event)
 }
 
 void FSConfigPage::OnEditTargetUI(wxUpdateUIEvent& event)
-{ event.Enable(m_dvListCtrlTargets->GetSelectedItemsCount()); }
+{
+    event.Enable(m_dvListCtrlTargets->GetSelectedItemsCount());
+}
 
 void FSConfigPage::OnNewTarget(wxCommandEvent& event)
 {

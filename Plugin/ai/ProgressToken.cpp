@@ -6,6 +6,6 @@ CancellationToken::CancellationToken(size_t max_tokens)
 {
 }
 
-CancellationToken::~CancellationToken() {}
+CancellationToken::~CancellationToken() = default;
 
 } // namespace llm

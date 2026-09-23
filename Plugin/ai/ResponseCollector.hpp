@@ -24,16 +24,18 @@ public:
     ResponseCollector();
     ~ResponseCollector() override;
 
-    inline void SetStateChangingCB(std::function<void(ChatState)> cb) { m_state_callback = std::move(cb); }
+    void SetStateChangingCB(std::function<void(ChatState)> cb) { m_state_callback = std::move(cb); }
     void Reset();
 
     /// The stream callbacl: message, is_done, is_thinking
-    inline void SetStreamCallback(std::function<void(const std::string&, StreamCallbackReason)> cb)
-    { m_stream_callback = std::move(cb); }
-    inline bool IsEndedWithError() const { return m_ended_with_error; }
+    void SetStreamCallback(std::function<void(const std::string&, StreamCallbackReason)> cb)
+    {
+        m_stream_callback = std::move(cb);
+    }
+    bool IsEndedWithError() const { return m_ended_with_error; }
 
-    inline void SetWantThinkingTokens(bool wantThinkingTokens) { this->m_wantThinkingTokens = wantThinkingTokens; }
-    inline bool IsWantThinkingTokens() const { return m_wantThinkingTokens; }
+    void SetWantThinkingTokens(bool wantThinkingTokens) { this->m_wantThinkingTokens = wantThinkingTokens; }
+    bool IsWantThinkingTokens() const { return m_wantThinkingTokens; }
 
 protected:
     void OnOutput(clLLMEvent& evnet);

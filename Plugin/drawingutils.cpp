@@ -30,6 +30,7 @@
 #include "clTabRenderer.h"
 #include "editor_config.h"
 
+#include <algorithm>
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
@@ -112,10 +113,10 @@ float Hue_2_RGB(float v1, float v2, float vH) // Function Hue_2_RGB
     if ((6.0 * vH) < 1)
         return (v1 + (v2 - v1) * 6.0 * vH);
     if ((2.0 * vH) < 1)
-        return (v2);
+        return v2;
     if ((3.0 * vH) < 2)
         return (v1 + (v2 - v1) * ((2.0 / 3.0) - vH) * 6.0);
-    return (v1);
+    return v1;
 }
 
 void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
@@ -155,8 +156,7 @@ wxColour DrawingUtils::LightColour(const wxColour& color, float percent)
 
     // reduce the Lum value
     l += (float)((percent * 5.0) / 100.0);
-    if (l > 1.0)
-        l = 1.0;
+    l = std::min(l, 1.0F);
 
     HSL_2_RGB(h, s, l, &r, &g, &b);
     return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);

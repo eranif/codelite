@@ -34,7 +34,7 @@ struct WXDLLIMPEXP_SDK LuaMenuItem {
      * @throws std::exception If the invoked action throws (the exception is handled
      *         internally by logging and showing a message box).
      */
-    inline void RunAction() const
+    void RunAction() const
     {
         if (!action.has_value()) {
             return;
@@ -59,8 +59,8 @@ struct WXDLLIMPEXP_SDK LuaMenuItem {
      *
      * @return true if the label is non-empty and action is a valid function, false otherwise
      */
-    inline bool IsOk() const { return !label.empty() && action.has_value() && action.value().isFunction(); }
-    inline bool IsSeparator() const { return !action.has_value(); }
+    bool IsOk() const { return !label.empty() && action.has_value() && action.value().isFunction(); }
+    bool IsSeparator() const { return !action.has_value(); }
 };
 
 class WXDLLIMPEXP_SDK CodeLiteLUA : public wxEvtHandler
@@ -311,7 +311,7 @@ protected:
      *
      * @param msg The error message to be logged.
      */
-    static inline void log_error(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Error); }
+    static void log_error(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Error); }
     /**
      * @brief Logs a system message.
      *
@@ -321,7 +321,7 @@ protected:
      *
      * @param msg The message to be logged.
      */
-    static inline void log_system(const std::string& msg) { log_message(msg, FileLogger::LogLevel::System); }
+    static void log_system(const std::string& msg) { log_message(msg, FileLogger::LogLevel::System); }
     /**
      * @brief Logs a warning message.
      *
@@ -330,7 +330,7 @@ protected:
      *
      * @param msg The message to be logged.
      */
-    static inline void log_warn(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Warning); }
+    static void log_warn(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Warning); }
     /**
      * @brief Logs a debug-level message.
      *
@@ -343,7 +343,7 @@ protected:
      *
      * @note The function returns no value and is inexpensive to call.
      */
-    static inline void log_debug(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Dbg); }
+    static void log_debug(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Dbg); }
     /**
      * Logs a trace message at the Developer log level.
      *
@@ -352,7 +352,7 @@ protected:
      *
      * @param msg The message to log.
      */
-    static inline void log_trace(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Trace); }
+    static void log_trace(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Trace); }
 
     /**
      * @brief Replaces all occurrences of a substring within a string with another substring.
@@ -417,7 +417,7 @@ protected:
 
 private:
     CodeLiteLUA();
-    ~CodeLiteLUA();
+    ~CodeLiteLUA() override;
     /**
      * Logs a message at the specified log level using the CodeLite logger.
      *

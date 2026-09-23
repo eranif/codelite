@@ -48,7 +48,7 @@ protected:
 public:
     void Initialize(wxWindow* window, const wxString& windowCaption, wxAuiManager* aui);
     clAuiCaptionEnabler();
-    virtual ~clAuiCaptionEnabler();
+    ~clAuiCaptionEnabler() override;
 };
 
 #endif // CLAUICAPTIONENABLER_H

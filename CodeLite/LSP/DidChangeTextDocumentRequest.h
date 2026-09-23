@@ -10,7 +10,7 @@ class WXDLLIMPEXP_CL DidChangeTextDocumentRequest : public LSP::Notification
 {
 public:
     explicit DidChangeTextDocumentRequest(const wxString& filename, const wxString& fileContent);
-    virtual ~DidChangeTextDocumentRequest() = default;
+    ~DidChangeTextDocumentRequest() override = default;
 };
 
 } // namespace LSP

@@ -43,7 +43,7 @@ clFileSystemWorkspaceDlg::clFileSystemWorkspaceDlg(wxWindow* parent, clFileSyste
     CenterOnParent();
 }
 
-clFileSystemWorkspaceDlg::~clFileSystemWorkspaceDlg() {}
+clFileSystemWorkspaceDlg::~clFileSystemWorkspaceDlg() = default;
 
 void clFileSystemWorkspaceDlg::SelectConfig(const wxString& config)
 {
@@ -127,7 +127,9 @@ void clFileSystemWorkspaceDlg::OnDeleteConfig(wxCommandEvent& event)
 }
 
 void clFileSystemWorkspaceDlg::OnDeleteConfigUI(wxUpdateUIEvent& event)
-{ event.Enable(m_notebook->GetPageCount() > 1); }
+{
+    event.Enable(m_notebook->GetPageCount() > 1);
+}
 
 void clFileSystemWorkspaceDlg::SetUseRemoteBrowsing(bool useRemoteBrowsing, const wxString& account)
 {

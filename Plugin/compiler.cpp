@@ -535,8 +535,8 @@ void Compiler::AddPattern(int type, const wxString& pattern, int fileNameIndex, 
 {
     CmpInfoPattern pt;
     pt.pattern = pattern;
-    pt.fileNameIndex = wxString::Format("%d", (int)fileNameIndex);
-    pt.lineNumberIndex = wxString::Format("%d", (int)lineNumberIndex);
+    pt.fileNameIndex = wxString::Format("%d", fileNameIndex);
+    pt.lineNumberIndex = wxString::Format("%d", lineNumberIndex);
     pt.columnIndex = wxString::Format("%d", colIndex);
     if (type == kSevError) {
         m_errorPatterns.push_back(pt);

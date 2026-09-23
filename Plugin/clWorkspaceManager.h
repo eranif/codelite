@@ -70,8 +70,8 @@ class IEditor;
 class WXDLLIMPEXP_SDK LocalWorkspaceCommon : public IWorkspace
 {
 public:
-    LocalWorkspaceCommon() {}
-    ~LocalWorkspaceCommon() override {}
+    LocalWorkspaceCommon() = default;
+    ~LocalWorkspaceCommon() override = default;
 
     /// Open (create if missing) `filepath` and load it into an editor.
     IEditor* OpenFileInEditor(const wxString& filepath, bool createIfMissing = true) override;

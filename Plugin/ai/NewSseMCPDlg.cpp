@@ -10,7 +10,7 @@ NewSseMCPDlg::NewSseMCPDlg(wxWindow* parent)
     CenterOnParent();
 }
 
-NewSseMCPDlg::~NewSseMCPDlg() {}
+NewSseMCPDlg::~NewSseMCPDlg() = default;
 
 std::map<std::string, std::string> NewSseMCPDlg::ProcessKeyValueEntry(wxTextCtrl* text_ctrl, const wxString& prefix)
 {
@@ -73,4 +73,6 @@ void NewSseMCPDlg::OnHeaders(wxCommandEvent& event)
 }
 
 void NewSseMCPDlg::OnOkUI(wxUpdateUIEvent& event)
-{ event.Enable(!m_textCtrlBaseURL->IsEmpty() && !m_textCtrlEndpoint->IsEmpty() && !m_textCtrlName->IsEmpty()); }
+{
+    event.Enable(!m_textCtrlBaseURL->IsEmpty() && !m_textCtrlEndpoint->IsEmpty() && !m_textCtrlName->IsEmpty());
+}

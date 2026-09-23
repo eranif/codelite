@@ -21,7 +21,9 @@ ChatAIWindowFrame::ChatAIWindowFrame(wxWindow* parent, ChatAI* plugin)
 }
 
 ChatAIWindowFrame::~ChatAIWindowFrame()
-{ llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindowFrame::OnLLMRestarted, this); }
+{
+    llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindowFrame::OnLLMRestarted, this);
+}
 
 void ChatAIWindowFrame::OnClose(wxCloseEvent& event)
 {

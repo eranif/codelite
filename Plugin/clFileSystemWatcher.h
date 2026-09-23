@@ -40,7 +40,7 @@ struct WXDLLIMPEXP_SDK clWatchedFile {
         return true;
     }
 
-    inline bool IsRemote() const { return !m_remoteAccount.empty(); }
+    bool IsRemote() const { return !m_remoteAccount.empty(); }
 
     wxString m_filename;
     wxEvtHandler* m_owner{nullptr};
@@ -101,7 +101,7 @@ public:
      */
     void RemoveFile(const wxString& filename);
 
-    inline bool Contains(const wxString& filepath) const
+    bool Contains(const wxString& filepath) const
     {
         return m_files.contains(filepath) || m_inFlightChecks.contains(filepath);
     }

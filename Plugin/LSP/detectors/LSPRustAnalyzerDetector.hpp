@@ -7,11 +7,11 @@
 class WXDLLIMPEXP_SDK LSPRustAnalyzerDetector : public LSPDetector
 {
 protected:
-    bool DoLocate();
+    bool DoLocate() override;
 
 public:
     LSPRustAnalyzerDetector();
-    ~LSPRustAnalyzerDetector() = default;
+    ~LSPRustAnalyzerDetector() override = default;
 };
 
 #endif // LSPRUSTANALYZERDETECTOR_HPP

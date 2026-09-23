@@ -882,9 +882,7 @@ time_t clCxxWorkspace::GetFileLastModifiedTime() const
 static clCxxWorkspace* gs_Workspace = nullptr;
 void clCxxWorkspaceST::Free()
 {
-    if (gs_Workspace) {
-        delete gs_Workspace;
-    }
+    delete gs_Workspace;
     gs_Workspace = nullptr;
 }
 

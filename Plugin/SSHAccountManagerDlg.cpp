@@ -58,7 +58,7 @@ SSHAccountManagerDlg::~SSHAccountManagerDlg()
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         SSHAccountInfo* pAccount = (SSHAccountInfo*)(m_dvListCtrl->GetItemData(item));
         delete pAccount;
-        m_dvListCtrl->SetItemData(item, (wxUIntPtr)nullptr);
+        m_dvListCtrl->SetItemData(item, (wxUIntPtr) nullptr);
     }
     m_dvListCtrl->DeleteAllItems();
 }

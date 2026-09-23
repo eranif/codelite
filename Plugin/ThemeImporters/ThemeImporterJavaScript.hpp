@@ -33,14 +33,13 @@ class WXDLLIMPEXP_SDK ThemeImporterJavaScript : public ThemeImporterBase
 {
 public:
     ThemeImporterJavaScript();
-    virtual ~ThemeImporterJavaScript() = default;
+    ~ThemeImporterJavaScript() override = default;
 
     /**
      * @brief import an eclipse XML colour theme
      * @param theme_file
-     * @param codeliteXml [output] the output file name
      */
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
 #endif // ECLIPSEJAVASCRIPTTHEMEIMPORTER_H

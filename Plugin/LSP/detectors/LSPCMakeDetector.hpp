@@ -12,7 +12,7 @@ class WXDLLIMPEXP_SDK LSPCMakeDetector : public LSPDetector
 
 public:
     LSPCMakeDetector();
-    virtual ~LSPCMakeDetector() = default;
+    ~LSPCMakeDetector() override = default;
 
     bool DoLocate() override;
 };

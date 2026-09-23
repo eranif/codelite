@@ -33,10 +33,10 @@ class WXDLLIMPEXP_SDK ThemeImporterLua : public ThemeImporterBase
 {
 public:
     ThemeImporterLua();
-    virtual ~ThemeImporterLua() = default;
+    ~ThemeImporterLua() override = default;
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
 #endif // ECLIPSELUATHEMEIMPORTER_H

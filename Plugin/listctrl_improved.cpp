@@ -109,9 +109,8 @@ ListCtrlImproved::~ListCtrlImproved()
 {
     for (int i = 0; i < GetItemCount(); i++) {
         wxClientData* data = (wxClientData*)GetItemData(i);
-        if (data) {
-            delete data;
-        }
+
+        delete data;
     }
 }
 

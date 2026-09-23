@@ -42,7 +42,7 @@ private:
 
 public:
     TerminalEmulatorUI(wxWindow* parent);
-    virtual ~TerminalEmulatorUI() = default;
+    ~TerminalEmulatorUI() override = default;
 
     void Clear();
     void SetTerminal(TerminalEmulator* terminal);
@@ -50,7 +50,7 @@ public:
     wxStyledTextCtrl* GetTerminalOutputWindow() { return m_stc; }
 
 protected:
-    virtual void OnSendCommand(wxCommandEvent& event);
+    void OnSendCommand(wxCommandEvent& event) override;
     void OnProcessExit(clCommandEvent& e);
     void OnProcessOutput(clCommandEvent& e);
 };

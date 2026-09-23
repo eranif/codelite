@@ -57,7 +57,9 @@ public:
     void FromSharedJSON(const JSONItem& json);
 
     void SetExcludeFilesPattern(const wxString& excludeFilesPattern)
-    { this->m_excludeFilesPattern = excludeFilesPattern; }
+    {
+        this->m_excludeFilesPattern = excludeFilesPattern;
+    }
     const wxString& GetExcludeFilesPattern() const { return m_excludeFilesPattern; }
     void SetBuildTargets(const std::map<wxString, wxString>& buildTargets) { this->m_buildTargets = buildTargets; }
     void SetCompileFlags(const wxArrayString& compileFlags) { this->m_compileFlags = compileFlags; }
@@ -123,7 +125,9 @@ public:
     void SetDebuggerRemoteHost(const wxString& host) { this->m_debuggerRemoteHost = host; }
     void SetDebuggerRemotePort(const wxString& port) { this->m_debuggerRemotePort = port; }
     void SetDebuggerRemoteCommands(const wxString& debuggerRemoteCommands)
-    { this->m_debuggerRemoteCommands = debuggerRemoteCommands; }
+    {
+        this->m_debuggerRemoteCommands = debuggerRemoteCommands;
+    }
 
     const wxString& GetDebuggerPath() const { return m_debuggerPath; }
     const wxString& GetDebuggerCommands() const { return m_debuggerCommands; }

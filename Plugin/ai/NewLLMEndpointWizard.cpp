@@ -30,7 +30,7 @@ NewLLMEndpointWizard::NewLLMEndpointWizard(wxWindow* parent)
     }
 }
 
-NewLLMEndpointWizard::~NewLLMEndpointWizard() {}
+NewLLMEndpointWizard::~NewLLMEndpointWizard() = default;
 
 void NewLLMEndpointWizard::OnProviderChanged(wxCommandEvent& event)
 {

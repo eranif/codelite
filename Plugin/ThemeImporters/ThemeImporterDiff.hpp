@@ -33,10 +33,10 @@ class WXDLLIMPEXP_SDK ThemeImporterDiff : public ThemeImporterBase
 {
 public:
     ThemeImporterDiff();
-    virtual ~ThemeImporterDiff() = default;
+    ~ThemeImporterDiff() override = default;
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
 #endif // ECLIPSEDIFFTHEMEIMPORTER_H

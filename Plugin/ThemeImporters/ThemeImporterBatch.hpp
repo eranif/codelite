@@ -32,9 +32,9 @@
 class WXDLLIMPEXP_SDK ThemeImporterBatch : public ThemeImporterBase
 {
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
     ThemeImporterBatch();
-    ~ThemeImporterBatch() = default;
+    ~ThemeImporterBatch() override = default;
 };
 
 #endif // ECLIPSEBATCHTHEMEIMPORTER_H

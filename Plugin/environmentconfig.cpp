@@ -53,9 +53,7 @@ EnvironmentConfig* EnvironmentConfig::Instance()
 
 void EnvironmentConfig::Release()
 {
-    if (ms_instance) {
-        delete ms_instance;
-    }
+    delete ms_instance;
     ms_instance = nullptr;
 }
 
@@ -106,7 +104,7 @@ wxString EnvironmentConfig::ExpandVariables(const wxString& in, bool applyEnviro
     return expandedValue;
 }
 
-void EnvironmentConfig::ApplyEnv(wxStringMap_t* overrideMap, const wxString& project, const wxString& config)
+void EnvironmentConfig::ApplyEnv(const wxStringMap_t* overrideMap, const wxString& project, const wxString& config)
 {
     // We lock the CS here and it will be released in UnApplyEnv
     // this is safe to call without Locker since the UnApplyEnv

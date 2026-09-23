@@ -21,4 +21,4 @@ clGetTextFromUserDialog::clGetTextFromUserDialog(
     GetSizer()->Fit(this);
 }
 
-clGetTextFromUserDialog::~clGetTextFromUserDialog() {}
+clGetTextFromUserDialog::~clGetTextFromUserDialog() = default;

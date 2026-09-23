@@ -9,9 +9,9 @@ class WXDLLIMPEXP_SDK LSPPyRightDetector : public LSPDetector
 {
 public:
     LSPPyRightDetector();
-    virtual ~LSPPyRightDetector() = default;
+    ~LSPPyRightDetector() override = default;
 
 protected:
-    virtual bool DoLocate();
+    bool DoLocate() override;
     void ConfigureFile(const wxFileName& tool_path);
 };

@@ -4,6 +4,8 @@
 #include "globals.h"
 #include "imanager.h"
 
+#include <algorithm>
+
 clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
     : m_ctrl(ctrl)
 {
@@ -32,9 +34,7 @@ clEditorStateLocker::~clEditorStateLocker()
     CHECK_PTR_RET(m_ctrl);
 
     // restore the position.
-    if (m_position > m_ctrl->GetLastPosition()) {
-        m_position = m_ctrl->GetLastPosition();
-    }
+    m_position = std::min<long>(m_position, m_ctrl->GetLastPosition());
 
     // If the caret is out of screen, scroll the editor to make it visible again
     int caretLine = m_ctrl->LineFromPosition(m_position);

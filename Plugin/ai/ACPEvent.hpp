@@ -114,10 +114,7 @@ public:
         m_permissionRequest = p;
         return *this;
     }
-    const std::optional<llm::acp::RequestPermissionParams>& GetPermissionRequest() const
-    {
-        return m_permissionRequest;
-    }
+    const std::optional<llm::acp::RequestPermissionParams>& GetPermissionRequest() const { return m_permissionRequest; }
 
     // -------------------------------------------------------
     // wxEVT_ACP_SESSION_LIST — session/list round-trip complete

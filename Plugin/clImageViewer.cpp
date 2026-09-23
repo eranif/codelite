@@ -15,4 +15,4 @@ clImageViewer::clImageViewer(wxWindow* parent, const wxFileName& filename)
     }
 }
 
-clImageViewer::~clImageViewer() {}
+clImageViewer::~clImageViewer() = default;

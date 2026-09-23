@@ -44,7 +44,7 @@ clCustomiseToolBarDlg::clCustomiseToolBarDlg(wxWindow* parent, clToolBarGeneric*
     ::clFitColumnWidth(*m_dvListCtrlItems);
 }
 
-clCustomiseToolBarDlg::~clCustomiseToolBarDlg() {}
+clCustomiseToolBarDlg::~clCustomiseToolBarDlg() = default;
 
 void clCustomiseToolBarDlg::OnOK(wxCommandEvent& event)
 {

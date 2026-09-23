@@ -736,7 +736,7 @@ struct WXDLLIMPEXP_CL Progress {
      *
      * @return wxString The formatted message string.
      */
-    inline wxString GetMessage() const
+    wxString GetMessage() const
     {
         wxString message;
         message.reserve(256);

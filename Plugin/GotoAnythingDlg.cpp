@@ -19,7 +19,7 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
     ::clSetDialogBestSizeAndPosition(*this);
 }
 
-GotoAnythingDlg::~GotoAnythingDlg() {}
+GotoAnythingDlg::~GotoAnythingDlg() = default;
 
 void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
 {

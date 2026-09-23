@@ -319,7 +319,9 @@ void wxTerminalCtrl::SSHAndSetWorkingDirectory(const wxString& ssh_account, cons
 }
 
 void wxTerminalCtrl::SetTerminalWorkingDirectory(const wxString& path)
-{ m_shell->Write(wxString() << "cd " << StringUtils::WrapWithDoubleQuotes(path)); }
+{
+    m_shell->Write(wxString() << "cd " << StringUtils::WrapWithDoubleQuotes(path));
+}
 
 bool wxTerminalCtrl::IsFocused() { return m_inputCtrl->IsFocused(); }
 

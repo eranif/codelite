@@ -38,10 +38,10 @@ class WXDLLIMPEXP_SDK DebuggerCmdData : public SerializedObject
 
 public:
     DebuggerCmdData() = default;
-    virtual ~DebuggerCmdData() = default;
+    ~DebuggerCmdData() override = default;
 
-    void Serialize(Archive& arhc);
-    void DeSerialize(Archive& arhc);
+    void Serialize(Archive& arhc) override;
+    void DeSerialize(Archive& arhc) override;
 
     // Setters
     void SetCommand(const wxString& command) { this->m_command = command; }
@@ -65,10 +65,10 @@ class WXDLLIMPEXP_SDK DebuggerPreDefinedTypes : public SerializedObject
 
 public:
     DebuggerPreDefinedTypes();
-    virtual ~DebuggerPreDefinedTypes() = default;
+    ~DebuggerPreDefinedTypes() override = default;
 
-    void Serialize(Archive& arch);
-    void DeSerialize(Archive& arch);
+    void Serialize(Archive& arch) override;
+    void DeSerialize(Archive& arch) override;
 
     void SetCmds(const DebuggerCmdDataVec& cmds) { this->m_cmds = cmds; }
 
@@ -88,10 +88,10 @@ class WXDLLIMPEXP_SDK DebuggerSettingsPreDefMap : public SerializedObject
 
 public:
     DebuggerSettingsPreDefMap() = default;
-    virtual ~DebuggerSettingsPreDefMap() = default;
+    ~DebuggerSettingsPreDefMap() override = default;
 
-    void Serialize(Archive& arch);
-    void DeSerialize(Archive& arch);
+    void Serialize(Archive& arch) override;
+    void DeSerialize(Archive& arch) override;
 
     void SePreDefinedTypesMap(const std::map<wxString, DebuggerPreDefinedTypes>& cmds) { this->m_cmds = cmds; }
     const std::map<wxString, DebuggerPreDefinedTypes>& GePreDefinedTypesMap() const { return m_cmds; }

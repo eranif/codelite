@@ -50,7 +50,7 @@ private:
     void GenerateFromProjectVC11(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
     wxString ExtractProjectCfgName(const wxString& parentCondition, const wxString& elemCondition);
     wxString ReplaceDefaultEnvVars(const wxString& str);
-    void AddFilesVC7(wxXmlNode* filterChild,
+    void AddFilesVC7(const wxXmlNode* filterChild,
                      GenericProjectPtr genericProject,
                      std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap,
                      wxString preVirtualPath);

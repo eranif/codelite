@@ -43,9 +43,7 @@ ConfFileLocator* ConfFileLocator::Instance()
 
 void ConfFileLocator::Release()
 {
-    if (ms_instance) {
-        delete ms_instance;
-    }
+    delete ms_instance;
     ms_instance = nullptr;
 }
 

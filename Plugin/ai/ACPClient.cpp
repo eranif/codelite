@@ -554,10 +554,7 @@ void ACPClient::Send(const json& msg)
 // Pending RPC book-keeping
 // -------------------------------------------------------
 
-void ACPClient::RegisterPending(int id, ResponseCallback cb)
-{
-    m_pending.emplace(id, std::move(cb));
-}
+void ACPClient::RegisterPending(int id, ResponseCallback cb) { m_pending.emplace(id, std::move(cb)); }
 
 void ACPClient::FailAllPending()
 {

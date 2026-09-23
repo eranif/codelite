@@ -45,9 +45,9 @@ constexpr const char* kDefaultSystemPrompt =
     "Answer concisely and briefly. Use B2-level English: simple vocabulary, short sentences, no rare words or "
     "idioms.";
 
-Config::Config() {}
+Config::Config() = default;
 
-Config::~Config() {}
+Config::~Config() = default;
 
 clStatus Config::Load()
 {
@@ -202,7 +202,9 @@ wxString Config::GetFullPath()
 }
 
 bool Config::IsBuiltInPrompt(const wxString& prompt) const
-{ return builtin_prompts.contains(prompt.ToStdString(wxConvUTF8)); }
+{
+    return builtin_prompts.contains(prompt.ToStdString(wxConvUTF8));
+}
 
 wxString Config::GetSystemPrompt() const
 {

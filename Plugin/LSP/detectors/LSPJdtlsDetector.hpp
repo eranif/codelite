@@ -10,12 +10,12 @@
 class WXDLLIMPEXP_SDK LSPJdtlsDetector : public LSPDetector
 {
 protected:
-    virtual bool DoLocate();
+    bool DoLocate() override;
     void ConfigureFile(const wxFileName& clangdExe);
 
 public:
     LSPJdtlsDetector();
-    virtual ~LSPJdtlsDetector() = default;
+    ~LSPJdtlsDetector() override = default;
 };
 
 #endif // LSPJdtlsDetector_HPP

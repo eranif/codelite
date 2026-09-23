@@ -49,24 +49,26 @@ public:
 
     // Implement the Builder Interface
     bool Export(const wxString& project,
-                        const wxString& confToBuild,
-                        const wxString& arguments,
-                        bool isProjectOnly,
-                        bool force,
-                        wxString& errMsg) override;
+                const wxString& confToBuild,
+                const wxString& arguments,
+                bool isProjectOnly,
+                bool force,
+                wxString& errMsg) override;
     wxString GetBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
     wxString GetCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
-    wxString GetPOBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
-    wxString GetPOCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
+    wxString
+    GetPOBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
+    wxString
+    GetPOCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
     wxString GetSingleFileCmd(const wxString& project,
-                                      const wxString& confToBuild,
-                                      const wxString& arguments,
-                                      const wxString& fileName) override;
+                              const wxString& confToBuild,
+                              const wxString& arguments,
+                              const wxString& fileName) override;
     wxString GetPreprocessFileCmd(const wxString& project,
-                                          const wxString& confToBuild,
-                                          const wxString& arguments,
-                                          const wxString& fileName,
-                                          wxString& errMsg) override;
+                                  const wxString& confToBuild,
+                                  const wxString& arguments,
+                                  const wxString& fileName,
+                                  wxString& errMsg) override;
     wxString
     GetPORebuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
     OptimalBuildConfig GetOptimalBuildConfig(const wxString& projectType) const override;

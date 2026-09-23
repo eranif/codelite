@@ -142,13 +142,13 @@ struct WXDLLIMPEXP_SDK ThreadTask {
     /// An optional collector object, if provided it wil be deleted by this class
     ResponseCollector* collector{nullptr};
     std::shared_ptr<CompletionHandler> completion_handler{nullptr};
-    inline wxEvtHandler* GetEventSink() { return collector ? collector : owner; }
+    wxEvtHandler* GetEventSink() { return collector ? collector : owner; }
 };
 
 struct WXDLLIMPEXP_SDK TokenUsage {
     size_t context_size{0};
     size_t used{0};
-    inline size_t GetPercentage() const
+    size_t GetPercentage() const
     {
         if (context_size == 0 || used == 0) {
             return 0;
@@ -417,7 +417,7 @@ public:
      *
      * @return {@code true} if the worker is busy; {@code false} otherwise
      */
-    inline bool IsBusy() const { return m_worker_busy.load(); }
+    bool IsBusy() const { return m_worker_busy.load(); }
 
     /**
      * @brief Internal helper that removes a previously registered {@link ResponseCollector}
@@ -590,25 +590,25 @@ public:
 
     const std::vector<wxString>& GetAvailablePlaceHolders() const;
 
-    inline ChatAIWindow* GetChatWindow(bool ensure_visibile)
+    ChatAIWindow* GetChatWindow(bool ensure_visibile)
     {
         CHECK_PTR_RET_NULL(m_chatAI.get());
         return m_chatAI->GetChatWindow(ensure_visibile);
     }
 
-    inline double GetLastRequestCost() const
+    double GetLastRequestCost() const
     {
         CHECK_COND_RET_VAL(m_client, 0.0);
         return m_client->GetLastRequestCost();
     }
 
-    inline double GetTotalCost() const
+    double GetTotalCost() const
     {
         CHECK_COND_RET_VAL(m_client, 0.0);
         return m_client->GetTotalCost();
     }
 
-    inline std::optional<llm::TokenUsage> GetUsage() const
+    std::optional<llm::TokenUsage> GetUsage() const
     {
         CHECK_COND_RET_VAL(m_client, std::nullopt);
         auto usage = m_client->GetTokenUsageStats();
@@ -625,13 +625,13 @@ public:
     /**
      * @brief Retrieves the last request usage.
      */
-    inline std::optional<Usage> GetLastRequestUsage() const
+    std::optional<Usage> GetLastRequestUsage() const
     {
         CHECK_COND_RET_VAL(m_client, std::nullopt);
         return m_client->GetLastRequestUsage();
     }
 
-    inline std::optional<wxString> GetModelName() const
+    std::optional<wxString> GetModelName() const
     {
         CHECK_COND_RET_VAL(m_client, std::nullopt);
         return m_client->GetModel();
@@ -649,7 +649,7 @@ public:
         return m_client->GetContextSize();
     }
 
-    inline bool HasPricing() const { return m_client && m_client->GetPricing().has_value(); }
+    bool HasPricing() const { return m_client && m_client->GetPricing().has_value(); }
 
     /**
      * @brief Prompts the user with a Yes/No/Trust question and waits for their response.
@@ -773,7 +773,7 @@ public:
     void DeleteTerminationFlag(std::shared_ptr<std::atomic_bool> flag);
 
     void OnGenerateDocString(wxCommandEvent& event);
-    inline bool IsClientStopping() const { return m_clientStopInProgress.load(); }
+    bool IsClientStopping() const { return m_clientStopInProgress.load(); }
 
     /**
      * @brief Checks whether a tool is trusted for the given file path.
@@ -961,7 +961,7 @@ struct WXDLLIMPEXP_SDK TerminationFlagGuard {
     {
     }
     ~TerminationFlagGuard() { llm::Manager::GetInstance().DeleteTerminationFlag(flag); }
-    inline bool IsSet() const { return flag->load(); }
+    bool IsSet() const { return flag->load(); }
     std::shared_ptr<std::atomic_bool> GetFlag() const { return flag; }
 };
 

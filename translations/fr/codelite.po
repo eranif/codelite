@@ -1,7 +1,7 @@
 # CodeLite pot file
-# Copyright (C) Eran Ifrah 2007-2025
+# Copyright (C) Eran Ifrah 2007-2026
 # This file is distributed under the same license as the CodeLite package.
-# Eran Ifrah <eran.ifrah@gmail.com>, 2007-2025.
+# Eran Ifrah <eran.ifrah@gmail.com>, 2007-2026.
 # 
 msgid ""
 msgstr ""
@@ -25,7 +25,7 @@ msgstr "Échec du démarrage du processus enfant"
 
 #: CodeLite/AsyncProcess/asyncprocess.cpp:347
 msgid "streaming callback must not be null"
-msgstr ""
+msgstr "La fonction de rappel du flux ne doit pas être nulle"
 
 #: CodeLite/AsyncProcess/clCommandProcessor.cpp:21
 msgid "Executing: "
@@ -38,23 +38,23 @@ msgstr "Échec de l'exécution de la commande : %s"
 
 #: CodeLite/CTags.cpp:128
 msgid "Failed to resolve file extension for file: "
-msgstr ""
+msgstr "Échec de la résolution de l'extension du fichier : "
 
 #: CodeLite/CTags.cpp:133 CodeLite/CTags.cpp:156
 msgid "Failed to write temporary file: "
-msgstr ""
+msgstr "Échec de l'écriture du fichier temporaire : "
 
 #: CodeLite/CTags.cpp:134 CodeLite/CTags.cpp:156
 msgid " to disk"
-msgstr ""
+msgstr " sur le disque"
 
 #: CodeLite/CTags.cpp:147
 msgid " from disk"
-msgstr ""
+msgstr " depuis le disque"
 
 #: CodeLite/CTags.cpp:147
 msgid "Failed to read file content: "
-msgstr ""
+msgstr "Échec de la lecture du contenu du fichier : "
 
 #: CodeLite/LSP/RenameRequest.cpp:55
 #, c-format
@@ -71,6 +71,8 @@ msgid ""
 "Error from language server %s:\n"
 "%s"
 msgstr ""
+"Erreur du serveur de langage %s :\n"
+"%s"
 
 #: CodeLite/PHP/PHPLookupTable.h:385
 msgid "PHP: parsed "
@@ -271,9 +273,8 @@ msgid "CodeLite"
 msgstr ""
 
 #: CodeLite/ssh/cl_ssh.cpp:374
-#, fuzzy
 msgid "Enter passphrase:"
-msgstr "Saisir l'expression rationnelle :"
+msgstr "Saisir la phrase de passe :"
 
 #: CodeLite/ssh/cl_ssh.cpp:386
 msgid "Public Key error: "
@@ -840,7 +841,7 @@ msgstr "Choisir le répertoire de travail :"
 
 #: LiteEditor/SecondarySideBar.cpp:63
 msgid "Move to primary sidebar"
-msgstr ""
+msgstr "Déplacer vers la barre latérale principale"
 
 #: LiteEditor/SideBar.cpp:60 LiteEditor/frame.cpp:1237
 #: LiteEditor/frame.cpp:5602 build-release/LiteEditor/tabgroupbasedlgs.cpp:172
@@ -872,7 +873,7 @@ msgstr "Analyse de l'espace de travail : %d%% terminée"
 
 #: LiteEditor/SideBar.cpp:294
 msgid "Move to secondary sidebar"
-msgstr ""
+msgstr "Déplacer vers la barre latérale secondaire"
 
 #: LiteEditor/WelcomePage.cpp:66 build-release/Plugin/sftp_ui.cpp:49
 #: build-release/Plugins/SFTP/UI.cpp:427
@@ -1901,7 +1902,7 @@ msgstr "Hauteur"
 
 #: LiteEditor/editorsettingsdockingwidows.cpp:65
 msgid "Sidebar buttons position"
-msgstr ""
+msgstr "Position des boutons de la barre latérale"
 
 #: LiteEditor/editorsettingsdockingwidows.cpp:74
 msgid "Output tabs orientation"
@@ -1912,9 +1913,8 @@ msgid "Show close button on tabs"
 msgstr "Afficher le bouton de fermeture sur les onglets"
 
 #: LiteEditor/editorsettingsdockingwidows.cpp:85
-#, fuzzy
 msgid "Dir parts in tab label"
-msgstr "Afficher le chemin d'accès au fichier sur l'étiquette de l'onglet"
+msgstr "Afficher les parties du chemin dans l'étiquette de l'onglet"
 
 #: LiteEditor/editorsettingsdockingwidows.cpp:88
 msgid "Mouse scroll switch bewtween tabs"
@@ -2119,19 +2119,16 @@ msgid "Space between button groups"
 msgstr "Espace entre les groupes de boutons"
 
 #: LiteEditor/editorsettingsmiscpanel.cpp:124
-#, fuzzy
 msgid "Launch"
-msgstr "Type de lancement"
+msgstr "Lancer"
 
 #: LiteEditor/editorsettingsmiscpanel.cpp:125
-#, fuzzy
 msgid "Clear output before launch"
-msgstr "Effacer la sortie"
+msgstr "Effacer la sortie avant de lancer"
 
 #: LiteEditor/editorsettingsmiscpanel.cpp:128
-#, fuzzy
 msgid "Switch to output on launch"
-msgstr "Passer à une nouvelle branche"
+msgstr "Passer à la sortie lors du lancement"
 
 #: LiteEditor/editorsettingsmiscpanel.cpp:132
 msgid "Locale"
@@ -3112,13 +3109,12 @@ msgid "Rename Symbol"
 msgstr "Renommer le symbole"
 
 #: LiteEditor/frame.cpp:1161
-#, fuzzy
 msgid "Find References"
 msgstr "Trouver des références"
 
 #: LiteEditor/frame.cpp:1162
 msgid "Search | Bookmarks"
-msgstr "Recherche de signets"
+msgstr "Recherche | Signets"
 
 #: LiteEditor/frame.cpp:1164 LiteEditor/frame.cpp:1668 Runtime/rc/menu.xrc:927
 msgid "Toggle Bookmark"
@@ -3321,7 +3317,7 @@ msgstr "Volet de sortie"
 
 #: LiteEditor/frame.cpp:1216
 msgid "Toggle Terminal View"
-msgstr ""
+msgstr "Basculer l'affichage du terminal"
 
 #: LiteEditor/frame.cpp:1217
 msgid "Workspace Pane"
@@ -3352,9 +3348,8 @@ msgid "Show Status Bar"
 msgstr "Montrer la barre d'état"
 
 #: LiteEditor/frame.cpp:1226
-#, fuzzy
 msgid "Show MiniMap View"
-msgstr "Basculer vers l'affichage minimal"
+msgstr "Montrer la vue MiniMap"
 
 #: LiteEditor/frame.cpp:1227
 msgid "Show Tool Bar"
@@ -3687,9 +3682,8 @@ msgid "Debug"
 msgstr "Déboguer"
 
 #: LiteEditor/frame.cpp:4052
-#, fuzzy
 msgid "The latest version of CodeLite is already installed on your system."
-msgstr "Une nouvelle version de CodeLite est disponible au téléchargement"
+msgstr "La dernière version de CodeLite est déjà installée sur votre système."
 
 #: LiteEditor/frame.cpp:4061
 msgid "A new version of CodeLite is available for download"
@@ -3755,13 +3749,15 @@ msgstr "Pas de fournisseur de LLM est actuellement configuré. Voulez-vous en co
 
 #: LiteEditor/frame.cpp:6322
 msgid "Choose Endpoint Provider"
-msgstr ""
+msgstr "Choisir le fournisseur du point de terminaison"
 
 #: LiteEditor/frame.cpp:6346
 msgid ""
 "This will reset the tool permissions to their default state, requiring confirmation before each invocation.\n"
 "Continue?"
 msgstr ""
+"Ceci réinitialisera les autorisations des outils à leur état par défaut, exigeant une confirmation avant chaque invocation.\n"
+"Continuer ?"
 
 #: LiteEditor/localstable.cpp:364
 #, c-format
@@ -4078,7 +4074,7 @@ msgstr "Tri"
 
 #: LiteEditor/openwindowspanel.cpp:74
 msgid "Sort Items"
-msgstr ""
+msgstr "Trier les éléments"
 
 #: LiteEditor/options_dlg2.cpp:85
 msgid "Guides"
@@ -4490,7 +4486,7 @@ msgstr "Choisir le thème à importer"
 
 #: LiteEditor/syntaxhighlightdlg.cpp:701
 msgid "Failed to import themes!"
-msgstr ""
+msgstr "Échec de l'importation des thèmes !"
 
 #: LiteEditor/syntaxhighlightdlg.cpp:703
 msgid "Successfully imported "
@@ -4712,36 +4708,32 @@ msgstr ""
 
 #: Plugin/CustomControls/PromptEditorDlg.cpp:27
 #: Plugin/CustomControls/PromptEditorDlg.cpp:159
-#, fuzzy
 msgid "New Prompt"
-msgstr "Nouveau projet"
+msgstr "Nouvelle invite"
 
 #: Plugin/CustomControls/PromptEditorDlg.cpp:29
-#, fuzzy
 msgid "Delete Prompt"
-msgstr "Supprimer le compilateur"
+msgstr "Supprimer l'invite"
 
 #: Plugin/CustomControls/PromptEditorDlg.cpp:144
 msgid "This operation discard any changes you have done and restore it to their default values. Continue?"
-msgstr ""
+msgstr "Cette opération annulera toutes les modifications effectuées et restaurera les valeurs par défaut. Continuer ?"
 
 #: Plugin/CustomControls/PromptEditorDlg.cpp:159
-#, fuzzy
 msgid "Enter the new prompt label"
-msgstr "Entrer le nouveau nom du formatteur"
+msgstr "Entrer le nouveau nom de l'invite"
 
 #: Plugin/CustomControls/PromptEditorDlg.cpp:166
-#, fuzzy
 msgid "A prompt with this name already exists"
-msgstr "Un compilateur portant ce nom existe déjà"
+msgstr "Une invite portant ce nom existe déjà"
 
 #: Plugin/CustomControls/PromptEditorDlg.cpp:189
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This will delete the prompt: '%s'\n"
 "Continue?"
 msgstr ""
-"Cette opération supprime les éléments sélectionnés.\n"
+"Cette opération supprime l'invite : '%s'\n"
 "Poursuivre ?"
 
 #: Plugin/CustomControls/TextGenerationPreviewFrame.cpp:101
@@ -5013,13 +5005,12 @@ msgid "Refresh View"
 msgstr "Rafraîchir la vue"
 
 #: Plugin/FileSystemWorkspace/clFileSystemWorkspaceView.cpp:38
-#, fuzzy
 msgid "Choose build configuration"
-msgstr "Sélectionner l'ordre de construction pour la configuration :"
+msgstr "Choisir la configuration de construction"
 
 #: Plugin/FileSystemWorkspace/clFileSystemWorkspaceView.cpp:52
 msgid "Build active project"
-msgstr "Construire un projet actif"
+msgstr "Construire le projet actif"
 
 #: Plugin/FileSystemWorkspace/clFileSystemWorkspaceView.cpp:63
 msgid "Stop current build"
@@ -5272,15 +5263,15 @@ msgstr "Sélectionner un raccourci clavier"
 
 #: Plugin/LSP/LSPManager.cpp:235
 msgid "Showing outline view dialog"
-msgstr ""
+msgstr "Affichage de la boîte de dialogue de la vue d'ensemble"
 
 #: Plugin/LSP/LSPManager.cpp:239
 msgid "Could not find symbols for the current editor"
-msgstr ""
+msgstr "Impossible de trouver les symboles de l'éditeur actuel"
 
 #: Plugin/LSP/LSPManager.cpp:407
 msgid "Requesting document symbols from LSP server..."
-msgstr ""
+msgstr "Demande des symboles du document au serveur LSP..."
 
 #: Plugin/LSP/LSPManager.cpp:1018
 msgid "Restarting Language Servers..."
@@ -5379,14 +5370,12 @@ msgid "Are you sure you want to delete the selected accounts?"
 msgstr "Êtes-vous sûr de vouloir supprimer les comptes sélectionnés ?"
 
 #: Plugin/Scripting/CodeLiteLUA.cpp:134
-#, fuzzy
 msgid "Failed to run LUA file: "
-msgstr "Échec du renommage du fichier : "
+msgstr "Échec de l'exécution du fichier LUA : "
 
 #: Plugin/Scripting/CodeLiteLUA.cpp:289
-#, fuzzy
 msgid "Another generation is in progress, try again later"
-msgstr "Une autre recherche est en cours, réessayez plus tard"
+msgstr "Une autre génération est en cours, réessayez plus tard"
 
 #: Plugin/SwitchToWorkspaceDlg.cpp:25
 msgid "Open workspace"
@@ -5409,25 +5398,27 @@ msgstr "Déplacer vers le haut"
 
 #: Plugin/ai/ChatAIWindow.cpp:54
 msgid "Configure MCP Tools"
-msgstr ""
+msgstr "Configurer les outils MCP"
 
 #: Plugin/ai/ChatAIWindow.cpp:62
 msgid "Enable All Tools"
-msgstr ""
+msgstr "Activer tous les outils"
 
 #: Plugin/ai/ChatAIWindow.cpp:147
 msgid ""
 "Hit Shift+ENTER to submit.\n"
 "Type / to see list of commands"
 msgstr ""
+"Appuyez sur Maj+Entrée pour envoyer.\n"
+"Tapez / pour voir la liste des commandes"
 
 #: Plugin/ai/ChatAIWindow.cpp:149
 msgid "Load Chat"
-msgstr ""
+msgstr "Charger une conversation"
 
 #: Plugin/ai/ChatAIWindow.cpp:150
 msgid "Save Chat"
-msgstr ""
+msgstr "Enregistrer la conversation"
 
 #: Plugin/ai/ChatAIWindow.cpp:158
 msgid "Submit"
@@ -5447,7 +5438,7 @@ msgstr "Options"
 
 #: Plugin/ai/ChatAIWindow.cpp:167
 msgid "Jump to latest"
-msgstr ""
+msgstr "Aller au plus récent"
 
 #: Plugin/ai/ChatAIWindow.cpp:170
 msgid "Clear the chat history"
@@ -5455,67 +5446,64 @@ msgstr "Effacer l'historique du chat"
 
 #: Plugin/ai/ChatAIWindow.cpp:308
 msgid "Configure MCP Tools..."
-msgstr ""
+msgstr "Configurer les outils MCP..."
 
 #: Plugin/ai/ChatAIWindow.cpp:312
-#, fuzzy
 msgid "Enable MCP Tools"
-msgstr "Outils externes"
+msgstr "Activer les outils MCP"
 
 #: Plugin/ai/ChatAIWindow.cpp:323
 #: build-release/LiteEditor/buildsettingstabbase.cpp:65
 msgid "None"
-msgstr "Non"
+msgstr "Aucun"
 
 #: Plugin/ai/ChatAIWindow.cpp:325
-#, fuzzy
 msgid "Auto"
-msgstr "Sauvegarde automatique"
+msgstr "Automatique"
 
 #: Plugin/ai/ChatAIWindow.cpp:328
-#, fuzzy
 msgid "Static Content"
-msgstr "Modifier le contenu"
+msgstr "Contenu statique"
 
 #: Plugin/ai/ChatAIWindow.cpp:352
-#, fuzzy
 msgid "Prompt Caching"
-msgstr "Sauvegarder les changement de prompt"
+msgstr "Mise en cache des invites"
 
 #: Plugin/ai/ChatAIWindow.cpp:368
-#, fuzzy
 msgid "Insert Prompt"
-msgstr "Insérer un bloc de commentaires"
+msgstr "Insérer une invite"
 
 #: Plugin/ai/ChatAIWindow.cpp:371
-#, fuzzy
 msgid "Dock Chat Window"
 msgstr "Accrocher la fenêtre de chat"
 
 #: Plugin/ai/ChatAIWindow.cpp:383 build-release/Plugin/ai_UI.hpp:182
 msgid "Manage Chat History"
-msgstr ""
+msgstr "Gérer l'historique des conversations"
 
 #: Plugin/ai/ChatAIWindow.cpp:441
-#, fuzzy
 msgid "Please choose an endpoint/model."
-msgstr "Choisissez un modèle"
+msgstr "Veuillez choisir un point de terminaison/modèle."
 
 #: Plugin/ai/ChatAIWindow.cpp:571
 msgid ""
 "Restarting the client will result in the loss of all the current session data.\n"
 "Do you wish to continue?"
 msgstr ""
+"Le redémarrage du client entraînera la perte de toutes les données de session en cours.\n"
+"Voulez-vous continuer ?"
 
 #: Plugin/ai/ChatAIWindow.cpp:583
 msgid "LLM client successfully restarted"
-msgstr "Le client LLM rédémarré avec succès"
+msgstr "Le client LLM a été redémarré avec succès"
 
 #: Plugin/ai/ChatAIWindow.cpp:616
 msgid ""
 "Proceeding with this operation will result in the loss of the current chat context. You may choose to save it before continuing.\n"
 "Do you wish to proceed with clearing the context?"
 msgstr ""
+"La poursuite de cette opération entraînera la perte du contexte de chat actuel. Vous pouvez choisir de l'enregistrer avant de continuer.\n"
+"Voulez-vous continuer à effacer le contexte ?"
 
 #: Plugin/ai/ChatAIWindow.cpp:621
 #: build-release/LiteEditor/filechecklistbase.cpp:144
@@ -5529,91 +5517,88 @@ msgstr "Travail en cours..."
 
 #: Plugin/ai/ChatAIWindow.cpp:744
 msgid ", Last Request cost: $"
-msgstr ""
+msgstr ", coût de la dernière requête : $"
 
 #: Plugin/ai/ChatAIWindow.cpp:744
-#, fuzzy
 msgid "Total cost: $"
-msgstr "Nombre total de tests :"
+msgstr "Coût total : $"
 
 #: Plugin/ai/ChatAIWindow.cpp:750
 msgid ", Total context size: "
-msgstr ""
+msgstr ", taille totale du contexte : "
 
 #: Plugin/ai/ChatAIWindow.cpp:750
 msgid "Used tokens: "
-msgstr ""
+msgstr "Jetons utilisés : "
 
 #: Plugin/ai/ChatAIWindow.cpp:994
 msgid "There are no stored sessions to load for endpoint: "
-msgstr ""
+msgstr "Aucune session enregistrée à charger pour le point de terminaison : "
 
 #: Plugin/ai/ChatAIWindow.cpp:1002
 msgid "Choose a chat to load"
-msgstr ""
+msgstr "Choisir une conversation à charger"
 
 #: Plugin/ai/ChatAIWindow.cpp:1034
 msgid "Enter chat name:"
-msgstr ""
+msgstr "Saisir le nom de la conversation :"
 
 #: Plugin/ai/ChatAIWindow.cpp:1063
 msgid "Context Window Used: "
-msgstr ""
+msgstr "Fenêtre de contexte utilisée : "
 
 #: Plugin/ai/ChatAIWindow.cpp:1125 Plugin/ai/ChatAIWindow.cpp:1138
 msgid "Choose Context Files"
-msgstr ""
+msgstr "Choisir les fichiers de contexte"
 
 #: Plugin/ai/ChatAIWindow.cpp:1207
 msgid "No, and tell me what to do differently:"
-msgstr ""
+msgstr "Non, indiquez-moi quoi faire différemment :"
 
 #: Plugin/ai/ChatAIWindow.cpp:1209
 msgid "No, "
-msgstr ""
+msgstr "Non, "
 
 #: Plugin/ai/ChatAIWindow.hpp:28 Plugin/ai/LLMManager.cpp:1729
 #: Runtime/rc/menu.xrc:700
 msgid "Chat AI"
-msgstr ""
+msgstr "Chat IA"
 
 #: Plugin/ai/ChatAIWindowFrame.cpp:76 Plugin/ai/ChatAIWindowFrame.cpp:79
 msgid "Assistant"
-msgstr ""
+msgstr "Assistant"
 
 #: Plugin/ai/EndpointModelSelector.cpp:32
-#, fuzzy
 msgid "Choose the model to use for this endpoint"
-msgstr "Choisissez la vue à utiliser pour ce dossier dans la liste ci-dessous"
+msgstr "Choisissez le modèle à utiliser pour ce point de terminaison"
 
 #: Plugin/ai/EndpointModelSelector.cpp:33
 msgid "Choose the endpoint to use"
-msgstr ""
+msgstr "Choisir le point de terminaison à utiliser"
 
 #: Plugin/ai/LLMManager.cpp:301
 msgid "AI Options"
-msgstr ""
+msgstr "Options d'IA"
 
 #: Plugin/ai/LLMManager.cpp:325
-#, fuzzy
 msgid "AI-Powered Options"
-msgstr "Fonctionnalités d'IA"
+msgstr "Options alimentées par l'IA"
 
 #: Plugin/ai/LLMManager.cpp:796
 msgid "The model wants to run the tool: `"
-msgstr ""
+msgstr "Le modèle souhaite exécuter l'outil : `"
 
 #: Plugin/ai/LLMManager.cpp:796
 msgid "`\n"
-msgstr ""
+msgstr "`\n"
 
 #: Plugin/ai/LLMManager.cpp:800
 msgid "' for future sessions?"
-msgstr ""
+msgstr "' pour les sessions futures ?"
 
 #: Plugin/ai/LLMManager.cpp:800
 msgid "Would you like to persist trust for the tool '"
-msgstr ""
+msgstr "Souhaitez-vous conserver la confiance pour l'outil '"
 
 #: Plugin/ai/LLMManager.cpp:866
 msgid ""
@@ -5625,7 +5610,7 @@ msgstr ""
 
 #: Plugin/ai/LLMManager.cpp:887
 msgid "Failed to reload AI configuration:\n"
-msgstr ""
+msgstr "Échec du rechargement de la configuration de l'IA :\n"
 
 #: Plugin/ai/LLMManager.cpp:1404 Plugin/ai/LLMManager.cpp:1425
 msgid "Failed to create configuration file:\n"
@@ -5637,12 +5622,11 @@ msgstr "Réflexion en cours..."
 
 #: Plugin/ai/LLMManager.cpp:1711
 msgid "Unable to gather enough context to generate docstring"
-msgstr ""
+msgstr "Impossible de réunir suffisamment de contexte pour générer la documentation"
 
 #: Plugin/ai/LLMManager.cpp:1715
-#, fuzzy
 msgid "Generating DocString..."
-msgstr "Génération du code ..."
+msgstr "Génération de la documentation..."
 
 #: Plugin/ai/LLMManager.cpp:1730
 msgid "Generate an AI-powered comment for the current function"
@@ -5651,13 +5635,15 @@ msgstr "Génère un commentaire généré par l'IA pour la fonction actuelle"
 #: Plugin/ai/LLMManager.cpp:1797
 #, c-format
 msgid "Define the level of trust for: '%s'"
-msgstr ""
+msgstr "Définir le niveau de confiance pour : '%s'"
 
 #: Plugin/ai/LLMManager.cpp:1924
 msgid ""
 "Successfully added the following files to the context:\n"
 "\n"
 msgstr ""
+"Les fichiers suivants ont été ajoutés avec succès au contexte :\n"
+"\n"
 
 #: Plugin/ai/NewLLMEndpointWizard.cpp:73
 msgid "Invalid URL"
@@ -5680,54 +5666,60 @@ msgid ""
 "# Environment variables should be defined in the format EnvName=Value\n"
 "# with each variable declaration on a separate line\n"
 msgstr ""
+"# Les variables d'environnement doivent être définies au format EnvName=Value\n"
+"# avec chaque déclaration de variable sur une ligne séparée\n"
 
 #: Plugin/ai/NewSseMCPDlg.cpp:70
 msgid ""
 "# Write headers in the format \"Header=Value\"\n"
 "# with each header on a separate line\n"
 msgstr ""
+"# Écrire les en-têtes au format \"Header=Value\"\n"
+"# avec chaque en-tête sur une ligne séparée\n"
 
 #: Plugin/ai/SopParamsDialog.cpp:9
 msgid "Enter SOP Parameters ("
-msgstr ""
+msgstr "Entrez les paramètres SOP ("
 
 #: Plugin/ai/ToolTrustLevelDlg.cpp:60
 msgid "Persisting an entire tool is not allowed"
-msgstr ""
+msgstr "La conservation d'un outil entier n'est pas autorisée"
 
 #: Plugin/ai/Tools.cpp:53
 msgid "Creating new directory:"
-msgstr ""
+msgstr "Création du nouveau répertoire :"
 
 #: Plugin/ai/Tools.cpp:53
 msgid "The model wants to create the directory:"
-msgstr ""
+msgstr "Le modèle souhaite créer le répertoire :"
 
 #: Plugin/ai/Tools.cpp:57
 msgid "Creating new file:"
-msgstr ""
+msgstr "Création du nouveau fichier :"
 
 #: Plugin/ai/Tools.cpp:57
 msgid "The model wants to create the file:"
-msgstr ""
+msgstr "Le modèle souhaite créer le fichier :"
 
 #: Plugin/ai/Tools.cpp:61
 msgid "Appending file:"
-msgstr ""
+msgstr "Ajout au fichier :"
 
 #: Plugin/ai/Tools.cpp:61
 msgid "The model wants to append to the file:"
-msgstr ""
+msgstr "Le modèle souhaite ajouter du contenu au fichier :"
 
 #: Plugin/ai/Tools.cpp:88
 msgid ""
 "' already exists.\n"
 "Override it?"
 msgstr ""
+"' existe déjà.\n"
+"Voulez-vous l'écraser ?"
 
 #: Plugin/ai/Tools.cpp:88
 msgid "The file '"
-msgstr ""
+msgstr "Le fichier '"
 
 #: Plugin/ai/Tools.cpp:91
 msgid " already exists"
@@ -5739,110 +5731,115 @@ msgstr "Le fichier : "
 
 #: Plugin/ai/Tools.cpp:202
 msgid "Reading file:"
-msgstr ""
+msgstr "Lecture du fichier :"
 
 #: Plugin/ai/Tools.cpp:202
 msgid "The model wants to read the file:"
-msgstr ""
+msgstr "Le modèle souhaite lire le fichier :"
 
 #: Plugin/ai/Tools.cpp:283
 msgid "Reading file metadata:"
-msgstr ""
+msgstr "Lecture des métadonnées du fichier :"
 
 #: Plugin/ai/Tools.cpp:283
 msgid "The model wants to read metadata for the file:"
-msgstr ""
+msgstr "Le modèle souhaite lire les métadonnées du fichier :"
 
 #: Plugin/ai/Tools.cpp:652
 msgid " files. "
-msgstr ""
+msgstr " fichiers. "
 
 #: Plugin/ai/Tools.cpp:652
 msgid " matches across "
-msgstr ""
+msgstr " correspondances sur "
 
 #: Plugin/ai/Tools.cpp:656
 msgid " results were truncated"
-msgstr ""
+msgstr " résultats ont été tronqués"
 
 #: Plugin/ai/Tools.cpp:693
 msgid "` is trusted for path: `"
-msgstr ""
+msgstr "` est approuvé pour le chemin : `"
 
 #: Plugin/ai/Tools.cpp:697 Plugin/ai/Tools.cpp:705
 msgid "Will apply the following patch:"
-msgstr ""
+msgstr "Le correctif suivant sera appliqué :"
 
 #: Plugin/ai/Tools.cpp:711 Plugin/ai/ToolsUtils.cpp:42
 #, c-format
 msgid "Specific path: %s"
-msgstr ""
+msgstr "Chemin spécifique : %s"
 
 #: Plugin/ai/Tools.cpp:712 Plugin/ai/ToolsUtils.cpp:43
 #, c-format
 msgid "Entire directory: %s/*"
-msgstr ""
+msgstr "Répertoire entier : %s/*"
 
 #: Plugin/ai/Tools.cpp:713 Plugin/ai/Tools.cpp:839 Plugin/ai/ToolsUtils.cpp:44
 msgid "Entire tool"
-msgstr ""
+msgstr "Outil entier"
 
 #: Plugin/ai/Tools.cpp:800
 msgid "` is trusted for the command: `"
-msgstr ""
+msgstr "` est approuvée pour la commande : `"
 
 #: Plugin/ai/Tools.cpp:809
 msgid "# Working directory\n"
-msgstr ""
+msgstr "# Répertoire de travail\n"
 
 #: Plugin/ai/Tools.cpp:809
 msgid ""
 "The model wants to run the following shell command:\n"
 "```bash\n"
 msgstr ""
+"Le modèle souhaite exécuter la commande shell suivante :\n"
+"```bash\n"
 
 #: Plugin/ai/Tools.cpp:811
 msgid "# Command\n"
-msgstr ""
+msgstr "# Commande\n"
 
 #: Plugin/ai/Tools.cpp:818
 #, c-format
 msgid "Exact command: %s"
-msgstr ""
+msgstr "Commande exacte : %s"
 
 #: Plugin/ai/Tools.cpp:837
 #, c-format
 msgid "Tools: %s"
-msgstr ""
+msgstr "Outils : %s"
 
 #: Plugin/ai/Tools.cpp:897 Plugin/ai/Tools.cpp:928
 msgid "The output for the command: `"
-msgstr ""
+msgstr "La sortie de la commande : `"
 
 #: Plugin/ai/Tools.cpp:897 Plugin/ai/Tools.cpp:928
 msgid "` is too large."
-msgstr ""
+msgstr "` est trop volumineuse."
 
 #: Plugin/ai/Tools.cpp:907
 msgid ""
 "Command output:\n"
 "```bash\n"
 msgstr ""
+"Sortie de la commande :\n"
+"```bash\n"
 
 #: Plugin/ai/Tools.cpp:941
 msgid ""
 "Command Output:\n"
 "```bash\n"
 msgstr ""
+"Sortie de la commande :\n"
+"```bash\n"
 
 #: Plugin/ai/ToolsUtils.hpp:20
 msgid " can not be run on the main thread"
-msgstr ""
+msgstr " ne peut pas être exécuté sur le thread principal"
 
 #: Plugin/ai/ToolsUtils.hpp:20
-#, fuzzy
 msgid "Tool "
-msgstr "Outils"
+msgstr "Outil "
 
 #: Plugin/async_executable_cmd.cpp:90
 msgid "Current working directory: "
@@ -6214,15 +6211,15 @@ msgstr "Sélectionnez un thème : "
 
 #: Plugin/clStatusBar.cpp:645
 msgid "Show sidebar"
-msgstr ""
+msgstr "Afficher la barre latérale"
 
 #: Plugin/clStatusBar.cpp:647 Plugin/clStatusBar.cpp:649
 msgid "Show output pane"
-msgstr ""
+msgstr "Afficher le volet de sortie"
 
 #: Plugin/clStatusBar.cpp:652 Plugin/clStatusBar.cpp:654
 msgid "Show secondary sidebar"
-msgstr ""
+msgstr "Afficher la barre latérale secondaire"
 
 #: Plugin/clStrings.h:9 Plugin/editor_config.cpp:381
 #: Plugin/editor_config.cpp:418
@@ -6243,7 +6240,7 @@ msgstr "Références"
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:238
 #: sdk/databaselayer/src/dblayer/MysqlDatabaseLayer.cpp:144
 msgid ":"
-msgstr ""
+msgstr " : "
 
 #: Plugin/clTableWithPagination.cpp:100
 msgid "Showing entries from: "
@@ -6514,7 +6511,7 @@ msgstr "Extension à la date du jour"
 
 #: Plugin/macrosdlg.cpp:97
 msgid "Expands to current year"
-msgstr ""
+msgstr "S'étend à l'année en cours"
 
 #: Plugin/macrosdlg.cpp:99
 msgid "Expands to CodeLite's startup directory on (e.g. on Unix it expands to ~/.codelite/)"
@@ -6734,28 +6731,28 @@ msgstr "Fichier d'espace de travail corrompu"
 
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:169
 msgid "Choose terminal theme"
-msgstr ""
+msgstr "Choisir le thème du terminal"
 
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:175
 #: build-release/Plugin/wxTerminalCtrlUI.hpp:69
 msgid "Terminal Settings"
-msgstr ""
+msgstr "Paramètres du terminal"
 
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:455
 msgid "Available Shells"
-msgstr ""
+msgstr "Shells disponibles"
 
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:455
 msgid "Choose a shell to Launch"
-msgstr ""
+msgstr "Choisir un shell à lancer"
 
 #: Plugin/wxTerminalCtrl/wxTerminalCtrl.cpp:88
 msgid "Unable to find "
-msgstr "Non capable de trouver "
+msgstr "Impossible de trouver "
 
 #: Plugin/wxTerminalCtrl/wxTerminalOutputCtrl.cpp:480
 msgid "Copy with Terminal Colours"
-msgstr "Copier avec les couleurs Terminal"
+msgstr "Copier avec les couleurs du terminal"
 
 #: Plugin/wxterminal.cpp:169 Plugin/wxterminal.cpp:222
 msgid ""
@@ -6959,19 +6956,19 @@ msgstr "Veuillez vérifier les paramètres des chemins d'accès des outils exter
 
 #: Plugins/ClaudeCode/ClaudeCode.cpp:18
 msgid "Claude Code Integration"
-msgstr ""
+msgstr "Intégration de Claude Code"
 
 #: Plugins/ClaudeCode/ClaudeCode.cpp:31
 msgid "Launch Claude Code for the Current Workspace"
-msgstr ""
+msgstr "Lancer Claude Code pour l'espace de travail actuel"
 
 #: Plugins/ClaudeCode/ClaudeCode.cpp:49
 msgid "Launch Claude Code\tCtrl-Shift-I"
-msgstr ""
+msgstr "Lancer Claude Code\tCtrl-Shift-I"
 
 #: Plugins/ClaudeCode/ClaudeCode.cpp:50 Plugins/ClaudeCode/ClaudeCode.cpp:62
 msgid "Launch Claude Code"
-msgstr ""
+msgstr "Lancer Claude Code"
 
 #: Plugins/ClaudeCode/ClaudeCode.cpp:54 Plugins/ClaudeCode/ClaudeCode.cpp:62
 #: Plugins/CodeFormatter/codeformatter.cpp:145
@@ -6989,11 +6986,11 @@ msgstr ""
 
 #: Plugins/ClaudeCode/ClaudeCode.cpp:80
 msgid "Launching Claude Code requires a workspace"
-msgstr ""
+msgstr "Lancer Claude Code nécessite un espace de travail"
 
 #: Plugins/ClaudeCode/ClaudeCode.cpp:107
 msgid "Could not locate claude executable"
-msgstr ""
+msgstr "Impossible de trouver l'exécutable 'claude'"
 
 #: Plugins/CodeFormatter/FormatterPage.cpp:46
 msgid "Format on save?"
@@ -7776,7 +7773,7 @@ msgstr "Scruter"
 #: Plugins/DebugAdapterClient/DapDebuggerSettingsDlg.cpp:63
 #, c-format
 msgid "Delete '%s'"
-msgstr ""
+msgstr "Supprimer '%s'"
 
 #: Plugins/DebugAdapterClient/DapDebuggerSettingsDlg.cpp:76
 msgid "Are you sure you want to scan for dap servers? (this will override your current settings)"
@@ -8558,11 +8555,11 @@ msgstr "Vérifier le style du code sur les fichiers source 'PHP'"
 
 #: Plugins/PHPLint/phplint.cpp:57
 msgid "Lint Current Source"
-msgstr ""
+msgstr "Analyser la source actuelle"
 
 #: Plugins/PHPLint/phplint.cpp:62
 msgid "PHP Linter"
-msgstr ""
+msgstr "Analyseur 'PHP'"
 
 #: Plugins/PHPLint/phplint.cpp:140
 msgid "PHPLint: can not lint file. Missing PHP executable path"
@@ -8749,9 +8746,8 @@ msgid "Downloading file: "
 msgstr "Téléchargement du fichier : "
 
 #: Plugins/Remoty/RemotyWorkspace.cpp:467
-#, fuzzy
 msgid "Failed to create new workspace directory:\n"
-msgstr "Échec de la création d'un nouveau fichier d'espace de travail :\n"
+msgstr "Échec de la création d'un nouveau répertoire d'espace de travail :\n"
 
 #: Plugins/Remoty/RemotyWorkspace.cpp:473
 msgid "Failed to create new workspace file:\n"
@@ -8844,7 +8840,7 @@ msgstr "Paramètres de l'espace de travail"
 
 #: Plugins/Remoty/RemotyWorkspaceView.cpp:39
 msgid "Editor codelite-remote.json"
-msgstr ""
+msgstr "Éditeur 'codelite-remote.json'"
 
 #: Plugins/Remoty/RemotyWorkspaceView.cpp:149
 #: build-release/LiteEditor/ConfigManagerBaseDlg.cpp:59
@@ -8895,11 +8891,11 @@ msgstr "Déconnecté. Cliquer pour se connecter"
 
 #: Plugins/SFTP/SFTPTreeView.cpp:75
 msgid "Goto Folder"
-msgstr ""
+msgstr "Aller au dossier"
 
 #: Plugins/SFTP/SFTPTreeView.cpp:122
 msgid "Goto Location:"
-msgstr ""
+msgstr "Aller à l'emplacement :"
 
 #: Plugins/SFTP/sftp.cpp:79 Plugins/SFTP/sftp.cpp:89
 msgid "SFTP plugin for CodeLite IDE"
@@ -9979,7 +9975,6 @@ msgid "Enable PHP support for CodeLite IDE"
 msgstr "Activer le support PHP pour l'IDE CodeLite"
 
 #: Plugins/codelitephp/php-plugin/php.cpp:73
-#, fuzzy
 msgid "PHP Plugin for the CodeLite IDE"
 msgstr "Extension 'PHP' pour l'IDE CodeLite"
 
@@ -10512,7 +10507,7 @@ msgstr "Réinitialiser le dépôt"
 
 #: Plugins/git/GitView.cpp:451
 msgid "Add unstaged file"
-msgstr ""
+msgstr "Ajouter le fichier non indexé"
 
 #: Plugins/git/GitView.cpp:453 Plugins/git/git.cpp:2345
 msgid "Reset file"
@@ -10532,17 +10527,19 @@ msgstr "Vous pouvez changer cela depuis la barre de menu: Plugins > Git > Config
 
 #: Plugins/git/GitView.cpp:730
 msgid "Delete File"
-msgstr ""
+msgstr "Supprimer le fichier"
 
 #: Plugins/git/GitView.cpp:808
 msgid "This operation will delete the following files:"
-msgstr ""
+msgstr "Cette opération supprimera les fichiers suivants :"
 
 #: Plugins/git/GitView.cpp:812
 msgid ""
 "\n"
 "Continue?"
 msgstr ""
+"\n"
+"Continuer ?"
 
 #: Plugins/git/git.cpp:183
 msgid "Simple GIT plugin"
@@ -10690,11 +10687,12 @@ msgid ""
 "Found lock file: '%s'\n"
 "Is another git process running (or crashed)?"
 msgstr ""
+"Fichier de verrouillage trouvé : '%s'\n"
+"Un autre processus 'git' est-il en cours d'exécution (ou a-t-il planté) ?"
 
 #: Plugins/git/git.cpp:878
-#, fuzzy
 msgid "Commit Error"
-msgstr "Historique des livraisons"
+msgstr "Erreur de validation"
 
 #: Plugins/git/git.cpp:918
 msgid "No remotes found, can't push!"
@@ -10837,7 +10835,6 @@ msgid "Git requires a commit message"
 msgstr "'Git' exige un message de livraison"
 
 #: Plugins/git/gitCommitDlg.cpp:278
-#, fuzzy
 msgid "Nothing to commit"
 msgstr "Rien à livrer !"
 
@@ -11281,9 +11278,8 @@ msgid "&Debugger Pane"
 msgstr "Volet &Débogueur"
 
 #: Runtime/rc/menu.xrc:338
-#, fuzzy
 msgid "&Show MiniMap View"
-msgstr "Basculer vers l'affichage minimal"
+msgstr "Afficher la vue MiniMap"
 
 #: Runtime/rc/menu.xrc:343
 msgid "&Toggle All Panes"
@@ -11581,32 +11577,31 @@ msgstr "Ouvrir l'&Editeur de prompt"
 
 #: Runtime/rc/menu.xrc:709
 msgid "Edit &System Prompt..."
-msgstr ""
+msgstr "Modifier l'&Invite du système..."
 
 #: Runtime/rc/menu.xrc:712
 msgid "Add New &Endpoint..."
-msgstr ""
+msgstr "Ajouter un nouveau &Point de terminaison..."
 
 #: Runtime/rc/menu.xrc:715
 msgid "Choose &Active Endpoint..."
-msgstr ""
+msgstr "Choisir le &Point de terminaison actif..."
 
 #: Runtime/rc/menu.xrc:719
 msgid "&Tools"
-msgstr ""
+msgstr "&Outils"
 
 #: Runtime/rc/menu.xrc:722
-#, fuzzy
 msgid "Add New Local MCP Server..."
-msgstr "Ajouter un nouveau serveur de langages"
+msgstr "Ajouter un nouveau serveur MCP local..."
 
 #: Runtime/rc/menu.xrc:725
 msgid "Add New SSE MCP Server..."
-msgstr ""
+msgstr "Ajouter un nouveau serveur MCP SSE..."
 
 #: Runtime/rc/menu.xrc:729
 msgid "Reset All Tools Permissions"
-msgstr ""
+msgstr "Réinitialiser toutes les autorisations des outils"
 
 #: Runtime/rc/menu.xrc:734
 msgid "Open &Settings File..."
@@ -11614,7 +11609,7 @@ msgstr "Ouvrir le fichier de &Configuration..."
 
 #: Runtime/rc/menu.xrc:737
 msgid "Open &Global Settings File..."
-msgstr ""
+msgstr "Ouvrir le fichier de &Configuration globale..."
 
 #: Runtime/rc/menu.xrc:742
 msgid "Settin&gs"
@@ -11646,7 +11641,7 @@ msgstr "&Achèvement du code..."
 
 #: Runtime/rc/menu.xrc:764
 msgid "Edit CodeLite's Lua Script..."
-msgstr ""
+msgstr "Modifier le script Lua de CodeLite..."
 
 #: Runtime/rc/menu.xrc:771
 msgid "He&lp"
@@ -11683,15 +11678,15 @@ msgstr "Mettre en lecture seule"
 
 #: Runtime/rc/menu.xrc:840
 msgid "Copy Path"
-msgstr ""
+msgstr "Copier le chemin"
 
 #: Runtime/rc/menu.xrc:843
 msgid "More Copy Options"
-msgstr ""
+msgstr "Plus d'options de copie"
 
 #: Runtime/rc/menu.xrc:848
 msgid "Copy Directory Path to Clipboard"
-msgstr ""
+msgstr "Copier le chemin du répertoire dans le presse-papiers"
 
 #: Runtime/rc/menu.xrc:864
 msgid "Swap Header/Implementation file\tF12"
@@ -11839,7 +11834,7 @@ msgstr "Génère la chaîne documentaire pour le scope actuel"
 
 #: Runtime/rc/menu.xrc:1220
 msgid "Add Selected Markdown Files to Context"
-msgstr ""
+msgstr "Ajouter les fichiers Markdown sélectionnés au contexte"
 
 #: build-release/LiteEditor/AccelTableBaseDlg.cpp:45
 msgid "Search for a keyboard shortcut either by its keyboard shortcut or by its description"
@@ -12088,7 +12083,6 @@ msgid "Replace All"
 msgstr "Tout Remplacer"
 
 #: build-release/LiteEditor/FindAndReplaceDialogFrameBase.hpp:90
-#, fuzzy
 msgid "Find & Replace"
 msgstr "Rechercher / Remplacer"
 
@@ -12956,7 +12950,7 @@ msgstr "Le nombre maximum d'images que CodeLite affichera dans l'onglet Pile d'a
 
 #: build-release/LiteEditor/debuggersettingsbasedlg.cpp:561
 msgid "MinGW / Cygwin:"
-msgstr ""
+msgstr "MinGW / Cygwin :"
 
 #: build-release/LiteEditor/debuggersettingsbasedlg.cpp:569
 msgid "Break at assertion failure (MinGW only)"
@@ -14288,11 +14282,11 @@ msgstr "Imposer sombre"
 
 #: build-release/LiteEditor/syntaxhighlightbasedlg.cpp:80
 msgid "Force light"
-msgstr ""
+msgstr "Imposer clair"
 
 #: build-release/LiteEditor/syntaxhighlightbasedlg.cpp:90
 msgid "Global overrides:"
-msgstr ""
+msgstr "Remplacements globaux :"
 
 #: build-release/LiteEditor/syntaxhighlightbasedlg.cpp:101
 msgid "Text selection background colour:"
@@ -14717,9 +14711,8 @@ msgid "Click to close the view or hit ESCAPE."
 msgstr "Cliquer pour fermer la vue ou appuyer sur ECHAP"
 
 #: build-release/Plugin/CustomControls.cpp:176
-#, fuzzy
 msgid "Available Prompts"
-msgstr "Macros disponibles"
+msgstr "Invites disponibles"
 
 #: build-release/Plugin/CustomControls.cpp:193
 #: build-release/Plugins/CodeFormatter/codeformatterdlgbase.cpp:80
@@ -14728,7 +14721,7 @@ msgstr "Par défaut"
 
 #: build-release/Plugin/CustomControls.cpp:194
 msgid "Restore prompts to defaults"
-msgstr ""
+msgstr "Restaurer les invites par défaut"
 
 #: build-release/Plugin/CustomControls.cpp:198
 #: build-release/Plugins/Copyright/copyrights_options_base_dlg.cpp:106
@@ -14738,11 +14731,11 @@ msgstr "Enregi&strer"
 
 #: build-release/Plugin/CustomControls.hpp:68
 msgid "Text Generation"
-msgstr ""
+msgstr "Génération de texte"
 
 #: build-release/Plugin/CustomControls.hpp:102
 msgid "Prompt Editor"
-msgstr ""
+msgstr "Éditeur d'invites"
 
 #: build-release/Plugin/DiffUI.cpp:47
 msgid "Select folders for comparison:"
@@ -14887,7 +14880,7 @@ msgstr "Ma colonne"
 
 #: build-release/Plugin/SelectFileTypesDialogBase.hpp:58
 msgid "Select language:"
-msgstr ""
+msgstr "Sélectionner le langage :"
 
 #: build-release/Plugin/SwitchToWorkspaceBase.cpp:54
 msgid "Workspace file:"
@@ -14963,11 +14956,11 @@ msgstr "Ajouter un fichier d'en-tête manquant"
 
 #: build-release/Plugin/ai_UI.cpp:110
 msgid "Allow this action?"
-msgstr ""
+msgstr "Autoriser cette action ?"
 
 #: build-release/Plugin/ai_UI.cpp:125
 msgid "Trust"
-msgstr ""
+msgstr "Faire confiance"
 
 #: build-release/Plugin/ai_UI.cpp:136
 msgid "Use Shift-ENTER to submit"
@@ -14982,9 +14975,8 @@ msgid "Anthropic"
 msgstr ""
 
 #: build-release/Plugin/ai_UI.cpp:268
-#, fuzzy
 msgid "OpenAI"
-msgstr "Ouvrir"
+msgstr ""
 
 #: build-release/Plugin/ai_UI.cpp:269
 msgid "MoonshotAI"
@@ -15000,7 +14992,7 @@ msgstr ""
 
 #: build-release/Plugin/ai_UI.cpp:277 build-release/Plugin/ai_UI.cpp:615
 msgid "Base URL:"
-msgstr ""
+msgstr "URL de base :"
 
 #: build-release/Plugin/ai_UI.cpp:289
 msgid "Model:"
@@ -15008,7 +15000,7 @@ msgstr "Modèle : "
 
 #: build-release/Plugin/ai_UI.cpp:300
 msgid "Model Context Window (KB):"
-msgstr ""
+msgstr "Fenêtre de contexte du modèle (Ko) :"
 
 #: build-release/Plugin/ai_UI.cpp:305
 msgid "The model context size, in kilobytes."
@@ -15023,57 +15015,56 @@ msgid ""
 "The API Key to use.\n"
 "Environment variables are allowed here."
 msgstr ""
+"La clé API à utiliser.\n"
+"Les variables d'environnement sont autorisées ici."
 
 #: build-release/Plugin/ai_UI.cpp:343
 msgid "Max Tokens (KB):"
-msgstr ""
+msgstr "Nombre maximum de jetons (Ko) :"
 
 #: build-release/Plugin/ai_UI.cpp:348
 msgid ""
 "Is a required parameter that controls the maximum number of tokens Claude will generate in its response.\n"
 "It serves as an upper limit on the length of Claude's output"
 msgstr ""
+"Est un paramètre requis qui contrôle le nombre maximum de jetons que Claude générera dans sa réponse.\n"
+"Il sert de limite supérieure à la longueur de la sortie de Claude"
 
 #: build-release/Plugin/ai_UI.cpp:417
-#, fuzzy
 msgid "Delete selected entry"
-msgstr "Supprimer le contrôle sélectionné"
+msgstr "Supprimer l'entrée sélectionnée"
 
 #: build-release/Plugin/ai_UI.cpp:422
-#, fuzzy
 msgid "Delete all prompts"
-msgstr "Supprimer tous les éléments"
+msgstr "Supprimer toutes les invites"
 
 #: build-release/Plugin/ai_UI.cpp:527
-#, fuzzy
 msgid "Env variables:"
 msgstr "Variables d'environnement :"
 
 #: build-release/Plugin/ai_UI.cpp:628
 msgid "Endpoint:"
-msgstr ""
+msgstr "Point de terminaison :"
 
 #: build-release/Plugin/ai_UI.cpp:641
-#, fuzzy
 msgid "Auth token:"
-msgstr "Auteur :"
+msgstr "Jeton d'authentification :"
 
 #: build-release/Plugin/ai_UI.cpp:654
-#, fuzzy
 msgid "Headers:"
-msgstr "En-tête"
+msgstr "En-têtes"
 
 #: build-release/Plugin/ai_UI.cpp:726
 msgid "Prompts"
-msgstr ""
+msgstr "Invites"
 
 #: build-release/Plugin/ai_UI.cpp:756
 msgid "Mesage"
-msgstr ""
+msgstr "Message"
 
 #: build-release/Plugin/ai_UI.cpp:766
 msgid "Persist"
-msgstr ""
+msgstr "Conserver"
 
 #: build-release/Plugin/ai_UI.hpp:106
 msgid "ChatAI"
@@ -15081,23 +15072,23 @@ msgstr ""
 
 #: build-release/Plugin/ai_UI.hpp:154
 msgid "New LLM Endpoint"
-msgstr ""
+msgstr "Nouveau point de terminaison LLM"
 
 #: build-release/Plugin/ai_UI.hpp:213
 msgid "New Local MCP"
-msgstr ""
+msgstr "Nouveau MCP local"
 
 #: build-release/Plugin/ai_UI.hpp:252
 msgid "New SSE MCP Server"
-msgstr ""
+msgstr "Nouveau serveur MCP SSE"
 
 #: build-release/Plugin/ai_UI.hpp:289
 msgid "Choose an option"
-msgstr ""
+msgstr "Choisir une option"
 
 #: build-release/Plugin/ai_UI.hpp:324
 msgid "System Prompt"
-msgstr ""
+msgstr "Invite système"
 
 #: build-release/Plugin/clAboutDialogBase.cpp:46
 #: build-release/Plugin/clAboutDialogBase.hpp:81
@@ -15217,7 +15208,7 @@ msgstr "Thème :"
 
 #: build-release/Plugin/clBoostrapWizardBase.cpp:146
 msgid "Default (OS settings)"
-msgstr ""
+msgstr "Par défaut (paramètres du système d'exploitation)"
 
 #: build-release/Plugin/clBoostrapWizardBase.cpp:150
 msgid ""
@@ -15735,33 +15726,32 @@ msgid "Default folder:"
 msgstr "Dossier par défaut :"
 
 #: build-release/Plugin/sftp_ui.cpp:202
-#, fuzzy
 msgid "Optionally, set the home folder for this account"
-msgstr "Définir le dossier personnel de ce compte"
+msgstr "Définir éventuellement le dossier personnel de ce compte"
 
 #: build-release/Plugin/sftp_ui.cpp:219
 msgid "Login method: public key"
-msgstr ""
+msgstr "Méthode de connexion : clé publique"
 
 #: build-release/Plugin/sftp_ui.cpp:231
 msgid "Use different key:"
-msgstr ""
+msgstr "Utiliser une autre clé :"
 
 #: build-release/Plugin/sftp_ui.cpp:236
 msgid "Optionally, choose an SSH key for login; if none is selected, CodeLite will fall back to your default public key."
-msgstr ""
+msgstr "Vous pouvez choisir une clé SSH pour la connexion ; si aucune clé n'est sélectionnée, CodeLite utilisera votre clé publique par défaut."
 
 #: build-release/Plugin/sftp_ui.cpp:242
 msgid "Use passphrase"
-msgstr ""
+msgstr "Utiliser une phrase secrète"
 
 #: build-release/Plugin/sftp_ui.cpp:244
 msgid "Check this if this SSH key requires passpharse."
-msgstr ""
+msgstr "Cochez cette option si cette clé SSH nécessite une phrase secrète."
 
 #: build-release/Plugin/sftp_ui.cpp:249
 msgid "Login method: password"
-msgstr ""
+msgstr "Méthode de connexion : mot de passe"
 
 #: build-release/Plugin/sftp_ui.cpp:261
 #: build-release/Plugins/DatabaseExplorer/GUI.cpp:251
@@ -15835,7 +15825,7 @@ msgstr "Ajouter un compte"
 
 #: build-release/Plugin/sftp_ui.hpp:188
 msgid "Remote File Explorer"
-msgstr ""
+msgstr "Explorateur de fichiers distant"
 
 #: build-release/Plugin/sftp_ui.hpp:248
 msgid "Run tool on remote host"
@@ -15843,20 +15833,20 @@ msgstr "Lancer l'outil sur l'hôte distant"
 
 #: build-release/Plugin/wxTerminalCtrlUI.cpp:54
 msgid "Default Shell:"
-msgstr ""
+msgstr "Shell par défaut :"
 
 #: build-release/Plugin/wxTerminalCtrlUI.cpp:64
 msgid "ScrollBack Lines:"
-msgstr ""
+msgstr "Lignes de défilement arrière :"
 
 #: build-release/Plugin/wxTerminalCtrlUI.cpp:74
 msgid "Optimized Drawings"
-msgstr ""
+msgstr "Dessins optimisés"
 
 #: build-release/Plugin/wxTerminalCtrlUI.cpp:75
 #: build-release/Plugin/wxTerminalCtrlUI.cpp:81
 msgid "Enable drawing optimizations for faster rendering when OpenGL is unavailable"
-msgstr ""
+msgstr "Activer les optimisations de dessin pour un rendu plus rapide lorsque OpenGL n'est pas disponible"
 
 #: build-release/Plugin/wxcrafter_plugin.cpp:128
 #: wxcrafter/wxCrafterCommon/aui/aui_manager_wrapper.cpp:41
@@ -15867,7 +15857,7 @@ msgstr "Intitulé"
 
 #: build-release/Plugin/wxcrafter_plugin.cpp:237
 msgid "Icon"
-msgstr ""
+msgstr "Icône"
 
 #: build-release/Plugin/wxcrafter_plugin.cpp:238
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter.cpp:1515
@@ -16021,7 +16011,7 @@ msgstr "Nombre de couleurs du niveau de charge du nœud (max. 10) :"
 
 #: build-release/Plugins/CallGraph/uisettings.cpp:154
 msgid "Strip parameters"
-msgstr ""
+msgstr "Supprimer les paramètres"
 
 #: build-release/Plugins/CallGraph/uisettings.cpp:159
 msgid "Number of edge load level colors (max 10):"
@@ -16029,7 +16019,7 @@ msgstr "Nombre de couleurs de niveau de charge des arêtes (max 10) :"
 
 #: build-release/Plugins/ClaudeCode/ClaudeCodeUI.cpp:47
 msgid "Claude executable:"
-msgstr ""
+msgstr "Exécutable Claude :"
 
 #: build-release/Plugins/CodeFormatter/codeformatterdlgbase.cpp:59
 msgid "name"
@@ -16045,7 +16035,7 @@ msgstr "Options de formatage du code source"
 
 #: build-release/Plugins/CodeLiteDiff/CodeLiteDiff_UI.cpp:47
 msgid "Left FIle:"
-msgstr ""
+msgstr "Fichier de gauche :"
 
 #: build-release/Plugins/CodeLiteDiff/CodeLiteDiff_UI.cpp:61
 msgid "Right File:"
@@ -16205,7 +16195,7 @@ msgstr ""
 
 #: build-release/Plugins/DatabaseExplorer/GUI.cpp:565
 msgid "Generic classes (STL)"
-msgstr ""
+msgstr "Classes génériques (STL)"
 
 #: build-release/Plugins/DatabaseExplorer/GUI.cpp:571
 msgid "Log:"
@@ -16783,7 +16773,7 @@ msgstr "Erreurs"
 
 #: build-release/Plugins/MemCheck/memcheckui.cpp:303
 msgid "Object"
-msgstr ""
+msgstr "Objet"
 
 #: build-release/Plugins/MemCheck/memcheckui.cpp:309
 msgid "First result page."
@@ -16945,7 +16935,7 @@ msgstr "Paramètres 'MemCheck'"
 
 #: build-release/Plugins/PHPLint/phplintdlgbase.cpp:58
 msgid "Lint on file load"
-msgstr ""
+msgstr "Analyser au chargement du fichier"
 
 #: build-release/Plugins/PHPLint/phplintdlgbase.cpp:60
 #: build-release/Plugins/PHPLint/phplintdlgbase.cpp:66
@@ -17005,7 +16995,7 @@ msgstr "Sélectionner l'emplacement du fichier 'Phpstan phar'"
 
 #: build-release/Plugins/PHPLint/phplintdlgbase.hpp:83
 msgid "PHP Linter Options"
-msgstr ""
+msgstr "Options de l'analyseur PHP"
 
 #: build-release/Plugins/PHPRefactoring/phprefactoringdlgbase.cpp:47
 msgid "PHP Refactoring PHAR file:"
@@ -17123,7 +17113,7 @@ msgstr "Définir le chemin d'accès au dossier distant"
 
 #: build-release/Plugins/SFTP/UI.cpp:432
 msgid "Choose Account:"
-msgstr ""
+msgstr "Choisir un compte :"
 
 #: build-release/Plugins/SFTP/UI.cpp:442
 msgid "Choose an account to connect to"
@@ -17131,7 +17121,7 @@ msgstr "Choisir un compte auquel se connecter"
 
 #: build-release/Plugins/SFTP/UI.cpp:447
 msgid "Manual"
-msgstr ""
+msgstr "Manuel"
 
 #: build-release/Plugins/SFTP/UI.cpp:452 build-release/Plugins/SFTP/UI.cpp:463
 msgid "Host:"
@@ -17180,7 +17170,7 @@ msgstr "Téléchargement de fichiers 'SFTP'"
 
 #: build-release/Plugins/SFTP/UI.hpp:221
 msgid "Connect"
-msgstr ""
+msgstr "Se connecter"
 
 #: build-release/Plugins/SFTP/UI.hpp:249
 msgid "Remote Grep"
@@ -17217,6 +17207,10 @@ msgid ""
 "NOTE:\n"
 "If your snippet contains @ or $, you can escape the placeholders with a backslash: \\@ OR \\$"
 msgstr ""
+"Utilisez $ comme espace réservé pour la sélection et @ pour définir la position du curseur.\n"
+"par exemple for($ = 0; $ < @; $++)\n"
+"REMARQUE :\n"
+"Si votre extrait contient @ ou $, vous pouvez échapper les espaces réservés avec un antislash : \\@ OU \\$"
 
 #: build-release/Plugins/SnipWiz/SnippetSettings.cpp:116
 #: build-release/Plugins/SnipWiz/templateclassbasedlg.cpp:198
@@ -18533,11 +18527,11 @@ msgstr "Afficher les informations relatives à la livraison dans la barre d'éta
 
 #: build-release/Plugins/git/gitui.cpp:381
 msgid "Add a Signed-off-by trailer"
-msgstr ""
+msgstr "Ajouter une signature Signed-off-by"
 
 #: build-release/Plugins/git/gitui.cpp:383
 msgid "Add a Signed-off-by trailer by the committer at the end of the commit log message"
-msgstr ""
+msgstr "Ajouter une signature Signed-off-by du responsable à la fin du message de livraison"
 
 #: build-release/Plugins/git/gitui.cpp:387
 msgid "Amend the previous commit"
@@ -19590,7 +19584,7 @@ msgstr "Nom de la nouvelle classe de base :"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter.cpp:1416
 msgid "e.g. FooBaseDlg"
-msgstr ""
+msgstr "par ex. FooBaseDlg"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter.cpp:1428
 msgid "New Inherited-Class Name:"
@@ -19598,7 +19592,7 @@ msgstr "Nouveau nom de la classe héritée :"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter.cpp:1433
 msgid "e.g. FooDlg"
-msgstr ""
+msgstr "par ex. FooDlg"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter.cpp:1440
 msgid "New Inherited-Class Filename:"
@@ -20002,7 +19996,7 @@ msgstr ""
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter_gui.cpp:636
 msgid "Toolbar Item"
-msgstr ""
+msgstr "Élément de barre d'outils"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter_gui.cpp:641
 msgid "Toolbar Separator"
@@ -20039,7 +20033,7 @@ msgstr "déroulant 'wxRibbonButton'"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter_gui.cpp:715
 msgid "wxRibbonButton (Hybrid)"
-msgstr ""
+msgstr "hybride 'wxRibbonButton'"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter_gui.cpp:720
 msgid "wxRibbonButton (Toggle)"
@@ -20059,7 +20053,7 @@ msgstr "déroulant 'wxRibbonTool'"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter_gui.cpp:750
 msgid "wxRibbonTool (Hybrid)"
-msgstr ""
+msgstr "hybride 'wxRibbonTool'"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter_gui.cpp:755
 msgid "wxRibbonTool (Toggle)"
@@ -20087,7 +20081,7 @@ msgstr ""
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter_gui.cpp:807
 msgid "wxDataViewCtrl (with tree-list custom model)"
-msgstr ""
+msgstr "wxDataViewCtrl (avec modèle personnalisé arbre-liste)"
 
 #: build-release/wxcrafter/wxCrafterCommonGui/wxcrafter_gui.cpp:812
 msgid "Add a column..."
@@ -20496,7 +20490,7 @@ msgstr ""
 #: sdk/databaselayer/src/dblayer/PostgresResultSet.cpp:120
 #: sdk/databaselayer/src/dblayer/PostgresResultSet.cpp:217
 msgid "Not implemented\n"
-msgstr "Pas de mise en œuvre\n"
+msgstr "Pas encore implémenté\n"
 
 #: sdk/databaselayer/src/dblayer/PreparedStatement.cpp:24
 msgid "ResultSet NOT closed and cleaned up by the PreparedStatement dtor"
@@ -20624,7 +20618,7 @@ msgstr ""
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:129
 msgid "USE "
-msgstr "UTILISER "
+msgstr ""
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:582
 msgid "exec sp_tables ?, NULL, NULL, '''TABLE'''"
@@ -20740,103 +20734,103 @@ msgstr "Le support d'extension chargeable n'est pas disponible"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:219
 msgid "Set Label..."
-msgstr ""
+msgstr "Définir l'étiquette..."
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:220
 msgid "Reset Label..."
-msgstr ""
+msgstr "Réinitialiser l'étiquette..."
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:228
 msgid "New Tab Name:"
-msgstr ""
+msgstr "Nom du nouvel onglet :"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:278
 msgid "New Terminal\tCtrl-N"
-msgstr ""
+msgstr "Nouveau terminal\tCtrl-N"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:279
 msgid "Close Terminal\tCtrl-W"
-msgstr ""
+msgstr "Fermer le terminal\tCtrl-W"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:294
 msgid "Next Tab\tCtrl-RIGHT"
-msgstr ""
+msgstr "Onglet suivant\tCtrl-DROITE"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:295
 msgid "Previous Tab\tCtrl-LEFT"
-msgstr ""
+msgstr "Onglet précédent\tCtrl-GAUCHE"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:301
 msgid "Copy All Text"
-msgstr ""
+msgstr "Copier tout le texte"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:616
 msgid "Find Text"
-msgstr ""
+msgstr "Rechercher du texte"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:66
 msgid "New Tab Title:"
-msgstr ""
+msgstr "Titre du nouvel onglet :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:100
 msgid "Show Close Button on Tab"
-msgstr ""
+msgstr "Afficher le bouton de fermeture sur l'onglet"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:110
 msgid "Use Block Cursor"
-msgstr ""
+msgstr "Utiliser un curseur bloc"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:119
 msgid "Colours"
-msgstr ""
+msgstr "Couleurs"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:166
 msgid "Text Colour:"
-msgstr ""
+msgstr "Couleur du texte :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:181
 msgid "Colours:"
-msgstr ""
+msgstr "Couleurs :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:195
 msgid "Black:"
-msgstr ""
+msgstr "Noir :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:209
 msgid "Red:"
-msgstr ""
+msgstr "Rouge :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:223
 msgid "Green:"
-msgstr ""
+msgstr "Vert :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:237
 msgid "Yellow:"
-msgstr ""
+msgstr "Jaune :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:251
 msgid "Blue"
-msgstr ""
+msgstr "Bleu"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:265
 msgid "Magenta:"
-msgstr ""
+msgstr "Magenta :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:279
 msgid "Cyan:"
-msgstr ""
+msgstr "Cyan :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:293
 msgid "White:"
-msgstr ""
+msgstr "Blanc :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:313
 msgid "Show Bright Colours"
-msgstr ""
+msgstr "Afficher les couleurs vives"
 
 #: submodules/wxTerminalEmulator/src/lib/terminal_view.cpp:1733
 msgid "Clear buffer"
-msgstr ""
+msgstr "Effacer le tampon"
 
 #: wxcrafter/wxCrafterCommon/Importer/import_from_xrc.cpp:208
 #, c-format
@@ -21525,7 +21519,7 @@ msgstr "Répond à l'événement 'wxEVT_PG_CHANGING', généré lorsque la valeu
 
 #: wxcrafter/wxCrafterCommon/controls/PropertyGrid/property_grid_manager_wrapper.cpp:40
 msgid "Respond to wxEVT_PG_HIGHLIGHTED event, which occurs when mouse moves over a property. Event's property is nullptr if hovered area does not belong to any property."
-msgstr ""
+msgstr "Répond à l'événement 'wxEVT_PG_HIGHLIGHTED', qui se produit lorsque la souris se déplace sur une propriété. La propriété de l'événement est nullptr si la zone survolée n'appartient à aucune propriété."
 
 #: wxcrafter/wxCrafterCommon/controls/PropertyGrid/property_grid_manager_wrapper.cpp:45
 msgid "Respond to wxEVT_PG_RIGHT_CLICK event, which occurs when property is clicked on with right mouse button."
@@ -21713,7 +21707,7 @@ msgstr "Similaire à 'EVT_RIBBONGALLERY_SELECTED' mais déclenché à chaque foi
 
 #: wxcrafter/wxCrafterCommon/controls/RibbonBar/ribbon_gallery_wrapper.cpp:18
 msgid "Triggered when the item being hovered over by the user changes. The item in the event will be the new item being hovered, or nullptr if there is no longer an item being hovered. Note that the ID is that of the gallery, not of the item."
-msgstr ""
+msgstr "Déclenché lorsque l'élément survolé par l'utilisateur change. L'élément dans l'événement sera le nouvel élément survolé, ou nullptr s'il n'y a plus d'élément survolé. Notez que l'ID est celui de la galerie, et non de l'élément."
 
 #: wxcrafter/wxCrafterCommon/controls/RibbonBar/ribbon_gallery_wrapper.cpp:22
 msgid "Triggered when the \"extension\" button of the gallery is pressed"
@@ -23110,7 +23104,7 @@ msgstr "Généré à chaque fois que la valeur numérique du contrôle rotatif e
 
 #: wxcrafter/wxCrafterCommon/controls/spin_ctrl_wrapper.cpp:20
 msgid "Process a wxEVT_COMMAND_TEXT_UPDATED event, when the spinCtrl text changes."
-msgstr ""
+msgstr "Traite un événement 'wxEVT_COMMAND_TEXT_UPDATED', lorsque le texte du 'spinCtrl' change."
 
 #: wxcrafter/wxCrafterCommon/controls/splitter_window_wrapper.cpp:19
 msgid "Sets the split mode"
@@ -23865,7 +23859,7 @@ msgstr "Police de caractères :"
 
 #: wxcrafter/wxCrafterCommon/src/wxgui_defs.h:125
 msgid "ID:"
-msgstr ""
+msgstr "ID :"
 
 #: wxcrafter/wxCrafterCommon/src/wxgui_defs.h:128
 msgid "Include File:"
@@ -25290,312 +25284,3 @@ msgstr "En tant que membre de la fratrie"
 #: wxcrafter/wxCrafterCommonGui/src/allocator_mgr.cpp:383
 msgid "As a Child"
 msgstr "En tant que descendant"
-
-#~ msgid " Called "
-#~ msgstr " Appelé "
-
-#~ msgid " Function name "
-#~ msgstr " Nom de fonction "
-
-#~ msgid " Self time [s]"
-#~ msgstr " Temps d'autonomie [s]"
-
-#~ msgid " Total time [%] "
-#~ msgstr " Temps total [%] "
-
-#, fuzzy
-#~ msgid "\". Continue?"
-#~ msgstr "Poursuivre ?"
-
-#~ msgid "&Check All"
-#~ msgstr "&Vérifier tout"
-
-#, fuzzy
-#~ msgid ", Input tokens: "
-#~ msgstr "Dossier d'entrée :"
-
-#~ msgid ""
-#~ "A double-click on a code line refreshes blame, rebasing it either to the commit clicked or to its parent commit.\n"
-#~ "Most of the time you will want to see what the code looked like earlier, so will want the parent commit."
-#~ msgstr ""
-#~ "Un double-clic sur une ligne de code rafraîchit le blâme, en le reprenant soit au commit cliqué, soit à son commit parent.\n"
-#~ "La plupart du temps, vous voudrez voir à quoi ressemblait le code plus tôt, et donc vous voudrez le commit parent."
-
-#~ msgid ""
-#~ "A restart is required for changes to take effect\n"
-#~ "Continue with restart?"
-#~ msgstr "Un redémarrage est requis pour que les changements prennent effetContinuer avec le redémarrage ?"
-
-#~ msgid "A workspace reparse is needed"
-#~ msgstr "Un ré-analyse de l'espace de travail est nécessaire"
-
-#~ msgid "AI"
-#~ msgstr "IA"
-
-#~ msgid "Add Search Paths to Code Completion Parser"
-#~ msgstr "Ajouter des chemins de recherche à l'analyseur dl'achèvement du code"
-
-#~ msgid "Ask me for each file"
-#~ msgstr "Demandez moi à chaque fichier"
-
-#~ msgid ""
-#~ "Below is a list of the 'annoying' dialogs answers, you can modify \n"
-#~ "the answer of a dialog by checking / unchecking the saved answer"
-#~ msgstr ""
-#~ "Vous trouverez ci-dessous une liste des réponses aux dialogues 'gênants', vous pouvez modifier la réponse d'un dialogue en cochant / décochant la réponse sauvegardée. \n"
-#~ "la réponse d'un dialogue en cochant / décochant la réponse sauvegardée"
-
-#, fuzzy
-#~ msgid "Chat History"
-#~ msgstr "Historique du chat"
-
-#~ msgid "Check this to prevent this dialog from showing up again"
-#~ msgstr "Cochez cette case pour éviter que cette boîte de dialogue ne s'affiche à nouveau"
-
-#~ msgid "Colouring modified git files..."
-#~ msgstr "Coloration des fichiers modifiés 'git'..."
-
-#~ msgid "Colouring tracked git files..."
-#~ msgstr "Coloration des fichiers de suivis 'git'..."
-
-#~ msgid "Commit message:"
-#~ msgstr "Message de la livraison :"
-
-#, fuzzy
-#~ msgid "Confirm Tool Invocation:"
-#~ msgstr "Configuration :"
-
-#~ msgid "Connect to an existing account"
-#~ msgstr "Se connecter à un compte existant"
-
-#~ msgid "Copy File Name"
-#~ msgstr "Copier le nom du fichier"
-
-#~ msgid "Could not find SSH account: "
-#~ msgstr "Impossible de trouver le compte 'SSH': "
-
-#~ msgid "Could not locate project: "
-#~ msgstr "Impossible de localiser le projet : "
-
-#~ msgid "Could not locate ssh executable"
-#~ msgstr "Impossible de localiser l'exécutable 'ssh'"
-
-#~ msgid "Could not locate the requested build configuration"
-#~ msgstr "Impossible de trouver la configuration de construction demandée"
-
-#, c-format
-#~ msgid "Delete '%s'?"
-#~ msgstr "Supprimer '%s' ?"
-
-#~ msgid "Discard changes for all files"
-#~ msgstr "Rejeter les modifications pour tous les fichiers"
-
-#~ msgid "Double-clicking a line shows blame for the parent commit"
-#~ msgstr "Un double-clic sur une ligne permet d'afficher la responsabilité de la livraison parent"
-
-#~ msgid "ERROR: (dap) loading remote file over SSH is not supported yet"
-#~ msgstr "ERREUR : ('dap') le chargement de fichiers distants via 'SSH' n'est pas encore supporté"
-
-#~ msgid "Enable auto scrolling"
-#~ msgstr "Activer le déroulement automatique"
-
-#~ msgid "Enable multiple selections"
-#~ msgstr "Permettre des sélections multiples"
-
-#~ msgid "Failed to start debugger!"
-#~ msgstr "Échec du démarrage du débogueur !"
-
-#~ msgid "Failed to start remote terminal process. Do you have `ssh` client installed and in PATH?"
-#~ msgstr "Échec du démarrage du processus de terminal distant. Le client `ssh` est-il installé et se trouve-t-il dans le 'PATH' ?"
-
-#~ msgid "File: `"
-#~ msgstr "Fichier : `"
-
-#~ msgid "Folders"
-#~ msgstr "Dossiers"
-
-#~ msgid "Git Blame Settings"
-#~ msgstr "'Git Blame' Paramètres"
-
-#~ msgid "Go to:"
-#~ msgstr "Aller à :"
-
-#~ msgid "Immediate Insert"
-#~ msgstr "Insertion immédiate"
-
-#~ msgid "Initialization completed"
-#~ msgstr "L'initialisation est terminée"
-
-#~ msgid "Initialization started..."
-#~ msgstr "L'initialisation a commencé..."
-
-#~ msgid "Initializing CodeLite"
-#~ msgstr "Initialisation de CodeLite"
-
-#~ msgid "Invalid C/C++ symbol name"
-#~ msgstr "Nom de symbole 'C/C++' invalide"
-
-#~ msgid "Invalid XRC! could not save DesignerPreview.xrc"
-#~ msgstr "'XRC' invalide ! Impossible d'enregistrer 'DesignerPreview.xrc'"
-
-#~ msgid "Left File:"
-#~ msgstr "Dossier de gauche :"
-
-#~ msgid "Location"
-#~ msgstr "Lieu"
-
-#~ msgid "Macros (clang only):"
-#~ msgstr "Macros ('clang' uniquement) :"
-
-#~ msgid "Manage bookmarks..."
-#~ msgstr "Gérer les signets..."
-
-#~ msgid "Match a whole word"
-#~ msgstr "Faire correspondre un mot entier"
-
-#~ msgid "Match a whole word only"
-#~ msgstr "Appairer avec un mot entier uniquement"
-
-#, fuzzy
-#~ msgid "Max Tokens:"
-#~ msgstr "Longueur 'max' :"
-
-#~ msgid "Modified"
-#~ msgstr "Modifié"
-
-#~ msgid "New Symbol Name:"
-#~ msgstr "Nouveau nom de symbole :"
-
-#, fuzzy
-#~ msgid "Open AI Chat Window"
-#~ msgstr "Ouvrir la fenêtre de &Chat\tCtrl-Shift-H"
-
-#~ msgid "Open Shell From File Path"
-#~ msgstr "Ouvrir l'interpréteur de commandes à partir du chemin d'accès au fichier"
-
-#, fuzzy
-#~ msgid "Output tokens: "
-#~ msgstr "Dossier de sortie :"
-
-#~ msgid "Parse Workspace"
-#~ msgstr "Analyse de l'espace de travail"
-
-#~ msgid "Perspectives..."
-#~ msgstr "Perspectives..."
-
-#~ msgid "Please save the file before retagging it"
-#~ msgstr "Veuillez sauvegarder le fichier avant de l'étiqueter à nouveau"
-
-#~ msgid "Quick connect"
-#~ msgstr "Connexion rapide"
-
-#~ msgid "Regular Expression"
-#~ msgstr "Expression régulière"
-
-#~ msgid "Rename Symbol Scope"
-#~ msgstr "Renommer un symbole de 'Scope'"
-
-#~ msgid "Reparse the workspace"
-#~ msgstr "Scruter l'espace de travail"
-
-#~ msgid "Resolve Ambiguity"
-#~ msgstr "Résoudre les ambiguïtés"
-
-#~ msgid "Respond to wxEVT_PG_HIGHLIGHTED event, which occurs when mouse moves over a property. Event's property is NULL if hovered area does not belong to any property."
-#~ msgstr "Répond à l'événement 'wxEVT_PG_HIGHLIGHTED, qui se produit lorsque la souris passe sur une propriété. La propriété de l'événement est nul si la zone survolée n'appartient à aucune propriété."
-
-#~ msgid "SFTP Browser"
-#~ msgstr "Navigateur 'SFTP'"
-
-#~ msgid "SFTP Connect"
-#~ msgstr "Connexion 'SFTP'"
-
-#~ msgid "Save Perspective As..."
-#~ msgstr "Enregistrer la perspective sous..."
-
-#~ msgid "Save the current layout as:"
-#~ msgstr "Sauvegarder la mise en page actuelle sous :"
-
-#~ msgid "Select Projects"
-#~ msgstr "Choisir les projets"
-
-#~ msgid "Select a directory"
-#~ msgstr "Choisir un répertoire"
-
-#~ msgid "Select debugger executable:"
-#~ msgstr "Choisir l'exécutable du débogueur :"
-
-#~ msgid "Select each match without de-selectiing the previous match"
-#~ msgstr "Sélectionner chaque match sans dé-sélectionner le match précédent"
-
-#~ msgid "Select the 'rename symbol' project scope"
-#~ msgstr "Sélectionnez le champ d'application du projet « renommer un symbole »"
-
-#~ msgid "Show Builtin Terminal"
-#~ msgstr "Afficher le terminal intégré"
-
-#~ msgid "Show the log and diff for the selected commit"
-#~ msgstr "Afficher le journal et le différentiel de la livraison sélectionnée"
-
-#~ msgid "Some of the files are modified, what action should CodeLite take?"
-#~ msgstr "Certains fichiers sont modifiés, quelle action CodeLite doit-il entreprendre ?"
-
-#~ msgid "Strip parameters   "
-#~ msgstr "Paramètres de la bande  "
-
-#~ msgid "Symbol"
-#~ msgstr "Symbole"
-
-#~ msgid ""
-#~ "The following include paths were detected on your system and will be added to your parser search path.\n"
-#~ "You may remove a path by unchecking it.\n"
-#~ "\n"
-#~ "You can always add/remove paths to the parser from the main menu:\n"
-#~ "Settings > Tags Settings > Parser"
-#~ msgstr ""
-#~ "Les chemins d'inclusion suivants ont été détectés sur votre système et seront ajoutés au chemin de recherche de votre analyseur.\n"
-#~ "Vous pouvez supprimer un chemin en le décochant.\n"
-#~ "\n"
-#~ "Vous pouvez toujours ajouter/supprimer des chemins d'accès à l'analyseur à partir du menu principal :\n"
-#~ "Paramètres > Balises Paramètres > Analyseur"
-
-#~ msgid "Triggered when the item being hovered over by the user changes. The item in the event will be the new item being hovered, or NULL if there is no longer an item being hovered. Note that the ID is that of the gallery, not of the item."
-#~ msgstr "Déclenché lorsque l'élément survolé par l'utilisateur change. L'élément dans l'événement sera le nouvel élément survolé, ou 'NULL' s'il n'y a plus d'élément survolé. Notez que l'ID est celui de la galerie et non de l'élément."
-
-#~ msgid "Type a path and hit ENTER"
-#~ msgstr "Tapez un chemin d'accès et appuyez sur ENTRÉE"
-
-#~ msgid ""
-#~ "Use $ as placeholder for the selection and @ to set the caret position.\n"
-#~ "e.g. for($ = 0; $ < @; $++)\n"
-#~ "NOTE:\n"
-#~ "If your snippet contains @ or $, you can escape the placeholders with a backslash: \\@ OR \\$ "
-#~ msgstr ""
-#~ "Utilisez $ comme caractère de remplacement pour la sélection et @ pour définir la position du curseur.\n"
-#~ "Par exemple, for($ = 0 ; $ < @ ; $++)\n"
-#~ "REMARQUE :\n"
-#~ "Si votre extrait contient @ ou $, vous pouvez échapper aux caractères génériques à l'aide d'une barre oblique inverse : \\@ OU \\$ "
-
-#~ msgid "Use case sensitive match"
-#~ msgstr "Utiliser une correspondance sensible à la casse"
-
-#~ msgid "Use regular expression"
-#~ msgstr "Utiliser des expressions régulières"
-
-#~ msgid "Use wildcard syntax"
-#~ msgstr "Utiliser la syntaxe des jokers"
-
-#~ msgid "Use wildcard syntax (* and ?)"
-#~ msgstr "Utiliser la syntaxe des jokers (* et ?)"
-
-#~ msgid "When a blame line is selected, the commit log message and diff are shown at the bottom of the dialog. Uncheck this box to hide those fields."
-#~ msgstr "Lorsqu'une ligne de reproche est sélectionnée, le message du journal de livraison et la différence sont affichés au bas de la boîte de dialogue. Décochez cette case pour masquer ces champs."
-
-#~ msgid "Wrong account selected!"
-#~ msgstr "Mauvais compte sélectionné !"
-
-#~ msgid "` is not opened on the server"
-#~ msgstr "` n'est pas ouvert sur le serveur"
-
-#~ msgid "unsupported message: `"
-#~ msgstr "message non supporté : `"

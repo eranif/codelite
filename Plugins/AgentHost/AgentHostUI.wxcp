@@ -3,12 +3,12 @@
     "m_GenerateCodeTypes": 1,
     "m_addHandlers": true,
     "m_bitmapFunction": "wxC3C61InitBitmapResources",
-    "m_bitmapsFile": "ClaudeCodeUI_claudecode_bitmaps.cpp",
+    "m_bitmapsFile": "AgentHostUI_agenthost_bitmaps.cpp",
     "m_firstWindowId": 10000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
     "m_objCounter": 135,
-    "m_outputFileName": "",
+    "m_outputFileName": "AgentHostUI",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
     "m_templateClasses": []
@@ -44,7 +44,7 @@
         {
           "type": "string",
           "m_label": "Name:",
-          "m_value": "ClaudeCodeSettgingsBaseDlg"
+          "m_value": "AgentHostSettgingsBaseDlg"
         },
         {
           "type": "multi-string",
@@ -125,12 +125,12 @@
         {
           "type": "string",
           "m_label": "Inherited Class",
-          "m_value": "ClaudeCodeSettgingsDlg"
+          "m_value": "AgentHostSettgingsDlg"
         },
         {
           "type": "string",
           "m_label": "File:",
-          "m_value": "ClaudeCodeSettgingsDlg"
+          "m_value": "AgentHostSettgingsDlg"
         },
         {
           "type": "string",
@@ -719,7 +719,7 @@
         {
           "type": "string",
           "m_label": "Size:",
-          "m_value": "500,300"
+          "m_value": "-1,-1"
         },
         {
           "type": "string",
@@ -729,7 +729,7 @@
         {
           "type": "string",
           "m_label": "Name:",
-          "m_value": "ClaudeCodePageBase"
+          "m_value": "AgentHostPageBase"
         },
         {
           "type": "multi-string",
@@ -805,12 +805,12 @@
         {
           "type": "string",
           "m_label": "Inherited Class",
-          "m_value": "ClaudeCodePage"
+          "m_value": "AgentHostPage"
         },
         {
           "type": "string",
           "m_label": "File:",
-          "m_value": "ClaudeCodePage"
+          "m_value": "AgentHostPage"
         },
         {
           "type": "string",

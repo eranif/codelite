@@ -230,13 +230,11 @@ void PluginManager::Load()
                 continue;
             }
 
-            // One-time migration: force-enable the ClaudeCode plugin for existing users so it
-            // is loaded automatically after upgrading, without overriding a later manual disable.
-            if (pluginInfo->GetName() == "ClaudeCode") {
-                bool forceLoadClaudeCode = clConfig::Get().Read("plugins/load-claude-code-on-first-time", true);
+            if (pluginInfo->GetName() == "ClaudeCode" || pluginInfo->GetName() == "AgentHost") {
+                bool forceLoadClaudeCode = clConfig::Get().Read("plugins/load-agent-host-on-first-time", true);
                 if (forceLoadClaudeCode) {
                     m_pluginsData.EnablePlugin(pluginInfo->GetName());
-                    clConfig::Get().Write("plugins/load-claude-code-on-first-time", false);
+                    clConfig::Get().Write("plugins/load-agent-host-on-first-time", false);
                 }
             }
 

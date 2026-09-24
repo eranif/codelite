@@ -1,18 +1,18 @@
 #pragma once
 
-#include "ClaudeCodeUI.hpp"
+#include "AgentHostUI.hpp"
 #include "cl_command_event.h"
 #include "ssh_account_info.h"
 
 class wxTerminalViewCtrl;
-class ClaudeCodePage : public ClaudeCodePageBase
+class AgentHostPage : public AgentHostPageBase
 {
 public:
-    ClaudeCodePage(wxBookCtrlBase* parent, const std::optional<SSHAccountInfo>& sshAccount);
-    ~ClaudeCodePage() override;
+    AgentHostPage(wxBookCtrlBase* parent, const std::optional<SSHAccountInfo>& sshAccount);
+    ~AgentHostPage() override;
 
     wxTerminalViewCtrl* GetTerminal() { return m_terminal; }
-    void StartClaudeCode(const wxString& claudeExecutable, const wxString& workingDirectory = wxEmptyString);
+    void StartAgentHost(const wxString& claudeExecutable, const wxString& workingDirectory = wxEmptyString);
 
 protected:
     void OnThemeChanged(clCommandEvent& event);

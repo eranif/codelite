@@ -1,6 +1,6 @@
-#include "ClaudeCode.hpp"
+#include "AgentHost.hpp"
 
-#include "ClaudeCodeSettgingsDlg.hpp"
+#include "AgentHostSettgingsDlg.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "Platform/Platform.hpp"
 #include "clSideBarCtrl.hpp"
@@ -8,13 +8,13 @@
 #include "open_resource_dialog.h"
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new ClaudeCode(manager); }
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new AgentHost(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
-    info.SetName(wxT("ClaudeCode"));
+    info.SetName(wxT("AgentHost"));
     info.SetDescription(_("Claude Code Integration"));
     info.SetVersion(wxT("v1.0"));
     return &info;
@@ -22,25 +22,24 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-ClaudeCode::ClaudeCode(IManager* manager)
+AgentHost::AgentHost(IManager* manager)
     : IPlugin(manager)
 {
-    m_showClaudeCode =
-        std::make_shared<std::function<void()>>([this]() { CallAfter(&ClaudeCode::ShowClaudeTerminal); });
+    m_showClaudeCode = std::make_shared<std::function<void()>>([this]() { CallAfter(&AgentHost::ShowClaudeTerminal); });
     m_mgr->GetLeftSideBarCtrl()->AddActionButton(
         "claude-code", _("Launch Claude Code for the Current Workspace"), m_showClaudeCode);
-    EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this);
-    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &ClaudeCode::OnAllPagesClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &AgentHost::OnPageClosing, this);
+    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &AgentHost::OnAllPagesClosed, this);
 }
 
-ClaudeCode::~ClaudeCode()
+AgentHost::~AgentHost()
 {
-    EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &ClaudeCode::OnPageClosing, this);
-    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &ClaudeCode::OnAllPagesClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &AgentHost::OnPageClosing, this);
+    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &AgentHost::OnAllPagesClosed, this);
 }
 
-void ClaudeCode::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
-void ClaudeCode::CreatePluginMenu(wxMenu* pluginsMenu)
+void AgentHost::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
+void AgentHost::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(nullptr);
@@ -54,26 +53,26 @@ void ClaudeCode::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("claude_code_options"), _("Options..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("Claude Code"), menu);
-    menu->Bind(wxEVT_MENU, &ClaudeCode::OnSettings, this, XRCID("claude_code_options"));
-    menu->Bind(wxEVT_MENU, &ClaudeCode::OnShowClaudeCode, this, XRCID("launch_claude_code"));
+    menu->Bind(wxEVT_MENU, &AgentHost::OnSettings, this, XRCID("claude_code_options"));
+    menu->Bind(wxEVT_MENU, &AgentHost::OnShowClaudeCode, this, XRCID("launch_claude_code"));
 
     clKeyboardManager::Get()->AddAccelerator(
         _("Claude Code"),
         {{"launch_claude_code", _("Launch Claude Code"), "Ctrl-Shift-I"}, {"claude_code_options", _("Options...")}});
 }
 
-void ClaudeCode::UnPlug() {}
-void ClaudeCode::OnSettings(wxCommandEvent& event)
+void AgentHost::UnPlug() {}
+void AgentHost::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    ClaudeCodeSettgingsDlg dlg{EventNotifier::Get()->TopFrame()};
+    AgentHostSettgingsDlg dlg{EventNotifier::Get()->TopFrame()};
     if (dlg.ShowModal() == wxID_OK) {
-        auto claude_exec = dlg.GetClaudeCode();
-        clConfig::Get().Write(kClaudeCodeExecutable, claude_exec);
+        auto claude_exec = dlg.GetClaudeCodeExecutable();
+        clConfig::Get().Write(kAgentHostCaudeCodeExecutable, claude_exec);
     }
 }
 
-void ClaudeCode::ShowClaudeTerminal()
+void AgentHost::ShowClaudeTerminal()
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace == nullptr) {
@@ -97,7 +96,7 @@ void ClaudeCode::ShowClaudeTerminal()
     } else {
         // On local executions, use the configured claude executable first if one is not set, locate using
         // the environment variables.
-        auto configured_claude_exec = clConfig::Get().Read(kClaudeCodeExecutable, wxString{});
+        auto configured_claude_exec = clConfig::Get().Read(kAgentHostCaudeCodeExecutable, wxString{});
         if (configured_claude_exec.empty())
             claude_exec = ThePlatform->Which("claude");
         else
@@ -110,14 +109,14 @@ void ClaudeCode::ShowClaudeTerminal()
     }
 
     // Define the working directory & the ssh account (if a remote workspace)
-    m_claudeCodePage = new ClaudeCodePage(clGetManager()->GetMainNotebook(), sshAccount);
+    m_claudeCodePage = new AgentHostPage(clGetManager()->GetMainNotebook(), sshAccount);
     clGetManager()->GetMainNotebook()->AddPage(m_claudeCodePage, _("Claude Code"), true);
     CHECK_PTR_RET(m_claudeCodePage);
 
-    m_claudeCodePage->StartClaudeCode(*claude_exec, workspace->GetDir());
+    m_claudeCodePage->StartAgentHost(*claude_exec, workspace->GetDir());
 }
 
-void ClaudeCode::OnPageClosing(wxNotifyEvent& event)
+void AgentHost::OnPageClosing(wxNotifyEvent& event)
 {
     const wxWindow* win = reinterpret_cast<wxWindow*>(event.GetClientData());
     if (win && win == m_claudeCodePage) {
@@ -127,13 +126,13 @@ void ClaudeCode::OnPageClosing(wxNotifyEvent& event)
     event.Skip();
 }
 
-void ClaudeCode::OnAllPagesClosed(wxCommandEvent& event)
+void AgentHost::OnAllPagesClosed(wxCommandEvent& event)
 {
     m_claudeCodePage = nullptr;
     event.Skip();
 }
 
-void ClaudeCode::OnShowClaudeCode(wxCommandEvent& event)
+void AgentHost::OnShowClaudeCode(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     ShowClaudeTerminal();

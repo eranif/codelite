@@ -1,4 +1,4 @@
-#include "ClaudeCodePage.hpp"
+#include "AgentHostPage.hpp"
 
 #include "ColoursAndFontsManager.h"
 #include "globals.h"
@@ -26,29 +26,29 @@ const wxString kShellCommand = "/bin/bash --login -i";
         return;                                 \
     }
 
-ClaudeCodePage::ClaudeCodePage(wxBookCtrlBase* parent, const std::optional<SSHAccountInfo>& sshAccount)
-    : ClaudeCodePageBase(parent)
+AgentHostPage::AgentHostPage(wxBookCtrlBase* parent, const std::optional<SSHAccountInfo>& sshAccount)
+    : AgentHostPageBase(parent)
 {
     m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
         wxEmptyString, sshAccount, wxEmptyString, true, kShellCommand, this);
     GetSizer()->Add(m_terminal, wxSizerFlags(1).Expand());
     GetSizer()->Layout();
 
-    EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &ClaudeCodePage::OnTerminalLink, this);
-    EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &ClaudeCodePage::OnTerminalTerminated, this);
-    EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &ClaudeCodePage::OnTerminalTitleChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &ClaudeCodePage::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
 }
 
-ClaudeCodePage::~ClaudeCodePage()
+AgentHostPage::~AgentHostPage()
 {
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &ClaudeCodePage::OnThemeChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &ClaudeCodePage::OnTerminalLink, this);
-    EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &ClaudeCodePage::OnTerminalTerminated, this);
-    EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &ClaudeCodePage::OnTerminalTitleChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
 }
 
-void ClaudeCodePage::OnThemeChanged(clCommandEvent& event)
+void AgentHostPage::OnThemeChanged(clCommandEvent& event)
 {
     event.Skip();
     CHECK_PTR_RET(m_terminal);
@@ -61,7 +61,7 @@ void ClaudeCodePage::OnThemeChanged(clCommandEvent& event)
     m_terminal->SetTheme(theme);
 }
 
-void ClaudeCodePage::OnTerminalTitleChanged(clCommandEvent& event)
+void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
 
@@ -78,7 +78,7 @@ void ClaudeCodePage::OnTerminalTitleChanged(clCommandEvent& event)
     }
 }
 
-void ClaudeCodePage::OnTerminalTerminated(clCommandEvent& event)
+void AgentHostPage::OnTerminalTerminated(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
 
@@ -91,7 +91,7 @@ void ClaudeCodePage::OnTerminalTerminated(clCommandEvent& event)
     });
 }
 
-void ClaudeCodePage::OnTerminalLink(clCommandEvent& event)
+void AgentHostPage::OnTerminalLink(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
 
@@ -152,7 +152,7 @@ void ClaudeCodePage::OnTerminalLink(clCommandEvent& event)
     }
 }
 
-void ClaudeCodePage::StartClaudeCode(const wxString& claudeExecutable, const wxString& workingDirectory)
+void AgentHostPage::StartAgentHost(const wxString& claudeExecutable, const wxString& workingDirectory)
 {
     // Remember the label given to the tab, the blink code needs it.
     wxString command = claudeExecutable;

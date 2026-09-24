@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2026 The CodeLite Team
-// File name            : ClaudeCode.hpp
+// File name            : AgentHost.hpp
 //
 // -------------------------------------------------------------------------
 // A
@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include "ClaudeCodePage.hpp"
+#include "AgentHostPage.hpp"
 #include "plugin.h"
 
 class wxTerminalEvent;
 
-class ClaudeCode : public IPlugin
+class AgentHost : public IPlugin
 {
 public:
-    ClaudeCode(IManager* manager);
-    ~ClaudeCode() override;
+    AgentHost(IManager* manager);
+    ~AgentHost() override;
 
     //--------------------------------------------
     // Abstract methods
@@ -57,6 +57,6 @@ protected:
     void OnShowClaudeCode(wxCommandEvent& event);
     void OnAllPagesClosed(wxCommandEvent& event);
 
-    ClaudeCodePage* m_claudeCodePage{nullptr};
+    AgentHostPage* m_claudeCodePage{nullptr};
     std::shared_ptr<std::function<void()>> m_showClaudeCode;
 };

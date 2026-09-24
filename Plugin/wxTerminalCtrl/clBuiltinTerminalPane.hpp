@@ -128,6 +128,7 @@ protected:
     void OnInitDone(wxCommandEvent& e);
     void OnPageChanged(wxBookCtrlEvent& event);
     void OnLinkClicked(wxTerminalEvent& event);
+    void OnTerminalBell(wxTerminalEvent& event);
     void OnNew(wxCommandEvent& event);
     void DetectTerminals(std::vector<std::pair<wxString, wxString>>& terminals);
     bool ReadTerminalOptionsFromDisk(std::vector<std::pair<wxString, wxString>>& terminals);

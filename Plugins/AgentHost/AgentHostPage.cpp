@@ -37,6 +37,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent, const std::optional<SSHAcco
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_BELL, &AgentHostPage::OnTerminalBell, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
 }
 
@@ -46,6 +47,7 @@ AgentHostPage::~AgentHostPage()
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_BELL, &AgentHostPage::OnTerminalBell, this);
 }
 
 void AgentHostPage::OnThemeChanged(clCommandEvent& event)
@@ -89,6 +91,12 @@ void AgentHostPage::OnTerminalTerminated(clCommandEvent& event)
             book->DeletePage(where);
         }
     });
+}
+
+void AgentHostPage::OnTerminalBell(clCommandEvent& event)
+{
+    CHECK_CAN_HANDLE_EVENT(event);
+    clDEBUG() << "Got a bell!" << endl;
 }
 
 void AgentHostPage::OnTerminalLink(clCommandEvent& event)
@@ -155,10 +163,11 @@ void AgentHostPage::OnTerminalLink(clCommandEvent& event)
 void AgentHostPage::StartAgentHost(const wxString& claudeExecutable, const wxString& workingDirectory)
 {
     // Remember the label given to the tab, the blink code needs it.
+    static const wxString kClaudeSettings = R"(--settings "{\"preferredNotifChannel\": \"terminal_bell\"}")";
     wxString command = claudeExecutable;
     command.Prepend("\"").Append("\"");
     wxString command_to_run;
-    command_to_run = wxString::Format("%s --continue || %s", command, command);
+    command_to_run = wxString::Format("%s %s --continue || %s %s", command, kClaudeSettings, command, kClaudeSettings);
     if (!workingDirectory.empty()) {
         wxString cd_command;
         cd_command << "cd \"" << workingDirectory << "\" && ";

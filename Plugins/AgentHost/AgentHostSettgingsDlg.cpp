@@ -5,7 +5,7 @@
 AgentHostSettgingsDlg::AgentHostSettgingsDlg(wxWindow* parent)
     : AgentHostSettgingsBaseDlg(parent)
 {
-    m_textCtrlClaudeExec->SetValue(clConfig::Get().Read(kAgentHostCaudeCodeExecutable, wxString{}));
+    m_textCtrlClaudeExec->SetValue(clConfig::Get().Read(kAgentHostClaudeCodeExecutable, wxString{}));
 }
 
 AgentHostSettgingsDlg::~AgentHostSettgingsDlg() {}

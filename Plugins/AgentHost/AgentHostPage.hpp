@@ -17,6 +17,7 @@ public:
 protected:
     void OnThemeChanged(clCommandEvent& event);
     void OnTerminalLink(clCommandEvent& event);
+    void OnTerminalBell(clCommandEvent& event);
     void OnTerminalTerminated(clCommandEvent& event);
     void OnTerminalTitleChanged(clCommandEvent& event);
 

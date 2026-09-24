@@ -245,6 +245,7 @@ void clBuiltinTerminalPane::BindTerminalEvents(wxTerminalViewCtrl* terminal, boo
         }
     });
     terminal->Bind(wxEVT_TERMINAL_TEXT_LINK, &clBuiltinTerminalPane::OnLinkClicked, this);
+    terminal->Bind(wxEVT_TERMINAL_BELL, &clBuiltinTerminalPane::OnTerminalBell, this);
 }
 
 wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxWindow* parent,
@@ -877,6 +878,19 @@ void clBuiltinTerminalPane::UpdateFont()
     if (lexer) {
         m_activeFont = lexer->GetFontForStyle(0, this);
     }
+}
+
+void clBuiltinTerminalPane::OnTerminalBell(wxTerminalEvent& event)
+{
+    event.Skip();
+    auto terminal = dynamic_cast<wxTerminalViewCtrl*>(event.GetEventObject());
+    if (m_book->FindPage(terminal) == wxNOT_FOUND) {
+        clCommandEvent evt{wxEVT_BUILTIN_TERMINAL_BELL};
+        evt.SetEventObject(terminal);
+        EventNotifier::Get()->ProcessEvent(evt);
+        return;
+    }
+    // Handle it here
 }
 
 void clBuiltinTerminalPane::OnLinkClicked(wxTerminalEvent& event)

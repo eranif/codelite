@@ -78,7 +78,7 @@ public:
 
 private:
     PHPEditorContextMenu();
-    virtual ~PHPEditorContextMenu();
+    ~PHPEditorContextMenu() override;
 
     void OnCommentSelection(wxCommandEvent& event);
     void OnCommentLine(wxCommandEvent& event);

@@ -34,6 +34,7 @@
 #include "wxCodeCompletionBoxEntry.hpp"
 #include "wxCodeCompletionBoxManager.h"
 
+#include <algorithm>
 #include <wx/bitmap.h>
 #include <wx/clntdata.h>
 #include <wx/menu.h>
@@ -225,9 +226,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         wxString textOrig;
         wxString textLeadingSpaces;
 
-        if (typedWordLen < 0) {
-            typedWordLen = 0;
-        }
+        typedWordLen = std::max(typedWordLen, 0);
 
         // format the text to insert
         bool appendEol(false);

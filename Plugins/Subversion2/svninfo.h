@@ -38,8 +38,8 @@ public:
     wxString m_date;
 
 public:
-    SvnInfo() {}
-    ~SvnInfo() {}
+    SvnInfo() = default;
+    ~SvnInfo() = default;
 };
 
 #endif // SVNINFO_H

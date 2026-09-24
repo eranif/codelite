@@ -24,6 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "newplugindata.h"
 
-NewPluginData::NewPluginData() {}
+NewPluginData::NewPluginData() = default;
 
-NewPluginData::~NewPluginData() {}
+NewPluginData::~NewPluginData() = default;

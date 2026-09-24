@@ -56,7 +56,7 @@ NewQtProjDlg::NewQtProjDlg(wxWindow* parent, QmakeConf* conf, IManager* mgr)
     WindowAttrManager::Load(this);
 }
 
-NewQtProjDlg::~NewQtProjDlg() {}
+NewQtProjDlg::~NewQtProjDlg() = default;
 
 void NewQtProjDlg::OnNewQmakeSettings(wxCommandEvent& event)
 {

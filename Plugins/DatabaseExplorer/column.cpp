@@ -57,8 +57,8 @@ void Column::Edit(wxString& name, wxString& parentName, IDbType* type)
     this->m_pType = nullptr;
     this->m_name = name;
     this->m_parentName = parentName;
-    if (this->m_pType)
-        delete this->m_pType;
+
+    delete this->m_pType;
     this->m_pType = type;
 }
 

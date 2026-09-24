@@ -29,6 +29,7 @@
 #include "fileutils.h"
 #include "workspace.h"
 
+#include <algorithm>
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
 #include <wx/filedlg.h>
@@ -119,8 +120,7 @@ int uicallgraphpanel::CreateAndInserDataToTable(int node_thr)
     while (it) {
         LineParser* line = it->GetData();
 
-        if (max_time < line->time)
-            max_time = line->time;
+        max_time = std::max(max_time, line->time);
 
         if (line->pline && wxRound(line->time) >= node_thr) {
             m_grid->AppendRows(1, true);
@@ -262,16 +262,14 @@ void uicallgraphpanel::OnZoom100(wxCommandEvent& event)
 void uicallgraphpanel::OnZoomIn(wxCommandEvent& event)
 {
     m_scale = m_scale + 0.1;
-    if (m_scale > 1)
-        m_scale = 1;
+    m_scale = std::min<float>(m_scale, 1);
     UpdateImage();
 }
 
 void uicallgraphpanel::OnZoomOut(wxCommandEvent& event)
 {
     m_scale = m_scale - 0.1;
-    if (m_scale < 0.1)
-        m_scale = 0.1;
+    m_scale = std::max<double>(m_scale, 0.1);
     UpdateImage();
 }
 

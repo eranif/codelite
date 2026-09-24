@@ -38,6 +38,7 @@
 #include "zn_config_item.h"
 #include "zoomtext.h"
 
+#include <algorithm>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
@@ -222,8 +223,7 @@ void ZoomNavigator::SetZoomTextScrollPosToMiddle(wxStyledTextCtrl& stc)
     const int linesAboveIt = numLinesOnScreen / 2;
 
     first = first - linesAboveIt;
-    if (first < 0)
-        first = 0;
+    first = std::max(first, 0);
 
     m_text->SetFirstVisibleLine(first);
     m_text->ClearSelections();

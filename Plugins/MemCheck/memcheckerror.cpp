@@ -18,17 +18,17 @@ bool MemCheckErrorLocation::operator==(const MemCheckErrorLocation& other) const
 
 bool MemCheckErrorLocation::operator!=(const MemCheckErrorLocation& other) const { return !(*this == other); }
 
-const wxString MemCheckErrorLocation::toString() const
+wxString MemCheckErrorLocation::toString() const
 {
     return wxString::Format(wxT("%s\t%s\t%i\t%s"), func, file, line, obj);
 }
 
-const wxString MemCheckErrorLocation::toText(const wxString& workspacePath) const
+wxString MemCheckErrorLocation::toText(const wxString& workspacePath) const
 {
     return wxString::Format(wxT("%s   ( %s: %i )"), func, getFile(workspacePath), line);
 }
 
-const wxString MemCheckErrorLocation::getFile(const wxString& workspacePath) const
+wxString MemCheckErrorLocation::getFile(const wxString& workspacePath) const
 {
     wxString localPath;
     if (workspacePath.IsEmpty() || !file.StartsWith(workspacePath, &localPath)) {
@@ -38,7 +38,7 @@ const wxString MemCheckErrorLocation::getFile(const wxString& workspacePath) con
     }
 }
 
-const wxString MemCheckErrorLocation::getObj(const wxString& workspacePath) const
+wxString MemCheckErrorLocation::getObj(const wxString& workspacePath) const
 {
     wxString localPath;
     if (workspacePath.IsEmpty() || !obj.StartsWith(workspacePath, &localPath)) {
@@ -58,7 +58,7 @@ MemCheckError::MemCheckError()
 {
 }
 
-const wxString MemCheckError::toString() const
+wxString MemCheckError::toString() const
 {
     wxString string = wxString::Format(wxT("%s"), label);
     for (const auto& nestedError : nestedErrors)
@@ -68,7 +68,7 @@ const wxString MemCheckError::toString() const
     return string;
 }
 
-const wxString MemCheckError::toText(unsigned int indent) const
+wxString MemCheckError::toText(unsigned int indent) const
 {
     wxString text = label;
     for (const auto& nestedError : nestedErrors)
@@ -78,7 +78,7 @@ const wxString MemCheckError::toText(unsigned int indent) const
     return text;
 }
 
-const wxString MemCheckError::getSuppression()
+wxString MemCheckError::getSuppression()
 {
     wxString ruleName;
     if (suppression.Contains(wxT(SUPPRESSION_NAME_PLACEHOLDER))) {

@@ -6,12 +6,12 @@
 
 #include <wx/dir.h>
 
-PHPParserThread* PHPParserThread::ms_instance = 0;
+PHPParserThread* PHPParserThread::ms_instance = nullptr;
 bool PHPParserThread::ms_goingDown = false;
 
 PHPParserThread* PHPParserThread::Instance()
 {
-    if (ms_instance == 0) {
+    if (ms_instance == nullptr) {
         ms_instance = new PHPParserThread();
     }
     return ms_instance;
@@ -20,10 +20,9 @@ PHPParserThread* PHPParserThread::Instance()
 void PHPParserThread::Release()
 {
     ms_instance->Stop();
-    if (ms_instance) {
-        delete ms_instance;
-    }
-    ms_instance = 0;
+    delete ms_instance;
+    ms_instance = nullptr;
+
     ms_goingDown = false;
 }
 

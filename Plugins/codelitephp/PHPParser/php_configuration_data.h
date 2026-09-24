@@ -51,14 +51,14 @@ public:
     };
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
     PHPConfigurationData();
 
     PHPConfigurationData& Load();
     void Save();
 
-    virtual ~PHPConfigurationData() = default;
+    ~PHPConfigurationData() override = default;
 
     PHPConfigurationData& SetWorkspaceType(int workspaceType)
     {

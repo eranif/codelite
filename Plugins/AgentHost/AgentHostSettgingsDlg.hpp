@@ -2,7 +2,7 @@
 
 #include "AgentHostUI.hpp"
 
-inline const wxString kAgentHostCaudeCodeExecutable = "agent-host/claude-code/executable";
+inline const wxString kAgentHostClaudeCodeExecutable = "claude-code/executable";
 
 class AgentHostSettgingsDlg : public AgentHostSettgingsBaseDlg
 {

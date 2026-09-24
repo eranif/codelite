@@ -68,7 +68,7 @@ void AgentHost::OnSettings(wxCommandEvent& event)
     AgentHostSettgingsDlg dlg{EventNotifier::Get()->TopFrame()};
     if (dlg.ShowModal() == wxID_OK) {
         auto claude_exec = dlg.GetClaudeCodeExecutable();
-        clConfig::Get().Write(kAgentHostCaudeCodeExecutable, claude_exec);
+        clConfig::Get().Write(kAgentHostClaudeCodeExecutable, claude_exec);
     }
 }
 
@@ -96,7 +96,7 @@ void AgentHost::ShowClaudeTerminal()
     } else {
         // On local executions, use the configured claude executable first if one is not set, locate using
         // the environment variables.
-        auto configured_claude_exec = clConfig::Get().Read(kAgentHostCaudeCodeExecutable, wxString{});
+        auto configured_claude_exec = clConfig::Get().Read(kAgentHostClaudeCodeExecutable, wxString{});
         if (configured_claude_exec.empty())
             claude_exec = ThePlatform->Which("claude");
         else

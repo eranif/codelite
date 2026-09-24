@@ -230,7 +230,7 @@ void PluginManager::Load()
                 continue;
             }
 
-            if (pluginInfo->GetName() == "ClaudeCode" || pluginInfo->GetName() == "AgentHost") {
+            if (pluginInfo->GetName() == "AgentHost") {
                 bool forceLoadClaudeCode = clConfig::Get().Read("plugins/load-agent-host-on-first-time", true);
                 if (forceLoadClaudeCode) {
                     m_pluginsData.EnablePlugin(pluginInfo->GetName());

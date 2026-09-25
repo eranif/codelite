@@ -2,6 +2,7 @@
 
 #include "Notebook.h"
 #include "file_logger.h"
+#include "globals.h"
 #include "imanager.h"
 #include "windowattrmanager.h"
 
@@ -14,6 +15,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     , m_notebook(book)
     , m_selection(wxNOT_FOUND)
 {
+    ::AdjustDataViewAlternateColour(m_dvListCtrl);
     Initialise(m_notebook);
     FinalizeCtor();
 }
@@ -24,6 +26,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clAuiBook* book)
     , m_aui_notebook(book)
     , m_selection(wxNOT_FOUND)
 {
+    ::AdjustDataViewAlternateColour(m_dvListCtrl);
     Initialise(m_aui_notebook);
     FinalizeCtor();
 }

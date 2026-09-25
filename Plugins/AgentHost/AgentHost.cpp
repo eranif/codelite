@@ -52,12 +52,12 @@ void AgentHost::CreatePluginMenu(wxMenu* pluginsMenu)
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("claude_code_options"), _("Options..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
-    pluginsMenu->Append(wxID_ANY, _("Claude Code"), menu);
+    pluginsMenu->Append(wxID_ANY, _("Agent Host"), menu);
     menu->Bind(wxEVT_MENU, &AgentHost::OnSettings, this, XRCID("claude_code_options"));
     menu->Bind(wxEVT_MENU, &AgentHost::OnShowClaudeCode, this, XRCID("launch_claude_code"));
 
     clKeyboardManager::Get()->AddAccelerator(
-        _("Claude Code"),
+        _("Agent Host"),
         {{"launch_claude_code", _("Launch Claude Code"), "Ctrl-Shift-I"}, {"claude_code_options", _("Options...")}});
 }
 

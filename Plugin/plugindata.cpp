@@ -89,6 +89,15 @@ void PluginInfoArray::FromJSON(const JSONItem& json)
             m_enabledPlugins.Add(enabledPlugin);
         }
     }
+
+    if (m_plugins.contains("ClaudeCode")) {
+        m_plugins.erase("ClaudeCode");
+    }
+
+    if (m_enabledPlugins.Index("ClaudeCode") != wxNOT_FOUND) {
+        m_enabledPlugins.Remove("ClaudeCode");
+        m_enabledPlugins.Add("AgentHost");
+    }
 }
 
 JSONItem PluginInfoArray::ToJSON() const

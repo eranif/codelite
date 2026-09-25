@@ -230,6 +230,12 @@ void PluginManager::Load()
                 continue;
             }
 
+            if (pluginInfo->GetName() == "ClaudeCode") {
+                // Don't load this obsolete plugin (replaced by AgentHost)
+                wxDELETE(dl);
+                continue;
+            }
+
             if (pluginInfo->GetName() == "AgentHost") {
                 bool forceLoadClaudeCode = clConfig::Get().Read("plugins/load-agent-host-on-first-time", true);
                 if (forceLoadClaudeCode) {

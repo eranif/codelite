@@ -232,9 +232,12 @@ GitPlugin::GitPlugin(IManager* manager)
         wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), nullptr, this);
     EventNotifier::Get()->Connect(
         wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), nullptr, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED,
+                                  wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged),
+                                  nullptr,
+                                  this);
     EventNotifier::Get()->Connect(
-        wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), nullptr, this);
-    EventNotifier::Get()->Connect(wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), nullptr, this);
+        wxEVT_CL_FRAME_TITLE, clCommandEventHandler(GitPlugin::OnMainFrameTitle), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &GitPlugin::OnFileMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &GitPlugin::OnFolderMenu, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
@@ -394,7 +397,8 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
         XRCID("git_browse_commit_list"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCommitList), nullptr, this);
     m_eventHandler->Connect(
         XRCID("git_commit_diff"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnShowDiffs), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_blame"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnGitBlame), nullptr, this);
+    m_eventHandler->Connect(
+        XRCID("git_blame"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnGitBlame), nullptr, this);
     m_eventHandler->Connect(
         XRCID("git_apply_patch"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnApplyPatch), nullptr, this);
     m_eventHandler->Connect(XRCID("git_push"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnPush), nullptr, this);
@@ -405,9 +409,13 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
         XRCID("git_start_gitk"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnStartGitk), nullptr, this);
     m_eventHandler->Connect(
         XRCID("git_list_modified"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnListModified), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_refresh"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnRefresh), nullptr, this);
     m_eventHandler->Connect(
-        XRCID("git_garbage_collection"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnGarbageColletion), nullptr, this);
+        XRCID("git_refresh"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnRefresh), nullptr, this);
+    m_eventHandler->Connect(XRCID("git_garbage_collection"),
+                            wxEVT_MENU,
+                            wxCommandEventHandler(GitPlugin::OnGarbageColletion),
+                            nullptr,
+                            this);
     m_eventHandler->Connect(XRCID("git_switch_branch"),
                             wxEVT_UPDATE_UI,
                             wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
@@ -509,7 +517,8 @@ void GitPlugin::UnPlug()
     m_eventHandler->Disconnect(
         XRCID("git_create_branch"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCreateBranch), nullptr, this);
     m_eventHandler->Disconnect(XRCID("git_pull"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnPull), nullptr, this);
-    m_eventHandler->Disconnect(XRCID("git_commit"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCommit), nullptr, this);
+    m_eventHandler->Disconnect(
+        XRCID("git_commit"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCommit), nullptr, this);
     m_eventHandler->Disconnect(
         XRCID("git_browse_commit_list"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCommitList), nullptr, this);
     m_eventHandler->Disconnect(
@@ -527,16 +536,21 @@ void GitPlugin::UnPlug()
         XRCID("git_list_modified"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnListModified), nullptr, this);
     m_eventHandler->Disconnect(
         XRCID("git_refresh"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnRefresh), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_garbage_collection"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnGarbageColletion), nullptr, this);
+    m_eventHandler->Disconnect(XRCID("git_garbage_collection"),
+                               wxEVT_MENU,
+                               wxCommandEventHandler(GitPlugin::OnGarbageColletion),
+                               nullptr,
+                               this);
     m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
 
     /*SYSTEM*/
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &GitPlugin::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &GitPlugin::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_ADDED, &GitPlugin::OnFilesAddedToProject, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), nullptr, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED,
+                                     wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged),
+                                     nullptr,
+                                     this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, &GitPlugin::OnAppActivated, this);
     EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &GitPlugin::OnReplaceInFiles, this);
@@ -3107,62 +3121,6 @@ bool GitPlugin::GenerateCommitMessage(const wxString& prompt)
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
     llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
     return true;
-}
-
-clStatusOr<wxArrayString> GitPlugin::FetchLogBetweenCommits(const wxString& start_commit,
-                                                            const wxString& end_commit,
-                                                            bool oneline,
-                                                            size_t chunk_size)
-{
-    // Build and execute the command.
-    wxString command, command_output;
-    command << "log " << start_commit << ".." << end_commit;
-    if (oneline) {
-        command << R"#( --format="Commit (%h), Author (%an): %s")#";
-    }
-    if (!DoExecuteCommandSync(command, &command_output)) {
-        wxString errmsg;
-        errmsg << "An error occurred while running git commit: " << command << ". " << command_output;
-        return StatusOther(errmsg);
-    }
-
-    wxArrayString lines = ::wxStringTokenize(command_output, "\r\n", wxTOKEN_STRTOK);
-
-    wxArrayString result;
-    wxString current;
-
-    // Filter some non interesting lines from the commit.
-    const wxString kSignedOffBy = wxT("Signed-off-by");
-    const wxString kDate = wxT("Date:");
-    const wxString kCommit = wxT("commit ");
-    const wxString kGeneratedBy = wxT("** Generated by ChatAI Plugin. **");
-
-    for (auto& line : lines) {
-        line.Trim().Trim(false);
-        bool breaking_point = line.StartsWith(kCommit);
-        line.Replace("    ", "\t");
-        line.Replace("  ", "\t");
-        if (breaking_point && current.size() >= chunk_size) {
-            result.push_back(current);
-            current.clear();
-        }
-        if (line.empty() || line.StartsWith(kSignedOffBy) || line.StartsWith(kDate) || line.Contains(kCommit) ||
-            line.StartsWith(kGeneratedBy)) {
-            continue;
-        }
-
-        current << line << "\n";
-    }
-
-    if (!current.empty()) {
-        result.push_back(current);
-    }
-
-    clDEBUG() << "Fetched commits:" << endl;
-    for (const auto& chunk : result) {
-        clDEBUG() << chunk << endl;
-    }
-    return result;
 }
 
 std::optional<wxString> GitPlugin::CheckForIndexLock() const

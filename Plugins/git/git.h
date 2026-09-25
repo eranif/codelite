@@ -374,14 +374,6 @@ public:
     void OnCommandEnded(clCommandEvent& event);
 
     bool GenerateCommitMessage(const wxString& prompt);
-
-    /// Return the commit log between range of commits. We split the log (line based), to match the `chunk_size`
-    /// argument.
-    clStatusOr<wxArrayString> FetchLogBetweenCommits(const wxString& start_commit,
-                                                     const wxString& end_commit,
-                                                     bool oneline = true,
-                                                     size_t chunk_size = wxString::npos);
-
     wxTerminalViewCtrl* GetOrCreateGitTerminal();
 
     wxString PrependGitExec(const wxString& args);

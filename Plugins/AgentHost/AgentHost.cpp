@@ -45,7 +45,7 @@ void AgentHost::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenuItem* item(nullptr);
     item = new wxMenuItem(menu,
                           XRCID("launch_claude_code"),
-                          _("Launch Claude Code\tCtrl-Shift-I"),
+                          _("Launch Claude Code\tCtrl-Shift-C"),
                           _("Launch Claude Code"),
                           wxITEM_NORMAL);
     menu->Append(item);

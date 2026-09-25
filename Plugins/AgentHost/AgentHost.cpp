@@ -58,7 +58,7 @@ void AgentHost::CreatePluginMenu(wxMenu* pluginsMenu)
 
     clKeyboardManager::Get()->AddAccelerator(
         _("Agent Host"),
-        {{"launch_claude_code", _("Launch Claude Code"), "Ctrl-Shift-I"}, {"claude_code_options", _("Options...")}});
+        {{"launch_claude_code", _("Launch Claude Code"), "Ctrl-Shift-C"}, {"claude_code_options", _("Options...")}});
 }
 
 void AgentHost::UnPlug() {}

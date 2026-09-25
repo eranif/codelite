@@ -55,6 +55,16 @@ enum class PathMatch {
     kExactMatchOnly = (1 << 1),
 };
 
+/**
+ * @brief Reads a mandatory, typed argument from a tool-call JSON object.
+ *
+ * @tparam T The C++ type the argument is expected to convert to.
+ * @param j The JSON object holding the tool arguments.
+ * @param name The key of the argument to read.
+ *
+ * @return The converted value on success; a NotFound status if @p name is missing, or an InvalidArgument
+ *         status if the value cannot be converted to @p T.
+ */
 template <typename T>
 inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
 {
@@ -118,15 +128,27 @@ struct WXDLLIMPEXP_SDK SSEMcp {
     std::map<std::string, std::string> headers;
 };
 
+/**
+ * @brief Holds optional callbacks that are invoked once a queued chat task finishes.
+ *
+ * Exactly one of the two callbacks is run per task: the success callback when the request completed normally,
+ * the error callback when it was cancelled or ended with an error. Both are dispatched on the main thread.
+ */
 struct WXDLLIMPEXP_SDK CompletionHandler {
 public:
     CompletionHandler() = default;
     ~CompletionHandler() = default;
 
+    /** @brief Runs the success callback on the main thread. No-op if none was set. */
     void RunSuccessCallback();
+
+    /** @brief Runs the error callback on the main thread. No-op if none was set. */
     void RunErrorCallback();
 
+    /** @brief Sets the callback to run when the request completes successfully. */
     void SetSuccessCallback(std::function<void()> cb) { m_successCallback = std::move(cb); }
+
+    /** @brief Sets the callback to run when the request is cancelled or fails. */
     void SetErrorCallback(std::function<void()> cb) { m_errorCallback = std::move(cb); }
 
 private:
@@ -142,12 +164,21 @@ struct WXDLLIMPEXP_SDK ThreadTask {
     /// An optional collector object, if provided it wil be deleted by this class
     ResponseCollector* collector{nullptr};
     std::shared_ptr<CompletionHandler> completion_handler{nullptr};
+
+    /** @brief Returns the object that receives this task's events: the collector if set, otherwise the owner. */
     wxEvtHandler* GetEventSink() { return collector ? collector : owner; }
 };
 
 struct WXDLLIMPEXP_SDK TokenUsage {
     size_t context_size{0};
     size_t used{0};
+
+    /**
+     * @brief Returns how much of the context window is used, as a whole-number percentage.
+     *
+     * @return 0 if either value is zero, 100 if @c used reaches or exceeds @c context_size, otherwise the
+     *         truncated percentage.
+     */
     size_t GetPercentage() const
     {
         if (context_size == 0 || used == 0) {
@@ -193,7 +224,11 @@ public:
     static Manager& GetInstance();
 
     /**
-     * @brief initialise the instance
+     * @brief Initialises the manager. Must be called once during application start-up.
+     *
+     * Creates the chat UI object, subscribes to workspace and file-saved events, and arranges for the LLM client
+     * to be created and started only once all plugins are loaded (on the application's init-done event).
+     * Until that event fires, methods that require a running client are no-ops.
      */
     void Initialise();
 
@@ -205,10 +240,14 @@ public:
      * to cancel the request, and {@link ChatOptions} configures the request
      * behaviour (e.g. streaming, temperature, etc.).</p>
      *
+     * Placeholders in @p prompt (e.g. `{{current_selection}}`, see GetAvailablePlaceHolders()) are expanded
+     * before the request is queued. If the worker thread is not running, it is restarted first.
+     *
      * @param owner         the event handler that will receive the result events
      * @param prompt        the text prompt to send to the LLM
      * @param cancel_token  token that can be signaled to cancel the request
      * @param options       additional options controlling the chat behaviour
+     * @param completion_handler optional callbacks run on the main thread when the request succeeds or fails
      */
     void Chat(wxEvtHandler* owner,
               const wxString& prompt,
@@ -216,8 +255,30 @@ public:
               ChatOptions options,
               std::shared_ptr<CompletionHandler> completion_handler = nullptr);
 
+    /**
+     * @brief Trims older tool responses from the client's conversation history to free context space.
+     *
+     * Keeps the most recent tool responses and drops the rest, then lowers the manager's running token
+     * estimate by the amount reclaimed.
+     *
+     * @return The number of tokens reclaimed, or 0 if there is no active client.
+     */
     size_t Compact();
 
+    /**
+     * @brief Runs a Standard Operating Procedure (SOP) by sending it to the LLM as a prompt.
+     *
+     * Wraps @p prompt in an instruction to execute it as an SOP, lists each entry of @p params as an input
+     * parameter (`- name = value`), and tells the model to fall back to the SOP's own defaults for any
+     * parameter that is missing. The resulting task is queued like a regular Chat() request.
+     *
+     * @param owner         the event handler that will receive the result events
+     * @param prompt        the SOP text
+     * @param params        (name, value) pairs passed to the SOP as input parameters
+     * @param cancel_token  token that can be signaled to cancel the request
+     * @param options       additional options controlling the chat behaviour
+     * @param completion_handler optional callbacks run on the main thread when the request succeeds or fails
+     */
     void RunSOP(wxEvtHandler* owner,
                 const wxString& prompt,
                 const std::vector<std::pair<wxString, wxString>>& params,
@@ -231,10 +292,13 @@ public:
      * a dedicated collector to aggregate responses instead of handling events
      * directly.
      *
+     * The manager takes ownership of @p collector and deletes it (on the main thread) once the task is done.
+     *
      * @param collector     collector object that will receive the response events
      * @param prompt        the text prompt to send to the LLM
      * @param cancel_token  token that can be signaled to cancel the request
      * @param options       additional options controlling the chat behaviour
+     * @param completion_handler optional callbacks run on the main thread when the request succeeds or fails
      */
     void Chat(ResponseCollector* collector,
               const wxString& prompt,
@@ -242,20 +306,28 @@ public:
               ChatOptions options,
               std::shared_ptr<CompletionHandler> completion_handler = nullptr);
 
+    /**
+     * @brief Shows the Chat AI window (docked pane or floating frame) and focuses its input box.
+     *
+     * @param prompt optional text; if not empty, it is submitted to the chat window as a new chat message
+     */
     void ShowChatWindow(const wxString& prompt = wxEmptyString);
 
     /**
-     * @brief Indicates whether an LLM is currently available for chat operations.
+     * @brief Indicates whether an LLM endpoint is configured and active.
      *
-     * @return {@code true} if an LLM can be used; {@code false} otherwise
+     * This checks the loaded configuration, not whether the client or worker thread is currently running.
+     *
+     * @return {@code true} if there is an active endpoint; {@code false} otherwise
      */
     bool IsAvailable();
 
     /**
-     * @brief Clears all stored chat history from the internal state.
+     * @brief Clears the conversation history of the active client.
      *
-     * <p>After this call, subsequent chat requests will start with an empty
-     * conversation context.</p>
+     * <p>Also resets the last-request usage and the running token counter. After this call, subsequent chat
+     * requests start with an empty conversation. System messages are not affected (see
+     * ResetSystemMessagesToDefaults()). No-op if there is no active client.</p>
      */
     void ClearHistory();
 
@@ -275,6 +347,14 @@ public:
      */
     void AddSystemMessage(const wxString& msg, const wxString& msgId);
 
+    /**
+     * @brief Removes one entry from the manager's local system-message registry.
+     *
+     * Does nothing if @p msgId is not in the registry. Like AddSystemMessage(), this only affects local state;
+     * call CommitSystemMessage() to make the change visible to the model.
+     *
+     * @param msgId The identifier the entry was added with.
+     */
     void DeleteSystemMessage(const wxString& msgId);
 
     /**
@@ -325,44 +405,52 @@ public:
     void CommitSystemMessage();
 
     /**
-     * @brief Extracts the first non-empty, non-markdown line from a conversation text and builds a Conversation.
+     * @brief Snapshots the client's current history into a Conversation object.
      *
-     * This method tokenizes the provided text by newline, skips blank lines and lines starting with "**",
-     * and returns a Conversation constructed from the first remaining line together with the client's history
-     * and the original conversation text. If no client is available or no suitable line is found, no value is returned.
+     * @param conversation_text The rendered conversation text (as shown in the chat window).
+     * @param label A short, human-readable label for the conversation.
      *
-     * @param conversation_text const wxString& The raw conversation text to inspect.
-     *
-     * @return std::optional<llm::Conversation> A Conversation initialized from the first eligible line, or std::nullopt
-     *         if the manager has no client or no valid line is present.
+     * @return A Conversation holding the client's message history, @p conversation_text and @p label, or
+     *         std::nullopt if there is no active client.
      */
     std::optional<llm::Conversation> NewConversation(const wxString& conversation_text, const wxString& label) const;
 
     /**
-     * Sets the conversation history for the underlying assistant client.
+     * @brief Replaces the active client's message history with the one stored in @p conversation.
      *
-     * This method delegates the history update to the internal `m_client` if it is valid.
-     * No additional processing or validation is performed on the history before forwarding.
+     * The history is forwarded as-is, without validation. No-op if there is no active client.
+     *
+     * @param conversation The conversation whose messages should become the client's history.
      */
     void LoadConversation(const llm::Conversation& conversation);
 
     /**
-     * @brief Stops the background worker thread if it is running.  The worker will
-     * finish any currently queued work before exiting.
+     * @brief Stops the LLM client and its background worker thread.
+     *
+     * Signals all termination flags handed out by NewTerminationFlag(), interrupts the client, drains the task
+     * queue (each pending task is completed with a "LLM is going down" message), detaches the worker thread so
+     * an in-flight request cannot block the UI, and releases the client. Fires wxEVT_LLM_STOPPED when done.
+     * No-op if the manager was not initialised or there is no active client.
      */
     void Stop();
 
     /**
-     * @brief Starts the background worker thread, creating it if it does not already
-     * exist.  The worker will begin processing queued tasks immediately.
+     * @brief Creates and starts the LLM client and its background worker thread.
+     *
+     * Builds a client from the current configuration (or uses @p client if provided), registers the built-in,
+     * plugin and MCP tools, applies the saved per-tool enabled states, pricing and caching policy, seeds the
+     * system messages via ResetSystemMessagesToDefaults(), and launches the worker thread. Fires
+     * wxEVT_LLM_STARTED when done. No-op until Initialise() has completed its start-up sequence.
+     *
+     * @param client optional, pre-built client to use instead of creating one from the configuration
      */
     void Start(std::shared_ptr<assistant::ClientBase> client = nullptr);
 
     /**
-     * @brief Restarts the worker thread by stopping it and then starting it again.
+     * @brief Restarts the client by calling Stop() and then Start().
      *
-     * <p>This forces a fresh context for the LLM and discards any pending
-     * requests.</p>
+     * <p>This forces a fresh context for the LLM; pending requests are completed with a "going down" message
+     * and the conversation history is discarded together with the old client.</p>
      */
     void Restart();
 
@@ -373,21 +461,24 @@ public:
      */
     Config& GetConfig() { return m_config; }
 
+    /**
+     * @brief Provides read-only access to the store of saved conversations.
+     *
+     * @return constant reference to the {@link HistoryStore}
+     */
     const HistoryStore& GetHistoryStore() const { return m_history; }
 
     /**
-     * @brief Stores the current conversation text in the history for the active endpoint.
+     * @brief Saves the current conversation in the history store of the active endpoint.
      *
-     * In the Manager context, this method creates a new conversation record from the
-     * provided text and saves it through the history store associated with the currently
-     * active endpoint. The operation fails if there is no active endpoint, if the
-     * conversation cannot be created, or if the history store rejects the record.
+     * Builds a Conversation from the client's history, @p conversation_text and @p label (see
+     * NewConversation()), and stores it under the currently active endpoint. The operation fails if there is
+     * no active endpoint, if the conversation cannot be created, or if the history store rejects the record.
      *
-     * @param conversation_text const wxString& The conversation content to persist.
+     * @param conversation_text The rendered conversation text to persist.
+     * @param label A short, human-readable label for the conversation.
      *
-     * @return bool True if the conversation was successfully stored; false otherwise.
-     *
-     * @throws None. This function reports failure by returning false.
+     * @return true if the conversation was stored; false otherwise. This function does not throw.
      */
     bool StoreCurrentConverstation(const wxString& conversation_text, const wxString& label);
 
@@ -399,15 +490,16 @@ public:
     const Config& GetConfig() const { return m_config; }
 
     /**
-     * @brief Reloads the manager configuration from the supplied content.
+     * @brief Reloads the LLM configuration and restarts the client with it.
      *
-     * <p>If {@code config_content} is {@code std::nullopt}, the configuration
-     * will be reloaded from the default location.  When {@code prompt} is {@code true},
-     * the user may be prompted to confirm the reload.</p>
+     * <p>If {@code config_content} is {@code std::nullopt}, the configuration is read from the assistant
+     * settings file. The content is validated first; on success the running client is stopped and a new one
+     * is created and started from the new configuration.</p>
      *
      * @param config_content optional string containing the new configuration JSON
-     * @param prompt          whether to prompt the user before applying changes
-     * @return {@code true} if the configuration was successfully reloaded
+     * @param prompt          whether to ask the user to confirm before the client is restarted
+     * @return {@code true} if the configuration was reloaded and the new client started; {@code false} if the
+     *         user declined, the content is invalid, or the client could not be created
      */
     bool ReloadConfig(std::optional<wxString> config_content, bool prompt = true);
 
@@ -435,24 +527,27 @@ public:
     FunctionTable& GetPluginFunctionTable() { return m_plugin_functions; }
 
     /**
-     * @brief Enumerates all LLM endpoints that are currently available to the manager.
+     * @brief Enumerates all LLM endpoints that are configured.
      *
-     * @return collection of endpoint identifiers
+     * @return the URLs of all configured endpoints (an endpoint's URL is its identifier)
      */
     wxArrayString ListEndpoints();
 
     /**
      * @brief Retrieves the currently active LLM endpoint, if any.
      *
-     * @return optional endpoint identifier; {@code std::nullopt} if none is active
+     * @return the active endpoint's URL; {@code std::nullopt} if none is active
      */
     std::optional<wxString> GetActiveEndpoint() const;
 
     /**
-     * @brief Sets the active LLM endpoint to the specified value.
+     * @brief Makes the specified endpoint the active one.
      *
-     * @param endpoint identifier of the endpoint to activate
-     * @return {@code true} if the endpoint was successfully set
+     * Marks @p endpoint as active (and every other endpoint as inactive) in the configuration file, writes the
+     * file and reloads the configuration, which restarts the client.
+     *
+     * @param endpoint identifier (URL) of the endpoint to activate
+     * @return {@code true} if the endpoint exists and the configuration was updated; {@code false} otherwise
      */
     bool SetActiveEndpoint(const wxString& endpoint);
 
@@ -487,7 +582,11 @@ public:
     std::optional<std::pair<wxString, wxArrayString>> GetEndpointModels(const wxString& endpoint);
 
     /**
-     * @brief Adds a new LLM endpoint to the manager's internal list.
+     * @brief Adds a new LLM endpoint to the configuration file.
+     *
+     * Replaces any existing endpoint with the same URL, fills in provider-specific settings (e.g. the auth
+     * headers) based on the endpoint's client type, makes it active if no other endpoint is, then writes the
+     * file and reloads the configuration. Errors are caught and logged.
      *
      * @param d data describing the new endpoint
      */
@@ -495,6 +594,9 @@ public:
 
     /**
      * @brief Adds a new local MCP (Model Context Protocol) server configuration to the manager.
+     *
+     * The SSE overload below does the same for a remote server that is reached over SSE (base URL, endpoint,
+     * auth token and headers) instead of a local command.
      *
      * This method reads the current configuration as JSON, ensures an "mcp_servers" section exists,
      * adds or updates the MCP server entry with the provided details (name, command, environment),
@@ -567,8 +669,9 @@ public:
      * @param prompt The input prompt string to send to the AI assistant for text generation.
      * @param chat_options Optional ChatOptions to customize the chat behavior. If not provided,
      *                     defaults to kNoTools and kNoHistory flags.
-     * @param completion_callback A function to be called when text generation completes and the
-     *                            preview frame is no longer shown. May be null/empty.
+     * @param preview_kind The kind of content being generated; selects how the preview frame is initialised.
+     * @param completion_callback A function to be called when text generation completes or is cancelled.
+     *                            May be null/empty.
      *
      * @return void This function does not return a value.
      *
@@ -588,26 +691,47 @@ public:
                                   PreviewKind preview_kind,
                                   std::function<void()> completion_callback = nullptr);
 
+    /**
+     * @brief Returns the placeholder tokens (e.g. `{{current_selection}}`, `{{workspace_path}}`) that are
+     * expanded in prompts before they are sent to the LLM.
+     */
     const std::vector<wxString>& GetAvailablePlaceHolders() const;
 
+    /**
+     * @brief Returns the Chat AI window.
+     *
+     * @param ensure_visibile if true, the window is made visible before being returned
+     * @return the chat window, or nullptr if the manager has not been initialised
+     */
     ChatAIWindow* GetChatWindow(bool ensure_visibile)
     {
         CHECK_PTR_RET_NULL(m_chatAI.get());
         return m_chatAI->GetChatWindow(ensure_visibile);
     }
 
+    /**
+     * @brief Returns the cost of the last request, or 0.0 if there is no active client.
+     */
     double GetLastRequestCost() const
     {
         CHECK_COND_RET_VAL(m_client, 0.0);
         return m_client->GetLastRequestCost();
     }
 
+    /**
+     * @brief Returns the accumulated cost of all requests made by the active client, or 0.0 if there is none.
+     */
     double GetTotalCost() const
     {
         CHECK_COND_RET_VAL(m_client, 0.0);
         return m_client->GetTotalCost();
     }
 
+    /**
+     * @brief Returns the client's total token usage against its context window.
+     *
+     * @return the usage, or std::nullopt if there is no active client or the client reports no usage stats
+     */
     std::optional<llm::TokenUsage> GetUsage() const
     {
         CHECK_COND_RET_VAL(m_client, std::nullopt);
@@ -624,6 +748,8 @@ public:
 
     /**
      * @brief Retrieves the last request usage.
+     *
+     * @return the usage of the last request, or std::nullopt if there is no active client
      */
     std::optional<Usage> GetLastRequestUsage() const
     {
@@ -631,45 +757,57 @@ public:
         return m_client->GetLastRequestUsage();
     }
 
+    /**
+     * @brief Returns the name of the model used by the active client, or std::nullopt if there is none.
+     */
     std::optional<wxString> GetModelName() const
     {
         CHECK_COND_RET_VAL(m_client, std::nullopt);
         return m_client->GetModel();
     }
 
+    /**
+     * @brief Returns the manager's running estimate of the tokens currently used in the context window.
+     *
+     * The counter grows as messages pass through the worker, and is reduced by compaction and reset by
+     * ClearHistory(). Returns 0 if there is no active client.
+     */
     size_t GetContextUsedTokens() const
     {
         CHECK_COND_RET_VAL(m_client, 0);
         return m_tokens;
     }
 
+    /**
+     * @brief Returns the context window size (in tokens) of the active client, or 0 if there is none.
+     */
     size_t GetTotalContextSize() const
     {
         CHECK_COND_RET_VAL(m_client, 0);
         return m_client->GetContextSize();
     }
 
+    /**
+     * @brief Returns true if the active client has pricing information for its model (so costs can be shown).
+     */
     bool HasPricing() const { return m_client && m_client->GetPricing().has_value(); }
 
     /**
-     * @brief Prompts the user with a Yes/No/Trust question and waits for their response.
+     * @brief Asks the user a yes/no/trust question in the chat window and blocks until they answer.
      *
-     * This function must be called from a worker thread (not the main thread). It displays
-     * a prompt in the chat window and waits for the user to respond.
-     * The function uses a message queue to synchronize between the calling thread and the
-     * main GUI thread where the prompt is displayed.
+     * Meant to be called from the worker thread (e.g. when the model wants to run a tool). The question is
+     * printed in the chat window and the calling thread waits, polling so that it can abort if the client is
+     * being stopped or restarted. The reply is interpreted (case-insensitively) as:
+     * - "yes" / "y" / "ok": allow the call.
+     * - "no" / "n": deny the call ("Permission denied").
+     * - "trust" / "t": allow the call and run @p on_trust_cb on the main thread.
+     * - anything else: deny the call, and pass the user's text back as the reason.
      *
      * @param text The question text to display to the user.
-     * @param code_block Optional code block to display before the question.
-     * @param code_block_lang The language identifier for syntax highlighting of the code block.
+     * @param on_trust_cb Optional callback run on the main thread when the user answers "trust", typically to
+     *                    persist the trust decision.
      *
-     * @return A clStatusOr<UserAnswer> containing the user's answer (kYes, kNo, or kTrust) on success,
-     *         or a status error if the function was called from the main thread, another prompt is
-     *         already pending, the user did not respond within the timeout, or a queue error occurred.
-     *
-     * @throws StatusOther if called from the main thread.
-     * @throws StatusResourceBusy if another prompt is already waiting for user response.
-     * @throws StatusOther if there is a message queue error reading the user's response.
+     * @return A CanInvokeToolResult telling the caller whether it may proceed, and why not if it may not.
      */
     CanInvokeToolResult PromptUserYesNoTrustQuestion(const wxString& text, std::function<void()> on_trust_cb = nullptr);
 
@@ -681,10 +819,12 @@ public:
      * the policy and returns early if the client is not initialized.
      *
      * @param policy The caching policy to be applied to the assistant client.
-     *
-     * @return void This function does not return a value.
      */
     void SetCachingPolicy(llm::CachePolicy policy);
+
+    /**
+     * @brief Returns the caching policy of the active client, or CachePolicy::kNone if there is no client.
+     */
     llm::CachePolicy GetCachingPolicy() const
     {
         if (!m_client) {
@@ -696,21 +836,12 @@ public:
     /**
      * @brief Prints a message with an icon to the chat window.
      *
-     * This method appends a formatted message with a symbolic icon to the chat window.
-     * The icon is selected based on the provided IconType. The message is appended on a new line
-     * if the current chat text does not end with a newline.
+     * The message is prefixed with the symbol of @p icon and appended on the main thread, on a new line if the
+     * current chat text does not end with one. Safe to call from any thread. No-op if there is no active
+     * client or chat window.
      *
      * @param msg The message to be printed in the chat window.
      * @param icon The type of icon to display alongside the message.
-     *
-     * @return void
-     *
-     * @throws (implicitly) May throw exceptions if any of the required pointers (m_client,
-     *         chat window container, or chat window) are null.
-     *
-     * @example
-     *   Manager manager;
-     *   manager.PrintMessage("Operation completed successfully", IconType::kSuccess);
      *
      * @see IconType
      */
@@ -720,20 +851,17 @@ public:
     using PromptPromise = std::shared_ptr<std::promise<std::string>>;
 
     /**
-     * @brief Appends a formatted message to the chat window and returns a future for a pending response.
+     * @brief Prints a question in the chat window and returns a future for the user's typed answer.
      *
-     * This callback captures the message, icon, and current object context, writes the message into the
-     * associated chat window with an icon-derived prefix, and creates a promise/future pair that is stored
-     * on the chat window for later fulfillment.
+     * On the main thread, the message is appended to the chat window (prefixed with the symbol of @p icon), the
+     * prompt panel is shown, and a promise is queued on the chat window. The returned future becomes ready when
+     * the user submits an answer. Safe to call from any thread.
      *
      * @param msg The message text to append to the chat window.
      * @param icon The icon type used to generate the string prefix shown before the message.
-     * @param this The current object instance used to access the chat window and queue the response promise.
      *
-     * @return Manager::PromptFuture A shared future wrapping a std::future<std::string> that will receive
-     *         the eventual response text.
-     *
-     * @throws std::bad_alloc If memory allocation fails while creating the promise, future, or message data.
+     * @return A shared future that receives the user's answer, or a null pointer if there is no active client or
+     *         chat window.
      */
     PromptFuture PromptUser(const wxString& msg, IconType icon);
 
@@ -772,7 +900,18 @@ public:
      */
     void DeleteTerminationFlag(std::shared_ptr<std::atomic_bool> flag);
 
+    /**
+     * @brief Event handler for the "generate documentation comment" command.
+     *
+     * Finds the symbol nearest to the caret in the active editor, builds a prompt from the configured
+     * comment-generation template and the symbol's source text, and streams the model's answer into a preview
+     * frame. Shows a warning if the file cannot be parsed or there is not enough context.
+     */
     void OnGenerateDocString(wxCommandEvent& event);
+
+    /**
+     * @brief Returns true while Stop() is in progress (used to abort blocking waits, e.g. user prompts).
+     */
     bool IsClientStopping() const { return m_clientStopInProgress.load(); }
 
     /**
@@ -785,6 +924,8 @@ public:
      *
      * @param toolname The tool name to validate.
      * @param path The file path to compare against the trusted patterns.
+     * @param flags Optional matching flags: PathMatch::kIsPath normalises @p path before comparing;
+     *              PathMatch::kExactMatchOnly ignores the "*" and prefix forms and only accepts exact matches.
      *
      * @return bool True if the tool is trusted for the specified path; otherwise false.
      */
@@ -799,7 +940,7 @@ public:
      *
      * @param toolname const wxString& Name of the tool requesting the command check.
      * @param cmd const wxString& Full shell command string to validate.
-     * @param working_directory const wxString& Working directory associated with the command.
+     * @param working_directory const wxString& Working directory associated with the command (currently unused).
      * @return bool true if every extracted command is allowed; false otherwise.
      */
     bool CheckIfShellCommandAllowed(const wxString& toolname, const wxString& cmd, const wxString& working_directory);
@@ -827,17 +968,16 @@ public:
     /**
      * @brief Adds Markdown files from a list of paths to the LLM context.
      *
-     * This method filters the provided file paths to ".md" files, reads each file's
-     * contents, and adds the content as a system message to the shared LLM manager.
-     * It then prints a success message listing the files that were processed.
+     * Filters @p files to ".md" files and reads each one (over SFTP if the workspace is remote). Each file's
+     * content is added to the system-message registry, keyed by its normalised full path so that files sharing a
+     * name in different directories do not overwrite each other, and the registry is then committed to the
+     * client. Finally, a success message listing the added files is printed in the chat window. Returns without
+     * doing anything if no file could be read.
+     *
+     * These entries are not restored by ResetSystemMessagesToDefaults(), so they are dropped on "Clear Session".
      *
      * @param files wxArrayString The file paths to consider for addition to the context.
      *               Only files with a ".md" extension are processed.
-     *
-     * @return void This function does not return a value.
-     *
-     * @note This is a Manager class method and operates on the global LLM manager
-     *       instance obtained via llm::Manager::GetInstance().
      */
     void AddFilesToContext(const wxArrayString& files);
 
@@ -850,24 +990,58 @@ private:
     Manager() = default;
     ~Manager() override;
 
+    /**
+     * @brief Second-phase initialisation, run on the application's init-done event.
+     *
+     * Creates the (hidden) text-generation preview frame, registers the "generate comment" accelerator and
+     * binds the editor and file-view context-menu handlers.
+     */
     void CompleteInitialisation();
 
+    /**
+     * @brief Locates the assistant configuration file, creating or resetting it if needed.
+     *
+     * If the file is missing or cannot be parsed, or its version does not match the expected one, the old file
+     * is backed up (as `<name>.old`) and replaced with the default configuration.
+     *
+     * @return the full path of the configuration file, or an IO error status if the default file could not be written
+     */
     clStatusOr<wxString> CreateOrOpenConfig();
-    clStatus ValidateConfigFile(std::optional<wxString> content = std::nullopt) const;
-
-    void CompactIfNeeded(std::shared_ptr<assistant::ClientBase> m_client, const std::string& msg);
 
     /**
-     * @brief Replaces placeholder tokens in a ThreadTask's prompt array with their corresponding runtime values.
+     * @brief Checks that a configuration can be parsed by the assistant library.
      *
-     * This method processes each prompt in the task's prompt_array and substitutes templated placeholders
-     * (e.g., {{current_selection}}, {{current_file_fullpath}}) with actual values obtained from the active
-     * editor and workspace context. If context is unavailable (e.g., no active editor), placeholders are
-     * replaced with empty strings or fallback values.
+     * @param content the configuration JSON to validate; if not provided, the content of the assistant
+     *                configuration file is used
+     * @return OK if the content is valid, NotFound if the file could not be read, or a ParseError status
+     */
+    clStatus ValidateConfigFile(std::optional<wxString> content = std::nullopt) const;
+
+    /**
+     * @brief Accounts for the tokens of a message and compacts the history when the threshold is reached.
      *
-     * @param task A reference to a ThreadTask object whose prompt_array field will be modified in place.
-     *             Each prompt string in the array will have all supported placeholders replaced with their
-     *             corresponding values.
+     * Adds the token count of @p msg to the running estimate (unless @p usingTempHistory is true, since such
+     * requests do not affect the shared history). If the client's auto-compact threshold (0 disables it) is
+     * reached, older tool responses are trimmed and wxEVT_LLM_AUTO_COMPACTED is fired. Called from the worker
+     * thread.
+     *
+     * @param m_client the client whose history should be compacted
+     * @param msg the message that just passed through the client
+     * @param usingTempHistory true if the current request uses a temporary (no-history) context
+     */
+    void CompactIfNeeded(std::shared_ptr<assistant::ClientBase> m_client,
+                         const std::string& msg,
+                         bool usingTempHistory = false);
+
+    /**
+     * @brief Replaces placeholder tokens in a ThreadTask's prompt with their corresponding runtime values.
+     *
+     * This method substitutes templated placeholders (e.g., {{current_selection}}, {{current_file_fullpath}})
+     * in the task's prompt with actual values obtained from the active editor and workspace context. If
+     * context is unavailable (e.g., no active editor), placeholders are replaced with empty strings or
+     * fallback values.
+     *
+     * @param task A reference to a ThreadTask object whose prompt field will be modified in place.
      *
      * @return void This function does not return a value.
      *
@@ -888,23 +1062,99 @@ private:
      */
     void ReplacePlaceHolders(ThreadTask& task);
 
+    /**
+     * @brief Writes @p j (pretty-printed) to the assistant configuration file and reloads it in the editor.
+     *
+     * @return true on success; false if the file could not be written
+     */
     bool WriteConfigFile(llm::json j);
+
+    /** @brief Reloads the assistant configuration (restarting the client) and fires wxEVT_LLM_CONFIG_UPDATED. */
     void HandleConfigFileUpdated();
+
+    /** @brief Reloads the global settings file (Config) and fires wxEVT_LLM_GLOBAL_CONFIG_UPDATED. */
     void HandleGlobalConfigFileUpdated();
+
+    /** @brief Adds the "AI-Powered Options" sub-menu to the editor's context menu, if an LLM is available. */
     void OnEditorContextMenu(clContextMenuEvent& event);
+
+    /** @brief Adds the "AI Options" sub-menu (add to context) to the file-view context menu when Markdown files are selected. */
     void OnFileViewFileContextMenu(clContextMenuEvent& event);
 
+    /**
+     * @brief Prepares a task and hands it to the worker thread.
+     *
+     * Restarts the worker if it is no longer running, expands the placeholders in the prompt, then queues the task.
+     */
     void PostTask(ThreadTask task);
+
+    /**
+     * @brief Entry point of the worker thread.
+     *
+     * Pulls tasks from the queue and runs each one on the client, translating the client's callbacks into
+     * wxEVT_LLM_* events sent to the task's event sink, until the client is interrupted or a fatal exception
+     * occurs. Fires the worker busy/idle events around every task.
+     */
     void WorkerMain();
+
+    /** @brief Queues a task directly on the worker thread, without any preparation (see PostTask()). */
     void PushThreadWork(ThreadTask work) { m_queue.Post(std::move(work)); }
+
+    /**
+     * @brief Drains the task queue and detaches the worker thread. Main thread only.
+     *
+     * Every pending task is completed with a "LLM is going down" message. A fresh "is running" flag is created
+     * so a new worker can be started.
+     */
     void CleanupAfterWorkerExit();
+
+    /**
+     * @brief Detaches (rather than joins) the worker thread so an in-flight request cannot block the UI.
+     *
+     * @return true always
+     */
     bool DetachWorkerThread();
+
+    /**
+     * @brief Builds the assistant library configuration from the assistant configuration file.
+     *
+     * Falls back to the built-in default configuration if the file cannot be opened or (on the main thread)
+     * cannot be parsed. On first use, also routes the assistant library's log output to the LLM log.
+     */
     assistant::Config MakeConfig();
+
+    /** @brief Reloads the LLM configuration when the assistant config file, or the global settings file, is saved. */
     void OnFileSaved(clCommandEvent& event);
+
+    /** @brief Loads the workspace's AGENTS.md / CLAUDE.md into the system messages when a workspace is opened. */
     void OnWorkspaceOpened(clWorkspaceEvent& event);
+
+    /** @brief Removes the workspace's AGENTS.md / CLAUDE.md from the system messages when the workspace is closed. */
     void OnWorkspaceClosed(clWorkspaceEvent& event);
+
+    /**
+     * @brief Adds the open workspace's project instructions to the local system-message registry.
+     *
+     * Reads `AGENTS.md`, or `CLAUDE.md` if there is no `AGENTS.md`, and stores its content under the file's name.
+     * Does nothing if neither file exists. Only affects local state; call CommitSystemMessage() afterwards.
+     */
     void LoadWorkspaceContenxtFiles();
+
+    /**
+     * @brief Reads the assistant configuration file and parses it as JSON.
+     *
+     * Uses the default configuration if the file cannot be read.
+     *
+     * @return the parsed JSON, or std::nullopt if it cannot be parsed
+     */
     std::optional<llm::json> GetConfigAsJSON();
+
+    /**
+     * @brief Callback invoked by the client before it runs a tool.
+     *
+     * Allows the call right away if the tool is fully trusted; otherwise asks the user (see
+     * PromptUserYesNoTrustQuestion()) and, if they answer "trust", records the tool as trusted.
+     */
     static CanInvokeToolResult CanRunTool(const std::string& tool_name, assistant::json args);
 
     std::unique_ptr<std::thread> m_worker_thread;

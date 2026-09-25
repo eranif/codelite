@@ -56,6 +56,15 @@ const wxString kSystemMessageAgenticLoop =
     "Do NOT stop and respond to the user until the entire task is fully complete. "
     "If you have more steps to perform, call the next tool immediately.";
 
+/**
+ * @brief Shortens @p text for logging.
+ *
+ * @param text The text to shorten.
+ * @param size The maximum length of the result, including the trailing "...".
+ *
+ * @return @p text unchanged if it is shorter than @p size; otherwise its first (@p size - 3) characters
+ *         followed by "...".
+ */
 wxString TruncateText(const wxString& text, size_t size = 100)
 {
     if (text.size() >= size) {
@@ -94,6 +103,13 @@ struct BusyCursor {
     }
 };
 
+/**
+ * @brief RAII helper that hands a task's ResponseCollector over to the main thread when it goes out of scope.
+ *
+ * The collector is a wxEvtHandler that must be destroyed on the main thread, and only after the worker thread
+ * is done posting events to it. Deferring the delete through CallAfter() guarantees both. After the hand-over,
+ * the task no longer refers to the collector.
+ */
 struct TaskDropper {
     llm::ThreadTask& task;
     TaskDropper(llm::ThreadTask& t)
@@ -113,6 +129,12 @@ struct TaskDropper {
     }
 };
 
+/**
+ * @brief Tells @p owner that its request is finished because of an error.
+ *
+ * Posts a wxEVT_LLM_OUTPUT_DONE event flagged as an error, carrying @p message. Safe to call from any thread.
+ * No-op if @p owner is null.
+ */
 void NotifyDoneWithError(wxEvtHandler* owner, const std::string& message)
 {
     CHECK_PTR_RET(owner);
@@ -122,6 +144,12 @@ void NotifyDoneWithError(wxEvtHandler* owner, const std::string& message)
     owner->AddPendingEvent(event);
 }
 
+/**
+ * @brief Tells @p owner that its request is finished because it was cancelled.
+ *
+ * Posts a wxEVT_LLM_OUTPUT_DONE event flagged as cancelled, carrying @p message. Safe to call from any thread.
+ * No-op if @p owner is null.
+ */
 void NotifyRequestCancelled(wxEvtHandler* owner, const std::string& message)
 {
     CHECK_PTR_RET(owner);
@@ -381,12 +409,13 @@ void Manager::WorkerMain()
             clDEBUG() << "Client (URL:" << client->GetUrl() << ", Model:" << client->GetModel()
                       << ") is processing the request" << endl;
             std::string prompt = task.prompt;
-            GetInstance().CompactIfNeeded(client, prompt);
+            bool usingTempHistory = llm::IsFlagSet(task.options, ChatOptions::kNoHistory);
+            GetInstance().CompactIfNeeded(client, prompt, usingTempHistory);
             client->Chat(
                 std::move(prompt),
-                [client, cancellation_token, &saved_thinking_state, owner, &exit_with_success](
+                [client, cancellation_token, &saved_thinking_state, owner, &exit_with_success, usingTempHistory](
                     std::string msg, assistant::Reason reason, bool thinking) -> bool {
-                    GetInstance().CompactIfNeeded(client, msg);
+                    GetInstance().CompactIfNeeded(client, msg, usingTempHistory);
 
                     // Check various options that the chat was cancelled.
                     if (client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
@@ -1263,12 +1292,15 @@ bool Manager::WriteConfigFile(llm::json j)
 }
 
 /**
- * @brief Handles the file saved event and triggers configuration reload if the assistant config
- * file was saved.
+ * @brief Handles the file saved event and reloads the LLM configuration if one of its files was saved.
  *
- * This function is called when a file is saved in the editor. It checks if the saved file is the
- * LLM assistant configuration file, and if so, triggers a configuration update by calling
- * HandleConfigFileUpdated(). If the saved file is not the config file, the function returns early.
+ * Two files are watched:
+ * - The assistant configuration file (assistant.json): triggers HandleConfigFileUpdated(), which restarts the client.
+ * - The global settings file (assistant-global-settings.json): the new content is first validated by loading it
+ *   into a temporary Config; if it is invalid a warning is shown and nothing changes, otherwise
+ *   HandleGlobalConfigFileUpdated() is called.
+ *
+ * Any other file is ignored. Afterwards, the focus is returned to the active editor.
  *
  * @param event the command event containing information about the file save operation
  */
@@ -1929,12 +1961,15 @@ void Manager::AddFilesToContext(const wxArrayString& files)
     llm_mgr.PrintMessage(text_message, IconType::kSuccess);
 }
 
-void Manager::CompactIfNeeded(std::shared_ptr<assistant::ClientBase> client, const std::string& msg)
+void Manager::CompactIfNeeded(std::shared_ptr<assistant::ClientBase> client,
+                              const std::string& msg,
+                              bool usingTempHistory)
 {
     CHECK_PTR_RET(client);
 
-    // Accumulate token count for every message passing through.
-    m_tokens += assistant::CountTokens(msg);
+    // Accumulate token count for every message passing through (unless we are using Temp History)
+    if (!usingTempHistory)
+        m_tokens += assistant::CountTokens(msg);
 
     // Determine the threshold: use the client's configured auto-compact threshold.
     const size_t threshold = client->GetAutoCompactThreshold();

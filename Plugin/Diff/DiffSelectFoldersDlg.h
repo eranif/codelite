@@ -6,9 +6,9 @@ class DiffSelectFoldersDlg : public DiffSelectFoldersBaseDlg
 {
 public:
     DiffSelectFoldersDlg(wxWindow* parent, const wxString& left = "", const wxString& right = "");
-    virtual ~DiffSelectFoldersDlg();
+    ~DiffSelectFoldersDlg() override;
 
 protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnOKUI(wxUpdateUIEvent& event) override;
 };
 #endif // DIFFSELECTFOLDERSDLG_H

@@ -62,9 +62,7 @@ static TagsManager* gs_TagsManager = nullptr;
 
 void TagsManagerST::Free()
 {
-    if (gs_TagsManager) {
-        delete gs_TagsManager;
-    }
+    delete gs_TagsManager;
     gs_TagsManager = nullptr;
 }
 
@@ -99,7 +97,7 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 // Database operations
 //-----------------------------------------------------------
 
-TagTreePtr TagsManager::Load(const wxFileName& fileName, TagEntryPtrVector_t* tags)
+TagTreePtr TagsManager::Load(const wxFileName& fileName, const TagEntryPtrVector_t* tags)
 {
     TagTreePtr tree;
     TagEntryPtrVector_t tagsByFile;

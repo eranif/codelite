@@ -1152,4 +1152,6 @@ void wxTerminalAnsiEscapeHandler::handle_sgr(wxStringView sv, wxTerminalAnsiRend
 }
 
 const wxColour& wxTerminalAnsiEscapeHandler::GetColour(int colour_number)
-{ return find_colour_by_number(pColours, colour_number); }
+{
+    return find_colour_by_number(pColours, colour_number);
+}

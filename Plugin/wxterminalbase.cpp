@@ -54,7 +54,7 @@ wxTerminalBase::wxTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_textCtrl->MarkerAdd(0, MARKER_ID);
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_textCtrl);
     }
     mainSizer->Add(m_textCtrl, 1, wxEXPAND, 0);
@@ -66,7 +66,7 @@ wxTerminalBase::wxTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_textCtrl->Bind(wxEVT_KEY_DOWN, &wxTerminalBase::OnKey, this);
     m_textCtrl->Bind(wxEVT_STC_CHARADDED, &wxTerminalBase::OnCharAdded, this);
     m_textCtrl->Bind(wxEVT_LEFT_UP, [&](wxMouseEvent& event) {
-        if(m_textCtrl->GetSelectedText().IsEmpty()) {
+        if (m_textCtrl->GetSelectedText().IsEmpty()) {
             this->CallAfter(&wxTerminalBase::CaretToEnd);
         }
         event.Skip();
@@ -84,9 +84,9 @@ void wxTerminalBase::OnKey(wxKeyEvent& event)
 {
     bool isLastLine = (m_textCtrl->LineFromPosition(m_textCtrl->GetCurrentPos()) == (m_textCtrl->GetLineCount() - 1));
     m_textCtrl->SetReadOnly(!isLastLine);
-    switch(event.GetKeyCode()) {
+    switch (event.GetKeyCode()) {
     case WXK_BACK: {
-        if(m_textCtrl->GetColumn(m_textCtrl->GetCurrentPos()) == 0) {
+        if (m_textCtrl->GetColumn(m_textCtrl->GetCurrentPos()) == 0) {
             return;
         } else {
             event.Skip();
@@ -107,7 +107,7 @@ void wxTerminalBase::OnKey(wxKeyEvent& event)
         break;
     case 'C':
     case 'c':
-        if(event.GetModifiers() == wxMOD_RAW_CONTROL) {
+        if (event.GetModifiers() == wxMOD_RAW_CONTROL) {
             OnCtrlC(event);
             event.Skip();
         } else {
@@ -122,7 +122,7 @@ void wxTerminalBase::OnKey(wxKeyEvent& event)
 void wxTerminalBase::OnCharAdded(wxStyledTextEvent& event)
 {
     event.Skip();
-    if(event.GetKey() == '\n') {
+    if (event.GetKey() == '\n') {
         AddMarker();
         OnEnter();
     }

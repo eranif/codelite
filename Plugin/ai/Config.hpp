@@ -177,7 +177,7 @@ public:
      * This method is thread-safe and uses a scoped lock to ensure atomic updates
      * to the internal caching policy string.
      */
-    inline void SetCachePolicy(llm::CachePolicy cp)
+    void SetCachePolicy(llm::CachePolicy cp)
     {
         std::scoped_lock lock{m_mutex};
         m_cachingPolicy = CachePolicyToString(cp);
@@ -186,7 +186,7 @@ public:
     /**
      * @brief Gets the current cache policy.
      */
-    inline llm::CachePolicy GetCachePolicy() const
+    llm::CachePolicy GetCachePolicy() const
     {
         std::scoped_lock lock{m_mutex};
         return CachePolicyFromString(m_cachingPolicy);
@@ -195,15 +195,15 @@ public:
     /**
      * @brief Gets the current cache policy as string.
      */
-    inline wxString GetCachePolicyString() const { return CachePolicyToString(GetCachePolicy()); }
+    wxString GetCachePolicyString() const { return CachePolicyToString(GetCachePolicy()); }
 
     /**
      * @brief Set the current cache policy as string.
      */
-    inline void SetCachePolicy(const wxString& cp) { SetCachePolicy(CachePolicyFromString(cp)); }
+    void SetCachePolicy(const wxString& cp) { SetCachePolicy(CachePolicyFromString(cp)); }
 
-    inline bool AreToolsEnabled() const { return m_enableTools.load(); }
-    inline void SetToolsEnabled(bool b) { m_enableTools.store(b); }
+    bool AreToolsEnabled() const { return m_enableTools.load(); }
+    void SetToolsEnabled(bool b) { m_enableTools.store(b); }
 
     /**
      * @brief Checks whether a specific tool is enabled in the configuration.

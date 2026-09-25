@@ -1,2 +1,35 @@
 ---
-Checks: modernize-use-override,modernize-use-nullptr,readability-redundant-*,-readability-redundant-access-specifiers
+Checks:
+  - misc-redundant-expression
+  - misc-unused-alias-decls
+  - misc-unused-using-decls
+  - modernize-make-shared
+  - modernize-make-unique
+  - modernize-raw-string-literals
+  - modernize-use-bool-literals
+  - modernize-use-equals-default
+  - modernize-use-equals-delete
+  - modernize-use-override
+  - modernize-use-nullptr
+  - modernize-use-using
+  - readability-const-return-type
+  - readability-delete-null-pointer
+  - readability-non-const-parameter
+  - readability-redundant-*
+  - -readability-redundant-access-specifiers
+  - readability-static-definition-in-anonymous-namespace
+  - readability-uniqueptr-delete-release
+  - readability-use-anyofallof
+  - readability-use-std-min-max
+# misc-explicit-constructor
+# misc-include-cleaner
+# misc-unused-parameters
+# modernize-avoid-c-style-cast
+# modernize-use-default-member-init
+# readability-avoid-const-params-in-decls
+# readability-container-contains
+# readability-convert-member-functions-to-static,readability-static-accessed-through-instance
+# readability-make-member-function-const
+# readability-implicit-bool-conversion
+# readability-inconsistent-declaration-parameter-name
+

@@ -15,6 +15,6 @@ SystemPromptDialog::SystemPromptDialog(wxWindow* parent, const wxString& content
     m_stcPrompt->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
-SystemPromptDialog::~SystemPromptDialog() {}
+SystemPromptDialog::~SystemPromptDialog() = default;
 
 void SystemPromptDialog::OnClose(wxCommandEvent& event) { EndModal(wxID_OK); }

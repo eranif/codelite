@@ -138,9 +138,9 @@ void CodeLiteLUA::InitialiseInternal()
     clDEBUG() << "Successfully executed script file:" << codelite_lua << endl;
 }
 
-CodeLiteLUA::CodeLiteLUA() {}
+CodeLiteLUA::CodeLiteLUA() = default;
 
-CodeLiteLUA::~CodeLiteLUA() {}
+CodeLiteLUA::~CodeLiteLUA() = default;
 
 void CodeLiteLUA::message_box(const std::string& message, int type)
 {

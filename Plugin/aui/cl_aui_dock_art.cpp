@@ -46,8 +46,8 @@ bool IsRectOK(wxDC& dc, const wxRect& rect)
 
     if (0 > rect.x || 0 > rect.y || 0 >= rect.width || 0 >= rect.height || dc_size.GetWidth() < (rect.x + rect.width) ||
         dc_size.GetHeight() < (rect.y + rect.height))
-        return (false);
-    return (true);
+        return false;
+    return true;
 }
 
 wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
@@ -116,7 +116,9 @@ clAuiDockArt::clAuiDockArt([[maybe_unused]] IManager* manager)
 }
 
 clAuiDockArt::~clAuiDockArt()
-{ EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clAuiDockArt::OnSettingsChanged, this); }
+{
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
+}
 
 void clAuiDockArt::DrawPaneButton(
     wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect, wxAuiPaneInfo& pane)

@@ -7,10 +7,10 @@ class WXDLLIMPEXP_SDK ThemeImporterYAML : public ThemeImporterBase
 {
 public:
     ThemeImporterYAML();
-    virtual ~ThemeImporterYAML() = default;
+    ~ThemeImporterYAML() override = default;
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
 #endif // ECLIPSEYAMLTHEMEIMPORTER_H

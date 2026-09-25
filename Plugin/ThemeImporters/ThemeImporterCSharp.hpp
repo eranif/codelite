@@ -31,7 +31,7 @@
 class WXDLLIMPEXP_SDK ThemeImporterCSharp : public ThemeImporterBase
 {
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
     ThemeImporterCSharp();
-    virtual ~ThemeImporterCSharp() = default;
+    ~ThemeImporterCSharp() override = default;
 };

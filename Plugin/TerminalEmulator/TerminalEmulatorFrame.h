@@ -35,7 +35,7 @@ class WXDLLIMPEXP_SDK TerminalEmulatorFrame : public TerminalEmulatorFrameBase
 
 public:
     TerminalEmulatorFrame(wxWindow* parent);
-    virtual ~TerminalEmulatorFrame() = default;
+    ~TerminalEmulatorFrame() override = default;
     TerminalEmulatorUI* GetTerminalUI() { return m_terminal; }
 };
 #endif // wxUSE_GUI

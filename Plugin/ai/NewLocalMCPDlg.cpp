@@ -11,7 +11,7 @@ NewLocalMCPDlg::NewLocalMCPDlg(wxWindow* parent)
     CenterOnParent();
 }
 
-NewLocalMCPDlg::~NewLocalMCPDlg() {}
+NewLocalMCPDlg::~NewLocalMCPDlg() = default;
 
 void NewLocalMCPDlg::OnEnvVariables(wxCommandEvent& event)
 {
@@ -73,4 +73,6 @@ llm::LocalMcp NewLocalMCPDlg::GetData() const
 }
 
 void NewLocalMCPDlg::OnOkUI(wxUpdateUIEvent& event)
-{ event.Enable(!m_textCtrlName->IsEmpty() && !m_textCtrlCommand->IsEmpty()); }
+{
+    event.Enable(!m_textCtrlName->IsEmpty() && !m_textCtrlCommand->IsEmpty());
+}

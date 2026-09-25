@@ -31,8 +31,8 @@ class ThemeImporterHTML : public ThemeImporterBase
 {
 public:
     ThemeImporterHTML();
-    virtual ~ThemeImporterHTML() = default;
+    ~ThemeImporterHTML() override = default;
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };

@@ -8,10 +8,10 @@
 class WXDLLIMPEXP_SDK LSPGoplsDetector : public LSPDetector
 {
 protected:
-    virtual bool DoLocate();
+    bool DoLocate() override;
     void ConfigureFile(const wxFileName& gopls);
 
 public:
     LSPGoplsDetector();
-    virtual ~LSPGoplsDetector() = default;
+    ~LSPGoplsDetector() override = default;
 };

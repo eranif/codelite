@@ -45,4 +45,4 @@ clAboutDialog::clAboutDialog(wxWindow* parent, const wxString& version)
     ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
-clAboutDialog::~clAboutDialog() {}
+clAboutDialog::~clAboutDialog() = default;

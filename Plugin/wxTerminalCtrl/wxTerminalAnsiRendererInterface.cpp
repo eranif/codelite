@@ -44,7 +44,9 @@ void wxTerminalAnsiRendererInterface::ClearDisplay(size_t dir)
 void wxTerminalAnsiRendererInterface::SetWindowTitle(wxStringView window_title)
 {
     LOG_IF_DEBUG
-    { LOG_DEBUG(LOG()) << "SetWindowTitle(" << wxString(window_title.data(), window_title.length()) << ")" << endl; }
+    {
+        LOG_DEBUG(LOG()) << "SetWindowTitle(" << wxString(window_title.data(), window_title.length()) << ")" << endl;
+    }
 }
 
 void wxTerminalAnsiRendererInterface::ResetStyle()

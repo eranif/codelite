@@ -194,7 +194,7 @@ public:
     const Value& value() const { return m_value; }
     Value& value() { return m_value; }
 
-    clStatusOr() {}
+    clStatusOr() = default;
     clStatusOr(const clStatus& status) { *this = status; }
     clStatusOr& operator=(const clStatus& status)
     {

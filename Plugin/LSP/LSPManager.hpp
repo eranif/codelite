@@ -30,7 +30,7 @@ public:
         Info = 3,
     };
 
-    inline static LogLevel LogLevelFromInt(int level)
+    static LogLevel LogLevelFromInt(int level)
     {
         switch (level) {
         case 1:
@@ -51,7 +51,7 @@ public:
     void StopAll(const std::unordered_set<wxString>& languages = {});
     void StartAll(const std::unordered_set<wxString>& languages = {});
 
-    inline void RestartAll(const std::unordered_set<wxString>& languages = {})
+    void RestartAll(const std::unordered_set<wxString>& languages = {})
     {
         wxBusyCursor bc{};
         StopAll(languages);
@@ -250,7 +250,9 @@ public:
     }
 
     void SetLogSink(std::function<void(const wxString, const wxString&, Manager::LogLevel)> logsink)
-    { m_logsink = std::move(logsink); }
+    {
+        m_logsink = std::move(logsink);
+    }
 
 protected:
     void OnSignatureHelp(LSPEvent& event);

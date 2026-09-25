@@ -215,9 +215,9 @@ void clCustomScrollBar::SetPosition(int pos, bool notify)
         m_thumbRect = wxRect();
         Refresh();
     }
-    double percent = (double)m_thumbSize / m_range;
+    double percent = m_thumbSize / m_range;
     double thumbMajorDim = percent * majorDim;
-    double thumbCoord = (double)(m_thumbPosition / m_range) * majorDim;
+    double thumbCoord = (m_thumbPosition / m_range) * majorDim;
 
     // Make sure that the thumb is always visible
     if (thumbMajorDim < 10) {
@@ -242,7 +242,6 @@ void clCustomScrollBar::SetPosition(int pos, bool notify)
         event.SetPosition(m_thumbPosition);
         GetEventHandler()->ProcessEvent(event);
     }
-    return;
 }
 
 int clCustomScrollBar::GetPositionFromPoint(const wxPoint& pt) const

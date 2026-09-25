@@ -4,6 +4,7 @@
 #include "clTreeCtrl.h"
 #include "file_logger.h"
 
+#include <algorithm>
 #include <cmath>
 #include <wx/minifram.h>
 #include <wx/panel.h>
@@ -296,7 +297,7 @@ void clControlWithItems::UpdateScrollBar()
         // V-scrollbar
         // wxRect rect = GetItemsRect();
         int thumbSize = GetNumLineCanFitOnScreen(); // Number of lines can be drawn
-        int pageSize = (thumbSize);
+        int pageSize = thumbSize;
         int rangeSize = GetRange();
         int position = GetFirstItemPosition();
         UpdateVScrollBar(position, thumbSize, rangeSize, pageSize);
@@ -317,9 +318,7 @@ void clControlWithItems::UpdateScrollBar()
             clHeaderItem& column = GetHeader()->Item(GetHeader()->size() - 1);
             column.UpdateWidth(column.GetWidth() - pixels_after);
         }
-        if (m_firstColumn < 0) {
-            m_firstColumn = 0;
-        }
+        m_firstColumn = std::max(m_firstColumn, 0);
         position = m_firstColumn;
         UpdateHScrollBar(position, thumbSize, rangeSize, pageSize);
     }
@@ -374,9 +373,7 @@ void clControlWithItems::ScrollColumns(int steps, wxDirection direction)
     } else {
         int max_width = GetHeader()->GetWidth();
         int firstColumn = m_firstColumn + ((direction == wxRIGHT) ? steps : -steps);
-        if (firstColumn < 0) {
-            firstColumn = 0;
-        }
+        firstColumn = std::max(firstColumn, 0);
         int pageSize = GetClientArea().GetWidth();
         if ((firstColumn + pageSize) > max_width) {
             firstColumn = max_width - pageSize;
@@ -519,9 +516,7 @@ void clControlWithItems::DoMouseScroll(const wxMouseEvent& event)
     int range = GetRange();
     bool going_up = (event.GetWheelRotation() > 0);
     int new_row = GetFirstItemPosition() + (going_up ? -GetScrollTick() : GetScrollTick());
-    if (new_row < 0) {
-        new_row = 0;
-    }
+    new_row = std::max(new_row, 0);
     if (new_row >= range) {
         new_row = range - 1;
     }

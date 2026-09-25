@@ -17,7 +17,7 @@ clFSWNewConfigDlg::clFSWNewConfigDlg(wxWindow* parent)
     }
 }
 
-clFSWNewConfigDlg::~clFSWNewConfigDlg() {}
+clFSWNewConfigDlg::~clFSWNewConfigDlg() = default;
 
 void clFSWNewConfigDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlName->GetValue().IsEmpty()); }
 wxString clFSWNewConfigDlg::GetCopyFrom() const { return m_choiceCopyFrom->GetStringSelection(); }

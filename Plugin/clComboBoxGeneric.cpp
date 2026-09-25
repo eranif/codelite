@@ -167,7 +167,7 @@ void clComboBoxGeneric::OnButtonClicked(wxCommandEvent& event)
     for (size_t i = 0; i < m_choices.size(); ++i) {
         const wxString& choice = m_choices.Item(i);
         auto item = menu.Append(wxID_ANY, choice, "", wxITEM_CHECK);
-        item->Check(i == (size_t)m_selection);
+        item->Check(i == m_selection);
         menu.Bind(
             wxEVT_MENU,
             [this, choice, i](wxCommandEvent& e) {
@@ -240,7 +240,7 @@ void clComboBoxGeneric::SetString(size_t n, const wxString& text)
         return;
     }
     m_choices[n] = text;
-    if (GetSelection() == (size_t)n) {
+    if (GetSelection() == n) {
         SetValue(m_choices[n]);
     }
 }

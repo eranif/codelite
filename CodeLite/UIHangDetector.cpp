@@ -17,7 +17,7 @@
         return;                     \
     }
 
-UIHangDetector::UIHangDetector() {}
+UIHangDetector::UIHangDetector() = default;
 
 UIHangDetector::~UIHangDetector()
 {

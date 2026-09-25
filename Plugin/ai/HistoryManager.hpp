@@ -75,7 +75,7 @@ struct WXDLLIMPEXP_SDK Conversation {
      *
      * @return const wxString& The stored label.
      */
-    inline const wxString& GetLabel() const { return label_; }
+    const wxString& GetLabel() const { return label_; }
 };
 
 /**
@@ -102,7 +102,7 @@ struct WXDLLIMPEXP_SDK HistoryEntryHelper {
      * @param entries History entries to process.
      * @return wxArrayString Labels in the same order as the input entries.
      */
-    static inline wxArrayString GetLabels(const std::vector<HistoryEntry>& entries)
+    static wxArrayString GetLabels(const std::vector<HistoryEntry>& entries)
     {
         wxArrayString labels;
         labels.reserve(entries.size());
@@ -118,7 +118,7 @@ struct WXDLLIMPEXP_SDK HistoryEntryHelper {
      * @param entries History entries to process.
      * @return std::map<wxString, HistoryEntry> Map keyed by entry label.
      */
-    static inline std::map<wxString, HistoryEntry> GetAsMap(const std::vector<HistoryEntry>& entries)
+    static std::map<wxString, HistoryEntry> GetAsMap(const std::vector<HistoryEntry>& entries)
     {
         std::map<wxString, HistoryEntry> m;
         for (const auto& e : entries) {

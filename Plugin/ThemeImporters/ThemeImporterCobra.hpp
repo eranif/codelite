@@ -33,7 +33,7 @@ class WXDLLIMPEXP_SDK ThemeImporterCobra : public ThemeImporterPython
 {
 public:
     ThemeImporterCobra();
-    virtual ~ThemeImporterCobra() = default;
+    ~ThemeImporterCobra() override = default;
 };
 
 #endif // ECLIPSECOBRATHEMEIMPORTER_H

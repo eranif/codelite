@@ -66,7 +66,7 @@ protected:
 
 public:
     wxTerminalInputCtrl(wxTerminalCtrl* parent);
-    virtual ~wxTerminalInputCtrl();
+    ~wxTerminalInputCtrl() override;
     void SetWritePositionEnd();
     void UpdateTextDeleted(int num);
     void ProcessKeyDown(wxKeyEvent& event);

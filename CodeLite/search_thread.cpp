@@ -556,9 +556,7 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 static SearchThread* gs_SearchThread = nullptr;
 void SearchThreadST::Free()
 {
-    if (gs_SearchThread) {
-        delete gs_SearchThread;
-    }
+    delete gs_SearchThread;
     gs_SearchThread = nullptr;
 }
 

@@ -21,7 +21,7 @@ SelectFileTypesDialog::SelectFileTypesDialog(wxWindow* parent, const wxArrayStri
     m_searchCtrl->CallAfter(&wxSearchCtrl::SetFocus);
 }
 
-SelectFileTypesDialog::~SelectFileTypesDialog() {}
+SelectFileTypesDialog::~SelectFileTypesDialog() = default;
 
 void SelectFileTypesDialog::InitializeList(const wxArrayString& selected_items)
 {

@@ -59,7 +59,7 @@ class WXDLLIMPEXP_SDK EnvironmentConfig : public ConfigurationToolBase
 
 protected:
     wxString DoExpandVariables(const wxString& in);
-    void ApplyEnv(wxStringMap_t* overrideMap, const wxString& project, const wxString& config);
+    void ApplyEnv(const wxStringMap_t* overrideMap, const wxString& project, const wxString& config);
     void UnApplyEnv();
 
 public:

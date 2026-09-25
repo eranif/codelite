@@ -47,7 +47,9 @@ void MemoryView::OnEvaluate(wxCommandEvent& event)
 }
 
 void MemoryView::OnEvaluateUI(wxUpdateUIEvent& event)
-{ event.Enable(m_textCtrlExpression->GetValue().IsEmpty() == false); }
+{
+    event.Enable(m_textCtrlExpression->GetValue().IsEmpty() == false);
+}
 
 void MemoryView::Clear()
 {

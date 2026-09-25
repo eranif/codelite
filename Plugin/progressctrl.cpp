@@ -26,6 +26,7 @@
 
 #include "drawingutils.h"
 
+#include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/settings.h>
 
@@ -70,9 +71,7 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
     dc.DrawRectangle(rect);
 
     // fill it with progress range
-    if (m_currValue > m_maxRange) {
-        m_currValue = m_maxRange;
-    }
+    m_currValue = std::min(m_currValue, m_maxRange);
 
     double factor = (double)m_currValue / (double)m_maxRange;
     double fill_width = factor * rect.width;

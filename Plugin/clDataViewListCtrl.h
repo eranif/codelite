@@ -264,8 +264,7 @@ public:
     }
 
     clDataViewTextBitmap(const clDataViewTextBitmap& other)
-        : wxObject()
-        , m_text(other.m_text)
+        : m_text(other.m_text)
         , m_bitmapIndex(other.m_bitmapIndex)
     {
     }
@@ -308,8 +307,7 @@ public:
     }
 
     clDataViewCheckbox(const clDataViewCheckbox& other)
-        : wxObject()
-        , m_checked(other.m_checked)
+        : m_checked(other.m_checked)
         , m_label(other.m_label)
         , m_bitmapIndex(other.m_bitmapIndex)
     {
@@ -427,8 +425,7 @@ public:
     }
 
     clDataViewColour(const clDataViewColour& other)
-        : wxObject()
-        , m_colour(other.m_colour)
+        : m_colour(other.m_colour)
     {
     }
 
@@ -457,8 +454,7 @@ public:
     }
 
     clDataViewControl(const clDataViewControl& other)
-        : wxObject()
-        , m_ctrl(other.m_ctrl)
+        : m_ctrl(other.m_ctrl)
     {
     }
 

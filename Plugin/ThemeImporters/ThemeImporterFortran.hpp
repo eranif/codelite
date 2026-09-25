@@ -32,9 +32,9 @@
 class WXDLLIMPEXP_SDK ThemeImporterFortran : public ThemeImporterBase
 {
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
     ThemeImporterFortran();
-    virtual ~ThemeImporterFortran() = default;
+    ~ThemeImporterFortran() override = default;
 };
 
 #endif // ECLIPSEFORTRANTHEMEIMPORTER_H

@@ -21,7 +21,7 @@ EnvVarImporterDlg::EnvVarImporterDlg(wxWindow* parent,
     m_envVars->SetValue(value);
 }
 
-EnvVarImporterDlg::~EnvVarImporterDlg() {}
+EnvVarImporterDlg::~EnvVarImporterDlg() = default;
 
 void EnvVarImporterDlg::OnImport(wxCommandEvent& event)
 {

@@ -9,7 +9,7 @@ struct WXDLLIMPEXP_SDK WriteOptions {
     wxMBConv* converter{nullptr};
     bool ignore_workspace{false};
 
-    inline const wxMBConv& GetConv() const
+    const wxMBConv& GetConv() const
     {
         if (converter == nullptr) {
             return wxConvUTF8;

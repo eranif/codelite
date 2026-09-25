@@ -15,7 +15,7 @@ clSingleChoiceDialog::clSingleChoiceDialog(wxWindow* parent, const wxArrayString
     ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
-clSingleChoiceDialog::~clSingleChoiceDialog() {}
+clSingleChoiceDialog::~clSingleChoiceDialog() = default;
 
 void clSingleChoiceDialog::OnOKUI(wxUpdateUIEvent& event)
 {

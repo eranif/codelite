@@ -46,7 +46,7 @@ EditDlg::EditDlg(wxWindow* parent, const wxString& text, LexerConf::Ptr_t lexer)
     ::clSetDialogBestSizeAndPosition(*this);
 }
 
-EditDlg::~EditDlg() {}
+EditDlg::~EditDlg() = default;
 
 wxString clGetStringFromUser(const wxString& initialValue, wxWindow* parent, LexerConf::Ptr_t lexer)
 {

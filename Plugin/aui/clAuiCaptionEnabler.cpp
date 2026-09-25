@@ -11,7 +11,9 @@ clAuiCaptionEnabler::clAuiCaptionEnabler()
     , m_timer(nullptr)
     , m_captionAdded(false)
     , m_ensureCaptionsVisible(false)
-{ EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiCaptionEnabler::OnEditorSettingsChanged, this); }
+{
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiCaptionEnabler::OnEditorSettingsChanged, this);
+}
 
 clAuiCaptionEnabler::~clAuiCaptionEnabler()
 {

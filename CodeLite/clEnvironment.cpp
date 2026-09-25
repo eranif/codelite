@@ -14,7 +14,7 @@
 
 namespace
 {
-static const wxString VARIABLE_REG_EXPR = R"#(\$[\(\{]?([\w]+)[\\/\)\}]?)#";
+const wxString VARIABLE_REG_EXPR = R"#(\$[\(\{]?([\w]+)[\\/\)\}]?)#";
 
 bool is_env_variable(const wxString& str, wxString* env_name)
 {

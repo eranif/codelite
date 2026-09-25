@@ -47,6 +47,8 @@
 #include <wx/xrc/xmlres.h>
 #include "clSystemSettings.h"
 #include <wx/stattext.h>
+#include <algorithm>
+
 // clang-format on
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
@@ -844,9 +846,7 @@ void clPluginsFindBar::DoEnsureLineIsVisible(wxStyledTextCtrl* sci, int line)
         // To place our line in the middle, the first visible line should be
         // the: line - (linesOnScreen / 2)
         int firstVisibleLine = line - (linesOnScreen / 2);
-        if (firstVisibleLine < 0) {
-            firstVisibleLine = 0;
-        }
+        firstVisibleLine = std::max(firstVisibleLine, 0);
         sci->SetFirstVisibleLine(firstVisibleLine);
     }
     sci->EnsureVisible(line);

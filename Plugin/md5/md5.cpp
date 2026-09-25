@@ -94,11 +94,11 @@ void MD5::update(uint1* input, uint4 input_length)
     buffer_index = (unsigned int)((count[0] >> 3) & 0x3F);
 
     // Update number of bits
-    if ((count[0] += ((uint4)input_length << 3)) < ((uint4)input_length << 3)) {
+    if ((count[0] += (input_length << 3)) < (input_length << 3)) {
         count[1]++;
     }
 
-    count[1] += ((uint4)input_length >> 29);
+    count[1] += (input_length >> 29);
 
     buffer_space = 64 - buffer_index; // how much space is left in buffer
 
@@ -406,7 +406,7 @@ void MD5::transform(uint1 block[64])
 
 // Encodes input (UINT4) into output (unsigned char). Assumes len is
 // a multiple of 4.
-void MD5::encode(uint1* output, uint4* input, uint4 len)
+void MD5::encode(uint1* output, const uint4* input, uint4 len)
 {
 
     unsigned int i, j;
@@ -421,7 +421,7 @@ void MD5::encode(uint1* output, uint4* input, uint4 len)
 
 // Decodes input (unsigned char) into output (UINT4). Assumes len is
 // a multiple of 4.
-void MD5::decode(uint4* output, uint1* input, uint4 len)
+void MD5::decode(uint4* output, const uint1* input, uint4 len)
 {
 
     unsigned int i, j;
@@ -433,7 +433,7 @@ void MD5::decode(uint4* output, uint1* input, uint4 len)
 }
 
 // Note: Replace "for loop" with standard memcpy if possible.
-void MD5::memcpy(uint1* output, uint1* input, uint4 len)
+void MD5::memcpy(uint1* output, const uint1* input, uint4 len)
 {
 
     unsigned int i;

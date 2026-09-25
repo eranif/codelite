@@ -19,16 +19,16 @@ public:
 
     /// Increment the number of tokens by 1. If the increment process crosses
     /// the max allowed, return false.
-    inline bool Incr()
+    bool Incr()
     {
         size_t old_value = m_tokens_count.fetch_add(1);
         return old_value < m_max_tokens;
     }
 
-    inline size_t GetTokenCount() const { return m_tokens_count.load(); }
-    inline void Cancel() { m_cancelled.store(true); }
-    inline bool IsCancelled() { return m_cancelled.load(); }
-    inline bool IsMaxTokenReached() const { return m_tokens_count.load() > m_max_tokens; }
+    size_t GetTokenCount() const { return m_tokens_count.load(); }
+    void Cancel() { m_cancelled.store(true); }
+    bool IsCancelled() { return m_cancelled.load(); }
+    bool IsMaxTokenReached() const { return m_tokens_count.load() > m_max_tokens; }
 
     void Reset()
     {

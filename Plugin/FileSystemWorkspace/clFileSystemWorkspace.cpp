@@ -632,7 +632,9 @@ void clFileSystemWorkspace::OnQuickDebugDlgDismissed(clDebugEvent& event)
 }
 
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspace::GetConfig() const
-{ return GetSettings().GetSelectedConfig(); }
+{
+    return GetSettings().GetSelectedConfig();
+}
 
 void clFileSystemWorkspace::OnMenuCustomTarget(wxCommandEvent& event)
 {
@@ -1017,7 +1019,9 @@ void clFileSystemWorkspace::GetExecutable(wxString& exe, wxString& args, wxStrin
 }
 
 CompilerPtr clFileSystemWorkspace::GetCompiler()
-{ return BuildSettingsConfigST::Get()->GetCompiler(GetConfig()->GetCompiler()); }
+{
+    return BuildSettingsConfigST::Get()->GetCompiler(GetConfig()->GetCompiler());
+}
 
 void clFileSystemWorkspace::OnExecProcessTerminated(clProcessEvent& event)
 {

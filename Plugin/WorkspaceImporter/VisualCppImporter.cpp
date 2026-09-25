@@ -1188,7 +1188,7 @@ wxString VisualCppImporter::ReplaceDefaultEnvVars(const wxString& str)
     return tmp;
 }
 
-void VisualCppImporter::AddFilesVC7(wxXmlNode* filterChild,
+void VisualCppImporter::AddFilesVC7(const wxXmlNode* filterChild,
                                     GenericProjectPtr genericProject,
                                     std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap,
                                     wxString preVirtualPath)

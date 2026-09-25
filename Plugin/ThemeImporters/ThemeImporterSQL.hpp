@@ -33,10 +33,10 @@ class WXDLLIMPEXP_SDK ThemeImporterSQL : public ThemeImporterBase
 {
 public:
     ThemeImporterSQL();
-    virtual ~ThemeImporterSQL() = default;
+    ~ThemeImporterSQL() override = default;
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
 #endif // ECLIPSESQLTHEMEIMPORTER_H

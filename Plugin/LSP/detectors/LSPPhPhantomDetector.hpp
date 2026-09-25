@@ -9,7 +9,7 @@ class WXDLLIMPEXP_SDK LSPPhPhantomDetector : public LSPDetector
 {
 public:
     LSPPhPhantomDetector();
-    virtual ~LSPPhPhantomDetector() = default;
+    ~LSPPhPhantomDetector() override = default;
 
     bool DoLocate() override;
 

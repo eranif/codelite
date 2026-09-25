@@ -28,7 +28,7 @@ public:
      * @return std::string The full HTTP request message, including headers and
      * body.
      */
-    inline std::string ToString() const
+    std::string ToString() const
     {
         using cstr_ptr = std::unique_ptr<char, decltype(&std::free)>;
         cstr_ptr data(m_json.FormatRawString(false), &std::free);

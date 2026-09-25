@@ -21,7 +21,7 @@ ChatHistoryPage::ChatHistoryPage(wxChoicebook* parent, const wxString& endpoint)
     }
 }
 
-ChatHistoryPage::~ChatHistoryPage() {}
+ChatHistoryPage::~ChatHistoryPage() = default;
 
 void ChatHistoryPage::Clear()
 {

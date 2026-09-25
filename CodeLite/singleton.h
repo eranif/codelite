@@ -52,25 +52,15 @@ protected:
     /**
      * Default constructor.
      */
-    Singleton();
+    Singleton() = default;
 
     /**
      * Destructor.
      */
-    virtual ~Singleton();
+    virtual ~Singleton() = default;
 };
 template <class T>
-T* Singleton<T>::ms_instance = 0;
-
-template <class T>
-Singleton<T>::Singleton()
-{
-}
-
-template <class T>
-Singleton<T>::~Singleton()
-{
-}
+T* Singleton<T>::ms_instance = nullptr;
 
 template <class T>
 T* Singleton<T>::Get()
@@ -83,10 +73,8 @@ T* Singleton<T>::Get()
 template <class T>
 void Singleton<T>::Free()
 {
-    if (ms_instance) {
-        delete ms_instance;
-        ms_instance = 0;
-    }
+    delete ms_instance;
+    ms_instance = nullptr;
 }
 
 #endif // SINGLETON_H

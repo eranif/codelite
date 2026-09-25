@@ -47,7 +47,7 @@ public:
     bool Contains(const wxString& key);
     wxString String();
 
-    inline clEnvList_t ToEnvList() const
+    clEnvList_t ToEnvList() const
     {
         clEnvList_t result;
         if (m_keys.size() != m_values.size()) {

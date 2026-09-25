@@ -5,7 +5,7 @@
 
 struct WXDLLIMPEXP_SDK DiagnosticsData : public wxClientData {
     LSP::Diagnostic diagnostic;
-    virtual ~DiagnosticsData() = default;
+    ~DiagnosticsData() override = default;
     DiagnosticsData(const DiagnosticsData&) = default;
     DiagnosticsData(const LSP::Diagnostic& diag) { diagnostic = diag; }
     DiagnosticsData(DiagnosticsData&&) = delete;

@@ -24,12 +24,12 @@ protected:
 
 public:
     LSPNetworkSocketClient() = default;
-    virtual ~LSPNetworkSocketClient();
+    ~LSPNetworkSocketClient() override;
 
 public:
-    virtual void Close();
-    virtual bool IsConnected() const;
-    virtual void Open(const LSPStartupInfo& info);
+    void Close() override;
+    bool IsConnected() const override;
+    void Open(const LSPStartupInfo& info) override;
     virtual void Send(const std::string& data);
 };
 

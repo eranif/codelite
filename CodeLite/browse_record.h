@@ -62,7 +62,7 @@ public:
      */
     const wxString& GetSshAccount() const { return ssh_account; }
 
-    inline wxString ToString() const
+    wxString ToString() const
     {
         wxString s;
         s << this->filename << ":" << this->lineno;

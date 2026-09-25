@@ -13,7 +13,7 @@ clXmlResource& clXmlResource::Get()
 
 clXmlResource::clXmlResource() { wxTheApp->Bind(wxEVT_MENU_OPEN, &clXmlResource::OnMenuShown, this); }
 
-clXmlResource::~clXmlResource() {}
+clXmlResource::~clXmlResource() = default;
 
 wxMenuBar* clXmlResource::LoadMenuBar(const wxString& name)
 {

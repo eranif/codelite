@@ -11,7 +11,7 @@ DiffSelectFoldersDlg::DiffSelectFoldersDlg(wxWindow* parent, const wxString& lef
     GetSizer()->Fit(this);
 }
 
-DiffSelectFoldersDlg::~DiffSelectFoldersDlg() {}
+DiffSelectFoldersDlg::~DiffSelectFoldersDlg() = default;
 
 void DiffSelectFoldersDlg::OnOKUI(wxUpdateUIEvent& event)
 {

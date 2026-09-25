@@ -26,7 +26,7 @@ BuildTargetDlg::BuildTargetDlg(wxWindow* parent, const wxString& name, const wxS
     ::clSetDialogBestSizeAndPosition(*this);
 }
 
-BuildTargetDlg::~BuildTargetDlg() {}
+BuildTargetDlg::~BuildTargetDlg() = default;
 
 wxString BuildTargetDlg::GetTargetName() const
 {
@@ -42,4 +42,6 @@ wxString BuildTargetDlg::GetTargetCommand() const
     return s;
 }
 void BuildTargetDlg::OnOK_UI(wxUpdateUIEvent& event)
-{ event.Enable(!GetTargetCommand().IsEmpty() && !GetTargetName().IsEmpty()); }
+{
+    event.Enable(!GetTargetCommand().IsEmpty() && !GetTargetName().IsEmpty());
+}

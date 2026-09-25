@@ -32,9 +32,9 @@
 class WXDLLIMPEXP_SDK ThemeImporterRuby : public ThemeImporterBase
 {
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
     ThemeImporterRuby();
-    ~ThemeImporterRuby() = default;
+    ~ThemeImporterRuby() override = default;
 };
 
 #endif // ECLIPSERUBYTHEMEIMPORTER_H

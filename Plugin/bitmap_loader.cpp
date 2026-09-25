@@ -575,8 +575,8 @@ bool BitmapLoader::GetIconBundle(const wxString& name, wxIconBundle* bundle)
 
 namespace
 {
-thread_local static std::unordered_map<wxString, wxBitmap> dark_sidebar_bitmaps;
-thread_local static std::unordered_map<wxString, wxBitmap> light_sidebar_bitmaps;
+thread_local std::unordered_map<wxString, wxBitmap> dark_sidebar_bitmaps;
+thread_local std::unordered_map<wxString, wxBitmap> light_sidebar_bitmaps;
 } // namespace
 
 void clClearSidebarBitmapCache()

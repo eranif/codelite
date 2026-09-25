@@ -46,9 +46,7 @@ static std::wstring Reverse(const std::wstring& str)
 
 wxString StringFindReplacer::GetString(const wxString& input, int from, bool search_up)
 {
-    if (from < 0) {
-        from = 0;
-    }
+    from = std::max(from, 0);
 
     if (!search_up) {
 
@@ -155,9 +153,7 @@ bool StringFindReplacer::DoSimpleSearch(
     std::wstring find_what(pfind_what);
 
     int from = startOffset;
-    if (from < 0) {
-        from = 0;
-    }
+    from = std::max(from, 0);
     std::wstring str;
     bool search_up = flags & wxSD_SEARCH_BACKWARD;
     if (!search_up) {

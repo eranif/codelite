@@ -33,6 +33,7 @@
 #include "imanager.h"
 #include "plugin.h"
 
+#include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
 #include <wx/log.h>
@@ -369,9 +370,7 @@ wxSize clEditorTipWindow::DoGetTipSize()
     sz.y = (m_args.size() * lineHeight);
     sz.x += (2 * TIP_SPACER);
 
-    if (sz.x < minLineWidth) {
-        sz.x = minLineWidth;
-    }
+    sz.x = std::max(sz.x, minLineWidth);
 
     if (!m_footer.IsEmpty()) {
         sz.y += lineHeight;
@@ -399,8 +398,7 @@ void clEditorTipWindow::DoAdjustPosition()
         // our tip can not fit into the screen, shift it left
         pt.x -= ((pt.x + sz.x) - parentSize.width);
 
-        if (pt.x < 0)
-            pt.x = 0;
+        pt.x = std::max(pt.x, 0);
     }
     Move(pt);
 }

@@ -9,7 +9,9 @@ struct EditorEnabler {
     wxStyledTextCtrl* m_ctrl = nullptr;
     EditorEnabler(wxStyledTextCtrl* ctrl)
         : m_ctrl(ctrl)
-    { m_ctrl->SetEditable(true); }
+    {
+        m_ctrl->SetEditable(true);
+    }
     ~EditorEnabler() { m_ctrl->SetEditable(false); }
 };
 } // namespace
@@ -151,7 +153,9 @@ void wxTerminalAnsiRendererSTC::ClearDisplay(size_t dir)
 }
 
 void wxTerminalAnsiRendererSTC::SetWindowTitle(wxStringView window_title)
-{ m_windowTitle = wxString(window_title.data(), window_title.length()); }
+{
+    m_windowTitle = wxString(window_title.data(), window_title.length());
+}
 
 int wxTerminalAnsiRendererSTC::GetInsertionPoint() const
 {

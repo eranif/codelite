@@ -33,10 +33,10 @@ class WXDLLIMPEXP_SDK NewKeyShortcutDlg : public NewKeyShortcutBaseDlg
     MenuItemData m_mid;
 
 protected:
-    virtual void OnSuggest(wxCommandEvent& event);
-    virtual void OnClear(wxCommandEvent& event);
-    virtual void OnClearUI(wxUpdateUIEvent& event);
-    virtual void OnKeyDown(wxKeyEvent& event);
+    void OnSuggest(wxCommandEvent& event) override;
+    void OnClear(wxCommandEvent& event) override;
+    void OnClearUI(wxUpdateUIEvent& event) override;
+    void OnKeyDown(wxKeyEvent& event) override;
     wxString ToString(wxKeyEvent& e) const;
     wxArrayString GetSuggestions() const;
 
@@ -44,7 +44,7 @@ protected:
 
 public:
     NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid);
-    virtual ~NewKeyShortcutDlg();
+    ~NewKeyShortcutDlg() override;
     clKeyboardShortcut GetAccel() const;
 };
 

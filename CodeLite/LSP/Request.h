@@ -70,8 +70,8 @@ public:
     void SetServerName(const wxString& server_name) { this->m_server_name = server_name; }
     const wxString& GetServerName() const { return m_server_name; }
 
-    inline void SetResponseCallback(ResponseCallback cb) { m_on_response_callback = std::move(cb); }
-    inline void InvokeResponseCallback(std::optional<LSPEvent> event)
+    void SetResponseCallback(ResponseCallback cb) { m_on_response_callback = std::move(cb); }
+    void InvokeResponseCallback(std::optional<LSPEvent> event)
     {
         if (!wxThread::IsMain() || !m_on_response_callback) {
             return;

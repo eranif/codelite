@@ -8,10 +8,10 @@ class WXDLLIMPEXP_SDK LSPPythonDetector : public LSPDetector
 {
 public:
     LSPPythonDetector();
-    virtual ~LSPPythonDetector() = default;
+    ~LSPPythonDetector() override = default;
 
 protected:
-    virtual bool DoLocate();
+    bool DoLocate() override;
 
     void ConfigurePylsp(const wxString& pylsp);
 };

@@ -48,14 +48,15 @@ public:
 
 public:
     clAuiDockArt(IManager* manager);
-    virtual ~clAuiDockArt();
+    ~clAuiDockArt() override;
 
-    virtual void DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane);
-    virtual void DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane);
-    virtual void
-    DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect, wxAuiPaneInfo& pane);
-    virtual void DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect);
-    virtual void DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect);
+    void DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane) override;
+    void
+    DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane) override;
+    void DrawPaneButton(
+        wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect, wxAuiPaneInfo& pane) override;
+    void DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect) override;
+    void DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect) override;
 };
 
 #endif // CLAUIDOCKART_H

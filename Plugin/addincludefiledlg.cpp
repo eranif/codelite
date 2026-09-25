@@ -88,14 +88,12 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
 
     int numOfLinesVisible = m_textCtrlPreview->LinesOnScreen();
     int firstVisibleLine = m_line - (numOfLinesVisible / 2);
-    if (firstVisibleLine < 0) {
-        firstVisibleLine = 0;
-    }
+    firstVisibleLine = std::max(firstVisibleLine, 0);
     m_textCtrlPreview->SetFirstVisibleLine(firstVisibleLine);
     ::clSetDialogBestSizeAndPosition(*this);
 }
 
-AddIncludeFileDlg::~AddIncludeFileDlg() {}
+AddIncludeFileDlg::~AddIncludeFileDlg() = default;
 
 void AddIncludeFileDlg::UpdateLineToAdd()
 {
@@ -167,9 +165,7 @@ void AddIncludeFileDlg::SetAndMarkLine()
     // Make the line to add at the center of the display
     int numOfLinesVisible = m_textCtrlPreview->LinesOnScreen();
     int firstVisibleLine = m_line - (numOfLinesVisible / 2);
-    if (firstVisibleLine < 0) {
-        firstVisibleLine = 0;
-    }
+    firstVisibleLine = std::max(firstVisibleLine, 0);
 
     m_textCtrlPreview->MarkerDeleteAll(0x7);
     m_textCtrlPreview->SetText(m_text);

@@ -214,7 +214,7 @@ void NewKeyShortcutDlg::OnClearUI(wxUpdateUIEvent& event)
                  !m_textCtrl1->IsEmpty());
 }
 
-NewKeyShortcutDlg::~NewKeyShortcutDlg() {}
+NewKeyShortcutDlg::~NewKeyShortcutDlg() = default;
 
 wxArrayString NewKeyShortcutDlg::GetSuggestions() const
 {

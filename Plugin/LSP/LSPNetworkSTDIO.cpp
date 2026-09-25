@@ -58,7 +58,9 @@ void LSPNetworkSTDIO::OnProcessOutput(clProcessEvent& event)
 }
 
 void LSPNetworkSTDIO::OnProcessStderr(clProcessEvent& event)
-{ LSP_TRACE() << "[**STDERR**]" << event.GetOutput() << endl; }
+{
+    LSP_TRACE() << "[**STDERR**]" << event.GetOutput() << endl;
+}
 
 void LSPNetworkSTDIO::DoStartLocalProcess()
 {

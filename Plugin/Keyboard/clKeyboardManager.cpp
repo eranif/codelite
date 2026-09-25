@@ -116,9 +116,7 @@ clKeyboardManager* clKeyboardManager::Get()
 
 void clKeyboardManager::Release()
 {
-    if (m_mgr) {
-        delete m_mgr;
-    }
+    delete m_mgr;
     m_mgr = nullptr;
 }
 

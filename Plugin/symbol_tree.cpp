@@ -367,8 +367,8 @@ void SymbolTree::UpdateGuiItem(TagEntry& data, const wxString& key)
             // update the linenumber and file
             MyTreeItemData* item_data = new MyTreeItemData(data.GetFile(), data.GetPattern());
             wxTreeItemData* old_data = GetItemData(itemId);
-            if (old_data)
-                delete old_data;
+
+            delete old_data;
             SetItemData(itemId, item_data);
         }
     }

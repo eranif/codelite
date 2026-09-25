@@ -650,7 +650,7 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
 
     wxString text;
     for (int i = startLine; i <= endLine; i++) {
-        int visibleLine = (int)ctrl->DocLineFromVisible(i); // get actual visible line, folding may offset lines
+        int visibleLine = ctrl->DocLineFromVisible(i); // get actual visible line, folding may offset lines
         wxString line_text = ctrl->GetLine(visibleLine);
         text = line_text.length() > text.length() ? line_text : text;
     }

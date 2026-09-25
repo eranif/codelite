@@ -33,10 +33,10 @@ class WXDLLIMPEXP_SDK ThemeImporterXML : public ThemeImporterBase
 {
 public:
     ThemeImporterXML();
-    virtual ~ThemeImporterXML() = default;
+    ~ThemeImporterXML() override = default;
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
 #endif // ECLIPSEXMLTHEMEIMPORTER_H

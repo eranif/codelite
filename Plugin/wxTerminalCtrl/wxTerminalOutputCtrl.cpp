@@ -78,7 +78,9 @@ struct EditorEnabler {
     wxStyledTextCtrl* m_ctrl = nullptr;
     EditorEnabler(wxStyledTextCtrl* ctrl)
         : m_ctrl(ctrl)
-    { m_ctrl->SetEditable(true); }
+    {
+        m_ctrl->SetEditable(true);
+    }
     ~EditorEnabler() { m_ctrl->SetEditable(false); }
 };
 } // namespace
@@ -104,7 +106,9 @@ wxTerminalOutputCtrl::wxTerminalOutputCtrl(wxTerminalCtrl* parent,
 }
 
 void wxTerminalOutputCtrl::SetInputCtrl(wxTerminalInputCtrl* input_ctrl)
-{ m_editEvents = std::make_unique<MyEventsHandler>(input_ctrl, m_ctrl); }
+{
+    m_editEvents = std::make_unique<MyEventsHandler>(input_ctrl, m_ctrl);
+}
 
 void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_colour, const wxColour& text_colour)
 {
@@ -195,7 +199,9 @@ wxTextAttr wxTerminalOutputCtrl::GetDefaultStyle() const { return m_defaultAttr;
 long wxTerminalOutputCtrl::GetInsertionPoint() const { return m_ctrl->GetInsertionPoint(); }
 
 void wxTerminalOutputCtrl::Replace(long from, long to, const wxString& replaceWith)
-{ m_ctrl->Replace(from, to, replaceWith); }
+{
+    m_ctrl->Replace(from, to, replaceWith);
+}
 
 wxString wxTerminalOutputCtrl::GetLineText(int lineNumber) const { return m_ctrl->GetLineText(lineNumber); }
 

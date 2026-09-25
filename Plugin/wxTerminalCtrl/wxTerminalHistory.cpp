@@ -5,6 +5,7 @@
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 
+#include <algorithm>
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
@@ -93,9 +94,7 @@ void wxTerminalHistory::Down()
         return;
     }
     --m_current;
-    if (m_current < 0) {
-        m_current = 0;
-    }
+    m_current = std::max(m_current, 0);
 }
 
 wxString wxTerminalHistory::Get() const

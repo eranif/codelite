@@ -35,10 +35,7 @@
 #include <wx/msw/registry.h>
 #endif
 
-CompilerLocatorCygwin::CompilerLocatorCygwin()
-    : ICompilerLocator()
-{
-}
+CompilerLocatorCygwin::CompilerLocatorCygwin() = default;
 
 bool CompilerLocatorCygwin::Locate()
 {

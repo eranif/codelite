@@ -33,9 +33,9 @@ class WXDLLIMPEXP_SDK ThemeImporterCMake : public ThemeImporterBase
 {
 public:
     ThemeImporterCMake();
-    virtual ~ThemeImporterCMake() = default;
+    ~ThemeImporterCMake() override = default;
 
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
 #endif // ECLIPSECMAKETHEMEIMPORTER_H

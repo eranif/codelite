@@ -28,16 +28,16 @@ protected:
     void OnProcessStderr(clProcessEvent& event);
 
 public:
-    virtual void Close();
+    void Close() override;
     /**
      * @brief open the LSP process. Throws clException on error
      */
-    virtual void Open(const LSPStartupInfo& info);
+    void Open(const LSPStartupInfo& info) override;
     virtual void Send(const std::string& data);
-    virtual bool IsConnected() const;
+    bool IsConnected() const override;
 
     LSPNetworkSTDIO();
-    virtual ~LSPNetworkSTDIO();
+    ~LSPNetworkSTDIO() override;
 };
 
 #endif // LSPNETWORKSOCKET_H

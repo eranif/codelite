@@ -5,8 +5,7 @@
 
 TerminalSettings::TerminalSettings()
     : m_defaultShell(kTerminalCommand)
-{
-}
+{}
 
 TerminalSettings::TerminalSettings(bool optimizedDrawings, const wxString& lastUsedTerminalCommand, int scrollBackLines)
     : m_optimizedDrawings(optimizedDrawings)
@@ -50,7 +49,7 @@ TerminalSettingsDlg::TerminalSettingsDlg(wxWindow* parent, const std::vector<std
     CenterOnParent();
 }
 
-TerminalSettingsDlg::~TerminalSettingsDlg() {}
+TerminalSettingsDlg::~TerminalSettingsDlg() = default;
 
 void TerminalSettingsDlg::OnOptimizedDrawingsUI(wxUpdateUIEvent& event)
 {

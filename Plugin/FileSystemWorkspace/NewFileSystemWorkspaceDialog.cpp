@@ -12,10 +12,12 @@ NewFileSystemWorkspaceDialog::NewFileSystemWorkspaceDialog(wxWindow* parent, boo
     CenterOnParent();
 }
 
-NewFileSystemWorkspaceDialog::~NewFileSystemWorkspaceDialog() {}
+NewFileSystemWorkspaceDialog::~NewFileSystemWorkspaceDialog() = default;
 
 void NewFileSystemWorkspaceDialog::OnOKUI(wxUpdateUIEvent& event)
-{ event.Enable(!m_textCtrlName->GetValue().IsEmpty() && wxFileName::DirExists(m_dirPickerPath->GetPath())); }
+{
+    event.Enable(!m_textCtrlName->GetValue().IsEmpty() && wxFileName::DirExists(m_dirPickerPath->GetPath()));
+}
 
 wxString NewFileSystemWorkspaceDialog::GetWorkspaceName() const { return m_textCtrlName->GetValue(); }
 

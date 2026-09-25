@@ -32,10 +32,10 @@ class WXDLLIMPEXP_SDK ThemeImporterRust : public ThemeImporterBase
 {
 public:
     ThemeImporterRust();
-    virtual ~ThemeImporterRust() = default;
+    ~ThemeImporterRust() override = default;
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
 #endif // ECLIPSERUSTTHEMEIMPORTER_H

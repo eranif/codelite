@@ -33,7 +33,7 @@ class WXDLLIMPEXP_SDK ThemeImporterCobraAlt : public ThemeImporterPython
 {
 public:
     ThemeImporterCobraAlt();
-    virtual ~ThemeImporterCobraAlt() = default;
+    ~ThemeImporterCobraAlt() override = default;
 };
 
 #endif // ECLIPSECOBRAALTTHEMEIMPORTER_H

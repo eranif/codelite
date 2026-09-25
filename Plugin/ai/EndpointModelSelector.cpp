@@ -106,4 +106,6 @@ void EndpointModelSelector::OnEndpointChanged(wxCommandEvent& event)
 }
 
 void EndpointModelSelector::OnBusyUI(wxUpdateUIEvent& event)
-{ event.Enable(llm::Manager::GetInstance().IsAvailable() && !llm::Manager::GetInstance().IsBusy()); }
+{
+    event.Enable(llm::Manager::GetInstance().IsAvailable() && !llm::Manager::GetInstance().IsBusy());
+}

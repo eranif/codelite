@@ -174,7 +174,7 @@ void MacrosDlg::AddMacro(const wxString& name, const wxString& desc)
     }
 }
 
-MacrosDlg::~MacrosDlg() {}
+MacrosDlg::~MacrosDlg() = default;
 
 void MacrosDlg::OnCopy(wxCommandEvent& e)
 {

@@ -62,7 +62,7 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
-EnvironmentVariablesDlg::~EnvironmentVariablesDlg() {}
+EnvironmentVariablesDlg::~EnvironmentVariablesDlg() = default;
 
 void EnvironmentVariablesDlg::DoAddPage(const wxString& name, const wxString& content, bool select)
 {

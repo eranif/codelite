@@ -1,5 +1,5 @@
 #include "SFTPClientData.hpp"
 
-SFTPClientData::SFTPClientData() {}
+SFTPClientData::SFTPClientData() = default;
 
-SFTPClientData::~SFTPClientData() {}
+SFTPClientData::~SFTPClientData() = default;

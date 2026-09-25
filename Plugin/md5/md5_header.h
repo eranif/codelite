@@ -95,9 +95,9 @@ public:
 
 private:
     // first, some types:
-    typedef unsigned int uint4;       // assumes integer is 4 words long
-    typedef unsigned short int uint2; // assumes short integer is 2 words long
-    typedef unsigned char uint1;      // assumes char is 1 word long
+    using uint4 = unsigned int;       // assumes integer is 4 words long
+    using uint2 = unsigned short int; // assumes short integer is 2 words long
+    using uint1 = unsigned char;      // assumes char is 1 word long
 
     // next, the private data:
     uint4 state[4];
@@ -112,9 +112,9 @@ private:
     void transform(uint1* buffer); // does the real update work.  Note
     // that length is implied to be 64.
 
-    static void encode(uint1* dest, uint4* src, uint4 length);
-    static void decode(uint4* dest, uint1* src, uint4 length);
-    static void memcpy(uint1* dest, uint1* src, uint4 length);
+    static void encode(uint1* dest, const uint4* src, uint4 length);
+    static void decode(uint4* dest, const uint1* src, uint4 length);
+    static void memcpy(uint1* dest, const uint1* src, uint4 length);
     static void memset(uint1* start, uint1 val, uint4 length);
 
     static uint4 rotate_left(uint4 x, uint4 n);

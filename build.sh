@@ -7,6 +7,7 @@ BUILD_DIR=${ROOT_DIR}/${BUILD_DIR_NAME}
 OS_NAME="$(uname -s)"
 FORCE_CMAKE=0
 WITH_TESTS=0
+WX_VERSION=v3.3.3.1
 
 . ${ROOT_DIR}/scripts/functions.rc
 
@@ -121,7 +122,7 @@ function build_wx_widgets_Linux() {
   rm -fr ${BUILD_DIR}/wxWidgets
   mkdir -p ${BUILD_DIR}
   cd $_
-  git clone --depth 1 https://github.com/wxWidgets/wxWidgets.git
+  git clone --depth 1 --branch ${WX_VERSION} https://github.com/wxWidgets/wxWidgets.git
   cd wxWidgets
   git submodule update --init --depth 1
   mkdir ${BUILD_DIR_NAME}
@@ -144,7 +145,7 @@ function build_wx_widgets_macOS() {
   rm -fr ${BUILD_DIR}/wxWidgets
   mkdir -p ${BUILD_DIR}
   cd $_
-  git clone --depth 1 https://github.com/wxWidgets/wxWidgets.git
+  git clone --depth 1 --branch ${WX_VERSION} https://github.com/wxWidgets/wxWidgets.git
   cd wxWidgets
   git submodule update --init --depth 1
   mkdir ${BUILD_DIR_NAME}
@@ -173,7 +174,7 @@ function build_wx_widgets_MSW() {
   mkdir -p ${BUILD_DIR}
   cd $_
   rm -fr wxWidgets # in case we aborted earlier
-  git clone --depth 1 https://github.com/wxWidgets/wxWidgets.git
+  git clone --depth 1 --branch ${WX_VERSION} https://github.com/wxWidgets/wxWidgets.git
   cd wxWidgets
   git submodule update --init --depth 1
   mkdir ${BUILD_DIR_NAME}

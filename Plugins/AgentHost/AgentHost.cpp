@@ -140,7 +140,18 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type)
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace == nullptr) {
-        wxMessageBox(_("Launching Claude Code requires a workspace"), "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
+        wxString agent_name;
+        switch (agent_type) {
+        case AgentType::kClaudeCode:
+            agent_name = "Claude Code";
+            break;
+        case AgentType::kKiroCli:
+            agent_name = "Kiro CLI";
+            break;
+        }
+        wxMessageBox(wxString::Format(_("Launching %s requires a workspace"), agent_name),
+                     "CodeLite",
+                     wxICON_WARNING | wxOK | wxOK_DEFAULT);
         return;
     }
 

@@ -225,7 +225,7 @@ function build_CodeLite_Linux() {
   INFO ""
   INFO "To run CodeLite:"
   INFO "=============="
-  INFO "${BUILD_DIR}/install/bin/codelite"
+  INFO "${BUILD_DIR}/bin/codelite"
   INFO ""
 }
 

@@ -182,7 +182,14 @@ void AgentHostPage::StartAgentHost(const AgentInfo& info)
     }
     m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
         wxEmptyString, info.sshAccount, wxEmptyString, true, kShellCommand, this);
-    m_terminal->SendCommand(command_to_run);
     GetSizer()->Add(m_terminal, wxSizerFlags(1).Expand());
     GetSizer()->Layout();
+    m_terminal->SendCommand(command_to_run);
+}
+
+void AgentHostPage::OnFocus(wxFocusEvent& event)
+{
+    event.Skip();
+    CHECK_PTR_RET(m_terminal);
+    m_terminal->SetFocus();
 }

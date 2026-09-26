@@ -485,11 +485,6 @@
                     },
                     {
                       "type": "bool",
-                      "m_label": "Enable Spell Checking",
-                      "m_value": false
-                    },
-                    {
-                      "type": "bool",
                       "m_label": "Auto Complete Directories:",
                       "m_value": false
                     },
@@ -818,7 +813,15 @@
           "m_value": ""
         }
       ],
-      "m_events": [],
+      "m_events": [
+        {
+          "m_description": "Process a wxEVT_SET_FOCUS event",
+          "m_eventClass": "wxFocusEvent",
+          "m_eventName": "wxEVT_SET_FOCUS",
+          "m_functionNameAndSignature": "OnFocus(wxFocusEvent& event)",
+          "m_noBody": false
+        }
+      ],
       "m_children": [
         {
           "m_type": 4401,

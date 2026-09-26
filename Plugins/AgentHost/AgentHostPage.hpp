@@ -28,6 +28,7 @@ public:
     void StartAgentHost(const AgentInfo& info);
 
 protected:
+    void OnFocus(wxFocusEvent& event) override;
     void OnThemeChanged(clCommandEvent& event);
     void OnTerminalLink(clCommandEvent& event);
     void OnTerminalBell(clCommandEvent& event);

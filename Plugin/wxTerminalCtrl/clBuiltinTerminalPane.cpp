@@ -258,7 +258,10 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxWindow* parent,
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
     wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(parent, shellCommand, env, workingDirectory);
-    ctrl->EnsureStarted();
+
+    // Call this after we initialize our terminal, so it will pick the actual terminal size.
+    ctrl->CallAfter(&wxTerminalViewCtrl::EnsureStarted);
+
     ctrl->SetBufferSize(m_terminalSettings.m_scrollBackLines);
     ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&*!`");
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
@@ -326,6 +329,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxWindow* parent,
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCopy, this, wxID_COPY);
 #endif
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnPaste, this, wxID_PASTE);
+    ctrl->CallAfter(&wxTerminalViewCtrl::SetFocus);
     return ctrl;
 }
 

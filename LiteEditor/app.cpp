@@ -367,56 +367,6 @@ void on_sigpipe(int sig)
 } // namespace
 #endif
 
-#ifdef __WXGTK__
-//-------------------------------------------
-// Signal Handlers for GTK
-//-------------------------------------------
-static void WaitForDebugger(int signo)
-{
-    wxString msg;
-
-    msg << wxT("codelite crashed: you may attach to it using gdb\n") << wxT("or let it crash silently..\n")
-        << wxT("Attach debugger?\n");
-
-    int rc = wxMessageBox(msg, wxT("CodeLite Crash Handler"), wxYES_NO | wxCENTER | wxICON_ERROR);
-    if (rc == wxYES) {
-
-        // Launch a shell command with the following command:
-        // gdb -p <PID>
-
-        char command[256]{};
-
-        if (ExeLocator::Locate(wxT("gnome-terminal"))) {
-            sprintf(command, "gnome-terminal -t 'gdb' -e 'gdb -p %d'", getpid());
-        } else if (ExeLocator::Locate(wxT("konsole"))) {
-            sprintf(command, "konsole -T 'gdb' -e 'gdb -p %d'", getpid());
-        } else if (ExeLocator::Locate(wxT("terminal"))) {
-            sprintf(command, "terminal -T 'gdb' -e 'gdb -p %d'", getpid());
-        } else if (ExeLocator::Locate(wxT("lxterminal"))) {
-            sprintf(command, "lxterminal -T 'gdb' -e 'gdb -p %d'", getpid());
-        } else {
-            sprintf(command, "xterm -T 'gdb' -e 'gdb -p %d'", getpid());
-        }
-
-        if (system(command) == 0) {
-            signal(signo, SIG_DFL);
-            raise(signo);
-        } else {
-            // Go down without launching the debugger, ask the user to do it manually
-            wxMessageBox(wxString::Format(wxT("Failed to launch the debugger\nYou may still attach to codelite "
-                                              "manually by typing this command in a terminal:\ngdb -p %d"),
-                                          getpid()),
-                         wxT("CodeLite Crash Handler"),
-                         wxOK | wxCENTER | wxICON_ERROR);
-            pause();
-        }
-    }
-
-    signal(signo, SIG_DFL);
-    raise(signo);
-}
-#endif
-
 IMPLEMENT_APP(CodeLiteApp)
 
 #ifdef __WXMAC__
@@ -476,14 +426,9 @@ bool CodeLiteApp::OnInit()
 
     // Handle sigchld
     CodeLiteBlockSigChild();
-
-#ifdef __WXGTK__
-    // Install signal handlers
-    signal(SIGSEGV, WaitForDebugger);
-    signal(SIGABRT, WaitForDebugger);
-#endif
     signal(SIGPIPE, on_sigpipe);
 
+    // Other signals: let CodeLite crash.
 #endif
     wxSocketBase::Initialize();
 

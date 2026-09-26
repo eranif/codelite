@@ -1,6 +1,7 @@
 #include "AgentHostPage.hpp"
 
 #include "ColoursAndFontsManager.h"
+#include "Notebook.h"
 #include "globals.h"
 #include "open_resource_dialog.h"
 #include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
@@ -28,7 +29,11 @@ const wxString kShellCommand = "/bin/bash --login -i";
 
 AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     : AgentHostPageBase(parent)
+    , m_book(parent)
 {
+    // Clicking on the tab label with the mouse does not move the focus to the page (GTK keeps it on the tab),
+    // so we set the focus on the terminal when our page becomes the selected one.
+    m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
@@ -38,6 +43,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
 
 AgentHostPage::~AgentHostPage()
 {
+    m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
@@ -192,4 +198,20 @@ void AgentHostPage::OnFocus(wxFocusEvent& event)
     event.Skip();
     CHECK_PTR_RET(m_terminal);
     m_terminal->SetFocus();
+}
+
+void AgentHostPage::OnBookPageChanged(wxBookCtrlEvent& event)
+{
+    event.Skip();
+    CHECK_PTR_RET(m_terminal);
+    if (m_book->GetCurrentPage() != this) {
+        return;
+    }
+
+    // The focus is moved to the tab label after the page is changed, so set it once we are done handling the event
+    CallAfter([this]() {
+        if (m_terminal) {
+            m_terminal->SetFocus();
+        }
+    });
 }

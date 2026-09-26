@@ -29,6 +29,7 @@ public:
 
 protected:
     void OnFocus(wxFocusEvent& event) override;
+    void OnBookPageChanged(wxBookCtrlEvent& event);
     void OnThemeChanged(clCommandEvent& event);
     void OnTerminalLink(clCommandEvent& event);
     void OnTerminalBell(clCommandEvent& event);
@@ -36,5 +37,6 @@ protected:
     void OnTerminalTitleChanged(clCommandEvent& event);
 
 private:
+    wxBookCtrlBase* m_book{nullptr};
     wxTerminalViewCtrl* m_terminal{nullptr};
 };

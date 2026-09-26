@@ -8,6 +8,7 @@
 #include <gtk/gtk.h>
 #endif
 
+#include <memory>
 #include <unordered_map>
 #include <vector>
 #include <wx/dataobj.h>
@@ -459,7 +460,7 @@ void clNativeNotebook::TabButtonClicked(wxWindow* page)
 void clNativeNotebook::Initialise(long style)
 {
     m_bitmaps = new clBitmapList;
-    m_history.reset(new clTabHistory());
+    m_history = std::make_shared<clTabHistory>();
     m_bookStyle = (style & ~wxWINDOW_STYLE_MASK);
     if (!(m_bookStyle & kNotebook_CloseButtonOnActiveTab)) {
         SetPadding(wxSize(5, 5));

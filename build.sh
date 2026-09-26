@@ -112,6 +112,8 @@ function install_wx_config_MSW() {
 
 function build_wx_widgets_Linux() {
   local wx_install_dir=${BUILD_DIR}/wxWidgets-install
+  # Do not use v3.3.3 or newer on Linux for now: wxGTK clipboard copy (Ctrl-C) crashes WSLg's Weston
+  local wx_version=v3.3.2
   if [ -x "${wx_install_dir}/bin/wx-config" ]; then
     INFO "wxWidgets already built at ${wx_install_dir}; skipping"
     export PATH="${wx_install_dir}/bin":$PATH
@@ -122,7 +124,7 @@ function build_wx_widgets_Linux() {
   rm -fr ${BUILD_DIR}/wxWidgets
   mkdir -p ${BUILD_DIR}
   cd $_
-  git clone --depth 1 --branch ${WX_VERSION} https://github.com/wxWidgets/wxWidgets.git
+  git clone --depth 1 --branch ${wx_version} https://github.com/wxWidgets/wxWidgets.git
   cd wxWidgets
   git submodule update --init --depth 1
   mkdir ${BUILD_DIR_NAME}

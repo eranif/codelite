@@ -14,7 +14,6 @@
 IMPLEMENT_DYNAMIC_CLASS(MyWxDialogXmlHandler, wxXmlResourceHandler)
 
 MyWxDialogXmlHandler::MyWxDialogXmlHandler()
-    : wxXmlResourceHandler()
 {
     XRC_ADD_STYLE(wxSTAY_ON_TOP);
     XRC_ADD_STYLE(wxCAPTION);

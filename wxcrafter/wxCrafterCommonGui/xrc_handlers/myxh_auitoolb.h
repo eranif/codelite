@@ -26,8 +26,8 @@ public:
     bool CanHandle(wxXmlNode* node) override;
 
 private:
-    bool m_isInside;
-    wxAuiToolBar* m_toolbar;
+    bool m_isInside = false;
+    wxAuiToolBar* m_toolbar = nullptr;
     wxSize m_toolSize;
 
     class MenuHandler : public wxEvtHandler // From the official wx3.1 handler

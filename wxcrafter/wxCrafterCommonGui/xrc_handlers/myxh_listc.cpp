@@ -25,7 +25,6 @@ const wxString LISTCOL_CLASS_NAME = wxT("listcol");
 } // anonymous namespace
 
 MYwxListCtrlXmlHandler::MYwxListCtrlXmlHandler()
-    : wxXmlResourceHandler()
 {
     // wxListItem styles
     XRC_ADD_STYLE(wxLIST_FORMAT_LEFT);

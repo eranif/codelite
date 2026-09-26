@@ -35,9 +35,9 @@ public:
     bool CanHandle(wxXmlNode* node) override;
 
 private:
-    wxTreebook* m_tbk;
+    wxTreebook* m_tbk = nullptr;
     wxArrayTbkPageIndexes m_treeContext;
-    bool m_isInside;
+    bool m_isInside = false;
 };
 
 // Example:

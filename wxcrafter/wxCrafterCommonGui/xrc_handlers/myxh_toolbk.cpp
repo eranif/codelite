@@ -19,9 +19,6 @@
 #include <wx/xrc/xmlres.h>
 
 MYwxToolbookXmlHandler::MYwxToolbookXmlHandler()
-    : wxXmlResourceHandler()
-    , m_isInside(false)
-    , m_toolbook(nullptr)
 {
     XRC_ADD_STYLE(wxBK_DEFAULT);
     XRC_ADD_STYLE(wxBK_TOP);

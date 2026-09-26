@@ -9,7 +9,6 @@
 #include "myxh_glcanvas.h"
 
 MyWxGLCanvasXmlHandler::MyWxGLCanvasXmlHandler()
-    : wxXmlResourceHandler()
 {
     AddWindowStyles();
 }

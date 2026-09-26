@@ -17,7 +17,6 @@ static std::map<wxString, int> s_lexers;
 #define ADD_LEXER(lexID) s_lexers.insert(std::make_pair(#lexID, lexID));
 
 MyWxStcXmlHandler::MyWxStcXmlHandler()
-    : wxXmlResourceHandler()
 {
     AddWindowStyles();
     if (s_lexers.empty()) {

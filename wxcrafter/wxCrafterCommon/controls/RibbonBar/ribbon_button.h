@@ -34,7 +34,7 @@ class RibbonButtonHybrid : public RibbonButtonBase
 {
 public:
     RibbonButtonHybrid();
-    ~RibbonButtonHybrid() = default;
+    ~RibbonButtonHybrid() override = default;
     wxcWidget* Clone() const override { return new RibbonButtonHybrid(); }
 };
 

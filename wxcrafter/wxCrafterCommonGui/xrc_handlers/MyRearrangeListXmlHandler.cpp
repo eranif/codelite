@@ -6,8 +6,6 @@
 #include <wx/xrc/xmlres.h>
 
 MyRearrangeListXmlHandler::MyRearrangeListXmlHandler()
-    : wxXmlResourceHandler()
-    , m_insideBox(false)
 {
     // wxListBox styles:
     XRC_ADD_STYLE(wxLB_SINGLE);

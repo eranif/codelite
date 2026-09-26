@@ -29,9 +29,6 @@
 #include <wx/xrc/xmlres.h>
 
 MYwxTreebookXmlHandler::MYwxTreebookXmlHandler()
-    : wxXmlResourceHandler()
-    , m_tbk(nullptr)
-    , m_isInside(false)
 {
     XRC_ADD_STYLE(wxBK_DEFAULT);
     XRC_ADD_STYLE(wxBK_TOP);

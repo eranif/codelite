@@ -8,10 +8,6 @@
 #include <wx/xrc/xmlres.h>
 
 MyWxPropGridXmlHandler::MyWxPropGridXmlHandler()
-    : wxXmlResourceHandler()
-    , m_isInside(false)
-    , m_pgmgr(nullptr)
-    , m_propertyParent(nullptr)
 {
     XRC_ADD_STYLE(wxPG_AUTO_SORT);
     XRC_ADD_STYLE(wxPG_HIDE_CATEGORIES);

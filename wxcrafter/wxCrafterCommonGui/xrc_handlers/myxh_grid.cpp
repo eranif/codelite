@@ -33,13 +33,12 @@
 #include <wx/xrc/xmlres.h>
 
 MyWxGridXmlHandler::MyWxGridXmlHandler()
-    : wxXmlResourceHandler()
 {
     AddWindowStyles();
 }
 
 struct GridColInfo {
-    typedef std::vector<GridColInfo> Vector_t;
+    using Vector_t = std::vector<GridColInfo>;
 
     wxString label;
     long size;
@@ -51,7 +50,7 @@ struct GridColInfo {
 };
 
 struct GridRowInfo {
-    typedef std::vector<GridRowInfo> Vector_t;
+    using Vector_t = std::vector<GridRowInfo>;
 
     wxString label;
     long size;

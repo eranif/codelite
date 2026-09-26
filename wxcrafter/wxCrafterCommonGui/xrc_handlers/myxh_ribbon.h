@@ -23,7 +23,7 @@ public:
     bool CanHandle(wxXmlNode* node) override;
 
 private:
-    const wxClassInfo* m_isInside;
+    const wxClassInfo* m_isInside = nullptr;
 
     bool IsRibbonControl(wxXmlNode* node);
 

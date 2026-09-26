@@ -18,7 +18,6 @@
 #endif
 
 MyWxWebViewXmlHandler::MyWxWebViewXmlHandler()
-    : wxXmlResourceHandler()
 {
     AddWindowStyles();
 }

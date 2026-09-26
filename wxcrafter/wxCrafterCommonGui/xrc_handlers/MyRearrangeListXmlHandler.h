@@ -8,7 +8,7 @@ class wxXmlNode;
 class MyRearrangeListXmlHandler : public wxXmlResourceHandler
 {
 private:
-    bool m_insideBox;
+    bool m_insideBox = false;
     wxArrayString strList;
 
 public:

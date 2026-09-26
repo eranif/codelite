@@ -6,9 +6,9 @@ class wxcAboutDlg : public wxcAboutDlgBaseClass
 {
 public:
     wxcAboutDlg(wxWindow* parent);
-    virtual ~wxcAboutDlg() = default;
+    ~wxcAboutDlg() override = default;
 
 protected:
-    virtual void OnSize(wxSizeEvent& event);
+    void OnSize(wxSizeEvent& event) override;
 };
 #endif // ABOUTDLG_H

@@ -31,7 +31,7 @@ public:
     ~ImportDlg() override = default;
 
     wxString GetFilepath() const { return m_filepathText->GetValue(); }
-    const wxString GetOutputFilepath() const { return m_textName->GetValue(); }
+    wxString GetOutputFilepath() const { return m_textName->GetValue(); }
 
     ImportFileData GetData() const;
 

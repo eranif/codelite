@@ -4,7 +4,6 @@
 #include <wx/xrc/xmlres.h>
 
 MyWxInfoBarCtrlHandler::MyWxInfoBarCtrlHandler()
-    : wxXmlResourceHandler()
 {
     AddWindowStyles();
 }

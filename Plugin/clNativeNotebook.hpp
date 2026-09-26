@@ -29,6 +29,7 @@ protected:
 
 protected:
     void DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, int bmp);
+    bool IsValidImageIndex(int index) const { return index >= 0 && index < static_cast<int>(GetImages().size()); }
     bool GetPageDetails(wxWindow* page, int& curindex, wxString& label, int& imageId) const;
     void BindEvents();
     void Initialise(long style);

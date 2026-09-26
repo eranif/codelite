@@ -175,8 +175,10 @@ void clNativeNotebook::AddPage(
     if (page->GetParent() != this) {
         page->Reparent(this);
     }
-    // TODO :: fix bmp code to display images
-    if (!wxNotebook::InsertPage(GetPageCount(), page, label, selected, wxNOT_FOUND)) {
+    if (!IsValidImageIndex(bmp)) {
+        bmp = wxNOT_FOUND;
+    }
+    if (!wxNotebook::InsertPage(GetPageCount(), page, label, selected, bmp)) {
         return;
     }
     DoFinaliseAddPage(page, shortLabel, bmp);
@@ -194,8 +196,10 @@ bool clNativeNotebook::InsertPage(
     if (!page->IsShown()) {
         page->Show();
     }
-    // TODO :: fix bmp code to display images
-    if (!wxNotebook::InsertPage(index, page, label, selected, wxNOT_FOUND)) {
+    if (!IsValidImageIndex(bmp)) {
+        bmp = wxNOT_FOUND;
+    }
+    if (!wxNotebook::InsertPage(index, page, label, selected, bmp)) {
         return false;
     }
     DoFinaliseAddPage(page, shortLabel, bmp);
@@ -633,21 +637,47 @@ bool clNativeNotebook::DeleteAllPages()
 
 void clNativeNotebook::SetPageBitmap(size_t index, const wxBitmap& bmp)
 {
-    if (index >= GetPageCount() || !bmp.IsOk()) {
+    if (index >= GetPageCount()) {
+        return;
+    }
+
+    auto update_user_data = [this, index](int imgIdx) {
+        auto it = m_userData.find(GetPage(index));
+        if (it != m_userData.end()) {
+            it->second.bitmap = imgIdx;
+        }
+    };
+
+    if (!bmp.IsOk()) {
+        // remove the image from the tab
+        SetPageImage(index, wxNOT_FOUND);
+        update_user_data(wxNOT_FOUND);
         return;
     }
 
     // wxNotebook stores only an image index per page, so keep the bitmaps in the images vector
     auto images = GetImages();
     int imgIdx = GetPageImage(index);
-    if (imgIdx != wxNOT_FOUND && imgIdx < static_cast<int>(images.size())) {
+
+    // reuse the current slot only if no other page shares it
+    bool reuse_slot = IsValidImageIndex(imgIdx);
+    for (size_t i = 0; reuse_slot && i < GetPageCount(); ++i) {
+        if (i != index && GetPageImage(i) == imgIdx) {
+            reuse_slot = false;
+        }
+    }
+
+    if (reuse_slot) {
         images[imgIdx] = wxBitmapBundle(bmp);
-        SetImages(images);
     } else {
         images.push_back(wxBitmapBundle(bmp));
-        SetImages(images);
-        SetPageImage(index, static_cast<int>(images.size()) - 1);
+        imgIdx = static_cast<int>(images.size()) - 1;
     }
+
+    // SetImages() does not refresh the existing tabs, SetPageImage() does
+    SetImages(images);
+    SetPageImage(index, imgIdx);
+    update_user_data(imgIdx);
 }
 
 wxBitmap clNativeNotebook::GetPageBitmap(size_t index) const
@@ -656,7 +686,7 @@ wxBitmap clNativeNotebook::GetPageBitmap(size_t index) const
         return wxNullBitmap;
     }
     int imgIdx = GetPageImage(index);
-    if (imgIdx == wxNOT_FOUND || imgIdx >= static_cast<int>(GetImages().size())) {
+    if (!IsValidImageIndex(imgIdx)) {
         return wxNullBitmap;
     }
     return GetImages()[imgIdx].GetBitmap(wxDefaultSize);

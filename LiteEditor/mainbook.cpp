@@ -50,6 +50,7 @@
 
 #include <algorithm>
 #include <unordered_map>
+#include <wx/bitmap.h>
 #include <wx/wupdlock.h>
 
 #if wxHAS_MINIMAP
@@ -1294,7 +1295,7 @@ void MainBook::MarkEditorReadOnly(clEditor* editor, std::optional<bool> readOnly
     int where = m_book->FindPage(editor);
     CHECK_COND_RET(where != wxNOT_FOUND);
 
-    auto bmp = clGetManager()->GetStdIcons()->LoadBitmap("lock");
+    const wxBitmap& bmp = clGetManager()->GetStdIcons()->LoadBitmap("lock");
     if (markReadOnly) {
         m_book->SetPageBitmap(where, bmp);
     } else {

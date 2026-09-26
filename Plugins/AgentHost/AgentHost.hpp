@@ -52,11 +52,13 @@ public:
 
 protected:
     void OnSettings(wxCommandEvent& event);
-    void ShowClaudeTerminal();
+    void ShowAgentTerminal(AgentType agent_type);
     void OnPageClosing(wxNotifyEvent& event);
     void OnShowClaudeCode(wxCommandEvent& event);
+    void OnShowKiroCli(wxCommandEvent& event);
     void OnAllPagesClosed(wxCommandEvent& event);
 
-    AgentHostPage* m_claudeCodePage{nullptr};
+    std::unordered_map<AgentType, AgentHostPage*> m_pages;
     std::shared_ptr<std::function<void()>> m_showClaudeCode;
+    std::shared_ptr<std::function<void()>> m_showKiroCli;
 };

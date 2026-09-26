@@ -5,14 +5,27 @@
 #include "ssh_account_info.h"
 
 class wxTerminalViewCtrl;
+
+enum class AgentType {
+    kClaudeCode = 0,
+    kKiroCli = 1,
+};
+
+struct AgentInfo {
+    AgentType agent_type;
+    wxString executable;
+    wxString workingDirectory;
+    std::optional<SSHAccountInfo> sshAccount;
+};
+
 class AgentHostPage : public AgentHostPageBase
 {
 public:
-    AgentHostPage(wxBookCtrlBase* parent, const std::optional<SSHAccountInfo>& sshAccount);
+    AgentHostPage(wxBookCtrlBase* parent);
     ~AgentHostPage() override;
 
     wxTerminalViewCtrl* GetTerminal() { return m_terminal; }
-    void StartAgentHost(const wxString& claudeExecutable, const wxString& workingDirectory = wxEmptyString);
+    void StartAgentHost(const AgentInfo& info);
 
 protected:
     void OnThemeChanged(clCommandEvent& event);

@@ -26,14 +26,9 @@ const wxString kShellCommand = "/bin/bash --login -i";
         return;                                 \
     }
 
-AgentHostPage::AgentHostPage(wxBookCtrlBase* parent, const std::optional<SSHAccountInfo>& sshAccount)
+AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     : AgentHostPageBase(parent)
 {
-    m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-        wxEmptyString, sshAccount, wxEmptyString, true, kShellCommand, this);
-    GetSizer()->Add(m_terminal, wxSizerFlags(1).Expand());
-    GetSizer()->Layout();
-
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
@@ -66,7 +61,7 @@ void AgentHostPage::OnThemeChanged(clCommandEvent& event)
 void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
-
+    CHECK_PTR_RET(m_terminal);
     wxString new_title = event.GetString();
     new_title.Trim().Trim(false);
     if (new_title.empty()) {
@@ -83,6 +78,7 @@ void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
 void AgentHostPage::OnTerminalTerminated(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
+    CHECK_PTR_RET(m_terminal);
 
     CallAfter([this]() {
         auto book = clGetManager()->GetMainNotebook();
@@ -96,12 +92,14 @@ void AgentHostPage::OnTerminalTerminated(clCommandEvent& event)
 void AgentHostPage::OnTerminalBell(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
+    CHECK_PTR_RET(m_terminal);
     clDEBUG() << "Got a bell!" << endl;
 }
 
 void AgentHostPage::OnTerminalLink(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
+    CHECK_PTR_RET(m_terminal);
 
     wxString trimmed_text = event.GetString();
     while (trimmed_text.EndsWith(".") || trimmed_text.EndsWith(":"))
@@ -160,18 +158,31 @@ void AgentHostPage::OnTerminalLink(clCommandEvent& event)
     }
 }
 
-void AgentHostPage::StartAgentHost(const wxString& claudeExecutable, const wxString& workingDirectory)
+void AgentHostPage::StartAgentHost(const AgentInfo& info)
 {
+    if (m_terminal)
+        return;
+
     // Remember the label given to the tab, the blink code needs it.
-    static const wxString kClaudeSettings = R"(--settings "{\"preferredNotifChannel\": \"terminal_bell\"}")";
-    wxString command = claudeExecutable;
+    wxString command = info.executable;
     command.Prepend("\"").Append("\"");
     wxString command_to_run;
-    command_to_run = wxString::Format("%s %s --continue || %s %s", command, kClaudeSettings, command, kClaudeSettings);
-    if (!workingDirectory.empty()) {
+    switch (info.agent_type) {
+    case AgentType::kClaudeCode:
+        command_to_run = wxString::Format("%s --continue || %s", command, command);
+        break;
+    case AgentType::kKiroCli:
+        command_to_run = wxString::Format("%s chat --resume || %s", command, command);
+        break;
+    }
+    if (!info.workingDirectory.empty()) {
         wxString cd_command;
-        cd_command << "cd \"" << workingDirectory << "\" && ";
+        cd_command << "cd \"" << info.workingDirectory << "\" && ";
         command_to_run.Prepend(cd_command);
     }
+    m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
+        wxEmptyString, info.sshAccount, wxEmptyString, true, kShellCommand, this);
     m_terminal->SendCommand(command_to_run);
+    GetSizer()->Add(m_terminal, wxSizerFlags(1).Expand());
+    GetSizer()->Layout();
 }

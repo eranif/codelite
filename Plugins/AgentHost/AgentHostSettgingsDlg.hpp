@@ -3,6 +3,7 @@
 #include "AgentHostUI.hpp"
 
 inline const wxString kAgentHostClaudeCodeExecutable = "claude-code/executable";
+inline const wxString kAgentHostKiroCliExecutable = "kiro-cli/executable";
 
 class AgentHostSettgingsDlg : public AgentHostSettgingsBaseDlg
 {

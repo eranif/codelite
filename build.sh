@@ -121,6 +121,7 @@ function build_wx_widgets_Linux() {
   fi
 
   INFO "Building wxWidgets"
+  INFO "Checking out wxWidgets version: ${wx_version}"
   rm -fr ${BUILD_DIR}/wxWidgets
   mkdir -p ${BUILD_DIR}
   cd $_
@@ -144,6 +145,7 @@ function build_wx_widgets_macOS() {
   fi
 
   INFO "Building wxWidgets"
+  INFO "Checking out wxWidgets version: ${WX_VERSION}"
   rm -fr ${BUILD_DIR}/wxWidgets
   mkdir -p ${BUILD_DIR}
   cd $_
@@ -173,6 +175,7 @@ function build_wx_widgets_MSW() {
   fi
 
   INFO "Building wxWidgets"
+  INFO "Checking out wxWidgets version: ${WX_VERSION}"
   mkdir -p ${BUILD_DIR}
   cd $_
   rm -fr wxWidgets # in case we aborted earlier

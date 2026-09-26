@@ -95,7 +95,7 @@ public:
     bool DeletePage(size_t page) override;
 
     wxWindow* GetCurrentPage() const;
-    void SetPageBitmap(size_t index, int bmp);
+    void SetPageBitmap(size_t index, const wxBitmap& bmp);
     wxBitmap GetPageBitmap(size_t index) const;
     bool DeleteAllPages() override;
     int GetPageIndex(wxWindow* window) const;

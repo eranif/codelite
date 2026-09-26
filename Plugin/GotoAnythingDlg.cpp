@@ -30,7 +30,7 @@ void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
     } else if (event.GetKeyCode() == WXK_DOWN) {
         event.Skip(false);
         int row = m_dvListCtrl->GetSelectedRow();
-        if ((size_t)(row + 1) < m_dvListCtrl->GetItemCount()) {
+        if (static_cast<size_t>(row + 1) < static_cast<size_t>(m_dvListCtrl->GetItemCount())) {
             row++;
             DoSelectItem(m_dvListCtrl->RowToItem(row));
         }

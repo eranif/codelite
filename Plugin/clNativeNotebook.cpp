@@ -631,21 +631,35 @@ bool clNativeNotebook::DeleteAllPages()
     return true;
 }
 
-void clNativeNotebook::SetPageBitmap(size_t index, int bmp)
+void clNativeNotebook::SetPageBitmap(size_t index, const wxBitmap& bmp)
 {
-    wxUnusedVar(bmp);
-    wxWindow* win = GetPage(index);
-    if (m_userData.count(win) == 0) {
+    if (index >= GetPageCount() || !bmp.IsOk()) {
         return;
     }
-    // TODO: do we really need m_userData now that we moved to clBitmapList ?
-    m_userData[win].bitmap = bmp;
+
+    // wxNotebook stores only an image index per page, so keep the bitmaps in the images vector
+    auto images = GetImages();
+    int imgIdx = GetPageImage(index);
+    if (imgIdx != wxNOT_FOUND && imgIdx < static_cast<int>(images.size())) {
+        images[imgIdx] = wxBitmapBundle(bmp);
+        SetImages(images);
+    } else {
+        images.push_back(wxBitmapBundle(bmp));
+        SetImages(images);
+        SetPageImage(index, static_cast<int>(images.size()) - 1);
+    }
 }
 
 wxBitmap clNativeNotebook::GetPageBitmap(size_t index) const
 {
-    wxUnusedVar(index);
-    return wxNullBitmap;
+    if (index >= GetPageCount()) {
+        return wxNullBitmap;
+    }
+    int imgIdx = GetPageImage(index);
+    if (imgIdx == wxNOT_FOUND || imgIdx >= static_cast<int>(GetImages().size())) {
+        return wxNullBitmap;
+    }
+    return GetImages()[imgIdx].GetBitmap(wxDefaultSize);
 }
 
 int clNativeNotebook::GetPageIndex(const wxString& label) const
@@ -813,6 +827,8 @@ void clNativeNotebook::GTKActionButtonNewClicked(GtkToolItem* button)
 
 int clNativeNotebook::GetPageBitmapIndex(size_t index) const
 {
-    // TODO :: implement this
-    return wxNOT_FOUND;
+    if (index >= GetPageCount()) {
+        return wxNOT_FOUND;
+    }
+    return GetPageImage(index);
 }

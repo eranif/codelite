@@ -204,7 +204,7 @@ void OpenWindowsPanel::DoSaveItem(wxDataViewItem item)
 void OpenWindowsPanel::DoSelectItem(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
-    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < static_cast<size_t>(m_dvListCtrl->GetItemCount()); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
         if (data->IsFile()) {
@@ -326,7 +326,7 @@ void OpenWindowsPanel::AppendEditor(const clTab& tab)
 
 void OpenWindowsPanel::Clear()
 {
-    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < static_cast<size_t>(m_dvListCtrl->GetItemCount()); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
         wxDELETE(data);
@@ -365,7 +365,7 @@ void OpenWindowsPanel::OnMenu(wxDataViewEvent& event)
 void OpenWindowsPanel::DoSelectItem(wxWindow* win)
 {
     CHECK_PTR_RET(win);
-    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < static_cast<size_t>(m_dvListCtrl->GetItemCount()); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
         if (data->tab.window == win) {

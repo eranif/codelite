@@ -518,7 +518,7 @@ void clNativeNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortla
         GtkToolItem* button = gtk_tool_button_new(nullptr, "✖");
 
         // remove the label and insert it back at the start
-        // add nother reference before removing it, since we plan on reusing it later
+        // add another reference before removing it, since we plan on reusing it later
         g_object_ref(p->m_label);
         gtk_container_remove(GTK_CONTAINER(p->m_box), p->m_label);
 
@@ -678,6 +678,13 @@ void clNativeNotebook::SetPageBitmap(size_t index, const wxBitmap& bmp)
     SetImages(images);
     SetPageImage(index, imgIdx);
     update_user_data(imgIdx);
+
+#ifdef __WXGTK__
+    // wxNotebook packs a newly created image after the label, move it back to the start: [BMP][LABEL][X]
+    if (auto p = GetNotebookPage(index); p && p->m_image) {
+        gtk_box_reorder_child(GTK_BOX(p->m_box), p->m_image, 0);
+    }
+#endif
 }
 
 wxBitmap clNativeNotebook::GetPageBitmap(size_t index) const

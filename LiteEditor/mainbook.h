@@ -210,7 +210,7 @@ public:
     void ShowWhitespace(int ws);
     void UpdateColours();
     void UpdateBreakpoints();
-    void MarkEditorReadOnly(clEditor* editor);
+    void MarkEditorReadOnly(clEditor* editor, std::optional<bool> readOnly = std::nullopt);
 
     void SetUseBuffereLimit(bool useBuffereLimit) { this->m_useBuffereLimit = useBuffereLimit; }
     bool GetUseBuffereLimit() const { return m_useBuffereLimit; }

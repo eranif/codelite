@@ -808,10 +808,16 @@ clMainFrame::~clMainFrame()
     m_infoBar->Unbind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
     Unbind(wxEVT_CHILD_FOCUS, &clMainFrame::OnChildFocus, this);
-    wxTheApp->Disconnect(
-        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
-    wxTheApp->Disconnect(
-        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
+    wxTheApp->Disconnect(wxID_COPY,
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
+                         nullptr,
+                         this);
+    wxTheApp->Disconnect(wxID_PASTE,
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
+                         nullptr,
+                         this);
     wxTheApp->Disconnect(wxID_SELECTALL,
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
@@ -830,7 +836,8 @@ clMainFrame::~clMainFrame()
     EventNotifier::Get()->Unbind(
         wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_PROCESS_ENDED, &clMainFrame::OnBuildEnded, this);
-    EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), nullptr, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clMainFrame::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(
@@ -933,10 +940,16 @@ void clMainFrame::Construct()
     m_timer = new wxTimer(this, FrameTimerId);
 
     // connect common edit events
-    wxTheApp->Connect(
-        wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
-    wxTheApp->Connect(
-        wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), nullptr, this);
+    wxTheApp->Connect(wxID_COPY,
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
+                      nullptr,
+                      this);
+    wxTheApp->Connect(wxID_PASTE,
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
+                      nullptr,
+                      this);
     wxTheApp->Connect(wxID_SELECTALL,
                       wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(clMainFrame::DispatchCommandEvent),
@@ -982,7 +995,8 @@ void clMainFrame::Construct()
         m_mainToolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
     }
 
-    EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), nullptr, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), nullptr, this);
 
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
@@ -5582,9 +5596,7 @@ void clMainFrame::OnMarkEditorReadonly(wxCommandEvent& e)
 {
     auto editor = GetEditorFromEvent(GetMainBook(), e);
     CHECK_PTR_RET(editor);
-
-    editor->SetReadOnly(e.IsChecked());
-    GetMainBook()->MarkEditorReadOnly(editor);
+    GetMainBook()->MarkEditorReadOnly(editor, e.IsChecked());
 }
 
 void clMainFrame::OnMarkEditorReadonlyUI(wxUpdateUIEvent& e)

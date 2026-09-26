@@ -78,8 +78,7 @@ struct clAuiFlatTabArt::Data {
 };
 
 clAuiFlatTabArt::clAuiFlatTabArt()
-    : wxAuiTabArtBase()
-    , m_data(new Data())
+    : m_data(new Data())
 {
     UpdateColoursFromSystem();
     InitBitmaps();
@@ -144,6 +143,7 @@ void clAuiFlatTabArt::DrawBorder(wxDC& dc, wxWindow* wnd, const wxRect& rect)
     wxAuiTabArtBase::DrawBorder(dc, wnd, rect);
 #endif
 }
+
 int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& page, const wxRect& rect)
 {
     // Clip everything we do here to the provided rectangle.
@@ -201,6 +201,12 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
 
     // Draw the icon, if any.
     int xStart = rect.x + wnd->FromDIP(Data::PADDING_X);
+    if (page.bitmap.IsOk()) {
+        const wxBitmap bmp = page.bitmap.GetBitmapFor(wnd);
+        const wxSize bitmapSize = bmp.GetLogicalSize();
+        dc.DrawBitmap(bmp, xStart, rect.y + (size.y - bitmapSize.y - 1) / 2, true /* use mask */);
+        xStart += bitmapSize.x + wnd->FromDIP(Data::MARGIN);
+    }
 
     // Draw buttons: start by computing their total width (note that we don't
     // use any margin between them currently because the bitmaps we use don't

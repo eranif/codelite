@@ -10,13 +10,12 @@
 #include <wx/version.h>
 
 #if wxCHECK_VERSION(3, 3, 0)
-
 // This tab art provider draws flat tabs with a thin border.
 class WXDLLIMPEXP_SDK clAuiFlatTabArt : public wxAuiTabArtBase
 {
 public:
     clAuiFlatTabArt();
-    virtual ~clAuiFlatTabArt();
+    ~clAuiFlatTabArt() override;
 
     // Objects of this class are supposed to be used polymorphically, so
     // copying them is not allowed, use Clone() instead.
@@ -42,7 +41,7 @@ private:
     // Private pseudo-copy ctor used by Clone().
     explicit clAuiFlatTabArt(clAuiFlatTabArt* other);
 
-    virtual wxColour GetButtonColour(wxAuiButtonId button, wxAuiPaneButtonState state) const override;
+    wxColour GetButtonColour(wxAuiButtonId button, wxAuiPaneButtonState state) const override;
     void DoDrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect, bool with_bg);
 
     struct Data;

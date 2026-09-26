@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CL_AUI_TOOLBAR_ART_H
-#define CL_AUI_TOOLBAR_ART_H
+#pragma once
 
 #include "cl_defs.h"
 #include "codelite_exports.h"
@@ -57,5 +56,3 @@ public:
                         const wxString& shortHelpString = wxEmptyString,
                         wxItemKind item_kind = wxITEM_NORMAL);
 };
-
-#endif // CL_AUI_TOOLBAR_ART_H

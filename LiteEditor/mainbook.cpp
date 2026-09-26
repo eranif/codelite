@@ -1267,14 +1267,18 @@ void MainBook::UpdateBreakpoints()
     ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointMarkers();
 }
 
-void MainBook::MarkEditorReadOnly(clEditor* editor)
+void MainBook::MarkEditorReadOnly(clEditor* editor, std::optional<bool> readOnly)
 {
     if (!editor) {
         return;
     }
 
-    bool readOnly = (!editor->IsEditable()) || FileUtils::IsFileReadOnly(editor->GetFileName());
-    if (readOnly && editor->GetModify()) {
+    bool markReadOnly;
+    if (readOnly.has_value())
+        markReadOnly = *readOnly;
+    else
+        markReadOnly = (!editor->IsEditable()) || FileUtils::IsFileReadOnly(editor->GetFileName());
+    if (markReadOnly && editor->GetModify()) {
         // an attempt to mark a modified file as read-only
         // ask the user to save his changes before
         ::clMessageBox(_("Please save your changes before marking the file as read only"),
@@ -1282,6 +1286,19 @@ void MainBook::MarkEditorReadOnly(clEditor* editor)
                        wxOK | wxCENTER | wxICON_WARNING,
                        this);
         return;
+    }
+
+    if (readOnly.has_value())
+        editor->SetReadOnly(readOnly.value());
+
+    int where = m_book->FindPage(editor);
+    CHECK_COND_RET(where != wxNOT_FOUND);
+
+    auto bmp = clGetManager()->GetStdIcons()->LoadBitmap("lock");
+    if (markReadOnly) {
+        m_book->SetPageBitmap(where, bmp);
+    } else {
+        m_book->SetPageBitmap(where, wxNullBitmap);
     }
 }
 

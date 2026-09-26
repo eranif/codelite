@@ -207,7 +207,12 @@ void PluginManager::Load()
             }
 
             // Check if this dll can be loaded
-            PluginInfo* pluginInfo = pfnGetPluginInfo();
+            const PluginInfo* pluginInfo = pfnGetPluginInfo();
+            if (pluginInfo->GetName() == "ClaudeCode") {
+                // Don't load this obsolete plugin (replaced by AgentHost)
+                wxDELETE(dl);
+                continue;
+            }
 
             wxString pname = pluginInfo->GetName();
             m_installedPlugins.insert({pname, *pluginInfo});
@@ -226,12 +231,6 @@ void PluginManager::Load()
             bool firstTimeLoading = (m_pluginsData.GetPlugins().count(pluginInfo->GetName()) == 0);
             if (firstTimeLoading && pluginInfo->HasFlag(PluginInfo::kDisabledByDefault)) {
                 m_pluginsData.DisablePlugin(pluginInfo->GetName());
-                wxDELETE(dl);
-                continue;
-            }
-
-            if (pluginInfo->GetName() == "ClaudeCode") {
-                // Don't load this obsolete plugin (replaced by AgentHost)
                 wxDELETE(dl);
                 continue;
             }

@@ -1,4 +1,4 @@
-#if defined(__WXMAC__)
+#if 0
 #include "clAuiFlatTabArt.hpp"
 
 #if wxCHECK_VERSION(3, 3, 0)

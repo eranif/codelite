@@ -1,7 +1,9 @@
 #include "clAuiFlatTabArt.hpp"
 
+#include "globals.h"
+
 #if wxCHECK_VERSION(3, 3, 0)
-#if defined(__WXGTK__) || defined(__WXMSW__)
+#if defined(__WXGTK__) || defined(__WXMSW__) || defined(__WXMAC__)
 #include "drawingutils.h"
 #include "editor_config.h"
 
@@ -18,7 +20,7 @@ void IndentPressedBitmap(wxWindow* wnd, wxRect* rect, int button_state)
         rect->Offset(wnd->FromDIP(wxPoint(1, 1)));
     }
 }
-static wxColour kBorderShadow = wxNullColour;
+wxColour kBorderShadow = wxNullColour;
 
 wxColour GetBorderColour()
 {
@@ -56,7 +58,7 @@ struct clAuiFlatTabArt::Data {
         bool is_dark = DrawingUtils::IsDark(m_bgActive);
 
         wxColour colour_face = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-        m_fgNormal = m_fgActive.ChangeLightness(is_dark ? 150 : 115);
+        m_fgNormal = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
         m_fgHilite = wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
         m_bgNormal = colour_face;
         m_bgWindow = m_bgNormal;
@@ -290,9 +292,22 @@ wxSize clAuiFlatTabArt::GetPageTabSize(wxReadOnlyDC& dc, wxWindow* wnd, const wx
     }
 
     // Add space for the optional bitmap too.
+    static std::optional<wxBitmapBundle> measuringBmp{std::nullopt};
+    if (!measuringBmp.has_value()) {
+        measuringBmp = clGetManager()->GetStdIcons()->LoadBitmap("lock");
+    }
+
+    // Always include the bitmap height
+    if (measuringBmp->IsOk()) {
+        const auto bmpHeight = measuringBmp->GetPreferredLogicalSizeFor(wnd).y;
+
+        // Increase the height if necessary (the width is never affected here).
+        size.IncTo(wxSize{0, bmpHeight});
+    }
+
+    // The width is dependant on the existing of the specific tab's bitmap
     if (page.bitmap.IsOk()) {
         const wxSize bitmapSize = page.bitmap.GetPreferredLogicalSizeFor(wnd);
-
         size.x += bitmapSize.x + wnd->FromDIP(Data::MARGIN);
 
         // Increase the height if necessary (the width is never affected here).

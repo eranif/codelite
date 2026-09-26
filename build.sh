@@ -212,8 +212,12 @@ function build_CodeLite_Linux() {
       buildTests="-DBUILD_TESTING=1"
       INFO "Building with UT enabled"
     fi
+    local installPrefix=""
+    if [ "${BUILD_TARGET}" == "Debug" ]; then
+      installPrefix="-DCMAKE_INSTALL_PREFIX=${HOME}/root"
+    fi
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 \
-      -DWITH_WX_CONFIG=${wx_config} ${buildTests}
+      -DWITH_WX_CONFIG=${wx_config} ${buildTests} ${installPrefix}
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
@@ -225,7 +229,12 @@ function build_CodeLite_Linux() {
   INFO ""
   INFO "To run CodeLite:"
   INFO "=============="
-  INFO "${BUILD_DIR}/bin/codelite"
+  if [ "${BUILD_TARGET}" == "Debug" ]; then
+    INFO "cd ${BUILD_DIR} && make -j$(nproc) install"
+    INFO "${HOME}/root/bin/codelite"
+  else
+    INFO "${BUILD_DIR}/bin/codelite"
+  fi
   INFO ""
 }
 

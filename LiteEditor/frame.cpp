@@ -5262,7 +5262,11 @@ void clMainFrame::OnWebSearchSelectionUI(wxUpdateUIEvent& e)
 
 ///////////////////// Helper methods /////////////////////////////
 
-void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event) { event.Enable(true); }
+void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event)
+{
+    const auto editor = GetMainBook()->GetActiveEditor();
+    event.Enable(editor && editor->IsModified());
+}
 
 void clMainFrame::OnActivateEditor(wxCommandEvent& e)
 {

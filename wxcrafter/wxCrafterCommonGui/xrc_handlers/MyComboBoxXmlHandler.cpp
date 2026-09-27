@@ -5,8 +5,6 @@
 #include <wx/xrc/xmlres.h>
 
 MyComboBoxXmlHandler::MyComboBoxXmlHandler()
-    : wxXmlResourceHandler()
-    , m_insideBox(false)
 {
     XRC_ADD_STYLE(wxCB_SIMPLE);
     XRC_ADD_STYLE(wxCB_SORT);

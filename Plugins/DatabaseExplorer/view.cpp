@@ -27,11 +27,8 @@
 
 XS_IMPLEMENT_CLONABLE_CLASS(View, xsSerializable);
 
-View::View()
-    : xsSerializable()
-{
-    initSerializable();
-}
+View::View() { initSerializable(); }
+
 View::View(const View& obj)
     : xsSerializable(obj)
 {
@@ -42,7 +39,6 @@ View::View(const View& obj)
 }
 
 View::View(IDbAdapter* dbAdapter, const wxString& name, const wxString& parentName, const wxString& select)
-    : xsSerializable()
 {
     m_name = name;
     m_parentName = parentName;

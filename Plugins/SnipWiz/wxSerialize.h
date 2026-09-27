@@ -422,7 +422,7 @@ public:
         , m_header(header)
         , m_newDataLoss(false) {};
 
-    ~wxSerializeStatus() {};
+    ~wxSerializeStatus() = default;
 
     /** Copy operator to get the latest copy of it from the wxSerialize class, and assign it to your copy */
     void operator=(const wxSerializeStatus& s)

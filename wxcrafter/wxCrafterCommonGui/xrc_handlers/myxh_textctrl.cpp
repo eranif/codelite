@@ -4,7 +4,6 @@
 #include <wx/xrc/xmlres.h>
 
 MyTextCtrlXrcHandler::MyTextCtrlXrcHandler()
-    : wxXmlResourceHandler()
 {
     XRC_ADD_STYLE(wxTE_NO_VSCROLL);
     XRC_ADD_STYLE(wxTE_PROCESS_ENTER);

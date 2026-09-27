@@ -23,7 +23,6 @@
 #include <wx/xrc/xmlres.h>
 
 MyWxRichTextCtrlXmlHandler::MyWxRichTextCtrlXmlHandler()
-    : wxXmlResourceHandler()
 {
     XRC_ADD_STYLE(wxTE_PROCESS_ENTER);
     XRC_ADD_STYLE(wxTE_PROCESS_TAB);

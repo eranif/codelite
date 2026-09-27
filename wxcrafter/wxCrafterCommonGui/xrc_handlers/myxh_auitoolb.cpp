@@ -23,9 +23,6 @@
 #include <wx/xml/xml.h>
 
 MyWxAuiToolBarXmlHandler::MyWxAuiToolBarXmlHandler()
-    : wxXmlResourceHandler()
-    , m_isInside(false)
-    , m_toolbar(nullptr)
 {
     XRC_ADD_STYLE(wxAUI_TB_TEXT);
     XRC_ADD_STYLE(wxAUI_TB_NO_TOOLTIPS);

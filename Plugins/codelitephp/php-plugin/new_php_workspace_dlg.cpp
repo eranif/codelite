@@ -13,7 +13,7 @@ NewPHPWorkspaceDlg::NewPHPWorkspaceDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-NewPHPWorkspaceDlg::~NewPHPWorkspaceDlg() {}
+NewPHPWorkspaceDlg::~NewPHPWorkspaceDlg() = default;
 
 wxString NewPHPWorkspaceDlg::GetWorkspacePath() const
 {

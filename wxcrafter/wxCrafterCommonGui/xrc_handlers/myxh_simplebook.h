@@ -13,8 +13,8 @@ public:
     bool CanHandle(wxXmlNode* node) override;
 
 private:
-    bool m_isInside;
-    wxSimplebook* m_notebook;
+    bool m_isInside = false;
+    wxSimplebook* m_notebook = nullptr;
 };
 
 #endif //_WX_XH_SIMPLEBOOK_H

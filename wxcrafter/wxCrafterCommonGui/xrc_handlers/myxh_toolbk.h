@@ -25,8 +25,8 @@ public:
     bool CanHandle(wxXmlNode* node) override;
 
 private:
-    bool m_isInside;
-    wxToolbook* m_toolbook;
+    bool m_isInside = false;
+    wxToolbook* m_toolbook = nullptr;
 };
 
 #endif // wxUSE_XRC && wxUSE_TOOLBOOK

@@ -7,9 +7,6 @@
 #include <wx/sizer.h>
 
 MyWxSimplebookXmlHandler::MyWxSimplebookXmlHandler()
-    : wxXmlResourceHandler()
-    , m_isInside(false)
-    , m_notebook(nullptr)
 {
     AddWindowStyles();
 }

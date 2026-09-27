@@ -5,7 +5,6 @@
 #include <wx/xrc/xmlres.h>
 
 MyWxDataViewCtrlHandler::MyWxDataViewCtrlHandler()
-    : wxXmlResourceHandler()
 {
     XRC_ADD_STYLE(wxDV_SINGLE);
     XRC_ADD_STYLE(wxDV_MULTIPLE);

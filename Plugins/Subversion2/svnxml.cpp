@@ -177,5 +177,4 @@ void SvnXML::GetSvnInfo(const wxString& input, SvnInfo& svnInfo)
             node = node->GetNext();
         }
     }
-    return;
 }

@@ -19,11 +19,7 @@ public:
 class SubMenuWrapper : public MenuWrapper
 {
 public:
-    SubMenuWrapper()
-        : MenuWrapper()
-    {
-        SetType(ID_WXSUBMENU);
-    }
+    SubMenuWrapper() { SetType(ID_WXSUBMENU); }
 
     ~SubMenuWrapper() override = default;
     wxcWidget* Clone() const override { return new SubMenuWrapper(); }

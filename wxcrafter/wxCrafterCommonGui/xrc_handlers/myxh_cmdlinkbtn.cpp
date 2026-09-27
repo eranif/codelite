@@ -4,7 +4,6 @@
 #include <wx/xrc/xmlres.h>
 
 MyWxCommandLinkButtonXmlHandler::MyWxCommandLinkButtonXmlHandler()
-    : wxXmlResourceHandler()
 {
     XRC_ADD_STYLE(wxBU_LEFT);
     XRC_ADD_STYLE(wxBU_RIGHT);

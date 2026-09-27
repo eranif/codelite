@@ -196,7 +196,7 @@ swStringDb::swStringDb() { m_compress = false; }
 
 //------------------------------------------------------------
 
-swStringDb::~swStringDb() {}
+swStringDb::~swStringDb() = default;
 
 //------------------------------------------------------------
 void swStringDb::DeleteAll()
@@ -219,7 +219,7 @@ void swStringDb::DeleteKey(const wxString& set, const wxString& key)
     // if set is empty, remove it
     if (pSet->m_list.size() == 0) {
         swStringSetList::iterator it = m_list.find(set);
-        delete (swStringSet*)pSet;
+        delete pSet;
         m_list.erase(it);
     }
 }

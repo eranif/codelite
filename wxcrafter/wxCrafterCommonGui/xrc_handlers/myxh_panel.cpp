@@ -7,7 +7,6 @@
 IMPLEMENT_DYNAMIC_CLASS(MyWxPanelXmlHandler, wxXmlResourceHandler)
 
 MyWxPanelXmlHandler::MyWxPanelXmlHandler()
-    : wxXmlResourceHandler()
 {
 #if WXWIN_COMPATIBILITY_2_6 && defined(wxNO_3D)
     XRC_ADD_STYLE(wxNO_3D);

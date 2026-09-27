@@ -30,9 +30,9 @@ protected:
     wxPGProperty* DoAppendProperty(wxPGProperty* parent, wxPGProperty* prop);
 
 private:
-    bool m_isInside;
-    wxPropertyGridManager* m_pgmgr;
-    wxPGProperty* m_propertyParent;
+    bool m_isInside = false;
+    wxPropertyGridManager* m_pgmgr = nullptr;
+    wxPGProperty* m_propertyParent = nullptr;
 };
 
 #endif // _WX_XH_PROPGRID_H_

@@ -43,8 +43,6 @@
 wxIMPLEMENT_DYNAMIC_CLASS(MyWxRibbonXmlHandler, wxXmlResourceHandler);
 
 MyWxRibbonXmlHandler::MyWxRibbonXmlHandler()
-    : wxXmlResourceHandler()
-    , m_isInside(nullptr)
 {
     XRC_ADD_STYLE(wxRIBBON_BAR_SHOW_PAGE_LABELS);
     XRC_ADD_STYLE(wxRIBBON_BAR_SHOW_PAGE_ICONS);

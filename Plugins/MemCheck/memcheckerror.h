@@ -105,28 +105,28 @@ public:
      *
      * this function is used in searching function
      */
-    const wxString toString() const;
+    wxString toString() const;
 
     /**
      * @brief Is used in tooltip.
      * @param workspacePath
      * @return string
      */
-    const wxString toText(const wxString& workspacePath = wxEmptyString) const;
+    wxString toText(const wxString& workspacePath = wxEmptyString) const;
 
     /**
      * @brief If file is in workspace path, that path is trimmed
      * @param workspacePath
      * @return file name
      */
-    const wxString getFile(const wxString& workspacePath = wxEmptyString) const;
+    wxString getFile(const wxString& workspacePath = wxEmptyString) const;
 
     /**
      * @brief If object file is in workspace path, that path is trimmed
      * @param workspacePath
      * @return obj file name
      */
-    const wxString getObj(const wxString& workspacePath = wxEmptyString) const;
+    wxString getObj(const wxString& workspacePath = wxEmptyString) const;
 
     /**
      * @brief test if is NOT in workspace
@@ -158,16 +158,16 @@ public:
      * to tab separated string.
      * @return string
      *
-     * TODO: It cloud be buffered to improve speed, but it would cost more memory.
+     * TODO: It could be buffered to improve speed, but it would cost more memory.
      */
-    const wxString toString() const;
+    wxString toString() const;
 
     /**
      * @brief Is used in tooltip.
      * @param indent number of spaces
      * @return string
      */
-    const wxString toText(unsigned int indent = 1) const;
+    wxString toText(unsigned int indent = 1) const;
 
     /**
      * @brief creates uniq name for suppression
@@ -175,7 +175,7 @@ public:
      *
      * FIXME This method must be moved to Valgrind processor, it is Valgrind specific.
      */
-    const wxString getSuppression();
+    wxString getSuppression();
 
     /**
      * @brief Test if error has file on specified path.

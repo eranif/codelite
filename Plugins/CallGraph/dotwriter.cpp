@@ -25,6 +25,7 @@
 
 #include "dotwriter.h"
 
+#include <algorithm>
 #include <vector>
 #include <wx/file.h>
 #include <wx/math.h>
@@ -153,8 +154,7 @@ void DotWriter::WriteToDotLanguage()
     while (it) {
         LineParser* line = it->GetData();
 
-        if (max_time < line->time)
-            max_time = line->time;
+        max_time = std::max(max_time, line->time);
 
         if (line->pline) {
             pl_index = line->index; // index for primary node

@@ -37,9 +37,9 @@ class XDebugBreakpointCmdHandler : public XDebugCommandHandler
 
 public:
     XDebugBreakpointCmdHandler(XDebugManager* mgr, int transactionId, XDebugBreakpoint& breakpoint);
-    virtual ~XDebugBreakpointCmdHandler() = default;
+    ~XDebugBreakpointCmdHandler() override = default;
 
-    virtual void Process(const wxXmlNode* response);
+    void Process(const wxXmlNode* response) override;
 };
 
 #endif // XDEBUGBREAKPOINTCMDHANDLER_H

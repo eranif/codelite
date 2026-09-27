@@ -9,7 +9,6 @@
 #include "myxh_mediactrl.h"
 
 MyWxMediaCtrlXmlHandler::MyWxMediaCtrlXmlHandler()
-    : wxXmlResourceHandler()
 {
     AddWindowStyles();
 }

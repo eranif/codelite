@@ -28,67 +28,67 @@ class ToolBarItemSpaceWrapper : public ToolBarItemWrapper
 {
 public:
     ToolBarItemSpaceWrapper();
-    virtual ~ToolBarItemSpaceWrapper() = default;
+    ~ToolBarItemSpaceWrapper() override = default;
 
-    virtual bool IsEventHandler() const { return false; }
+    bool IsEventHandler() const override { return false; }
 
-    virtual wxcWidget* Clone() const { return new ToolBarItemSpaceWrapper(); }
+    wxcWidget* Clone() const override { return new ToolBarItemSpaceWrapper(); }
 
-    virtual wxString CppCtorCode() const;
+    wxString CppCtorCode() const override;
 };
 
 class ToolBarItemSeparatorWrapper : public ToolBarItemWrapper
 {
 public:
     ToolBarItemSeparatorWrapper();
-    virtual ~ToolBarItemSeparatorWrapper() = default;
+    ~ToolBarItemSeparatorWrapper() override = default;
 
-    virtual bool IsEventHandler() const { return false; }
+    bool IsEventHandler() const override { return false; }
 
-    virtual wxcWidget* Clone() const { return new ToolBarItemSeparatorWrapper(); }
+    wxcWidget* Clone() const override { return new ToolBarItemSeparatorWrapper(); }
 
-    virtual wxString CppCtorCode() const;
+    wxString CppCtorCode() const override;
 };
 
 class AuiToolBarLabelWrapper : public wxcWidget
 {
 public:
     AuiToolBarLabelWrapper(int type = ID_WXAUITOOLBARLABEL);
-    virtual ~AuiToolBarLabelWrapper() = default;
-    virtual bool IsEventHandler() const { return false; }
-    virtual wxcWidget* Clone() const;
-    virtual wxString CppCtorCode() const;
-    void GetIncludeFile(wxArrayString& headers) const;
-    wxString GetWxClassName() const;
-    void ToXRC(wxString& text, XRC_TYPE type) const;
-    virtual bool IsToolBarTool() const { return true; }
-    void LoadPropertiesFromXRC(const wxXmlNode* node);
+    ~AuiToolBarLabelWrapper() override = default;
+    bool IsEventHandler() const override { return false; }
+    wxcWidget* Clone() const override;
+    wxString CppCtorCode() const override;
+    void GetIncludeFile(wxArrayString& headers) const override;
+    wxString GetWxClassName() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
+    bool IsToolBarTool() const override { return true; }
+    void LoadPropertiesFromXRC(const wxXmlNode* node) override;
 };
 
 class AuiToolBarItemSpaceWrapper : public ToolBarItemWrapper
 {
 public:
     AuiToolBarItemSpaceWrapper();
-    virtual ~AuiToolBarItemSpaceWrapper() = default;
+    ~AuiToolBarItemSpaceWrapper() override = default;
 
-    virtual bool IsEventHandler() const { return false; }
-    virtual wxcWidget* Clone() const { return new AuiToolBarItemSpaceWrapper(); }
+    bool IsEventHandler() const override { return false; }
+    wxcWidget* Clone() const override { return new AuiToolBarItemSpaceWrapper(); }
 
-    virtual wxString CppCtorCode() const;
-    void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxString CppCtorCode() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 class AuiToolBarItemNonStretchSpaceWrapper : public ToolBarItemWrapper
 {
 public:
     AuiToolBarItemNonStretchSpaceWrapper();
-    virtual ~AuiToolBarItemNonStretchSpaceWrapper() = default;
+    ~AuiToolBarItemNonStretchSpaceWrapper() override = default;
 
-    virtual bool IsEventHandler() const { return false; }
-    virtual wxcWidget* Clone() const { return new AuiToolBarItemNonStretchSpaceWrapper(); }
+    bool IsEventHandler() const override { return false; }
+    wxcWidget* Clone() const override { return new AuiToolBarItemNonStretchSpaceWrapper(); }
 
-    virtual wxString CppCtorCode() const;
-    void ToXRC(wxString& text, XRC_TYPE type) const;
+    wxString CppCtorCode() const override;
+    void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
 #endif // TOOLBARITEMWRAPPER_H

@@ -63,11 +63,11 @@ public:
     {
     }
 
-    virtual ~XDebugComThread();
+    ~XDebugComThread() override;
 
     void SendMsg(const wxString& msg);
 
-    void* Entry();
+    void* Entry() override;
     void Start()
     {
         Create();

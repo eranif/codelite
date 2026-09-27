@@ -73,25 +73,25 @@ namespace
 void InitializeAllImageHandlers()
 {
     // Initialize all image handlers known to us (that aren't already loaded)
-    if (wxImage::FindHandler(wxBITMAP_TYPE_PNG) == 0) {
+    if (wxImage::FindHandler(wxBITMAP_TYPE_PNG) == nullptr) {
         wxImage::AddHandler(new wxPNGHandler);
     }
-    if (wxImage::FindHandler(wxBITMAP_TYPE_JPEG) == 0) {
+    if (wxImage::FindHandler(wxBITMAP_TYPE_JPEG) == nullptr) {
         wxImage::AddHandler(new wxJPEGHandler);
     }
-    if (wxImage::FindHandler(wxBITMAP_TYPE_GIF) == 0) {
+    if (wxImage::FindHandler(wxBITMAP_TYPE_GIF) == nullptr) {
         wxImage::AddHandler(new wxGIFHandler);
     }
-    if (wxImage::FindHandler(wxBITMAP_TYPE_BMP) == 0) {
+    if (wxImage::FindHandler(wxBITMAP_TYPE_BMP) == nullptr) {
         wxImage::AddHandler(new wxBMPHandler);
     }
-    if (wxImage::FindHandler(wxBITMAP_TYPE_ICO) == 0) {
+    if (wxImage::FindHandler(wxBITMAP_TYPE_ICO) == nullptr) {
         wxImage::AddHandler(new wxICOHandler);
     }
-    if (wxImage::FindHandler(wxBITMAP_TYPE_ANI) == 0) {
+    if (wxImage::FindHandler(wxBITMAP_TYPE_ANI) == nullptr) {
         wxImage::AddHandler(new wxANIHandler);
     }
-    if (wxImage::FindHandler(wxBITMAP_TYPE_CUR) == 0) {
+    if (wxImage::FindHandler(wxBITMAP_TYPE_CUR) == nullptr) {
         wxImage::AddHandler(new wxCURHandler);
     }
 }

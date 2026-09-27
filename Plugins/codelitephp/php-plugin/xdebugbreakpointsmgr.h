@@ -41,7 +41,7 @@ protected:
 
 public:
     XDebugBreakpointsMgr();
-    virtual ~XDebugBreakpointsMgr();
+    ~XDebugBreakpointsMgr() override;
 
     bool HasBreakpoint(const wxString& filename, int line) const;
     void AddBreakpoint(const wxString& filename, int line);

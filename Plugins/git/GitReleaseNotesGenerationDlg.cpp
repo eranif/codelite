@@ -13,7 +13,7 @@ GitReleaseNotesGenerationDlg::GitReleaseNotesGenerationDlg(wxWindow* parent)
     CenterOnParent();
 }
 
-GitReleaseNotesGenerationDlg::~GitReleaseNotesGenerationDlg() {}
+GitReleaseNotesGenerationDlg::~GitReleaseNotesGenerationDlg() = default;
 
 void GitReleaseNotesGenerationDlg::OnButtonokUpdateUi(wxUpdateUIEvent& event)
 {

@@ -36,9 +36,6 @@ public:
 };
 
 MyWxAuiNotebookXmlHandler::MyWxAuiNotebookXmlHandler()
-    : wxXmlResourceHandler()
-    , m_isInside(false)
-    , m_notebook(nullptr)
 {
     XRC_ADD_STYLE(wxAUI_NB_DEFAULT_STYLE);
     XRC_ADD_STYLE(wxAUI_NB_TAB_SPLIT);

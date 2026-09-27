@@ -18,7 +18,7 @@
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
-PHPEditorContextMenu* PHPEditorContextMenu::ms_instance = 0;
+PHPEditorContextMenu* PHPEditorContextMenu::ms_instance = nullptr;
 
 PHPEditorContextMenu::PHPEditorContextMenu()
     : m_manager(nullptr)
@@ -78,7 +78,7 @@ void PHPEditorContextMenu::ConnectEvents()
 
 PHPEditorContextMenu* PHPEditorContextMenu::Instance()
 {
-    if (ms_instance == 0) {
+    if (ms_instance == nullptr) {
         ms_instance = new PHPEditorContextMenu();
     }
     return ms_instance;
@@ -86,10 +86,8 @@ PHPEditorContextMenu* PHPEditorContextMenu::Instance()
 
 void PHPEditorContextMenu::Release()
 {
-    if (ms_instance) {
-        delete ms_instance;
-    }
-    ms_instance = 0;
+    delete ms_instance;
+    ms_instance = nullptr;
 }
 
 void PHPEditorContextMenu::DoBuildMenu(wxMenu* menu, IEditor* editor)

@@ -387,9 +387,7 @@ void VimManager::DoBindEditor(IEditor* editor)
 
 void VimManager::setUpVimBar()
 {
-
-    if (status_vim != nullptr)
-        delete status_vim;
+    delete status_vim;
 
     // wxWindow* parent = m_ctrl->GetParent();
     wxWindow* parent = (wxWindow*)m_ctrl;

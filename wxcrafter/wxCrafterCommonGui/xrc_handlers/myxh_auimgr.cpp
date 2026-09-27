@@ -22,12 +22,6 @@
 wxIMPLEMENT_DYNAMIC_CLASS(MyWxAuiManagerXmlHandler, wxXmlResourceHandler)
 
     MyWxAuiManagerXmlHandler::MyWxAuiManagerXmlHandler()
-    : wxXmlResourceHandler()
-    , m_manager(nullptr)
-    , m_window(nullptr)
-    , m_notebook(nullptr)
-    , m_mgrInside(false)
-    , m_anbInside(false)
 {
     XRC_ADD_STYLE(wxAUI_MGR_ALLOW_ACTIVE_PANE);
     XRC_ADD_STYLE(wxAUI_MGR_ALLOW_FLOATING);

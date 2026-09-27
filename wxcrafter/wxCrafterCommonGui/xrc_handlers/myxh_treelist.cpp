@@ -6,7 +6,6 @@
 #include <wx/xrc/xmlres.h>
 
 MyTreeListCtrl::MyTreeListCtrl()
-    : wxXmlResourceHandler()
 {
     XRC_ADD_STYLE(wxTL_SINGLE);
     XRC_ADD_STYLE(wxTL_MULTIPLE);

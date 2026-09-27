@@ -114,7 +114,7 @@
 #include "wxc_widget.h"
 #include "wxgui_bitmaploader.h"
 
-Allocator* Allocator::ms_instance = 0;
+Allocator* Allocator::ms_instance = nullptr;
 
 // --------------------------------------------------------
 
@@ -272,7 +272,7 @@ Allocator::Allocator()
 
 Allocator* Allocator::Instance()
 {
-    if (ms_instance == 0) {
+    if (ms_instance == nullptr) {
         ms_instance = new Allocator();
     }
     return ms_instance;

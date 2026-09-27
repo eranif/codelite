@@ -5602,8 +5602,11 @@ void clMainFrame::OnMarkEditorReadonly(wxCommandEvent& e)
 void clMainFrame::OnMarkEditorReadonlyUI(wxUpdateUIEvent& e)
 {
     auto editor = GetEditorFromEvent(GetMainBook(), e);
-    CHECK_PTR_RET(editor);
-
+    if (editor == nullptr) {
+        e.Enable(false);
+        e.Check(false);
+        return;
+    }
     e.Check(!editor->IsEditable());
 }
 

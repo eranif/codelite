@@ -148,6 +148,7 @@ using MenuItemDataMap_t = std::unordered_map<wxString, MenuItemData>;
 using MenuItemDataIntMap_t = std::unordered_map<int, MenuItemData>;
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_KEYBOARD_ACCEL_INIT_DONE, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_KEYBOARD_SHORTCUTS_UPDATED, clCommandEvent);
 class WXDLLIMPEXP_SDK clKeyboardManager : public wxEvtHandler
 {
 private:

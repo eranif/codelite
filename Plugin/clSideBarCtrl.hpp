@@ -68,6 +68,8 @@ struct clSideBarToolData {
 
 struct ActionButtonData {
     wxString bmpname_;
+    wxString tooltip_;
+    wxString action_name_;
     ActionButtonCallbackPtr callback_;
 };
 
@@ -138,6 +140,11 @@ public:
     void AddPage(wxWindow* page, const wxString& label, const wxString& bmpname, bool selected = false);
 
     void AddActionButton(const wxString& bmpname, const wxString& tooltip, ActionButtonCallbackPtr func);
+    void AddActionButton(const wxString& bmpname,
+                         const wxString& tooltip,
+                         const wxString& action_name,
+                         ActionButtonCallbackPtr func);
+    void UpdateActionButtonTooltip(const wxString& action_name);
 
     /// Move page identified by `label` to a new position
     void MovePageToIndex(const wxString& label, int new_pos);

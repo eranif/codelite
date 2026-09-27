@@ -30,16 +30,19 @@ AgentHost::AgentHost(IManager* manager)
     m_showKiroCli = std::make_shared<std::function<void()>>(
         [this]() { CallAfter(&AgentHost::ShowAgentTerminal, AgentType::kKiroCli); });
     m_mgr->GetLeftSideBarCtrl()->AddActionButton(
-        "claude-code", _("Launch Claude Code for the Current Workspace"), m_showClaudeCode);
-    m_mgr->GetLeftSideBarCtrl()->AddActionButton("kiro", _("Launch Kiro Cli for the Current Workspace"), m_showKiroCli);
+        "claude-code", _("Launch Claude Code for the Current Workspace"), "launch_claude_code", m_showClaudeCode);
+    m_mgr->GetLeftSideBarCtrl()->AddActionButton(
+        "kiro", _("Launch Kiro Cli for the Current Workspace"), "launch_kiro_cli", m_showKiroCli);
     EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &AgentHost::OnPageClosing, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &AgentHost::OnAllPagesClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &AgentHost::OnKeyboardShortcutsUpdated, this);
 }
 
 AgentHost::~AgentHost()
 {
     EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &AgentHost::OnPageClosing, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &AgentHost::OnAllPagesClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &AgentHost::OnKeyboardShortcutsUpdated, this);
 }
 
 void AgentHost::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -70,9 +73,26 @@ void AgentHost::CreatePluginMenu(wxMenu* pluginsMenu)
                                                  {"launch_kiro_cli", _("Launch Kiro Cli"), "Ctrl-Shift-K"},
                                                  {"agent_host_settings", _("Options...")},
                                              });
+    UpdateActionButtonTooltips();
 }
 
 void AgentHost::UnPlug() {}
+
+void AgentHost::OnKeyboardShortcutsUpdated(clCommandEvent& event)
+{
+    event.Skip();
+    UpdateActionButtonTooltips();
+}
+
+void AgentHost::UpdateActionButtonTooltips()
+{
+    auto sidebar = m_mgr->GetLeftSideBarCtrl();
+    CHECK_PTR_RET(sidebar);
+
+    sidebar->UpdateActionButtonTooltip("launch_claude_code");
+    sidebar->UpdateActionButtonTooltip("launch_kiro_cli");
+}
+
 void AgentHost::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);

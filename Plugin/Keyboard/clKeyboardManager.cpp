@@ -20,6 +20,7 @@
 #include <wx/xrc/xmlres.h>
 
 wxDEFINE_EVENT(wxEVT_KEYBOARD_ACCEL_INIT_DONE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, clCommandEvent);
 
 clKeyboardManager::clKeyboardManager()
 {
@@ -268,6 +269,9 @@ void clKeyboardManager::Update()
 
     // update only the requested frame
     DoUpdateFrame(frame, intAccels);
+
+    clCommandEvent event(wxEVT_KEYBOARD_SHORTCUTS_UPDATED);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 int clKeyboardManager::PopupNewKeyboardShortcutDlg(wxWindow* parent, MenuItemData& menuItemData)

@@ -1,5 +1,6 @@
 #include "clSideBarCtrl.hpp"
 
+#include "Keyboard/clKeyboardManager.h"
 #include "aui/clAuiToolBarArt.h"
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
@@ -63,6 +64,19 @@ bool IsWindows11DarkMode()
 #else
     return false;
 #endif
+}
+
+wxString BuildActionButtonTooltip(const wxString& tooltip, const wxString& action_name)
+{
+    if (action_name.empty()) {
+        return tooltip;
+    }
+
+    auto shortcut = clKeyboardManager::Get()->GetShortcutForCommand(action_name);
+    if (!shortcut.IsOk()) {
+        return tooltip;
+    }
+    return wxString::Format("%s (%s)", tooltip, shortcut.DisplayString());
 }
 } // namespace
 
@@ -204,7 +218,8 @@ void clSideBarCtrl::PlaceButtons()
         auto tool = old_toolbar->GetButtonsToolBar()->FindToolByIndex(i);
         auto data_opt = old_toolbar->GetActionButtonData(tool->GetId());
         if (data_opt.has_value()) {
-            AddActionButton(data_opt.value().bmpname_, tool->GetLabel(), data_opt.value().callback_);
+            const auto& data = data_opt.value();
+            AddActionButton(data.bmpname_, data.tooltip_, data.action_name_, data.callback_);
         }
     }
 
@@ -279,6 +294,14 @@ void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size
 
 void clSideBarCtrl::AddActionButton(const wxString& bmpname, const wxString& tooltip, ActionButtonCallbackPtr func)
 {
+    AddActionButton(bmpname, tooltip, wxEmptyString, std::move(func));
+}
+
+void clSideBarCtrl::AddActionButton(const wxString& bmpname,
+                                    const wxString& tooltip,
+                                    const wxString& action_name,
+                                    ActionButtonCallbackPtr func)
+{
     CHECK_PTR_RET(func);
 
     wxBitmap dark_theme_bmp, light_theme_bmp;
@@ -292,9 +315,12 @@ void clSideBarCtrl::AddActionButton(const wxString& bmpname, const wxString& too
         tb->AddSeparator();
     }
 
+    const wxString displayed_tooltip = BuildActionButtonTooltip(tooltip, action_name);
     const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark() ? dark_theme_bmp : light_theme_bmp;
-    auto tool = tb->AddTool(wxID_ANY, tooltip, wxBitmapBundle(bmp), tooltip);
-    m_buttonsBar->SetActionButtonData(tool->GetId(), ActionButtonData{.bmpname_ = bmpname, .callback_ = func});
+    auto tool = tb->AddTool(wxID_ANY, displayed_tooltip, wxBitmapBundle(bmp), displayed_tooltip);
+    m_buttonsBar->SetActionButtonData(
+        tool->GetId(),
+        ActionButtonData{.bmpname_ = bmpname, .tooltip_ = tooltip, .action_name_ = action_name, .callback_ = func});
 
     tb->Bind(
         wxEVT_TOOL,
@@ -304,6 +330,22 @@ void clSideBarCtrl::AddActionButton(const wxString& bmpname, const wxString& too
         },
         tool->GetId());
     Realize();
+}
+
+void clSideBarCtrl::UpdateActionButtonTooltip(const wxString& action_name)
+{
+    auto tb = m_buttonsBar->GetButtonsToolBar();
+    for (size_t i = 0; i < tb->GetToolCount(); ++i) {
+        auto tool = tb->FindToolByIndex(i);
+        if (!tool) {
+            continue;
+        }
+
+        auto data = m_buttonsBar->GetActionButtonData(tool->GetId());
+        if (data.has_value() && data->action_name_ == action_name) {
+            tb->SetToolShortHelp(tool->GetId(), BuildActionButtonTooltip(data->tooltip_, action_name));
+        }
+    }
 }
 
 void clSideBarCtrl::AddPage(wxWindow* page, const wxString& label, const wxString& bmpname, bool selected)

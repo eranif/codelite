@@ -57,6 +57,8 @@ protected:
     void OnShowClaudeCode(wxCommandEvent& event);
     void OnShowKiroCli(wxCommandEvent& event);
     void OnAllPagesClosed(wxCommandEvent& event);
+    void OnKeyboardShortcutsUpdated(clCommandEvent& event);
+    void UpdateActionButtonTooltips();
 
     std::unordered_map<AgentType, AgentHostPage*> m_pages;
     std::shared_ptr<std::function<void()>> m_showClaudeCode;

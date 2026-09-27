@@ -193,8 +193,8 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
         dc.SetPen(GetBorderColour());
         dc.DrawLine(page.rect.GetTopLeft(), page.rect.GetBottomLeft());
 
-        wxColour right_side_border = GetBorderColour().ChangeLightness(50);
-        dc.SetPen(right_side_border);
+        //wxColour right_side_border = GetBorderColour().ChangeLightness(50);
+        dc.SetPen(GetBorderColour());
         dc.DrawLine(page.rect.GetTopRight(), page.rect.GetBottomRight());
     } else {
         dc.SetPen(GetBorderColour());

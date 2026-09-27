@@ -1840,7 +1840,12 @@ void MainBook::DoShowTabLabelContextMenu(size_t tabIdx)
         return;
     }
 
-    wxMenu* contextMenu = clXmlResource::Get().LoadMenu(wxT("editor_tab_right_click"));
+    clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(tabIdx));
+    wxMenu* contextMenu{nullptr};
+    if (editor == nullptr)
+        contextMenu = clXmlResource::Get().LoadMenu(wxT("non_editor_tab_right_click"));
+    else
+        contextMenu = clXmlResource::Get().LoadMenu(wxT("editor_tab_right_click"));
 
     // Notify the plugins about the tab label context menu
     clContextMenuEvent event(wxEVT_CONTEXT_MENU_TAB_LABEL);
@@ -1850,6 +1855,7 @@ void MainBook::DoShowTabLabelContextMenu(size_t tabIdx)
 
     contextMenu->SetClientData((void*)m_book->GetPage(tabIdx));
     contextMenu = event.GetMenu();
+
     m_book->PopupMenu(contextMenu);
     wxDELETE(contextMenu);
 }

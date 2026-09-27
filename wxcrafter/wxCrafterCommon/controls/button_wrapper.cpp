@@ -23,10 +23,8 @@ ButtonWrapper::ButtonWrapper()
 
     const wxArrayString directions = {"wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"};
 
-    RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"),
-                  wxT("wxCommandEvent"),
-                  _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
-                  wxT("wxCommandEventHandler"));
+    RegisterEventCommand(wxT("wxEVT_COMMAND_BUTTON_CLICKED"),
+                         _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."));
 
     m_namePattern = wxT("m_button");
     SetPropertyString(_("Common Settings"), "wxButton");

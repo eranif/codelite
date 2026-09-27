@@ -10,9 +10,9 @@
 class EventsEditorPane;
 class EventsTableListView : public wxPropertyGridManager
 {
-    wxcWidget* m_control;
-    EventsDatabase* m_eventsDb;
-    EventsEditorPane* m_dlg;
+    wxcWidget* m_control = nullptr;
+    const EventsDatabase* m_eventsDb = nullptr;
+    EventsEditorPane* m_dlg = nullptr;
     wxBitmap m_dropDownBmp;
     wxString m_gotoFunctionName;
 
@@ -20,7 +20,7 @@ protected:
     void OnPropertyChanged(wxPropertyGridEvent& e);
 
 public:
-    EventsTableListView(wxWindow* parent);
+    explicit EventsTableListView(wxWindow* parent);
     ~EventsTableListView() override;
 
     void Construct(EventsEditorPane* dlg, wxcWidget* control, const EventsDatabase& events);

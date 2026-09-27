@@ -3,10 +3,8 @@
 ActivityIndicatorWrapper::ActivityIndicatorWrapper()
     : wxcWidget(ID_WXACTIVITYINDICATOR)
 {
-    RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"),
-                  wxT("wxCommandEvent"),
-                  _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
-                  wxT("wxCommandEventHandler"));
+    RegisterEventCommand(wxT("wxEVT_COMMAND_BUTTON_CLICKED"),
+                         _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."));
     m_namePattern = wxT("m_activityCtrl");
     SetPropertyString(_("Common Settings"), "wxActivityIndicator");
     SetName(GenerateName());

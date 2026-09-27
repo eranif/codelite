@@ -1522,11 +1522,7 @@ wxString wxcWidget::DoGenerateEventStubs() const
             eventDetails.GenerateFunctionName(GetName());
         }
 
-        if (eventDetails.GetNoBody()) {
-            stubsCode << "virtual void " << eventDetails.GetFunctionNameAndSignature() << ";\n";
-        } else {
-            stubsCode << "virtual void " << eventDetails.GetFunctionNameAndSignature() << " { event.Skip(); }\n";
-        }
+        stubsCode << "virtual void " << eventDetails.GetFunctionNameAndSignature() << " { event.Skip(); }\n";
     }
     WrapInIfBlockIfNeeded(stubsCode);
     return stubsCode;
@@ -1603,12 +1599,9 @@ wxString wxcWidget::DoGetScopeName() const
 
 void wxcWidget::RegisterEvent(const wxString& eventName,
                               const wxString& className,
-                              const wxString& description,
-                              const wxString& handlerName /*=""*/,
-                              const wxString& functionNameAndSig /*=""*/,
-                              bool noBody /*=false*/)
+                              const wxString& description)
 {
-    m_controlEvents.Add(eventName, className, description, functionNameAndSig, noBody);
+    m_controlEvents.Add(eventName, className, description);
 }
 
 wxString wxcWidget::XRCPrefix(const wxString& class_name) const

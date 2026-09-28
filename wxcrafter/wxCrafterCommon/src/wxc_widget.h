@@ -853,16 +853,13 @@ protected:
 
     void RegisterEvent(const wxString& eventName,
                        const wxString& className,
-                       const wxString& description,
-                       const wxString& handlerName = "",
-                       const wxString& functionNameAndSig = "",
-                       bool noBody = false);
+                       const wxString& description);
     /**
-     * @brief acronym for RegisterEvent(eventName, "wxCommandEvent", "wxCommandEventHandler")
+     * @brief acronym for RegisterEvent(eventName, "wxCommandEvent", description)
      */
     void RegisterEventCommand(const wxString& eventName, const wxString& description)
     {
-        RegisterEvent(eventName, "wxCommandEvent", description, "wxCommandEventHandler");
+        RegisterEvent(eventName, "wxCommandEvent", description);
     }
 
     const wxcWidget* DoFindByName(const wxcWidget* parent, const wxString& name) const;

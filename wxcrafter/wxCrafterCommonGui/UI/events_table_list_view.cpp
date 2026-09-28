@@ -26,7 +26,6 @@ EventsTableListView::EventsTableListView(wxWindow* parent)
           wxDefaultPosition,
           wxDefaultSize,
           wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION | GetControlBorder())
-    , m_eventsDb(nullptr)
 {
     Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsTableListView::OnPropertyChanged), nullptr, this);
 }
@@ -42,7 +41,7 @@ void EventsTableListView::Construct(EventsEditorPane* dlg, wxcWidget* control, c
     grid->Append(new wxPropertyCategory(_("Event Handlers")));
 
     m_dlg = dlg;
-    m_eventsDb = const_cast<EventsDatabase*>(&events);
+    m_eventsDb = &events;
     CHECK_POINTER(control);
     m_control = control;
 

@@ -75,13 +75,9 @@ void EventsDatabase::Add(const ConnectDetails& ed)
     m_menuIdToName[ed.GetMenuItemId()] = ed.GetEventName();
 }
 
-void EventsDatabase::Add(const wxString& eventName,
-                         const wxString& className,
-                         const wxString& description,
-                         const wxString& functionNameAndSig /*=""*/,
-                         bool noBody /*=false*/)
+void EventsDatabase::Add(const wxString& eventName, const wxString& className, const wxString& description)
 {
-    m_events.PushBack(eventName, ConnectDetails(eventName, className, description, noBody, functionNameAndSig));
+    m_events.PushBack(eventName, ConnectDetails(eventName, className, description));
     m_menuIdToName[m_events.Item(eventName).GetMenuItemId()] = eventName;
 }
 
@@ -154,9 +150,9 @@ void EventsDatabase::FillCommonEvents()
         "wxEVT_MOUSE_CAPTURE_LOST",
         ConnectDetails("wxEVT_MOUSE_CAPTURE_LOST",
                        "wxMouseCaptureLostEvent",
-                       wxT("A mouse capture lost event is sent to a window that had obtained mouse capture, which was "
-                           "subsequently lost due to an \"external\" event (for example, when a dialog box is shown or "
-                           "if another application captures the mouse)")));
+                       _("A mouse capture lost event is sent to a window that had obtained mouse capture, which was "
+                         "subsequently lost due to an \"external\" event (for example, when a dialog box is shown or "
+                         "if another application captures the mouse)")));
 
     // Focus
     m_events.PushBack(
@@ -183,20 +179,6 @@ void EventsDatabase::FillCommonEvents()
     for (const auto& [_, cd] : m_events) {
         m_menuIdToName[cd.GetMenuItemId()] = cd.GetEventName();
     }
-}
-
-wxMenu* EventsDatabase::CreateMenu() const
-{
-    wxMenu* menu = new wxMenu;
-    for (const auto& [_, cd] : m_events) {
-        if (cd.GetEventName().IsEmpty()) {
-            menu->AppendSeparator();
-
-        } else {
-            menu->Append(cd.GetMenuItemId(), cd.GetEventName(), wxEmptyString, wxITEM_CHECK);
-        }
-    }
-    return menu;
 }
 
 void EventsDatabase::Clear()

@@ -23,10 +23,8 @@ CommandLinkButtonWrapper::CommandLinkButtonWrapper()
     DelProperty(_("Control Specific Settings"));
     Add<CategoryProperty>("wxCommandLinkButton");
 
-    RegisterEvent("wxEVT_COMMAND_BUTTON_CLICKED",
-                  "wxCommandEvent",
-                  _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
-                  "wxCommandEventHandler");
+    RegisterEventCommand(
+        "wxEVT_COMMAND_BUTTON_CLICKED", _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."));
 
     Add<StringProperty>(PROP_LABEL,
                         _("Label"),

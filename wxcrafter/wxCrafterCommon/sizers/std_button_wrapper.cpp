@@ -22,10 +22,8 @@ StdButtonWrapper::StdButtonWrapper()
                                "wxID_HELP",
                                "wxID_CONTEXT_HELP"};
 
-    RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"),
-                  wxT("wxCommandEvent"),
-                  _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
-                  wxT("wxCommandEventHandler"));
+    RegisterEventCommand(wxT("wxEVT_COMMAND_BUTTON_CLICKED"),
+                         _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."));
 
     Add<CategoryProperty>(_("Standard wxButton"));
     Add<ChoiceProperty>(PROP_WINDOW_ID, ids, 0, _("Button ID"));

@@ -31,7 +31,7 @@ class FileHistory : public wxFileHistory
 {
 public:
     FileHistory() = default;
-    virtual ~FileHistory() = default;
+    ~FileHistory() override = default;
 
     /**
      * \brief

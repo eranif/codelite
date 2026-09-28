@@ -63,7 +63,7 @@ class DebuggerDisassemblyTab : public DebuggerDisassemblyTabBase
     wxStringMap_t m_oldValues;
 
 protected:
-    virtual void OnMarginClicked(wxStyledTextEvent& event);
+    void OnMarginClicked(wxStyledTextEvent& event) override;
 
     void DoClearRegistersView();
     void DoClearDisassembleView();
@@ -79,7 +79,7 @@ protected:
 
 public:
     DebuggerDisassemblyTab(wxWindow* parent, const wxString& label);
-    virtual ~DebuggerDisassemblyTab();
+    ~DebuggerDisassemblyTab() override;
 
     void SetTitle(const wxString& title) { this->m_title = title; }
     const wxString& GetTitle() const { return m_title; }

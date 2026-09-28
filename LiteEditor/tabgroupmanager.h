@@ -79,7 +79,7 @@ public:
 
 protected:
     TabgroupManager();
-    ~TabgroupManager();
+    ~TabgroupManager() override;
 
     void LoadKnownTabgroups(bool isGlobal = false);
 

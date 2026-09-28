@@ -9,7 +9,7 @@ protected:
 
 public:
     CopyCompilerSettingsDlg(wxWindow* parent);
-    virtual ~CopyCompilerSettingsDlg();
+    ~CopyCompilerSettingsDlg() override;
 
     void GetCopyFrom(wxString& project, wxString& config);
 };

@@ -57,20 +57,20 @@ class BreakpointsView : public BreakpointTabBase
     std::vector<bpd_IDs> m_ids;
 
 protected:
-    void OnBreakpointActivated(wxDataViewEvent& event);
-    void OnContextMenu(wxDataViewEvent& event);
-    void OnAdd(wxCommandEvent& e);
-    void OnEdit(wxCommandEvent& e);
-    void OnDelete(wxCommandEvent& e);
-    void OnDeleteAll(wxCommandEvent& e);
-    void OnApplyPending(wxCommandEvent& e);
+    void OnBreakpointActivated(wxDataViewEvent& event) override;
+    void OnContextMenu(wxDataViewEvent& event) override;
+    void OnAdd(wxCommandEvent& e) override;
+    void OnEdit(wxCommandEvent& e) override;
+    void OnDelete(wxCommandEvent& e) override;
+    void OnDeleteAll(wxCommandEvent& e) override;
+    void OnApplyPending(wxCommandEvent& e) override;
     void OnBreakpointsUpdated(clDebugEvent& event);
     void OnSessionLoading(clCommandEvent& event);
     void OnSessionLoaded(clCommandEvent& event);
 
 public:
     BreakpointsView(wxWindow* parent);
-    virtual ~BreakpointsView();
+    ~BreakpointsView() override;
     void Initialize();
 };
 

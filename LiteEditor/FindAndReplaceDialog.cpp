@@ -829,7 +829,7 @@ void FindAndReplaceDialog::DoReplaceAll(bool selectionOnly)
     m_sci->EndUndoAction();
 
     double ms = sw.Time();
-    clDEBUG() << "Replace all took:" << (double)(ms / 1000.0) << "seconds" << endl;
+    clDEBUG() << "Replace all took:" << (ms / 1000.0) << "seconds" << endl;
     if (replacements_done) {
         int pos = m_sci->PositionFromLine(starting_line);
         CenterLine(m_sci, pos, pos);

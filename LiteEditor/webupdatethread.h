@@ -95,7 +95,7 @@ protected:
 
 public:
     WebUpdateJob(wxEvtHandler* parent, bool userRequest, bool onlyRelease);
-    virtual ~WebUpdateJob();
+    ~WebUpdateJob() override;
     void ParseFile();
     bool IsUserRequest() const { return m_userRequest; }
     void Check();

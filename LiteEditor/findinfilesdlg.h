@@ -41,22 +41,22 @@ class FindInFilesDialog : public FindInFilesDialogBase
     bool m_presetSearch = false;
 
 protected:
-    virtual void OnRegex(wxCommandEvent& event);
-    virtual void OnATTN(wxCommandEvent& event);
-    virtual void OnBUG(wxCommandEvent& event);
-    virtual void OnFIXME(wxCommandEvent& event);
-    virtual void OnTODO(wxCommandEvent& event);
-    virtual void OnFindEnter(wxCommandEvent& event);
-    virtual void OnReplaceEnter(wxCommandEvent& event);
+    void OnRegex(wxCommandEvent& event) override;
+    void OnATTN(wxCommandEvent& event) override;
+    void OnBUG(wxCommandEvent& event) override;
+    void OnFIXME(wxCommandEvent& event) override;
+    void OnTODO(wxCommandEvent& event) override;
+    void OnFindEnter(wxCommandEvent& event) override;
+    void OnReplaceEnter(wxCommandEvent& event) override;
     wxArrayString GetPathsAsArray() const;
     void SetPresets();
 
 protected:
     virtual void OnLookInKeyDown(wxKeyEvent& event);
-    virtual void OnReplaceUI(wxUpdateUIEvent& event);
-    virtual void OnButtonClose(wxCommandEvent& event);
-    virtual void OnFind(wxCommandEvent& event);
-    virtual void OnReplace(wxCommandEvent& event);
+    void OnReplaceUI(wxUpdateUIEvent& event) override;
+    void OnButtonClose(wxCommandEvent& event) override;
+    void OnFind(wxCommandEvent& event) override;
+    void OnReplace(wxCommandEvent& event) override;
     void DoSearch();
     void DoSearchReplace();
     SearchData DoGetSearchData();
@@ -69,9 +69,9 @@ protected:
 
     // Event Handlers
     virtual void OnClose(wxCloseEvent& event);
-    virtual void OnAddPath(wxCommandEvent& event);
+    void OnAddPath(wxCommandEvent& event) override;
 
-    virtual void OnFindWhatUI(wxUpdateUIEvent& event);
+    void OnFindWhatUI(wxUpdateUIEvent& event) override;
 
     void OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event);
     size_t GetSearchFlags();
@@ -79,7 +79,7 @@ protected:
 
 public:
     FindInFilesDialog(wxWindow* parent, wxWindow* handler = nullptr);
-    virtual ~FindInFilesDialog();
+    ~FindInFilesDialog() override;
     void SetSearchPaths(const wxString& paths, bool transient = false);
     void SetFileMask(const wxString& mask);
     int ShowDialog();

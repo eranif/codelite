@@ -39,11 +39,11 @@ protected:
 
 protected:
     // Event handlers
-    void OnCCContentModified(wxStyledTextEvent& event);
+    void OnCCContentModified(wxStyledTextEvent& event) override;
 
 public:
     CodeCompletionPage(wxWindow* parent, int type);
-    virtual ~CodeCompletionPage() = default;
+    ~CodeCompletionPage() override = default;
 
     void Save();
 

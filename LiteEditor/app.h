@@ -39,7 +39,7 @@ public:
 
 public:
     CodeLiteApp();
-    virtual ~CodeLiteApp();
+    ~CodeLiteApp() override;
 
     static void FinalizeShutdown();
     void SetAllowedPlugins(const wxArrayString& allowedPlugins) { this->m_allowedPlugins = allowedPlugins; }

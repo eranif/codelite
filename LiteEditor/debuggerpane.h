@@ -62,8 +62,8 @@ public:
     };
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     void SetWindows(size_t windows) { this->m_windows = windows; }
     size_t GetWindows() const { return m_windows; }
@@ -86,7 +86,7 @@ public:
 
 public:
     DebuggerPaneConfig();
-    virtual ~DebuggerPaneConfig() = default;
+    ~DebuggerPaneConfig() override = default;
 };
 
 class DebuggerPane : public wxPanel

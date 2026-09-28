@@ -387,9 +387,7 @@ CodeLiteApp::CodeLiteApp()
 CodeLiteApp::~CodeLiteApp()
 {
     wxImage::CleanUpHandlers();
-    if (m_singleInstance) {
-        delete m_singleInstance;
-    }
+    delete m_singleInstance;
 }
 
 static wxLogNull NO_LOG;

@@ -94,7 +94,7 @@ class ProjectSettingsDlg : public ProjectSettingsBaseDlg
     WorkspaceTab* m_workspaceTab;
 
 protected:
-    virtual void OnPageChanged(wxTreebookEvent& event);
+    void OnPageChanged(wxTreebookEvent& event) override;
     void SaveValues();
     void ClearValues();
     void LoadValues(const wxString& configName);
@@ -102,7 +102,7 @@ protected:
     void DoGetAllBuildConfigs();
 
 public:
-    virtual void OnButtonCancel(wxCommandEvent& event);
+    void OnButtonCancel(wxCommandEvent& event) override;
     void SetIsProjectEnabled(bool isProjectEnabled) { this->m_isProjectEnabled = isProjectEnabled; }
     bool IsProjectEnabled() const { return m_isProjectEnabled; }
     bool IsCustomBuildEnabled() const { return m_isCustomBuild; }
@@ -133,18 +133,18 @@ public:
                        const wxString& configName,
                        const wxString& projectName,
                        const wxString& title);
-    virtual ~ProjectSettingsDlg();
+    ~ProjectSettingsDlg() override;
 
     const wxString& GetConfigName() const { return m_configName; }
     const wxString& GetProjectName() const { return m_projectName; }
 
     DECLARE_EVENT_TABLE()
 
-    virtual void OnButtonApply(wxCommandEvent& event);
-    virtual void OnButtonOK(wxCommandEvent& event);
-    virtual void OnButtonHelp(wxCommandEvent& e);
-    virtual void OnButtonApplyUI(wxUpdateUIEvent& event);
-    virtual void OnConfigurationChanged(wxCommandEvent& event);
+    void OnButtonApply(wxCommandEvent& event) override;
+    void OnButtonOK(wxCommandEvent& event) override;
+    void OnButtonHelp(wxCommandEvent& e) override;
+    void OnButtonApplyUI(wxUpdateUIEvent& event) override;
+    void OnConfigurationChanged(wxCommandEvent& event) override;
     virtual void OnProjectSelected(wxCommandEvent& e);
     virtual void OnWorkspaceClosed(clWorkspaceEvent& e);
 };

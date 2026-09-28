@@ -42,15 +42,15 @@ protected:
 
 public:
     AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector_t& tags, const wxString& targetFile);
-    virtual ~AddFunctionsImpDlg() = default;
+    ~AddFunctionsImpDlg() override = default;
 
     wxString GetText() const;
     wxString GetFileName() const;
 
 protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event);
-    virtual void OnCheckAll(wxCommandEvent& event);
-    virtual void OnUncheckAll(wxCommandEvent& event);
+    void OnOKUI(wxUpdateUIEvent& event) override;
+    void OnCheckAll(wxCommandEvent& event) override;
+    void OnUncheckAll(wxCommandEvent& event) override;
 };
 
 #endif // ADDFUNCTIONSIMPDLG_H

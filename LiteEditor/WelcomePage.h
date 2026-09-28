@@ -48,7 +48,7 @@ class WelcomePage : public WelcomePageBase
 {
 public:
     WelcomePage(wxWindow* parent);
-    virtual ~WelcomePage();
+    ~WelcomePage() override;
     bool Show(bool show = true) override;
     wxWindow* GetList() { return m_dvTreeCtrlWorkspaces; }
     void SelectSomething();

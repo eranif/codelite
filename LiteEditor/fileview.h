@@ -82,7 +82,7 @@ public:
     /**
      * Destructor .
      */
-    virtual ~FileViewTree();
+    ~FileViewTree() override;
 
     /**
      * @brief build project context menu

@@ -47,14 +47,14 @@ public:
      * @brief
      * @param json
      */
-    virtual void FromJSON(const JSONItem& json);
+    void FromJSON(const JSONItem& json) override;
     /**
      * @brief
      * @return
      */
-    virtual JSONItem ToJSON() const;
+    JSONItem ToJSON() const override;
     FindReplaceData();
-    virtual ~FindReplaceData() = default;
+    ~FindReplaceData() override = default;
 
     void SetFileScannerFlags(size_t f) { m_file_scanner_flags = f; }
     size_t GetFileScannerFlags() const { return m_file_scanner_flags; }

@@ -31,13 +31,13 @@ class NewCompilerDlg : public NewCompilerDlgBase
 {
 public:
     NewCompilerDlg(wxWindow* parent);
-    virtual ~NewCompilerDlg() = default;
+    ~NewCompilerDlg() override = default;
 
     wxString GetCompilerName() const { return m_textCtrlCompilerName->GetValue(); }
 
     wxString GetMasterCompiler() const;
 
 protected:
-    virtual void OnOkUI(wxUpdateUIEvent& event);
+    void OnOkUI(wxUpdateUIEvent& event) override;
 };
 #endif // NEWCOMPILERDLG_H

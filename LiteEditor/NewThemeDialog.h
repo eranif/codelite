@@ -35,7 +35,7 @@ private:
 
 public:
     NewThemeDialog(wxWindow* parent, LexerConf::Ptr_t lexer);
-    virtual ~NewThemeDialog() = default;
+    ~NewThemeDialog() override = default;
 
     wxString GetLexerName() const { return m_choiceLanguage->GetStringSelection(); }
 
@@ -44,7 +44,7 @@ public:
     wxString GetBaseTheme() const { return m_choiceBaseTheme->GetStringSelection(); }
 
 protected:
-    virtual void OnLexerSelected(wxCommandEvent& event);
-    virtual void OnOkUI(wxUpdateUIEvent& event);
+    void OnLexerSelected(wxCommandEvent& event) override;
+    void OnOkUI(wxUpdateUIEvent& event) override;
 };
 #endif // NEWTHEMEDIALOG_H

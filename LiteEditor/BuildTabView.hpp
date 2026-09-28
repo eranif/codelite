@@ -22,7 +22,7 @@ class BuildTabView : public wxStyledTextCtrl
 {
 public:
     BuildTabView(wxWindow* parent);
-    virtual ~BuildTabView();
+    ~BuildTabView() override;
 
     /// Append text to the control.
     ///
@@ -35,7 +35,7 @@ public:
     wxString Add(const wxString& output, bool process_last_line = false);
 
     /// Clear the view and all parsed information
-    void Clear();
+    void Clear() override;
 
     /// Initialise the view, preparing it for the next build process. This method should be called when a new build
     /// is starting

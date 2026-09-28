@@ -53,19 +53,19 @@ protected:
     void DoUpdateLocals(const LocalVariables& locals, size_t kind);
 
     // Events
-    void OnItemExpanding(wxTreeEvent& event);
-    void OnRefresh(wxCommandEvent& event);
-    void OnRefreshUI(wxUpdateUIEvent& event);
-    void OnItemRightClick(wxTreeEvent& event);
+    void OnItemExpanding(wxTreeEvent& event) override;
+    void OnRefresh(wxCommandEvent& event) override;
+    void OnRefreshUI(wxUpdateUIEvent& event) override;
+    void OnItemRightClick(wxTreeEvent& event) override;
     void OnEditValue(wxCommandEvent& event);
     void OnEditValueUI(wxUpdateUIEvent& event);
     void OnStackSelected(clCommandEvent& event);
-    void OnSortItems(wxCommandEvent& event);
+    void OnSortItems(wxCommandEvent& event) override;
     void SetSortingFunction();
 
 public:
     LocalsTable(wxWindow* parent);
-    virtual ~LocalsTable() = default;
+    ~LocalsTable() override = default;
 
 public:
     /**

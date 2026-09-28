@@ -36,10 +36,10 @@ class ImportFilesSettings : public SerializedObject
 
 public:
     ImportFilesSettings();
-    virtual ~ImportFilesSettings() = default;
+    ~ImportFilesSettings() override = default;
 
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     // Setters
     void SetFileMask(const wxString& fileMask) { this->m_fileMask = fileMask; }

@@ -44,15 +44,15 @@ class DebuggerPage : public DbgPageGeneralBase
     wxString m_title;
 
 protected:
-    virtual void OnSuperuserUI(wxUpdateUIEvent& event);
-    void OnBrowse(wxCommandEvent& e);
+    void OnSuperuserUI(wxUpdateUIEvent& event) override;
+    void OnBrowse(wxCommandEvent& e) override;
     void OnDebugAssert(wxCommandEvent& e);
 
     virtual void OnWindowsUI(wxUpdateUIEvent& event);
 
 public:
     DebuggerPage(wxWindow* parent, wxString title);
-    virtual ~DebuggerPage() = default;
+    ~DebuggerPage() override = default;
 };
 
 ///////////////////////////////////////////////////
@@ -64,11 +64,11 @@ class DebuggerPageMisc : public DbgPageMiscBase
     wxString m_title;
 
 public:
-    virtual void OnDebugAssert(wxCommandEvent& event);
-    virtual void OnWindowsUI(wxUpdateUIEvent& event);
+    void OnDebugAssert(wxCommandEvent& event) override;
+    void OnWindowsUI(wxUpdateUIEvent& event) override;
 
     DebuggerPageMisc(wxWindow* parent, const wxString& title);
-    virtual ~DebuggerPageMisc() = default;
+    ~DebuggerPageMisc() override = default;
 };
 
 ///////////////////////////////////////////////////
@@ -81,7 +81,7 @@ class DebuggerPageStartupCmds : public DbgPageStartupCmdsBase
 
 public:
     DebuggerPageStartupCmds(wxWindow* parent, const wxString& title);
-    virtual ~DebuggerPageStartupCmds() = default;
+    ~DebuggerPageStartupCmds() override = default;
 };
 
 ///////////////////////////////////////////////////
@@ -93,11 +93,11 @@ class DbgPagePreDefTypes : public DbgPagePreDefTypesBase
 
 public:
     DbgPagePreDefTypes(wxWindow* parent);
-    virtual ~DbgPagePreDefTypes() = default;
+    ~DbgPagePreDefTypes() override = default;
 
-    virtual void OnDeleteSet(wxCommandEvent& event);
-    virtual void OnDeleteSetUI(wxUpdateUIEvent& event);
-    virtual void OnNewSet(wxCommandEvent& event);
+    void OnDeleteSet(wxCommandEvent& event) override;
+    void OnDeleteSetUI(wxUpdateUIEvent& event) override;
+    void OnNewSet(wxCommandEvent& event) override;
 
     void Save();
 };
@@ -109,13 +109,13 @@ class DebuggerSettingsDlg : public DebuggerSettingsBaseDlg
 
 protected:
     void Initialize();
-    void OnOk(wxCommandEvent& e);
-    void OnButtonCancel(wxCommandEvent& e);
+    void OnOk(wxCommandEvent& e) override;
+    void OnButtonCancel(wxCommandEvent& e) override;
 
 public:
     /** Constructor */
     DebuggerSettingsDlg(wxWindow* parent);
-    virtual ~DebuggerSettingsDlg() = default;
+    ~DebuggerSettingsDlg() override = default;
 };
 
 class NewPreDefinedSetDlg : public NewPreDefinedSetBaseDlg
@@ -126,7 +126,7 @@ public:
         : NewPreDefinedSetBaseDlg(parent)
     {
     }
-    virtual ~NewPreDefinedSetDlg() = default;
+    ~NewPreDefinedSetDlg() override = default;
 
     wxTextCtrl* GetNameTextctl() { return m_textCtrlName; }
     wxChoice* GetChoiceCopyFrom() { return m_choiceCopyFrom; }

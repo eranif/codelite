@@ -43,11 +43,11 @@ public:
     };
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     SettersGetterData();
-    virtual ~SettersGetterData() = default;
+    ~SettersGetterData() override = default;
 
     void SetFlags(size_t flags) { this->m_flags = flags; }
     size_t GetFlags() const { return m_flags; }
@@ -100,12 +100,12 @@ class SettersGettersDlg : public SettersGettersBaseDlg
     SettersGetterData m_settings;
 
 protected:
-    virtual void OnSettersReturnReference(wxCommandEvent& event);
-    virtual void OnFilter(wxCommandEvent& event);
-    virtual void OnValueChanged(wxDataViewEvent& event);
-    void OnCheckStartWithUpperCase(wxCommandEvent& event);
-    void OnCheckAll(wxCommandEvent& e);
-    void OnUncheckAll(wxCommandEvent& e);
+    void OnSettersReturnReference(wxCommandEvent& event) override;
+    void OnFilter(wxCommandEvent& event) override;
+    void OnValueChanged(wxDataViewEvent& event) override;
+    void OnCheckStartWithUpperCase(wxCommandEvent& event) override;
+    void OnCheckAll(wxCommandEvent& e) override;
+    void OnUncheckAll(wxCommandEvent& e) override;
     void OnUpdatePreview(wxCommandEvent& e);
     void OnButtonOk(wxCommandEvent& e);
     int BuildTree();
@@ -130,7 +130,7 @@ protected:
 public:
     /** Constructor */
     SettersGettersDlg(wxWindow* parent);
-    virtual ~SettersGettersDlg();
+    ~SettersGettersDlg() override;
     wxString GetGenCode();
     bool GetFormatText() const { return m_checkBoxFormatFileWhenDone->IsChecked(); }
 

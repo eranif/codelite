@@ -48,18 +48,18 @@ public:
 protected:
     // Handlers for BatchBuildBaseDlg events.
     void OnItemSelected(wxCommandEvent& event);
-    void OnItemToggled(wxCommandEvent& event);
-    void OnBuild(wxCommandEvent& event);
-    void OnBuildUI(wxUpdateUIEvent& event);
-    void OnClean(wxCommandEvent& event);
-    void OnCleanUI(wxUpdateUIEvent& event);
-    void OnCheckAll(wxCommandEvent& event);
-    void OnUnCheckAll(wxCommandEvent& event);
-    void OnMoveUp(wxCommandEvent& event);
-    void OnMoveUpUI(wxUpdateUIEvent& event);
-    void OnMoveDown(wxCommandEvent& event);
-    void OnMoveDownUI(wxUpdateUIEvent& event);
-    void OnClose(wxCommandEvent& event);
+    void OnItemToggled(wxCommandEvent& event) override;
+    void OnBuild(wxCommandEvent& event) override;
+    void OnBuildUI(wxUpdateUIEvent& event) override;
+    void OnClean(wxCommandEvent& event) override;
+    void OnCleanUI(wxUpdateUIEvent& event) override;
+    void OnCheckAll(wxCommandEvent& event) override;
+    void OnUnCheckAll(wxCommandEvent& event) override;
+    void OnMoveUp(wxCommandEvent& event) override;
+    void OnMoveUpUI(wxUpdateUIEvent& event) override;
+    void OnMoveDown(wxCommandEvent& event) override;
+    void OnMoveDownUI(wxUpdateUIEvent& event) override;
+    void OnClose(wxCommandEvent& event) override;
 
 public:
     /** Constructor */

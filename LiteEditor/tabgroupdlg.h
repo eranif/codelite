@@ -31,12 +31,12 @@
 
 class LoadTabGroupDlg : public LoadTabGroupBaseDlg
 {
-    virtual void OnBrowse(wxCommandEvent& WXUNUSED(event));
-    virtual void OnItemActivated(wxCommandEvent& WXUNUSED(event));
+    void OnBrowse(wxCommandEvent& WXUNUSED(event)) override;
+    void OnItemActivated(wxCommandEvent& WXUNUSED(event)) override;
 
 public:
     LoadTabGroupDlg(wxWindow* parent, const wxString& path, const wxArrayString& previousgroups);
-    virtual ~LoadTabGroupDlg() = default;
+    ~LoadTabGroupDlg() override = default;
 
     void SetListTabs(const wxArrayString& tabs) { m_listBox->Set(tabs); }
 
@@ -51,14 +51,14 @@ public:
 
 class SaveTabGroupDlg : public SaveTabGroupBaseDlg
 {
-    virtual void OnCheckAll(wxCommandEvent& event);
-    virtual void OnCheckAllUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnClearAll(wxCommandEvent& event);
-    virtual void OnClearAllUpdateUI(wxUpdateUIEvent& event);
+    void OnCheckAll(wxCommandEvent& event) override;
+    void OnCheckAllUpdateUI(wxUpdateUIEvent& event) override;
+    void OnClearAll(wxCommandEvent& event) override;
+    void OnClearAllUpdateUI(wxUpdateUIEvent& event) override;
 
 public:
     SaveTabGroupDlg(wxWindow* parent, const wxArrayString& previousgroups);
-    virtual ~SaveTabGroupDlg() = default;
+    ~SaveTabGroupDlg() override = default;
     void SetListTabs(const wxArrayString& tabs)
     {
         m_ListTabs->Set(tabs);

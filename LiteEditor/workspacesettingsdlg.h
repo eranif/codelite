@@ -45,12 +45,12 @@ protected:
     // Handlers for WorkspaceSettingsBase events.
     // void OnAddIncludePath( wxCommandEvent& event );
     // void OnAddExcludePath( wxCommandEvent& event );
-    void OnButtonOK(wxCommandEvent& event);
+    void OnButtonOK(wxCommandEvent& event) override;
 
 public:
     /** Constructor */
     WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* localWorkspace);
-    virtual ~WorkspaceSettingsDlg() = default;
+    ~WorkspaceSettingsDlg() override = default;
 
     wxArrayString GetIncludePaths() const;
 };

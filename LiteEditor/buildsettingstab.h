@@ -42,7 +42,7 @@ public:
     void OnUpdateUI(wxUpdateUIEvent& event);
 
 protected:
-    virtual void OnChange(wxCommandEvent& event);
+    void OnChange(wxCommandEvent& event) override;
 };
 
 #endif // __buildsettingstab__

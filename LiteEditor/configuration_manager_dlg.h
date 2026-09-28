@@ -52,10 +52,10 @@ protected:
     // Events
     //----------------------------------
     void OnButtonNew(wxCommandEvent& event);
-    void OnButtonOK(wxCommandEvent& event);
-    void OnWorkspaceConfigSelected(wxCommandEvent& event);
-    void OnButtonApply(wxCommandEvent& event);
-    void OnButtonApplyUI(wxUpdateUIEvent& event);
+    void OnButtonOK(wxCommandEvent& event) override;
+    void OnWorkspaceConfigSelected(wxCommandEvent& event) override;
+    void OnButtonApply(wxCommandEvent& event) override;
+    void OnButtonApplyUI(wxUpdateUIEvent& event) override;
     void LoadWorkspaceConfiguration(const wxString& confName);
 
     void PopulateConfigurations();
@@ -65,7 +65,7 @@ protected:
 public:
     /** Constructor */
     ConfigurationManagerDlg(wxWindow* parent);
-    virtual ~ConfigurationManagerDlg();
+    ~ConfigurationManagerDlg() override;
 };
 
 #endif // __configuration_manager_dlg__

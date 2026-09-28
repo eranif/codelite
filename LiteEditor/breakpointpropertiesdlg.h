@@ -33,17 +33,17 @@
 class BreakptPropertiesDlg : public BreakpointPropertiesDlgBase
 {
 protected:
-    void EndModal(int retCode);
+    void EndModal(int retCode) override;
     // Handlers for BreakptPropertiesDlg events.
-    void OnCheckBreakLineno(wxCommandEvent& event);
-    void OnCheckBreakFunction(wxCommandEvent& event);
-    void OnCheckBreakMemory(wxCommandEvent& event);
-    void OnBrowse(wxCommandEvent& event);
-    void OnCheckBreakLinenoUI(wxUpdateUIEvent& event);
-    void OnCheckBreakFunctionUI(wxUpdateUIEvent& event);
-    void OnCheckBreakMemoryUI(wxUpdateUIEvent& event);
-    void OnPageChanging(wxChoicebookEvent& event);
-    void OnPageChanged(wxChoicebookEvent& event);
+    void OnCheckBreakLineno(wxCommandEvent& event) override;
+    void OnCheckBreakFunction(wxCommandEvent& event) override;
+    void OnCheckBreakMemory(wxCommandEvent& event) override;
+    void OnBrowse(wxCommandEvent& event) override;
+    void OnCheckBreakLinenoUI(wxUpdateUIEvent& event) override;
+    void OnCheckBreakFunctionUI(wxUpdateUIEvent& event) override;
+    void OnCheckBreakMemoryUI(wxUpdateUIEvent& event) override;
+    void OnPageChanging(wxChoicebookEvent& event) override;
+    void OnPageChanged(wxChoicebookEvent& event) override;
 
     bool its_a_breakpt; // Holds whether it's a break or a watch. Used for UpdateUI
     enum whichbreakchk { wbc_line, wbc_function, wbc_memory };
@@ -52,7 +52,7 @@ protected:
 
 public:
     BreakptPropertiesDlg(wxWindow* parent);
-    ~BreakptPropertiesDlg() = default;
+    ~BreakptPropertiesDlg() override = default;
 
     /**
      * \brief Insert the data from an existing breakpoint into the dialog fields

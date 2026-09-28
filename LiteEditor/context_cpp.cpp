@@ -56,6 +56,7 @@
 #include "setters_getters_dlg.h"
 #include "workspacetab.h"
 
+#include <algorithm>
 #include <wx/choicdlg.h>
 #include <wx/file.h>
 #include <wx/regex.h>
@@ -1865,9 +1866,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor) co
         }
     }
 
-    if (at < 0) {
-        at = 0;
-    }
+    at = std::max(at, 0);
     return ctrl->GetTextRange(at, pos);
 }
 

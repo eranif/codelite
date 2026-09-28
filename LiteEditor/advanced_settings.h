@@ -61,8 +61,8 @@ class BuildSettingsDialog : public AdvancedDlgBase
     std::map<wxString, std::vector<ICompilerSubPage*>> m_compilerPagesMap;
 
 protected:
-    virtual void OnApply(wxCommandEvent& event);
-    virtual void OnApplyUI(wxUpdateUIEvent& event);
+    void OnApply(wxCommandEvent& event) override;
+    void OnApplyUI(wxUpdateUIEvent& event) override;
 
     wxPanel* m_compilersMainPanel;
     CompilerMainPage* m_compilersPage;
@@ -78,7 +78,7 @@ public:
     void OnButtonNewClicked();
     void OnScanAndSuggestCompilers();
     void OnAddExistingCompiler();
-    void OnButtonOKClicked(wxCommandEvent&);
+    void OnButtonOKClicked(wxCommandEvent&) override;
     void OnContextMenu(wxContextMenuEvent& e);
 
     void LoadCompilers();
@@ -94,7 +94,7 @@ public:
                         wxPoint pos = wxDefaultPosition,
                         wxSize size = wxDefaultSize,
                         int style = wxDEFAULT_DIALOG_STYLE);
-    ~BuildSettingsDialog();
+    ~BuildSettingsDialog() override;
     void OnAutoDetectCompilers(wxButton* btn);
 };
 

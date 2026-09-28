@@ -33,7 +33,7 @@ class DebugCoreDumpDlg : public DebugCoreDumpDlgBase
 
 public:
     DebugCoreDumpDlg(wxWindow* parent);
-    virtual ~DebugCoreDumpDlg() = default;
+    ~DebugCoreDumpDlg() override = default;
 
     wxString GetCore() { return m_Core->GetValue(); }
     wxString GetExe() { return m_ExeFilepath->GetValue(); }
@@ -41,12 +41,12 @@ public:
     wxString GetDebuggerName() { return m_choiceDebuggers->GetStringSelection(); }
 
 protected:
-    virtual void OnButtonBrowseCore(wxCommandEvent& event);
-    virtual void OnButtonBrowseExe(wxCommandEvent& event);
-    virtual void OnButtonBrowseWD(wxCommandEvent& event);
-    virtual void OnButtonCancel(wxCommandEvent& event);
-    virtual void OnButtonDebug(wxCommandEvent& event);
-    virtual void OnDebugBtnUpdateUI(wxUpdateUIEvent& event);
+    void OnButtonBrowseCore(wxCommandEvent& event) override;
+    void OnButtonBrowseExe(wxCommandEvent& event) override;
+    void OnButtonBrowseWD(wxCommandEvent& event) override;
+    void OnButtonCancel(wxCommandEvent& event) override;
+    void OnButtonDebug(wxCommandEvent& event) override;
+    void OnDebugBtnUpdateUI(wxUpdateUIEvent& event) override;
 
     void Initialize();
 };

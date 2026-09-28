@@ -40,12 +40,12 @@ class CompilersModifiedDlg : public CompilersModifiedDlgBase
 
 public:
     CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t& deletedCompilers);
-    virtual ~CompilersModifiedDlg() = default;
+    ~CompilersModifiedDlg() override = default;
 
     const wxStringMap_t& GetReplacementTable() const { return m_table; }
 
 protected:
-    virtual void OnValueChanged(wxPropertyGridEvent& event);
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnValueChanged(wxPropertyGridEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
 };
 #endif // COMPILERSMODIFIEDDLG_H

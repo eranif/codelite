@@ -36,12 +36,12 @@ class SelectDropTargetDlg : public SelectDropTargetBaseDlg
 
 public:
     SelectDropTargetDlg(wxWindow* parent, const wxArrayString& folders);
-    virtual ~SelectDropTargetDlg() = default;
+    ~SelectDropTargetDlg() override = default;
 
 protected:
-    virtual void OnSelectionActivated(wxDataViewEvent& event);
-    virtual void OnOK(wxCommandEvent& event);
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnSelectionActivated(wxDataViewEvent& event) override;
+    void OnOK(wxCommandEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
     void Initialize();
     void ActivateSelection();
 };

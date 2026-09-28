@@ -102,7 +102,7 @@ protected:
 
 public:
     SyntaxHighlightDlg(wxWindow* parent);
-    virtual ~SyntaxHighlightDlg();
+    ~SyntaxHighlightDlg() override;
     bool IsRestartRequired() const;
 };
 

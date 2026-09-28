@@ -72,7 +72,7 @@ public:
         }
     }
 
-    virtual ~BreakpointsListctrl() = default;
+    ~BreakpointsListctrl() override = default;
     void Initialise(std::vector<clDebuggerBreakpoint>& bps);
     int GetLinenoColumn() { return col_lineno; }
     int GetFileColumn() { return col_file; }

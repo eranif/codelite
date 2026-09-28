@@ -39,10 +39,10 @@ public:
         : m_selectedDbg(0)
     {
     }
-    ~DebugCoreDumpInfo() {}
+    ~DebugCoreDumpInfo() override = default;
 
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     void SetCoreFilepaths(const wxArrayString& coreFilepaths) { this->m_coreFilepaths = coreFilepaths; }
     void SetExeFilepaths(const wxArrayString& exeFilepaths) { this->m_exeFilepaths = exeFilepaths; }

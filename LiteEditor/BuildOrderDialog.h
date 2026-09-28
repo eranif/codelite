@@ -13,7 +13,7 @@ class BuildOrderDialog : public BuildOrderDialogBase
 
 public:
     BuildOrderDialog(wxWindow* parent, const wxString& projectName);
-    virtual ~BuildOrderDialog() = default;
+    ~BuildOrderDialog() override = default;
 
 protected:
     void Initialise(const wxString& config);

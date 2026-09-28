@@ -43,11 +43,11 @@ protected:
     void EnsureRowVisible(int row);
 
 public:
-    virtual void OnMenu(wxDataViewEvent& event);
-    virtual void OnItemActivated(wxDataViewEvent& event);
+    void OnMenu(wxDataViewEvent& event) override;
+    void OnItemActivated(wxDataViewEvent& event) override;
 
     DebuggerCallstackView(wxWindow* parent);
-    virtual ~DebuggerCallstackView();
+    ~DebuggerCallstackView() override;
     void Update(const StackEntryArray& stackArr);
     void SetCurrentLevel(const int level);
     void Clear();

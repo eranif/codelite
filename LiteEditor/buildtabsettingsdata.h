@@ -47,10 +47,10 @@ public:
     BuildTabSettingsData& operator=(const BuildTabSettingsData& rhs) = default;
 
     BuildTabSettingsData() = default;
-    ~BuildTabSettingsData() = default;
+    ~BuildTabSettingsData() override = default;
 
-    void Serialize(Archive& arch);
-    void DeSerialize(Archive& arch);
+    void Serialize(Archive& arch) override;
+    void DeSerialize(Archive& arch) override;
 
     void SetSkipWarnings(bool skipWarnings) { this->m_skipWarnings = skipWarnings; }
     bool IsSkipWarnings() const { return m_skipWarnings; }

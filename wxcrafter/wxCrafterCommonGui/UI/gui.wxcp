@@ -7,7 +7,7 @@
     "m_firstWindowId": 1000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 318,
+    "m_objCounter": 319,
     "m_outputFileName": "gui",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -176,8 +176,7 @@
           "m_description": "Process a close event. This event applies to wxFrame and wxDialog classes",
           "m_eventClass": "wxCloseEvent",
           "m_eventName": "wxEVT_CLOSE_WINDOW",
-          "m_functionNameAndSignature": "OnCloseFrame(wxCloseEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnCloseFrame(wxCloseEvent& event)"
         }
       ],
       "m_children": [
@@ -1070,8 +1069,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnFileOpen(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnFileOpen(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1137,15 +1135,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnSave(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnSave(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnSaveUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnSaveUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1270,15 +1266,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnGenerateCode(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnGenerateCode(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnGenerateCodeUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnGenerateCodeUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1344,15 +1338,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnBatchGenerateCode(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnBatchGenerateCode(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnBatchGenerateCodeUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnBatchGenerateCodeUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1477,8 +1469,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnHide(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnHide(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1574,15 +1565,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnPreview(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnPreview(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnPreviewUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnPreviewUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1678,15 +1667,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnDeleteItem(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnDeleteItem(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnDeleteItemUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnDeleteItemUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1811,15 +1798,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnCopy(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnCopy(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnSelectionUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnSelectionUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1885,15 +1870,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnPaste(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnPaste(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnPasteUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnPasteUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1959,15 +1942,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnCut(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnCut(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnSelectionUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnSelectionUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2092,15 +2073,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnUndo(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnUndo(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnUndoUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnUndoUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2166,15 +2145,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnRedo(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnRedo(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnRedoUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnRedoUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2358,8 +2335,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnRename(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnRename(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2484,8 +2460,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnSettings(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnSettings(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2581,15 +2556,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnOpenFindDialog(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOpenFindDialog(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnFindUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnFindUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2685,15 +2658,13 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnBuild(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnBuild(wxCommandEvent& event)"
                     },
                     {
                       "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnBuildUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnBuildUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2789,8 +2760,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnImportFB(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnImportFB(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2856,8 +2826,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnImportSmith(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnImportSmith(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2923,8 +2892,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnImportXRC(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnImportXRC(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -3020,8 +2988,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnNewCustomControl(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnNewCustomControl(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -3087,8 +3054,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnEditCustomControl(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnEditCustomControl(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -3154,8 +3120,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnDeleteCustomControl(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnDeleteCustomControl(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -3251,8 +3216,7 @@
                       "m_description": "Menu item has been clicked",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_MENU",
-                      "m_functionNameAndSignature": "OnAbout(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnAbout(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -3871,8 +3835,7 @@
                                       "m_description": "The page selection was changed",
                                       "m_eventClass": "wxBookCtrlEvent",
                                       "m_eventName": "wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED",
-                                      "m_functionNameAndSignature": "OnPageChanged(wxBookCtrlEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnPageChanged(wxBookCtrlEvent& event)"
                                     }
                                   ],
                                   "m_children": [
@@ -4571,8 +4534,7 @@
                                                   "m_description": "The page selection was changed",
                                                   "m_eventClass": "wxBookCtrlEvent",
                                                   "m_eventName": "wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED",
-                                                  "m_functionNameAndSignature": "OnCppBookPageChanged(wxBookCtrlEvent& event)",
-                                                  "m_noBody": false
+                                                  "m_functionNameAndSignature": "OnCppBookPageChanged(wxBookCtrlEvent& event)"
                                                 }
                                               ],
                                               "m_children": [
@@ -6619,8 +6581,7 @@
                                                   "m_description": "Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
                                                   "m_eventClass": "wxPropertyGridEvent",
                                                   "m_eventName": "wxEVT_PG_CHANGED",
-                                                  "m_functionNameAndSignature": "OnStylesChanged(wxPropertyGridEvent& event)",
-                                                  "m_noBody": false
+                                                  "m_functionNameAndSignature": "OnStylesChanged(wxPropertyGridEvent& event)"
                                                 }
                                               ],
                                               "m_children": []
@@ -6874,15 +6835,13 @@
                                                   "m_description": "Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
                                                   "m_eventClass": "wxPropertyGridEvent",
                                                   "m_eventName": "wxEVT_PG_CHANGED",
-                                                  "m_functionNameAndSignature": "OnSizerFlagsChanged(wxPropertyGridEvent& event)",
-                                                  "m_noBody": false
+                                                  "m_functionNameAndSignature": "OnSizerFlagsChanged(wxPropertyGridEvent& event)"
                                                 },
                                                 {
                                                   "m_description": "Process a wxEVT_UPDATE_UI event",
                                                   "m_eventClass": "wxUpdateUIEvent",
                                                   "m_eventName": "wxEVT_UPDATE_UI",
-                                                  "m_functionNameAndSignature": "OnSizerFlagsUpdateUI(wxUpdateUIEvent& event)",
-                                                  "m_noBody": false
+                                                  "m_functionNameAndSignature": "OnSizerFlagsUpdateUI(wxUpdateUIEvent& event)"
                                                 }
                                               ],
                                               "m_children": []
@@ -7136,8 +7095,7 @@
                                                   "m_description": "Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
                                                   "m_eventClass": "wxPropertyGridEvent",
                                                   "m_eventName": "wxEVT_PG_CHANGED",
-                                                  "m_functionNameAndSignature": "OnAuiPaneInfoChanged(wxPropertyGridEvent& event)",
-                                                  "m_noBody": false
+                                                  "m_functionNameAndSignature": "OnAuiPaneInfoChanged(wxPropertyGridEvent& event)"
                                                 }
                                               ],
                                               "m_children": []
@@ -9237,8 +9195,7 @@
                       "m_description": "Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_CHOICE_SELECTED",
-                      "m_functionNameAndSignature": "OnStandardColorSelected(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnStandardColorSelected(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -9368,8 +9325,7 @@
                       "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnSelectColor(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnSelectColor(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -9470,15 +9426,13 @@
                   "m_description": "Process a wxEVT_ERASE_BACKGROUND event.",
                   "m_eventClass": "wxEraseEvent",
                   "m_eventName": "wxEVT_ERASE_BACKGROUND",
-                  "m_functionNameAndSignature": "OnErasePreviewColor(wxEraseEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnErasePreviewColor(wxEraseEvent& event)"
                 },
                 {
                   "m_description": "Process a wxEVT_PAINT event",
                   "m_eventClass": "wxPaintEvent",
                   "m_eventName": "wxEVT_PAINT",
-                  "m_functionNameAndSignature": "OnPaintPreviewColor(wxPaintEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnPaintPreviewColor(wxPaintEvent& event)"
                 }
               ],
               "m_children": []
@@ -10330,6 +10284,105 @@
                       ],
                       "m_events": [],
                       "m_children": []
+                    },
+                    {
+                      "m_type": 4415,
+                      "proportion": 0,
+                      "border": 5,
+                      "gbSpan": "1,1",
+                      "gbPosition": "0,0",
+                      "m_styles": [],
+                      "m_sizerFlags": [
+                        "wxALL",
+                        "wxLEFT",
+                        "wxRIGHT",
+                        "wxTOP",
+                        "wxBOTTOM"
+                      ],
+                      "m_properties": [
+                        {
+                          "type": "winid",
+                          "m_label": "ID:",
+                          "m_winid": "wxID_ANY"
+                        },
+                        {
+                          "type": "string",
+                          "m_label": "Size:",
+                          "m_value": "-1,-1"
+                        },
+                        {
+                          "type": "string",
+                          "m_label": "Minimum Size:",
+                          "m_value": "-1,-1"
+                        },
+                        {
+                          "type": "string",
+                          "m_label": "Name:",
+                          "m_value": "m_checkBoxGenerateHFiles"
+                        },
+                        {
+                          "type": "multi-string",
+                          "m_label": "Tooltip:",
+                          "m_value": ""
+                        },
+                        {
+                          "type": "colour",
+                          "m_label": "Bg Colour:",
+                          "colour": "<Default>"
+                        },
+                        {
+                          "type": "colour",
+                          "m_label": "Fg Colour:",
+                          "colour": "<Default>"
+                        },
+                        {
+                          "type": "font",
+                          "m_label": "Font:",
+                          "m_value": ""
+                        },
+                        {
+                          "type": "bool",
+                          "m_label": "Hidden",
+                          "m_value": false
+                        },
+                        {
+                          "type": "bool",
+                          "m_label": "Disabled",
+                          "m_value": false
+                        },
+                        {
+                          "type": "bool",
+                          "m_label": "Focused",
+                          "m_value": false
+                        },
+                        {
+                          "type": "string",
+                          "m_label": "Class Name:",
+                          "m_value": ""
+                        },
+                        {
+                          "type": "string",
+                          "m_label": "Include File:",
+                          "m_value": ""
+                        },
+                        {
+                          "type": "string",
+                          "m_label": "Style:",
+                          "m_value": ""
+                        },
+                        {
+                          "type": "string",
+                          "m_label": "Label:",
+                          "m_value": "Generate .h files instead of .hpp"
+                        },
+                        {
+                          "type": "bool",
+                          "m_label": "Value:",
+                          "m_value": false
+                        }
+                      ],
+                      "m_events": [],
+                      "m_children": []
                     }
                   ]
                 },
@@ -10927,8 +10980,7 @@
                       "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnOk(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOk(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -11113,22 +11165,19 @@
           "m_description": "Process a wxEVT_PAINT event",
           "m_eventClass": "wxPaintEvent",
           "m_eventName": "wxEVT_PAINT",
-          "m_functionNameAndSignature": "OnPaint(wxPaintEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnPaint(wxPaintEvent& event)"
         },
         {
           "m_description": "Process a wxEVT_ERASE_BACKGROUND event.",
           "m_eventClass": "wxEraseEvent",
           "m_eventName": "wxEVT_ERASE_BACKGROUND",
-          "m_functionNameAndSignature": "OnEraseBG(wxEraseEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnEraseBG(wxEraseEvent& event)"
         },
         {
           "m_description": "Process a wxEVT_LEFT_DOWN event. The handler of this event should normally call event.Skip() to allow the default processing to take place as otherwise the window under mouse wouldn't get the focus.",
           "m_eventClass": "wxMouseEvent",
           "m_eventName": "wxEVT_LEFT_DOWN",
-          "m_functionNameAndSignature": "OnLeftDown(wxMouseEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnLeftDown(wxMouseEvent& event)"
         }
       ],
       "m_children": []

@@ -346,10 +346,9 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
         derivedClassFileHPP.MakeAbsolute(wxcpFile.GetPath());
     }
 
-    // By default we want to generate hpp files. However, if a "h" file exists
-    // keep it.
+    // If a ".h" file exists, keep using it. Otherwise, use the project default.
     if (!derivedClassFileHPP.FileExists()) {
-        derivedClassFileHPP.SetExt("hpp");
+        derivedClassFileHPP.SetExt(wxcProjectMetadata::Get().GetHeaderFileExt());
     }
 
     wxString dCpp, dH, dBlockGuard;

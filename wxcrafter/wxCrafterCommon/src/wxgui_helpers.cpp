@@ -30,12 +30,12 @@ namespace
 // set explicitly below.
 wxFontFamily SystemFontFamilyFor(const wxString& sysName)
 {
-    if (sysName == wxT("wxSYS_OEM_FIXED_FONT") || sysName == wxT("wxSYS_ANSI_FIXED_FONT")
-        || sysName == wxT("wxSYS_SYSTEM_FIXED_FONT")) {
+    if (sysName == wxT("wxSYS_OEM_FIXED_FONT") || sysName == wxT("wxSYS_ANSI_FIXED_FONT") ||
+        sysName == wxT("wxSYS_SYSTEM_FIXED_FONT")) {
         return wxFONTFAMILY_TELETYPE;
     }
-    if (sysName == wxT("wxSYS_ANSI_VAR_FONT") || sysName == wxT("wxSYS_SYSTEM_FONT")
-        || sysName == wxT("wxSYS_DEVICE_DEFAULT_FONT") || sysName == wxT("wxSYS_DEFAULT_GUI_FONT")) {
+    if (sysName == wxT("wxSYS_ANSI_VAR_FONT") || sysName == wxT("wxSYS_SYSTEM_FONT") ||
+        sysName == wxT("wxSYS_DEVICE_DEFAULT_FONT") || sysName == wxT("wxSYS_DEFAULT_GUI_FONT")) {
         return wxFONTFAMILY_DEFAULT;
     }
     return wxFONTFAMILY_MAX; // sentinel: not a wxSYS_* token
@@ -1300,9 +1300,21 @@ void wxCrafter::SetTopFrame(wxWindow* frame) { sTopFrame = frame; }
 const wxString& wxCrafter::SimpleBorderCode()
 {
     static const wxString s_code = R"(
+#ifdef WXC_MAYBE_UNUSED
+#undef WXC_MAYBE_UNUSED
+#endif
+
+#if __cplusplus >= 201703L
+#define WXC_MAYBE_UNUSED [[maybe_unused]]
+#elif defined(__GNUC__) || defined(__clang__)
+#define WXC_MAYBE_UNUSED __attribute__((unused))
+#else
+#define WXC_MAYBE_UNUSED
+#endif
+
 namespace {
 // return the wxBORDER_SIMPLE that matches the current application theme
-[[maybe_unused]]
+WXC_MAYBE_UNUSED
 wxBorder get_border_simple_theme_aware_bit() {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
     return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;

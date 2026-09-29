@@ -60,6 +60,7 @@ public:
         FORMAT_INHERITED_FILES = (1 << 10),
         DONT_USE_RELATIVE_BITMAPS = (1 << 11),
         EXIT_MINIMIZE_TO_TRAY = (1 << 12),
+        PREFER_H_OVER_HPP = (1 << 13),
     };
 
 protected:

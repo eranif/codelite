@@ -42,6 +42,8 @@ void LSPNetworkRemoteSTDIO::DoClose()
         m_process->Terminate();
         m_process = nullptr;
     }
+    // The events were bound to the old process, the next process needs new bindings.
+    m_eventsBound = false;
     m_createRequestId.reset();
 }
 

@@ -8,6 +8,8 @@ OS_NAME="$(uname -s)"
 FORCE_CMAKE=0
 WITH_TESTS=0
 WX_VERSION=v3.3.3.1
+WXCRAFTER_BUILD_DIR_NAME=.build-release-wxcrafter
+WXCRAFTER_BUILD_DIR=${ROOT_DIR}/${WXCRAFTER_BUILD_DIR_NAME}
 
 . ${ROOT_DIR}/scripts/functions.rc
 
@@ -319,6 +321,46 @@ function build_CodeLite_MSW() {
   INFO ""
 }
 
+function build_wxCrafter_MSW() {
+  INFO "Building wxCrafter"
+
+  # wxCrafter must be built against the exact same wxWidgets build used for CodeLite,
+  # so make sure it exists first (this reuses ${BUILD_DIR}/wxWidgets-install; it does
+  # NOT build a separate copy of wxWidgets for wxCrafter).
+  build_wx_widgets_MSW
+  local wx_install_dir=${BUILD_DIR}/wxWidgets-install
+
+  mkdir -p ${WXCRAFTER_BUILD_DIR}
+  cd ${WXCRAFTER_BUILD_DIR}
+  # Configure if the build tree has not been generated yet, or if
+  # CMakeLists.txt is newer than the generated cache.
+  if [ "${FORCE_CMAKE}" -eq 1 ] || [ ! -f "${WXCRAFTER_BUILD_DIR}/CMakeCache.txt" ] || [ ! -d "${WXCRAFTER_BUILD_DIR}/install" ] ||
+    check_cmake_modified "${WXCRAFTER_BUILD_DIR}"; then
+    INFO "Configuring wxCrafter"
+    rm -f ${WXCRAFTER_BUILD_DIR}/CMakeCache.txt
+    cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DWXC_APP=1 -DWXWIN="${wx_install_dir}"
+  else
+    INFO "wxCrafter already configured; skipping cmake"
+  fi
+  make -j$(nproc) install
+  INFO "wxCrafter built successfully"
+  cd ${ROOT_DIR}
+
+  INFO ""
+  INFO "To run wxCrafter:"
+  INFO "================="
+  INFO ""
+  INFO "(cd ${WXCRAFTER_BUILD_DIR}/install/bin && ./wxcrafter.exe)"
+  INFO ""
+}
+
+function package_wxCrafter_MSW() {
+  build_wxCrafter_MSW
+  cd ${WXCRAFTER_BUILD_DIR}
+  make -j$(nproc) setup
+  cd ${ROOT_DIR}
+}
+
 function clean() {
   if [ ! -d "${BUILD_DIR}" ]; then
     INFO "Nothing to clean"
@@ -344,6 +386,8 @@ function usage() {
   echo "  clean       Remove build artifacts (make clean)"
   echo "  distclean   Remove the entire build directory"
   echo "  package     Create an installer suitable for the current platform"
+  echo "  wxcrafter           Build wxCrafter (Windows only)"
+  echo "  package_wxcrafter   Build wxCrafter and create an installer for it (Windows only)"
   echo ""
   echo "Options:"
   echo "  --cmake     Force the cmake configure stage even if it is up to date"
@@ -411,7 +455,7 @@ while [ $# -gt 0 ]; do
     usage
     exit 0
     ;;
-  clean | distclean | package | debug)
+  clean | distclean | package | debug | wxcrafter | package_wxcrafter)
     if [ -n "${TARGET}" ]; then
       ERROR "Multiple targets specified: '${TARGET}' and '${1}'"
       usage
@@ -439,6 +483,19 @@ distclean)
   ;;
 package)
   package
+  exit 0
+  ;;
+wxcrafter | package_wxcrafter)
+  if [[ "${OS_NAME}" != *MINGW* ]]; then
+    ERROR "'${TARGET}' is only supported on Windows"
+    exit 1
+  fi
+  check_prerequistes
+  if [ "${TARGET}" == "wxcrafter" ]; then
+    build_wxCrafter_MSW
+  else
+    package_wxCrafter_MSW
+  fi
   exit 0
   ;;
 debug)

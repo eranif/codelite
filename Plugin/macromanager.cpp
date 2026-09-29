@@ -185,6 +185,19 @@ wxString MacroManager::DoExpand(
     wxString account_name;
     wxString ssh_user;
 
+    auto expandCommonMacros = [&](wxString& expandedString) {
+        // expand common macros
+        wxDateTime now = wxDateTime::Now();
+        expandedString.Replace("$(User)", wxGetUserId());
+        expandedString.Replace("$(Date)", now.FormatDate());
+        expandedString.Replace("$(Year)", StringUtils::wxIntToString(now.GetCurrentYear()));
+
+        // ssh related
+        expandedString.Replace("$(SSH_AccountName)", account_name);
+        expandedString.Replace("$(SSH_Host)", ssh_host);
+        expandedString.Replace("$(SSH_User)", ssh_user);
+    };
+
     auto w = clWorkspaceManager::Get().GetWorkspace();
     if (w && w->IsRemote()) {
         wxString ssh_account = w->GetSshAccount();
@@ -192,6 +205,8 @@ wxString MacroManager::DoExpand(
         ssh_host = account.GetHost();
         account_name = ssh_account;
         ssh_user = account.GetUsername();
+        expandCommonMacros(expandedString);
+        return expandedString;
     }
 
     if (clCxxWorkspaceST::Get()->IsOpen()) {
@@ -347,16 +362,7 @@ wxString MacroManager::DoExpand(
         }
 
         // expand common macros
-        wxDateTime now = wxDateTime::Now();
-        expandedString.Replace("$(User)", wxGetUserId());
-        expandedString.Replace("$(Date)", now.FormatDate());
-        expandedString.Replace("$(Year)", StringUtils::wxIntToString(now.GetCurrentYear()));
-
-        // ssh related
-        expandedString.Replace("$(SSH_AccountName)", account_name);
-        expandedString.Replace("$(SSH_Host)", ssh_host);
-        expandedString.Replace("$(SSH_User)", ssh_user);
-
+        expandCommonMacros(expandedString);
         if (manager && applyEnv) {
             expandedString.Replace("$(CodeLitePath)", manager->GetInstallDirectory());
 

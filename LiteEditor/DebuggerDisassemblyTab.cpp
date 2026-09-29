@@ -25,6 +25,8 @@
 
 #include "DebuggerDisassemblyTab.h"
 
+#include <algorithm>
+
 #include "BreakpointsView.hpp"
 #include "Debugger/debuggermanager.h"
 #include "breakpointsmgr.h"
@@ -183,8 +185,7 @@ void DebuggerDisassemblyTab::DoCentrLine(int line)
     int linesAboveIt = numLinesOnScreen / 2;
 
     line = line - linesAboveIt;
-    if (line < 0)
-        line = 0;
+    line = std::max(line, 0);
 
     m_stc->SetFirstVisibleLine(line);
     m_stc->ClearSelections();

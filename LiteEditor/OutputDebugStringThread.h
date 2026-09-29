@@ -27,13 +27,13 @@ class OutputDebugStringThread : public wxThread
 
 public:
     OutputDebugStringThread();
-    virtual ~OutputDebugStringThread();
+    ~OutputDebugStringThread() override;
 
 public:
     /**
      * @brief the thread entry point
      */
-    virtual void* Entry();
+    void* Entry() override;
 
     /**
      * Stops the thread

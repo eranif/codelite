@@ -40,7 +40,7 @@ public:
                         wxWindow* parent = nullptr,
                         wxWindowID id = wxID_ANY,
                         const wxString& title = _("Local Preferences"));
-    ~EditorSettingsLocal() = default;
+    ~EditorSettingsLocal() override = default;
 
     LocalOptionsConfigPtr GetLocalOpts() const { return localOptions; }
 
@@ -48,22 +48,22 @@ protected:
     void DisplayHigherValues(const OptionsConfigPtr options);
     void DisplayLocalValues(const LocalOptionsConfigPtr options);
 
-    void indentsUsesTabsUpdateUI(wxUpdateUIEvent& event);
-    void indentWidthUpdateUI(wxUpdateUIEvent& event);
-    void tabWidthUpdateUI(wxUpdateUIEvent& event);
-    void displayBookmarkMarginUpdateUI(wxUpdateUIEvent& event);
-    void checkBoxDisplayFoldMarginUpdateUI(wxUpdateUIEvent& event);
-    void checkBoxHideChangeMarkerMarginUpdateUI(wxUpdateUIEvent& event);
-    void displayLineNumbersUpdateUI(wxUpdateUIEvent& event);
-    void showIndentationGuideLinesUpdateUI(wxUpdateUIEvent& event);
-    void highlightCaretLineUpdateUI(wxUpdateUIEvent& event);
-    void checkBoxTrimLineUpdateUI(wxUpdateUIEvent& event);
-    void checkBoxAppendLFUpdateUI(wxUpdateUIEvent& event);
-    void whitespaceStyleUpdateUI(wxUpdateUIEvent& event);
-    void choiceEOLUpdateUI(wxUpdateUIEvent& event);
-    void fileEncodingUpdateUI(wxUpdateUIEvent& event);
+    void indentsUsesTabsUpdateUI(wxUpdateUIEvent& event) override;
+    void indentWidthUpdateUI(wxUpdateUIEvent& event) override;
+    void tabWidthUpdateUI(wxUpdateUIEvent& event) override;
+    void displayBookmarkMarginUpdateUI(wxUpdateUIEvent& event) override;
+    void checkBoxDisplayFoldMarginUpdateUI(wxUpdateUIEvent& event) override;
+    void checkBoxHideChangeMarkerMarginUpdateUI(wxUpdateUIEvent& event) override;
+    void displayLineNumbersUpdateUI(wxUpdateUIEvent& event) override;
+    void showIndentationGuideLinesUpdateUI(wxUpdateUIEvent& event) override;
+    void highlightCaretLineUpdateUI(wxUpdateUIEvent& event) override;
+    void checkBoxTrimLineUpdateUI(wxUpdateUIEvent& event) override;
+    void checkBoxAppendLFUpdateUI(wxUpdateUIEvent& event) override;
+    void whitespaceStyleUpdateUI(wxUpdateUIEvent& event) override;
+    void choiceEOLUpdateUI(wxUpdateUIEvent& event) override;
+    void fileEncodingUpdateUI(wxUpdateUIEvent& event) override;
 
-    void OnOK(wxCommandEvent& event);
+    void OnOK(wxCommandEvent& event) override;
 
     StringManager m_EOLstringManager;
     StringManager m_WSstringManager;

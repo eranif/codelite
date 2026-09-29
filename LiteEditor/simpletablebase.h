@@ -83,11 +83,11 @@ protected:
     virtual void OnRefreshUI(wxUpdateUIEvent& event);
     virtual void OnDeleteWatch(wxCommandEvent& event);
     virtual void OnDeleteWatchUI(wxUpdateUIEvent& event);
-    virtual void OnItemExpanding(wxTreeEvent& event);
-    virtual void OnItemRightClick(wxTreeEvent& event);
-    virtual void OnListEditLabelBegin(wxTreeEvent& event);
-    virtual void OnListEditLabelEnd(wxTreeEvent& event);
-    virtual void OnListKeyDown(wxTreeEvent& event);
+    void OnItemExpanding(wxTreeEvent& event) override;
+    void OnItemRightClick(wxTreeEvent& event) override;
+    void OnListEditLabelBegin(wxTreeEvent& event) override;
+    void OnListEditLabelEnd(wxTreeEvent& event) override;
+    void OnListKeyDown(wxTreeEvent& event) override;
     virtual void OnNewWatch(wxCommandEvent& event);
     virtual void OnNewWatchUI(wxUpdateUIEvent& event);
     virtual void OnRefresh(wxCommandEvent& event);
@@ -109,7 +109,7 @@ public:
                              const wxPoint& pos = wxDefaultPosition,
                              const wxSize& size = wxSize(500, 300),
                              long style = wxTAB_TRAVERSAL);
-    ~DebuggerTreeListCtrlBase() = default;
+    ~DebuggerTreeListCtrlBase() override = default;
 
     //////////////////////////////////////////////
     // Common to both Locals / Watches

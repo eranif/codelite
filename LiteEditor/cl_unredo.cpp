@@ -28,7 +28,6 @@
 #include "cl_editor.h"
 
 CLCommandProcessor::CLCommandProcessor()
-    : CommandProcessorBase()
 {
     m_initialCommand = std::make_shared<CLTextCommand>(CLC_unknown);
     m_initialCommand->Close();

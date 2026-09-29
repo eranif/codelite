@@ -43,12 +43,12 @@ protected:
 
 protected:
     // Handlers for PreDefinedTypesPageBase events.
-    void OnItemActivated(wxListEvent& event);
-    void OnItemDeselected(wxListEvent& event);
-    void OnItemSelected(wxListEvent& event);
-    void OnNewShortcut(wxCommandEvent& event);
-    void OnEditShortcut(wxCommandEvent& event);
-    void OnDeleteShortcut(wxCommandEvent& event);
+    void OnItemActivated(wxListEvent& event) override;
+    void OnItemDeselected(wxListEvent& event) override;
+    void OnItemSelected(wxListEvent& event) override;
+    void OnNewShortcut(wxCommandEvent& event) override;
+    void OnEditShortcut(wxCommandEvent& event) override;
+    void OnDeleteShortcut(wxCommandEvent& event) override;
 
     void DoEditItem();
     void DoDeleteItem();

@@ -42,7 +42,7 @@ class PerspectiveManager : public wxEvtHandler
 {
 public:
     PerspectiveManager();
-    virtual ~PerspectiveManager();
+    ~PerspectiveManager() override;
 
     void FlushCacheToDisk();
     void ConnectEvents(wxAuiManager* mgr);

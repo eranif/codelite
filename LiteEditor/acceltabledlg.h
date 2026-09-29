@@ -44,15 +44,15 @@ class AccelTableDlg : public AccelTableBaseDlg
     MenuItemDataMap_t m_accelMap;
 
 protected:
-    virtual void OnEditUI(wxUpdateUIEvent& event);
-    virtual void OnDVItemActivated(wxDataViewEvent& event);
+    void OnEditUI(wxUpdateUIEvent& event) override;
+    void OnDVItemActivated(wxDataViewEvent& event) override;
 
     // Handlers for AccelTableBaseDlg events
     void PopulateTable(const wxString& filter);
-    void OnButtonOk(wxCommandEvent& e);
-    void OnButtonDefaults(wxCommandEvent& e);
-    void OnEditButton(wxCommandEvent& e);
-    void OnText(wxCommandEvent& event);
+    void OnButtonOk(wxCommandEvent& e) override;
+    void OnButtonDefaults(wxCommandEvent& e) override;
+    void OnEditButton(wxCommandEvent& e) override;
+    void OnText(wxCommandEvent& event) override;
 
     void DoItemActivated();
     bool IsMatchesFilter(const wxString& filter, const MenuItemData& item);
@@ -63,7 +63,7 @@ protected:
 public:
     /** Constructor */
     AccelTableDlg(wxWindow* parent);
-    virtual ~AccelTableDlg() = default;
+    ~AccelTableDlg() override = default;
 };
 
 #endif // __acceltabledlg__

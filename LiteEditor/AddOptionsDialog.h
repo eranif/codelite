@@ -6,7 +6,7 @@ class AddOptionsDialog : public AddOptionsDialogBase
 {
 public:
     AddOptionsDialog(wxWindow* parent, const wxString& value);
-    virtual ~AddOptionsDialog() = default;
+    ~AddOptionsDialog() override = default;
     wxString GetValue() const;
 };
 #endif // ADDOPTIONSDIALOG_H

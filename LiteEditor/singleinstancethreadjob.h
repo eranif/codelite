@@ -58,7 +58,7 @@ public:
     /**
      * @brief the thread main loop
      */
-    virtual void* Entry();
+    void* Entry() override;
 
     /**
      * @brief start the single instance thread
@@ -85,6 +85,6 @@ public:
     }
 
     clSingleInstanceThread();
-    virtual ~clSingleInstanceThread();
+    ~clSingleInstanceThread() override;
 };
 #endif // __singleinstancethreadjob__

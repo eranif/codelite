@@ -709,7 +709,7 @@ void clEditor::SetProperties()
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
     CallTipUseStyle(1);
-    int lineSpacing = clConfig::Get().Read("extra_line_spacing", (int)0);
+    int lineSpacing = clConfig::Get().Read("extra_line_spacing", 0);
     SetExtraAscent(lineSpacing);
     SetExtraDescent(lineSpacing);
     CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
@@ -5285,9 +5285,7 @@ void clEditor::SetLineVisible(int lineno)
         // try this: set the first visible line to be -10 lines from
         // the requested lineNo
         lineno -= offsetFromTop;
-        if (lineno < 0) {
-            lineno = 0;
-        }
+        lineno = std::max(lineno, 0);
         SetFirstVisibleLine(VisibleFromDocLine(lineno));
         // If the line is hidden - expand it
         EnsureVisible(lineno);

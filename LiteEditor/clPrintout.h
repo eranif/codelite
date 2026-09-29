@@ -49,12 +49,12 @@ public:
     clPrintout(clEditor* edit, const wxString& title = wxT(""));
 
     //! event handlers
-    bool OnPrintPage(int page);
-    bool OnBeginDocument(int startPage, int endPage);
+    bool OnPrintPage(int page) override;
+    bool OnBeginDocument(int startPage, int endPage) override;
 
     //! print functions
-    bool HasPage(int page);
-    void GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* selPageTo);
+    bool HasPage(int page) override;
+    void GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* selPageTo) override;
 };
 
 #endif // CLPRINTOUT_H

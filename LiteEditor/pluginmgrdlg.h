@@ -32,20 +32,20 @@ class PluginMgrDlg : public PluginMgrDlgBase
     wxArrayString m_initialEnabledPlugins;
 
 protected:
-    virtual void OnCheckAll(wxCommandEvent& event);
-    virtual void OnCheckAllUI(wxUpdateUIEvent& event);
-    virtual void OnUncheckAll(wxCommandEvent& event);
-    virtual void OnUncheckAllUI(wxUpdateUIEvent& event);
+    void OnCheckAll(wxCommandEvent& event) override;
+    void OnCheckAllUI(wxUpdateUIEvent& event) override;
+    void OnUncheckAll(wxCommandEvent& event) override;
+    void OnUncheckAllUI(wxUpdateUIEvent& event) override;
     void WritePropertyLine(const wxString& label, const wxString& text);
     void Initialize();
-    void OnItemSelected(wxDataViewEvent& event);
-    void OnButtonOK(wxCommandEvent& event);
+    void OnItemSelected(wxDataViewEvent& event) override;
+    void OnButtonOK(wxCommandEvent& event) override;
     void CreateInfoPage(unsigned int index);
 
 public:
     /** Constructor */
     PluginMgrDlg(wxWindow* parent);
-    virtual ~PluginMgrDlg() = default;
+    ~PluginMgrDlg() override = default;
 };
 
 #endif // __pluginmgrdlg__

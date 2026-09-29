@@ -38,13 +38,13 @@ public:
 
 public:
     FilesModifiedDlg(wxWindow* parent);
-    virtual ~FilesModifiedDlg() = default;
+    ~FilesModifiedDlg() override = default;
 
     bool GetRememberMyAnswer() const { return m_checkBoxRemember->IsChecked(); }
 
 protected:
-    virtual void OnIgnore(wxCommandEvent& event);
-    virtual void OnChoose(wxCommandEvent& event);
-    virtual void OnLoad(wxCommandEvent& event);
+    void OnIgnore(wxCommandEvent& event) override;
+    void OnChoose(wxCommandEvent& event) override;
+    void OnLoad(wxCommandEvent& event) override;
 };
 #endif // FILESMODIFIEDDLG_H

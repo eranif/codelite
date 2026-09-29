@@ -111,7 +111,7 @@ public:
     void SetExpectingControl(bool expectingControl) { this->m_expectingControl = expectingControl; }
     bool GetExpectingControl() const { return m_expectingControl; }
     BreakptMgr();
-    ~BreakptMgr();
+    ~BreakptMgr() override;
 
     /**
      * @brief refresh the breakpoints marker for a given editor

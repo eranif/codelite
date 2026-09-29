@@ -38,20 +38,20 @@ class ImportFilesDialogNew : public ImportFilesDialogNewBase
     wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp) const;
 
 protected:
-    virtual void OnBrowse(wxCommandEvent& event);
-    virtual void OnItemExpanding(wxDataViewEvent& event);
+    void OnBrowse(wxCommandEvent& event) override;
+    void OnItemExpanding(wxDataViewEvent& event) override;
     void DoCheckChildren(const wxDataViewItem& parent, bool check);
     void DoGetCheckedDirs(const wxDataViewItem& parent, wxStringBoolMap_t& dirs);
 
 protected:
-    virtual void OnValueChanged(wxDataViewEvent& event);
-    virtual void OnDirChanged(wxCommandEvent& event);
+    void OnValueChanged(wxDataViewEvent& event) override;
+    void OnDirChanged(wxCommandEvent& event) override;
     void DoBuildTree(const wxDataViewItem& parent, const wxDir& dir, bool initialState);
     void DoBuildTree();
 
 public:
     ImportFilesDialogNew(wxWindow* parent);
-    virtual ~ImportFilesDialogNew();
+    ~ImportFilesDialogNew() override;
     wxStringBoolMap_t GetDirectories();
     bool ExtlessFiles();
     wxString GetFileMask();

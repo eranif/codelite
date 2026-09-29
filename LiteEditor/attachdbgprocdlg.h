@@ -33,7 +33,7 @@ public:
     void RefreshProcessesList(wxString filter);
 
     AttachDbgProcDlg(wxWindow* parent);
-    virtual ~AttachDbgProcDlg();
+    ~AttachDbgProcDlg() override;
 
     wxString GetProcessId() const;
     wxString GetExeName() const;
@@ -41,11 +41,11 @@ public:
 
 protected:
     // events
-    virtual void OnBtnAttachUI(wxUpdateUIEvent& event);
-    virtual void OnFilter(wxCommandEvent& event);
-    virtual void OnRefresh(wxCommandEvent& event);
-    virtual void OnEnter(wxCommandEvent& event);
-    virtual void OnItemActivated(wxDataViewEvent& event);
+    void OnBtnAttachUI(wxUpdateUIEvent& event) override;
+    void OnFilter(wxCommandEvent& event) override;
+    void OnRefresh(wxCommandEvent& event) override;
+    void OnEnter(wxCommandEvent& event) override;
+    void OnItemActivated(wxDataViewEvent& event) override;
 };
 
 #endif // __attachdbgprocdlg__

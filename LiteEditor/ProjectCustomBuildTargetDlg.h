@@ -39,7 +39,7 @@ public:
 
 public:
     ProjectCustomBuildTargetDlg(wxWindow* parent, const wxString& targetName, const wxString& targetCommand);
-    virtual ~ProjectCustomBuildTargetDlg() = default;
+    ~ProjectCustomBuildTargetDlg() override = default;
 
     wxString GetTargetName() const { return m_textCtrlTargetName->GetValue(); }
     wxString GetTargetCommand() const { return m_textCtrlCommand->GetValue(); }

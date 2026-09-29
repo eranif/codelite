@@ -39,12 +39,12 @@ class NewItemDlg : public NewItemBaseDlg
 {
 public:
     NewItemDlg(wxWindow* parent, const wxString& cwd);
-    virtual ~NewItemDlg() = default;
+    ~NewItemDlg() override = default;
     wxFileName GetFileName() const;
 
 protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event);
-    virtual void OnBrowseButton(wxCommandEvent& event);
+    void OnOKUI(wxUpdateUIEvent& event) override;
+    void OnBrowseButton(wxCommandEvent& event) override;
 };
 
 #endif //__new_item_dlg__

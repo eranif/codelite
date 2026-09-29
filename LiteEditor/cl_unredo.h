@@ -37,9 +37,9 @@ public:
         : CLCommand(type, name)
     {
     }
-    virtual ~CLTextCommand() = default;
+    ~CLTextCommand() override = default;
 
-    virtual bool GetIsAppendable() const
+    bool GetIsAppendable() const override
     { // We can append to a text command
         return true;
     }
@@ -69,13 +69,13 @@ class CLCommandProcessor : public CommandProcessorBase
 {
 public:
     CLCommandProcessor();
-    virtual ~CLCommandProcessor() = default;
+    ~CLCommandProcessor() override = default;
 
     void StartNewTextCommand(CLC_types type, const wxString& text = "");
 
     void AppendToTextCommand(const wxString& text, int position);
 
-    virtual void ProcessOpenCommand();
+    void ProcessOpenCommand() override;
 
     clEditor* GetParent() const { return m_parent; }
 
@@ -88,9 +88,9 @@ public:
 
     void CloseSciUndoAction() const; // Closes any open undo action at the scintilla level
 
-    virtual bool DoUndo();
+    bool DoUndo() override;
 
-    virtual bool DoRedo();
+    bool DoRedo() override;
 
 protected:
     clEditor* m_parent;

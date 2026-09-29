@@ -7,6 +7,6 @@ class EditorOptionsGeneralGuidesPanel : public OptionsConfigPage
 {
 public:
     EditorOptionsGeneralGuidesPanel(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorOptionsGeneralGuidesPanel() = default;
+    ~EditorOptionsGeneralGuidesPanel() override = default;
 };
 #endif // EDITOROPTIONSGENERALGUIDESPANEL_H

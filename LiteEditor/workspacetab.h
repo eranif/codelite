@@ -47,8 +47,8 @@ class WorkspaceTab : public WorkspaceTabBase
     bool m_runInProgress = false;
 
 protected:
-    virtual void OnPinnedCxxProjectSelected(wxDataViewEvent& event);
-    virtual void OnPinnedCxxProjectContextMenu(wxDataViewEvent& event);
+    void OnPinnedCxxProjectSelected(wxDataViewEvent& event) override;
+    void OnPinnedCxxProjectContextMenu(wxDataViewEvent& event) override;
     void ProjectSettingsDlgClosed();
     void DoGoHome();
     void LoadCxxPinnedProjects();
@@ -94,7 +94,7 @@ protected:
 
 public:
     WorkspaceTab(wxWindow* parent, const wxString& caption);
-    ~WorkspaceTab();
+    ~WorkspaceTab() override;
 
     void OpenProjectSettings(const wxString& project = "");
 

@@ -30,7 +30,7 @@ class FileDropTarget : public wxFileDropTarget
 {
 public:
     FileDropTarget();
-    virtual ~FileDropTarget() = default;
-    virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+    ~FileDropTarget() override = default;
+    bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames) override;
 };
 #endif // DROPFILETARGET_H

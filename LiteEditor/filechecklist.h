@@ -38,8 +38,8 @@ class FileCheckList : public FileCheckListBase
 
 protected:
     // Handlers for filechecklistbase events.
-    void OnCheckAll(wxCommandEvent& event);
-    void OnClearAll(wxCommandEvent& event);
+    void OnCheckAll(wxCommandEvent& event) override;
+    void OnClearAll(wxCommandEvent& event) override;
     void OnFileSelected(wxCommandEvent& event);
     void OnFileCheckChanged(wxCommandEvent& event);
 
@@ -52,7 +52,7 @@ public:
                   const wxString& title = wxEmptyString,
                   const wxPoint& pos = wxDefaultPosition,
                   const wxSize& size = wxDefaultSize);
-    ~FileCheckList() = default;
+    ~FileCheckList() override = default;
 
     void SetCancellable(bool can) { m_buttonCancel->Show(can); }
     void SetCaption(const wxString& caption);

@@ -32,16 +32,16 @@
 class QuickDebugDlg : public QuickDebugBase
 {
 protected:
-    virtual void OnRemoteBrowedDebuggee(wxCommandEvent& event);
-    virtual void OnRemoteBrowseDebugger(wxCommandEvent& event);
-    virtual void OnRemoteBrowseWD(wxCommandEvent& event);
-    virtual void OnDebuggerChanged(wxCommandEvent& event);
-    virtual void OnDebugOverSshUI(wxUpdateUIEvent& event);
-    virtual void OnSelectAlternateDebugger(wxCommandEvent& event);
-    void OnButtonBrowseExe(wxCommandEvent& event);
-    void OnButtonDebug(wxCommandEvent& event);
-    void OnButtonCancel(wxCommandEvent& event);
-    void OnButtonBrowseWD(wxCommandEvent& event);
+    void OnRemoteBrowedDebuggee(wxCommandEvent& event) override;
+    void OnRemoteBrowseDebugger(wxCommandEvent& event) override;
+    void OnRemoteBrowseWD(wxCommandEvent& event) override;
+    void OnDebuggerChanged(wxCommandEvent& event) override;
+    void OnDebugOverSshUI(wxUpdateUIEvent& event) override;
+    void OnSelectAlternateDebugger(wxCommandEvent& event) override;
+    void OnButtonBrowseExe(wxCommandEvent& event) override;
+    void OnButtonDebug(wxCommandEvent& event) override;
+    void OnButtonCancel(wxCommandEvent& event) override;
+    void OnButtonBrowseWD(wxCommandEvent& event) override;
     void Initialize();
     void UpdateDebuggerExecutable(const QuickDebugInfo& info);
     wxArrayString GetStartupCmds();
@@ -49,7 +49,7 @@ protected:
 
 public:
     QuickDebugDlg(wxWindow* parent);
-    virtual ~QuickDebugDlg() = default;
+    ~QuickDebugDlg() override = default;
 };
 
 #endif // __quickdebugdlg__

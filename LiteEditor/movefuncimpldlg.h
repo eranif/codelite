@@ -30,8 +30,8 @@
 /** Implementing MoveFuncImplBaseDlg */
 class MoveFuncImplDlg : public MoveFuncImplBaseDlg
 {
-    void OnButtonCancel(wxCommandEvent& e);
-    void OnButtonOK(wxCommandEvent& e);
+    void OnButtonCancel(wxCommandEvent& e) override;
+    void OnButtonOK(wxCommandEvent& e) override;
 
 public:
     /** Constructor */

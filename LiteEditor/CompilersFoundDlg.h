@@ -42,7 +42,7 @@ private:
 
 public:
     CompilersFoundDlg(wxWindow* parent, const ICompilerLocator::CompilerVec_t& compilers);
-    virtual ~CompilersFoundDlg() = default;
+    ~CompilersFoundDlg() override = default;
 
     /**
      * @brief return list of compilers to configure

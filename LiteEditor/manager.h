@@ -101,7 +101,7 @@ protected:
 
 protected:
     Manager();
-    virtual ~Manager();
+    ~Manager() override;
     void OnHideGdbTooltip(clCommandEvent& event);
 
     //--------------------------- Global State -----------------------------
@@ -559,7 +559,7 @@ public:
     // Handle debugger event
     //---------------------------------------------------
 
-    void DebuggerUpdate(const DebuggerEventData& event);
+    void DebuggerUpdate(const DebuggerEventData& event) override;
     void DoShowQuickWatchDialog(const DebuggerEventData& event);
 
     //--------------------------- Build Management -----------------------------

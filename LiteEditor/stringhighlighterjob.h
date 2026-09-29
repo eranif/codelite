@@ -32,10 +32,7 @@ struct StringHighlightOutput {
     wxString filename;
     std::vector<std::pair<int, int>> matches;
 
-    StringHighlightOutput()
-        : filename(wxT(""))
-    {
-    }
+    StringHighlightOutput() = default;
 
     ~StringHighlightOutput() = default;
 };

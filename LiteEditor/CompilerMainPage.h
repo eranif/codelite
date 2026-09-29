@@ -38,13 +38,13 @@ class CompilerPatternDlg : public CompilerPatternDlgBase
 {
 public:
     CompilerPatternDlg(wxWindow* parent, const wxString& title);
-    virtual ~CompilerPatternDlg() = default;
+    ~CompilerPatternDlg() override = default;
 
     void
     SetPattern(const wxString& pattern, const wxString& lineIdx, const wxString& fileIdx, const wxString& columnIndex);
 
 protected:
-    virtual void OnSubmit(wxCommandEvent& event);
+    void OnSubmit(wxCommandEvent& event) override;
 
 public:
     wxString GetPattern() const { return m_textPattern->GetValue(); }
@@ -102,17 +102,17 @@ class CompilerMainPage : public CompilerMainPageBase
     long m_selectedLnkOption;
 
 protected:
-    virtual void OnLinkLineActivated(wxDataViewEvent& event);
-    virtual void OnLinkerUseFileInput(wxCommandEvent& event);
+    void OnLinkLineActivated(wxDataViewEvent& event) override;
+    void OnLinkerUseFileInput(wxCommandEvent& event) override;
     virtual void OnAddExistingCompiler(wxCommandEvent& event);
     virtual void OnCloneCompiler(wxCommandEvent& event);
     virtual void OnScanCompilers(wxCommandEvent& event);
-    virtual void OnCmdModify(wxCommandEvent& event);
-    virtual void OnValueChanged(wxPropertyGridEvent& event);
+    void OnCmdModify(wxCommandEvent& event) override;
+    void OnValueChanged(wxPropertyGridEvent& event) override;
     virtual void OnRenameCompiler(wxCommandEvent& event);
     virtual void OnDeleteCompiler(wxCommandEvent& event);
-    virtual void OnContextMenu(wxContextMenuEvent& event);
-    virtual void OnCompilerSelected(wxCommandEvent& event);
+    void OnContextMenu(wxContextMenuEvent& event) override;
+    void OnCompilerSelected(wxCommandEvent& event) override;
     void Initialize();
 
     // Tools
@@ -154,40 +154,40 @@ protected:
 
 public:
     CompilerMainPage(wxWindow* parent);
-    virtual ~CompilerMainPage() = default;
+    ~CompilerMainPage() override = default;
     void LoadCompilers();
     void Save();
 
     bool IsDirty() const { return m_isDirty; }
 
 protected:
-    virtual void OnBtnAddErrPattern(wxCommandEvent& event);
-    virtual void OnBtnAddWarnPattern(wxCommandEvent& event);
-    virtual void OnBtnDelErrPattern(wxCommandEvent& event);
-    virtual void OnBtnDelWarnPattern(wxCommandEvent& event);
-    virtual void OnBtnUpdateErrPattern(wxCommandEvent& event);
-    virtual void OnBtnUpdateWarnPattern(wxCommandEvent& event);
-    virtual void OnCompilerOptionActivated(wxListEvent& event);
-    virtual void OnCompilerOptionDeSelected(wxListEvent& event);
-    virtual void OnCompilerOptionSelected(wxListEvent& event);
-    virtual void OnCustomEditorButtonClicked(wxCommandEvent& event);
-    virtual void OnDeleteCompilerOption(wxCommandEvent& event);
-    virtual void OnDeleteFileType(wxCommandEvent& event);
-    virtual void OnDeleteLinkerOption(wxCommandEvent& event);
-    virtual void OnEditIncludePaths(wxCommandEvent& event);
-    virtual void OnEditLibraryPaths(wxCommandEvent& event);
-    virtual void OnErrItemActivated(wxDataViewEvent& event);
-    virtual void OnErrorPatternSelectedUI(wxUpdateUIEvent& event);
-    virtual void OnFileTypeActivated(wxDataViewEvent& event);
-    virtual void OnItemActivated(wxListEvent& event);
-    virtual void OnItemSelected(wxListEvent& event);
-    virtual void OnLinkerOptionActivated(wxListEvent& event);
-    virtual void OnLinkerOptionDeSelected(wxListEvent& event);
-    virtual void OnLinkerOptionSelected(wxListEvent& event);
-    virtual void OnNewCompilerOption(wxCommandEvent& event);
-    virtual void OnNewFileType(wxCommandEvent& event);
-    virtual void OnNewLinkerOption(wxCommandEvent& event);
-    virtual void OnWarnItemActivated(wxDataViewEvent& event);
-    virtual void OnWarningPatternSelectedUI(wxUpdateUIEvent& event);
+    void OnBtnAddErrPattern(wxCommandEvent& event) override;
+    void OnBtnAddWarnPattern(wxCommandEvent& event) override;
+    void OnBtnDelErrPattern(wxCommandEvent& event) override;
+    void OnBtnDelWarnPattern(wxCommandEvent& event) override;
+    void OnBtnUpdateErrPattern(wxCommandEvent& event) override;
+    void OnBtnUpdateWarnPattern(wxCommandEvent& event) override;
+    void OnCompilerOptionActivated(wxListEvent& event) override;
+    void OnCompilerOptionDeSelected(wxListEvent& event) override;
+    void OnCompilerOptionSelected(wxListEvent& event) override;
+    void OnCustomEditorButtonClicked(wxCommandEvent& event) override;
+    void OnDeleteCompilerOption(wxCommandEvent& event) override;
+    void OnDeleteFileType(wxCommandEvent& event) override;
+    void OnDeleteLinkerOption(wxCommandEvent& event) override;
+    void OnEditIncludePaths(wxCommandEvent& event) override;
+    void OnEditLibraryPaths(wxCommandEvent& event) override;
+    void OnErrItemActivated(wxDataViewEvent& event) override;
+    void OnErrorPatternSelectedUI(wxUpdateUIEvent& event) override;
+    void OnFileTypeActivated(wxDataViewEvent& event) override;
+    void OnItemActivated(wxListEvent& event) override;
+    void OnItemSelected(wxListEvent& event) override;
+    void OnLinkerOptionActivated(wxListEvent& event) override;
+    void OnLinkerOptionDeSelected(wxListEvent& event) override;
+    void OnLinkerOptionSelected(wxListEvent& event) override;
+    void OnNewCompilerOption(wxCommandEvent& event) override;
+    void OnNewFileType(wxCommandEvent& event) override;
+    void OnNewLinkerOption(wxCommandEvent& event) override;
+    void OnWarnItemActivated(wxDataViewEvent& event) override;
+    void OnWarningPatternSelectedUI(wxUpdateUIEvent& event) override;
 };
 #endif // COMPILERMAINPAGE_H

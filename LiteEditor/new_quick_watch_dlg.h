@@ -52,7 +52,7 @@ protected:
     void DoEditItem(const wxTreeItemId& item);
 
 protected:
-    void OnItemExpanding(wxTreeEvent& event);
+    void OnItemExpanding(wxTreeEvent& event) override;
     void OnBtnCancel(wxCommandEvent& e);
     void OnCloseEvent(wxCloseEvent& e);
     void DoAddChildren(wxTreeItemId& item, const VariableObjChildren& children);
@@ -63,7 +63,7 @@ protected:
 public:
     /** Constructor */
     DisplayVariableDlg(wxWindow* parent);
-    virtual ~DisplayVariableDlg();
+    ~DisplayVariableDlg() override;
 
     void AddItems(const wxString& varname, const VariableObjChildren& children);
     void UpdateValue(const wxString& varname, const wxString& value);

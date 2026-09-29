@@ -41,6 +41,6 @@ protected:
 
 public:
     DefaultWorkspacePage(wxWindow* parent);
-    virtual ~DefaultWorkspacePage();
+    ~DefaultWorkspacePage() override;
 };
 #endif // DEFAULTWORKSPACEPAGE_H

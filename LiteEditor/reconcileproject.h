@@ -38,19 +38,19 @@ class VirtualDirectoryTree;
 class ReconcileProjectDlg : public ReconcileProjectDlgBaseClass
 {
 protected:
-    virtual void OnApply(wxCommandEvent& event);
-    virtual void OnApplyUI(wxUpdateUIEvent& event);
-    virtual void OnApplyAllUI(wxUpdateUIEvent& event);
-    virtual void OnClose(wxCommandEvent& event);
-    virtual void OnDeleteStaleFiles(wxCommandEvent& event);
-    virtual void OnDeleteStaleFilesUI(wxUpdateUIEvent& event);
-    virtual void OnDeleteAllStaleFilesUI(wxUpdateUIEvent& event);
-    virtual void OnAddFile(wxCommandEvent& event);
-    virtual void OnAddFileUI(wxUpdateUIEvent& event);
-    virtual void OnAutoAssignUI(wxUpdateUIEvent& event);
-    virtual void OnAutoSuggest(wxCommandEvent& event);
-    virtual void OnUndoSelectedFiles(wxCommandEvent& event);
-    virtual void OnUndoSelectedFilesUI(wxUpdateUIEvent& event);
+    void OnApply(wxCommandEvent& event) override;
+    void OnApplyUI(wxUpdateUIEvent& event) override;
+    void OnApplyAllUI(wxUpdateUIEvent& event) override;
+    void OnClose(wxCommandEvent& event) override;
+    void OnDeleteStaleFiles(wxCommandEvent& event) override;
+    void OnDeleteStaleFilesUI(wxUpdateUIEvent& event) override;
+    void OnDeleteAllStaleFilesUI(wxUpdateUIEvent& event) override;
+    void OnAddFile(wxCommandEvent& event) override;
+    void OnAddFileUI(wxUpdateUIEvent& event) override;
+    void OnAutoAssignUI(wxUpdateUIEvent& event) override;
+    void OnAutoSuggest(wxCommandEvent& event) override;
+    void OnUndoSelectedFiles(wxCommandEvent& event) override;
+    void OnUndoSelectedFilesUI(wxUpdateUIEvent& event) override;
     void OnDeleteSelectedNewFiles(wxCommandEvent& e);
 
     void OnDVLCContextMenu(wxDataViewEvent& event);
@@ -72,7 +72,7 @@ protected:
 
 public:
     ReconcileProjectDlg(wxWindow* parent, const wxString& projname);
-    virtual ~ReconcileProjectDlg() = default;
+    ~ReconcileProjectDlg() override = default;
 
     /*!
      * \brief Searches the filesystem and project to find new and stale files, then fills the dialog's fields with them
@@ -100,7 +100,7 @@ class ReconcileProjectFiletypesDlg : public ReconcileProjectFiletypesDlgBaseClas
 {
 public:
     ReconcileProjectFiletypesDlg(wxWindow* parent, const wxString& projname);
-    virtual ~ReconcileProjectFiletypesDlg() = default;
+    ~ReconcileProjectFiletypesDlg() override = default;
 
     void SetData();
     void GetData(wxString& toplevelDir,
@@ -113,15 +113,15 @@ protected:
     void SetRegex(const wxString& regex); // Takes a VD|regex string, splits and inserts into listctrl cols
     wxArrayString GetRegexes()
         const; // Extracts the regex and VD data from listctrl, joins each to VD|regex string, and puts in arraystring
-    virtual void OnIgnoreBrowse(wxCommandEvent& event);
-    virtual void OnIgnoreRemove(wxCommandEvent& event);
-    virtual void OnIgnoreFileBrowse(wxCommandEvent& event);
-    virtual void OnIgnoreFileRemove(wxCommandEvent& event);
-    virtual void OnAddRegex(wxCommandEvent& event);
-    virtual void OnRemoveRegex(wxCommandEvent& event);
-    virtual void OnIgnoreRemoveUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnIgnoreFileRemoveUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnRemoveRegexUpdateUI(wxUpdateUIEvent& event);
+    void OnIgnoreBrowse(wxCommandEvent& event) override;
+    void OnIgnoreRemove(wxCommandEvent& event) override;
+    void OnIgnoreFileBrowse(wxCommandEvent& event) override;
+    void OnIgnoreFileRemove(wxCommandEvent& event) override;
+    void OnAddRegex(wxCommandEvent& event) override;
+    void OnRemoveRegex(wxCommandEvent& event) override;
+    void OnIgnoreRemoveUpdateUI(wxUpdateUIEvent& event) override;
+    void OnIgnoreFileRemoveUpdateUI(wxUpdateUIEvent& event) override;
+    void OnRemoveRegexUpdateUI(wxUpdateUIEvent& event) override;
 
     const wxString m_projname;
 };
@@ -130,14 +130,14 @@ class ReconcileByRegexDlg : public ReconcileByRegexDlgBaseClass
 {
 public:
     ReconcileByRegexDlg(wxWindow* parent, const wxString& projname);
-    virtual ~ReconcileByRegexDlg() = default;
+    ~ReconcileByRegexDlg() override = default;
 
     wxString GetRegex() { return m_textCtrlVirtualFolder->GetValue() + '|' + m_textCtrlRegex->GetValue(); }
 
 protected:
-    virtual void OnTextEnter(wxCommandEvent& event);
-    virtual void OnVDBrowse(wxCommandEvent& event);
-    virtual void OnRegexOKCancelUpdateUI(wxUpdateUIEvent& event);
+    void OnTextEnter(wxCommandEvent& event) override;
+    void OnVDBrowse(wxCommandEvent& event) override;
+    void OnRegexOKCancelUpdateUI(wxUpdateUIEvent& event) override;
 
     const wxString m_projname;
 };

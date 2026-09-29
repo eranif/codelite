@@ -35,12 +35,12 @@ protected:
 
 protected:
     // Handlers for ThreadListBasePanel events.
-    void OnItemActivated(wxDataViewEvent& event);
+    void OnItemActivated(wxDataViewEvent& event) override;
     bool IsTheSame(const ThreadEntryArray& threads1, const ThreadEntryArray& threads2);
 
 public:
     ThreadListPanel(wxWindow* parent);
-    virtual ~ThreadListPanel() = default;
+    ~ThreadListPanel() override = default;
     void PopulateList(const ThreadEntryArray& threads);
     void Clear();
 };

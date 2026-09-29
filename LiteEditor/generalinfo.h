@@ -49,7 +49,7 @@ class GeneralInfo : public SerializedObject
 
 public:
     GeneralInfo();
-    virtual ~GeneralInfo() = default;
+    ~GeneralInfo() override = default;
 
     const wxSize& GetFrameSize() const { return m_frameSize; }
     void SetFrameSize(const wxSize& sz) { m_frameSize = sz; }
@@ -60,8 +60,8 @@ public:
     void SetFlags(size_t flags) { this->m_flags = flags; }
     size_t GetFlags() const { return m_flags; }
 
-    void Serialize(Archive& arch);
-    void DeSerialize(Archive& arch);
+    void Serialize(Archive& arch) override;
+    void DeSerialize(Archive& arch) override;
 
     const wxRect& GetDefaultRect() const { return m_defaultRect; }
 };

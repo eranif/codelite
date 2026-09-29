@@ -37,15 +37,15 @@ protected:
 
 public:
     NewVirtualFolderDlg(wxWindow* parent, const wxString& currentVD);
-    virtual ~NewVirtualFolderDlg();
+    ~NewVirtualFolderDlg() override;
     wxString GetName() const { return m_textCtrlName->GetValue(); }
     bool GetCreateOnDisk() const { return m_checkBoxCreateOnDisk->IsChecked(); }
     wxString GetDiskPath() const { return m_textCtrlPath->GetValue(); }
 
 protected:
-    virtual void OnCreateOnFolderChecked(wxCommandEvent& event);
-    virtual void OnOkUI(wxUpdateUIEvent& event);
-    virtual void OnCreateOnDiskUI(wxUpdateUIEvent& event);
-    virtual void OnNameUpdated(wxCommandEvent& event);
+    void OnCreateOnFolderChecked(wxCommandEvent& event) override;
+    void OnOkUI(wxUpdateUIEvent& event) override;
+    void OnCreateOnDiskUI(wxUpdateUIEvent& event) override;
+    void OnNameUpdated(wxCommandEvent& event) override;
 };
 #endif // NEWVIRTUALFOLDERDLG_H

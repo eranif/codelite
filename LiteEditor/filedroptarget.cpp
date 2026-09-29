@@ -26,10 +26,7 @@
 
 #include "frame.h"
 
-FileDropTarget::FileDropTarget()
-    : wxFileDropTarget()
-{
-}
+FileDropTarget::FileDropTarget() = default;
 
 bool FileDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
 {

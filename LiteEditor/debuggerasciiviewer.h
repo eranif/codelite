@@ -38,7 +38,7 @@ class IDebugger;
 /** Implementing DebuggerAsciiViewerBase */
 class DebuggerAsciiViewer : public DebuggerAsciiViewerBase
 {
-    void OnClearView(wxCommandEvent& e);
+    void OnClearView(wxCommandEvent& e) override;
     void OnEdit(wxCommandEvent& e);
     void OnEditUI(wxUpdateUIEvent& e);
     void OnThemeColourChanged(wxCommandEvent& e);
@@ -47,7 +47,7 @@ class DebuggerAsciiViewer : public DebuggerAsciiViewerBase
 public:
     /** Constructor */
     DebuggerAsciiViewer(wxWindow* parent);
-    virtual ~DebuggerAsciiViewer();
+    ~DebuggerAsciiViewer() override;
     void UpdateView(const wxString& expr, const wxString& value);
 };
 

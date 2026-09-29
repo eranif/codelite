@@ -2625,9 +2625,7 @@ void Manager::RunCustomPreMakeCommand(const wxString& project)
     }
     QueueCommand info(project, conf, false, QueueCommand::kBuild);
 
-    if (m_shellProcess) {
-        delete m_shellProcess;
-    }
+    delete m_shellProcess;
     m_shellProcess = new CompileRequest(info,
                                         wxEmptyString, // no file name (valid only for build file only)
                                         true);         // run premake step only
@@ -2664,9 +2662,7 @@ void Manager::CompileFile(const wxString& projectName, const wxString& fileName,
         info.SetKind(QueueCommand::kCustomBuild);
     }
 
-    if (m_shellProcess) {
-        delete m_shellProcess;
-    }
+    delete m_shellProcess;
     switch (info.GetKind()) {
     case QueueCommand::kBuild:
         m_shellProcess = new CompileRequest(info, fileName, false, preprocessOnly);
@@ -2704,10 +2700,7 @@ void Manager::DoBuildProject(const QueueCommand& buildInfo)
         DbgStop();
     }
 
-    if (m_shellProcess) {
-        delete m_shellProcess;
-    }
-
+    delete m_shellProcess;
     m_shellProcess = new CompileRequest(buildInfo);
     m_shellProcess->Process(PluginManager::Get());
 }
@@ -2718,9 +2711,7 @@ void Manager::DoCleanProject(const QueueCommand& buildInfo)
         return;
     }
 
-    if (m_shellProcess) {
-        delete m_shellProcess;
-    }
+    delete m_shellProcess;
     m_shellProcess = new CleanRequest(buildInfo);
     m_shellProcess->Process(PluginManager::Get());
 }

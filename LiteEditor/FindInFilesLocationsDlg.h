@@ -7,15 +7,15 @@ class FindInFilesLocationsDlg : public FindInFilesLocationsDlgBase
     wxArrayString m_initialLocations;
 
 protected:
-    virtual void OnAddPath(wxCommandEvent& event);
-    virtual void OnDeletePath(wxCommandEvent& event);
-    virtual void OnDeletePathUI(wxUpdateUIEvent& event);
+    void OnAddPath(wxCommandEvent& event) override;
+    void OnDeletePath(wxCommandEvent& event) override;
+    void OnDeletePathUI(wxUpdateUIEvent& event) override;
     void DoAppendItem(const wxString& str);
     void DoAppendItem(const wxString& str, bool check);
 
 public:
     FindInFilesLocationsDlg(wxWindow* parent, const wxArrayString& locations);
-    virtual ~FindInFilesLocationsDlg() = default;
+    ~FindInFilesLocationsDlg() override = default;
 
     wxArrayString GetLocations() const;
 };

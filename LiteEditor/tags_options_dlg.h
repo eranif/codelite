@@ -47,16 +47,16 @@ class CodeCompletionSettingsDialog : public TagsOptionsBaseDlg
     void CopyData();
 
 protected:
-    virtual void OnButtonCancel(wxCommandEvent& event);
-    virtual void OnButtonOk(wxCommandEvent& event);
+    void OnButtonCancel(wxCommandEvent& event) override;
+    void OnButtonOk(wxCommandEvent& event) override;
     void DoSetEditEventsHandler(wxWindow* win);
 
 protected:
-    virtual void OnAutoShowWordAssitUI(wxUpdateUIEvent& event);
+    void OnAutoShowWordAssitUI(wxUpdateUIEvent& event) override;
 
 public:
     CodeCompletionSettingsDialog(wxWindow* parent, const TagsOptionsData& data);
-    virtual ~CodeCompletionSettingsDialog() = default;
+    ~CodeCompletionSettingsDialog() override = default;
     TagsOptionsData& GetData() { return m_data; }
 };
 

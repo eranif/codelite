@@ -56,9 +56,9 @@ protected:
     void OnThemeChanged(clCommandEvent& event);
 
 protected:
-    virtual void OnMenu(wxDataViewEvent& event);
-    virtual void OnTabActivated(wxDataViewEvent& event);
-    virtual void OnTabSelected(wxDataViewEvent& event);
+    void OnMenu(wxDataViewEvent& event) override;
+    void OnTabActivated(wxDataViewEvent& event) override;
+    void OnTabSelected(wxDataViewEvent& event) override;
     void OnInitDone(wxCommandEvent& event);
 
     // Handlers for OpenWindowsPanelBase events.
@@ -82,7 +82,7 @@ protected:
 
 public:
     OpenWindowsPanel(wxWindow* parent, const wxString& caption);
-    ~OpenWindowsPanel();
+    ~OpenWindowsPanel() override;
     const wxString& GetCaption() const { return m_caption; }
 };
 

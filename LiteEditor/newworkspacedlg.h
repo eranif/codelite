@@ -42,17 +42,17 @@ protected:
     void DoUpdateFilePath();
 
 protected:
-    virtual void OnWorkspaceNameUpdated(wxCommandEvent& event);
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnWorkspaceNameUpdated(wxCommandEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
     // Handlers for NewWorkspaceBase events.
-    void OnWorkspacePathUpdated(wxCommandEvent& event);
-    void OnWorkspaceDirPicker(wxCommandEvent& event);
-    void OnButtonCreate(wxCommandEvent& event);
+    void OnWorkspacePathUpdated(wxCommandEvent& event) override;
+    void OnWorkspaceDirPicker(wxCommandEvent& event) override;
+    void OnButtonCreate(wxCommandEvent& event) override;
 
 public:
     /** Constructor */
     NewWorkspaceDlg(wxWindow* parent);
-    virtual ~NewWorkspaceDlg();
+    ~NewWorkspaceDlg() override;
 
     wxString GetFilePath() const { return m_workspacePath; }
 };

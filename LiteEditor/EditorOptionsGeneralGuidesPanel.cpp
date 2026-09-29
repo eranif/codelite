@@ -68,7 +68,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
         AddProperty(_("EOL Style"), options, m_options->GetEolMode(), UPDATE_TEXT_CB(SetEolMode));
     }
 
-    long line_spacing = clConfig::Get().Read("extra_line_spacing", (int)0);
+    long line_spacing = clConfig::Get().Read("extra_line_spacing", 0);
     AddProperty(_("Line spacing"), line_spacing, [&](const wxString& label, const wxAny& value) {
         wxUnusedVar(label);
         long spacing;

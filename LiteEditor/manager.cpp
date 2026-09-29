@@ -1597,7 +1597,7 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
         clDEBUG() << "Running program  :" << execLine << endl;
         clDEBUG() << "Working directory:" << wd << endl;
 #ifdef __WXMSW__
-        wxString terminalApp = clStandardPaths::Get().GetBinaryFullPath("wxterminal");
+        wxString terminalApp = clStandardPaths::Get().GetBinaryFullPath("glypht");
         wd = (wd.empty() || !wxDirExists(wd)) ? ::wxGetCwd() : wd;
 
         // Build the command

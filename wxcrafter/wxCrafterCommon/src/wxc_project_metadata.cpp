@@ -227,7 +227,12 @@ wxString wxcProjectMetadata::GetOutputFileName() const
     return m_outputFileName;
 }
 
-wxString wxcProjectMetadata::GetHeaderFileExt() const { return m_useHpp ? "hpp" : "h"; }
+wxString wxcProjectMetadata::GetHeaderFileExt() const
+{
+    if (wxcSettings::Get().HasFlag(wxcSettings::PREFER_H_OVER_HPP))
+        return "h";
+    return m_useHpp ? "hpp" : "h";
+}
 
 void wxcProjectMetadata::SetProjectFile(const wxString& filename)
 {

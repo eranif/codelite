@@ -25,8 +25,6 @@
 
 #include "event_notifier.h"
 
-#include "codelite_events.h"
-
 #include <wx/app.h>
 
 static EventNotifier* eventNotifier = nullptr;
@@ -36,6 +34,18 @@ EventNotifier* EventNotifier::Get()
     if (eventNotifier == nullptr)
         eventNotifier = new EventNotifier();
     return eventNotifier;
+}
+
+EventNotifier::EventNotifier()
+{
+    Bind(wxEVT_WORKSPACE_LOADED, &EventNotifier::OnWorkspaceOpened, this);
+    Bind(wxEVT_WORKSPACE_CLOSED, &EventNotifier::OnWorkspaceClosed, this);
+}
+
+EventNotifier::~EventNotifier()
+{
+    Unbind(wxEVT_WORKSPACE_LOADED, &EventNotifier::OnWorkspaceOpened, this);
+    Unbind(wxEVT_WORKSPACE_CLOSED, &EventNotifier::OnWorkspaceClosed, this);
 }
 
 void EventNotifier::Release()
@@ -144,4 +154,26 @@ int EventNotifier::FilterEvent(wxEvent& event)
         }
     }
     return wxEventFilter::Event_Skip;
+}
+
+void EventNotifier::OnWorkspaceOpened(clWorkspaceEvent& event)
+{
+    event.Skip();
+    std::lock_guard<std::mutex> lk{m_workspaceInfoMutex};
+    m_workspaceInfo = WorkspaceInfo{
+        .is_remote = event.IsRemote(),
+    };
+}
+
+void EventNotifier::OnWorkspaceClosed(clWorkspaceEvent& event)
+{
+    event.Skip();
+    std::lock_guard<std::mutex> lk{m_workspaceInfoMutex};
+    m_workspaceInfo.reset();
+}
+
+std::optional<EventNotifier::WorkspaceInfo> EventNotifier::GetWorkspaceInfo()
+{
+    std::lock_guard<std::mutex> lk{m_workspaceInfoMutex};
+    return m_workspaceInfo;
 }

@@ -29,6 +29,7 @@
 
 #include "Console/clConsoleBase.h"
 #include "StringUtils.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "macros.h"
 #include "procutils.h"
@@ -486,6 +487,11 @@ bool FileUtils::RemoveFile(const wxString& filename, const wxString& context)
 // This is readlink on steroids: it also makes-absolute, and dereferences any symlinked dirs in the path
 wxString FileUtils::RealPath(const wxString& filepath, bool forced)
 {
+    // Do not handle remote paths.
+    auto workspace_info = EventNotifier::Get()->GetWorkspaceInfo();
+    if (workspace_info && workspace_info->is_remote)
+        return filepath;
+
 #if defined(__WXGTK__) || defined(__WXOSX__)
     if (!filepath.empty() && (forced || bRealPathModeResolveSymlinks)) {
 #if defined(__FreeBSD__) || defined(__WXOSX__)

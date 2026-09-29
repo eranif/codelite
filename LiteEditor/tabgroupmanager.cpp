@@ -169,6 +169,9 @@ TabgroupManager::DoDeleteTabgroupItem(wxXmlDocument& doc, const wxString& filepa
 void TabgroupManager::OnWorkspaceLoaded(clWorkspaceEvent& evt)
 {
     evt.Skip();
+    if (evt.IsRemote())
+        return;
+
     wxFileName fnWorkspaceFile(evt.GetString());
     fnWorkspaceFile.AppendDir(".codelite");
     fnWorkspaceFile.AppendDir("tabgroups");

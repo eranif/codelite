@@ -26,10 +26,13 @@
 #ifndef EVENTNOTIFIER_H
 #define EVENTNOTIFIER_H
 
+#include "codelite_events.h"
 #include "codelite_exports.h"
 
 #include <functional>
 #include <future>
+#include <mutex>
+#include <optional>
 #include <type_traits>
 #include <unordered_map>
 #include <wx/event.h>
@@ -59,6 +62,10 @@ public:
 #if wxUSE_GUI
     wxFrame* TopFrame();
 #endif
+    struct WorkspaceInfo {
+        bool is_remote{false};
+    };
+    std::optional<WorkspaceInfo> GetWorkspaceInfo();
     bool SendCommandEvent(int eventId, void* clientData);
     void PostCommandEvent(int eventId, void* clientData);
     bool SendCommandEvent(int eventId, void* clientData, const wxString& s);
@@ -146,10 +153,16 @@ public:
     int FilterEvent(wxEvent& event);
 
 private:
-    EventNotifier() = default;
-    ~EventNotifier() override = default;
+    EventNotifier();
+    ~EventNotifier() override;
+
+    void OnWorkspaceOpened(clWorkspaceEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
 
     std::unordered_map<wxEventType, std::vector<EventFilterCallbackContainer>> m_eventFilterCallbacks;
+    /// Protects m_workspaceInfo: written on the main thread, may be read from any thread
+    std::mutex m_workspaceInfoMutex;
+    std::optional<WorkspaceInfo> m_workspaceInfo;
 };
 
 /**

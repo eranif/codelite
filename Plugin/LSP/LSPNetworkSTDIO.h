@@ -33,7 +33,7 @@ public:
      * @brief open the LSP process. Throws clException on error
      */
     void Open(const LSPStartupInfo& info) override;
-    virtual void Send(const std::string& data);
+    void Send(const std::string& data) override;
     bool IsConnected() const override;
 
     LSPNetworkSTDIO();

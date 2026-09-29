@@ -1,21 +1,26 @@
 #include "clRemoteHost.hpp"
 
 #if USE_SFTP
-
 #include "StringUtils.h"
 #include "clModuleLogger.hpp"
 #include "clSSHInteractiveChannel.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
 
+#include <atomic>
+#include <thread>
 #include <wx/utils.h> // wxBusyCursor
+
+wxDEFINE_EVENT(wxEVT_REMOTEHOST_SESSION_CREATED, clRemoteHostEvent);
+wxDEFINE_EVENT(wxEVT_REMOTEHOST_SESSION_CREATE_ERROR, clRemoteHostEvent);
 
 INITIALISE_SSH_LOG(LOG, "Remote-Host");
 
 namespace
 {
+std::atomic_uint64_t requestId{0};
 clRemoteHost* ms_instance{nullptr};
-}
+} // namespace
 
 clRemoteHost::clRemoteHost()
 {
@@ -102,8 +107,8 @@ clSSH::Ptr_t clRemoteHost::CreateSession(const wxString& account_name)
 
     /// open channel
     try {
-        ssh_session.reset(new clSSH(
-            account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFile(), account.GetPort()));
+        ssh_session = std::make_shared<clSSH>(
+            account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFile(), account.GetPort());
         wxString message;
 
         ssh_session->Open();
@@ -179,14 +184,26 @@ void clRemoteHost::OnCommandCompleted(clProcessEvent& event)
     m_callbacks.erase(m_callbacks.begin());
 }
 
-IProcess::Ptr_t clRemoteHost::run_interactive_process(
+clStatusOr<IProcess::Ptr_t> clRemoteHost::CreateInteractiveProcess(
     wxEvtHandler* parent, const wxArrayString& command, size_t flags, const wxString& wd, const clEnvList_t& env)
 {
     // create new ssh session
-    auto ssh_session = CreateSession(m_activeAccount);
+    auto ssh_session = clRemoteHost::CreateSession(m_activeAccount);
     if (!ssh_session) {
-        LOG_ERROR(LOG()) << "no ssh session available" << endl;
-        return IProcess::Ptr_t{};
+        return StatusOther("Could not create SSH session");
+    }
+    return CreateInteractiveProcess(parent, ssh_session, command, flags, wd, env);
+}
+
+clStatusOr<IProcess::Ptr_t> clRemoteHost::CreateInteractiveProcess(wxEvtHandler* parent,
+                                                                   clSSH::Ptr_t ssh_session,
+                                                                   const wxArrayString& command,
+                                                                   size_t flags,
+                                                                   const wxString& wd,
+                                                                   const clEnvList_t& env)
+{
+    if (!ssh_session) {
+        return StatusInvalidArgument(_("Invalid SSH session"));
     }
 
     LOG_DEBUG(LOG()) << "Launching remote process:" << command << endl;
@@ -194,17 +211,33 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(
 
     IProcess::Ptr_t proc(
         clSSHInteractiveChannel::Create(parent, ssh_session, argv, flags, wd, env.empty() ? nullptr : &env));
-    if (proc) {
-        m_interactiveProcesses.push_back(proc);
+    if (!proc) {
+        return StatusOther("Could not create interactive channel");
     }
+    m_interactiveProcesses.push_back(proc);
     return proc;
 }
 
-IProcess::Ptr_t clRemoteHost::run_interactive_process(
-    wxEvtHandler* parent, const wxString& command, size_t flags, const wxString& wd, const clEnvList_t& env)
+clStatusOr<uint64_t> clRemoteHost::AsyncCreateSession()
 {
-    auto wxargv = StringUtils::BuildArgv(command);
-    return run_interactive_process(parent, wxargv, flags, wd, env);
+    // Only the (slow) session creation runs in the thread. The thread captures copies of plain values
+    // only, so it never touches an object that the caller can destroy while we connect.
+    wxString activeAccount = m_activeAccount;
+    uint64_t uid = requestId.fetch_add(1) + 1;
+    std::thread([activeAccount, uid]() {
+        auto ssh_session = clRemoteHost::CreateSession(activeAccount);
+        if (!ssh_session) {
+            clRemoteHostEvent createError{wxEVT_REMOTEHOST_SESSION_CREATE_ERROR};
+            createError.SetString("Could not create SSH session");
+            createError.SetRequestId(uid);
+            EventNotifier::Get()->AddPendingEvent(createError);
+            return;
+        }
+        clRemoteHostEvent createSuccess{wxEVT_REMOTEHOST_SESSION_CREATED};
+        createSuccess.SetSession(ssh_session);
+        createSuccess.SetRequestId(uid);
+        EventNotifier::Get()->AddPendingEvent(createSuccess);
+    }).detach();
+    return uid;
 }
-
 #endif // USE_SFTP

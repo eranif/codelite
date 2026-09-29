@@ -4,13 +4,18 @@
 #if USE_SFTP
 
 #include "LSP/LSPNetwork.h"
+#include "clRemoteHost.hpp"
 #include "codelite_exports.h"
 #include "ssh/clSSHInteractiveChannel.hpp"
+
+#include <cstdint>
+#include <optional>
 
 class WXDLLIMPEXP_SDK LSPNetworkRemoteSTDIO : public LSPNetwork
 {
     clSSHInteractiveChannel::Ptr_t m_process;
     bool m_eventsBound = false;
+    std::optional<uint64_t> m_createRequestId{std::nullopt};
 
 private:
     void DoClose();
@@ -19,6 +24,8 @@ private:
     void OnProcessStderr(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
+    void OnRemoteSessionCreateOk(clRemoteHostEvent& event);
+    void OnRemoteSessionCreateError(clRemoteHostEvent& event);
 
 public:
     LSPNetworkRemoteSTDIO();

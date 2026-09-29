@@ -30,7 +30,7 @@ public:
     void Close() override;
     bool IsConnected() const override;
     void Open(const LSPStartupInfo& info) override;
-    virtual void Send(const std::string& data);
+    void Send(const std::string& data) override;
 };
 
 #endif // LSPNETWORKSOCKETCLIENT_H

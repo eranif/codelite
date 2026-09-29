@@ -38,7 +38,7 @@ protected:
 public:
     NewVirtualFolderDlg(wxWindow* parent, const wxString& currentVD);
     ~NewVirtualFolderDlg() override;
-    wxString GetName() const { return m_textCtrlName->GetValue(); }
+    wxString GetFolderName() const { return m_textCtrlName->GetValue(); }
     bool GetCreateOnDisk() const { return m_checkBoxCreateOnDisk->IsChecked(); }
     wxString GetDiskPath() const { return m_textCtrlPath->GetValue(); }
 

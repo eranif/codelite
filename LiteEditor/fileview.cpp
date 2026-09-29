@@ -998,7 +998,7 @@ void FileViewTree::OnNewVirtualFolder(wxCommandEvent& WXUNUSED(event))
     wxTreeItemId item = GetSingleSelection();
     NewVirtualFolderDlg dlg(clMainFrame::Get(), GetItemPath(item));
     if (dlg.ShowModal() == wxID_OK) {
-        DoAddVirtualFolder(item, dlg.GetName());
+        DoAddVirtualFolder(item, dlg.GetFolderName());
         if (dlg.GetCreateOnDisk()) {
             // Create the path on the file system, but don't complain if it is already there
             wxFileName::Mkdir(dlg.GetDiskPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);

@@ -36,8 +36,8 @@ public:
     {
         return nlohmann::json{{"m_eventName", m_eventName.ToStdString(wxConvUTF8)},
                               {"m_eventClass", m_eventClass.ToStdString(wxConvUTF8)},
-                              {"m_functionNameAndSignature", m_functionNameAndSignature.ToStdString(wxConvUTF8)},
-                              {"m_description", m_description.ToStdString(wxConvUTF8)}};
+                              {"m_functionNameAndSignature", m_functionNameAndSignature.ToStdString(wxConvUTF8)}
+        };
     }
 
     void FromJSON(const JSONItem& json)
@@ -45,7 +45,6 @@ public:
         m_eventName = json.namedObject(wxT("m_eventName")).toString();
         m_eventClass = json.namedObject(wxT("m_eventClass")).toString();
         m_functionNameAndSignature = json.namedObject(wxT("m_functionNameAndSignature")).toString();
-        m_description = json.namedObject(wxT("m_description")).toString();
     }
 
     const wxString& GetDescription() const { return m_description; }

@@ -154,17 +154,30 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
         throw clException("SFTP is not initialized");
     }
 
-    static size_t counter = 0;
-    int access_type = O_WRONLY | O_CREAT | O_TRUNC;
-    sftp_file file;
-    wxString tmpRemoteFile = remotePath;
-    tmpRemoteFile << ".codelitesftp" << (++counter);
+    // Every sftp call below is one network round trip, so keep their number small.
+    // Check the target first: it tells us if we replace a file, and what its permissions are.
+    auto char_buffer_remote = remotePath.mb_str(wxConvUTF8);
+    SFTPAttribute::Ptr_t pattr(new SFTPAttribute(sftp_stat(m_sftp, char_buffer_remote.data())));
+    const bool target_exists = pattr->IsOk();
 
-    auto cb = tmpRemoteFile.mb_str(wxConvUTF8);
-    file = sftp_open(m_sftp, cb.data(), access_type, 0644);
+    // Existing file: write to a temp file and rename it over the original, so a failed write never
+    // leaves a half written file. New file: there is nothing to protect, so write it directly.
+    static size_t counter = 0;
+    wxString outputFile = remotePath;
+    if (target_exists) {
+        outputFile << ".codelitesftp" << (++counter);
+    }
+    auto cb = outputFile.mb_str(wxConvUTF8);
+
+    // Create the file with the permissions of the original file. In most cases this saves a chmod call.
+    const size_t original_perms = target_exists ? pattr->GetPermissions() : 0;
+    const int create_mode = original_perms != 0 ? static_cast<int>(original_perms & 07777) : 0644;
+
+    int access_type = O_WRONLY | O_CREAT | O_TRUNC;
+    sftp_file file = sftp_open(m_sftp, cb.data(), access_type, create_mode);
     if (file == nullptr) {
         throw clException(
-            wxString() << _("Can't open file: ") << tmpRemoteFile << ". " << ssh_get_error(m_ssh->GetSession()),
+            wxString() << _("Can't open file: ") << outputFile << ". " << ssh_get_error(m_ssh->GetSession()),
             sftp_get_error(m_sftp));
     }
 
@@ -176,21 +189,27 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
         wxInt64 chunkSize = bytesLeft > maxChunkSize ? maxChunkSize : bytesLeft;
         wxInt64 bytesWritten = sftp_write(file, p, chunkSize);
         if (bytesWritten < 0) {
+            wxString error_message = ssh_get_error(m_ssh->GetSession());
+            int error_code = sftp_get_error(m_sftp);
             sftp_close(file);
-            throw clException(wxString() << _("Can't write data to file: ") << tmpRemoteFile << ". "
-                                         << ssh_get_error(m_ssh->GetSession()),
-                              sftp_get_error(m_sftp));
+            // Best effort: do not leave a partial file behind
+            sftp_unlink(m_sftp, cb.data());
+            throw clException(
+                wxString() << _("Can't write data to file: ") << outputFile << ". " << error_message, error_code);
         }
         bytesLeft -= bytesWritten;
         p += bytesWritten;
     }
     sftp_close(file);
 
-    // Unlink the original file if it exists
-    auto char_buffer_remote = remotePath.mb_str(wxConvUTF8);
-    SFTPAttribute::Ptr_t pattr(new SFTPAttribute(sftp_stat(m_sftp, char_buffer_remote.data())));
+    if (!target_exists) {
+        return;
+    }
 
-    if (pattr->IsOk() && sftp_unlink(m_sftp, char_buffer_remote.data()) < 0) {
+    // Servers with the "posix-rename" extension replace the target atomically (libssh uses it in
+    // sftp_rename). Only the other servers need the original file to be removed first.
+    if (!sftp_extension_supported(m_sftp, "posix-rename@openssh.com", "1") &&
+        sftp_unlink(m_sftp, char_buffer_remote.data()) < 0) {
         throw clException(
             wxString() << _("Failed to unlink file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()),
             sftp_get_error(m_sftp));
@@ -198,13 +217,15 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
 
     // Rename the file
     if (sftp_rename(m_sftp, cb.data(), char_buffer_remote.data()) < 0) {
-        throw clException(wxString() << _("Failed to rename file: ") << tmpRemoteFile << " -> " << remotePath << ". "
+        throw clException(wxString() << _("Failed to rename file: ") << outputFile << " -> " << remotePath << ". "
                                      << ssh_get_error(m_ssh->GetSession()),
                           sftp_get_error(m_sftp));
     }
 
-    if (pattr->IsOk()) {
-        Chmod(remotePath, pattr->GetPermissions());
+    // The server umask may have removed the group/other write bits from the mode we passed to sftp_open.
+    // Restore the permissions only when it could have happened.
+    if ((original_perms & 0022) != 0) {
+        Chmod(remotePath, original_perms);
     }
 }
 

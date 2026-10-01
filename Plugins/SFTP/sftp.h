@@ -36,8 +36,10 @@
 #include "sftp_workspace_settings.h"
 
 #include <SFTPClientData.hpp>
+#include <memory>
 
 class SFTPStatusPage;
+class SFTPSyncJob;
 class SFTPTreeView;
 
 class SFTP : public IPlugin
@@ -48,6 +50,7 @@ class SFTP : public IPlugin
     SFTPTreeView* m_browserView = nullptr;
     RemoteFileInfo::Map_t m_remoteFiles;
     clTabTogglerHelper::Ptr_t m_tabToggler;
+    std::unique_ptr<SFTPSyncJob> m_syncJob;
 
 public:
     SFTP(IManager* manager);
@@ -61,6 +64,12 @@ public:
     SFTPTreeView* GetTreeView() { return m_browserView; }
 
     void OpenFile(const wxString& remotePath, int lineNumber = wxNOT_FOUND);
+
+    /// Cancel the running "Sync Folder with Remote" job (if any). The file that is being uploaded is not interrupted
+    void CancelFolderSync();
+
+    /// Called by the sync job when it is done, deletes the job
+    void OnSyncJobFinished();
 
 protected:
     void OnReplaceInFiles(clFileSystemEvent& e);
@@ -77,6 +86,8 @@ protected:
     void OnEditorClosed(wxCommandEvent& e);
     void MSWInitiateConnection();
     void OnInitDone(wxCommandEvent& event);
+    void OnFolderContextMenu(clContextMenuEvent& event);
+    void SyncFolderWithRemote(const wxString& folder);
     void DoFileSaved(const wxString& filename);
     bool IsWorkspaceOpened() const { return m_workspaceFile.IsOk(); }
     void DoSaveRemoteFile(const RemoteFileInfo& remoteFile);

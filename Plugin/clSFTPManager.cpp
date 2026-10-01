@@ -654,6 +654,38 @@ bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accoun
     return future.get();
 }
 
+void clSFTPManager::AsyncNewFolder(const wxString& path, const wxString& accountName, wxEvtHandler* sink)
+{
+    auto fire_event = [path, accountName, sink](wxEventType type, const wxString& error) {
+        clSFTPEvent event{type};
+        event.SetAccount(accountName);
+        event.SetRemoteFile(path);
+        event.SetString(error);
+        sink->QueueEvent(event.Clone());
+    };
+
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    if (!conn) {
+        fire_event(wxEVT_SFTP_NEW_FOLDER_ERROR, _("Failed to connect to the remote machine"));
+        return;
+    }
+
+    auto func = [conn, path, fire_event]() {
+        try {
+            conn->CreateDir(path);
+            fire_event(wxEVT_SFTP_NEW_FOLDER_COMPLETED, wxEmptyString);
+        } catch (const clException& e) {
+            clDEBUG() << "AsyncNewFolder() error." << e.What();
+            wxString error = e.What();
+            if (error.empty()) {
+                error = _("Failed to create remote folder");
+            }
+            fire_event(wxEVT_SFTP_NEW_FOLDER_ERROR, error);
+        }
+    };
+    m_q.push_back(std::move(func));
+}
+
 bool clSFTPManager::Rename(const wxString& oldpath, const wxString& newpath, const SSHAccountInfo& accountInfo)
 {
     auto conn = GetConnectionPtrAddIfMissing(accountInfo.GetAccountName());

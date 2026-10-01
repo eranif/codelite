@@ -29,6 +29,8 @@
 #include "SFTPBrowserDlg.h"
 #include "SFTPSettingsDialog.h"
 #include "SFTPStatusPage.h"
+#include "SFTPSyncFolderDlg.h"
+#include "SFTPSyncJob.h"
 #include "SFTPTreeView.h"
 #include "SSHAccountManagerDlg.h"
 #include "clFilesCollector.h"
@@ -115,6 +117,7 @@ SFTP::SFTP(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FILE_DELETED, &SFTP::OnFileDeleted, this);
     EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &SFTP::OnEditorClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &SFTP::OnFolderContextMenu, this);
 
     // API support
     EventNotifier::Get()->Bind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
@@ -207,6 +210,11 @@ bool SFTP::IsPaneDetached(const wxString& name) const
 
 void SFTP::UnPlug()
 {
+    if (m_syncJob) {
+        // the job deletes itself once its pending work is done
+        m_syncJob.release()->Detach();
+    }
+
     if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_browserView)) {
         m_browserView->Destroy();
     }
@@ -244,6 +252,7 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FILE_DELETED, &SFTP::OnFileDeleted, this);
     EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &SFTP::OnEditorClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &SFTP::OnFolderContextMenu, this);
 
     EventNotifier::Get()->Unbind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_RENAME_FILE, &SFTP::OnRenameFile, this);
@@ -614,6 +623,67 @@ void SFTP::OpenFile(const wxString& remotePath, int lineNumber)
 }
 
 void SFTP::OnInitDone(wxCommandEvent& event) { event.Skip(); }
+
+void SFTP::OnFolderContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+
+    // This menu is used by the local folder views, make sure that we have a local folder
+    const wxString folder = event.GetPath();
+    wxMenu* menu = event.GetMenu();
+    if (menu == nullptr || folder.empty() || !wxFileName::DirExists(folder)) {
+        return;
+    }
+
+    const int id = XRCID("sftp_sync_folder_with_remote");
+    menu->AppendSeparator();
+    auto* item = new wxMenuItem(menu, id, _("Sync Folder with Remote"));
+    item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("debugger_restart"));
+    menu->Append(item);
+    menu->Bind(
+        wxEVT_MENU,
+        [this, folder](wxCommandEvent& e) {
+            e.Skip();
+            // let the menu close before displaying the dialog
+            CallAfter(&SFTP::SyncFolderWithRemote, folder);
+        },
+        id);
+}
+
+void SFTP::SyncFolderWithRemote(const wxString& folder)
+{
+    if (m_syncJob) {
+        ::wxMessageBox(_("A folder sync is already running"), "CodeLite", wxICON_INFORMATION | wxOK | wxCENTER);
+        return;
+    }
+
+    SFTPSyncFolderDlg dlg(EventNotifier::Get()->TopFrame(), folder);
+    if (!dlg.HasFiles()) {
+        ::wxMessageBox(_("There are no files to upload in this folder.\nNested folders are not included."),
+                       _("Nothing to Sync"),
+                       wxICON_INFORMATION | wxOK | wxCENTER);
+        return;
+    }
+
+    if (dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    // Show the log view, it displays the progress
+    m_mgr->BookSelectPage(PaneId::BOTTOM_BAR, m_logView);
+
+    m_syncJob = std::make_unique<SFTPSyncJob>(this, dlg.GetAccount(), dlg.GetRemoteFolder(), dlg.GetSelectedFiles());
+    m_syncJob->Start();
+}
+
+void SFTP::CancelFolderSync()
+{
+    if (m_syncJob) {
+        m_syncJob->Cancel();
+    }
+}
+
+void SFTP::OnSyncJobFinished() { m_syncJob.reset(); }
 
 void SFTP::OnOpenFile(clSFTPEvent& e)
 {

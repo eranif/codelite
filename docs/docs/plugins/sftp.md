@@ -83,4 +83,28 @@ In addition for defining new SSH accounts in CodeLite, the SFTP plugin offers a 
     
 You should now be able to browse files on the remote machine
 
+## Sync Folder with Remote
+---
+
+**Since CodeLite 19.0.0**
+
+You can upload the files of a local folder to a remote machine in one step:
+
+- In a folder view (for example the `File Explorer` tab), right-click a folder and select `Sync Folder with Remote`
+- In the dialog that opens:
+    - Choose the target **account**
+    - Enter the **remote folder**, or click the `Browse...` button to choose it from the remote machine
+    - In the file list, uncheck the files that you do not want to upload. Use the `Select All` and `Unselect All` buttons on the right of the list, or press ++space++ to check or uncheck the selected file
+    - To find files quickly, type in the filter field above the list. Only the file names that contain the text are displayed (the search is not case sensitive). For example, type `.cpp` to display only the `.cpp` files
+- Click `OK`
+
+Notes:
+
+- Only the files that are directly inside the folder are listed. Nested folders are not included. If the folder has no files, CodeLite shows a `Nothing to Sync` message.
+- When a filter is used, only the files that are displayed (and checked) are uploaded. `Select All` and `Unselect All` also change only the displayed files.
+- Existing files on the remote machine are overwritten. Nothing is deleted on the remote machine.
+- If the remote folder does not exist, it is created, including its missing parent folders (like `mkdir -p`).
+- CodeLite remembers the account and the remote folder that you entered, and fills them in next time.
+- The progress is shown in the `SFTP Log` view, which does not block the rest of the IDE. Click `Cancel` to stop. The file that is being uploaded is not interrupted, but the next files are skipped.
+
 [1]: https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse

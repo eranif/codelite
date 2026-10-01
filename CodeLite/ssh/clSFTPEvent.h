@@ -73,4 +73,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_OPEN_FILE, clSFTPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_SESSION_OPENED, clSFTPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_SESSION_CLOSED, clSFTPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_READ, clSFTPEvent);
+
+// A remote folder was created (or already exists).
+// GetAccount() -> the account, GetRemoteFile() -> the folder path
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_NEW_FOLDER_COMPLETED, clSFTPEvent);
+
+// Failed to create a remote folder.
+// GetAccount() -> the account, GetRemoteFile() -> the folder path, GetString() -> the error message
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_NEW_FOLDER_ERROR, clSFTPEvent);
 #endif // CLSFTPEVENT_H

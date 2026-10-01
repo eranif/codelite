@@ -30,7 +30,11 @@
 #include "UI.hpp"
 #include "cl_command_event.h"
 
+#include <wx/button.h>
+#include <wx/gauge.h>
 #include <wx/menu.h>
+#include <wx/panel.h>
+#include <wx/stattext.h>
 #include <wx/stc/stc.h>
 
 class SFTPThreadMessage;
@@ -41,6 +45,12 @@ class SFTPStatusPage : public SFTPStatusPageBase
     SFTPImages m_bitmaps;
     SFTP* m_plugin;
     SFTPGrepStyler::Ptr_t m_styler;
+
+    // "Sync Folder with Remote" progress strip (hidden when no sync is running)
+    wxPanel* m_panelSync = nullptr;
+    wxStaticText* m_staticTextSync = nullptr;
+    wxGauge* m_gaugeSync = nullptr;
+    wxButton* m_buttonCancelSync = nullptr;
 
 public:
     SFTPStatusPage(wxWindow* parent, SFTP* plugin);
@@ -53,12 +63,20 @@ public:
     void ShowSearchTab();
     void AddSearchText(const wxString& text);
 
+    /// Show the sync progress strip
+    void BeginSync(size_t total);
+    /// Update the sync progress: `done` files were uploaded out of `total`, now uploading `current_file`
+    void UpdateSync(size_t done, size_t total, const wxString& current_file);
+    /// Hide the sync progress strip
+    void EndSync();
+
 protected:
     virtual void OnContentMenu(wxContextMenuEvent& event);
     virtual void OnClearLog(wxCommandEvent& event);
     virtual void OnCopy(wxCommandEvent& event);
     virtual void OnSelectAll(wxCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
+    void OnCancelSync(wxCommandEvent& event);
 
     void OnFindOutput(clCommandEvent& event);
     void OnFindFinished(clCommandEvent& event);

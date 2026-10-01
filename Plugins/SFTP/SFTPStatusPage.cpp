@@ -56,6 +56,20 @@ SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     Bind(wxEVT_SSH_CHANNEL_CLOSED, &SFTPStatusPage::OnFindFinished, this);
     m_styler = std::make_unique<SFTPGrepStyler>(m_stcSearch);
     m_stcSearch->Bind(wxEVT_STC_HOTSPOT_CLICK, &SFTPStatusPage::OnHotspotClicked, this);
+
+    // The progress strip is placed at the top of the "Log" tab
+    m_panelSync = new wxPanel(m_panelLog);
+    auto* syncSizer = new wxBoxSizer(wxHORIZONTAL);
+    m_staticTextSync = new wxStaticText(m_panelSync, wxID_ANY, wxEmptyString);
+    m_gaugeSync = new wxGauge(m_panelSync, wxID_ANY, 100, wxDefaultPosition, FromDIP(wxSize(200, -1)));
+    m_buttonCancelSync = new wxButton(m_panelSync, wxID_ANY, _("Cancel"));
+    syncSizer->Add(m_staticTextSync, 1, wxALIGN_CENTER_VERTICAL | wxALL, FromDIP(5));
+    syncSizer->Add(m_gaugeSync, 1, wxALIGN_CENTER_VERTICAL | wxALL, FromDIP(5));
+    syncSizer->Add(m_buttonCancelSync, 0, wxALIGN_CENTER_VERTICAL | wxALL, FromDIP(5));
+    m_panelSync->SetSizer(syncSizer);
+    m_panelLog->GetSizer()->Insert(0, m_panelSync, 0, wxEXPAND);
+    m_panelSync->Hide();
+    m_buttonCancelSync->Bind(wxEVT_BUTTON, &SFTPStatusPage::OnCancelSync, this);
 }
 
 SFTPStatusPage::~SFTPStatusPage()
@@ -70,6 +84,40 @@ SFTPStatusPage::~SFTPStatusPage()
     m_stcOutput->Unbind(wxEVT_MENU, &SFTPStatusPage::OnCopy, this, wxID_COPY);
     m_stcOutput->Unbind(wxEVT_MENU, &SFTPStatusPage::OnSelectAll, this, wxID_SELECTALL);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &SFTPStatusPage::OnThemeChanged, this);
+}
+
+void SFTPStatusPage::BeginSync(size_t total)
+{
+    m_gaugeSync->SetRange(static_cast<int>(total));
+    m_gaugeSync->SetValue(0);
+    m_staticTextSync->SetLabel(_("Preparing..."));
+    m_buttonCancelSync->SetLabel(_("Cancel"));
+    m_buttonCancelSync->Enable();
+    m_panelSync->Show();
+    m_panelLog->Layout();
+}
+
+void SFTPStatusPage::UpdateSync(size_t done, size_t total, const wxString& current_file)
+{
+    m_gaugeSync->SetRange(static_cast<int>(total));
+    m_gaugeSync->SetValue(static_cast<int>(done));
+    m_staticTextSync->SetLabel(wxString::Format(
+        _("Uploading (%d/%d): %s"), static_cast<int>(done + 1), static_cast<int>(total), current_file));
+    m_panelLog->Layout();
+}
+
+void SFTPStatusPage::EndSync()
+{
+    m_panelSync->Hide();
+    m_panelLog->Layout();
+}
+
+void SFTPStatusPage::OnCancelSync(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_buttonCancelSync->Disable();
+    m_buttonCancelSync->SetLabel(_("Cancelling..."));
+    m_plugin->CancelFolderSync();
 }
 
 void SFTPStatusPage::OnContentMenu(wxContextMenuEvent& event)

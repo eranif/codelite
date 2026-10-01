@@ -221,6 +221,16 @@ public:
     bool NewFolder(const wxString& path, const SSHAccountInfo& accountInfo);
 
     /**
+     * @brief create a folder (like "mkdir -p"). this function is async
+     * @param path the remote folder path
+     * @param accountName the account name to use
+     * @param sink the object that receives the result event
+     * @event wxEVT_SFTP_NEW_FOLDER_COMPLETED fired once the folder exists
+     * @event wxEVT_SFTP_NEW_FOLDER_ERROR fired on failure, GetString() contains the error message
+     */
+    void AsyncNewFolder(const wxString& path, const wxString& accountName, wxEvtHandler* sink);
+
+    /**
      * @brief rename a file/directory
      * @param oldpath
      * @param newpath

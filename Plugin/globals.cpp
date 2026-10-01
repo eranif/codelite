@@ -904,8 +904,10 @@ int clGetSize(int size, const wxWindow* win)
     if (*gdk_dpi_scale > 0.0) {
         return static_cast<int>(static_cast<double>(size) * gdk_dpi_scale.value());
     }
-#endif
     return winToUse->FromDIP(size);
+#endif
+    wxUnusedVar(winToUse);
+    return size;
 }
 
 bool clIsWaylandSession()

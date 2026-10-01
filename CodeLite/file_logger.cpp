@@ -126,6 +126,12 @@ void FileLogger::OpenLog(const wxString& fullName, int verbosity)
     logfile.AppendDir("logs");
     logfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_logfile = logfile.GetFullPath();
+
+    // Flush() falls back to stdout when the log file does not exist, so create it (e.g. on a fresh data dir)
+    if (!logfile.FileExists()) {
+        wxLogNull noLog;
+        wxFFile fp(m_logfile, "a+");
+    }
     SetGlobalLogVerbosity(verbosity);
 }
 

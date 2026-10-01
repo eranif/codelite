@@ -749,7 +749,12 @@ else()
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXXFLAGS}")
       add_definitions(${EXTRA_CPPFLAGS})
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
-      set(LINKER_OPTIONS "${EXTRA_LDFLAGS}")
+      # dpkg-buildflags returns a plain, space-separated string; turn it into a
+      # real CMake list so each flag is passed as its own argument wherever
+      # ${LINKER_OPTIONS} is used (target_link_libraries(), target_link_options()).
+      # Otherwise it ends up as a single argument with embedded spaces, which
+      # ld rejects.
+      separate_arguments(LINKER_OPTIONS UNIX_COMMAND "${EXTRA_LDFLAGS}")
       list(APPEND LINKER_OPTIONS "-s") # strip binaries
     endif()
   endif()
@@ -968,14 +973,19 @@ endif(WITH_SFTP)
 # ##############################################################################
 
 if(UNIX AND NOT APPLE)
-  set(CMAKE_SKIP_BUILD_RPATH TRUE)
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-  list(
-    PREPEND
-    CMAKE_INSTALL_RPATH
-    "${CMAKE_BINARY_DIR}/lib:${CMAKE_BINARY_DIR}/wxWidgets-install/lib:${PLUGINS_DIR}"
-  )
+  # Binaries run from the build tree (e.g. wxcgen, invoked during the build
+  # itself) need to find the libraries that were just built, before `make
+  # install` has run. CMAKE_BUILD_RPATH is never baked into installed files.
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  set(CMAKE_BUILD_RPATH
+      "${CMAKE_BINARY_DIR}/lib:${CMAKE_BINARY_DIR}/wxWidgets-install/lib")
+
+  # Installed binaries must only ever look in PLUGINS_DIR (where wx libs are
+  # copied to when COPY_WX_LIBS is set, and where plugins live). No build-tree
+  # path should ever appear here.
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+  set(CMAKE_INSTALL_RPATH "${PLUGINS_DIR}")
 endif(UNIX AND NOT APPLE)
 
 if(WITH_PCH)

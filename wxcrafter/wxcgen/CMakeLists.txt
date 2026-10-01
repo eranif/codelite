@@ -19,11 +19,11 @@ if(NOT MINGW)
     set(WXC_LIBS_DIR
         "${CMAKE_INSTALL_PREFIX}/${WXC_INSTALL_LIBDIR}/${APP_NAME}")
     set(LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
-  else(WXC_APP)
-    if(NOT OFFICIAL_CL_BUILD)
-      set(LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-    endif(NOT OFFICIAL_CL_BUILD)
   endif(WXC_APP)
+  # When not building the standalone wxCrafter app, wxcgen is a headless
+  # code-gen tool with no plugins to load. It picks up its build-tree and
+  # install RPATHs from the global settings in the top-level CMakeLists.txt,
+  # so no explicit -Wl,-rpath is needed here.
 endif()
 
 set(RES_FILES "")
@@ -41,9 +41,6 @@ if(USE_PCH AND NOT MINGW)
   target_compile_options(wxcgen PRIVATE -include "${CL_PCH_FILE}")
   target_compile_options(wxcgen PRIVATE -Winvalid-pch)
 endif()
-
-target_link_libraries(wxcgen PRIVATE ${LINKER_OPTIONS}
-                                     $<IF:$<BOOL:${MINGW}>,-mconsole,-lutil>)
 
 if(UNIX AND NOT APPLE)
   set_target_properties(wxcgen PROPERTIES SKIP_BUILD_RPATH FALSE

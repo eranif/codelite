@@ -46,11 +46,10 @@ if(NOT MINGW)
     set(WXC_LIBS_DIR
         "${CMAKE_INSTALL_PREFIX}/${WXC_INSTALL_LIBDIR}/${APP_NAME}")
     set(LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
-  else(WXC_APP)
-    if(NOT OFFICIAL_CL_BUILD)
-      set(LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-    endif(NOT OFFICIAL_CL_BUILD)
   endif(WXC_APP)
+  # When not building the standalone wxCrafter app, this target picks up its
+  # build-tree and install RPATHs from the global settings in the top-level
+  # CMakeLists.txt, so no explicit -Wl,-rpath is needed here.
 endif()
 
 include_directories(

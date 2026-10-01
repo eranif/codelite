@@ -351,6 +351,7 @@ WXDLLIMPEXP_SDK int clGetScaledSize(int size);
  * @brief return the real size for based on Window DIP
  */
 WXDLLIMPEXP_SDK int clGetSize(int size, const wxWindow* win);
+WXDLLIMPEXP_SDK wxSize clGetSize(const wxSize& size, const wxWindow* win);
 
 /**
  * @param signo signal number

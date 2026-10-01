@@ -873,22 +873,39 @@ void clSetDialogSizeAndPosition(wxDialog& win, double ratio) { DoSetDialogSize(w
 
 bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFileSystemWorkspace::Get().IsOpen(); }
 
+wxSize clGetSize(const wxSize& size, const wxWindow* win)
+{
+    return wxSize(clGetSize(size.x, win), clGetSize(size.y, win));
+}
+
 int clGetSize(int size, const wxWindow* win)
 {
-    if (!win) {
+    const wxWindow* winToUse = win ? win : wxTheApp->GetTopWindow();
+    if (winToUse == nullptr)
         return size;
-    }
+
 #ifdef __WXGTK__
-    wxString dpiscale = "1.0";
-    if (wxGetEnv("GDK_DPI_SCALE", &dpiscale)) {
-        double scale = 1.0;
-        if (dpiscale.ToDouble(&scale)) {
-            double scaledSize = scale * size;
-            return scaledSize;
+    static std::optional<double> gdk_dpi_scale{std::nullopt};
+    if (!gdk_dpi_scale.has_value()) {
+        wxString gdk_dpi_scale_str;
+        double d;
+        if (::wxGetEnv("GDK_DPI_SCALE", &gdk_dpi_scale_str) && gdk_dpi_scale_str.ToCDouble(&d)) {
+            // Clamp to a sane range: never shrink below 1, never scale more than 2x.
+            if (d < 1.0) {
+                d = 1.0;
+            } else if (d > 2.0) {
+                d = 2.0;
+            }
+            gdk_dpi_scale = d;
+        } else {
+            gdk_dpi_scale = 0.0;
         }
     }
+    if (*gdk_dpi_scale > 0.0) {
+        return static_cast<int>(static_cast<double>(size) * gdk_dpi_scale.value());
+    }
 #endif
-    return win->FromDIP(size);
+    return winToUse->FromDIP(size);
 }
 
 bool clIsWaylandSession()

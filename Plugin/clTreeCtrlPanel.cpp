@@ -80,6 +80,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
             collapse_all_children(m_treeCtrl, m_treeCtrl->GetRootItem());
         },
         XRCID("collapse_folders"));
+
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &clTreeCtrlPanel::OnLinkEditor, this, XRCID("link_editor"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &clTreeCtrlPanel::OnLinkEditorUI, this, XRCID("link_editor"));

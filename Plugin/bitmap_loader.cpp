@@ -120,7 +120,7 @@ void BitmapLoader::LoadSVGFiles(bool darkTheme)
         clDEBUG() << "Loading SVG files from:" << svg_path.GetPath() << endl;
         scanner.ScanWithCallbacks(svg_path.GetPath(), nullptr, [&](const wxArrayString& files) -> bool {
             for (const wxString& filepath : files) {
-                auto bmpbundle = wxBitmapBundle::FromSVGFile(filepath, wxSize(16, 16));
+                auto bmpbundle = wxBitmapBundle::FromSVGFile(filepath, clGetSize(wxSize(16, 16), nullptr));
                 if (bmpbundle.IsOk()) {
                     bitmap_bundle_cache->insert({wxFileName(filepath).GetName(), bmpbundle});
                 }
@@ -603,7 +603,7 @@ static wxBitmap LoadSidebarBitmapInternal(const wxString& name, wxWindow* win, b
 
     const wxSize button_size{24, 24};
 
-    auto bmpbundle = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), button_size);
+    auto bmpbundle = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), clGetSize(button_size, win));
     if (!bmpbundle.IsOk()) {
         return wxNullBitmap;
     }

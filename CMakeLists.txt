@@ -981,10 +981,10 @@ if(UNIX AND NOT APPLE)
   set(CMAKE_BUILD_RPATH
       "${CMAKE_BINARY_DIR}/lib:${CMAKE_BINARY_DIR}/wxWidgets-install/lib")
 
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
   # Installed binaries must only ever look in PLUGINS_DIR (where wx libs are
   # copied to when COPY_WX_LIBS is set, and where plugins live). No build-tree
   # path should ever appear here.
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
   set(CMAKE_INSTALL_RPATH "${PLUGINS_DIR}")
 endif(UNIX AND NOT APPLE)
 

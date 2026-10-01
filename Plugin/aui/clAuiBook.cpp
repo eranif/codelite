@@ -6,6 +6,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 
+#include <memory>
 #include <vector>
 #include <wx/aui/tabart.h>
 #include <wx/wupdlock.h>
@@ -54,7 +55,7 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     SetNormalFont(font);
     SetSelectedFont(font);
 
-    m_history.reset(new clTabHistory());
+    m_history = std::make_shared<clTabHistory>();
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGING, &clAuiBook::OnPageChanging, this);
     Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clAuiBook::OnPageChanged, this);
     Bind(wxEVT_AUINOTEBOOK_PAGE_CLOSE, &clAuiBook::OnPageClosing, this);

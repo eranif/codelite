@@ -89,6 +89,10 @@ SFTPBrowserDlg::SFTPBrowserDlg(
     , m_flags(flags)
 {
     SetLabel(title);
+
+    // Type-ahead search in the list of files and folders: type to jump to the matching entry
+    m_typeHelper = std::make_unique<DataViewTypeHelper>(m_dataview);
+
     SFTPSettings settings;
     settings.Load();
 

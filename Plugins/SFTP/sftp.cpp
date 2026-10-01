@@ -728,8 +728,8 @@ void SFTP::SyncFolderWithRemote(const wxString& folder)
         return;
     }
 
-    // Show the log view, it displays the progress
-    m_mgr->BookSelectPage(PaneId::BOTTOM_BAR, m_logView);
+    // Show the output pane with the "SFTP Log" tab selected, it displays the progress
+    m_mgr->ShowOutputPane(_("SFTP Log"));
 
     m_syncJob = std::make_unique<SFTPSyncJob>(this, dlg.GetAccount(), dlg.GetRemoteFolder(), dlg.GetSelectedFiles());
     m_syncJob->Start();

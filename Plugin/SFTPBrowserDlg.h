@@ -28,8 +28,11 @@
 
 #if USE_SFTP
 
+#include "DataViewTypeHelper.h"
 #include "sftp_ui.hpp"
 #include "ssh/cl_sftp.h"
+
+#include <memory>
 
 class SFTPBrowserEntryClientData;
 class FloatingTextCtrl;
@@ -85,6 +88,7 @@ private:
     clSFTP::Ptr_t m_sftp;
     wxString m_filter;
     size_t m_flags;
+    std::unique_ptr<DataViewTypeHelper> m_typeHelper;
 };
 #endif // USE_SFTP
 

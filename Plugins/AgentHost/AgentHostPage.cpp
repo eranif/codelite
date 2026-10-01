@@ -1,7 +1,9 @@
 #include "AgentHostPage.hpp"
 
 #include "ColoursAndFontsManager.h"
+#include "FileManager.hpp"
 #include "Notebook.h"
+#include "ai/LLMManager.hpp"
 #include "globals.h"
 #include "open_resource_dialog.h"
 #include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
@@ -170,15 +172,21 @@ void AgentHostPage::StartAgentHost(const AgentInfo& info)
         return;
 
     // Remember the label given to the tab, the blink code needs it.
-    wxString command = info.executable;
-    command.Prepend("\"").Append("\"");
+    wxString baseCommand = info.executable;
+    baseCommand.Prepend("\"").Append("\"");
     wxString command_to_run;
+
+    // Append the system prompt args to the base command.
+    auto systemPromptArgs = BuildSystemPrompt(info);
+    if (systemPromptArgs && !systemPromptArgs->empty())
+        baseCommand << " " << systemPromptArgs.value();
+
     switch (info.agent_type) {
     case AgentType::kClaudeCode:
-        command_to_run = wxString::Format("%s --continue || %s", command, command);
+        command_to_run = wxString::Format("%s --continue || %s", baseCommand, baseCommand);
         break;
     case AgentType::kKiroCli:
-        command_to_run = wxString::Format("%s chat --resume || %s", command, command);
+        command_to_run = wxString::Format("%s --resume || %s", baseCommand, baseCommand);
         break;
     }
     if (!info.workingDirectory.empty()) {
@@ -191,6 +199,59 @@ void AgentHostPage::StartAgentHost(const AgentInfo& info)
     GetSizer()->Add(m_terminal, wxSizerFlags(1).Expand());
     GetSizer()->Layout();
     m_terminal->SendCommand(command_to_run);
+}
+
+std::optional<wxString> AgentHostPage::BuildSystemPrompt(const AgentInfo& info)
+{
+    wxBusyCursor bc{};
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (workspace == nullptr)
+        return std::nullopt;
+
+    wxString systemPromptFilePath;
+    wxString systemPromptArgs;
+    wxString systemPrompt = llm::Manager::GetInstance().GetConfig().GetSystemPrompt();
+    if (systemPrompt.empty())
+        return std::nullopt;
+
+    switch (info.agent_type) {
+    case AgentType::kClaudeCode: {
+        systemPromptFilePath = FileManager::GetSettingFileFullPath("SYSTEM_PROMPT.md");
+        if (!FileManager::WriteContent(systemPromptFilePath, systemPrompt, true)) {
+            clWARNING() << "Failed to write system prompt file:" << systemPromptFilePath << endl;
+            return std::nullopt;
+        }
+        systemPromptArgs << "--append-system-prompt-file " << StringUtils::WrapWithDoubleQuotes(systemPromptFilePath);
+    } break;
+    case AgentType::kKiroCli: {
+        // Kiro does not support using custom files, we need to use .kiro/steering/SYSTEM_PROMPT.md file.
+        systemPromptFilePath = FileManager::GetFullPath(".kiro/steering/SYSTEM_PROMPT.md");
+        wxArrayString dirs = wxStringTokenize(systemPromptFilePath, "/", wxTOKEN_STRTOK);
+        dirs.pop_back(); // Remove the file name SYSTEM_PROMPT.md
+        dirs.pop_back(); // Remove steering
+
+        wxString dirpath = "/" + wxJoin(dirs, '/');
+        clDEBUG() << "Creating rmeote dir:" << dirpath << endl;
+        FileManager::CreateDir(dirpath); // create .kiro
+
+        dirs.push_back("steering"); // Re-add "streeing"
+        dirpath = "/" + wxJoin(dirs, '/');
+        clDEBUG() << "Creating rmeote dir:" << dirpath << endl;
+        FileManager::CreateDir(dirpath); // create .kiro/steering
+
+        systemPromptArgs.clear();
+    } break;
+    default:
+        return std::nullopt;
+    }
+
+    if (!FileManager::WriteContent(systemPromptFilePath, systemPrompt, true)) {
+        clWARNING() << "Failed to write system prompt file:" << systemPromptFilePath << endl;
+        return std::nullopt;
+    }
+    clDEBUG() << "Successfully written system prompt file:" << systemPromptFilePath << endl;
+    clDEBUG() << "Will add the following args to agent CLI:" << systemPromptArgs << endl;
+    return systemPromptArgs;
 }
 
 void AgentHostPage::OnFocus(wxFocusEvent& event)

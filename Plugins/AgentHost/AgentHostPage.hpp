@@ -4,6 +4,8 @@
 #include "cl_command_event.h"
 #include "ssh_account_info.h"
 
+#include <optional>
+
 class wxTerminalViewCtrl;
 
 enum class AgentType {
@@ -35,6 +37,7 @@ protected:
     void OnTerminalBell(clCommandEvent& event);
     void OnTerminalTerminated(clCommandEvent& event);
     void OnTerminalTitleChanged(clCommandEvent& event);
+    std::optional<wxString> BuildSystemPrompt(const AgentInfo& info);
 
 private:
     wxBookCtrlBase* m_book{nullptr};

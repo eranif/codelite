@@ -201,6 +201,20 @@ wxString SFTPSyncFolderDlg::ConfigKey(const wxString& name) const
     return "sftp/sync-folder/" + m_localFolder + "/" + name;
 }
 
+bool SFTPSyncFolderDlg::SetTarget(const wxString& account, const wxString& remoteFolder)
+{
+    if (!account.empty()) {
+        int where = m_choiceAccount->FindString(account);
+        if (where == wxNOT_FOUND) {
+            return false;
+        }
+        m_choiceAccount->SetSelection(where);
+    }
+    m_textCtrlRemoteFolder->ChangeValue(remoteFolder);
+    UpdateTitle();
+    return true;
+}
+
 wxString SFTPSyncFolderDlg::GetAccount() const { return m_choiceAccount->GetStringSelection(); }
 
 wxString SFTPSyncFolderDlg::GetRemoteFolder() const

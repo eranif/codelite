@@ -21,6 +21,10 @@ public:
     /// Return true if the folder has files that can be uploaded
     bool HasFiles() const { return !m_entries.empty(); }
 
+    /// Pre-fill the remote folder, and the account (unless `account` is empty, then the account is not changed).
+    /// Returns false (and changes nothing) if the account is unknown
+    bool SetTarget(const wxString& account, const wxString& remoteFolder);
+
     wxString GetAccount() const;
     wxString GetRemoteFolder() const;
 

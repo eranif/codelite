@@ -25,6 +25,7 @@
 
 #include "sftp.h"
 
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "JSON.h"
 #include "SFTPBrowserDlg.h"
 #include "SFTPSettingsDialog.h"
@@ -48,6 +49,7 @@
 #include "sftp_workspace_settings.h"
 
 #include <algorithm>
+#include <optional>
 #include <wx/log.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
@@ -624,6 +626,58 @@ void SFTP::OpenFile(const wxString& remotePath, int lineNumber)
 
 void SFTP::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 
+namespace
+{
+/// Returns the account and the remote folder to use for `folder`, when `folder` is under the root of an open file
+/// system workspace. Otherwise, returns std::nullopt.
+///
+/// If the workspace defines a remote counterpart of its root folder (remote development is enabled, and the remote
+/// folder and the account are set), the remote folder is: <remote-root-folder>/<folder relative to the workspace root>
+/// If it does not, the account is empty and the remote folder is empty (no remote folder is suggested).
+std::optional<std::pair<wxString, wxString>> GetWorkspaceRemoteTarget(const wxString& folder)
+{
+    auto& workspace = clFileSystemWorkspace::Get();
+    if (!workspace.IsOpen()) {
+        return std::nullopt;
+    }
+
+    auto config = workspace.GetSettings().GetSelectedConfig();
+    if (!config) {
+        return std::nullopt;
+    }
+
+    // The folder must be located under the workspace root
+    wxFileName local = wxFileName::DirName(folder);
+    if (!local.MakeRelativeTo(workspace.GetDir())) {
+        return std::nullopt;
+    }
+
+    wxArrayString parts;
+    for (const wxString& dir : local.GetDirs()) {
+        if (dir == "..") {
+            return std::nullopt;
+        }
+        if (dir != ".") {
+            parts.Add(dir);
+        }
+    }
+
+    if (!config->IsRemoteEnabled() || config->GetRemoteFolder().empty() || config->GetRemoteAccount().empty()) {
+        return std::make_pair(wxString{}, wxString{});
+    }
+
+    wxString remote = config->GetRemoteFolder();
+    remote.Trim().Trim(false);
+    while (remote.length() > 1 && remote.EndsWith("/")) {
+        remote.RemoveLast();
+    }
+    if (!parts.IsEmpty()) {
+        remote << (remote.EndsWith("/") ? "" : "/") << wxJoin(parts, '/');
+    }
+    return std::make_pair(config->GetRemoteAccount(), remote);
+}
+} // namespace
+
 void SFTP::OnFolderContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
@@ -663,6 +717,11 @@ void SFTP::SyncFolderWithRemote(const wxString& folder)
                        _("Nothing to Sync"),
                        wxICON_INFORMATION | wxOK | wxCENTER);
         return;
+    }
+
+    // In a file system workspace, the target is derived from the workspace settings (it may be empty)
+    if (auto target = GetWorkspaceRemoteTarget(folder)) {
+        dlg.SetTarget(target->first, target->second);
     }
 
     if (dlg.ShowModal() != wxID_OK) {

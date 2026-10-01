@@ -71,7 +71,7 @@ jobs:
       run: |
         mkdir wxWidgets/build-release
         cd wxWidgets/build-release
-        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxUSE_STL=1
+        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxUSE_STL=1 -DwxBUILD_LOCALES=ON
         mingw32-make -j$(nproc) && PATH="/${{matrix.arch.msystem}}/bin:$PATH" mingw32-make install
 
     # wx-config-msys2

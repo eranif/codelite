@@ -28,6 +28,7 @@
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
 #include "GitDiffOutputParser.h"
+#include "ThreadStack.hpp"
 #include "cl_config.h"
 #include "editor_config.h"
 #include "git.h"
@@ -139,6 +140,8 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
     m_stcDiff->SetEditable(false);
     m_commandOutput.Clear();
     m_stcCommitMessage->SetEditable(false);
+    clDEBUG() << "m_fileListBox->GetCount():" << m_fileListBox->GetCount() << endl;
+    clDEBUG() << "m_stcCommitMessage->GetLength():" << m_stcCommitMessage->GetLength() << endl;
 }
 
 /*******************************************************************************/
@@ -146,18 +149,27 @@ void GitCommitListDlg::OnProcessOutput(clProcessEvent& event) { m_commandOutput.
 
 void GitCommitListDlg::UpdateSelection(const wxDataViewItem& item)
 {
+    if (m_process) {
+        clDEBUG() << "Another GIT process is currently running" << endl;
+        return;
+    }
+
     int row = m_dvListCtrlCommitList->GetSelectedRow();
     if (item.IsOk()) {
         row = m_dvListCtrlCommitList->ItemToRow(item);
     } else if (row == wxNOT_FOUND && (m_dvListCtrlCommitList->GetItemCount() > 0)) {
         row = 0;
     }
-    if (row == wxNOT_FOUND)
+
+    if (row == wxNOT_FOUND) {
+        clDEBUG() << "No selection" << endl;
         return;
+    }
 
     wxString commitID = m_dvListCtrlCommitList->GetTextValue(row, 0);
     wxString command_args;
     command_args << "--no-pager show --first-parent " << commitID;
+    clDEBUG() << "Loading info for commit:" << commitID << endl;
     m_process = m_git->AsyncRunGit(this, command_args, IProcessCreateDefault | IProcessWrapInShell, m_workingDir);
 }
 
@@ -338,9 +350,4 @@ void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event)
 }
 
 void GitCommitListDlg::OnBtnClose(wxCommandEvent& event) { Destroy(); }
-
-void GitCommitListDlg::OnInitDone(wxInitDialogEvent& event)
-{
-    event.Skip();
-    UpdateSelection();
-}
+void GitCommitListDlg::OnInitDone(wxInitDialogEvent& event) { event.Skip(); }

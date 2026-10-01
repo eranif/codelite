@@ -81,7 +81,7 @@ private:
     wxStringMap_t m_diffMap;
     wxString m_workingDir;
     wxString m_commandOutput;
-    IProcess* m_process;
+    IProcess* m_process{nullptr};
     wxString m_commitList;
     wxString m_Filter;
     int m_skip;

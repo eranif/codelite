@@ -118,9 +118,11 @@ void DataViewTypeHelper::SelectMatch(const wxString& searchText)
             isMatch = text.Lower().Contains(searchText.Lower());
             break;
         }
+
         if (isMatch) {
             m_ctrl->UnselectAll();
             m_ctrl->Select(item);
+            m_ctrl->SetCurrentItem(item);
             m_ctrl->EnsureVisible(item);
             wxDataViewEvent evt(wxEVT_DATAVIEW_SELECTION_CHANGED, m_ctrl, item);
             m_ctrl->ProcessWindowEvent(evt);

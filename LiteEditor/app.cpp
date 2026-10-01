@@ -364,6 +364,17 @@ void on_sigpipe(int sig)
     clERROR() << "Received SIGPIPE!" << endl;
     signal(SIGPIPE, on_sigpipe);
 }
+
+void on_sigabrt(int sig)
+{
+    // wxHandleFatalExceptions() only installs handlers for SIGFPE/SIGILL/SIGBUS/SIGSEGV, not
+    // SIGABRT (raised e.g. by an uncaught C++ exception, a failed libc assertion, or heap
+    // corruption detected by glibc). Dump a stack trace here too, then restore the default
+    // handler and re-raise so the process still terminates (and still core dumps) as expected.
+    StackWalker::Dump({"CODELITE CRASHED (SIGABRT)"}, true);
+    signal(sig, SIG_DFL);
+    raise(sig);
+}
 } // namespace
 #endif
 
@@ -426,7 +437,9 @@ bool CodeLiteApp::OnInit()
     CodeLiteBlockSigChild();
     signal(SIGPIPE, on_sigpipe);
 
-    // Other signals: let CodeLite crash.
+    // wxHandleFatalExceptions() (below) does not cover SIGABRT; dump a stack trace for it too,
+    // then let CodeLite crash normally.
+    signal(SIGABRT, on_sigabrt);
 #endif
     wxSocketBase::Initialize();
 

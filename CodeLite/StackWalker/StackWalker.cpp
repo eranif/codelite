@@ -1,12 +1,12 @@
 #include "StackWalker.hpp"
 
+#include "ThreadStack.hpp"
 #include "file_logger.h"
 
 #include <sstream>
 
 // clang-format off
 #include <wx/app.h>
-#include <wx/stackwalk.h>
 // clang-format on
 
 #ifdef __WXMSW__
@@ -15,25 +15,6 @@
 #pragma comment(lib, "dbghelp.lib")
 static HANDLE g_mainThreadHandle{nullptr};
 static DWORD g_mainThreadId{0};
-#endif
-
-#if wxUSE_STACKWALKER
-class MyStackWalker : public wxStackWalker
-{
-public:
-    MyStackWalker(wxString& output)
-        : m_output{output}
-    {
-    }
-    void OnStackFrame(const wxStackFrame& frame) override
-    {
-        m_output << frame.GetModule() << wxT(" ") << frame.GetName() << wxT(" ") << frame.GetFileName() << wxT(":")
-                 << frame.GetLine() << wxT("\n");
-    }
-
-private:
-    wxString& m_output;
-};
 #endif
 
 void StackWalker::Shutdown()
@@ -226,12 +207,8 @@ void StackWalker::Dump(const std::vector<wxString>& prefix, bool dumpCurrentThre
     }
     clERROR() << text << "\n";
 #else
-#if wxUSE_STACKWALKER
-    MyStackWalker walker{text};
-    walker.Walk();
+    wxString trace = DumpCurrentThreadStack();
+    text << (trace.empty() ? wxString("Stack Walker is not available on this platform\n") : trace);
     clERROR() << text << "\n";
-#else
-    clERROR() << "Stack Walker is not available on this architecture\n";
-#endif
 #endif
 }

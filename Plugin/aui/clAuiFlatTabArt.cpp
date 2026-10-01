@@ -193,7 +193,7 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
         dc.SetPen(GetBorderColour());
         dc.DrawLine(page.rect.GetTopLeft(), page.rect.GetBottomLeft());
 
-        //wxColour right_side_border = GetBorderColour().ChangeLightness(50);
+        // wxColour right_side_border = GetBorderColour().ChangeLightness(50);
         dc.SetPen(GetBorderColour());
         dc.DrawLine(page.rect.GetTopRight(), page.rect.GetBottomRight());
     } else {
@@ -244,10 +244,13 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
             button.rect.width = buttonSize.x;
             button.rect.height = buttonSize.y;
 
-            auto button_rect = button.rect.CentreIn(all_buttons_rect, wxBOTH);
-            button_rect.y += 2;
+            // Centre the rect and store it back into `button.rect`: wxAuiNotebook's
+            // hit-testing (clicking the close button) checks this exact rect, so it
+            // must match what we actually draw, not just a local copy of it.
+            button.rect = button.rect.CentreIn(all_buttons_rect, wxBOTH);
+            button.rect.y += 2;
 
-            dc.DrawBitmap(bmp, button_rect.GetPosition(), true);
+            dc.DrawBitmap(bmp, button.rect.GetPosition(), true);
 
             buttonX += buttonSize.x;
         }

@@ -236,10 +236,13 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
             button.rect.width = buttonSize.x;
             button.rect.height = buttonSize.y;
 
-            auto button_rect = button.rect.CentreIn(all_buttons_rect, wxBOTH);
-            button_rect.y += 1;
+            // Centre the rect and store it back into `button.rect`: wxAuiNotebook's
+            // hit-testing (clicking the close button) checks this exact rect, so it
+            // must match what we actually draw, not just a local copy of it.
+            button.rect = button.rect.CentreIn(all_buttons_rect, wxBOTH);
+            button.rect.y += 1;
 
-            dc.DrawBitmap(bmp, button_rect.GetPosition(), true);
+            dc.DrawBitmap(bmp, button.rect.GetPosition(), true);
             buttonX += buttonSize.x;
         }
         xEnd -= wnd->FromDIP(Data::MARGIN);

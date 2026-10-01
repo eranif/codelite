@@ -16,8 +16,9 @@ nav:
           - Linux: getting_started/linux.md
           - macOS: getting_started/macos.md
       - Hello World: hello_world.md
-  - AI:
-      - AI/ai.md
+  - AI In CodeLite:
+      - AgentHost Plugin: AI/agent_host.md
+      - Chat AI: AI/chat_ai.md
   - LSP:
       - plugins/lsp.md
   - LUA:

@@ -346,23 +346,41 @@ void clSFTP::CreateDir(const wxString& dirname)
         throw clException("SFTP is not initialized");
     }
 
-    int rc;
-    auto attr = sftp_stat(m_sftp, dirname.mb_str(wxConvUTF8).data());
-    if (attr) {
-        // already exists
-        sftp_attributes_free(attr);
-        clDEBUG() << "remote folder:" << dirname << "already exists. nothing to be done here" << endl;
-        // nothing to be done here
-        return;
+    // Same as "mkdir -p". Build every prefix of the path: /a, /a/b, /a/b/c
+    wxArrayString parts = ::wxStringTokenize(dirname, "/", wxTOKEN_STRTOK);
+    std::vector<wxString> paths;
+    paths.reserve(parts.size());
+    wxString current = dirname.StartsWith("/") ? "/" : "";
+    for (const wxString& part : parts) {
+        if (!current.empty() && !current.EndsWith("/")) {
+            current << "/";
+        }
+        current << part;
+        paths.push_back(current);
     }
 
-    rc = sftp_mkdir(m_sftp, dirname.mb_str(wxConvUTF8).data(), S_IRWXU);
+    // Walk from the end to find the deepest folder that already exists. Usually only the last
+    // part is missing, so this takes fewer round trips than checking from the root.
+    size_t first_missing = 0;
+    for (size_t i = paths.size(); i > 0; --i) {
+        auto attr = sftp_stat(m_sftp, paths[i - 1].mb_str(wxConvUTF8).data());
+        if (attr) {
+            sftp_attributes_free(attr);
+            first_missing = i;
+            break;
+        }
+    }
 
-    if (rc != SSH_OK) {
-        wxString message;
-        message << _("SFTP: failed to create directory: ") << dirname << ". " << ssh_get_error(m_ssh->GetSession());
-        clERROR() << message << endl;
-        throw clException(message);
+    // Create the missing parts, from the top to the bottom
+    for (size_t i = first_missing; i < paths.size(); ++i) {
+        int rc = sftp_mkdir(m_sftp, paths[i].mb_str(wxConvUTF8).data(), S_IRWXU);
+        if (rc != SSH_OK) {
+            wxString message;
+            message << _("SFTP: failed to create directory: ") << paths[i] << ". "
+                    << ssh_get_error(m_ssh->GetSession());
+            clERROR() << message << endl;
+            throw clException(message);
+        }
     }
 }
 

@@ -106,6 +106,6 @@ Notes:
 - If the remote folder does not exist, it is created, including its missing parent folders (like `mkdir -p`).
 - CodeLite remembers the account and the remote folder that you entered, and fills them in next time.
 - In a **File System Workspace** that has a remote folder and an SSH account (the `Remote` page of the workspace settings, with remote enabled), the dialog is already filled for you. The remote folder is `<remote workspace folder>/<selected folder, relative to the workspace root>`. For example, if the workspace root is `/home/me/project`, the remote workspace folder is `/srv/project`, and you sync `/home/me/project/src/ui`, the remote folder is `/srv/project/src/ui`. You can still change it. If remote development is disabled for the workspace, or no remote folder is set, the `Remote folder` field is left empty.
-- The progress is shown in the `SFTP Log` view, which does not block the rest of the IDE. Click `Cancel` to stop. The file that is being uploaded is not interrupted, but the next files are skipped.
+- When the sync starts, the `SFTP Log` view opens and shows the progress. It does not block the rest of the IDE. Click `Cancel` to stop. The file that is being uploaded is not interrupted, but the next files are skipped.
 
 [1]: https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse

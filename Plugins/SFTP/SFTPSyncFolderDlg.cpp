@@ -2,6 +2,7 @@
 
 #include "SFTPBrowserDlg.h"
 #include "cl_config.h"
+#include "globals.h"
 #include "sftp_settings.h"
 #include "ssh/ssh_account_info.h"
 
@@ -108,6 +109,8 @@ SFTPSyncFolderDlg::SFTPSyncFolderDlg(wxWindow* parent, const wxString& localFold
     SetMinSize(FromDIP(wxSize(500, 350)));
     SetSize(FromDIP(wxSize(650, 500)));
     CentreOnParent();
+    ::AdjustDataViewAlternateColour(m_dvListCtrlFiles);
+    ::clSetDialogBestSizeAndPosition(*this);
     m_textCtrlRemoteFolder->SetFocus();
 }
 

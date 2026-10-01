@@ -141,6 +141,7 @@ SFTPBrowserDlg::SFTPBrowserDlg(
     }
     CallAfter(&SFTPBrowserDlg::DoSetLocationFocus);
     SetName("SFTPBrowserDlg");
+    ::AdjustDataViewAlternateColour(m_dataview);
     WindowAttrManager::Load(this);
 }
 

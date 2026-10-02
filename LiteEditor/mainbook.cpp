@@ -152,6 +152,24 @@ wxBorder get_border_simple_theme_aware_bit()
     return wxBORDER_DEFAULT;
 #endif
 } // get_border_simple_theme_aware_bit
+
+/// Sets the flag to `true` for the lifetime of this object and sets it back to `false` when leaving the scope
+class RestoringSessionLocker
+{
+public:
+    explicit RestoringSessionLocker(bool& flag)
+        : m_flag(flag)
+    {
+        m_flag = true;
+    }
+    ~RestoringSessionLocker() { m_flag = false; }
+
+    RestoringSessionLocker(const RestoringSessionLocker&) = delete;
+    RestoringSessionLocker& operator=(const RestoringSessionLocker&) = delete;
+
+private:
+    bool& m_flag;
+};
 } // namespace
 
 MainBook::MainBook(wxWindow* parent)
@@ -433,45 +451,46 @@ void MainBook::DoRestoreSession(const SessionEntry& session)
     clAuiBookEventsDisabler events_disabler{m_book};
 #endif
 
-    // Moving the focus to an editor makes its tab the selected one. Don't do that for every file we open, or the user
-    // sees the selection jumping between the tabs until the load is done
-    m_restoringSession = true;
-
     size_t sel = session.GetSelectedTab();
     clEditor* active_editor = nullptr;
     const auto& vTabInfoArr = session.GetTabInfoArr();
-    for (size_t i = 0; i < vTabInfoArr.size(); i++) {
-        const TabInfo& ti = vTabInfoArr[i];
-        int first_visible_line = ti.GetFirstVisibleLine();
-        int current_line = ti.GetCurrentLine();
-        const wxArrayString& bookmarks = ti.GetBookmarks();
-        const std::vector<int>& folds = ti.GetCollapsedFolds();
 
-        bool is_selected = sel == i;
-        m_reloadingDoRaise = (i == vTabInfoArr.size() - 1); // Raise() when opening only the last editor
+    // Moving the focus to an editor makes its tab the selected one. Don't do that for every file we open, or the user
+    // sees the selection jumping between the tabs until the load is done
+    {
+        RestoringSessionLocker restoring_locker{m_restoringSession};
+        for (size_t i = 0; i < vTabInfoArr.size(); i++) {
+            const TabInfo& ti = vTabInfoArr[i];
+            int first_visible_line = ti.GetFirstVisibleLine();
+            int current_line = ti.GetCurrentLine();
+            const wxArrayString& bookmarks = ti.GetBookmarks();
+            const std::vector<int>& folds = ti.GetCollapsedFolds();
 
-        /// prepare a callback to be executed once the file is visible on screen
-        auto cb = [first_visible_line, current_line, is_selected, bookmarks, folds](IEditor* editor) {
-            auto ctrl = editor->GetCtrl();
-            ctrl->SetFirstVisibleLine(first_visible_line);
-            editor->SetCaretAt(ctrl->PositionFromLine(current_line));
+            bool is_selected = sel == i;
+            m_reloadingDoRaise = (i == vTabInfoArr.size() - 1); // Raise() when opening only the last editor
 
-            clEditor* cl_editor = dynamic_cast<clEditor*>(ctrl);
-            if (cl_editor) {
-                cl_editor->LoadMarkersFromArray(bookmarks);
-                cl_editor->LoadCollapsedFoldsFromArray(folds);
+            /// prepare a callback to be executed once the file is visible on screen
+            auto cb = [first_visible_line, current_line, is_selected, bookmarks, folds](IEditor* editor) {
+                auto ctrl = editor->GetCtrl();
+                ctrl->SetFirstVisibleLine(first_visible_line);
+                editor->SetCaretAt(ctrl->PositionFromLine(current_line));
+
+                clEditor* cl_editor = dynamic_cast<clEditor*>(ctrl);
+                if (cl_editor) {
+                    cl_editor->LoadMarkersFromArray(bookmarks);
+                    cl_editor->LoadCollapsedFoldsFromArray(folds);
+                }
+
+                if (is_selected) {
+                    editor->SetActive();
+                }
+            };
+            auto editor = OpenFileAsync(ti.GetFileName(), std::move(cb));
+            if (sel == i) {
+                active_editor = editor;
             }
-
-            if (is_selected) {
-                editor->SetActive();
-            }
-        };
-        auto editor = OpenFileAsync(ti.GetFileName(), std::move(cb));
-        if (sel == i) {
-            active_editor = editor;
         }
     }
-    m_restoringSession = false;
     SelectPage(active_editor);
 
 #if MAINBOOK_AUIBOOK

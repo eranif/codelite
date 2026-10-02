@@ -85,16 +85,6 @@ void PluginManager::UnLoad()
         clConfig::Get().Write("VisibleWorkspaceTabs", visibleTabs);
     }
 
-    {
-        // Now do the same for the output view
-        auto bottom_book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
-        wxArrayString visibleTabs;
-        for (size_t i = 0; i < bottom_book->GetPageCount(); ++i) {
-            visibleTabs.Add(bottom_book->GetPageText(i));
-        }
-        clConfig::Get().Write("VisibleOutputTabs", visibleTabs);
-    }
-
     for (auto [__, plugin] : m_plugins) {
         plugin->UnPlug();
         delete plugin;
@@ -316,22 +306,7 @@ void PluginManager::Load()
         }
     }
 
-    {
-        // Hide output tabs
-        const wxArrayString& tabs = GetOutputTabs();
-        wxArrayString visibleTabs = clConfig::Get().Read("VisibleOutputTabs", DefaultArray);
-        if (!((visibleTabs.size() == 1) && (visibleTabs.Item(0) == "NOT-FOUND"))) {
-            for (size_t i = 0; i < tabs.size(); ++i) {
-                if ((visibleTabs.Index(tabs.Item(i)) == wxNOT_FOUND) &&
-                    (detachedPanes.Index(tabs.Item(i)) == wxNOT_FOUND)) {
-                    // hidden tab - post an event
-                    clCommandEvent eventHide(wxEVT_SHOW_OUTPUT_TAB);
-                    eventHide.SetSelected(false).SetString(tabs.Item(i));
-                    EventNotifier::Get()->AddPendingEvent(eventHide);
-                }
-            }
-        }
-    }
+    // The output tabs are always visible: there is no UI to bring a hidden one back
 }
 
 IEditor* PluginManager::GetActiveEditor()

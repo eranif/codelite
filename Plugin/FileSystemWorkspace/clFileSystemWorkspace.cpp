@@ -693,7 +693,7 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
     m_shell_helper.Cleanup(); // clear any scripts generated earlier
     size_t flags = IProcessCreateDefault | IProcessCreateWithHiddenConsole | IProcessRawOutput;
     // Check that the remote development is enabled AND remote build
-    if (GetConfig()->IsRemoteEnabled() && GetConfig()->IsRemoteBuild()) {
+    if (GetConfig()->IsRemoteTargetEnabled() && GetConfig()->IsRemoteBuild()) {
         flags |= IProcessCreateSSH;
     } else {
         flags |= IProcessWrapInShell;
@@ -824,7 +824,7 @@ void clFileSystemWorkspace::OnFileSaved(clCommandEvent& event)
     event.Skip();
     CHECK_ACTIVE_CONFIG();
 
-    if (GetConfig()->IsRemoteEnabled()) {
+    if (GetConfig()->IsRemoteTargetEnabled() && GetConfig()->IsSyncOnSave()) {
         const wxString& filename = event.GetFileName();
 
         // There are 2 cases where we don't want to trigger remote save:

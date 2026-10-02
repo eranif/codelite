@@ -662,7 +662,7 @@ std::optional<std::pair<wxString, wxString>> GetWorkspaceRemoteTarget(const wxSt
         }
     }
 
-    if (!config->IsRemoteEnabled() || config->GetRemoteFolder().empty() || config->GetRemoteAccount().empty()) {
+    if (!config->IsRemoteTargetEnabled() || config->GetRemoteFolder().empty() || config->GetRemoteAccount().empty()) {
         return std::make_pair(wxString{}, wxString{});
     }
 

@@ -15,8 +15,9 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspaceConfig
 public:
     enum {
         kUnused = (1 << 0),
-        kEnableRemoteSync = (1 << 1),
+        kEnableRemoteTarget = (1 << 1),
         kRemoteBuild = (1 << 2),
+        kSyncOnSave = (1 << 3),
     };
 
 protected:
@@ -78,15 +79,25 @@ public:
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetEnvironment() const { return m_environment; }
     const wxString& GetExecutable() const { return m_executable; }
-    bool IsRemoteEnabled() const { return m_flags & kEnableRemoteSync; }
+    bool IsRemoteTargetEnabled() const { return m_flags & kEnableRemoteTarget; }
     void SetRemoteEnabled(bool b)
     {
         if (b) {
-            m_flags |= kEnableRemoteSync;
+            m_flags |= kEnableRemoteTarget;
         } else {
-            m_flags &= ~kEnableRemoteSync;
+            m_flags &= ~kEnableRemoteTarget;
         }
     }
+    bool IsSyncOnSave() const { return m_flags & kSyncOnSave; }
+    void SetSyncOnSave(bool b)
+    {
+        if (b) {
+            m_flags |= kSyncOnSave;
+        } else {
+            m_flags &= ~kSyncOnSave;
+        }
+    }
+
     void SetCompiler(const wxString& compiler) { this->m_compiler = compiler; }
     const wxString& GetCompiler() const { return m_compiler; }
     clFileSystemWorkspaceConfig();

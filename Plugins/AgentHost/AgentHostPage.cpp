@@ -33,7 +33,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     : AgentHostPageBase(parent)
     , m_book(parent)
 {
-#ifdef __WXMSW__
+#ifndef __WXMSW__
     // Clicking on the tab label with the mouse does not move the focus to the page (GTK keeps it on the tab),
     // so we set the focus on the terminal when our page becomes the selected one.
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
@@ -48,7 +48,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
 
 AgentHostPage::~AgentHostPage()
 {
-#ifdef __WXMSW__
+#ifndef __WXMSW__
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
 #endif
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);

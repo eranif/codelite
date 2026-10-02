@@ -33,9 +33,12 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     : AgentHostPageBase(parent)
     , m_book(parent)
 {
+#ifdef __WXMSW__
     // Clicking on the tab label with the mouse does not move the focus to the page (GTK keeps it on the tab),
     // so we set the focus on the terminal when our page becomes the selected one.
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
+#endif
+
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
@@ -45,7 +48,9 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
 
 AgentHostPage::~AgentHostPage()
 {
+#ifdef __WXMSW__
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
+#endif
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
@@ -132,8 +137,10 @@ void AgentHostPage::OnTerminalLink(clCommandEvent& event)
         return;
     }
 
-    if (clGetManager()->OpenFile(trimmed_text) != nullptr)
+    if (auto editor = clGetManager()->OpenFile(trimmed_text); editor != nullptr) {
+        editor->SetActive();
         return;
+    }
 
 #if USE_SFTP
     // Try a remote file.

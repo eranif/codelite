@@ -64,6 +64,7 @@
 #include "singleinstancethreadjob.h"
 
 #include <wx/dir.h>
+#include <wx/fontenum.h>
 #include <wx/msgdlg.h>
 #include <wx/persist.h>
 #include <wx/regex.h>
@@ -407,8 +408,8 @@ static wxLogNull NO_LOG;
 namespace
 {
 // The bundled font that is used as the default monospaced font (file name and the font family name)
-const wxString kDefaultFontFile = "Iosevka-Regular.ttf";
-const wxString kDefaultFontFace = "Iosevka";
+const wxString kDefaultFontFile = "IosevkaTerm-Regular.ttf";
+const wxString kDefaultFontFace = "Iosevka Term";
 
 /// Make the fonts shipped with CodeLite available to this process. Must run before any window is created.
 void LoadBundledFonts()
@@ -434,11 +435,21 @@ void LoadBundledFonts()
             if (wxFileName{font_file}.GetFullName() == kDefaultFontFile) {
                 // our default font, use it
                 FontUtils::SetBundledMonospacedFace(kDefaultFontFace);
+#if wxUSE_FONTENUM
+                if (!wxFontEnumerator::IsValidFacename(kDefaultFontFace)) {
+                    clWARNING() << "The font face" << kDefaultFontFace
+                                << "is not known to the system after loading:" << font_file << endl;
+                }
+#endif
             }
         } else {
             clWARNING() << "Failed to load bundled font:" << font_file << endl;
         }
     }
+
+    const wxFont default_font = FontUtils::GetDefaultMonospacedFont();
+    clINFO() << "Default monospaced font: ok=" << default_font.IsOk() << ", face=" << default_font.GetFaceName()
+             << ", desc=" << default_font.GetNativeFontInfoDesc() << endl;
 #endif // wxUSE_PRIVATE_FONTS
 }
 } // namespace

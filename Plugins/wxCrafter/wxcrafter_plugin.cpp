@@ -301,6 +301,7 @@ void wxCrafterPlugin::OnProjectSynched(wxCommandEvent& e)
 void wxCrafterPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
+    CHECK_POINTER(m_mainFrame);
     m_mainFrame->CloseProject(false);
 }
 

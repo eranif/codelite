@@ -9,7 +9,7 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 221,
+    "m_objCounter": 224,
     "m_outputFileName": "lsp_UI",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -5222,14 +5222,13 @@
           "m_events": [],
           "m_children": [
             {
-              "m_type": 4447,
+              "m_type": 4442,
               "proportion": 1,
               "border": 5,
               "gbSpan": "1,1",
               "gbPosition": "0,0",
               "m_styles": [
-                "wxSP_LIVE_UPDATE",
-                "wxSP_3D"
+                "wxBK_DEFAULT"
               ],
               "m_sizerFlags": [
                 "wxALL",
@@ -5258,7 +5257,7 @@
                 {
                   "type": "string",
                   "m_label": "Name:",
-                  "m_value": "m_splitter"
+                  "m_value": "m_notebook"
                 },
                 {
                   "type": "multi-string",
@@ -5309,36 +5308,12 @@
                   "type": "string",
                   "m_label": "Style:",
                   "m_value": ""
-                },
-                {
-                  "type": "choice",
-                  "m_label": "Split Mode:",
-                  "m_selection": 1,
-                  "m_options": [
-                    "wxSPLIT_VERTICAL",
-                    "wxSPLIT_HORIZONTAL"
-                  ]
-                },
-                {
-                  "type": "string",
-                  "m_label": "Sash Gravity:",
-                  "m_value": "0.5"
-                },
-                {
-                  "type": "string",
-                  "m_label": "Minimum Pane Size:",
-                  "m_value": "10"
-                },
-                {
-                  "type": "string",
-                  "m_label": "Sash Position:",
-                  "m_value": "0"
                 }
               ],
               "m_events": [],
               "m_children": [
                 {
-                  "m_type": 4448,
+                  "m_type": 4441,
                   "proportion": 0,
                   "border": 5,
                   "gbSpan": "1,1",
@@ -5372,7 +5347,7 @@
                     {
                       "type": "string",
                       "m_label": "Name:",
-                      "m_value": "m_splitterPageTop"
+                      "m_value": "m_panelProgress"
                     },
                     {
                       "type": "multi-string",
@@ -5423,6 +5398,26 @@
                       "type": "string",
                       "m_label": "Style:",
                       "m_value": ""
+                    },
+                    {
+                      "type": "string",
+                      "m_label": "Label:",
+                      "m_value": "Progress"
+                    },
+                    {
+                      "type": "bitmapPicker",
+                      "m_label": "Bitmap File:",
+                      "m_path": ""
+                    },
+                    {
+                      "type": "bool",
+                      "m_label": "Selected",
+                      "m_value": true
+                    },
+                    {
+                      "type": "bool",
+                      "m_label": "Null Page",
+                      "m_value": false
                     }
                   ],
                   "m_events": [],
@@ -5573,7 +5568,7 @@
                   ]
                 },
                 {
-                  "m_type": 4448,
+                  "m_type": 4441,
                   "proportion": 0,
                   "border": 5,
                   "gbSpan": "1,1",
@@ -5607,7 +5602,7 @@
                     {
                       "type": "string",
                       "m_label": "Name:",
-                      "m_value": "m_splitterPageBottom"
+                      "m_value": "m_panelLog"
                     },
                     {
                       "type": "multi-string",
@@ -5658,6 +5653,26 @@
                       "type": "string",
                       "m_label": "Style:",
                       "m_value": ""
+                    },
+                    {
+                      "type": "string",
+                      "m_label": "Label:",
+                      "m_value": "Log"
+                    },
+                    {
+                      "type": "bitmapPicker",
+                      "m_label": "Bitmap File:",
+                      "m_path": ""
+                    },
+                    {
+                      "type": "bool",
+                      "m_label": "Selected",
+                      "m_value": false
+                    },
+                    {
+                      "type": "bool",
+                      "m_label": "Null Page",
+                      "m_value": false
                     }
                   ],
                   "m_events": [],

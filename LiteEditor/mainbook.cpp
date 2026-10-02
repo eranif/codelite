@@ -433,6 +433,10 @@ void MainBook::DoRestoreSession(const SessionEntry& session)
     clAuiBookEventsDisabler events_disabler{m_book};
 #endif
 
+    // Moving the focus to an editor makes its tab the selected one. Don't do that for every file we open, or the user
+    // sees the selection jumping between the tabs until the load is done
+    m_restoringSession = true;
+
     size_t sel = session.GetSelectedTab();
     clEditor* active_editor = nullptr;
     const auto& vTabInfoArr = session.GetTabInfoArr();
@@ -467,6 +471,7 @@ void MainBook::DoRestoreSession(const SessionEntry& session)
             active_editor = editor;
         }
     }
+    m_restoringSession = false;
     SelectPage(active_editor);
 
 #if MAINBOOK_AUIBOOK
@@ -847,7 +852,7 @@ clEditor* MainBook::OpenFile(const wxString& file_name,
         NavMgr::Get()->StoreCurrentLocation(jumpfrom, jumpto);
     }
 
-    if (editor) {
+    if (editor && !m_restoringSession) {
         // Grab the focus to the newly opened editor.
         editor->CallAfter(&clEditor::SetActive);
     }
@@ -2052,7 +2057,7 @@ clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(
         }
     }
 
-    if (editor) {
+    if (editor && !m_restoringSession) {
         editor->GetCtrl()->CallAfter(&clEditor::SetFocus);
     }
     return editor;

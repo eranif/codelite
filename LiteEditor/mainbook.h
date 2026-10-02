@@ -467,6 +467,7 @@ private:
     bool m_useBuffereLimit{true};
     bool m_isWorkspaceReloading{false};
     bool m_reloadingDoRaise{true}; // Prevents multiple Raises() during RestoreSession()
+    bool m_restoringSession{false}; // True while DoRestoreSession() opens the files (no focus changes)
     FilesModifiedDlg* m_filesModifiedDlg{nullptr};
     std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
     WelcomePage* m_welcomePage{nullptr};

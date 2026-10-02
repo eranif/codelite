@@ -13,7 +13,7 @@ const wxString DEFAULT_FACE_NAME = "monaco";
 constexpr int DEFAULT_FONT_SIZE = 16;
 #else // GTK, FreeBSD etc
 const wxString DEFAULT_FACE_NAME = "Monospace";
-constexpr int DEFAULT_FONT_SIZE = 14;
+constexpr int DEFAULT_FONT_SIZE = 18;
 #endif
 
 #ifdef __WXMSW__

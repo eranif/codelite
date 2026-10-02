@@ -35,7 +35,8 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     long aui_book_style = 0;
     aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_BottomTabs, wxAUI_NB_BOTTOM);
     aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_ShowFileListButton, wxAUI_NB_WINDOWLIST_BUTTON);
-    aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_ShowFileListButton, wxAUI_NB_SCROLL_BUTTONS);
+    aui_book_style |= NotebookFlagsToAuiBookStyle(
+        style, static_cast<NotebookStyle>(kNotebook_ShowFileListButton | kNotebook_ShowScrollButtons), wxAUI_NB_SCROLL_BUTTONS);
     aui_book_style |=
         NotebookFlagsToAuiBookStyle(style, kNotebook_CloseButtonOnActiveTab, wxAUI_NB_CLOSE_ON_ACTIVE_TAB);
     aui_book_style |=

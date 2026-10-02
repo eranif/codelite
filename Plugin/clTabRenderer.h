@@ -73,6 +73,10 @@ enum NotebookStyle {
     /// Fixed width tabs
     kNotebook_FixedWidth = (1 << 11),
 
+    /// Show the scroll buttons when the tabs do not fit (wxAuiNotebook only, other implementations ignore it).
+    /// Implied by kNotebook_ShowFileListButton
+    kNotebook_ShowScrollButtons = (1 << 12),
+
     /// The notebook colours are changing based on the current editor theme
     kNotebook_DynamicColours = (1 << 13),
 

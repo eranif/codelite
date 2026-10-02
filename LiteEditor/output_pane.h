@@ -94,7 +94,6 @@ protected:
     void OnBuildEnded(clBuildEvent& e);
     void OnSettingsChanged(wxCommandEvent& event);
     void OnToggleTab(clCommandEvent& event);
-    void OnOutputBookFileListMenu(clContextMenuEvent& event);
     void OnPageChanged(wxBookCtrlEvent& event);
 
 public:

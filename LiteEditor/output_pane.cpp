@@ -87,7 +87,9 @@ void OutputPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
     SetMinClientSize(wxSize(-1, 250));
-    long style = (kNotebook_Default | kNotebook_AllowDnD);
+    // No "file list" (drop down) button, but keep the scroll buttons for when the tabs do not fit
+    long style =
+        ((kNotebook_Default & ~kNotebook_ShowFileListButton) | kNotebook_ShowScrollButtons | kNotebook_AllowDnD);
     if (EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM) {
         style |= kNotebook_BottomTabs;
     } else if (EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxLEFT) {
@@ -109,7 +111,6 @@ void OutputPane::CreateGUIControls()
     }
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-    m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &OutputPane::OnOutputBookFileListMenu, this);
 
     // Calculate the widest tab (the one with the 'Workspace' label) TODO: What happens with translations?
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 0);
@@ -313,58 +314,6 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
         clGetManager()->BookRemovePage(PaneId::BOTTOM_BAR, t.m_label);
     }
 #endif
-}
-
-void OutputPane::OnOutputBookFileListMenu(clContextMenuEvent& event)
-{
-    if (event.GetEventObject() != m_book) {
-        event.Skip();
-        return;
-    }
-    wxMenu* menu = event.GetMenu();
-
-    DetachedPanesInfo dpi;
-    EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
-
-    wxMenu* hiddenTabsMenu = new wxMenu();
-    const wxArrayString& tabs = clGetManager()->GetOutputTabs();
-    for (size_t i = 0; i < tabs.size(); ++i) {
-        const wxString& label = tabs.Item(i);
-        if ((m_book->GetPageIndex(label) != wxNOT_FOUND)) {
-            // Tab is visible, don't show it
-            continue;
-        }
-
-        if (menu->GetMenuItemCount() > 0 && hiddenTabsMenu->GetMenuItemCount() == 0) {
-            // we are adding the first menu item
-            menu->AppendSeparator();
-        }
-
-        int tabId = wxXmlResource::GetXRCID(wxString() << "output_tab_" << label);
-        wxMenuItem* item = new wxMenuItem(hiddenTabsMenu, tabId, label);
-        hiddenTabsMenu->Append(item);
-
-        // Output pane does not support "detach"
-        if (dpi.GetPanes().Index(label) != wxNOT_FOUND) {
-            item->Enable(false);
-        }
-
-        hiddenTabsMenu->Bind(
-            wxEVT_MENU,
-            // Use lambda by value here so we make a copy
-            [=](wxCommandEvent& e) {
-                clCommandEvent eventShow(wxEVT_SHOW_OUTPUT_TAB);
-                eventShow.SetSelected(true).SetString(label);
-                EventNotifier::Get()->AddPendingEvent(eventShow);
-            },
-            tabId);
-    }
-
-    if (hiddenTabsMenu->GetMenuItemCount() == 0) {
-        wxDELETE(hiddenTabsMenu);
-    } else {
-        menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
-    }
 }
 
 void OutputPane::ShowTab(const wxString& name, bool show)

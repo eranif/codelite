@@ -695,15 +695,21 @@ void LanguageServerProtocol::DrainOutputBuffer()
 
         } else if (message_method == "$/progress") {
             // Progress notifications associated with work-done progress tokens.
-            // For now just log them, so they do not get treated as unknown messages.
             auto progress = LSP::Progress::FromJSON(json_item);
             LOG_IF_DEBUG
             {
                 LSP_DEBUG() << GetLogPrefix() << "Received $/progress: " << json_item.format(false) << endl;
             }
             if (progress) {
-                LSP::Manager::GetInstance().LogMessage(
-                    GetName(), progress.value().GetMessage(), LSP::Manager::LogLevel::Info);
+                // `report` ticks are shown only in the progress view, to avoid flooding the log
+                if (progress.value().m_kind != LSP::ProgressKind::report) {
+                    LSP::Manager::GetInstance().LogMessage(
+                        GetName(), progress.value().GetMessage(), LSP::Manager::LogLevel::Info);
+                }
+                LSPEvent progress_event{wxEVT_LSP_PROGRESS};
+                progress_event.SetServerName(GetName());
+                progress_event.SetProgress(progress.value());
+                EventNotifier::Get()->AddPendingEvent(progress_event);
             } else {
                 LSP_DEBUG() << "Failed to parse progress object" << endl;
             }

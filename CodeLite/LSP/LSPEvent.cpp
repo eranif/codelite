@@ -24,6 +24,7 @@ wxDEFINE_EVENT(wxEVT_LSP_REFERENCES, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_REFERENCES_INPROGRESS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_CODE_ACTIONS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_EDIT_FILES, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_PROGRESS, LSPEvent);
 
 LSPEvent::LSPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)

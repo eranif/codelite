@@ -31,6 +31,7 @@ protected:
     std::vector<LSP::Location> m_locations;                             // used by wxEVT_LSP_REFERENCES
     std::vector<LSP::Command> m_commands;                               // used by wxEVT_LSP_CODE_ACTIONS
     std::unordered_map<wxString, std::vector<LSP::TextEdit>> m_changes; // list of changes per file
+    LSP::Progress m_progress;                                           // used by wxEVT_LSP_PROGRESS
     int m_logMessageSeverity = LSP_LOG_INFO;
     LSP::CompletionItem::eTriggerKind m_triggerKind =
         LSP::CompletionItem::kTriggerKindInvoked; // CC response is due to 24x7 cc
@@ -46,6 +47,9 @@ public:
 
     void SetLogMessageSeverity(int sev) { m_logMessageSeverity = sev; }
     int GetLogMessageSeverity() const { return m_logMessageSeverity; }
+
+    void SetProgress(const LSP::Progress& progress) { m_progress = progress; }
+    const LSP::Progress& GetProgress() const { return m_progress; }
 
     void SetMessage(const wxString& message) { SetString(message); }
     wxString GetMessage() const { return GetString(); }
@@ -142,5 +146,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REFERENCES, LSPEvent);       
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REFERENCES_INPROGRESS, LSPEvent); // EventNotifier
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CODE_ACTIONS, LSPEvent);          // EventNotifier
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_EDIT_FILES, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_PROGRESS, LSPEvent); // EventNotifier
 
 #endif // LSPEVENT_H

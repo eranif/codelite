@@ -536,6 +536,9 @@ if(NOT APPLE)
     # License file
     install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CL_RESOURCES_DIR})
 
+    # Bundled fonts
+    install(DIRECTORY ${CL_SRC_ROOT}/assets/fonts DESTINATION ${CL_RESOURCES_DIR})
+
     # Manual pages
     install(DIRECTORY ${CL_SRC_ROOT}/Runtime/man1 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man)
 
@@ -758,6 +761,12 @@ else() # APPLE
         FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
         DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/images
         RENAME splashscreen.png)
+
+    # Bundled fonts
+    # wxFont::AddPrivateFont() expects the fonts under Contents/Resources/Fonts (+ ATSApplicationFontsPath in
+    # Info.plist). Note the trailing slash: copy the folder content, not the folder itself
+    install(DIRECTORY ${CL_SRC_ROOT}/assets/fonts/
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/Resources/Fonts)
 
     codelite_install_script(${CL_SRC_ROOT}/Runtime/codelite-remote)
 endif()

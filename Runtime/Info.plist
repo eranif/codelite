@@ -23,6 +23,8 @@
     <string>CodeLite IDE version 18.4.0</string>
     <key>CSResourcesFileMapped</key>
     <true/>
+    <key>ATSApplicationFontsPath</key>
+    <string>Fonts</string>
     <key>CFBundleDocumentTypes</key>
     <array>
       <dict>

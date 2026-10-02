@@ -39,9 +39,15 @@ wxString GetFontInfo(const wxString& font_desc)
     //    return fixed_fonts_cache[font_desc];
 }
 
+// The face name of the bundled font, empty if it was not loaded
+static wxString bundled_face_name;
+
+void SetBundledMonospacedFace(const wxString& face_name) { bundled_face_name = face_name; }
+
 wxFont GetDefaultMonospacedFont()
 {
-    wxFontInfo fontInfo = wxFontInfo(DEFAULT_FONT_SIZE).Family(wxFONTFAMILY_MODERN).FaceName(DEFAULT_FACE_NAME);
+    const wxString& face_name = bundled_face_name.empty() ? DEFAULT_FACE_NAME : bundled_face_name;
+    wxFontInfo fontInfo = wxFontInfo(DEFAULT_FONT_SIZE).Family(wxFONTFAMILY_MODERN).FaceName(face_name);
     wxFont font(fontInfo);
     return font;
 }

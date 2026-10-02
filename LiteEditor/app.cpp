@@ -41,6 +41,7 @@
 
 #include "BlockTimer.hpp"
 #include "ColoursAndFontsManager.h"
+#include "FontUtils.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "SideBar.hpp"
 #include "SocketAPI/clSocketClient.h"
@@ -403,6 +404,45 @@ CodeLiteApp::~CodeLiteApp()
 
 static wxLogNull NO_LOG;
 
+namespace
+{
+// The bundled font that is used as the default monospaced font (file name and the font family name)
+const wxString kDefaultFontFile = "Iosevka-Regular.ttf";
+const wxString kDefaultFontFace = "Iosevka";
+
+/// Make the fonts shipped with CodeLite available to this process. Must run before any window is created.
+void LoadBundledFonts()
+{
+#if wxUSE_PRIVATE_FONTS
+#ifdef __WXOSX__
+    // on macOS the fonts must be under Contents/Resources/Fonts (see ATSApplicationFontsPath in Info.plist)
+    wxFileName fonts_dir{wxStandardPaths::Get().GetResourcesDir(), wxEmptyString};
+    fonts_dir.AppendDir("Fonts");
+#else
+    wxFileName fonts_dir{clStandardPaths::Get().GetDataDir(), wxEmptyString};
+    fonts_dir.AppendDir("fonts");
+#endif
+    if (!fonts_dir.DirExists()) {
+        return;
+    }
+
+    wxArrayString font_files;
+    wxDir::GetAllFiles(fonts_dir.GetPath(), &font_files, "*.?tf", wxDIR_FILES);
+    for (const wxString& font_file : font_files) {
+        if (wxFont::AddPrivateFont(font_file)) {
+            clINFO() << "Loaded bundled font:" << font_file << endl;
+            if (wxFileName{font_file}.GetFullName() == kDefaultFontFile) {
+                // our default font, use it
+                FontUtils::SetBundledMonospacedFace(kDefaultFontFace);
+            }
+        } else {
+            clWARNING() << "Failed to load bundled font:" << font_file << endl;
+        }
+    }
+#endif // wxUSE_PRIVATE_FONTS
+}
+} // namespace
+
 bool CodeLiteApp::OnInit()
 {
 #if defined(__WXOSX__)
@@ -620,6 +660,9 @@ bool CodeLiteApp::OnInit()
     // CodeLite itself :/
     FileLogger::OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
     clDEBUG() << "Starting codelite..." << endl;
+
+    // The log is ready: load the bundled fonts (must be done before the main frame is created)
+    LoadBundledFonts();
 
 #ifdef __WXMSW__
     if (FreeConsole()) {

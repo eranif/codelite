@@ -30,15 +30,15 @@ class DbgCommandDlg : public DbgCommandBaseDlg
 {
 public:
     /** Constructor */
-    DbgCommandDlg(wxWindow* parent);
+    explicit DbgCommandDlg(wxWindow* parent);
     ~DbgCommandDlg() override = default;
 
-    wxString GetExpression() { return m_textCtrlCommand->GetValue(); }
-    wxString GetName() { return m_textCtrlName->GetValue(); }
-    wxString GetDbgCommand() { return m_textCtrtDebuggerCommand->GetValue(); }
+    wxString GetExpression() const { return m_textCtrlCommand->GetValue(); }
+    wxString GetTypeName() const { return m_textCtrlName->GetValue(); }
+    wxString GetDbgCommand() const { return m_textCtrtDebuggerCommand->GetValue(); }
 
     void SetDbgCommand(const wxString& dbgCmd) { m_textCtrtDebuggerCommand->SetValue(dbgCmd); }
-    void SetName(const wxString& name) { m_textCtrlName->SetValue(name); }
+    void SetTypeName(const wxString& name) { m_textCtrlName->SetValue(name); }
     void SetExpression(const wxString& cmd) { m_textCtrlCommand->SetValue(cmd); }
 };
 

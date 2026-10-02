@@ -12,6 +12,8 @@
 
 #include <map>
 #include <optional>
+#include <string>
+#include <utility>
 #include <vector>
 #include <wx/aui/auibar.h>
 #include <wx/choice.h>
@@ -154,6 +156,8 @@ protected:
 
     void OnThemeChanged(clCommandEvent& event);
     void ThemesUpdated();
+    /// Called on the main thread with the (name, content) of the theme files read by the background thread
+    void OnTOMLFilesLoaded(const std::vector<std::pair<std::string, std::string>>& files);
     void OnChoiceTheme(wxCommandEvent& event);
     void ApplyThemeChanges();
     void ApplySettings();
@@ -161,13 +165,13 @@ protected:
     void OnSettings(wxCommandEvent& event);
 
 private:
-    static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);
+    /// Create a theme from the content of an Alacritty theme (TOML) file. `name` is used for logging only
+    static std::optional<wxTerminalTheme> FromTOML(const wxString& name, const wxString& content);
     wxAuiToolBar* m_toolbar = nullptr;
     wxAuiNotebook* m_book = nullptr;
     wxChoice* m_choice_themes = nullptr;
     std::vector<std::pair<EventFilterCallbackToken, wxEventType>> m_tokens;
-    wxMutex m_themes_mutex;
-    std::map<wxString, wxTerminalTheme> m_themes;
+    std::map<wxString, wxTerminalTheme> m_themes; // accessed from the main thread only
     std::optional<wxTerminalTheme> m_activeTheme{std::nullopt};
     wxFont m_activeFont;
     TerminalSettings m_terminalSettings;

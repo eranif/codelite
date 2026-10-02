@@ -20,6 +20,8 @@
 #include "terminal_view.h"
 #include "wxTerminalCtrl/TerminalSettingsDlg.hpp"
 
+#include <filesystem>
+#include <fstream>
 #include <wx/app.h>
 #include <wx/choicdlg.h>
 #include <wx/dir.h>
@@ -686,29 +688,61 @@ void clBuiltinTerminalPane::OnCtrlLetter(wxCommandEvent& e)
 void clBuiltinTerminalPane::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
-    std::thread([this]() {
-        wxFileName themes_path{clStandardPaths::Get().GetDataDir(), wxEmptyString};
-        themes_path.AppendDir("terminal_themes");
-        themes_path.AppendDir("themes");
-        wxArrayString theme_files;
-        wxDir::GetAllFiles(themes_path.GetPath(), &theme_files, "*.toml", wxDIR_FILES);
 
-        std::map<wxString, wxTerminalTheme> themes;
-        for (const wxString& toml_file : theme_files) {
-            wxFileName fn{toml_file};
-            auto theme = clBuiltinTerminalPane::FromTOML(fn);
-            if (theme.has_value()) {
-                theme->isBlockCursor = true;
-                themes.insert({fn.GetName(), *theme});
+    // The background thread must not touch wx objects (strings, colours, file names, ...) or any other global wx
+    // state while the main thread is initializing: it reads the files using plain C++ types only, and the themes
+    // are created on the main thread.
+    wxFileName themes_path{clStandardPaths::Get().GetDataDir(), wxEmptyString};
+    themes_path.AppendDir("terminal_themes");
+    themes_path.AppendDir("themes");
+    std::string themes_dir = themes_path.GetPath().ToStdString(wxConvUTF8);
+
+    std::thread([this, themes_dir = std::move(themes_dir)]() {
+        // An exception that leaves a thread function terminates the whole application
+        try {
+            namespace fs = std::filesystem;
+            constexpr std::uintmax_t kMaxThemeFileSize = 1 << 20; // 1MiB, a theme file is a few hundreds bytes
+
+            // theme name -> file content
+            std::vector<std::pair<std::string, std::string>> files;
+            std::error_code ec;
+            const fs::path dir{reinterpret_cast<const char8_t*>(themes_dir.c_str())};
+            for (fs::directory_iterator iter{dir, ec}, end; !ec && iter != end; iter.increment(ec)) {
+                const fs::path& path = iter->path();
+                if (path.extension() != ".toml" || !iter->is_regular_file(ec) ||
+                    fs::file_size(path, ec) > kMaxThemeFileSize) {
+                    continue;
+                }
+
+                std::ifstream ifs{path, std::ios::binary};
+                if (!ifs.is_open()) {
+                    continue;
+                }
+                std::string content{std::istreambuf_iterator<char>{ifs}, std::istreambuf_iterator<char>{}};
+                const std::u8string name = path.stem().u8string();
+                files.emplace_back(std::string{name.begin(), name.end()}, std::move(content));
             }
-        }
 
-        {
-            wxMutexLocker locker(m_themes_mutex);
-            m_themes.swap(themes);
+            CallAfter(&clBuiltinTerminalPane::OnTOMLFilesLoaded, std::move(files));
+        } catch (...) {
+            // out of memory, a bad path, etc: keep the default theme. Don't use wx or the logger from this thread
         }
-        EventNotifier::Get()->RunOnMain([this]() { ThemesUpdated(); });
     }).detach();
+}
+
+void clBuiltinTerminalPane::OnTOMLFilesLoaded(const std::vector<std::pair<std::string, std::string>>& files)
+{
+    std::map<wxString, wxTerminalTheme> themes;
+    for (const auto& [name, content] : files) {
+        const wxString theme_name = wxString::FromUTF8(name);
+        auto theme = clBuiltinTerminalPane::FromTOML(theme_name, wxString::FromUTF8(content));
+        if (theme.has_value()) {
+            theme->isBlockCursor = true;
+            themes.insert({theme_name, *theme});
+        }
+    }
+    m_themes.swap(themes);
+    ThemesUpdated();
 }
 
 #ifdef __WXMAC__
@@ -732,20 +766,19 @@ void clBuiltinTerminalPane::OnThemeChanged(clCommandEvent& event)
     ApplyThemeChanges();
 }
 
-std::optional<wxTerminalTheme> clBuiltinTerminalPane::FromTOML(const wxFileName& filepath)
+std::optional<wxTerminalTheme> clBuiltinTerminalPane::FromTOML(const wxString& name, const wxString& content)
 {
-    clTRACE() << "   > Importing Alacritty Theme (TOML) file:" << filepath << endl;
-    std::string filename = filepath.GetFullPath().ToStdString(wxConvUTF8);
+    clTRACE() << "   > Importing Alacritty Theme (TOML):" << name << endl;
 
     clINIParser ini_parser;
-    ini_parser.ParseFile(filepath.GetFullPath());
+    ini_parser.ParseString(content);
 
     wxTerminalTheme theme;
     theme.bg = ini_parser["colors.primary"]["background"].GetValue();
     theme.fg = ini_parser["colors.primary"]["foreground"].GetValue();
 
     if (!theme.bg.IsOk() || !theme.fg.IsOk()) {
-        clSYSTEM() << "Can not import theme:" << filepath << endl;
+        clSYSTEM() << "Can not import theme:" << name << endl;
         return std::nullopt;
     }
 
@@ -797,7 +830,7 @@ std::optional<wxTerminalTheme> clBuiltinTerminalPane::FromTOML(const wxFileName&
         !theme.brightRed.IsOk() || !theme.brightGreen.IsOk() || !theme.brightYellow.IsOk() ||
         !theme.brightBlue.IsOk() || !theme.brightMagenta.IsOk() || !theme.brightCyan.IsOk() ||
         !theme.brightWhite.IsOk()) {
-        clWARNING() << "failed to read basic colour for theme:" << filepath << endl;
+        clWARNING() << "failed to read basic colour for theme:" << name << endl;
         return std::nullopt;
     }
     return theme;

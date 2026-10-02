@@ -1241,9 +1241,12 @@ void CodeLiteApp::OpenFolder(const wxString& path)
 
 void CodeLiteApp::OpenFile(const wxString& path, long lineNumber)
 {
-    wxFileName fn(path);
+    wxFileName fn{path};
     if (fn.GetExt() == wxT("workspace")) {
-        ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
+        // Fire an event to open the workspace.
+        wxCommandEvent eventOpenWorkspace{wxEVT_MENU, XRCID("switch_to_workspace")};
+        eventOpenWorkspace.SetString(fn.GetFullPath());
+        GetTopWindow()->GetEventHandler()->AddPendingEvent(eventOpenWorkspace);
     } else {
         clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNumber);
     }

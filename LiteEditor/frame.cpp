@@ -3705,9 +3705,6 @@ void clMainFrame::CompleteInitialization()
 
     // Save the current layout as the "Default" layout (unless we already got one ...)
     ManagerST::Get()->GetPerspectiveManager().SavePerspectiveIfNotExists(NORMAL_LAYOUT);
-
-    // Process the remainder of the command line arguments
-    static_cast<CodeLiteApp*>(wxTheApp)->ProcessCommandLineParams();
     m_mgr.Update();
 
 #ifdef __WXMSW__
@@ -3729,6 +3726,9 @@ void clMainFrame::CompleteInitialization()
     m_uiHangDetector = std::make_unique<UIHangDetector>();
     m_uiHangDetector->Start(500, 50);
 #endif
+
+    // Finally, process the remainder of the command line arguments
+    static_cast<CodeLiteApp*>(wxTheApp)->ProcessCommandLineParams();
 }
 
 void clMainFrame::RestoreFrameSizeAndPosition()

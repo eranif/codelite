@@ -73,7 +73,7 @@ void PreDefinedTypesPage::OnNewShortcut(wxCommandEvent& event)
     if (dlg.ShowModal() == wxID_OK) {
 
         // add new command to the table
-        wxString name = dlg.GetName();
+        wxString name = dlg.GetTypeName();
         wxString expression = dlg.GetExpression();
         wxString dbgCmd = dlg.GetDbgCommand();
 
@@ -127,7 +127,7 @@ void PreDefinedTypesPage::DoEditItem()
     wxString expr = GetColumnText(m_listCtrl1, m_selectedItem, 1);
     wxString dbgCmd = GetColumnText(m_listCtrl1, m_selectedItem, 2);
 
-    dlg.SetName(name);
+    dlg.SetTypeName(name);
     dlg.SetExpression(expr);
     dlg.SetDbgCommand(dbgCmd);
 

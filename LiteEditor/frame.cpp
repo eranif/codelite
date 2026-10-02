@@ -1771,11 +1771,18 @@ void clMainFrame::Bootstrap()
     sessConfFile << clStandardPaths::Get().GetUserDataDir() << "/config/sessions.xml";
     SessionManager::Get().Load(sessConfFile);
 
-    // restore last session if needed
-    if (clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
+    // restore last session if needed (clWorkspaceManager::Get().IsWorkspaceOpened() can be true here if the user
+    // passed a workspace in the command line).
+    bool workspace_opened = clWorkspaceManager::Get().IsWorkspaceOpened();
+    if (workspace_opened)
+        clDEBUG() << "A workspace is already loaded. Will not load last session." << endl;
+
+    if (!workspace_opened && clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
+        clDEBUG() << "Restoring last session" << endl;
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
         EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
     }
+
     EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, nullptr);
 
     // and finally, find the best window to give focus to

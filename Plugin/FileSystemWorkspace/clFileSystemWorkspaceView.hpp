@@ -43,6 +43,7 @@ protected:
     void OnFindInFilesShowing(clFindInFilesEvent& event) override;
     void OnExcludePath(wxCommandEvent& event);
     void OnThemeChanged(clCommandEvent& event);
+    bool LoadPersistentFolders() const override { return false; }
 
 protected:
     void DoAddIncludePathsToConfig(clFileSystemWorkspaceConfig::Ptr_t config, const wxArrayString& paths);

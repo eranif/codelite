@@ -320,7 +320,7 @@ void clFileSystemWorkspace::DoOpen()
     }
 
     // load the new cache
-    m_backtickCache.reset(new clBacktickCache(GetDir()));
+    m_backtickCache = std::make_shared<clBacktickCache>(GetDir());
 
     // Init the view
     GetView()->Clear();

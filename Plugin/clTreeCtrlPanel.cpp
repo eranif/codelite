@@ -932,9 +932,11 @@ void clTreeCtrlPanel::OnInitDone(wxCommandEvent& event)
         m_options |= kShowHiddenFiles;
         m_options |= kShowHiddenFolders;
 
-        pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
-        for (size_t i = 0; i < pinnedFolders.size(); ++i) {
-            AddFolder(pinnedFolders.Item(i));
+        if (LoadPersistentFolders()) {
+            pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
+            for (size_t i = 0; i < pinnedFolders.size(); ++i) {
+                AddFolder(pinnedFolders.Item(i));
+            }
         }
     }
 }

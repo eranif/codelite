@@ -186,6 +186,8 @@ protected:
     virtual void OnOpenShellFolder(wxCommandEvent& event);
     virtual void OnFolderDropped(clCommandEvent& event);
     virtual void OnRefresh(wxCommandEvent& event);
+    virtual bool LoadPersistentFolders() const { return true; }
+
     void OnOpenFolder(wxCommandEvent& event);
     // Helpers
     // isNativeExpandEvent must be true only when called from OnItemExpanding(): in that case the

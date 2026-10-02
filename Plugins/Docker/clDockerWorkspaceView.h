@@ -18,13 +18,12 @@ public:
 protected:
     void DoDockerfileContextMenu(wxMenu* menu, const wxString& dockerfile);
     void DoDockerComposeContextMenu(wxMenu* menu, const wxString& docker_compose);
-
-protected:
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnWorkspaceOpened(clWorkspaceEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
     void OnFindInFilesDismissed(clFindInFilesEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event) override; // override parent's method
+    bool LoadPersistentFolders() const override { return false; }
 };
 
 #endif // CLDOCKERWORKSPACEVIEW_H

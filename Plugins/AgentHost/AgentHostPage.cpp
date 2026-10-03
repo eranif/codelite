@@ -284,8 +284,8 @@ void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
         // Escape '&' so it is not used as a mnemonic
         label.Replace("&", "&&");
 
-        const int search_id = wxWindow::NewControlId();
         const int symbol_id = wxWindow::NewControlId();
+        const int search_id = XRCID("grep_current_workspace");
         wxString search_label = wxString::Format(_("Search '%s' in Workspace"), label);
 
         menu.Append(search_id, search_label);
@@ -372,6 +372,9 @@ void AgentHostPage::SearchInWorkspace(const wxString& text)
     wxArrayString files;
     workspace->GetWorkspaceFiles(files);
     SearchThreadST::Get()->GrepWord(owner, files, text);
+
+    if (m_terminal)
+        m_terminal->CallAfter(&wxWindow::SetFocus);
 }
 
 void AgentHostPage::OnGrepWorkspace(wxCommandEvent& event)

@@ -269,10 +269,10 @@ public:
     clKeyboardShortcut GetShortcutForCommand(int command_id) const;
 
     /**
-     * @brief fix the keyboard shortcuts shown in `menu` (sub-menus included).
-     * Only items that already show a shortcut (the text after the tab character) are checked. If the shown
-     * shortcut differs from the one assigned to the item, it is replaced with the assigned one. If no shortcut is
-     * assigned to the item, the shown shortcut is removed. Items without a shortcut label are not changed.
+     * @brief update the keyboard shortcuts shown in `menu` (sub-menus included).
+     * The shortcut text of each item (the text after the tab character) is set to the shortcut assigned to the
+     * item's ID: a missing or wrong shortcut text is replaced. If no shortcut is assigned to the item, any shortcut
+     * text is removed. Items whose ID has no entry in the keyboard table are not changed.
      */
     void UpdateMenuShortcuts(wxMenu& menu);
 };

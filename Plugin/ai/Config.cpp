@@ -65,7 +65,7 @@ clStatus Config::Load()
     m_prompts = kDefaultPromptTable;
     wxString doc_string_prompt_label = GetPromptFilePath(kPromptGenerateComment);
     if (!wxFileName::FileExists(doc_string_prompt_label)) {
-        clSYSTEM() << "Initializing prompt store with default values" << endl;
+        clDEBUG() << "Initializing prompt store with default values" << endl;
         // First time, write default prompts
         for (const auto& [prompt_label, prompt_content] : m_prompts) {
             wxString label = wxString::FromUTF8(prompt_label);
@@ -75,7 +75,7 @@ clStatus Config::Load()
                 clWARNING() << "Failed to write default prompt file:" << GetPromptFilePath(label) << "."
                             << result.message() << endl;
             }
-            clSYSTEM() << "Default prompt:" << label << "written to file:" << GetPromptFilePath(label) << endl;
+            clDEBUG() << "Default prompt:" << label << "written to file:" << GetPromptFilePath(label) << endl;
         }
     }
 
@@ -87,8 +87,10 @@ clStatus Config::Load()
                 std::string prompt_label = kv.key();
                 const auto st = ReadPromptFromFile(wxString::FromUTF8(prompt_label));
                 if (!st.ok()) {
-                    clWARNING() << "Failed to read prompt file:" << GetPromptFilePath(prompt_label) << "."
-                                << st.error_message() << endl;
+                    if (!StatusIsNotFound(st.status())) {
+                        clWARNING() << "Failed to read prompt file:" << GetPromptFilePath(prompt_label) << "."
+                                    << st.error_message() << endl;
+                    }
                     continue;
                 }
                 m_prompts[prompt_label] = st.value().ToStdString(wxConvUTF8);
@@ -336,13 +338,14 @@ wxString Config::GetPromptFilePath(const wxString& label) const
     fn.AppendDir("assistant");
     fn.AppendDir("prompts");
     fn.SetExt("md");
-    fn.Mkdir(wxS_DIR_DEFAULT);
     return fn.GetFullPath();
 }
 
 clStatus Config::WritePromptToFile(const wxString& label, const wxString& content) const
 {
     wxFileName file_name{GetPromptFilePath(label)};
+    file_name.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
     if (!FileUtils::WriteFileContent(file_name, content)) {
         return StatusIOError("Write error");
     }

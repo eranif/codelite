@@ -112,7 +112,7 @@ public:
     /**
      * Destructor
      */
-    virtual ~OutputPane();
+    ~OutputPane() override;
 
     /**
      * @brief show or hide tab by name

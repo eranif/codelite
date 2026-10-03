@@ -2,10 +2,12 @@
 
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
-#include "Notebook.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "ai/LLMManager.hpp"
+#include "clStrings.h"
 #include "globals.h"
 #include "open_resource_dialog.h"
+#include "search_thread.h"
 #include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
 
 #if USE_SFTP
@@ -45,6 +47,10 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_BELL, &AgentHostPage::OnTerminalBell, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
+    if (auto frame = EventNotifier::Get()->TopFrame()) {
+        frame->Bind(wxEVT_MENU, &AgentHostPage::OnGrepWorkspace, this, XRCID("grep_current_workspace"));
+        frame->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnGrepWorkspaceUI, this, XRCID("grep_current_workspace"));
+    }
 }
 
 AgentHostPage::~AgentHostPage()
@@ -57,6 +63,10 @@ AgentHostPage::~AgentHostPage()
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_BELL, &AgentHostPage::OnTerminalBell, this);
+    if (auto frame = EventNotifier::Get()->TopFrame()) {
+        frame->Unbind(wxEVT_MENU, &AgentHostPage::OnGrepWorkspace, this, XRCID("grep_current_workspace"));
+        frame->Unbind(wxEVT_UPDATE_UI, &AgentHostPage::OnGrepWorkspaceUI, this, XRCID("grep_current_workspace"));
+    }
 }
 
 void AgentHostPage::OnThemeChanged(clCommandEvent& event)
@@ -255,12 +265,8 @@ void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
     wxUnusedVar(event);
     wxMenu menu;
 
-    // Use the first line of the selection only
-    wxString selection;
+    const wxString selection = GetSelectedLine();
     if (m_terminal->CanCopy()) {
-        if (auto text = m_terminal->GetMouseSelection(); text.has_value()) {
-            selection = text.value().BeforeFirst('\n').BeforeFirst('\r').Trim().Trim(false);
-        }
         menu.Append(wxID_COPY);
         menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_terminal->Copy(); }, wxID_COPY);
     }
@@ -280,19 +286,22 @@ void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
 
         const int search_id = wxWindow::NewControlId();
         const int symbol_id = wxWindow::NewControlId();
-        menu.Append(search_id, wxString::Format(_("Search '%s' in workspace"), label));
+        wxString search_label = wxString::Format(_("Search '%s' in workspace"), label);
+        // Show the keyboard shortcut of "Grep Selection in the Workspace" (if any)
+        if (auto shortcut = clKeyboardManager::Get()->GetShortcutForCommand("grep_current_workspace");
+            shortcut.IsOk()) {
+            search_label << "\t" << shortcut.ToString();
+        }
+        menu.Append(search_id, search_label);
         menu.Append(symbol_id, wxString::Format(_("Open Symbol '%s'"), label));
         menu.Bind(
             wxEVT_MENU,
-            [selection](wxCommandEvent&) {
-                wxCommandEvent grep_event{wxEVT_MENU, XRCID("grep_current_workspace")};
-                grep_event.SetString(selection);
-                // The main frame handles this one
-                EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(grep_event);
-            },
+            [this, selection](wxCommandEvent&) { CallAfter(&AgentHostPage::SearchInWorkspace, selection); },
             search_id);
-        menu.Bind(wxEVT_MENU, [this, selection](wxCommandEvent&) { CallAfter(&AgentHostPage::OpenText, selection); },
-                  symbol_id);
+        menu.Bind(
+            wxEVT_MENU,
+            [this, selection](wxCommandEvent&) { CallAfter(&AgentHostPage::OpenText, selection); },
+            symbol_id);
         menu.AppendSeparator();
     }
     menu.Append(wxID_REFRESH);
@@ -338,4 +347,53 @@ void AgentHostPage::RestartAgentHost()
     // Hook a custom context menu
     m_terminal->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
     m_terminal->SendCommand(command_to_run);
+}
+
+wxString AgentHostPage::GetSelectedLine() const
+{
+    if (m_terminal == nullptr || !m_terminal->CanCopy()) {
+        return wxEmptyString;
+    }
+    // Use the first line of the selection only
+    return m_terminal->GetMouseSelection()
+        .value_or(wxEmptyString)
+        .BeforeFirst('\n')
+        .BeforeFirst('\r')
+        .Trim()
+        .Trim(false);
+}
+
+void AgentHostPage::SearchInWorkspace(const wxString& text)
+{
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    auto owner = clGetManager()->BookGetPage(PaneId::BOTTOM_BAR, FIND_IN_FILES_WIN);
+    if (workspace == nullptr || owner == nullptr || text.empty()) {
+        return;
+    }
+
+    wxArrayString files;
+    workspace->GetWorkspaceFiles(files);
+    SearchThreadST::Get()->GrepWord(owner, files, text);
+}
+
+void AgentHostPage::OnGrepWorkspace(wxCommandEvent& event)
+{
+    // Handle it only when the focus is in our terminal and we have a selection, otherwise let the frame handle it
+    const wxString selection = (wxWindow::FindFocus() == m_terminal) ? GetSelectedLine() : wxString();
+    if (selection.empty()) {
+        event.Skip();
+        return;
+    }
+    SearchInWorkspace(selection);
+}
+
+void AgentHostPage::OnGrepWorkspaceUI(wxUpdateUIEvent& event)
+{
+    // Enable the item when our terminal has the focus and a selection, otherwise let the frame decide
+    if (wxWindow::FindFocus() == m_terminal && !GetSelectedLine().empty() &&
+        clWorkspaceManager::Get().GetWorkspace() != nullptr) {
+        event.Enable(true);
+        return;
+    }
+    event.Skip();
 }

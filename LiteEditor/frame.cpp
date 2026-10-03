@@ -398,8 +398,6 @@ EVT_MENU(XRCID("removeall_current_bookmarks"), clMainFrame::DispatchCommandEvent
 EVT_MENU(XRCID("removeall_bookmarks"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("next_fif_match"), clMainFrame::OnNextFiFMatch)
 EVT_MENU(XRCID("previous_fif_match"), clMainFrame::OnPreviousFiFMatch)
-EVT_MENU(XRCID("grep_current_file"), clMainFrame::OnGrepWord)
-EVT_MENU(XRCID("grep_current_workspace"), clMainFrame::OnGrepWord)
 EVT_MENU(XRCID("web_search_selection"), clMainFrame::OnWebSearchSelection)
 EVT_MENU(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::DispatchCommandEvent)
@@ -1009,6 +1007,8 @@ void clMainFrame::Construct()
     Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceLeft, this, XRCID("toolbar_left"));
     Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceBottom, this, XRCID("toolbar_bottom"));
     Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceRight, this, XRCID("toolbar_right"));
+    Bind(wxEVT_MENU, &clMainFrame::OnGrepWord, this, XRCID("grep_current_file"));
+    Bind(wxEVT_MENU, &clMainFrame::OnGrepWord, this, XRCID("grep_current_workspace"));
 
     Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarHideUI, this, XRCID("toolbar_hidden"));
     Bind(wxEVT_UPDATE_UI, &clMainFrame::OnMainToolBarPlaceTopUI, this, XRCID("toolbar_top"));
@@ -5168,29 +5168,23 @@ void clMainFrame::OnGrepWord(wxCommandEvent& e)
 {
     CHECK_SHUTDOWN();
     clEditor* editor = GetMainBook()->GetActiveEditor();
-
-    // The text to search can be passed by the caller (e.g. from the Agent Host terminal) in the event string
-    // (workspace search only). Otherwise, use the selected text of the active editor.
-    const bool workspaceSearch = (e.GetId() == XRCID("grep_current_workspace"));
-    wxString findWhat = e.GetString();
-    if (findWhat.IsEmpty() || !workspaceSearch) {
-        findWhat = editor ? editor->GetSelectedText() : wxString();
-    }
-
-    bool singleFileSearch = !workspaceSearch;
-    if (findWhat.IsEmpty() || (singleFileSearch && editor == nullptr)) {
+    if (!editor || editor->GetSelectedText().IsEmpty()) {
         return;
     }
 
     // Prepare the search data
+    bool singleFileSearch(true);
+    if (e.GetId() == XRCID("grep_current_workspace")) {
+        singleFileSearch = false;
+    }
+
     SearchData data;
-    data.SetFindString(findWhat);
+    data.SetFindString(editor->GetSelectedText());
     data.SetMatchCase(true);
     data.SetMatchWholeWord(true);
     data.SetRegularExpression(false);
     data.SetDisplayScope(false);
-    const OptionsConfigPtr options = editor ? editor->GetOptions() : EditorConfigST::Get()->GetOptions();
-    data.SetEncoding(wxFontMapper::GetEncodingName(options->GetFileFontEncoding()));
+    data.SetEncoding(wxFontMapper::GetEncodingName(editor->GetOptions()->GetFileFontEncoding()));
     data.SetSkipComments(false);
     data.SetSkipStrings(false);
     data.SetColourComments(false);

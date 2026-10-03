@@ -618,3 +618,57 @@ void SearchSummary::FromJSON(const JSONItem& json)
     m_findWhat = json.namedObject("findWhat").toString();
     m_replaceWith = json.namedObject("replaceWith").toString();
 }
+
+void SearchThread::GrepWord(wxEvtHandler* owner,
+                            const wxArrayString& files,
+                            const wxString& word,
+                            const wxFontEncoding& encoding)
+{
+    if (owner == nullptr || word.empty() || files.empty())
+        return;
+
+    // Prepare the search data
+    SearchData data;
+    data.SetFindString(word);
+    data.SetMatchCase(true);
+    data.SetMatchWholeWord(true);
+    data.SetRegularExpression(false);
+    data.SetDisplayScope(false);
+    data.SetEncoding(wxFontMapper::GetEncodingName(encoding));
+    data.SetSkipComments(false);
+    data.SetSkipStrings(false);
+    data.SetColourComments(false);
+
+    wxArrayString rootDirs;
+    wxString mask;
+    if (files.size() == 1) {
+        rootDirs.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
+        mask << wxFileName{files[0]}.GetFullName(); // this will ensure that this file is scanned
+
+    } else {
+        rootDirs.Add(wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER));
+
+        wxStringSet_t masks;
+        // Build a mask that matches the workspace content
+        for (const wxString& filename : files) {
+            wxFileName fn(filename);
+            wxString curfileMask = fn.GetExt();
+            if (fn.GetExt().IsEmpty()) {
+                curfileMask = "*";
+            } else {
+                curfileMask = "*." + fn.GetExt();
+            }
+
+            if (masks.insert(curfileMask).second) {
+                mask << curfileMask << ";";
+            }
+        }
+    }
+
+    data.SetRootDirs(rootDirs);
+    data.SetFiles(files);
+    data.UseNewTab(true);
+    data.SetOwner(owner);
+    data.SetExtensions(mask);
+    PerformSearch(data);
+}

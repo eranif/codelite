@@ -348,6 +348,24 @@ public:
     void PerformSearch(const SearchData& data);
 
     /**
+     * Searches for a specific word within a given set of files.
+     *
+     * This method configures the search parameters, including encoding and file masks,
+     * and then triggers the search process.
+     *
+     * @param owner The event handler that will receive search notifications.
+     * @param files A list of file paths to be searched.
+     * @param word The string to search for.
+     * @param encoding The font encoding used to read the files.
+     *
+     * @return void
+     */
+    void GrepWord(wxEvtHandler* owner,
+                  const wxArrayString& files,
+                  const wxString& word,
+                  const wxFontEncoding& encoding = wxFontEncoding::wxFONTENCODING_UTF8);
+
+    /**
      * Stops the current search operation
      * \note This call must be called from the context of other thread (e.g. main thread)
      */

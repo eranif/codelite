@@ -175,37 +175,8 @@ void AgentHostPage::OnTerminalLink(clCommandEvent& event)
 
 void AgentHostPage::StartAgentHost(const AgentInfo& info)
 {
-    if (m_terminal)
-        return;
-
-    // Remember the label given to the tab, the blink code needs it.
-    wxString baseCommand = info.executable;
-    baseCommand.Prepend("\"").Append("\"");
-    wxString command_to_run;
-
-    // Append the system prompt args to the base command.
-    auto systemPromptArgs = BuildSystemPrompt(info);
-    if (systemPromptArgs && !systemPromptArgs->empty())
-        baseCommand << " " << systemPromptArgs.value();
-
-    switch (info.agent_type) {
-    case AgentType::kClaudeCode:
-        command_to_run = wxString::Format("%s --continue || %s", baseCommand, baseCommand);
-        break;
-    case AgentType::kKiroCli:
-        command_to_run = wxString::Format("%s --resume || %s", baseCommand, baseCommand);
-        break;
-    }
-    if (!info.workingDirectory.empty()) {
-        wxString cd_command;
-        cd_command << "cd \"" << info.workingDirectory << "\" && ";
-        command_to_run.Prepend(cd_command);
-    }
-    m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-        wxEmptyString, info.sshAccount, wxEmptyString, true, kShellCommand, this);
-    GetSizer()->Add(m_terminal, wxSizerFlags(1).Expand());
-    GetSizer()->Layout();
-    m_terminal->SendCommand(command_to_run);
+    m_agentInfo = info;
+    RestartAgentHost();
 }
 
 std::optional<wxString> AgentHostPage::BuildSystemPrompt(const AgentInfo& info)
@@ -272,4 +243,61 @@ void AgentHostPage::OnBookPageChanged(wxBookCtrlEvent& event)
             m_terminal->SetFocus();
         }
     });
+}
+
+void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
+{
+    wxUnusedVar(event);
+    wxMenu menu;
+    if (m_terminal->CanCopy()) {
+        menu.Append(wxID_COPY);
+        menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_terminal->Copy(); }, wxID_COPY);
+    }
+
+    menu.Append(wxID_PASTE);
+    menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_terminal->Paste(); }, wxID_PASTE);
+    menu.AppendSeparator();
+    menu.Append(wxID_REFRESH);
+    menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::RestartAgentHost); }, wxID_REFRESH);
+    m_terminal->PopupMenu(&menu);
+}
+
+void AgentHostPage::RestartAgentHost()
+{
+    wxWindowUpdateLocker locker{this};
+    if (m_terminal) {
+        GetSizer()->Detach(m_terminal);
+        wxDELETE(m_terminal);
+    }
+
+    // Remember the label given to the tab, the blink code needs it.
+    wxString baseCommand = m_agentInfo.executable;
+    baseCommand.Prepend("\"").Append("\"");
+    wxString command_to_run;
+
+    // Append the system prompt args to the base command.
+    auto systemPromptArgs = BuildSystemPrompt(m_agentInfo);
+    if (systemPromptArgs && !systemPromptArgs->empty())
+        baseCommand << " " << systemPromptArgs.value();
+
+    switch (m_agentInfo.agent_type) {
+    case AgentType::kClaudeCode:
+        command_to_run = wxString::Format("%s --continue || %s", baseCommand, baseCommand);
+        break;
+    case AgentType::kKiroCli:
+        command_to_run = wxString::Format("%s --resume || %s", baseCommand, baseCommand);
+        break;
+    }
+    if (!m_agentInfo.workingDirectory.empty()) {
+        wxString cd_command;
+        cd_command << "cd \"" << m_agentInfo.workingDirectory << "\" && ";
+        command_to_run.Prepend(cd_command);
+    }
+    m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
+        wxEmptyString, m_agentInfo.sshAccount, wxEmptyString, true, kShellCommand, this);
+    GetSizer()->Add(m_terminal, wxSizerFlags(1).Expand());
+    GetSizer()->Layout();
+    // Hook a custom context menu
+    m_terminal->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
+    m_terminal->SendCommand(command_to_run);
 }

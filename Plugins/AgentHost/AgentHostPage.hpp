@@ -37,9 +37,12 @@ protected:
     void OnTerminalBell(clCommandEvent& event);
     void OnTerminalTerminated(clCommandEvent& event);
     void OnTerminalTitleChanged(clCommandEvent& event);
+    void OnContextMenu(wxContextMenuEvent& event);
+    void RestartAgentHost();
     std::optional<wxString> BuildSystemPrompt(const AgentInfo& info);
 
 private:
     wxBookCtrlBase* m_book{nullptr};
     wxTerminalViewCtrl* m_terminal{nullptr};
+    AgentInfo m_agentInfo;
 };

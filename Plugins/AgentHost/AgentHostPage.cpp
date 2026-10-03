@@ -286,12 +286,8 @@ void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
 
         const int search_id = wxWindow::NewControlId();
         const int symbol_id = wxWindow::NewControlId();
-        wxString search_label = wxString::Format(_("Search '%s' in workspace"), label);
-        // Show the keyboard shortcut of "Grep Selection in the Workspace" (if any)
-        if (auto shortcut = clKeyboardManager::Get()->GetShortcutForCommand("grep_current_workspace");
-            shortcut.IsOk()) {
-            search_label << "\t" << shortcut.ToString();
-        }
+        wxString search_label = wxString::Format(_("Search '%s' in Workspace"), label);
+
         menu.Append(search_id, search_label);
         menu.Append(symbol_id, wxString::Format(_("Open Symbol '%s'"), label));
         menu.Bind(
@@ -306,6 +302,8 @@ void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
     }
     menu.Append(wxID_REFRESH);
     menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::RestartAgentHost); }, wxID_REFRESH);
+
+    clKeyboardManager::Get()->UpdateMenuShortcuts(menu);
     m_terminal->PopupMenu(&menu);
 }
 

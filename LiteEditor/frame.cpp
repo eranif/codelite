@@ -1161,8 +1161,8 @@ void clMainFrame::AddKeyboardAccelerators()
     mgr->AddAccelerator(_("Help"), {{"wxID_ABOUT", _("About...")}});
     mgr->AddAccelerator(_("Plugins"), {{"manage_plugins", _("Manage Plugins...")}});
     mgr->AddAccelerator(_("Search"),
-                        {{"grep_current_file", _("Grep Selection in the Current File"), "Ctrl-Shift-G"},
-                         {"grep_current_workspace", _("Grep Selection in the Workspace")},
+                        {{"grep_current_file", _("Grep Selection in the Current File")},
+                         {"grep_current_workspace", _("Grep Selection in the Workspace"), "Ctrl-Shift-G"},
                          {"web_search_selection", _("Search for Selection with default browser"), "Ctrl-Shift-W"},
                          {"ID_GOTO_ANYTHING", _("Goto Anything"), "Ctrl-Shift-P"},
                          {"find_previous", _("Find Previous"), "Shift-F3"},
@@ -3712,7 +3712,6 @@ void clMainFrame::CompleteInitialization()
 
     // Save the current layout as the "Default" layout (unless we already got one ...)
     ManagerST::Get()->GetPerspectiveManager().SavePerspectiveIfNotExists(NORMAL_LAYOUT);
-    m_mgr.Update();
 
 #ifdef __WXMSW__
     // needs to be done in an "CallAfter" to avoid the flicker
@@ -3736,6 +3735,7 @@ void clMainFrame::CompleteInitialization()
 
     // Finally, process the remainder of the command line arguments
     static_cast<CodeLiteApp*>(wxTheApp)->ProcessCommandLineParams();
+    m_mgr.Update();
 }
 
 void clMainFrame::RestoreFrameSizeAndPosition()

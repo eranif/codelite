@@ -13,6 +13,7 @@
 #include "wxCustomControls.hpp"
 
 #include <algorithm>
+#include <memory>
 #include <wx/app.h>
 #include <wx/log.h>
 #include <wx/menu.h>
@@ -534,6 +535,50 @@ wxString clKeyboardShortcut::to_string(bool for_ui) const
 wxString clKeyboardShortcut::ToString() const { return to_string(false); }
 wxString clKeyboardShortcut::DisplayString() const { return to_string(true); }
 
+void clKeyboardManager::DoFixMenuShortcuts(wxMenu* menu, const MenuItemDataIntMap_t& accels) const
+{
+    for (wxMenuItem* item : menu->GetMenuItems()) {
+        if (item->GetSubMenu()) {
+            DoFixMenuShortcuts(item->GetSubMenu(), accels);
+            continue;
+        }
+
+        // Only fix items that already show a shortcut
+        const wxString label = item->GetItemLabel();
+        if (!label.Contains("\t")) {
+            continue;
+        }
+
+        auto where = accels.find(item->GetId());
+        if (where == accels.end()) {
+            continue;
+        }
+
+        const clKeyboardShortcut& expected = where->second.accel;
+        const wxString text = label.BeforeFirst('\t');
+        const std::unique_ptr<wxAcceleratorEntry> shown{wxAcceleratorEntry::Create(label)};
+        if (!expected.IsOk()) {
+            // No shortcut is assigned, remove the label
+            item->SetItemLabel(text);
+            continue;
+        }
+
+        const auto wanted = expected.ToAccelerator(text);
+        const bool is_same = shown && wanted && shown->GetFlags() == wanted->GetFlags() &&
+                             shown->GetKeyCode() == wanted->GetKeyCode();
+        if (!is_same) {
+            item->SetItemLabel(text + "\t" + expected.ToString());
+        }
+    }
+}
+
+void clKeyboardManager::UpdateMenuShortcuts(wxMenu& menu)
+{
+    MenuItemDataIntMap_t accels;
+    DoConvertToIntMap(m_accelTable, accels);
+    DoFixMenuShortcuts(&menu, accels);
+}
+
 clKeyboardShortcut clKeyboardManager::GetShortcutForCommand(const wxString& xrcid_string) const
 {
     if (m_accelTable.count(xrcid_string)) {
@@ -541,6 +586,19 @@ clKeyboardShortcut clKeyboardManager::GetShortcutForCommand(const wxString& xrci
     }
     if (m_defaultAccelTable.count(xrcid_string)) {
         return m_defaultAccelTable.find(xrcid_string)->second.accel;
+    }
+    return {};
+}
+
+clKeyboardShortcut clKeyboardManager::GetShortcutForCommand(int command_id) const
+{
+    // Same lookup order as the string overload: user settings first, then the defaults
+    for (const MenuItemDataMap_t* table : {&m_accelTable, &m_defaultAccelTable}) {
+        for (const auto& [resource_id, menu_item] : *table) {
+            if (wxXmlResource::GetXRCID(resource_id) == command_id) {
+                return menu_item.accel;
+            }
+        }
     }
     return {};
 }

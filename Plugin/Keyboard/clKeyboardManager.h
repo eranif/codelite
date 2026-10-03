@@ -182,6 +182,7 @@ protected:
     void DoUpdateMenu(wxMenu* menu, MenuItemDataIntMap_t& accels, std::vector<wxAcceleratorEntry>& table);
     void DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& accels);
     void DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuItemDataIntMap_t& intMap);
+    void DoFixMenuShortcuts(wxMenu* menu, const MenuItemDataIntMap_t& accels) const;
 
     clKeyboardManager();
     ~clKeyboardManager() override;
@@ -261,6 +262,19 @@ public:
      * @brief return keyboard shortcut for given XRCID
      */
     clKeyboardShortcut GetShortcutForCommand(const wxString& xrcid_string) const;
+
+    /**
+     * @brief return keyboard shortcut for the given command ID (e.g. wxID_COPY or XRCID("my_command"))
+     */
+    clKeyboardShortcut GetShortcutForCommand(int command_id) const;
+
+    /**
+     * @brief fix the keyboard shortcuts shown in `menu` (sub-menus included).
+     * Only items that already show a shortcut (the text after the tab character) are checked. If the shown
+     * shortcut differs from the one assigned to the item, it is replaced with the assigned one. If no shortcut is
+     * assigned to the item, the shown shortcut is removed. Items without a shortcut label are not changed.
+     */
+    void UpdateMenuShortcuts(wxMenu& menu);
 };
 
 #endif // KEYBOARDMANAGER_H

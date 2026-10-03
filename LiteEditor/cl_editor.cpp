@@ -36,6 +36,7 @@
 #include "CompletionHelper.hpp"
 #include "Debugger/debuggersettings.h"
 #include "FindAndReplaceDialog.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "LSP/LSPManager.hpp"
 #include "StringUtils.h"
 #include "attribute_style.h"
@@ -3303,6 +3304,7 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
     // Popup the menu
     // +++++--------------------------
     CursorChanger cd{this};
+    clKeyboardManager::Get()->UpdateMenuShortcuts(*menu);
     PopupMenu(menu);
     wxDELETE(menu);
 

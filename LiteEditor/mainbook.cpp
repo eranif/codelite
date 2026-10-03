@@ -26,6 +26,7 @@
 
 #include "FilesModifiedDlg.h"
 #include "FindAndReplaceDialog.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "LSP/LSPManager.hpp"
 #include "WelcomePage.h"
 #include "aui/clAuiFlatTabArt.hpp"
@@ -1880,6 +1881,7 @@ void MainBook::DoShowTabLabelContextMenu(size_t tabIdx)
     contextMenu->SetClientData((void*)m_book->GetPage(tabIdx));
     contextMenu = event.GetMenu();
 
+    clKeyboardManager::Get()->UpdateMenuShortcuts(*contextMenu);
     m_book->PopupMenu(contextMenu);
     wxDELETE(contextMenu);
 }

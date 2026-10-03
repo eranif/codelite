@@ -36,7 +36,6 @@ static const std::unordered_set<std::string> builtin_prompts = {
 
 static const std::map<std::string, std::string> kDefaultPromptTable = {
     {kPromptGenerateComment, PROMPT_DOCSTRING_GEN},
-    {kPromptGenerateReleaseNotes, PROMPT_GIT_RELEASE_NOTES},
     {kPromptGenerateCommitMessage, PROMPT_GIT_COMMIT_MSG},
     {kPromptGenerateCodeReview, PROMPT_GIT_CODE_REVIEW},
 };

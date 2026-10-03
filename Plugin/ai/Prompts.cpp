@@ -7,7 +7,7 @@ const std::string PROMPT_DOCSTRING_GEN =
 
 The comment must be suitable for being placed **directly above** the function definition and should follow the most common documentation style for the language in which the function is written (e.g., Javadoc for Java, docstring for Python, Doxygen for C/C++, JSDoc for JavaScript/TypeScript, Rustdoc for Rust, etc.).
 
-The documentation comment must contain **all** of the following sections (in this order, if the language supports them):
+Add the following sections if appropriate (in this order, if the language supports them):
 
 1. **Brief summary** – one‑sentence description of what the function does.
 2. **Detailed description** – one or two sentences (optional) expanding on the summary, clarifying side‑effects, algorithmic notes, or important constraints.
@@ -35,12 +35,12 @@ asterisks (*), and other basic punctuation marks.
 ---
 
 Generate only the documentation comment (no surrounding code).
+
+IMPORTANT: Write concisely and briefly. Use B2-level English: simple vocabulary, short sentences, no rare words or idioms.
 )#";
 
 const std::string PROMPT_GIT_COMMIT_MSG =
-    R"#(Write concisely and briefly. Use B2-level English: simple vocabulary, short sentences, no rare words or idioms.
-
-Examine the current diff and write a git commit message that aligns with GitHub commit message style.
+    R"#(Examine the current diff and write a git commit message that aligns with GitHub commit message style.
 
 ```diff
 {{context}}
@@ -48,53 +48,15 @@ Examine the current diff and write a git commit message that aligns with GitHub 
 
 ## Output
 Produce **only** the commit message, in the exact format described above (title, blank line, body). Do not add any extra explanations, code blocks, or markdown.
+
+IMPORTANT: Write concisely and briefly. Use B2-level English: simple vocabulary, short sentences, no rare words or idioms.
 )#";
 
-const std::string PROMPT_GIT_RELEASE_NOTES =
-    R"(You are an expert technical writer who creates concise, well‑structured release notes for public websites.
-
-Your job:
-
-1. Obtain all git commits from HEAD to the latest tag. Use `git describe --tags --abbrev=0` to find the latest tag, then `git log <tag>..HEAD --oneline` to list the commits.
-
-2. **Filter commits to include only significant, user-facing changes.** Skip commits that are:
-   - Minor typo fixes or formatting changes
-   - Internal-only refactorings with no user impact
-   - Trivial dependency updates or version bumps
-   - Routine maintenance tasks (e.g., updating .gitignore, minor CI tweaks)
-   - Work-in-progress or temporary commits
-   - Commits that merely merge branches without substantive changes
-
-3. Group the **major commits only** into the following sections **only if there is at least one item**:
-   - **✨ New Features** – new public‑facing functionality.
-   - **🐛 Bug Fixes** – corrections of defects that affect users.
-   - **🔧 Improvements / Refactorings** – significant internal enhancements, performance improvements, or meaningful code cleanup.
-   - **📝 Documentation** – substantial docs, READMEs, comments, examples, or API documentation updates.
-   - **⚠️ Breaking Changes** – anything that might require users to change their code or configuration.
-   - **🚀 Other** – other noteworthy changes that don't fit above (e.g., significant CI/CD updates, major test additions, important build script changes).
-
-4. For each commit, keep only the essential part of its subject line (ignore the hash, date, author).
-   - If the commit message already contains a conventional prefix (e.g., `feat:`, `fix:`, `docs:`), **use that to decide the section**.
-   - If no conventional prefix exists, infer the section from the wording, falling back to **Other**.
-
-5. Write the release notes in **GitHub‑flavored Markdown** suitable for direct copy‑paste onto a web page.
-   - Use level‑2 headings (`##`) for each section.
-   - Use bullet points (`-`) for individual items.
-   - Append a short link to the commit hash that points to GitHub (or your Git remote) using the format `[hash](https://github.com/ORG/REPO/commit/hash)`.
-   - If a commit references a PR number (e.g., `#123`), turn it into a link `[#123](https://github.com/ORG/REPO/pull/123)`.
-
-6. At the top of the document, add a title line with the release version and date, formatted exactly as:
-
-```markdown
-# Release {{VERSION}} – {{RELEASE_DATE}}
-```
-
-7. End the notes with a short "_Thank you for using our software!_" line.)";
-
 const std::string PROMPT_GIT_CODE_REVIEW =
-    R"(You are an expert developer performing a code review. Your task is to analyze the provided git diff and offer constructive feedback.
-
+    R"(You are an expert developer performing a code review.
+Examine the current diff and provide a code review.
 Your review should cover the following points:
+
 1.  **Code quality and best practices:** Are standard patterns followed? Is the code readable? Is it adhering to the DRY (Don't Repeat Yourself) principle?
 2.  **Potential bugs and logical errors:** Identify any obvious issues or edge cases that might cause problems.
 3.  **Performance implications:** Flag any changes that might negatively impact performance.
@@ -104,33 +66,13 @@ Your review should cover the following points:
 Provide a concise summary at the beginning of your review. For each suggestion, use a GCC style format.
 If you provide a code example for an improvement, include the filename where the change should be applied.
 
-To obtain the git diff, use the command: `git --no-pager diff HEAD`
-
-Here are some examples:
-
-## Example:
-
-Example input git diff:
-
-```diff
-diff --git a/Plugin/CustomControls/TextGenerationPreviewFrame.cpp b/Plugin/CustomControls/TextGenerationPreviewFrame.cpp
-index fa39e40fd..12e491747 100644
---- a/Plugin/CustomControls/TextGenerationPreviewFrame.cpp
-+++ b/Plugin/CustomControls/TextGenerationPreviewFrame.cpp
-@@ -84,7 +84,9 @@ void TextGenerationPreviewFrame::OnCopy(wxCommandEvent& event)
-     wxString text = m_editor->GetText().Trim().Trim(false);
-
-     auto stripped_text = StripMarkdownCodeBlocks(text.ToStdString(wxConvUTF8));
-+    char *a = new char[120];
-+    strcpy(a, stripped_text.c_str());
-+    return a;
-
-```
-
 Example output:
 
 ```
 Plugin/CustomControls/TextGenerationPreviewFrame.cpp:87: warning: potential memory leak?
 Plugin/CustomControls/TextGenerationPreviewFrame.cpp:88: warning: make sure no buffer overflow.
-```)";
+```
+
+IMPORTANT: Write concisely and briefly. Use B2-level English: simple vocabulary, short sentences, no rare words or idioms.
+)";
 } // namespace llm

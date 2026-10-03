@@ -190,10 +190,6 @@ bool SessionManager::GetSession(const wxString& workspaceFile,
                                 const wxString& suffix,
                                 const wxChar* Tag)
 {
-    if (!m_doc.GetRoot()) {
-        return false;
-    }
-
     wxFileName sessionFileName = GetSessionFileName(workspaceFile, suffix);
     wxXmlDocument doc;
 
@@ -220,10 +216,6 @@ bool SessionManager::Save(const wxString& name,
                           const wxString& suffix /*=wxT("")*/,
                           const wxChar* Tag /*=sessionTag*/)
 {
-    if (!m_doc.GetRoot()) {
-        return false;
-    }
-
     if (name.empty())
         return false;
 

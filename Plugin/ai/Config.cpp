@@ -54,6 +54,9 @@ clStatus Config::Load()
 
     wxString content;
     if (!FileUtils::ReadFileContent(GetFullPath(), content, wxConvUTF8)) {
+        // Initial some defaults.
+        m_prompts = kDefaultPromptTable;
+        m_systemPrompts.push_back(kDefaultSystemPrompt);
         return StatusIOError("Read error");
     }
     std::string cstr_content = content.ToStdString(wxConvUTF8);
@@ -91,6 +94,10 @@ clStatus Config::Load()
                 m_prompts[prompt_label] = st.value().ToStdString(wxConvUTF8);
             }
         }
+
+        // Ensure we have the default prompts.
+        if (m_prompts.empty())
+            m_prompts = kDefaultPromptTable;
 
         m_cachingPolicy = ReadValue<std::string>(json, "caching_policy", llm::kCacheAuto.ToStdString(wxConvUTF8));
         m_persistingTrustedTools = ReadValue(json, "trusted_tools", decltype(m_persistingTrustedTools){});

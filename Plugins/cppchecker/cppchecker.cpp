@@ -50,7 +50,7 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new CppCheckPlug
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
-    info.SetAuthor("Eran Ifrah & Jérémie (jfouche)");
+    info.SetAuthor(wxT("Eran Ifrah & Jérémie (jfouche)"));
     info.SetName("CppChecker");
     info.SetDescription(_("CppChecker integration for CodeLite IDE"));
     info.SetVersion("v2.0");

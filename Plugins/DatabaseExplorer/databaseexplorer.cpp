@@ -93,7 +93,7 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
-    info.SetAuthor("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)");
+    info.SetAuthor(wxT("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
     info.SetName("DatabaseExplorer");
     info.SetDescription(_("DatabaseExplorer for CodeLite"));
     info.SetVersion(DBE_VERSION);
@@ -139,8 +139,11 @@ void DatabaseExplorer::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("wxEVT_EXECUTE_SQL"), _("Execute SQL"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("Database Explorer"), menu);
-    m_mgr->GetTheApp()->Connect(
-        XRCID("dbe_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DatabaseExplorer::OnAbout), nullptr, this);
+    m_mgr->GetTheApp()->Connect(XRCID("dbe_about"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(DatabaseExplorer::OnAbout),
+                                nullptr,
+                                this);
 }
 
 void DatabaseExplorer::HookPopupMenu(wxMenu* menu, MenuType type)

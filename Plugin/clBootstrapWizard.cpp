@@ -20,15 +20,7 @@ wxArrayString GetMiscPlugins()
         miscPlugins.push_back("AutoSave");
         miscPlugins.push_back("CodeLite Vim");
         miscPlugins.push_back("ExternalTools");
-        miscPlugins.push_back("CMakePlugin");
-        miscPlugins.push_back("CScope");
         miscPlugins.push_back("CppChecker");
-        miscPlugins.push_back("QMakePlugin");
-        miscPlugins.push_back("UnitTestPP");
-        miscPlugins.push_back("EOSWiki");
-#ifdef __WXGTK__
-        miscPlugins.push_back("MemCheck");
-#endif
     }
     return miscPlugins;
 }
@@ -117,7 +109,8 @@ public:
         m_str = other.m_str;
         m_integer = other.m_integer;
     }
-};)";
+};
+)";
 } // namespace
 
 #define DARK_THEME "Atom One-Dark"

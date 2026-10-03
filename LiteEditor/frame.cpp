@@ -5168,23 +5168,29 @@ void clMainFrame::OnGrepWord(wxCommandEvent& e)
 {
     CHECK_SHUTDOWN();
     clEditor* editor = GetMainBook()->GetActiveEditor();
-    if (!editor || editor->GetSelectedText().IsEmpty()) {
+
+    // The text to search can be passed by the caller (e.g. from the Agent Host terminal) in the event string
+    // (workspace search only). Otherwise, use the selected text of the active editor.
+    const bool workspaceSearch = (e.GetId() == XRCID("grep_current_workspace"));
+    wxString findWhat = e.GetString();
+    if (findWhat.IsEmpty() || !workspaceSearch) {
+        findWhat = editor ? editor->GetSelectedText() : wxString();
+    }
+
+    bool singleFileSearch = !workspaceSearch;
+    if (findWhat.IsEmpty() || (singleFileSearch && editor == nullptr)) {
         return;
     }
 
     // Prepare the search data
-    bool singleFileSearch(true);
-    if (e.GetId() == XRCID("grep_current_workspace")) {
-        singleFileSearch = false;
-    }
-
     SearchData data;
-    data.SetFindString(editor->GetSelectedText());
+    data.SetFindString(findWhat);
     data.SetMatchCase(true);
     data.SetMatchWholeWord(true);
     data.SetRegularExpression(false);
     data.SetDisplayScope(false);
-    data.SetEncoding(wxFontMapper::GetEncodingName(editor->GetOptions()->GetFileFontEncoding()));
+    const OptionsConfigPtr options = editor ? editor->GetOptions() : EditorConfigST::Get()->GetOptions();
+    data.SetEncoding(wxFontMapper::GetEncodingName(options->GetFileFontEncoding()));
     data.SetSkipComments(false);
     data.SetSkipStrings(false);
     data.SetColourComments(false);

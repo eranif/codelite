@@ -13,6 +13,7 @@
 #endif
 
 #include <wx/sizer.h>
+#include <wx/xrc/xmlres.h>
 
 namespace
 {
@@ -113,8 +114,12 @@ void AgentHostPage::OnTerminalLink(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
     CHECK_PTR_RET(m_terminal);
+    OpenText(event.GetString());
+}
 
-    wxString trimmed_text = event.GetString();
+void AgentHostPage::OpenText(const wxString& text)
+{
+    wxString trimmed_text = text;
     while (trimmed_text.EndsWith(".") || trimmed_text.EndsWith(":"))
         trimmed_text.RemoveLast();
 
@@ -249,7 +254,13 @@ void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
 {
     wxUnusedVar(event);
     wxMenu menu;
+
+    // Use the first line of the selection only
+    wxString selection;
     if (m_terminal->CanCopy()) {
+        if (auto text = m_terminal->GetMouseSelection(); text.has_value()) {
+            selection = text.value().BeforeFirst('\n').BeforeFirst('\r').Trim().Trim(false);
+        }
         menu.Append(wxID_COPY);
         menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_terminal->Copy(); }, wxID_COPY);
     }
@@ -257,6 +268,33 @@ void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
     menu.Append(wxID_PASTE);
     menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_terminal->Paste(); }, wxID_PASTE);
     menu.AppendSeparator();
+
+    if (!selection.empty()) {
+        // Keep long selections readable in the menu
+        wxString label = selection;
+        if (label.length() > 40) {
+            label = label.Left(37) + "...";
+        }
+        // Escape '&' so it is not used as a mnemonic
+        label.Replace("&", "&&");
+
+        const int search_id = wxWindow::NewControlId();
+        const int symbol_id = wxWindow::NewControlId();
+        menu.Append(search_id, wxString::Format(_("Search '%s' in workspace"), label));
+        menu.Append(symbol_id, wxString::Format(_("Open Symbol '%s'"), label));
+        menu.Bind(
+            wxEVT_MENU,
+            [selection](wxCommandEvent&) {
+                wxCommandEvent grep_event{wxEVT_MENU, XRCID("grep_current_workspace")};
+                grep_event.SetString(selection);
+                // The main frame handles this one
+                EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(grep_event);
+            },
+            search_id);
+        menu.Bind(wxEVT_MENU, [this, selection](wxCommandEvent&) { CallAfter(&AgentHostPage::OpenText, selection); },
+                  symbol_id);
+        menu.AppendSeparator();
+    }
     menu.Append(wxID_REFRESH);
     menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::RestartAgentHost); }, wxID_REFRESH);
     m_terminal->PopupMenu(&menu);

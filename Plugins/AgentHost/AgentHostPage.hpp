@@ -38,6 +38,8 @@ protected:
     void OnTerminalTerminated(clCommandEvent& event);
     void OnTerminalTitleChanged(clCommandEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
+    /// Open `text` as a URL, folder, file or symbol (same as clicking a link in the terminal)
+    void OpenText(const wxString& text);
     void RestartAgentHost();
     std::optional<wxString> BuildSystemPrompt(const AgentInfo& info);
 

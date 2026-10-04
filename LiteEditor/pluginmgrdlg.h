@@ -25,11 +25,15 @@
 #ifndef __pluginmgrdlg__
 #define __pluginmgrdlg__
 
+#include "DataViewTypeHelper.h"
 #include "plugindlgbase.hpp"
+
+#include <memory>
 
 class PluginMgrDlg : public PluginMgrDlgBase
 {
     wxArrayString m_initialEnabledPlugins;
+    std::unique_ptr<DataViewTypeHelper> m_typeHelper;
 
 protected:
     void OnCheckAll(wxCommandEvent& event) override;

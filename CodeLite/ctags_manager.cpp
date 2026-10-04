@@ -323,13 +323,6 @@ wxString TagsManager::GetScopeName(const wxString& scope)
     return lang->GetScopeName(scope);
 }
 
-void TagsManager::GetFiles(const wxString& partialName, std::vector<FileEntryPtr>& files)
-{
-    if (GetDatabase()) {
-        GetDatabase()->GetFiles(partialName, files);
-    }
-}
-
 TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int lineno)
 {
     if (!GetDatabase()) {

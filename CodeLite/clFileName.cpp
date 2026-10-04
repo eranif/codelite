@@ -109,27 +109,3 @@ wxString clFileName::ToCygwin(const wxFileName& fullpath)
     cygwin_path.Prepend("/cygdrive/" + drive.Lower());
     return cygwin_path;
 }
-
-wxString clFileName::ToMSYS2(const wxString& fullpath) { return ToMSYS2(wxFileName(fullpath)); }
-wxString clFileName::ToMSYS2(const wxFileName& fullpath)
-{
-    // MSYS2 can handle Windows native paths, they just need to be using forward slashes
-    wxString f = fullpath.GetFullPath();
-    f.Replace("\\", "/");
-    return f;
-}
-
-wxString clFileName::FromMSYS2(const wxString& fullpath)
-{
-    std::call_once(cygpath_once, []() -> void {
-        cygpath = ThePlatform->Which("cygpath");
-        if (cygpath) {
-            *cygpath << " -w";
-        }
-    });
-
-    if (!cygpath) {
-        return fullpath;
-    }
-    return ProcUtils::SafeExecuteCommand(*cygpath + " " + StringUtils::WrapWithDoubleQuotes(fullpath));
-}

@@ -317,19 +317,6 @@ void clTabRenderer::DrawButton(
                               unicode_symbol);
 }
 
-void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)
-{
-    wxColour buttonColour;
-    if (DrawingUtils::IsDark(colours.tabAreaColour)) {
-        buttonColour = colours.tabAreaColour.ChangeLightness(150);
-    } else {
-        buttonColour = colours.tabAreaColour.ChangeLightness(50);
-    }
-
-    int flags = wxCONTROL_NONE;
-    DrawingUtils::DrawDropDownArrow(win, dc, rect, flags, buttonColour);
-}
-
 int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
 {
     int bmpHeight = 0;

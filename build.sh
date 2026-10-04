@@ -7,6 +7,7 @@ BUILD_DIR=${ROOT_DIR}/${BUILD_DIR_NAME}
 OS_NAME="$(uname -s)"
 FORCE_CMAKE=0
 WITH_TESTS=0
+NO_BUILD=0
 WX_VERSION=v3.3.3.1
 WXCRAFTER_BUILD_DIR_NAME=.build-release-wxcrafter
 WXCRAFTER_BUILD_DIR=${ROOT_DIR}/${WXCRAFTER_BUILD_DIR_NAME}
@@ -27,6 +28,14 @@ function check_cmake_modified() {
     -name "CMakeLists.txt" \
     -newer "${build_dir}/Makefile" \
     -print -quit | grep -q .
+}
+
+function run_make() {
+  if [ "${NO_BUILD}" -eq 1 ]; then
+    INFO "--no-build was passed; skipping: make $*"
+    return 0
+  fi
+  make "$@"
 }
 
 function check_prerequistes() {
@@ -105,11 +114,41 @@ function install_wx_config_MSW() {
   cd $_
   git clone --depth 1 https://github.com/eranif/wx-config-msys2.git
   cd wx-config-msys2
-  mkdir ${BUILD_DIR_NAME}
+  mkdir .build-release
   cd $_
   cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX="${wx_config_install_dir}"
   mingw32-make -j$(nproc) install
   export PATH=${wx_config_install_dir}/bin:$PATH
+}
+
+function build_wx_widgets_MSW() {
+  local wx_install_dir=${BUILD_DIR}/wxWidgets-install
+
+  if ls ${wx_install_dir}/lib/clang*/wxmsw*.dll >/dev/null 2>&1; then
+    INFO "wxWidgets DLLs already found in ${wx_install_dir}; skipping build"
+    return 0
+  fi
+
+  INFO "Building wxWidgets"
+  INFO "Checking out wxWidgets version: ${WX_VERSION}"
+  mkdir -p ${BUILD_DIR}
+  cd $_
+  rm -fr wxWidgets # in case we aborted earlier
+  git clone --depth 1 --branch ${WX_VERSION} https://github.com/wxWidgets/wxWidgets.git
+  cd wxWidgets
+  git submodule update --init --depth 1
+  mkdir .build-release
+  cd .build-release
+  cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
+    -DwxBUILD_DEBUG_LEVEL=0 \
+    -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=OFF -DwxUSE_STL=ON \
+    -DCMAKE_TLS_VERIFY=OFF \
+    -DCMAKE_INSTALL_PREFIX=${BUILD_DIR}/wxWidgets-install
+
+  make -j$(nproc) install
+  export WXWIN="${BUILD_DIR}/wxWidgets-install"
+  INFO "WXWIN is set to '${WXWIN}'"
+  cd ${ROOT_DIR}
 }
 
 function build_wx_widgets_Linux() {
@@ -168,36 +207,6 @@ function build_wx_widgets_macOS() {
   cd ${ROOT_DIR}
 }
 
-function build_wx_widgets_MSW() {
-  local wx_install_dir=${BUILD_DIR}/wxWidgets-install
-
-  if ls ${wx_install_dir}/lib/clang*/wxmsw*.dll >/dev/null 2>&1; then
-    INFO "wxWidgets DLLs already found in ${wx_install_dir}; skipping build"
-    return 0
-  fi
-
-  INFO "Building wxWidgets"
-  INFO "Checking out wxWidgets version: ${WX_VERSION}"
-  mkdir -p ${BUILD_DIR}
-  cd $_
-  rm -fr wxWidgets # in case we aborted earlier
-  git clone --depth 1 --branch ${WX_VERSION} https://github.com/wxWidgets/wxWidgets.git
-  cd wxWidgets
-  git submodule update --init --depth 1
-  mkdir ${BUILD_DIR_NAME}
-  cd ${BUILD_DIR_NAME}
-  cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
-    -DwxBUILD_DEBUG_LEVEL=0 \
-    -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=OFF -DwxUSE_STL=ON \
-    -DCMAKE_TLS_VERIFY=OFF \
-    -DCMAKE_INSTALL_PREFIX=${BUILD_DIR}/wxWidgets-install
-
-  make -j$(nproc) install
-  export WXWIN="${BUILD_DIR}/wxWidgets-install"
-  INFO "WXWIN is set to '${WXWIN}'"
-  cd ${ROOT_DIR}
-}
-
 function build_CodeLite_Linux() {
   INFO "Building CodeLite"
   local wx_install_dir=${BUILD_DIR}/wxWidgets-install
@@ -230,7 +239,11 @@ function build_CodeLite_Linux() {
     INFO "CodeLite already configured; skipping cmake"
   fi
 
-  make -j$(nproc) #VERBOSE=1
+  run_make -j$(nproc) #VERBOSE=1
+  if [ "${NO_BUILD}" -eq 1 ]; then
+    cd ${ROOT_DIR}
+    return 0
+  fi
   INFO "CodeLite built successfully"
   cd ${ROOT_DIR}
 
@@ -278,7 +291,11 @@ function build_CodeLite_macOS() {
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
-  make -j$(sysctl -n hw.physicalcpu) install
+  run_make -j$(sysctl -n hw.physicalcpu) install
+  if [ "${NO_BUILD}" -eq 1 ]; then
+    cd ${ROOT_DIR}
+    return 0
+  fi
   INFO "CodeLite built successfully"
   cd ${ROOT_DIR}
 
@@ -309,7 +326,11 @@ function build_CodeLite_MSW() {
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
-  make -j$(nproc) install
+  run_make -j$(nproc) install
+  if [ "${NO_BUILD}" -eq 1 ]; then
+    cd ${ROOT_DIR}
+    return 0
+  fi
   INFO "CodeLite built successfully"
   cd ${ROOT_DIR}
 
@@ -342,7 +363,11 @@ function build_wxCrafter_MSW() {
   else
     INFO "wxCrafter already configured; skipping cmake"
   fi
-  make -j$(nproc) install
+  run_make -j$(nproc) install
+  if [ "${NO_BUILD}" -eq 1 ]; then
+    cd ${ROOT_DIR}
+    return 0
+  fi
   INFO "wxCrafter built successfully"
   cd ${ROOT_DIR}
 
@@ -392,6 +417,7 @@ function usage() {
   echo "Options:"
   echo "  --cmake     Force the cmake configure stage even if it is up to date"
   echo "  --tests     Enable Tests"
+  echo "  --no-build  Run cmake only, skip the build step (make)"
   echo "  -h, --help  Show this help message"
 }
 
@@ -450,6 +476,9 @@ while [ $# -gt 0 ]; do
     ;;
   --tests)
     WITH_TESTS=1
+    ;;
+  --no-build)
+    NO_BUILD=1
     ;;
   -h | --help)
     usage

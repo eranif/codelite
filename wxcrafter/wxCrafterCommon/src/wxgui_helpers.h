@@ -3,6 +3,7 @@
 
 #include "macros.h"
 
+#include <optional>
 #include <set>
 #include <utility>
 #include <vector>
@@ -71,6 +72,17 @@ wxString CDATA(const wxString& text);
 wxArrayString MakeUnique(const wxArrayString& arr);
 wxString AddQuotes(const wxString& str);
 void MakeAbsToProject(wxFileName& fn);
+
+/**
+ * @brief find the output directory for the base classes of `projectFile` using the environment
+ * variable WXCGEN_FOLDER_MAP=<base_dir>=<target_folder>. If `projectFile` is under <base_dir>, the output
+ * directory is <target_folder> + the relative path of the project folder. Multiple entries can be
+ * separated by the platform path-list separator (`:` on Unix, `;` on Windows).
+ * If the variable is not set (or has no match), look for a `.wxcrafter-environment` file (a `WXCGEN_FOLDER_MAP=<base_dir>=<target_folder>` line)
+ * in the project folder, then in each of its parent folders
+ * @return the output directory, or `std::nullopt` if there is no match
+ */
+std::optional<wxString> GetOutputDirFromEnv(const wxFileName& projectFile);
 
 /**
  * @brief convert windows slashes to unix paths

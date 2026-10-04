@@ -47,3 +47,4 @@ Agents reading this file should convert it to their system prompt, honor its gui
 - **Submodules:** Never edit files inside `submodules/`. Changes there get overridden on the next submodule update, so exclude them from commits (`git status` will show them as modified/untracked content — leave them out of `git add`).
 - **Commit attribution:** Use `git commit -s` to add a `Signed-off-by` trailer. Do not add `Co-Authored-By` or `Claude-Session` trailers to commit messages.
 - **Communication style:** Write at a B2 English level — clear, plain wording, avoid idioms and complex sentence structures. Keep answers short and concise; skip preamble and unnecessary elaboration.
+- **Builds:** NEVER run a build (`cmake --build`, `make`, `build.sh`, or any compile step) without explicit permission from the user. Ask first, every time. Permission for one build does not cover the next one.

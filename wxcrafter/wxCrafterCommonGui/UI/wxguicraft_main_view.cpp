@@ -60,34 +60,6 @@ GUICraftMainPanel* GUICraftMainPanel::m_MainPanel = nullptr;
 
 namespace
 {
-std::optional<wxString> FindConfigEntry(wxFileName projectFile)
-{
-    wxFileName keyfn{projectFile};
-    auto key = keyfn.GetFullPath().ToStdString(wxConvUTF8);
-    using json = nlohmann::ordered_json;
-    projectFile.SetFullName(".wxcgen.json");
-    wxString content;
-    while (projectFile.GetDirCount()) {
-        if (projectFile.FileExists()) {
-            if (!FileUtils::ReadFileContent(projectFile, content, wxConvUTF8)) {
-                return std::nullopt;
-            }
-            try {
-                auto j = json::parse(content.ToStdString(wxConvUTF8));
-                if (j.contains("output-directory") && j["output-directory"].is_object() &&
-                    j["output-directory"].contains(key) && j["output-directory"][key].is_string()) {
-                    auto outputDir = wxString::FromUTF8(j["output-directory"][key].get<std::string>());
-                    return outputDir;
-                }
-            } catch (...) {
-                return std::nullopt;
-            }
-        }
-        projectFile.RemoveLastDir();
-    }
-    return std::nullopt;
-}
-
 struct OutputDirectoryLocker {
     wxString m_oldPath;
     bool m_enabled{false};
@@ -3696,7 +3668,7 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
     }
 
     OutputDirectoryLocker locker{
-        FindConfigEntry(wxcProjectMetadata::Get().GetProjectFileName()).value_or(wxEmptyString)};
+        wxCrafter::GetOutputDirFromEnv(wxcProjectMetadata::Get().GetProjectFileName()).value_or(wxEmptyString)};
 
     wxFileName outputDir(wxcProjectMetadata::Get().GetGeneratedFilesDir(), "");
     wxCrafter::MakeAbsToProject(outputDir);

@@ -35,3 +35,4 @@ LiteEditor/autoversion.h
 .kiro/
 .wxcgen.json
 *.lock
+.wxcrafter-environment

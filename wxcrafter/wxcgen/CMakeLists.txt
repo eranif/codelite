@@ -115,11 +115,9 @@ macro(
   endforeach()
   unset(ExtraMacroArgs)
 
-  set(WXCGEN_CONFIG_FILE "${CMAKE_SOURCE_DIR}/.wxcgen.json")
   add_custom_command(
     OUTPUT ${WXCRAFTER_${Name}_OUTPUTS}
-    COMMAND $<TARGET_FILE:wxcgen> -o "${OutputDir}" -p "${WXCGEN_CONFIG_FILE}"
-            "${Input}"
+    COMMAND $<TARGET_FILE:wxcgen> -o "${OutputDir}" "${Input}"
     VERBATIM
     DEPENDS ${Input} wxcgen
     COMMENT "[WxCrafter][${Name}] Building code (wxcgen)")

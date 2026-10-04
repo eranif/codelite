@@ -27,23 +27,10 @@
 #include <wx/wxcrtvararg.h>
 #include <wx/xml/xml.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <fcntl.h>
-#include <unistd.h>
-#endif
-
 static const wxCmdLineEntryDesc s_cmdDesc[] = {
     {wxCMD_LINE_SWITCH, "v", "version", "Print version and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH, "h", "help", "Print usage and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_OPTION, "o", "output", "Override output directory", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
-    {wxCMD_LINE_OPTION,
-     "p",
-     "persist",
-     "Persist the output directory in a .wxcrafter resource file",
-     wxCMD_LINE_VAL_STRING,
-     wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_PARAM,
      nullptr,
      nullptr,
@@ -53,136 +40,6 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
     wxCMD_LINE_DESC_END};
 
 extern const char* GIT_REVISION;
-
-namespace
-{
-#ifdef _WIN32
-class FileLockGuard
-{
-    HANDLE m_mutex = nullptr;
-
-public:
-    explicit FileLockGuard(const wxString& lockPath)
-    {
-        wxUnusedVar(lockPath);
-        // Create a unique mutex name from the lock path
-        wxString mutexName = "Global\\WXCGEN_LOCK_MUTEX";
-
-        // Create or open the named mutex
-        m_mutex = ::CreateMutexW(nullptr, FALSE, mutexName.wc_str());
-        if (m_mutex == nullptr) {
-            return;
-        }
-
-        // Wait for the mutex (blocking until acquired)
-        DWORD dwRet = ::WaitForSingleObject(m_mutex, INFINITE);
-        if (dwRet != WAIT_OBJECT_0) {
-            ::CloseHandle(m_mutex);
-            m_mutex = nullptr;
-        }
-    }
-
-    ~FileLockGuard()
-    {
-        if (m_mutex != nullptr) {
-            ::ReleaseMutex(m_mutex);
-            ::CloseHandle(m_mutex);
-        }
-    }
-
-    bool IsLocked() const { return m_mutex != nullptr; }
-
-    FileLockGuard(const FileLockGuard&) = delete;
-    FileLockGuard& operator=(const FileLockGuard&) = delete;
-};
-#else
-class FileLockGuard
-{
-    int m_fd = -1;
-
-public:
-    explicit FileLockGuard(const wxString& lockPath)
-    {
-        m_fd = ::open(lockPath.ToUTF8().data(), O_CREAT | O_WRONLY | O_CLOEXEC, 0644);
-        if (m_fd < 0) {
-            return;
-        }
-
-        struct flock fl{};
-        fl.l_type = F_WRLCK;
-        fl.l_whence = SEEK_SET;
-
-        // Try non-blocking first; on contention, retry with short sleeps up to 5 seconds.
-        if (::fcntl(m_fd, F_SETLK, &fl) == 0) {
-            return;
-        }
-
-        constexpr int MAX_RETRIES = 50;
-        constexpr useconds_t SLEEP_US = 100000; // 100 ms
-        for (int i = 0; i < MAX_RETRIES; ++i) {
-            ::usleep(SLEEP_US);
-            if (::fcntl(m_fd, F_SETLK, &fl) == 0) {
-                return;
-            }
-        }
-
-        ::close(m_fd);
-        m_fd = -1;
-    }
-
-    ~FileLockGuard()
-    {
-        if (m_fd >= 0) {
-            struct flock fl{};
-            fl.l_type = F_UNLCK;
-            fl.l_whence = SEEK_SET;
-            ::fcntl(m_fd, F_SETLK, &fl);
-            ::close(m_fd);
-        }
-    }
-
-    bool IsLocked() const { return m_fd >= 0; }
-
-    FileLockGuard(const FileLockGuard&) = delete;
-    FileLockGuard& operator=(const FileLockGuard&) = delete;
-};
-#endif
-} // namespace
-
-void UpdateConfigFile(const wxString& filepath, const wxString& section, const wxString& key, const wxString& value)
-{
-    using json = nlohmann::ordered_json;
-
-    wxString lockPath = filepath + ".lock";
-    FileLockGuard lock(lockPath);
-    if (!lock.IsLocked()) {
-        wxFprintf(stderr, "wxcgen: warning: could not acquire lock on %s\n", lockPath);
-    }
-
-    json j;
-
-    // Load existing JSON if file exists
-    if (wxFileName::FileExists(filepath)) {
-        wxString fileContent;
-        if (FileUtils::ReadFileContent(filepath, fileContent)) {
-            try {
-                j = json::parse(fileContent.ToStdString(wxConvUTF8));
-            } catch (...) {
-                j = json::object();
-            }
-        }
-    }
-
-    // Ensure section exists and update/add the key
-    if (!j.contains(section.ToStdString(wxConvUTF8))) {
-        j[section.ToStdString(wxConvUTF8)] = json::object();
-    }
-    j[section.ToStdString(wxConvUTF8)][key.ToStdString(wxConvUTF8)] = value.ToStdString(wxConvUTF8);
-
-    // Write back to file with pretty formatting
-    wxString jsonContent(j.dump(2).c_str(), wxConvUTF8);
-    FileUtils::WriteFileContent(filepath, jsonContent);
-}
 
 static bool
 GenerateFromProject(const wxString& filename, const wxString& fileContent, const wxString& outputDirOverride)
@@ -318,6 +175,18 @@ int wxcgenApp::OnRun()
 
     wxCmdLineParser parser;
     parser.SetDesc(s_cmdDesc);
+    parser.SetLogo("wxcgen: generate the wxCrafter base classes from .wxcp files.\n"
+                   "\n"
+                   "The base classes are placed next to the .wxcp file, unless an output directory is found.\n"
+                   "The output directory is selected using the first match of:\n"
+                   "  1. The -o option.\n"
+                   "  2. The environment variable WXCGEN_FOLDER_MAP=<base_dir>=<target_folder>\n"
+                   "     (several entries are separated by ':' on Unix and ';' on Windows).\n"
+                   "  3. The same WXCGEN_FOLDER_MAP=<base_dir>=<target_folder> line in a '.wxcrafter-environment'\n"
+                   "     file, searched in the .wxcp folder and then in each of its parent folders.\n"
+                   "If the .wxcp file is under <base_dir>, the base classes are generated in <target_folder>\n"
+                   "plus the relative path of the .wxcp folder. Subclass files are always generated next to\n"
+                   "the .wxcp file.\n");
     parser.SetCmdLine(argc, argv);
     if (parser.Parse(/*giveUsage=*/false) != 0) {
         parser.Usage();
@@ -349,16 +218,6 @@ int wxcgenApp::OnRun()
         }
     }
 
-    wxString persistPath;
-    if (parser.Found("p", &persistPath) && !outputDirStr.empty()) {
-        wxFileName persistenceFile(persistPath);
-        persistenceFile.MakeAbsolute();
-        if (!persistenceFile.DirExists()) {
-            persistenceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        }
-        persistPath = persistenceFile.GetFullPath();
-    }
-
     // Ensure the user data dir exists before anything tries to write into
     // it (FileLogger expect it).
     wxFileName user_data_dir{wxStandardPaths::Get().GetUserDataDir(), wxEmptyString};
@@ -381,11 +240,13 @@ int wxcgenApp::OnRun()
             continue;
         }
 
-        if (!persistPath.empty()) {
-            UpdateConfigFile(persistPath, "output-directory", filename, outputDirStr);
+        // -o has priority, then WXCGEN_FOLDER_MAP
+        wxString outputDir = outputDirStr;
+        if (outputDir.empty()) {
+            outputDir = wxCrafter::GetOutputDirFromEnv(fn).value_or(wxEmptyString);
         }
 
-        if (!GenerateFromProject(filename, fileContent, outputDirStr)) {
+        if (!GenerateFromProject(filename, fileContent, outputDir)) {
             rc = 1;
         }
     }

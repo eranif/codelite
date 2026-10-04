@@ -18,6 +18,7 @@
 #include <wx/sstream.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
+#include <wx/utils.h>
 #include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
 
@@ -1098,6 +1099,107 @@ void wxCrafter::MakeAbsToProject(wxFileName& fn)
     if (fn.IsRelative()) {
         fn.MakeAbsolute(wxcProjectMetadata::Get().GetProjectPath());
     }
+}
+
+namespace
+{
+const char* const kEnvironmentFileName = ".wxcrafter-environment";
+
+// Search for `.wxcrafter-environment` starting from the project folder and going up to the root.
+// The file contains `ENV_VAR=VALUE` lines (empty lines and lines starting with `#` are ignored).
+// Returns the value of `name` from the first file that defines it
+std::optional<wxString> ReadVariableFromFile(const wxFileName& projectFile, const wxString& name)
+{
+    wxFileName fn{projectFile.GetFullPath()};
+    fn.Normalize(wxPATH_NORM_ABSOLUTE | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE);
+    fn.SetFullName(kEnvironmentFileName);
+    while (true) {
+        if (fn.FileExists()) {
+            wxFFile file(fn.GetFullPath(), "rb");
+            wxString content;
+            if (file.IsOpened() && file.ReadAll(&content, wxConvUTF8)) {
+                for (wxString line : wxSplit(content, '\n')) {
+                    line.Trim().Trim(false);
+                    const int where = line.Find('=');
+                    if (line.empty() || line.StartsWith("#") || where == wxNOT_FOUND) {
+                        continue;
+                    }
+                    if (line.Left(where).Trim().IsSameAs(name)) {
+                        return line.Mid(where + 1).Trim(false);
+                    }
+                }
+            }
+        }
+        if (fn.GetDirCount() == 0) {
+            break;
+        }
+        fn.RemoveLastDir();
+    }
+    return std::nullopt;
+}
+
+// Find the first entry (<base_dir>=<target_folder>) of `value` that contains `projectFile`
+std::optional<wxString> MatchFolderMap(const wxString& value, const wxFileName& projectFile)
+{
+    wxFileName projectDir{projectFile.GetFullPath()};
+    projectDir.Normalize(wxPATH_NORM_ABSOLUTE | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE);
+    const wxArrayString projectDirs = projectDir.GetDirs();
+    const bool caseSensitive = wxFileName::IsCaseSensitive();
+
+    auto same = [caseSensitive](const wxString& a, const wxString& b) {
+        return caseSensitive ? a == b : a.IsSameAs(b, false);
+    };
+
+    wxArrayString entries = wxSplit(value, wxPATH_SEP[0]);
+    for (const wxString& entry : entries) {
+        const int where = entry.Find('=');
+        if (where == wxNOT_FOUND) {
+            continue;
+        }
+        wxFileName baseDir{entry.Left(where), ""};
+        baseDir.Normalize(wxPATH_NORM_ABSOLUTE | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE);
+        const wxArrayString baseDirs = baseDir.GetDirs();
+
+        if (baseDirs.size() > projectDirs.size() || !same(baseDir.GetVolume(), projectDir.GetVolume())) {
+            continue;
+        }
+
+        bool matched = true;
+        for (size_t i = 0; i < baseDirs.size(); ++i) {
+            if (!same(baseDirs[i], projectDirs[i])) {
+                matched = false;
+                break;
+            }
+        }
+        if (!matched) {
+            continue;
+        }
+
+        wxFileName target{entry.Mid(where + 1), ""};
+        target.Normalize(wxPATH_NORM_ABSOLUTE | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE);
+        for (size_t i = baseDirs.size(); i < projectDirs.size(); ++i) {
+            target.AppendDir(projectDirs[i]);
+        }
+        return target.GetPath();
+    }
+    return std::nullopt;
+}
+} // namespace
+
+std::optional<wxString> wxCrafter::GetOutputDirFromEnv(const wxFileName& projectFile)
+{
+    wxString value;
+    if (wxGetEnv("WXCGEN_FOLDER_MAP", &value) && !value.empty()) {
+        if (auto dir = MatchFolderMap(value, projectFile)) {
+            return dir;
+        }
+    }
+
+    const auto fromFile = ReadVariableFromFile(projectFile, "WXCGEN_FOLDER_MAP");
+    if (!fromFile || fromFile->empty()) {
+        return std::nullopt;
+    }
+    return MatchFolderMap(*fromFile, projectFile);
 }
 
 int wxCrafter::ToAligment(const wxString& aligment)

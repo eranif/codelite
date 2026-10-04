@@ -497,19 +497,8 @@ if(MINGW)
     message(FATAL_ERROR "Missing -DWXWIN=<wxWidgets/root/install/dir>")
   endif()
 
-  if(CMAKE_BUILD_TYPE MATCHES Release)
-    set(WXCFG "clang_x64_dll/mswu")
-  else()
-    set(WXCFG "clang_x64_dll/mswud")
-  endif()
-
-  if(NOT EXISTS "${WXWIN}/lib/${WXCFG}")
-    message(
-      WARNING
-        "Could not find path: ${WXWIN}/lib/${WXCFG}, defaulting to: ${WXWIN}/lib/clang_x64_dll/mswu"
-    )
-    set(WXCFG "clang_x64_dll/mswu")
-  endif()
+  # wxWidgets is never built as a debug build on Windows
+  set(WXCFG "clang_x64_dll/mswu")
 
   message(STATUS "WXWIN is set to ${WXWIN}")
   message(STATUS "WXCFG is set to ${WXCFG}")
@@ -1039,6 +1028,10 @@ endif()
 
 add_subdirectory(CxxParser)
 add_subdirectory(CodeLite)
+# Tell wxcgen and the wxCrafter plugin to generate the base classes under the build directory.
+# The file holds ENV_VAR=VALUE lines so it always reflects the last configured build type
+file(WRITE "${CMAKE_SOURCE_DIR}/.wxcrafter-environment" "WXCGEN_FOLDER_MAP=${CMAKE_SOURCE_DIR}=${CMAKE_BINARY_DIR}\n")
+
 add_subdirectory(wxcrafter/wxCrafterCommon)
 add_subdirectory(wxcrafter/wxcgen)
 

@@ -45,6 +45,7 @@
 AccelTableDlg::AccelTableDlg(wxWindow* parent)
     : AccelTableBaseDlg(parent)
 {
+    ::AdjustDataViewAlternateColour(m_dvListCtrl);
     clKeyboardManager::Get()->GetAllAccelerators(m_accelMap);
     PopulateTable("");
 
@@ -59,6 +60,11 @@ AccelTableDlg::AccelTableDlg(wxWindow* parent)
 
 void AccelTableDlg::PopulateTable(const wxString& filter)
 {
+    for (auto i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        auto data = reinterpret_cast<AccelItemData*>(m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i)));
+        wxDELETE(data);
+    }
+
     m_dvListCtrl->DeleteAllItems();
 
     MenuItemDataMap_t filteredMap;

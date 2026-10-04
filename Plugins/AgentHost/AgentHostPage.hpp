@@ -41,6 +41,7 @@ protected:
     /// Open `text` as a URL, folder, file or symbol (same as clicking a link in the terminal)
     void OpenText(const wxString& text);
     void RestartAgentHost();
+    void OnShowTerminal(wxCommandEvent& event);
     void OnGrepWorkspace(wxCommandEvent& event);
     void OnGrepWorkspaceUI(wxUpdateUIEvent& event);
     /// First line of the terminal selection (empty if nothing is selected)

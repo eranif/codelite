@@ -50,6 +50,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     if (auto frame = EventNotifier::Get()->TopFrame()) {
         frame->Bind(wxEVT_MENU, &AgentHostPage::OnGrepWorkspace, this, XRCID("grep_current_workspace"));
         frame->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnGrepWorkspaceUI, this, XRCID("grep_current_workspace"));
+        frame->Bind(wxEVT_MENU, &AgentHostPage::OnShowTerminal, this, XRCID("show_terminal_pane"));
     }
 }
 
@@ -66,6 +67,7 @@ AgentHostPage::~AgentHostPage()
     if (auto frame = EventNotifier::Get()->TopFrame()) {
         frame->Unbind(wxEVT_MENU, &AgentHostPage::OnGrepWorkspace, this, XRCID("grep_current_workspace"));
         frame->Unbind(wxEVT_UPDATE_UI, &AgentHostPage::OnGrepWorkspaceUI, this, XRCID("grep_current_workspace"));
+        frame->Unbind(wxEVT_MENU, &AgentHostPage::OnShowTerminal, this, XRCID("show_terminal_pane"));
     }
 }
 
@@ -375,6 +377,11 @@ void AgentHostPage::SearchInWorkspace(const wxString& text)
 
     if (m_terminal)
         m_terminal->CallAfter(&wxWindow::SetFocus);
+}
+
+void AgentHostPage::OnShowTerminal(wxCommandEvent& event)
+{
+    event.Skip();
 }
 
 void AgentHostPage::OnGrepWorkspace(wxCommandEvent& event)

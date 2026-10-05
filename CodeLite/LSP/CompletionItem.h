@@ -1,7 +1,6 @@
 #ifndef COMPLETIONITEM_H
 #define COMPLETIONITEM_H
 
-#include "LSP/JSONObject.h"
 #include "LSP/basic_types.h"
 
 #include <memory>
@@ -9,7 +8,7 @@
 
 namespace LSP
 {
-class WXDLLIMPEXP_CL CompletionItem : public Serializable
+class WXDLLIMPEXP_CL CompletionItem
 {
     wxString m_label;
     int m_kind = wxNOT_FOUND;
@@ -64,9 +63,8 @@ public:
 
 public:
     CompletionItem() = default;
-    ~CompletionItem() override = default;
-    nlohmann::json ToJSON() const override;
-    void FromJSON(const JSONItem& json) override;
+    ~CompletionItem() = default;
+    void FromJSON(const JSONItem& json);
     void SetDetail(const wxString& detail) { this->m_detail = detail; }
     void SetDocumentation(const MarkupContent& documentation) { this->m_documentation = documentation; }
     void SetFilterText(const wxString& filterText) { this->m_filterText = filterText; }

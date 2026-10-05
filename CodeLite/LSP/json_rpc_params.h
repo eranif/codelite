@@ -2,7 +2,6 @@
 #define JSONRPC_PARAMS_H
 
 #include "JSON.h"
-#include "LSP/JSONObject.h"
 #include "basic_types.h"
 #include "codelite_exports.h"
 
@@ -14,15 +13,17 @@ namespace LSP
 //===----------------------------------------------------------------------------------
 // Params
 //===----------------------------------------------------------------------------------
-class WXDLLIMPEXP_CL Params : public Serializable
+class WXDLLIMPEXP_CL Params
 {
 public:
     using Ptr_t = std::shared_ptr<Params>;
 
 public:
     Params() = default;
-    ~Params() override = default;
+    virtual ~Params() = default;
     bool operator==(const Params&) const = default;
+    virtual nlohmann::json ToJSON() const = 0;
+    virtual void FromJSON(const JSONItem& json) = 0;
     template <typename T>
     T* As() const
     {

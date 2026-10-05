@@ -1473,7 +1473,8 @@ void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
                                      const wxArrayString& headersIn,
                                      const wxStringMap_t& additionalFiles,
                                      const wxString& autoGenComment,
-                                     std::function<void(const wxFileName&)> onFileSaved)
+                                     std::function<void(const wxFileName&)> onFileSaved,
+                                     const wxString& bitmapsCode)
 {
     if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !baseCpp.IsEmpty()) {
         wxFileName projectFile(wxcProjectMetadata::Get().GetProjectFile());
@@ -1553,8 +1554,17 @@ void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
         cppPrefix << autoGenComment;
         cppPrefix << "#include \"" << headerFile.GetFullName() << "\"\n";
         cppPrefix << projectIncludes << "\n\n";
-        cppPrefix << "// Declare the bitmap loading function\n";
-        cppPrefix << wxcCodeGeneratorHelper::Get().GenerateExternCode() << "\n";
+        if (bitmapsCode.IsEmpty()) {
+            cppPrefix << "// Declare the bitmap loading function\n";
+            cppPrefix << wxcCodeGeneratorHelper::Get().GenerateExternCode() << "\n";
+        } else {
+            // The bitmap loading function is defined in this file
+            cppPrefix << "#include <wx/filesys.h>\n";
+            cppPrefix << "#include <wx/fs_mem.h>\n";
+            cppPrefix << "#include <wx/xrc/xmlres.h>\n";
+            cppPrefix << "#include <wx/xrc/xh_all.h>\n\n";
+            cppPrefix << bitmapsCode << "\n";
+        }
         cppPrefix << wxCrafter::SimpleBorderCode();
 
         wxString cppOut = baseCpp;

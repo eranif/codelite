@@ -3719,15 +3719,59 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
     GenerateCppOutput(baseCpp, baseHeader, headers, additionalFiles);
 
     wxcProjectMetadata::Get().SetAdditionalFiles(additionalFiles);
+
+    // The bitmap resource code callbacks
+    auto requestDesignerRefresh = []() {
+        wxCommandEvent evt(wxEVT_REFRESH_DESIGNER);
+        EventNotifier::Get()->AddPendingEvent(evt);
+    };
+    auto bitmapGenerationStart = []() {
+        wxFrame* topFrame = EventNotifier::Get()->TopFrame();
+        if (topFrame) {
+            topFrame->SetStatusText("Generating bitmap code...");
+        }
+        wxBeginBusyCursor();
+    };
+    auto bitmapGenerationEnd = []() {
+        if (wxIsBusy()) {
+            wxEndBusyCursor();
+        }
+        wxFrame* topFrame = EventNotifier::Get()->TopFrame();
+        if (topFrame) {
+            topFrame->SetStatusText("Ready");
+        }
+    };
+
+    // Generate the bitmap resource code. By default, it is placed in the base class source file.
+    // Otherwise, it is written to its own file (see below)
+    const bool embedBitmaps = wxcCodeGeneratorHelper::Get().EmbedBitmapsInBaseClassFile();
+    wxString bitmapsCode;
+    if (embedBitmaps) {
+        auto bitmaps_result = wxcCodeGeneratorHelper::Get().GenerateBitmapsCode(
+            requestDesignerRefresh, bitmapGenerationStart, bitmapGenerationEnd);
+        if (!bitmaps_result.ok()) {
+            ::wxMessageBox(
+                bitmaps_result.error_message(), "wxCrafter", wxOK | wxCENTER | wxICON_ERROR, wxCrafter::TopFrame());
+            return;
+        }
+        bitmapsCode = bitmaps_result.value();
+    }
+
     wxCrafter::WriteGeneratedOutput(
-        baseCpp, baseHeader, headers, additionalFiles, autoGenComment, [this](const wxFileName& filename) {
+        baseCpp,
+        baseHeader,
+        headers,
+        additionalFiles,
+        autoGenComment,
+        [this](const wxFileName& filename) {
             if (m_mainFrame->GetManager()) {
                 clSourceFormatEvent event(wxEVT_FORMAT_FILE);
                 event.SetFileName(filename.GetFullPath());
                 EventNotifier::Get()->ProcessEvent(event);
                 NotifyFileSaved(filename);
             }
-        });
+        },
+        bitmapsCode);
 
     // Export the XRC output if required
     if (wxcProjectMetadata::Get().GetGenerateXRC()) {
@@ -3755,28 +3799,19 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
         }
     }
 
-    // And finally, generate the Bitmap resource file
-    auto requestDesignerRefresh = []() {
-        wxCommandEvent evt(wxEVT_REFRESH_DESIGNER);
-        EventNotifier::Get()->AddPendingEvent(evt);
-    };
-    auto bitmapGenerationStart = []() {
-        wxFrame* topFrame = EventNotifier::Get()->TopFrame();
-        if (topFrame) {
-            topFrame->SetStatusText("Generating bitmap code...");
-        }
-        wxBeginBusyCursor();
-    };
-    auto bitmapGenerationEnd = []() {
-        if (wxIsBusy()) {
-            wxEndBusyCursor();
-        }
-        wxFrame* topFrame = EventNotifier::Get()->TopFrame();
-        if (topFrame) {
-            topFrame->SetStatusText("Ready");
-        }
-    };
+    if (embedBitmaps) {
+        // The bitmap code is already part of the base class source file, so there is no bitmaps file to generate.
+        // Still, let the main frame do its work after a generation (add the generated files to the project, retag
+        // etc.)
+        wxFileName baseCppFile = wxcProjectMetadata::Get().BaseCppFile();
+        wxCrafter::MakeAbsToProject(baseCppFile);
+        wxCommandEvent eventEnd(wxEVT_BITMAP_CODE_GENERATION_DONE);
+        eventEnd.SetString(baseCppFile.GetFullPath());
+        EventNotifier::Get()->AddPendingEvent(eventEnd);
+        return;
+    }
 
+    // And finally, generate the Bitmap resource file
     const auto ret = wxcCodeGeneratorHelper::Get().CreateXRC(requestDesignerRefresh,
                                                              bitmapGenerationStart,
                                                              bitmapGenerationEnd,

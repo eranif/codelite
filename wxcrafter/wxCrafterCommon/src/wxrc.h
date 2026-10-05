@@ -154,11 +154,25 @@ class wxcXmlResourceCmp
     wxString m_xrcFile;
     clStatus m_retCode;
     wxString m_outputPath;
+    bool m_embedded{false};   // Return the code as a string instead of writing it to a file
+    wxString m_generatedCode; // The code generated in the embedded mode
 
 public:
     // don't use builtin cmd line parsing:
     bool OnInit() { return true; }
     clStatus Run(const wxString& inXrcFile, const wxString& outputCppFile, const wxString& functionName);
+
+    /**
+     * @brief generate the resources code and return it as a string, so it can be placed inside another source
+     * file. The returned code does not contain any `#include` directive and the loading function is static.
+     * The code expects these headers: <wx/filesys.h>, <wx/fs_mem.h>, <wx/xrc/xmlres.h> and <wx/xrc/xh_all.h>
+     * @param inXrcFile the XRC file to compile
+     * @param hostCppFile the source file that is going to contain the code. It is never written by this function
+     * (its name and folder are used for the temporary files)
+     * @param functionName the name of the loading function
+     */
+    clStatusOr<wxString>
+    RunEmbedded(const wxString& inXrcFile, const wxString& hostCppFile, const wxString& functionName);
 
 private:
     void CompileRes();

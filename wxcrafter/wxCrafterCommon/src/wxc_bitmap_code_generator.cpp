@@ -3,6 +3,7 @@
 #include "event_notifier.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_project_metadata.h"
+#include "wxc_settings.h"
 #include "wxgui_helpers.h"
 #include "wxrc.h"
 
@@ -31,13 +32,11 @@ void wxcCodeGeneratorHelper::Clear()
     m_icons.Clear();
 }
 
-clStatus wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefresh,
-                                           std::function<void()> bitmapGenerationStart,
-                                           std::function<void()> bitmapGenerationEnd,
-                                           std::function<void(const wxFileName&)> onFileSaved)
+clStatus wxcCodeGeneratorHelper::PrepareBitmapsXrc(std::function<void()> requestDesignerRefresh,
+                                                   wxXmlDocument& doc,
+                                                   wxString& outputString,
+                                                   bool& isBitmapModifiedOutside)
 {
-    wxLogNull noLog;
-
     wxString text;
     text << wxT("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
     text << wxT("<resource xmlns=\"http://www.wxwidgets.org/wxxrc\">");
@@ -72,7 +71,7 @@ clStatus wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesigner
     text << wxT("</resource>");
 
     wxStringInputStream str(text);
-    wxXmlDocument doc(str);
+    doc.Load(str);
 
     wxFileName projectFileName(wxcProjectMetadata::Get().GetProjectFile());
     m_cppFile = wxFileName(wxcProjectMetadata::Get().GetProjectPath(), wxcProjectMetadata::Get().GetOutputFileName());
@@ -82,23 +81,38 @@ clStatus wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesigner
     m_xrcFile = m_cppFile;
     m_xrcFile.SetExt(wxT("xrc"));
 
-    wxString outputString;
+    outputString.Clear();
     wxStringOutputStream outStream(&outputString);
-
     if (!doc.Save(outStream)) {
         return StatusIOError();
     }
 
-    // Check to see if we already got
+    // The bitmaps file (used when the code is not embedded in the base class file)
     m_destCPP =
         wxFileName(wxcProjectMetadata::Get().GetGeneratedFilesDir(), wxcProjectMetadata::Get().GetBitmapsFile());
     m_destCPP.SetExt("cpp");
     wxCrafter::MakeAbsToProject(m_destCPP);
 
-    bool isBitmapModifiedOutside = IsGenerateNeeded();
-
+    isBitmapModifiedOutside = IsGenerateNeeded();
     if (isBitmapModifiedOutside && requestDesignerRefresh) {
         requestDesignerRefresh();
+    }
+    return {};
+}
+
+clStatus wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesignerRefresh,
+                                           std::function<void()> bitmapGenerationStart,
+                                           std::function<void()> bitmapGenerationEnd,
+                                           std::function<void(const wxFileName&)> onFileSaved)
+{
+    wxLogNull noLog;
+
+    wxXmlDocument doc;
+    wxString outputString;
+    bool isBitmapModifiedOutside{false};
+    const auto prepare_status = PrepareBitmapsXrc(requestDesignerRefresh, doc, outputString, isBitmapModifiedOutside);
+    if (!prepare_status.ok()) {
+        return prepare_status;
     }
 
     if (wxCrafter::IsTheSame(outputString, m_xrcFile) && m_destCPP.FileExists() && !isBitmapModifiedOutside) {
@@ -140,8 +154,56 @@ clStatus wxcCodeGeneratorHelper::CreateXRC(std::function<void()> requestDesigner
         }
     }
 
-    // m_bmpGenThread.AddMessage( req );
     return {};
+}
+
+clStatusOr<wxString> wxcCodeGeneratorHelper::GenerateBitmapsCode(std::function<void()> requestDesignerRefresh,
+                                                                 std::function<void()> bitmapGenerationStart,
+                                                                 std::function<void()> bitmapGenerationEnd)
+{
+    wxLogNull noLog;
+
+    wxXmlDocument doc;
+    wxString outputString;
+    bool isBitmapModifiedOutside{false};
+    const auto prepare_status = PrepareBitmapsXrc(requestDesignerRefresh, doc, outputString, isBitmapModifiedOutside);
+    if (!prepare_status.ok()) {
+        return prepare_status;
+    }
+
+    // The code is going to be placed in the base class source file, it is the "host" of the code.
+    // The host file is never written here, but the resource compiler creates temporary files next to it.
+    wxFileName hostCppFile = wxcProjectMetadata::Get().BaseCppFile();
+    wxCrafter::MakeAbsToProject(hostCppFile);
+    hostCppFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
+    // The XRC file is the input of the resource compiler. Update it only when needed, so its timestamp
+    // can be used to find bitmap files that were modified outside wxCrafter
+    if (isBitmapModifiedOutside || !wxCrafter::IsTheSame(outputString, m_xrcFile)) {
+        if (!doc.Save(m_xrcFile.GetFullPath())) {
+            return StatusIOError(m_xrcFile.GetFullPath());
+        }
+    }
+
+    if (bitmapGenerationStart) {
+        bitmapGenerationStart();
+    }
+
+    wxcXmlResourceCmp cmp;
+    auto code = cmp.RunEmbedded(
+        m_xrcFile.GetFullPath(), hostCppFile.GetFullPath(), wxcProjectMetadata::Get().GetBitmapFunction());
+
+    if (bitmapGenerationEnd) {
+        bitmapGenerationEnd();
+    }
+    return code;
+}
+
+bool wxcCodeGeneratorHelper::EmbedBitmapsInBaseClassFile() const
+{
+    // Without a base class source file, there is no place for the code
+    return wxcProjectMetadata::Get().GetGenerateCPPCode() &&
+           wxcSettings::Get().HasFlag(wxcSettings::BITMAPS_IN_BASE_CLASS_FILE);
 }
 
 wxString wxcCodeGeneratorHelper::GenerateInitCode(TopLevelWinWrapper* tw) const

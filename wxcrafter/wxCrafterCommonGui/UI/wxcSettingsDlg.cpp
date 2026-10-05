@@ -12,6 +12,8 @@ wxcSettingsDlg::wxcSettingsDlg(wxWindow* parent, bool standAlone)
     m_checkBoxCopyEventhandlerToo->SetValue(wxcSettings::Get().HasFlag(wxcSettings::DUPLICATE_EVENTHANDLERS_TOO));
     m_checkBoxGenerateHFiles->SetValue(wxcSettings::Get().HasFlag(wxcSettings::PREFER_H_OVER_HPP));
     m_checkBoxUseTRay->SetValue(wxcSettings::Get().HasFlag(wxcSettings::EXIT_MINIMIZE_TO_TRAY));
+    m_checkBoxGenerateBitmapsInBaseClassFile->SetValue(
+        wxcSettings::Get().HasFlag(wxcSettings::BITMAPS_IN_BASE_CLASS_FILE));
 
     if (!standAlone) {
         m_checkBoxUseTRay->Set3StateValue(wxCheckBoxState::wxCHK_UNCHECKED);
@@ -29,6 +31,8 @@ void wxcSettingsDlg::OnOk(wxCommandEvent& event)
     wxcSettings::Get().EnableFlag(wxcSettings::DUPLICATE_EVENTHANDLERS_TOO, m_checkBoxCopyEventhandlerToo->IsChecked());
     wxcSettings::Get().EnableFlag(wxcSettings::PREFER_H_OVER_HPP, m_checkBoxGenerateHFiles->IsChecked());
     wxcSettings::Get().EnableFlag(wxcSettings::EXIT_MINIMIZE_TO_TRAY, m_checkBoxUseTRay->IsChecked());
+    wxcSettings::Get().EnableFlag(
+        wxcSettings::BITMAPS_IN_BASE_CLASS_FILE, m_checkBoxGenerateBitmapsInBaseClassFile->IsChecked());
     wxcSettings::Get().Save();
 
     m_useTabModeEnd = wxcSettings::Get().HasFlag(wxcSettings::USE_TABBED_MODE);

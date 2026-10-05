@@ -261,13 +261,17 @@ wxString FormatBmpTextOptions(const BmpTextList& vec);
  * @param additionalFiles  Extra per-class files (keyed by filename)
  * @param autoGenComment  Auto-generated file banner to prepend
  * @param onFileSaved Callback called each time a file is written
+ * @param bitmapsCode The bitmaps loading code (see wxcCodeGeneratorHelper::GenerateBitmapsCode). When it is not
+ * empty, it is placed in the base class source file. Otherwise, the loading function is declared as an extern function
+ * that is defined in the bitmaps file
  */
 void WriteGeneratedOutput(const wxString& baseCpp,
                           const wxString& baseHeader,
                           const wxArrayString& headers,
                           const wxStringMap_t& additionalFiles,
                           const wxString& autoGenComment,
-                          std::function<void(const wxFileName&)> onFileSaved);
+                          std::function<void(const wxFileName&)> onFileSaved,
+                          const wxString& bitmapsCode = wxEmptyString);
 } // namespace wxCrafter
 
 #endif // _WXGUI_HELPERS_H_

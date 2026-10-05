@@ -9,6 +9,7 @@
 #include "top_level_win_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
+#include "wxc_settings.h"
 #include "wxgui_helpers.h"
 
 #include <memory>
@@ -31,6 +32,13 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
     {wxCMD_LINE_SWITCH, "v", "version", "Print version and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH, "h", "help", "Print usage and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_OPTION, "o", "output", "Override output directory", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH,
+     nullptr,
+     "bitmaps-in-base-class-file",
+     "Generate the bitmaps code inside the base class source file (by default, it is written to its own "
+     "\"_bitmaps.cpp\" file)",
+     wxCMD_LINE_VAL_NONE,
+     wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH,
      nullptr,
      "verbose",
@@ -69,7 +77,8 @@ static wxString RelativeToDir(const wxString& file, const wxString& dir)
 static void PrintGeneratedFiles(const wxString& projectFile,
                                 const wxFileName& baseOutputDir,
                                 const wxString& baseCpp,
-                                const wxStringMap_t& additionalFiles)
+                                const wxStringMap_t& additionalFiles,
+                                bool bitmapsFileGenerated)
 {
     wxFileName baseDir(baseOutputDir);
     baseDir.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_TILDE);
@@ -85,7 +94,7 @@ static void PrintGeneratedFiles(const wxString& projectFile,
             baseFiles.Add(p.first);
         }
         const wxFileName& bitmapsCpp = wxcCodeGeneratorHelper::Get().GetBitmapsCppFile();
-        if (bitmapsCpp.IsOk()) {
+        if (bitmapsFileGenerated && bitmapsCpp.IsOk()) {
             baseFiles.Add(RelativeToDir(bitmapsCpp.GetFullPath(), baseDirPath));
         }
     }
@@ -178,7 +187,21 @@ static bool GenerateFromProject(const wxString& filename,
                    << "// Do not modify this file by hand!\n"
                    << "//////////////////////////////////////////////////////////////////////\n\n";
 
-    wxCrafter::WriteGeneratedOutput(baseCpp, baseHeader, headers, additionalFiles, autoGenComment, nullptr);
+    // By default, the bitmaps code is written to its own file (see below).
+    // With --bitmaps-in-base-class-file, it is placed inside the base class source file
+    const bool embedBitmaps = wxcCodeGeneratorHelper::Get().EmbedBitmapsInBaseClassFile();
+    wxString bitmapsCode;
+    if (embedBitmaps) {
+        const auto bitmaps_result = wxcCodeGeneratorHelper::Get().GenerateBitmapsCode(nullptr, nullptr, nullptr);
+        if (!bitmaps_result.ok()) {
+            wxPrintf("%s\n", bitmaps_result.error_message());
+            return false;
+        }
+        bitmapsCode = bitmaps_result.value();
+    }
+
+    wxCrafter::WriteGeneratedOutput(
+        baseCpp, baseHeader, headers, additionalFiles, autoGenComment, nullptr, bitmapsCode);
 
     // Write XRC output
     if (wxcProjectMetadata::Get().GetGenerateXRC()) {
@@ -208,14 +231,16 @@ static bool GenerateFromProject(const wxString& filename,
         }
     }
 
-    const auto ret = wxcCodeGeneratorHelper::Get().CreateXRC(nullptr, nullptr, nullptr, nullptr);
-    if (!ret.ok()) {
-        wxPrintf("%s\n", ret.message());
-        return false;
+    if (!embedBitmaps) {
+        const auto ret = wxcCodeGeneratorHelper::Get().CreateXRC(nullptr, nullptr, nullptr, nullptr);
+        if (!ret.ok()) {
+            wxPrintf("%s\n", ret.message());
+            return false;
+        }
     }
 
     if (verbose) {
-        PrintGeneratedFiles(filename, outputDir, baseCpp, additionalFiles);
+        PrintGeneratedFiles(filename, outputDir, baseCpp, additionalFiles, !embedBitmaps);
     }
     return true;
 }
@@ -260,6 +285,9 @@ int wxcgenApp::OnRun()
         "plus the relative path of the .wxcp folder. Subclass files are always generated next to\n"
         "the .wxcp file.\n"
         "\n"
+        "The bitmaps code is written to a separate \"_bitmaps.cpp\" file. With --bitmaps-in-base-class-file,\n"
+        "it is generated inside the base class source file instead.\n"
+        "\n"
         "With --verbose, wxcgen prints the following lines for each input file after a successful generation:\n"
         "  Base class output directory:<full-path>\n"
         "  Base class files:<comma separated list of files>\n"
@@ -287,6 +315,11 @@ int wxcgenApp::OnRun()
     }
 
     const bool verbose = parser.Found("verbose");
+
+    // The command line decides where the bitmaps code goes, not the wxCrafter user settings (which the settings
+    // object loads on creation), so the output is the same on every machine.
+    // By default, the code is written to its own file, so existing build systems keep working.
+    wxcSettings::Get().EnableFlag(wxcSettings::BITMAPS_IN_BASE_CLASS_FILE, parser.Found("bitmaps-in-base-class-file"));
 
     wxString outputDirStr;
     if (parser.Found("o", &outputDirStr)) {

@@ -61,6 +61,10 @@ public:
         DONT_USE_RELATIVE_BITMAPS = (1 << 11),
         EXIT_MINIMIZE_TO_TRAY = (1 << 12),
         PREFER_H_OVER_HPP = (1 << 13),
+        /// When set, the bitmaps code is generated inside the base class source file.
+        /// By default (not set), it is written to a separate "_bitmaps.cpp" file. This keeps the build systems of
+        /// existing projects, that compile this file, working
+        BITMAPS_IN_BASE_CLASS_FILE = (1 << 14),
     };
 
 protected:

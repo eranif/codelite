@@ -9,7 +9,6 @@ include(${wxWidgets_USE_FILE})
 wxcrafter_target(
     CodeLiteGenerateThemes
     "${CMAKE_CURRENT_SOURCE_DIR}/codelite-generate-themes/wxcrafter.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "wxcrafter.cpp"
     "wxcrafter.hpp"
     "wxcrafter_codelite-generate-themes_bitmaps.cpp")

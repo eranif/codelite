@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     HelpPlugin
     "${CMAKE_CURRENT_SOURCE_DIR}/HelpPluginUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "HelpPluginUI.cpp"
     "HelpPluginUI.hpp"
     "HelpPluginUI_helpplugin_bitmaps.cpp")

@@ -18,7 +18,6 @@ if(UNIX AND NOT APPLE)
     wxcrafter_target(
         MemCheck
     "${CMAKE_CURRENT_SOURCE_DIR}/memcheckui.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "memcheckui.cpp"
     "memcheckui.hpp"
     "memcheckdvcerrorsmodel.cpp"

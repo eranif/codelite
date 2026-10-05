@@ -1,6 +1,7 @@
 #include "wxgui_helpers.h"
 
 #include "JSON.h"
+#include "file_logger.h"
 #include "macros.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
@@ -1115,6 +1116,7 @@ std::optional<wxString> ReadVariableFromFile(const wxFileName& projectFile, cons
     fn.SetFullName(kEnvironmentFileName);
     while (true) {
         if (fn.FileExists()) {
+            clDEBUG() << "Found env file:" << fn << endl;
             wxFFile file(fn.GetFullPath(), "rb");
             wxString content;
             if (file.IsOpened() && file.ReadAll(&content, wxConvUTF8)) {
@@ -1125,7 +1127,9 @@ std::optional<wxString> ReadVariableFromFile(const wxFileName& projectFile, cons
                         continue;
                     }
                     if (line.Left(where).Trim().IsSameAs(name)) {
-                        return line.Mid(where + 1).Trim(false);
+                        const auto envalue = line.Mid(where + 1).Trim(false);
+                        clDEBUG() << "Value read for env:" << name << "is:" << envalue << endl;
+                        return envalue;
                     }
                 }
             }
@@ -1135,6 +1139,7 @@ std::optional<wxString> ReadVariableFromFile(const wxFileName& projectFile, cons
         }
         fn.RemoveLastDir();
     }
+    clDEBUG() << "No Env file Found" << endl;
     return std::nullopt;
 }
 
@@ -1146,9 +1151,8 @@ std::optional<wxString> MatchFolderMap(const wxString& value, const wxFileName& 
     const wxArrayString projectDirs = projectDir.GetDirs();
     const bool caseSensitive = wxFileName::IsCaseSensitive();
 
-    auto same = [caseSensitive](const wxString& a, const wxString& b) {
-        return caseSensitive ? a == b : a.IsSameAs(b, false);
-    };
+    auto same = [caseSensitive](
+                    const wxString& a, const wxString& b) { return caseSensitive ? a == b : a.IsSameAs(b, false); };
 
     wxArrayString entries = wxSplit(value, wxPATH_SEP[0]);
     for (const wxString& entry : entries) {
@@ -1188,9 +1192,11 @@ std::optional<wxString> MatchFolderMap(const wxString& value, const wxFileName& 
 
 std::optional<wxString> wxCrafter::GetOutputDirFromEnv(const wxFileName& projectFile)
 {
+    clDEBUG() << "Reading output directory from env" << endl;
     wxString value;
     if (wxGetEnv("WXCGEN_FOLDER_MAP", &value) && !value.empty()) {
         if (auto dir = MatchFolderMap(value, projectFile)) {
+            clDEBUG() << "Found env variable: WXCGEN_FOLDER_MAP" << endl;
             return dir;
         }
     }

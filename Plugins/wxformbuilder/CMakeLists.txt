@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     wxFormBuilderNewWxItem
     "${CMAKE_CURRENT_SOURCE_DIR}/NewWxItem.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "wxfbitembasedlg.cpp"
     "wxfbitembasedlg.hpp"
     "NewWxItem_wxformbuilder_bitmaps.cpp")
@@ -23,7 +22,6 @@ wxcrafter_target(
 wxcrafter_target(
     wxFormBuilderSettingsBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/formbuildsettingsbasedlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "formbuildsettingsbasedlg.cpp"
     "formbuildsettingsbasedlg.hpp"
     "formbuildsettingsbasedlg_wxformbuilder_bitmaps.cpp")

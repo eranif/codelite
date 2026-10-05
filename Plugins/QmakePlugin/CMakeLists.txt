@@ -15,21 +15,18 @@ endif()
 wxcrafter_target(
     QmakePluginNewProj
     "${CMAKE_CURRENT_SOURCE_DIR}/NewQtProj.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "NewQtProj.cpp"
     "NewQtProj.hpp"
     "NewQtProj_qmakeplugin_bitmaps.cpp")
 wxcrafter_target(
     QmakePluginSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/qmakesettingsbasedlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "qmakesettingsbasedlg.cpp"
     "qmakesettingsbasedlg.hpp"
     "qmakesettingsbasedlg_qmakeplugin_bitmaps.cpp")
 wxcrafter_target(
     QmakePluginTab
     "${CMAKE_CURRENT_SOURCE_DIR}/qmaketabbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "qmaketabbase.cpp"
     "qmaketabbase.hpp"
     "qmaketabbase_qmakeplugin_bitmaps.cpp")

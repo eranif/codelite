@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     ExternalTools
     "${CMAKE_CURRENT_SOURCE_DIR}/external_tools.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "external_tools.cpp"
     "external_tools.hpp"
     "external_tools_bitmaps.cpp")
@@ -23,7 +22,6 @@ wxcrafter_target(
 wxcrafter_target(
     NewToolBase
     "${CMAKE_CURRENT_SOURCE_DIR}/NewToolBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "NewToolBase.cpp"
     "NewToolBase.hpp"
     "NewToolBase_bitmaps.cpp")

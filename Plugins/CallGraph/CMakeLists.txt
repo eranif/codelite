@@ -15,7 +15,6 @@ endif(USE_PCH)
 wxcrafter_target(
     CallGraphUiCallGraph
     "${CMAKE_CURRENT_SOURCE_DIR}/uicallgraph.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "uicallgraph.cpp"
     "uicallgraph.hpp"
     "uicallgraph_callgraph_bitmaps.cpp")
@@ -23,7 +22,6 @@ wxcrafter_target(
 wxcrafter_target(
     CallGraphUiSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/uisettings.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "uisettings.cpp"
     "uisettings.hpp"
     "uisettings_callgraph_bitmaps.cpp")

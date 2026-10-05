@@ -31,6 +31,12 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
     {wxCMD_LINE_SWITCH, "v", "version", "Print version and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH, "h", "help", "Print usage and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_OPTION, "o", "output", "Override output directory", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH,
+     nullptr,
+     "verbose",
+     "Print the output directories and the generated files",
+     wxCMD_LINE_VAL_NONE,
+     wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_PARAM,
      nullptr,
      nullptr,
@@ -41,8 +47,69 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
 
 extern const char* GIT_REVISION;
 
-static bool
-GenerateFromProject(const wxString& filename, const wxString& fileContent, const wxString& outputDirOverride)
+// Return `file` relative to `dir` when it is located under `dir`. Otherwise, return its full path.
+static wxString RelativeToDir(const wxString& file, const wxString& dir)
+{
+    wxFileName fn(file);
+    wxFileName rel(fn);
+    if (rel.MakeRelativeTo(dir) && !(rel.GetDirCount() > 0 && rel.GetDirs()[0] == "..")) {
+        return rel.GetFullPath();
+    }
+    return fn.GetFullPath();
+}
+
+// Print the directories and the files that were generated, one item per line:
+//
+//   Base class output directory:<full-path>
+//   Base class files:<comma separated list of files>
+//   Subclass output directory:<full-path>
+//   Subclass files:<comma separated list of files>
+//
+// The file names are relative to the directory printed before them (when they are located under it).
+static void PrintGeneratedFiles(const wxString& projectFile,
+                                const wxFileName& baseOutputDir,
+                                const wxString& baseCpp,
+                                const wxStringMap_t& additionalFiles)
+{
+    wxFileName baseDir(baseOutputDir);
+    baseDir.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_TILDE);
+    const wxString baseDirPath = baseDir.GetPath();
+
+    wxArrayString baseFiles;
+    if (wxcProjectMetadata::Get().GetGenerateCPPCode()) {
+        if (!baseCpp.IsEmpty()) {
+            baseFiles.Add(RelativeToDir(wxcProjectMetadata::Get().BaseHeaderFile().GetFullPath(), baseDirPath));
+            baseFiles.Add(RelativeToDir(wxcProjectMetadata::Get().BaseCppFile().GetFullPath(), baseDirPath));
+        }
+        for (const auto& p : additionalFiles) {
+            baseFiles.Add(p.first);
+        }
+        const wxFileName& bitmapsCpp = wxcCodeGeneratorHelper::Get().GetBitmapsCppFile();
+        if (bitmapsCpp.IsOk()) {
+            baseFiles.Add(RelativeToDir(bitmapsCpp.GetFullPath(), baseDirPath));
+        }
+    }
+
+    // Subclass files are generated next to the .wxcp file
+    wxFileName subclassDir(projectFile);
+    subclassDir.MakeAbsolute();
+    const wxString subclassDirPath = subclassDir.GetPath();
+
+    wxArrayString subclassFiles;
+    for (const wxString& file : wxcProjectMetadata::Get().GetSubclassFiles()) {
+        subclassFiles.Add(RelativeToDir(file, subclassDirPath));
+    }
+
+    wxPrintf("Base class output directory:%s\n", baseDirPath.c_str());
+    wxPrintf("Base class files:%s\n", wxJoin(baseFiles, ',', '\0').c_str());
+    wxPrintf("Subclass output directory:%s\n", subclassDirPath.c_str());
+    wxPrintf("Subclass files:%s\n", wxJoin(subclassFiles, ',', '\0').c_str());
+}
+
+static bool GenerateFromProject(const wxString& filename,
+                                const wxString& fileContent,
+                                const wxString& outputDirOverride,
+                                bool verbose)
 {
     wxcProjectMetadata::Get().SetProjectFile(filename);
 
@@ -146,6 +213,10 @@ GenerateFromProject(const wxString& filename, const wxString& fileContent, const
         wxPrintf("%s\n", ret.message());
         return false;
     }
+
+    if (verbose) {
+        PrintGeneratedFiles(filename, outputDir, baseCpp, additionalFiles);
+    }
     return true;
 }
 
@@ -175,18 +246,25 @@ int wxcgenApp::OnRun()
 
     wxCmdLineParser parser;
     parser.SetDesc(s_cmdDesc);
-    parser.SetLogo("wxcgen: generate the wxCrafter base classes from .wxcp files.\n"
-                   "\n"
-                   "The base classes are placed next to the .wxcp file, unless an output directory is found.\n"
-                   "The output directory is selected using the first match of:\n"
-                   "  1. The -o option.\n"
-                   "  2. The environment variable WXCGEN_FOLDER_MAP=<base_dir>=<target_folder>\n"
-                   "     (several entries are separated by ':' on Unix and ';' on Windows).\n"
-                   "  3. The same WXCGEN_FOLDER_MAP=<base_dir>=<target_folder> line in a '.wxcrafter-environment'\n"
-                   "     file, searched in the .wxcp folder and then in each of its parent folders.\n"
-                   "If the .wxcp file is under <base_dir>, the base classes are generated in <target_folder>\n"
-                   "plus the relative path of the .wxcp folder. Subclass files are always generated next to\n"
-                   "the .wxcp file.\n");
+    parser.SetLogo(
+        "wxcgen: generate the wxCrafter base classes from .wxcp files.\n"
+        "\n"
+        "The base classes are placed next to the .wxcp file, unless an output directory is found.\n"
+        "The output directory is selected using the first match of:\n"
+        "  1. The -o option.\n"
+        "  2. The environment variable WXCGEN_FOLDER_MAP=<base_dir>=<target_folder>\n"
+        "     (several entries are separated by ':' on Unix and ';' on Windows).\n"
+        "  3. The same WXCGEN_FOLDER_MAP=<base_dir>=<target_folder> line in a '.wxcrafter-environment'\n"
+        "     file, searched in the .wxcp folder and then in each of its parent folders.\n"
+        "If the .wxcp file is under <base_dir>, the base classes are generated in <target_folder>\n"
+        "plus the relative path of the .wxcp folder. Subclass files are always generated next to\n"
+        "the .wxcp file.\n"
+        "\n"
+        "With --verbose, wxcgen prints the following lines for each input file after a successful generation:\n"
+        "  Base class output directory:<full-path>\n"
+        "  Base class files:<comma separated list of files>\n"
+        "  Subclass output directory:<full-path>\n"
+        "  Subclass files:<comma separated list of files>\n");
     parser.SetCmdLine(argc, argv);
     if (parser.Parse(/*giveUsage=*/false) != 0) {
         parser.Usage();
@@ -207,6 +285,8 @@ int wxcgenApp::OnRun()
         parser.Usage();
         return 1;
     }
+
+    const bool verbose = parser.Found("verbose");
 
     wxString outputDirStr;
     if (parser.Found("o", &outputDirStr)) {
@@ -246,7 +326,7 @@ int wxcgenApp::OnRun()
             outputDir = wxCrafter::GetOutputDirFromEnv(fn).value_or(wxEmptyString);
         }
 
-        if (!GenerateFromProject(filename, fileContent, outputDir)) {
+        if (!GenerateFromProject(filename, fileContent, outputDir, verbose)) {
             rc = 1;
         }
     }

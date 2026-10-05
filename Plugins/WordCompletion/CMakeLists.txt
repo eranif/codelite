@@ -20,7 +20,6 @@ set(FlexSrcs "${FLEX_WordFlex_OUTPUTS}")
 wxcrafter_target(
     WordCompletion
     "${CMAKE_CURRENT_SOURCE_DIR}/UI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "UI.cpp"
     "UI.hpp"
     "UI_wordcompletion_bitmaps.cpp")

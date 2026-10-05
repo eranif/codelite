@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     PHPLint
     "${CMAKE_CURRENT_SOURCE_DIR}/phplintdlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "phplintdlgbase.cpp"
     "phplintdlgbase.hpp"
     "phplintdlg_phplint_bitmaps.cpp")

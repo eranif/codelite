@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     SubversionSubversion2
     "${CMAKE_CURRENT_SOURCE_DIR}/subversion2.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "subversion2_ui.cpp"
     "subversion2_ui.hpp"
     "subversion2_subversion2_bitmaps.cpp")
@@ -23,7 +22,6 @@ wxcrafter_target(
 wxcrafter_target(
     SubversionWxCrafter
     "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "wxcrafter.cpp"
     "wxcrafter.hpp"
     "wxcrafter_subversion2_bitmaps.cpp")

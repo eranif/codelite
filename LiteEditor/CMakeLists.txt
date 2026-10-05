@@ -26,7 +26,6 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/autoversion.h.in ${CMAKE_BINARY_DIR}/ge
 wxcrafter_target(
     LiteEditorAccelTableBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/AccelTableBaseDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "AccelTableBaseDlg.cpp"
     "AccelTableBaseDlg.hpp"
     "AccelTableBaseDlg_liteeditor_bitmaps.cpp")
@@ -34,7 +33,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorAddOptionCheckDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/AddOptionCheckDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "AddOptionCheckDlgBase.cpp"
     "AddOptionCheckDlgBase.hpp"
     "AddOptionCheckDlg_liteeditor_bitmaps.cpp")
@@ -42,7 +40,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorAddOptionsDialogBase
     "${CMAKE_CURRENT_SOURCE_DIR}/AddOptionsDialogBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "AddOptionsDialogBase.cpp"
     "AddOptionsDialogBase.hpp"
     "AddOptionsDialogBase_liteeditor_bitmaps.cpp")
@@ -50,7 +47,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorAdvanceSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/advance_settings.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "advance_settings_base.cpp"
     "advance_settings_base.hpp"
     "advance_settings_liteeditor_bitmaps.cpp")
@@ -58,7 +54,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorAttachDbgProcBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/AttachDbgProcBaseDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "attachdbgprocbasedlg.cpp"
     "attachdbgprocbasedlg.hpp"
     "AttachDbgProcBaseDlg_liteeditor_bitmaps.cpp")
@@ -66,7 +61,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorBatchBuildBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/BatchBuildBaseDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "BatchBuildBaseDlg.cpp"
     "BatchBuildBaseDlg.hpp"
     "BatchBuildBaseDlg_liteeditor_bitmaps.cpp")
@@ -74,7 +68,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorBreakpointDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/breakpointdlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "breakpointdlgbase.cpp"
     "breakpointdlgbase.hpp"
     "breakpoint_dlg_liteeditor_bitmaps.cpp")
@@ -82,7 +75,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorBuildTabSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/BuildTabSettings.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "buildsettingstabbase.cpp"
     "buildsettingstabbase.hpp"
     "buildsettingstab_liteeditor_bitmaps.cpp")
@@ -90,7 +82,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorCompilerPage
     "${CMAKE_CURRENT_SOURCE_DIR}/compiler_page.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "compiler_pages.cpp"
     "compiler_pages.hpp"
     "compiler_page_plugin_bitmaps.cpp")
@@ -98,7 +89,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorCompilersFoundDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/CompilersFoundDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "CompilersFoundDlgBase.cpp"
     "CompilersFoundDlgBase.hpp"
     "CompilersFoundDlg_liteeditor_bitmaps.cpp")
@@ -106,7 +96,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorConfigManagerBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/ConfigManagerBaseDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "ConfigManagerBaseDlg.cpp"
     "ConfigManagerBaseDlg.hpp"
     "ConfigManagerBaseDlg_liteeditor_bitmaps.cpp")
@@ -114,7 +103,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorDbgCommandBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/DbgCommandBaseDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "DbgCommandBaseDlg.cpp"
     "DbgCommandBaseDlg.hpp"
     "DbgCommandBaseDlg_liteeditor_bitmaps.cpp")
@@ -122,7 +110,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorDebugCoreDumpBase
     "${CMAKE_CURRENT_SOURCE_DIR}/debugcoredump.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "debugcoredumpbase.cpp"
     "debugcoredumpbase.hpp"
     "debugcoredump_liteeditor_bitmaps.cpp")
@@ -130,7 +117,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorDebuggerAsciiViewerBase
     "${CMAKE_CURRENT_SOURCE_DIR}/debuggerasciiviewerbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "debuggerasciiviewerbase.cpp"
     "debuggerasciiviewerbase.hpp"
     "debuggerasciiviewerbase_liteeditor_bitmaps.cpp")
@@ -138,7 +124,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorDebuggerSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/DebuggerSettings.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "debuggersettingsbasedlg.cpp"
     "debuggersettingsbasedlg.hpp"
     "DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp")
@@ -146,7 +131,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorDependDlgPage
     "${CMAKE_CURRENT_SOURCE_DIR}/depend_dlg_page.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "buildorderbasepage.cpp"
     "buildorderbasepage.hpp"
     "depend_dlg_page_liteeditor_bitmaps.cpp")
@@ -154,7 +138,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorEditConfiguration
     "${CMAKE_CURRENT_SOURCE_DIR}/edit_configuration.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "edit_configuration_base.cpp"
     "edit_configuration_base.hpp"
     "edit_configuration_liteeditor_bitmaps.cpp")
@@ -162,7 +145,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorEditWorkspaceConfDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/edit_workspace_conf_dlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "edit_workspace_conf_dlg_base.cpp"
     "edit_workspace_conf_dlg_base.hpp"
     "edit_workspace_conf_dlg_liteeditor_bitmaps.cpp")
@@ -170,7 +152,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorEditorSettingsLocal
     "${CMAKE_CURRENT_SOURCE_DIR}/editorsettingslocalbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "editorsettingslocalbase.cpp"
     "editorsettingslocalbase.hpp"
     "editorsettingslocalbase_liteeditor_bitmaps.cpp")
@@ -178,7 +159,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorFileCheckListBase
     "${CMAKE_CURRENT_SOURCE_DIR}/filechecklistbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "filechecklistbase.cpp"
     "filechecklistbase.hpp"
     "filechecklistbase_liteeditor_bitmaps.cpp")
@@ -186,7 +166,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorFindAndReplaceDialogFrameBase
     "${CMAKE_CURRENT_SOURCE_DIR}/FindAndReplaceDialogFrameBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "FindAndReplaceDialogFrameBase.cpp"
     "FindAndReplaceDialogFrameBase.hpp"
     "findandreplacedialogframebase_liteeditor_bitmaps.cpp")
@@ -194,7 +173,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorFindInFilesDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/findinfiles_dlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "findinfiles_dlg.cpp"
     "findinfiles_dlg.hpp"
     "findinfiles_dlg_liteeditor_bitmaps.cpp")
@@ -202,7 +180,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorFreeTextDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/free_text_dialog.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "free_text_dialog_base.cpp"
     "free_text_dialog_base.hpp"
     "free_text_dialog_liteeditor_bitmaps.cpp")
@@ -210,7 +187,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorImportFileDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/importfilesdialog.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "importfilesdialog_new.cpp"
     "importfilesdialog_new.hpp"
     "foldermodel.cpp"
@@ -220,7 +196,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorListCtrlPanelBase
     "${CMAKE_CURRENT_SOURCE_DIR}/listctrlpanel.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "listctrlpanelbase.cpp"
     "listctrlpanelbase.hpp"
     "listctrlpanel_liteeditor_bitmaps.cpp")
@@ -228,7 +203,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorMoveFuncImplBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/movefuncimplbasedlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "movefuncimplbasedlg.cpp"
     "movefuncimplbasedlg.hpp"
     "movefuncimplbasedlg_liteeditor_bitmaps.cpp")
@@ -236,7 +210,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorNewConfigurationDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/new_configuration_dlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "new_configuration_dlg_base.cpp"
     "new_configuration_dlg_base.hpp"
     "new_configuration_liteeditor_bitmaps.cpp")
@@ -244,7 +217,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorNewItemBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/new_item_dlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "new_item_base_dlg.cpp"
     "new_item_base_dlg.hpp"
     "new_item_dlg_liteeditor_bitmaps.cpp")
@@ -252,7 +224,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorNewVirtualFolder
     "${CMAKE_CURRENT_SOURCE_DIR}/new_virtual_folder.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "new_virtual_folder.cpp"
     "new_virtual_folder.hpp"
     "new_virtual_folder_liteeditor_bitmaps.cpp")
@@ -260,7 +231,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorNewWorkspaceDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/new_workspace_dlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "newworkspacebasedlg.cpp"
     "newworkspacebasedlg.hpp"
     "new_workspace_dlg_liteeditor_bitmaps.cpp")
@@ -268,7 +238,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorNewQuickWatch
     "${CMAKE_CURRENT_SOURCE_DIR}/newquickwatch.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "newquickwatch.cpp"
     "newquickwatch.hpp"
     "newquickwatch_liteeditor_bitmaps.cpp")
@@ -276,7 +245,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorOpenWindowsPanelBase
     "${CMAKE_CURRENT_SOURCE_DIR}/OpenWindowsPanelBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "openwindowspanelbase.cpp"
     "openwindowspanelbase.hpp"
     "OpenWindowsPanelBase_liteeditor_bitmaps.cpp")
@@ -284,7 +252,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorOptionsDialogBase2
     "${CMAKE_CURRENT_SOURCE_DIR}/optionsdialogbase2.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "options_base_dlg2.cpp"
     "options_base_dlg2.hpp"
     "optionsdialogbase2_liteeditor_bitmaps.cpp")
@@ -292,7 +259,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorPluginDlgBase
     "${CMAKE_CURRENT_SOURCE_DIR}/plugindlgbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "plugindlgbase.cpp"
     "plugindlgbase.hpp"
     "plugindlgbase_liteeditor_bitmaps.cpp")
@@ -300,7 +266,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorProjectSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/project_settings.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "project_settings_base_dlg.cpp"
     "project_settings_base_dlg.hpp"
     "project_settings_liteeditor_bitmaps.cpp")
@@ -308,7 +273,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorQuickDebug
     "${CMAKE_CURRENT_SOURCE_DIR}/quickdebug.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "quickdebugbase.cpp"
     "quickdebugbase.hpp"
     "quickdebug_liteeditor_bitmaps.cpp")
@@ -316,7 +280,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorReconcileProject
     "${CMAKE_CURRENT_SOURCE_DIR}/reconcileproject.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "reconcileprojectbase.cpp"
     "reconcileprojectbase.hpp"
     "assignedfilesmodel.cpp"
@@ -328,7 +291,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorSettersGetters
     "${CMAKE_CURRENT_SOURCE_DIR}/setters_getters.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "setters_getters.cpp"
     "setters_getters.hpp"
     "setters_getters_liteeditor_bitmaps.cpp")
@@ -336,7 +298,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorSyntaxHighlightBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/SyntaxHighlightBaseDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "syntaxhighlightbasedlg.cpp"
     "syntaxhighlightbasedlg.hpp"
     "syntaxhighlightbasedlg_liteeditor_bitmaps.cpp")
@@ -344,7 +305,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorTabGroupBaseDlgs
     "${CMAKE_CURRENT_SOURCE_DIR}/tabgroupbasedlgs.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "tabgroupbasedlgs.cpp"
     "tabgroupbasedlgs.hpp"
     "tabgroupbasedlgs_liteeditor_bitmaps.cpp")
@@ -352,7 +312,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorTagsOptionsBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/tags_options_base_dlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "tags_options_base_dlg.cpp"
     "tags_options_base_dlg.hpp"
     "tags_options_base_dlg_liteeditor_bitmaps.cpp")
@@ -360,7 +319,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorThreadListPanelBase
     "${CMAKE_CURRENT_SOURCE_DIR}/ThreadListPanelBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "ThreadListPanelBase.cpp"
     "ThreadListPanelBase.hpp"
     "ThreadListPanelBase_liteeditor_bitmaps.cpp")
@@ -368,7 +326,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorWorkspaceSettingsBase
     "${CMAKE_CURRENT_SOURCE_DIR}/workspacesettingsbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "workspacesettingsbase.cpp"
     "workspacesettingsbase.hpp"
     "workspacesettingsbase_liteeditor_bitmaps.cpp")
@@ -376,7 +333,6 @@ wxcrafter_target(
 wxcrafter_target(
     LiteEditorWxCrafter
     "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "wxcrafter.cpp"
     "wxcrafter.hpp"
     "wxcrafter_liteeditor_bitmaps.cpp")

@@ -10,7 +10,6 @@ include("${wxWidgets_USE_FILE}")
 wxcrafter_target(
     AutoSave
     "${CMAKE_CURRENT_SOURCE_DIR}/AutoSaveUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "AutoSaveUI.cpp"
     "AutoSaveUI.hpp"
     "AutoSaveUI_autosave_bitmaps.cpp")

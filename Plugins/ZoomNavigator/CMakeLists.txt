@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     ZoomNavigator
     "${CMAKE_CURRENT_SOURCE_DIR}/zoom_navigator.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "zoom_navigator.cpp"
     "zoom_navigator.hpp"
     "zoom_navigator_zoomnavigator_bitmaps.cpp")

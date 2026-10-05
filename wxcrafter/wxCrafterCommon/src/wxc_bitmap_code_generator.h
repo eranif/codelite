@@ -55,6 +55,9 @@ public:
     wxString GenerateWinIdEnum() const;
     wxString BitmapCode(const wxString& bmp, const wxString& bmpname = wxEmptyString) const;
     bool Contains(const wxString& bmp) const { return m_bitmapMap.count(bmp); }
+
+    /// The generated bitmaps source file. Valid after CreateXRC() was called.
+    const wxFileName& GetBitmapsCppFile() const { return m_destCPP; }
 };
 
 #endif // WXCBITMAPCODEGENERATOR_H

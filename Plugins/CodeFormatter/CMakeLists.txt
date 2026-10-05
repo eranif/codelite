@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     CodeFormatter
     "${CMAKE_CURRENT_SOURCE_DIR}/codeformatterdlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "codeformatterdlgbase.cpp"
     "codeformatterdlgbase.hpp"
     "codeformatterdlg_codeformatter_bitmaps.cpp")

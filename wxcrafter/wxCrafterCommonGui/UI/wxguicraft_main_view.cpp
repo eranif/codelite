@@ -840,8 +840,10 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, MainFrame* mainFrame, clT
         wxEVT_WXC_SELECT_TREE_TLW, wxCommandEventHandler(GUICraftMainPanel::OnSelectToplevelItem), nullptr, this);
     EventNotifier::Get()->Connect(
         wxEVT_PREVIEW_BOOKPAGE_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnBookPageSelected), nullptr, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_PREVIEW_RIBBON_PAGE_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnRibbonPageSelected), nullptr, this);
+    EventNotifier::Get()->Connect(wxEVT_PREVIEW_RIBBON_PAGE_SELECTED,
+                                  wxCommandEventHandler(GUICraftMainPanel::OnRibbonPageSelected),
+                                  nullptr,
+                                  this);
     EventNotifier::Get()->Connect(
         wxEVT_PREVIEW_CLOSED, wxCommandEventHandler(GUICraftMainPanel::OnPreviewClosed), nullptr, this);
     EventNotifier::Get()->Connect(
@@ -858,17 +860,21 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, MainFrame* mainFrame, clT
         wxEVT_PREVIEW_BAR_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnBarItemSelected), nullptr, this);
     EventNotifier::Get()->Connect(
         wxEVT_SHOW_CONTEXT_MENU, wxCommandEventHandler(GUICraftMainPanel::OnShowContextMenu), nullptr, this);
-    EventNotifier::Get()->Connect(wxEVT_DELETE_CONTROL, wxCommandEventHandler(GUICraftMainPanel::OnDelete), nullptr, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_DELETE_CONTROL, wxCommandEventHandler(GUICraftMainPanel::OnDelete), nullptr, this);
     EventNotifier::Get()->Connect(
         wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(GUICraftMainPanel::OnUpdatePreview), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_FINDBAR_ABOUT_TO_SHOW, &GUICraftMainPanel::OnFindBar, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_REFRESH_PROPERTIES_VIEW, wxCommandEventHandler(GUICraftMainPanel::OnRefreshPropertiesView), nullptr, this);
+    EventNotifier::Get()->Connect(wxEVT_REFRESH_PROPERTIES_VIEW,
+                                  wxCommandEventHandler(GUICraftMainPanel::OnRefreshPropertiesView),
+                                  nullptr,
+                                  this);
     m_MainPanel = this;
 
     m_treeControls->Connect(
         wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnBeginDrag), nullptr, this);
-    m_treeControls->Connect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnEndDrag), nullptr, this);
+    m_treeControls->Connect(
+        wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnEndDrag), nullptr, this);
     m_treeControls->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(GUICraftMainPanel::OnMenu), nullptr, this);
     m_treeControls->Connect(
         wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler(GUICraftMainPanel::OnItemRightClick), nullptr, this);
@@ -891,7 +897,8 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, MainFrame* mainFrame, clT
                       wxCommandEventHandler(GUICraftMainPanel::OnLabelCurrentState),
                       nullptr,
                       this);
-    wxTheApp->Connect(wxEVT_MULTIPLE_UNREDO, wxCommandEventHandler(GUICraftMainPanel::OnLoadCurrentState), nullptr, this);
+    wxTheApp->Connect(
+        wxEVT_MULTIPLE_UNREDO, wxCommandEventHandler(GUICraftMainPanel::OnLoadCurrentState), nullptr, this);
     this->Connect(ID_FORM_TYPE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnNewFormUI), nullptr, this);
 
     int sashPos = wxcSettings::Get().GetSashPosition();
@@ -956,8 +963,10 @@ GUICraftMainPanel::~GUICraftMainPanel()
         wxEVT_PREVIEW_CTRL_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnPreviewItemSelected), nullptr, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_PREVIEW_BOOKPAGE_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnBookPageSelected), nullptr, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_PREVIEW_RIBBON_PAGE_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnRibbonPageSelected), nullptr, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PREVIEW_RIBBON_PAGE_SELECTED,
+                                     wxCommandEventHandler(GUICraftMainPanel::OnRibbonPageSelected),
+                                     nullptr,
+                                     this);
     EventNotifier::Get()->Disconnect(
         wxEVT_PREVIEW_CLOSED, wxCommandEventHandler(GUICraftMainPanel::OnPreviewClosed), nullptr, this);
     EventNotifier::Get()->Disconnect(
@@ -980,8 +989,10 @@ GUICraftMainPanel::~GUICraftMainPanel()
     EventNotifier::Get()->Disconnect(
         wxEVT_UPDATE_PREVIEW, wxCommandEventHandler(GUICraftMainPanel::OnUpdatePreview), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDBAR_ABOUT_TO_SHOW, &GUICraftMainPanel::OnFindBar, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_REFRESH_PROPERTIES_VIEW, wxCommandEventHandler(GUICraftMainPanel::OnRefreshPropertiesView), nullptr, this);
+    EventNotifier::Get()->Disconnect(wxEVT_REFRESH_PROPERTIES_VIEW,
+                                     wxCommandEventHandler(GUICraftMainPanel::OnRefreshPropertiesView),
+                                     nullptr,
+                                     this);
 
     // Only disconnect the events in Tabbed mode,
     // in the "frame" mode, the main panel and the tree view have the same
@@ -993,8 +1004,10 @@ GUICraftMainPanel::~GUICraftMainPanel()
             wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnEndDrag), nullptr, this);
         m_treeControls->Disconnect(
             wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(GUICraftMainPanel::OnMenu), nullptr, this);
-        m_treeControls->Disconnect(
-            wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler(GUICraftMainPanel::OnItemRightClick), nullptr, this);
+        m_treeControls->Disconnect(wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK,
+                                   wxTreeEventHandler(GUICraftMainPanel::OnItemRightClick),
+                                   nullptr,
+                                   this);
         m_treeControls->Disconnect(
             wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(GUICraftMainPanel::OnItemSelected), nullptr, this);
         m_treeControls->Disconnect(ID_DELETE_NODE,
@@ -1014,8 +1027,10 @@ GUICraftMainPanel::~GUICraftMainPanel()
         wxID_UNDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnUndo), nullptr, this);
     wxTheApp->Disconnect(
         wxID_REDO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GUICraftMainPanel::OnRedo), nullptr, this);
-    wxTheApp->Disconnect(wxID_UNDO, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnUndoUI), nullptr, this);
-    wxTheApp->Disconnect(wxID_REDO, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnRedoUI), nullptr, this);
+    wxTheApp->Disconnect(
+        wxID_UNDO, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnUndoUI), nullptr, this);
+    wxTheApp->Disconnect(
+        wxID_REDO, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnRedoUI), nullptr, this);
     wxTheApp->Disconnect(XRCID("label_current_state"),
                          wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(GUICraftMainPanel::OnLabelCurrentState),
@@ -3672,13 +3687,14 @@ void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode
 
     wxFileName outputDir(wxcProjectMetadata::Get().GetGeneratedFilesDir(), "");
     wxCrafter::MakeAbsToProject(outputDir);
-    if (!outputDir.DirExists()) {
+    if (!outputDir.DirExists() && !outputDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL)) {
         if (interactionMode == InteractionMode::HideDialogs) {
             return;
         }
         wxString msg;
         msg << _("Please set the base classes generated files output directory\nThis can be done by selecting the root "
-                 "item of the tree and edit the properties");
+                 "item of the tree and edit the properties.\nCurrent value: '")
+            << outputDir.GetPath() << "'";
         ::wxMessageBox(msg, "wxCrafter", wxOK | wxCENTER | wxICON_WARNING, wxCrafter::TopFrame());
         return;
     }

@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     Vim
     "${CMAKE_CURRENT_SOURCE_DIR}/VIM.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "VIM.cpp"
     "VIM.hpp"
     "VIM_codelite_vim_bitmaps.cpp")

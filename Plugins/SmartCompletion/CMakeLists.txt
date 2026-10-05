@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     SmartCompletion
     "${CMAKE_CURRENT_SOURCE_DIR}/SmartCompletionsUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "SmartCompletionsUI.cpp"
     "SmartCompletionsUI.hpp"
     "SmartCompletionsUI_smartcompletion_bitmaps.cpp")

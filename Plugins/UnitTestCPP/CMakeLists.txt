@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     UnitTestCPP_NewClassTestBase
     "${CMAKE_CURRENT_SOURCE_DIR}/NewClassTestBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "testclassbasedlg.cpp"
     "testclassbasedlg.hpp"
     "NewClassTestBase_unittestcpp_bitmaps.cpp")
@@ -23,7 +22,6 @@ wxcrafter_target(
 wxcrafter_target(
     UnitTestCPP_NewUnitTestBase
     "${CMAKE_CURRENT_SOURCE_DIR}/newunittestbasedlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "newunittestbasedlg.cpp"
     "newunittestbasedlg.hpp"
     "newunittestbasedlg_unittestcpp_bitmaps.cpp")
@@ -31,7 +29,6 @@ wxcrafter_target(
 wxcrafter_target(
     UnitTestCPP_unittestreport
     "${CMAKE_CURRENT_SOURCE_DIR}/unittestreport.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "unittestreport.cpp"
     "unittestreport.hpp"
     "unittestreport_unittestcpp_bitmaps.cpp")

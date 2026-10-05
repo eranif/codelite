@@ -38,7 +38,6 @@ endif(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 wxcrafter_target(
     PhpNewClass
     "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin/new_class.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "new_class.cpp"
     "new_class.hpp"
     "new_class_php-plugin_bitmaps.cpp")
@@ -46,7 +45,6 @@ wxcrafter_target(
 wxcrafter_target(
     PhpUi
     "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin/php_ui.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "php_ui.cpp"
     "php_ui.hpp"
     "php_ui_php-plugin_bitmaps.cpp")

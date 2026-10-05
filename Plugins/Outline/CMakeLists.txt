@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     Outline
     "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "wxcrafter.cpp"
     "wxcrafter.hpp"
     "wxcrafter_outline_bitmaps.cpp")

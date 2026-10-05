@@ -384,6 +384,8 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
     if (WantsSubclass()) {
         wxcProjectMetadata::Get().SetGeneratedHeader(derivedClassFileHPP);
         wxcProjectMetadata::Get().SetGeneratedSource(derivedClassFileCPP);
+        wxcProjectMetadata::Get().AddSubclassFile(derivedClassFileHPP);
+        wxcProjectMetadata::Get().AddSubclassFile(derivedClassFileCPP);
     }
 
     wxcProjectMetadata::Get().SetGeneratedClassName(inheritedClass);

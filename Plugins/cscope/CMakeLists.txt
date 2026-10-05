@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     Cscope
     "${CMAKE_CURRENT_SOURCE_DIR}/CscopeTabBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "CscopeTabBase.cpp"
     "CscopeTabBase.hpp"
     "CscopeTabBase_cscope_bitmaps.cpp")

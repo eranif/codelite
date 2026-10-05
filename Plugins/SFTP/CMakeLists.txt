@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     SFTP
     "${CMAKE_CURRENT_SOURCE_DIR}/UI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "UI.cpp"
     "UI.hpp"
     "UI_sftp_bitmaps.cpp")

@@ -24,6 +24,7 @@ protected:
     wxFileName m_generatedHeader;  // Derived class
     wxFileName m_generatedSource;  // Derived class
     wxString m_generatedClassName; // Derived class
+    wxArrayString m_subclassFiles; // All the derived classes files (full paths), of all the top level windows
     wxString m_virtualFolder;
     wxString m_bitmapFunction;
     int m_GenerateCodeTypes;
@@ -84,6 +85,9 @@ public:
     void SetGeneratedSource(const wxFileName& generatedSource) { this->m_generatedSource = generatedSource; }
     const wxFileName& GetGeneratedHeader() const { return m_generatedHeader; }
     const wxFileName& GetGeneratedSource() const { return m_generatedSource; }
+    /// Remember a derived class file (the file is added only once)
+    void AddSubclassFile(const wxFileName& file);
+    const wxArrayString& GetSubclassFiles() const { return m_subclassFiles; }
     void SetIncludeFiles(const wxArrayString& includeFiles) { this->m_includeFiles = includeFiles; }
     const wxArrayString& GetIncludeFiles() const { return m_includeFiles; }
     wxString GetProjectPath() const;

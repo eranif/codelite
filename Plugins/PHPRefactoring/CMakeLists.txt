@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     PHPRefactoring
     "${CMAKE_CURRENT_SOURCE_DIR}/phprefactoringdlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "phprefactoringdlgbase.cpp"
     "phprefactoringdlgbase.hpp"
     "phprefactoringdlg_phprefactoring_bitmaps.cpp")

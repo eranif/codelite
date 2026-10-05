@@ -98,31 +98,53 @@ macro(
   wxcrafter_target
   Name
   Input
-  OutputDir
   OutputCpp
   OutputHpp
   OutputBitmaps
   # Extra output for models
 )
 
+  # The base classes are generated under the build directory, in the same
+  # relative path as the .wxcp file has under the source root. For example:
+  # <source-root>/Plugin/Keyboard/my.wxcp -> <build-dir>/Plugin/Keyboard
+  get_filename_component(_wxc_input "${Input}" ABSOLUTE BASE_DIR
+                         "${CMAKE_CURRENT_SOURCE_DIR}")
+  get_filename_component(_wxc_input_dir "${_wxc_input}" DIRECTORY)
+  file(RELATIVE_PATH _wxc_rel_dir "${CMAKE_SOURCE_DIR}" "${_wxc_input_dir}")
+  if(_wxc_rel_dir MATCHES "^\\.\\.")
+    message(
+      FATAL_ERROR
+        "wxcrafter_target(${Name}): '${Input}' is not under the source root '${CMAKE_SOURCE_DIR}'"
+    )
+  endif()
+
+  if(_wxc_rel_dir STREQUAL "")
+    set(WXCRAFTER_${Name}_OUTPUTDIR "${CMAKE_BINARY_DIR}")
+  else()
+    set(WXCRAFTER_${Name}_OUTPUTDIR "${CMAKE_BINARY_DIR}/${_wxc_rel_dir}")
+  endif()
+  unset(_wxc_input)
+  unset(_wxc_input_dir)
+  unset(_wxc_rel_dir)
+
   set(WXCRAFTER_${Name}_OUTPUTS
-      "${OutputDir}/${OutputCpp}" "${OutputDir}/${OutputHpp}"
-      "${OutputDir}/${OutputBitmaps}")
+      "${WXCRAFTER_${Name}_OUTPUTDIR}/${OutputCpp}"
+      "${WXCRAFTER_${Name}_OUTPUTDIR}/${OutputHpp}"
+      "${WXCRAFTER_${Name}_OUTPUTDIR}/${OutputBitmaps}")
 
   set(ExtraMacroArgs ${ARGN}) # ARGN is not a variable
   foreach(ExtraArgs ${ExtraMacroArgs})
-    list(APPEND WXCRAFTER_${Name}_OUTPUTS "${OutputDir}/${ExtraArgs}")
+    list(APPEND WXCRAFTER_${Name}_OUTPUTS
+         "${WXCRAFTER_${Name}_OUTPUTDIR}/${ExtraArgs}")
   endforeach()
   unset(ExtraMacroArgs)
 
   add_custom_command(
     OUTPUT ${WXCRAFTER_${Name}_OUTPUTS}
-    COMMAND $<TARGET_FILE:wxcgen> -o "${OutputDir}" "${Input}"
+    COMMAND $<TARGET_FILE:wxcgen> -o "${WXCRAFTER_${Name}_OUTPUTDIR}" "${Input}"
     VERBATIM
     DEPENDS ${Input} wxcgen
-    COMMENT "[WxCrafter][${Name}] Building code (wxcgen)")
-
-  set(WXCRAFTER_${Name}_OUTPUTDIR "${OutputDir}")
+    COMMENT "[wxCrafter][${Name}] Building code (wxcgen)")
 endmacro()
 
 # Install

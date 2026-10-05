@@ -41,7 +41,6 @@ else()
     wxcrafter_target(
         SpellChecker
         "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
-        "${CMAKE_CURRENT_BINARY_DIR}"
         "wxcrafter.cpp"
         "wxcrafter.hpp"
         "wxcrafter_bitmaps.cpp")

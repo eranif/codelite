@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     EditorConfigPlugin
     "${CMAKE_CURRENT_SOURCE_DIR}/EditorConfigUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "EditorConfigUI.cpp"
     "EditorConfigUI.hpp"
     "EditorConfigUI_editorconfigplugin_bitmaps.cpp")

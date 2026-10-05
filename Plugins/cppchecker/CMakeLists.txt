@@ -10,7 +10,6 @@ include("${wxWidgets_USE_FILE}")
 wxcrafter_target(
     Cppchecker
     "${CMAKE_CURRENT_SOURCE_DIR}/cppchecksettingsdlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "cppchecksettingsdlgbase.cpp"
     "cppchecksettingsdlgbase.hpp"
     "cppchecksettingsdlg_cppchecker_bitmaps.cpp")

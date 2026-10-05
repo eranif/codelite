@@ -20,7 +20,6 @@ endif()
 wxcrafter_target(
     CodeLiteDiff
     "${CMAKE_CURRENT_SOURCE_DIR}/CodeLiteDiff_UI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "CodeLiteDiff_UI.cpp"
     "CodeLiteDiff_UI.hpp"
     "CodeLiteDiff_UI_codelitediff_bitmaps.cpp")

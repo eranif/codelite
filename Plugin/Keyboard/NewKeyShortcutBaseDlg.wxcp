@@ -12,7 +12,7 @@
     "m_objCounter": 41,
     "m_outputFileName": "NewKeyShortcutBaseDlg",
     "m_useEnum": true,
-    "m_useUnderscoreMacro": true,
+    "m_useUnderscoreMacro": false,
     "m_templateClasses": []
   },
   "windows": [
@@ -1042,8 +1042,7 @@
                                     "wxLEFT",
                                     "wxRIGHT",
                                     "wxTOP",
-                                    "wxBOTTOM",
-                                    "wxALIGN_CENTER_VERTICAL"
+                                    "wxBOTTOM"
                                   ],
                                   "m_properties": [
                                     {
@@ -1218,7 +1217,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Label:",
-                                      "m_value": "CMD"
+                                      "m_value": "Cmd"
                                     },
                                     {
                                       "type": "bool",
@@ -1493,7 +1492,8 @@
                                 "wxLEFT",
                                 "wxRIGHT",
                                 "wxTOP",
-                                "wxBOTTOM"
+                                "wxBOTTOM",
+                                "wxEXPAND"
                               ],
                               "m_properties": [
                                 {

@@ -15,7 +15,6 @@ endif(USE_PCH)
 wxcrafter_target(
     ContinuousBuild
     "${CMAKE_CURRENT_SOURCE_DIR}/continuousbuildbasepane.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "continuousbuildbasepane.cpp"
     "continuousbuildbasepane.hpp"
     "continuousbuildbasepane_continuousbuild_bitmaps.cpp")

@@ -85,7 +85,6 @@ add_compile_definitions(DBL_USE_SQLITE)
 wxcrafter_target(
     DatabaseExplorer
     "${CMAKE_CURRENT_SOURCE_DIR}/GUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "GUI.cpp"
     "GUI.hpp"
     "GUI_databaseexplorer_bitmaps.cpp")

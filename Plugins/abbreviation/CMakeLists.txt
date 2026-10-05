@@ -10,7 +10,6 @@ include("${wxWidgets_USE_FILE}")
 wxcrafter_target(
     AbbreviationsSettingsBase
     "${CMAKE_CURRENT_SOURCE_DIR}/abbreviationssettingsbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "abbreviationssettingsbase.cpp"
     "abbreviationssettingsbase.hpp"
     "abbreviationssettingsbase_abbreviation_bitmaps.cpp")

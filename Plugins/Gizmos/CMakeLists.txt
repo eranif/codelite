@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     GizmosGizmos
     "${CMAKE_CURRENT_SOURCE_DIR}/gizmos.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "gizmos_base.cpp"
     "gizmos_base.hpp"
     "gizmos_gizmos_bitmaps.cpp")
@@ -23,7 +22,6 @@ wxcrafter_target(
 wxcrafter_target(
     GizmosNewClassWizard
     "${CMAKE_CURRENT_SOURCE_DIR}/newclasswizard.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "newclassbasedlg.cpp"
     "newclassbasedlg.hpp"
     "newclasswizard_gizmos_bitmaps.cpp")
@@ -31,7 +29,6 @@ wxcrafter_target(
 wxcrafter_target(
     GizmosNewWxProject
     "${CMAKE_CURRENT_SOURCE_DIR}/newwxprojectbasedlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "newwxprojectbasedlg.cpp"
     "newwxprojectbasedlg.hpp"
     "newwxprojectbasedlg_gizmos_bitmaps.cpp")

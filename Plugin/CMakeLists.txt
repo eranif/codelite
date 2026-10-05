@@ -11,7 +11,6 @@ include("${wxWidgets_USE_FILE}")
 wxcrafter_target(
     PluginAi
     "${CMAKE_CURRENT_SOURCE_DIR}/ai/ai_UI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "ai_UI.cpp"
     "ai_UI.hpp"
     "UI_assistance_ai_bitmaps.cpp")
@@ -19,7 +18,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginCustomControls
     "${CMAKE_CURRENT_SOURCE_DIR}/CustomControls/CustomControls.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "CustomControls.cpp"
     "CustomControls.hpp"
     "CustomControls_customcontrols_bitmaps.cpp")
@@ -27,7 +25,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginDebugger
     "${CMAKE_CURRENT_SOURCE_DIR}/Debugger/memoryviewbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "memoryviewbase.cpp"
     "memoryviewbase.hpp"
     "memoryviewbase_liteeditor_bitmaps.cpp")
@@ -35,7 +32,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginDiff
     "${CMAKE_CURRENT_SOURCE_DIR}/Diff/DiffUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "DiffUI.cpp"
     "DiffUI.hpp"
     "DiffUI_plugin_bitmaps.cpp")
@@ -43,7 +39,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginFileSystemWorkspace
     "${CMAKE_CURRENT_SOURCE_DIR}/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "clFileSystemWorkspaceDlgBase.cpp"
     "clFileSystemWorkspaceDlgBase.hpp"
     "clFileSystemWorkspaceDlgBase_plugin_bitmaps.cpp")
@@ -51,7 +46,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginKeyboard
     "${CMAKE_CURRENT_SOURCE_DIR}/Keyboard/NewKeyShortcutBaseDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "NewKeyShortcutBaseDlg.cpp"
     "NewKeyShortcutBaseDlg.hpp"
     "NewKeyShortcutBaseDlg_plugin_bitmaps.cpp")
@@ -59,7 +53,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginLSP
     "${CMAKE_CURRENT_SOURCE_DIR}/LSP/lsp_UI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "lsp_UI.cpp"
     "lsp_UI.hpp"
     "UI_languageserver_bitmaps.cpp")
@@ -67,7 +60,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginTerminalEmulator
     "${CMAKE_CURRENT_SOURCE_DIR}/TerminalEmulator/TerminalEmulatorUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "TerminalEmulatorUIBase.cpp"
     "TerminalEmulatorUIBase.hpp"
     "TerminalEmulatorUI_plugin_bitmaps.cpp")
@@ -75,7 +67,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginWxTerminal
     "${CMAKE_CURRENT_SOURCE_DIR}/wxTerminalCtrl/wxTerminalCtrlUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "wxTerminalCtrlUI.cpp"
     "wxTerminalCtrlUI.hpp"
     "wxTerminalCtrlUI_wxterminalctrl_bitmaps.cpp")
@@ -83,7 +74,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginAddIncludeFile
     "${CMAKE_CURRENT_SOURCE_DIR}/AddIncludeFile.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "addincludefiledlgbase.cpp"
     "addincludefiledlgbase.hpp"
     "AddIncludeFile_liteeditor_bitmaps.cpp")
@@ -91,7 +81,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginAboutDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/clAboutDialogBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "clAboutDialogBase.cpp"
     "clAboutDialogBase.hpp"
     "clAboutDialogBase_plugin_bitmaps.cpp")
@@ -99,7 +88,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginBoostrapWizard
     "${CMAKE_CURRENT_SOURCE_DIR}/clBoostrapWizardBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "clBoostrapWizardBase.cpp"
     "clBoostrapWizardBase.hpp"
     "clBoostrapWizardBase_plugin_bitmaps.cpp")
@@ -107,7 +95,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginProgressDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/clprogressdlgbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "clprogressdlgbase.cpp"
     "clprogressdlgbase.hpp"
     "clprogressdlgbase_plugin_bitmaps.cpp")
@@ -115,7 +102,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginResizableTooltip
     "${CMAKE_CURRENT_SOURCE_DIR}/clResizableTooltipBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "clResizableTooltipBase.cpp"
     "clResizableTooltipBase.hpp"
     "clResizableTooltipBase_plugin_bitmaps.cpp")
@@ -123,7 +109,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginSelectSymbolDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/clSelectSymbolDialogBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "clSelectSymbolDialogBase.cpp"
     "clSelectSymbolDialogBase.hpp"
     "clSelectSymbolDialogBase_plugin_bitmaps.cpp")
@@ -131,7 +116,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginEnvVarTableDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/envvar_table_dlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "EnvironmentVariablesDlgBase.cpp"
     "EnvironmentVariablesDlgBase.hpp"
     "EnvironmentVariablesDlgBaseBitmaps.cpp")
@@ -139,7 +123,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginGotoAnythingBaseUI
     "${CMAKE_CURRENT_SOURCE_DIR}/GotoAnythingBaseUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "GotoAnythingBaseUI.cpp"
     "GotoAnythingBaseUI.hpp"
     "GotoAnythingBaseUI_plugin_bitmaps.cpp")
@@ -147,7 +130,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginMacrosBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/MacrosBaseDlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "macrosbasedlg.cpp"
     "macrosbasedlg.hpp"
     "MacrosBaseDlg_plugin_bitmaps.cpp")
@@ -155,7 +137,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginNameAndDescDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/nameanddescdlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "nameanddescbasedlg.cpp"
     "nameanddescbasedlg.hpp"
     "nameanddescdlg_plugin_bitmaps.cpp")
@@ -163,7 +144,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginNewProjectDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/NewProjectDialogBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "NewProjectDialogBase.cpp"
     "NewProjectDialogBase.hpp"
     "NewProjectDialogBase_plugin_bitmaps.cpp")
@@ -171,7 +151,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginOpenResourceDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/openresourcedialogbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "openresourcedialogbase.cpp"
     "openresourcedialogbase.hpp"
     "openresourcedialogbase_plugin_bitmaps.cpp")
@@ -179,7 +158,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginGeneralWxcp
     "${CMAKE_CURRENT_SOURCE_DIR}/plugin_general_wxcp.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "plugin_general_wxcp.cpp"
     "plugin_general_wxcp.hpp"
     "plugin_general_wxcp_plugin_bitmaps.cpp")
@@ -187,7 +165,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginQuickFindBar
     "${CMAKE_CURRENT_SOURCE_DIR}/quickfindbarbase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "quickfindbarbase.cpp"
     "quickfindbarbase.hpp"
     "quickfindbarbase_bitmaps.cpp")
@@ -195,7 +172,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginSelectFileTypesDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/SelectFileTypesDialogBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "SelectFileTypesDialogBase.cpp"
     "SelectFileTypesDialogBase.hpp"
     "SelectFileTypesDialogBase_plugin_bitmaps.cpp")
@@ -203,7 +179,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginSftpUi
     "${CMAKE_CURRENT_SOURCE_DIR}/sftp_ui.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "sftp_ui.cpp"
     "sftp_ui.hpp"
     "sftp_ui_plugin_bitmaps.cpp")
@@ -211,7 +186,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginSwitchToWorkspace
     "${CMAKE_CURRENT_SOURCE_DIR}/SwitchToWorkspaceBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "SwitchToWorkspaceBase.cpp"
     "SwitchToWorkspaceBase.hpp"
     "SwitchToWorkspaceBase_plugin_bitmaps.cpp")
@@ -219,7 +193,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginToolBar
     "${CMAKE_CURRENT_SOURCE_DIR}/ToolBar.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "ToolBarUI.cpp"
     "ToolBarUI.hpp"
     "ToolBar_plugin_bitmaps.cpp")
@@ -227,7 +200,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginVirtualDirectorySelector
     "${CMAKE_CURRENT_SOURCE_DIR}/VirtualDirectorySelectorBase.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "VirtualDirectorySelectorBase.cpp"
     "VirtualDirectorySelectorBase.hpp"
     "VirtualDirectorySelectorBase_plugin_bitmaps.cpp")
@@ -235,7 +207,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginWSImporterDlgs
     "${CMAKE_CURRENT_SOURCE_DIR}/WSImporterDlgs.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "WSImporterDlgs.cpp"
     "WSImporterDlgs.hpp"
     "WSImporterDlgs_plugin_bitmaps.cpp")
@@ -243,7 +214,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginCodeCompletionBox
     "${CMAKE_CURRENT_SOURCE_DIR}/wxCodeCompletionBox.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "wxCodeCompletionBoxBase.cpp"
     "wxCodeCompletionBoxBase.hpp"
     "wxCodeCompletionBox_plugin_bitmaps.cpp")
@@ -251,7 +221,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginWxCrafter
     "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "wxcrafter_plugin.cpp"
     "wxcrafter_plugin.hpp"
     "wxcrafter_plugin_bitmaps.cpp")
@@ -259,7 +228,6 @@ wxcrafter_target(
 wxcrafter_target(
     PluginRenameFile
     "${CMAKE_CURRENT_SOURCE_DIR}/renamefilebasedlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "renamefilebasedlg.cpp"
     "renamefilebasedlg.hpp"
     "renamefilebasedlg_plugin_bitmaps.cpp")
@@ -267,7 +235,6 @@ wxcrafter_target(
 #wxcrafter_target(
 #    PluginTerminal
 #    "${CMAKE_CURRENT_SOURCE_DIR}/wxterminalbase.wxcp"
-#    "${CMAKE_CURRENT_BINARY_DIR}"
 #    "wxterminalbase.cpp"
 #    "wxterminalbase.hpp"
 #    "wxterminalbase_plugin_bitmaps.cpp")
@@ -335,6 +302,8 @@ target_include_directories(
           "${WXCRAFTER_PluginFileSystemWorkspace_OUTPUTDIR}"
           "${WXCRAFTER_PluginKeyboard_OUTPUTDIR}"
           "${WXCRAFTER_PluginLSP_OUTPUTDIR}"
+          "${WXCRAFTER_PluginTerminalEmulator_OUTPUTDIR}"
+          "${WXCRAFTER_PluginWxTerminal_OUTPUTDIR}"
           "${WXCRAFTER_PluginAddIncludeFile_OUTPUTDIR}"
   PRIVATE "${CL_SRC_ROOT}/submodules/yaml-cpp/include"
           "${CL_SRC_ROOT}/ThemeImporters" "${CL_SRC_ROOT}/wxTerminalCtrl")

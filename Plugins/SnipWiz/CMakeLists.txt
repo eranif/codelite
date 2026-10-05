@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     SnipWizSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/SnippetSettings.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "SnippetSettings.cpp"
     "SnippetSettings.hpp"
     "SnippetSettings_snipwiz_bitmaps.cpp")
@@ -23,7 +22,6 @@ wxcrafter_target(
 wxcrafter_target(
     SnipWizTemplate
     "${CMAKE_CURRENT_SOURCE_DIR}/templateclassbasedlg.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "templateclassbasedlg.cpp"
     "templateclassbasedlg.hpp"
     "templateclassbasedlg_snipwiz_bitmaps.cpp")

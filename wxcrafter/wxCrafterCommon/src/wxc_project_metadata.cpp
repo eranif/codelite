@@ -128,11 +128,19 @@ wxFileName wxcProjectMetadata::BaseHeaderFile() const
     return f;
 }
 
+void wxcProjectMetadata::AddSubclassFile(const wxFileName& file)
+{
+    if (m_subclassFiles.Index(file.GetFullPath()) == wxNOT_FOUND) {
+        m_subclassFiles.Add(file.GetFullPath());
+    }
+}
+
 void wxcProjectMetadata::ClearAggregatedData()
 {
     m_generatedHeader.Clear();
     m_generatedSource.Clear();
     m_generatedClassName.Clear();
+    m_subclassFiles.Clear();
     m_additionalFiles.clear();
 }
 
@@ -141,6 +149,7 @@ void wxcProjectMetadata::Reset()
     m_generatedHeader.Clear();
     m_generatedSource.Clear();
     m_generatedClassName.Clear();
+    m_subclassFiles.Clear();
     m_virtualFolder.Clear();
     m_includeFiles.Clear();
     m_projectFile.Clear();

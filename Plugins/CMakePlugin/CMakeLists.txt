@@ -24,7 +24,6 @@ endif()
 wxcrafter_target(
     CMakePlugin
     "${CMAKE_CURRENT_SOURCE_DIR}/CMakePlugin.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "CMakePluginUi.cpp"
     "CMakePluginUi.hpp"
     "CMakePluginUi_bitmaps.cpp")

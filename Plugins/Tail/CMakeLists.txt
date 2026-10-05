@@ -15,7 +15,6 @@ endif()
 wxcrafter_target(
     Tail
     "${CMAKE_CURRENT_SOURCE_DIR}/TailUI.wxcp"
-    "${CMAKE_CURRENT_BINARY_DIR}"
     "TailUI.cpp"
     "TailUI.hpp"
     "TailUI_tail_bitmaps.cpp")

@@ -16,8 +16,7 @@ wxcrafter_target(
     ContinuousBuild
     "${CMAKE_CURRENT_SOURCE_DIR}/continuousbuildbasepane.wxcp"
     "continuousbuildbasepane.cpp"
-    "continuousbuildbasepane.hpp"
-    "continuousbuildbasepane_continuousbuild_bitmaps.cpp")
+    "continuousbuildbasepane.hpp")
 
 file(GLOB SRCS "*.cpp")
 

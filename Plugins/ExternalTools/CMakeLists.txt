@@ -16,15 +16,13 @@ wxcrafter_target(
     ExternalTools
     "${CMAKE_CURRENT_SOURCE_DIR}/external_tools.wxcp"
     "external_tools.cpp"
-    "external_tools.hpp"
-    "external_tools_bitmaps.cpp")
+    "external_tools.hpp")
 
 wxcrafter_target(
     NewToolBase
     "${CMAKE_CURRENT_SOURCE_DIR}/NewToolBase.wxcp"
     "NewToolBase.cpp"
-    "NewToolBase.hpp"
-    "NewToolBase_bitmaps.cpp")
+    "NewToolBase.hpp")
 
 file(GLOB SRCS "*.cpp")
 

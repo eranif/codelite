@@ -16,8 +16,7 @@ wxcrafter_target(
     HelpPlugin
     "${CMAKE_CURRENT_SOURCE_DIR}/HelpPluginUI.wxcp"
     "HelpPluginUI.cpp"
-    "HelpPluginUI.hpp"
-    "HelpPluginUI_helpplugin_bitmaps.cpp")
+    "HelpPluginUI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

@@ -16,8 +16,7 @@ wxcrafter_target(
     Cscope
     "${CMAKE_CURRENT_SOURCE_DIR}/CscopeTabBase.wxcp"
     "CscopeTabBase.cpp"
-    "CscopeTabBase.hpp"
-    "CscopeTabBase_cscope_bitmaps.cpp")
+    "CscopeTabBase.hpp")
 
 file(GLOB SRCS "*.cpp")
 

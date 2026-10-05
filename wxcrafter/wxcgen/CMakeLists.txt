@@ -100,8 +100,7 @@ macro(
   Input
   OutputCpp
   OutputHpp
-  OutputBitmaps
-  # Extra output for models
+  # Extra outputs (e.g. for models) are passed as additional arguments
 )
 
   # The base classes are generated under the build directory, in the same
@@ -129,8 +128,7 @@ macro(
 
   set(WXCRAFTER_${Name}_OUTPUTS
       "${WXCRAFTER_${Name}_OUTPUTDIR}/${OutputCpp}"
-      "${WXCRAFTER_${Name}_OUTPUTDIR}/${OutputHpp}"
-      "${WXCRAFTER_${Name}_OUTPUTDIR}/${OutputBitmaps}")
+      "${WXCRAFTER_${Name}_OUTPUTDIR}/${OutputHpp}")
 
   set(ExtraMacroArgs ${ARGN}) # ARGN is not a variable
   foreach(ExtraArgs ${ExtraMacroArgs})
@@ -141,7 +139,9 @@ macro(
 
   add_custom_command(
     OUTPUT ${WXCRAFTER_${Name}_OUTPUTS}
-    COMMAND $<TARGET_FILE:wxcgen> -o "${WXCRAFTER_${Name}_OUTPUTDIR}" "${Input}"
+    # The bitmaps code is generated inside the base class source file
+    COMMAND $<TARGET_FILE:wxcgen> --bitmaps-in-base-class-file -o
+            "${WXCRAFTER_${Name}_OUTPUTDIR}" "${Input}"
     VERBATIM
     DEPENDS ${Input} wxcgen
     COMMENT "[wxCrafter][${Name}] Building code (wxcgen)")

@@ -11,8 +11,7 @@ wxcrafter_target(
     AbbreviationsSettingsBase
     "${CMAKE_CURRENT_SOURCE_DIR}/abbreviationssettingsbase.wxcp"
     "abbreviationssettingsbase.cpp"
-    "abbreviationssettingsbase.hpp"
-    "abbreviationssettingsbase_abbreviation_bitmaps.cpp")
+    "abbreviationssettingsbase.hpp")
 
 file(GLOB SRCS "*.cpp")
 

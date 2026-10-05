@@ -16,8 +16,7 @@ wxcrafter_target(
     Outline
     "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
     "wxcrafter.cpp"
-    "wxcrafter.hpp"
-    "wxcrafter_outline_bitmaps.cpp")
+    "wxcrafter.hpp")
 
 file(GLOB SRCS "*.cpp")
 

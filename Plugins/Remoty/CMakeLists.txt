@@ -16,8 +16,7 @@ wxcrafter_target(
     Remoty
     "${CMAKE_CURRENT_SOURCE_DIR}/RemotyUI.wxcp"
     "RemotyUI.cpp"
-    "RemotyUI.hpp"
-    "RemotyUI_remoty_bitmaps.cpp")
+    "RemotyUI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

@@ -42,8 +42,7 @@ else()
         SpellChecker
         "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
         "wxcrafter.cpp"
-        "wxcrafter.hpp"
-        "wxcrafter_bitmaps.cpp")
+        "wxcrafter.hpp")
 
     file(GLOB SRCS "*.cpp")
 

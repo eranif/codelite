@@ -11,8 +11,7 @@ wxcrafter_target(
     Cppchecker
     "${CMAKE_CURRENT_SOURCE_DIR}/cppchecksettingsdlg.wxcp"
     "cppchecksettingsdlgbase.cpp"
-    "cppchecksettingsdlgbase.hpp"
-    "cppchecksettingsdlg_cppchecker_bitmaps.cpp")
+    "cppchecksettingsdlgbase.hpp")
 
 file(GLOB SRCS "*.cpp")
 

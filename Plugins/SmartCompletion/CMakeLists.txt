@@ -16,8 +16,7 @@ wxcrafter_target(
     SmartCompletion
     "${CMAKE_CURRENT_SOURCE_DIR}/SmartCompletionsUI.wxcp"
     "SmartCompletionsUI.cpp"
-    "SmartCompletionsUI.hpp"
-    "SmartCompletionsUI_smartcompletion_bitmaps.cpp")
+    "SmartCompletionsUI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

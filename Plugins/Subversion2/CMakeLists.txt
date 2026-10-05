@@ -16,15 +16,13 @@ wxcrafter_target(
     SubversionSubversion2
     "${CMAKE_CURRENT_SOURCE_DIR}/subversion2.wxcp"
     "subversion2_ui.cpp"
-    "subversion2_ui.hpp"
-    "subversion2_subversion2_bitmaps.cpp")
+    "subversion2_ui.hpp")
 
 wxcrafter_target(
     SubversionWxCrafter
     "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
     "wxcrafter.cpp"
-    "wxcrafter.hpp"
-    "wxcrafter_subversion2_bitmaps.cpp")
+    "wxcrafter.hpp")
 
 file(GLOB SRCS "*.cpp")
 

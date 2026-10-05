@@ -16,8 +16,7 @@ wxcrafter_target(
     EditorConfigPlugin
     "${CMAKE_CURRENT_SOURCE_DIR}/EditorConfigUI.wxcp"
     "EditorConfigUI.cpp"
-    "EditorConfigUI.hpp"
-    "EditorConfigUI_editorconfigplugin_bitmaps.cpp")
+    "EditorConfigUI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

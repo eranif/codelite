@@ -11,8 +11,7 @@ wxcrafter_target(
     DebugAdapterClient
     "${CMAKE_CURRENT_SOURCE_DIR}/UI.wxcp"
     "UI.cpp"
-    "UI.hpp"
-    "UI_lldbdebugger_bitmaps.cpp")
+    "UI.hpp")
 
 # By default, use the sources under the current folder
 file(GLOB PLUGIN_SRCS "*.cpp")

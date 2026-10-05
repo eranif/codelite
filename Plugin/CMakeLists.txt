@@ -12,232 +12,199 @@ wxcrafter_target(
     PluginAi
     "${CMAKE_CURRENT_SOURCE_DIR}/ai/ai_UI.wxcp"
     "ai_UI.cpp"
-    "ai_UI.hpp"
-    "UI_assistance_ai_bitmaps.cpp")
+    "ai_UI.hpp")
 
 wxcrafter_target(
     PluginCustomControls
     "${CMAKE_CURRENT_SOURCE_DIR}/CustomControls/CustomControls.wxcp"
     "CustomControls.cpp"
-    "CustomControls.hpp"
-    "CustomControls_customcontrols_bitmaps.cpp")
+    "CustomControls.hpp")
 
 wxcrafter_target(
     PluginDebugger
     "${CMAKE_CURRENT_SOURCE_DIR}/Debugger/memoryviewbase.wxcp"
     "memoryviewbase.cpp"
-    "memoryviewbase.hpp"
-    "memoryviewbase_liteeditor_bitmaps.cpp")
+    "memoryviewbase.hpp")
 
 wxcrafter_target(
     PluginDiff
     "${CMAKE_CURRENT_SOURCE_DIR}/Diff/DiffUI.wxcp"
     "DiffUI.cpp"
-    "DiffUI.hpp"
-    "DiffUI_plugin_bitmaps.cpp")
+    "DiffUI.hpp")
 
 wxcrafter_target(
     PluginFileSystemWorkspace
     "${CMAKE_CURRENT_SOURCE_DIR}/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.wxcp"
     "clFileSystemWorkspaceDlgBase.cpp"
-    "clFileSystemWorkspaceDlgBase.hpp"
-    "clFileSystemWorkspaceDlgBase_plugin_bitmaps.cpp")
+    "clFileSystemWorkspaceDlgBase.hpp")
 
 wxcrafter_target(
     PluginKeyboard
     "${CMAKE_CURRENT_SOURCE_DIR}/Keyboard/NewKeyShortcutBaseDlg.wxcp"
     "NewKeyShortcutBaseDlg.cpp"
-    "NewKeyShortcutBaseDlg.hpp"
-    "NewKeyShortcutBaseDlg_plugin_bitmaps.cpp")
+    "NewKeyShortcutBaseDlg.hpp")
 
 wxcrafter_target(
     PluginLSP
     "${CMAKE_CURRENT_SOURCE_DIR}/LSP/lsp_UI.wxcp"
     "lsp_UI.cpp"
-    "lsp_UI.hpp"
-    "UI_languageserver_bitmaps.cpp")
+    "lsp_UI.hpp")
 
 wxcrafter_target(
     PluginTerminalEmulator
     "${CMAKE_CURRENT_SOURCE_DIR}/TerminalEmulator/TerminalEmulatorUI.wxcp"
     "TerminalEmulatorUIBase.cpp"
-    "TerminalEmulatorUIBase.hpp"
-    "TerminalEmulatorUI_plugin_bitmaps.cpp")
+    "TerminalEmulatorUIBase.hpp")
 
 wxcrafter_target(
     PluginWxTerminal
     "${CMAKE_CURRENT_SOURCE_DIR}/wxTerminalCtrl/wxTerminalCtrlUI.wxcp"
     "wxTerminalCtrlUI.cpp"
-    "wxTerminalCtrlUI.hpp"
-    "wxTerminalCtrlUI_wxterminalctrl_bitmaps.cpp")
+    "wxTerminalCtrlUI.hpp")
 
 wxcrafter_target(
     PluginAddIncludeFile
     "${CMAKE_CURRENT_SOURCE_DIR}/AddIncludeFile.wxcp"
     "addincludefiledlgbase.cpp"
-    "addincludefiledlgbase.hpp"
-    "AddIncludeFile_liteeditor_bitmaps.cpp")
+    "addincludefiledlgbase.hpp")
 
 wxcrafter_target(
     PluginAboutDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/clAboutDialogBase.wxcp"
     "clAboutDialogBase.cpp"
-    "clAboutDialogBase.hpp"
-    "clAboutDialogBase_plugin_bitmaps.cpp")
+    "clAboutDialogBase.hpp")
 
 wxcrafter_target(
     PluginBoostrapWizard
     "${CMAKE_CURRENT_SOURCE_DIR}/clBoostrapWizardBase.wxcp"
     "clBoostrapWizardBase.cpp"
-    "clBoostrapWizardBase.hpp"
-    "clBoostrapWizardBase_plugin_bitmaps.cpp")
+    "clBoostrapWizardBase.hpp")
 
 wxcrafter_target(
     PluginProgressDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/clprogressdlgbase.wxcp"
     "clprogressdlgbase.cpp"
-    "clprogressdlgbase.hpp"
-    "clprogressdlgbase_plugin_bitmaps.cpp")
+    "clprogressdlgbase.hpp")
 
 wxcrafter_target(
     PluginResizableTooltip
     "${CMAKE_CURRENT_SOURCE_DIR}/clResizableTooltipBase.wxcp"
     "clResizableTooltipBase.cpp"
-    "clResizableTooltipBase.hpp"
-    "clResizableTooltipBase_plugin_bitmaps.cpp")
+    "clResizableTooltipBase.hpp")
 
 wxcrafter_target(
     PluginSelectSymbolDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/clSelectSymbolDialogBase.wxcp"
     "clSelectSymbolDialogBase.cpp"
-    "clSelectSymbolDialogBase.hpp"
-    "clSelectSymbolDialogBase_plugin_bitmaps.cpp")
+    "clSelectSymbolDialogBase.hpp")
 
 wxcrafter_target(
     PluginEnvVarTableDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/envvar_table_dlg.wxcp"
     "EnvironmentVariablesDlgBase.cpp"
-    "EnvironmentVariablesDlgBase.hpp"
-    "EnvironmentVariablesDlgBaseBitmaps.cpp")
+    "EnvironmentVariablesDlgBase.hpp")
 
 wxcrafter_target(
     PluginGotoAnythingBaseUI
     "${CMAKE_CURRENT_SOURCE_DIR}/GotoAnythingBaseUI.wxcp"
     "GotoAnythingBaseUI.cpp"
-    "GotoAnythingBaseUI.hpp"
-    "GotoAnythingBaseUI_plugin_bitmaps.cpp")
+    "GotoAnythingBaseUI.hpp")
 
 wxcrafter_target(
     PluginMacrosBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/MacrosBaseDlg.wxcp"
     "macrosbasedlg.cpp"
-    "macrosbasedlg.hpp"
-    "MacrosBaseDlg_plugin_bitmaps.cpp")
+    "macrosbasedlg.hpp")
 
 wxcrafter_target(
     PluginNameAndDescDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/nameanddescdlg.wxcp"
     "nameanddescbasedlg.cpp"
-    "nameanddescbasedlg.hpp"
-    "nameanddescdlg_plugin_bitmaps.cpp")
+    "nameanddescbasedlg.hpp")
 
 wxcrafter_target(
     PluginNewProjectDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/NewProjectDialogBase.wxcp"
     "NewProjectDialogBase.cpp"
-    "NewProjectDialogBase.hpp"
-    "NewProjectDialogBase_plugin_bitmaps.cpp")
+    "NewProjectDialogBase.hpp")
 
 wxcrafter_target(
     PluginOpenResourceDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/openresourcedialogbase.wxcp"
     "openresourcedialogbase.cpp"
-    "openresourcedialogbase.hpp"
-    "openresourcedialogbase_plugin_bitmaps.cpp")
+    "openresourcedialogbase.hpp")
 
 wxcrafter_target(
     PluginGeneralWxcp
     "${CMAKE_CURRENT_SOURCE_DIR}/plugin_general_wxcp.wxcp"
     "plugin_general_wxcp.cpp"
-    "plugin_general_wxcp.hpp"
-    "plugin_general_wxcp_plugin_bitmaps.cpp")
+    "plugin_general_wxcp.hpp")
 
 wxcrafter_target(
     PluginQuickFindBar
     "${CMAKE_CURRENT_SOURCE_DIR}/quickfindbarbase.wxcp"
     "quickfindbarbase.cpp"
-    "quickfindbarbase.hpp"
-    "quickfindbarbase_bitmaps.cpp")
+    "quickfindbarbase.hpp")
 
 wxcrafter_target(
     PluginSelectFileTypesDialog
     "${CMAKE_CURRENT_SOURCE_DIR}/SelectFileTypesDialogBase.wxcp"
     "SelectFileTypesDialogBase.cpp"
-    "SelectFileTypesDialogBase.hpp"
-    "SelectFileTypesDialogBase_plugin_bitmaps.cpp")
+    "SelectFileTypesDialogBase.hpp")
 
 wxcrafter_target(
     PluginSftpUi
     "${CMAKE_CURRENT_SOURCE_DIR}/sftp_ui.wxcp"
     "sftp_ui.cpp"
-    "sftp_ui.hpp"
-    "sftp_ui_plugin_bitmaps.cpp")
+    "sftp_ui.hpp")
 
 wxcrafter_target(
     PluginSwitchToWorkspace
     "${CMAKE_CURRENT_SOURCE_DIR}/SwitchToWorkspaceBase.wxcp"
     "SwitchToWorkspaceBase.cpp"
-    "SwitchToWorkspaceBase.hpp"
-    "SwitchToWorkspaceBase_plugin_bitmaps.cpp")
+    "SwitchToWorkspaceBase.hpp")
 
 wxcrafter_target(
     PluginToolBar
     "${CMAKE_CURRENT_SOURCE_DIR}/ToolBar.wxcp"
     "ToolBarUI.cpp"
-    "ToolBarUI.hpp"
-    "ToolBar_plugin_bitmaps.cpp")
+    "ToolBarUI.hpp")
 
 wxcrafter_target(
     PluginVirtualDirectorySelector
     "${CMAKE_CURRENT_SOURCE_DIR}/VirtualDirectorySelectorBase.wxcp"
     "VirtualDirectorySelectorBase.cpp"
-    "VirtualDirectorySelectorBase.hpp"
-    "VirtualDirectorySelectorBase_plugin_bitmaps.cpp")
+    "VirtualDirectorySelectorBase.hpp")
 
 wxcrafter_target(
     PluginWSImporterDlgs
     "${CMAKE_CURRENT_SOURCE_DIR}/WSImporterDlgs.wxcp"
     "WSImporterDlgs.cpp"
-    "WSImporterDlgs.hpp"
-    "WSImporterDlgs_plugin_bitmaps.cpp")
+    "WSImporterDlgs.hpp")
 
 wxcrafter_target(
     PluginCodeCompletionBox
     "${CMAKE_CURRENT_SOURCE_DIR}/wxCodeCompletionBox.wxcp"
     "wxCodeCompletionBoxBase.cpp"
-    "wxCodeCompletionBoxBase.hpp"
-    "wxCodeCompletionBox_plugin_bitmaps.cpp")
+    "wxCodeCompletionBoxBase.hpp")
 
 wxcrafter_target(
     PluginWxCrafter
     "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
     "wxcrafter_plugin.cpp"
-    "wxcrafter_plugin.hpp"
-    "wxcrafter_plugin_bitmaps.cpp")
+    "wxcrafter_plugin.hpp")
 
 wxcrafter_target(
     PluginRenameFile
     "${CMAKE_CURRENT_SOURCE_DIR}/renamefilebasedlg.wxcp"
     "renamefilebasedlg.cpp"
-    "renamefilebasedlg.hpp"
-    "renamefilebasedlg_plugin_bitmaps.cpp")
+    "renamefilebasedlg.hpp")
 
 #wxcrafter_target(
 #    PluginTerminal
 #    "${CMAKE_CURRENT_SOURCE_DIR}/wxterminalbase.wxcp"
 #    "wxterminalbase.cpp"
-#    "wxterminalbase.hpp"
-#    "wxterminalbase_plugin_bitmaps.cpp")
+#    "wxterminalbase.hpp")
 
 
 if(MINGW)

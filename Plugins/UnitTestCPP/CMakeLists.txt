@@ -16,22 +16,19 @@ wxcrafter_target(
     UnitTestCPP_NewClassTestBase
     "${CMAKE_CURRENT_SOURCE_DIR}/NewClassTestBase.wxcp"
     "testclassbasedlg.cpp"
-    "testclassbasedlg.hpp"
-    "NewClassTestBase_unittestcpp_bitmaps.cpp")
+    "testclassbasedlg.hpp")
 
 wxcrafter_target(
     UnitTestCPP_NewUnitTestBase
     "${CMAKE_CURRENT_SOURCE_DIR}/newunittestbasedlg.wxcp"
     "newunittestbasedlg.cpp"
-    "newunittestbasedlg.hpp"
-    "newunittestbasedlg_unittestcpp_bitmaps.cpp")
+    "newunittestbasedlg.hpp")
 
 wxcrafter_target(
     UnitTestCPP_unittestreport
     "${CMAKE_CURRENT_SOURCE_DIR}/unittestreport.wxcp"
     "unittestreport.cpp"
-    "unittestreport.hpp"
-    "unittestreport_unittestcpp_bitmaps.cpp")
+    "unittestreport.hpp")
 
 file(GLOB SRCS "*.cpp")
 

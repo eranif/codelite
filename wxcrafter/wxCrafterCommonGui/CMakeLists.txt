@@ -4,15 +4,13 @@ include("${wxWidgets_USE_FILE}")
 file(GLOB_RECURSE SRCS "*.cpp")
 
 wxcrafter_target(
-  WxCrafterGui "${CMAKE_CURRENT_SOURCE_DIR}/UI/gui.wxcp" "gui.cpp" "gui.hpp" "gui_wxcrafter_bitmaps.cpp")
+  WxCrafterGui "${CMAKE_CURRENT_SOURCE_DIR}/UI/gui.wxcp" "gui.cpp" "gui.hpp")
 
 wxcrafter_target(
-  WxCrafterWxCrafter "${CMAKE_CURRENT_SOURCE_DIR}/UI/wxcrafter.wxcp" "wxcrafter.cpp" "wxcrafter.hpp"
-  "wxcrafter_wxcrafter_bitmaps.cpp")
+  WxCrafterWxCrafter "${CMAKE_CURRENT_SOURCE_DIR}/UI/wxcrafter.wxcp" "wxcrafter.cpp" "wxcrafter.hpp")
 
 wxcrafter_target(
-  WxCrafterWxCrafterGui "${CMAKE_CURRENT_SOURCE_DIR}/UI/wxcrafter_gui.wxcp" "wxcrafter_gui.cpp" "wxcrafter_gui.hpp"
-  "wxcrafter_gui_wxcrafter_bitmaps.cpp")
+  WxCrafterWxCrafterGui "${CMAKE_CURRENT_SOURCE_DIR}/UI/wxcrafter_gui.wxcp" "wxcrafter_gui.cpp" "wxcrafter_gui.hpp")
 
 add_library(
   wxCrafterCommonGui STATIC

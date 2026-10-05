@@ -16,8 +16,7 @@ wxcrafter_target(
     Vim
     "${CMAKE_CURRENT_SOURCE_DIR}/VIM.wxcp"
     "VIM.cpp"
-    "VIM.hpp"
-    "VIM_codelite_vim_bitmaps.cpp")
+    "VIM.hpp")
 
 file(GLOB SRCS "*.cpp")
 

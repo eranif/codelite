@@ -16,15 +16,13 @@ wxcrafter_target(
     CallGraphUiCallGraph
     "${CMAKE_CURRENT_SOURCE_DIR}/uicallgraph.wxcp"
     "uicallgraph.cpp"
-    "uicallgraph.hpp"
-    "uicallgraph_callgraph_bitmaps.cpp")
+    "uicallgraph.hpp")
 
 wxcrafter_target(
     CallGraphUiSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/uisettings.wxcp"
     "uisettings.cpp"
-    "uisettings.hpp"
-    "uisettings_callgraph_bitmaps.cpp")
+    "uisettings.hpp")
 
 file(GLOB SRCS "*.cpp")
 

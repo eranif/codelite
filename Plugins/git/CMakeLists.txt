@@ -11,8 +11,7 @@ wxcrafter_target(
     git
     "${CMAKE_CURRENT_SOURCE_DIR}/gitui.wxcp"
     "gitui.cpp"
-    "gitui.hpp"
-    "gitui_git_bitmaps.cpp")
+    "gitui.hpp")
 
 file(GLOB SRCS "*.cpp")
 

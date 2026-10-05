@@ -16,15 +16,13 @@ wxcrafter_target(
     CopyrightOptions
     "${CMAKE_CURRENT_SOURCE_DIR}/copyrights_options_base_dlg.wxcp"
     "copyrights_options_base_dlg.cpp"
-    "copyrights_options_base_dlg.hpp"
-    "copyrights_options_base_dlg_copyright_bitmaps.cpp")
+    "copyrights_options_base_dlg.hpp")
 
 wxcrafter_target(
     CopyrightProjectSelection
     "${CMAKE_CURRENT_SOURCE_DIR}/copyrights_proj_sel_base_dlg.wxcp"
     "copyrights_proj_sel_base_dlg.cpp"
-    "copyrights_proj_sel_base_dlg.hpp"
-    "copyrights_proj_sel_base_dlg_copyright_bitmaps.cpp")
+    "copyrights_proj_sel_base_dlg.hpp")
 
 file(GLOB SRCS "*.cpp")
 

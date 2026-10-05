@@ -14,8 +14,7 @@ if(USE_PCH AND NOT MINGW)
 endif()
 
 wxcrafter_target(
-  AgentHost "${CMAKE_CURRENT_SOURCE_DIR}/AgentHostUI.wxcp" "AgentHostUI.cpp" "AgentHostUI.hpp"
-  "AgentHostUI_agenthost_bitmaps.cpp")
+  AgentHost "${CMAKE_CURRENT_SOURCE_DIR}/AgentHostUI.wxcp" "AgentHostUI.cpp" "AgentHostUI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

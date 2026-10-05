@@ -16,20 +16,17 @@ wxcrafter_target(
     QmakePluginNewProj
     "${CMAKE_CURRENT_SOURCE_DIR}/NewQtProj.wxcp"
     "NewQtProj.cpp"
-    "NewQtProj.hpp"
-    "NewQtProj_qmakeplugin_bitmaps.cpp")
+    "NewQtProj.hpp")
 wxcrafter_target(
     QmakePluginSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/qmakesettingsbasedlg.wxcp"
     "qmakesettingsbasedlg.cpp"
-    "qmakesettingsbasedlg.hpp"
-    "qmakesettingsbasedlg_qmakeplugin_bitmaps.cpp")
+    "qmakesettingsbasedlg.hpp")
 wxcrafter_target(
     QmakePluginTab
     "${CMAKE_CURRENT_SOURCE_DIR}/qmaketabbase.wxcp"
     "qmaketabbase.cpp"
-    "qmaketabbase.hpp"
-    "qmaketabbase_qmakeplugin_bitmaps.cpp")
+    "qmaketabbase.hpp")
 
 file(GLOB SRCS "*.cpp")
 

@@ -16,8 +16,7 @@ wxcrafter_target(
     CodeFormatter
     "${CMAKE_CURRENT_SOURCE_DIR}/codeformatterdlg.wxcp"
     "codeformatterdlgbase.cpp"
-    "codeformatterdlgbase.hpp"
-    "codeformatterdlg_codeformatter_bitmaps.cpp")
+    "codeformatterdlgbase.hpp")
 
 file(GLOB SRCS "*.cpp")
 

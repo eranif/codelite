@@ -21,8 +21,7 @@ wxcrafter_target(
     WordCompletion
     "${CMAKE_CURRENT_SOURCE_DIR}/UI.wxcp"
     "UI.cpp"
-    "UI.hpp"
-    "UI_wordcompletion_bitmaps.cpp")
+    "UI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

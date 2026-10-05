@@ -10,8 +10,7 @@ wxcrafter_target(
     CodeLiteGenerateThemes
     "${CMAKE_CURRENT_SOURCE_DIR}/codelite-generate-themes/wxcrafter.wxcp"
     "wxcrafter.cpp"
-    "wxcrafter.hpp"
-    "wxcrafter_codelite-generate-themes_bitmaps.cpp")
+    "wxcrafter.hpp")
 
 file(GLOB SRCS "codelite-generate-themes/*.cpp")
 

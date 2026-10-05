@@ -25,8 +25,7 @@ wxcrafter_target(
     CMakePlugin
     "${CMAKE_CURRENT_SOURCE_DIR}/CMakePlugin.wxcp"
     "CMakePluginUi.cpp"
-    "CMakePluginUi.hpp"
-    "CMakePluginUi_bitmaps.cpp")
+    "CMakePluginUi.hpp")
 
 # Add all CPP files
 file(GLOB SRCS "*.cpp")

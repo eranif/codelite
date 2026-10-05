@@ -16,8 +16,7 @@ wxcrafter_target(
     PHPRefactoring
     "${CMAKE_CURRENT_SOURCE_DIR}/phprefactoringdlg.wxcp"
     "phprefactoringdlgbase.cpp"
-    "phprefactoringdlgbase.hpp"
-    "phprefactoringdlg_phprefactoring_bitmaps.cpp")
+    "phprefactoringdlgbase.hpp")
 
 file(GLOB SRCS "*.cpp")
 

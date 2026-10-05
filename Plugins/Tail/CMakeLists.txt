@@ -16,8 +16,7 @@ wxcrafter_target(
     Tail
     "${CMAKE_CURRENT_SOURCE_DIR}/TailUI.wxcp"
     "TailUI.cpp"
-    "TailUI.hpp"
-    "TailUI_tail_bitmaps.cpp")
+    "TailUI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

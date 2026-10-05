@@ -86,8 +86,7 @@ wxcrafter_target(
     DatabaseExplorer
     "${CMAKE_CURRENT_SOURCE_DIR}/GUI.wxcp"
     "GUI.cpp"
-    "GUI.hpp"
-    "GUI_databaseexplorer_bitmaps.cpp")
+    "GUI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

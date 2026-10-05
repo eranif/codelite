@@ -16,15 +16,13 @@ wxcrafter_target(
     wxFormBuilderNewWxItem
     "${CMAKE_CURRENT_SOURCE_DIR}/NewWxItem.wxcp"
     "wxfbitembasedlg.cpp"
-    "wxfbitembasedlg.hpp"
-    "NewWxItem_wxformbuilder_bitmaps.cpp")
+    "wxfbitembasedlg.hpp")
 
 wxcrafter_target(
     wxFormBuilderSettingsBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/formbuildsettingsbasedlg.wxcp"
     "formbuildsettingsbasedlg.cpp"
-    "formbuildsettingsbasedlg.hpp"
-    "formbuildsettingsbasedlg_wxformbuilder_bitmaps.cpp")
+    "formbuildsettingsbasedlg.hpp")
 
 file(GLOB SRCS "*.cpp")
 

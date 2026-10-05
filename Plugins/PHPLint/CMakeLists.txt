@@ -16,8 +16,7 @@ wxcrafter_target(
     PHPLint
     "${CMAKE_CURRENT_SOURCE_DIR}/phplintdlg.wxcp"
     "phplintdlgbase.cpp"
-    "phplintdlgbase.hpp"
-    "phplintdlg_phplint_bitmaps.cpp")
+    "phplintdlgbase.hpp")
 
 file(GLOB SRCS "*.cpp")
 

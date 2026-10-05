@@ -16,8 +16,7 @@ wxcrafter_target(
     EOSWiki
     "${CMAKE_CURRENT_SOURCE_DIR}/eosUI.wxcp"
     "eosUI.cpp"
-    "eosUI.hpp"
-    "eosUI_eoswiki_bitmaps.cpp")
+    "eosUI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

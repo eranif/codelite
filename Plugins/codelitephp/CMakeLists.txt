@@ -39,15 +39,13 @@ wxcrafter_target(
     PhpNewClass
     "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin/new_class.wxcp"
     "new_class.cpp"
-    "new_class.hpp"
-    "new_class_php-plugin_bitmaps.cpp")
+    "new_class.hpp")
 
 wxcrafter_target(
     PhpUi
     "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin/php_ui.wxcp"
     "php_ui.cpp"
-    "php_ui.hpp"
-    "php_ui_php-plugin_bitmaps.cpp")
+    "php_ui.hpp")
 
 file(GLOB SRCS "php-plugin/*.cpp" "php-plugin/*.c")
 file(GLOB LIBSRC "PHPParser/*.cpp")

@@ -16,22 +16,19 @@ wxcrafter_target(
     GizmosGizmos
     "${CMAKE_CURRENT_SOURCE_DIR}/gizmos.wxcp"
     "gizmos_base.cpp"
-    "gizmos_base.hpp"
-    "gizmos_gizmos_bitmaps.cpp")
+    "gizmos_base.hpp")
 
 wxcrafter_target(
     GizmosNewClassWizard
     "${CMAKE_CURRENT_SOURCE_DIR}/newclasswizard.wxcp"
     "newclassbasedlg.cpp"
-    "newclassbasedlg.hpp"
-    "newclasswizard_gizmos_bitmaps.cpp")
+    "newclassbasedlg.hpp")
 
 wxcrafter_target(
     GizmosNewWxProject
     "${CMAKE_CURRENT_SOURCE_DIR}/newwxprojectbasedlg.wxcp"
     "newwxprojectbasedlg.cpp"
-    "newwxprojectbasedlg.hpp"
-    "newwxprojectbasedlg_gizmos_bitmaps.cpp")
+    "newwxprojectbasedlg.hpp")
 
 file(GLOB SRCS "*.cpp")
 

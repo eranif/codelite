@@ -16,15 +16,13 @@ wxcrafter_target(
     SnipWizSettings
     "${CMAKE_CURRENT_SOURCE_DIR}/SnippetSettings.wxcp"
     "SnippetSettings.cpp"
-    "SnippetSettings.hpp"
-    "SnippetSettings_snipwiz_bitmaps.cpp")
+    "SnippetSettings.hpp")
 
 wxcrafter_target(
     SnipWizTemplate
     "${CMAKE_CURRENT_SOURCE_DIR}/templateclassbasedlg.wxcp"
     "templateclassbasedlg.cpp"
-    "templateclassbasedlg.hpp"
-    "templateclassbasedlg_snipwiz_bitmaps.cpp")
+    "templateclassbasedlg.hpp")
 
 file(GLOB SRCS "*.cpp")
 

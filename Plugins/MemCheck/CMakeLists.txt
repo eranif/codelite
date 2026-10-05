@@ -21,8 +21,7 @@ if(UNIX AND NOT APPLE)
     "memcheckui.cpp"
     "memcheckui.hpp"
     "memcheckdvcerrorsmodel.cpp"
-    "memcheckdvcerrorsmodel.hpp"
-    "memcheckui_bitmaps.cpp")
+    "memcheckdvcerrorsmodel.hpp")
 
     file(GLOB SRCS "*.cpp")
 

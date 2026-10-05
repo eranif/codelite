@@ -11,8 +11,7 @@ wxcrafter_target(
     AutoSave
     "${CMAKE_CURRENT_SOURCE_DIR}/AutoSaveUI.wxcp"
     "AutoSaveUI.cpp"
-    "AutoSaveUI.hpp"
-    "AutoSaveUI_autosave_bitmaps.cpp")
+    "AutoSaveUI.hpp")
 
 file(GLOB SRCS "*.cpp")
 

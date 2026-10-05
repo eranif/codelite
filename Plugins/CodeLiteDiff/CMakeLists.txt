@@ -21,8 +21,7 @@ wxcrafter_target(
     CodeLiteDiff
     "${CMAKE_CURRENT_SOURCE_DIR}/CodeLiteDiff_UI.wxcp"
     "CodeLiteDiff_UI.cpp"
-    "CodeLiteDiff_UI.hpp"
-    "CodeLiteDiff_UI_codelitediff_bitmaps.cpp")
+    "CodeLiteDiff_UI.hpp")
 
 # Add all CPP files
 file(GLOB SRCS "*.cpp")

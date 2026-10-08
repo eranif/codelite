@@ -37,6 +37,19 @@
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 
+namespace
+{
+// Without wxUSE_STD_CONTAINERS, wxVector has no initializer_list constructor:
+// {wxString, wxString} would be taken as an iterator pair.
+void AppendTarget(wxDataViewListCtrl* ctrl, const wxString& target, const wxString& command)
+{
+    wxVector<wxVariant> cols;
+    cols.push_back(target);
+    cols.push_back(command);
+    ctrl->AppendItem(cols);
+}
+} // namespace
+
 PSCustomBuildPage::PSCustomBuildPage(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg)
     : PSCustomBuildBasePage(parent)
     , m_projectName(projectName)
@@ -200,14 +213,16 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
 
     m_dvListCtrlTargets->DeleteAllItems();
 
-    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_BUILD, buildConf->GetCustomBuildCmd()});
-    m_dvListCtrlTargets->AppendItem({ProjectCustomBuildTargetDlg::CUSTOM_TARGET_CLEAN, buildConf->GetCustomCleanCmd()});
-    m_dvListCtrlTargets->AppendItem(
-        {ProjectCustomBuildTargetDlg::CUSTOM_TARGET_REBUILD, buildConf->GetCustomRebuildCmd()});
-    m_dvListCtrlTargets->AppendItem(
-        {ProjectCustomBuildTargetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE, buildConf->GetSingleFileBuildCommand()});
-    m_dvListCtrlTargets->AppendItem(
-        {ProjectCustomBuildTargetDlg::CUSTOM_TARGET_PREPROCESS_FILE, buildConf->GetPreprocessFileCommand()});
+    AppendTarget(m_dvListCtrlTargets, ProjectCustomBuildTargetDlg::CUSTOM_TARGET_BUILD, buildConf->GetCustomBuildCmd());
+    AppendTarget(m_dvListCtrlTargets, ProjectCustomBuildTargetDlg::CUSTOM_TARGET_CLEAN, buildConf->GetCustomCleanCmd());
+    AppendTarget(
+        m_dvListCtrlTargets, ProjectCustomBuildTargetDlg::CUSTOM_TARGET_REBUILD, buildConf->GetCustomRebuildCmd());
+    AppendTarget(m_dvListCtrlTargets,
+                 ProjectCustomBuildTargetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE,
+                 buildConf->GetSingleFileBuildCommand());
+    AppendTarget(m_dvListCtrlTargets,
+                 ProjectCustomBuildTargetDlg::CUSTOM_TARGET_PREPROCESS_FILE,
+                 buildConf->GetPreprocessFileCommand());
 
     // Initialize the custom build targets
     for (const auto& p : buildConf->GetCustomTargets()) {
@@ -215,7 +230,7 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
         if (ProjectCustomBuildTargetDlg::IsPredefinedTarget(p.first)) {
             continue;
         }
-        m_dvListCtrlTargets->AppendItem({p.first, p.second});
+        AppendTarget(m_dvListCtrlTargets, p.first, p.second);
     }
     m_dlg->SetCustomBuildEnabled(m_checkEnableCustomBuild->IsChecked());
 }

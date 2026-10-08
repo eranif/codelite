@@ -18,7 +18,7 @@
 - `SpellChecker/`: spelling support in the editor.
 - `Subversion2/`, `git/`: version control integrations.
 - `QmakePlugin/`, `CMakePlugin/`, `wxcrafter/`, `wxformbuilder/`: build and GUI tooling integrations.
-- `Rust/`, `PHPLint/`, `PHPRefactoring/`, `codelitephp/`: language-specific tooling.
+- `Rust/`, `PHPRefactoring/`, `codelitephp/`: language-specific tooling.
 - `ExternalTools/`, `ContinuousBuild/`, `AutoSave/`, `ZoomNavigator/`, `WordCompletion/`: productivity and utility extensions.
 
 ## Component relationships

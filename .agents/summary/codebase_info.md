@@ -40,7 +40,7 @@ graph TB
 
 ## Notable directories and roles
 - `LiteEditor/`, `CodeLite/`, `Runtime/`, `Plugin/`: primary IDE implementation layers.
-- Feature modules such as `Debugger/`, `DatabaseExplorer/`, `LanguageServer/`, `SmartCompletion/`, `SpellChecker/`, `Subversion2/`, `QmakePlugin/`, `CMakePlugin/`, `Rust/`, `PHPLint/`, `PHPRefactoring/`.
+- Feature modules such as `Debugger/`, `DatabaseExplorer/`, `LanguageServer/`, `SmartCompletion/`, `SpellChecker/`, `Subversion2/`, `QmakePlugin/`, `CMakePlugin/`, `Rust/`, `PHPRefactoring/`.
 - Support libraries and SDKs: `sdk/`, `Interfaces/`, `PCH/`, `CxxParser/`, `gdbparser/`, `cscope/`, `outline/`-style components.
 - Packaging/build helpers: `cmake/`, `scripts/`, `Docker/`, `InnoSetup/`, `MacBundler/`, `weekly/`, `BuildInfo.txt`.
 - Documentation and metadata: `docs/`, `README.md`, `TODO.md`, `AUTHORS`, `COPYING`, `LICENSE*`.

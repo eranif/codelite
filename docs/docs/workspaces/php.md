@@ -90,19 +90,13 @@ $my_class->hello_world();
 ## Syntax checking
 ---
 
-CodeLite has built-in integration for [PHP_CodeSniffer][2], [PHPMD][3] and basic php lint.
+Syntax checking is provided by the PHP language server ([`phpantom_lsp`][6]).
+It reports syntax errors and runs [PHP_CodeSniffer][2], [PHPMD][3] and [PHPStan][7] when they are found in the project's `vendor/bin` folder or in the `PATH`.
 
-These tools look for code style violations, code design issue and basic syntax errors. 
 When an issue is detected a marker will be placed to the left of the affected line, hover the marker to view a description of the issue
 
-From the main menu, select `Plugins` &#8594; `PHP Linter` &#8594; `Options`. 
-Under the general tab you can enable automatic linting on file load and file save.
-
-Under the Code Sniffer tab you need to specify the path to the `phpcs` `phar` file. 
-Configuration of `phpcs` should be done by creating a `phpcs.xml` rule file and placing it under the workspace root folder.
-
-The Mess Detector allows you to point to the `phpmd` `phar` file and an optional rule set `xml` file.
-You can use an [online standard generator][5] to generate the XML rule files
+See [Language Server Plugin][8] for how to install and enable `phpantom_lsp`.
+The linters are configured in the project's `.phpantom.toml` file and in the tools' own configuration files (for example `phpcs.xml` or `phpstan.neon`).
 
 ## Code refactoring
 ---
@@ -120,4 +114,6 @@ from the right click menu or from the project level context menu
 [2]: https://github.com/squizlabs/PHP_CodeSniffer
 [3]: https://github.com/phpmd/phpmd
 [4]: https://github.com/AJenbo/php-refactoring-browser/releases
-[5]: http://edorian.github.io/php-coding-standard-generator/
+[6]: https://github.com/PHPantom-dev/phpantom_lsp
+[7]: https://phpstan.org/
+[8]: /plugins/lsp/#phpantom_lsp-php

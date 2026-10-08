@@ -102,19 +102,24 @@ Visit the [python-lsp-server project page][3] for additional information.
 
 ### phpantom_lsp (PHP)
 
-`phpantom_lsp` is currently available via building from sources.
+**Pre-built Binary**
 
-**Standard Installation**
+Download the latest binary for your platform from the [releases page](https://github.com/PHPantom-dev/phpantom_lsp/releases/latest) and place it in `~/.local/bin` (Windows: `C:\Users\<user>\.local\bin`) or in another folder that is in your `PATH`.
+Binaries are available for Windows, Linux and macOS.
 
-- [Install Rust][13]
-
-**Build phpantom_lsp**
+**macOS and Linux (Homebrew)**
 
 ```bash
-git clone https://github.com/AJenbo/phpantom_lsp.git
-cargo build --release
-cargo install --path .
+brew install phpantom-lsp
 ```
+
+**Cargo**
+
+```bash
+cargo install phpantom_lsp --locked
+```
+
+Visit the [phpantom_lsp project page](https://github.com/PHPantom-dev/phpantom_lsp) for additional information.
 
 ### TypeScript
 

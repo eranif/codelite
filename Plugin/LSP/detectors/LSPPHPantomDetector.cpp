@@ -1,14 +1,14 @@
-#include "LSP/detectors/LSPPhPhantomDetector.hpp"
+#include "LSP/detectors/LSPPHPantomDetector.hpp"
 
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
 
-LSPPhPhantomDetector::LSPPhPhantomDetector()
-    : LSPDetector("PHPhantom")
+LSPPHPantomDetector::LSPPHPantomDetector()
+    : LSPDetector("PHPantom")
 {
 }
 
-bool LSPPhPhantomDetector::DoLocate()
+bool LSPPHPantomDetector::DoLocate()
 {
     wxString name = "phpantom_lsp";
     const auto fullpath = ThePlatform->Which(name);
@@ -20,10 +20,10 @@ bool LSPPhPhantomDetector::DoLocate()
     return true;
 }
 
-void LSPPhPhantomDetector::ConfigureFile(const wxFileName& phphantom_exe)
+void LSPPHPantomDetector::ConfigureFile(const wxFileName& phpantom_exe)
 {
-    LSP_DEBUG() << "==> Found" << phphantom_exe << endl;
-    wxString command = StringUtils::WrapWithDoubleQuotes(phphantom_exe.GetFullPath());
+    LSP_DEBUG() << "==> Found" << phpantom_exe << endl;
+    wxString command = StringUtils::WrapWithDoubleQuotes(phpantom_exe.GetFullPath());
 
     SetCommand(command);
     // Add support for the languages

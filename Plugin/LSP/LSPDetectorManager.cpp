@@ -4,7 +4,7 @@
 #include "detectors/LSPClangdDetector.hpp"
 #include "detectors/LSPGoplsDetector.hpp"
 #include "detectors/LSPJdtlsDetector.hpp"
-#include "detectors/LSPPhPhantomDetector.hpp"
+#include "detectors/LSPPHPantomDetector.hpp"
 #include "detectors/LSPPyRightDetector.hpp"
 #include "detectors/LSPPythonDetector.hpp"
 #include "detectors/LSPRustAnalyzerDetector.hpp"
@@ -21,7 +21,7 @@ LSPDetectorManager::LSPDetectorManager()
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPJdtlsDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPGoplsDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPPyRightDetector()));
-    m_detectors.push_back(LSPDetector::Ptr_t(new LSPPhPhantomDetector()));
+    m_detectors.push_back(LSPDetector::Ptr_t(new LSPPHPantomDetector()));
 }
 
 size_t LSPDetectorManager::Scan(std::vector<LSPDetector::Ptr_t>& matchers)

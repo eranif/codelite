@@ -8,7 +8,6 @@
 #include "lexer_configuration.h"
 #include "php_event.h"
 #include "php_utils.h"
-#include "php_workspace.h"
 #include "xdebugevent.h"
 
 #include <wx/tokenzr.h>
@@ -213,7 +212,7 @@ void PHPDebugPane::OnXDebugSessionStarted(XDebugEvent& e)
 void PHPDebugPane::OnXDebugSessionStarting(XDebugEvent& event)
 {
     event.Skip();
-    m_console->SetTerminal(PHPWorkspace::Get()->GetTerminalEmulator());
+    m_console->SetTerminal(XDebugManager::Get().GetTerminalEmulator());
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
     if (phpLexer) {
         phpLexer->Apply(m_console->GetTerminalOutputWindow());

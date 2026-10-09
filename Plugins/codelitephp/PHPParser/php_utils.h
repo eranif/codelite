@@ -27,6 +27,7 @@
 #define PHP_UTILS_H
 
 #include "ieditor.h"
+#include "macros.h"
 
 #include <wx/wx.h>
 
@@ -60,6 +61,9 @@ wxString FileNameToURI(const wxString& filename);
  */
 wxString Base64Encode(const wxString& str);
 
-wxString MapRemoteFileToLocalFile(const wxString& remoteFile);
+/**
+ * @brief map a file path reported by Xdebug to a local file, using fileMapping (local folder -> remote folder)
+ */
+wxString MapRemoteFileToLocalFile(const wxString& remoteFile, const wxStringMap_t& fileMapping);
 
 #endif // PHP_UTILS

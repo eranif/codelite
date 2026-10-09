@@ -107,17 +107,8 @@ wxString Base64Encode(const wxString& str)
 
 static void DecodeFileName(wxString& filename) { filename = StringUtils::DecodeURI(filename); }
 
-wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
+wxString MapRemoteFileToLocalFile(const wxString& remoteFile, const wxStringMap_t& fileMapping)
 {
-    // Check that a workspace is opened
-    if (!PHPWorkspace::Get()->IsOpen())
-        return remoteFile;
-
-    // Sanity
-    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetActiveProject();
-    if (!pProject)
-        return remoteFile;
-
     // Map filename file attribute returned by xdebug to local filename
     wxString filename = remoteFile;
 
@@ -140,8 +131,7 @@ wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
         return wxFileName(filename).GetFullPath();
     }
 
-    // Use the active project file mapping
-    for (const auto& [localFolder, remoteFolder] : pProject->GetSettings().GetFileMapping()) {
+    for (const auto& [localFolder, remoteFolder] : fileMapping) {
         if (filename.StartsWith(remoteFolder)) {
             filename.Replace(remoteFolder, localFolder);
             return wxFileName(filename).GetFullPath();

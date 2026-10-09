@@ -27,10 +27,11 @@
 #define XDEBUGMANAGER_H
 
 #include "XDebugCommandHandler.h"
+#include "XDebugSettings.h"
 #include "cl_command_event.h"
 #include "macros.h"
 #include "php_event.h"
-#include "php_project.h"
+#include "phpexecutor.h"
 #include "xdebugbreakpointsmgr.h"
 
 #include <memory>
@@ -61,6 +62,10 @@ class XDebugManager : public wxEvtHandler
     PhpPlugin* m_plugin = nullptr;
     XDebugComThread* m_readerThread = nullptr;
     bool m_connected = false;
+    // The settings of the current debug session, loaded when it starts
+    XDebugSettings m_settings;
+    // Runs the script (or opens the URL) that is debugged
+    PHPExecutor m_executor;
 
 public:
     using Ptr_t = std::shared_ptr<XDebugManager>;
@@ -111,10 +116,12 @@ public:
     void ClearDebuggerMarker();
 
     /**
-     * @brief return all the file mapping for a given project
-     * the mapping will include the xdebug mapping + SFTP mapping
+     * @brief return the file mapping of the current debug session
+     * the mapping will include the xdebug mapping + the remote folder (SFTP) mapping
      */
-    wxStringMap_t GetFileMapping(PHPProject::Ptr_t pProject) const;
+    const wxStringMap_t& GetFileMapping() const { return m_settings.GetFileMapping(); }
+
+    TerminalEmulator* GetTerminalEmulator() { return m_executor.GetTerminalEmulator(); }
 
 protected:
     void DoStartDebugger(bool ideInitiate = true);

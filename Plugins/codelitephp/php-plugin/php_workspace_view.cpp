@@ -87,7 +87,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &PHPWorkspaceView::OnIsProgramRunning, this);
     EventNotifier::Get()->Connect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(PHPWorkspaceView::OnEditorChanged), nullptr, this);
-    EventNotifier::Get()->Connect(wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), nullptr, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), nullptr, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &PHPWorkspaceView::OnWorkspaceLoaded, this);
@@ -344,8 +345,8 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_open_shell"), _("Open Shell"));
                 menu.AppendSeparator();
 
-                menuItem =
-                    new wxMenuItem(nullptr, XRCID("php_synch_with_filesystem"), _("Sync workspace with file system..."));
+                menuItem = new wxMenuItem(
+                    nullptr, XRCID("php_synch_with_filesystem"), _("Sync workspace with file system..."));
                 menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("debugger_restart"));
                 menu.Append(menuItem);
                 menu.AppendSeparator();
@@ -890,14 +891,29 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
 
 void PHPWorkspaceView::OnRunProject(wxCommandEvent& e)
 {
+    PHPProject::Ptr_t project = PHPWorkspace::Get()->GetActiveProject();
+    CHECK_PTR_RET(project);
+
     // Test which file we want to debug
-    PHPDebugStartDlg debugDlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);
-    debugDlg.SetLabel("Run Project");
-    if (debugDlg.ShowModal() != wxID_OK) {
+    wxString path;
+    if (!DoShowRunDialog(project, path)) {
         return;
     }
+    PHPWorkspace::Get()->RunProject(false, path, DoGetSelectedProject());
+}
 
-    PHPWorkspace::Get()->RunProject(false, debugDlg.GetPath(), DoGetSelectedProject());
+bool PHPWorkspaceView::DoShowRunDialog(PHPProject::Ptr_t project, wxString& path)
+{
+    int result = wxID_CANCEL;
+    {
+        // The dialog stores its values in the project settings when it is destroyed
+        PHPDebugStartDlg dlg(EventNotifier::Get()->TopFrame(), project->GetSettings(), m_mgr);
+        dlg.SetLabel("Run Project");
+        result = dlg.ShowModal();
+        path = dlg.GetPath();
+    }
+    project->Save();
+    return result == wxID_OK;
 }
 
 void PHPWorkspaceView::OnActiveProjectSettings(wxCommandEvent& event)
@@ -934,14 +950,15 @@ void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
 void PHPWorkspaceView::OnRunActiveProject(clExecuteEvent& e)
 {
     if (PHPWorkspace::Get()->IsOpen()) {
-        CHECK_COND_RET(PHPWorkspace::Get()->GetActiveProject());
+        PHPProject::Ptr_t project = PHPWorkspace::Get()->GetActiveProject();
+        CHECK_PTR_RET(project);
+
         // Test which file we want to debug
-        PHPDebugStartDlg dlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);
-        dlg.SetLabel("Run Project");
-        if (dlg.ShowModal() != wxID_OK) {
+        wxString path;
+        if (!DoShowRunDialog(project, path)) {
             return;
         }
-        PHPWorkspace::Get()->RunProject(false, dlg.GetPath());
+        PHPWorkspace::Get()->RunProject(false, path);
 
     } else {
         // Must call skip !

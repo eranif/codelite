@@ -8,6 +8,7 @@
 #include "LSP/DidCloseTextDocumentRequest.h"
 #include "LSP/DidOpenTextDocumentRequest.h"
 #include "LSP/DidSaveTextDocumentRequest.h"
+#include "LSP/DocumentLinkRequest.hpp"
 #include "LSP/DocumentOnTypeFormattingRequest.hpp"
 #include "LSP/DocumentSymbolsRequest.hpp"
 #include "LSP/FindReferencesRequest.hpp"
@@ -757,6 +758,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
                     if (res["result"]["capabilities"]["codeActionProvider"]["resolveProvider"].toBool(false)) {
                         m_providers.insert("codeAction/resolve");
                     }
+                    CheckCapability(res, "documentLinkProvider", "textDocument/documentLink");
                     if (CheckCapability(res, "documentOnTypeFormattingProvider", "textDocument/onTypeFormatting")) {
                         auto options = res["result"]["capabilities"]["documentOnTypeFormattingProvider"];
                         m_onTypeFormattingTriggers.insert(options["firstTriggerCharacter"].toString());
@@ -1224,6 +1226,11 @@ bool LanguageServerProtocol::IsOnTypeFormattingSupported(const wxString& ch) con
     return m_onTypeFormattingTriggers.count(ch) > 0;
 }
 
+bool LanguageServerProtocol::IsDocumentLinkSupported() const
+{
+    return IsCapabilitySupported("textDocument/documentLink");
+}
+
 bool LanguageServerProtocol::IsIncrementalChangeSupported() const { return m_incrementalChangeSupported; }
 
 void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command)
@@ -1276,6 +1283,25 @@ bool LanguageServerProtocol::SendOnTypeFormattingRequest(IEditor& editor, const 
             GetEditorFilePath(editor), position, ch, ctrl->GetTabWidth(), !ctrl->GetUseTabs()));
     QueueMessage(req);
     return true;
+}
+
+std::optional<size_t> LanguageServerProtocol::SendDocumentLinkRequest(IEditor& editor,
+                                                                      const std::optional<LSP::Position>& openAt)
+{
+    if (!IsDocumentLinkSupported() || !ShouldHandleFile(editor)) {
+        return std::nullopt;
+    }
+
+    // make sure that the server has the latest content
+    wxString text = editor.GetEditorText();
+    SendOpenOrChangeRequest(editor, text, GetLanguageId(editor));
+
+    size_t text_hash = std::hash<wxString>{}(text);
+    LSP_DEBUG() << "Sending a document link request for file:" << GetEditorFilePath(editor) << endl;
+    LSP::DocumentLinkRequest::Ptr_t req =
+        LSP::MessageWithParams::MakeRequest(new LSP::DocumentLinkRequest(GetEditorFilePath(editor), text_hash, openAt));
+    QueueMessage(req);
+    return text_hash;
 }
 
 void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes, size_t message_id)

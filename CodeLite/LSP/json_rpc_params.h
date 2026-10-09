@@ -141,6 +141,25 @@ public:
 };
 
 //===----------------------------------------------------------------------------------
+// DocumentLinkParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL DocumentLinkParams : public Params
+{
+    TextDocumentIdentifier m_textDocument;
+
+public:
+    DocumentLinkParams() = default;
+    ~DocumentLinkParams() override = default;
+    bool operator==(const DocumentLinkParams&) const = default;
+
+    void FromJSON(const JSONItem& json) override;
+    nlohmann::json ToJSON() const override;
+
+    void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
+    const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
+};
+
+//===----------------------------------------------------------------------------------
 // CompletionParams
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL CompletionParams : public TextDocumentPositionParams

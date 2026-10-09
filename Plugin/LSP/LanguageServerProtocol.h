@@ -320,6 +320,14 @@ public:
     bool SendOnTypeFormattingRequest(IEditor& editor, const wxString& ch);
 
     /**
+     * @brief ask the server for the links in the editor (`textDocument/documentLink`). The reply fires
+     * `wxEVT_LSP_DOCUMENT_LINKS`
+     * @param openAt open the link at this position when the reply arrives
+     * @return the hash of the text that was sent, or nothing when the request was not sent
+     */
+    std::optional<size_t> SendDocumentLinkRequest(IEditor& editor, const std::optional<LSP::Position>& openAt);
+
+    /**
      * @brief ask the server for semantic tokens
      */
     void SendSemanticTokensRequest(IEditor& editor);
@@ -339,6 +347,7 @@ public:
     bool IsCodeActionSupported() const;
     bool IsCodeActionResolveSupported() const;
     bool IsOnTypeFormattingSupported(const wxString& ch) const;
+    bool IsDocumentLinkSupported() const;
 };
 
 #endif // CLLANGUAGESERVER_H

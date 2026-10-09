@@ -29,6 +29,14 @@ nlohmann::json SemanticTokensParams::ToJSON() const
 }
 
 //===----------------------------------------------------------------------------------
+// DocumentLinkParams
+//===----------------------------------------------------------------------------------
+
+void DocumentLinkParams::FromJSON(const JSONItem& json) { m_textDocument.FromJSON(json["textDocument"]); }
+
+nlohmann::json DocumentLinkParams::ToJSON() const { return nlohmann::json{{"textDocument", m_textDocument.ToJSON()}}; }
+
+//===----------------------------------------------------------------------------------
 // DidOpenTextDocumentParams
 //===----------------------------------------------------------------------------------
 

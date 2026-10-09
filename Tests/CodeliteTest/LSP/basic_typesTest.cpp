@@ -257,6 +257,29 @@ TEST_CASE("LSP::Diagnostic keeps unknown fields")
     CHECK_FALSE(diagnostic.ToJSON().contains("code"));
 }
 
+TEST_CASE("LSP::DocumentLink")
+{
+    const nlohmann::json json = {
+        {"range", {{"start", {{"line", 1}, {"character", 8}}}, {"end", {{"line", 1}, {"character", 20}}}}},
+        {"target", "file:///tmp/a.php"},
+        {"tooltip", "/tmp/a.php"}};
+    LSP::DocumentLink link;
+
+    link.FromJSON(json);
+
+    CHECK(link.IsOk());
+    CHECK(link.GetTarget() == "file:///tmp/a.php");
+    CHECK(link.Contains(LSP::Position{1, 8}));
+    CHECK(link.Contains(LSP::Position{1, 20}));
+    CHECK_FALSE(link.Contains(LSP::Position{1, 7}));
+    CHECK_FALSE(link.Contains(LSP::Position{2, 10}));
+
+    // A link without a target needs `documentLink/resolve`
+    LSP::DocumentLink unresolved;
+    unresolved.FromJSON(nlohmann::json{{"range", json["range"]}});
+    CHECK_FALSE(unresolved.IsOk());
+}
+
 #if 0 // Unimplemented Command::ToJSON()
 TEST_CASE("LSP::Command")
 {

@@ -1,7 +1,6 @@
 #include "php.h"
 
 #include "Debugger/debuggermanager.h"
-#include "NewPHPProjectWizard.h"
 #include "PHPDebugPane.h"
 #include "PHPXDebugSetupWizard.h"
 #include "XDebugSettingsDlg.h"
@@ -22,7 +21,6 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "localsview.h"
-#include "new_php_workspace_dlg.h"
 #include "php_code_completion.h"
 #include "php_configuration_data.h"
 #include "php_editor_context_menu.h"
@@ -69,9 +67,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     , m_xdebugEvalPane(nullptr)
     , m_showWelcomePage(false)
 {
-    // Add new workspace type
-    clWorkspaceManager::Get().RegisterWorkspace(new PHPWorkspace());
-
     m_longName = _("PHP Plugin for the CodeLite IDE");
     m_shortName = wxT("PHP");
 
@@ -102,12 +97,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
         wxEVT_CC_SHOW_QUICK_OUTLINE, clCodeCompletionEventHandler(PhpPlugin::OnShowQuickOutline), nullptr, this);
     EventNotifier::Get()->Connect(
         wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, clDebugEventHandler(PhpPlugin::OnXDebugDeleteAllBreakpoints), nullptr, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_CREATE_NEW_WORKSPACE, clCommandEventHandler(PhpPlugin::OnNewWorkspace), nullptr, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_NEW_PROJECT_WIZARD_SHOWING, clNewProjectEventHandler(PhpPlugin::OnNewProject), nullptr, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_NEW_PROJECT_WIZARD_FINISHED, clNewProjectEventHandler(PhpPlugin::OnNewProjectFinish), nullptr, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_IS_WORKSPACE_OPEN, clCommandEventHandler(PhpPlugin::OnIsWorkspaceOpen), nullptr, this);
     EventNotifier::Get()->Connect(
@@ -217,12 +206,6 @@ void PhpPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_SHOW_QUICK_OUTLINE, clCodeCompletionEventHandler(PhpPlugin::OnShowQuickOutline), nullptr, this);
     EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_CREATE_NEW_WORKSPACE, clCommandEventHandler(PhpPlugin::OnNewWorkspace), nullptr, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_NEW_PROJECT_WIZARD_SHOWING, clNewProjectEventHandler(PhpPlugin::OnNewProject), nullptr, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_NEW_PROJECT_WIZARD_FINISHED, clNewProjectEventHandler(PhpPlugin::OnNewProjectFinish), nullptr, this);
-    EventNotifier::Get()->Disconnect(
         wxEVT_CMD_IS_WORKSPACE_OPEN, clCommandEventHandler(PhpPlugin::OnIsWorkspaceOpen), nullptr, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_CLOSE_WORKSPACE, clCommandEventHandler(PhpPlugin::OnCloseWorkspace), nullptr, this);
@@ -295,30 +278,6 @@ void PhpPlugin::OnShowQuickOutline(clCodeCompletionEvent& e)
     CallAfter(&PhpPlugin::SetEditorActive, editor);
 }
 
-void PhpPlugin::OnNewWorkspace(clCommandEvent& e)
-{
-    if (e.GetString() != PHPWorkspace::Get()->GetWorkspaceType()) {
-        e.Skip();
-        return;
-    }
-    e.Skip(false);
-
-    // Create a PHP workspace
-    NewPHPWorkspaceDlg newWspDlg(m_mgr->GetTheApp()->GetTopWindow());
-    if (newWspDlg.ShowModal() == wxID_OK) {
-        // Ensure that the workspace path exists
-        wxFileName workspaceFile(newWspDlg.GetWorkspacePath());
-        if (!workspaceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL)) {
-            ::clMessageBox(wxString::Format(_("Could not create workspace folder:\n%s"), workspaceFile.GetPath()),
-                           "CodeLite",
-                           wxICON_ERROR | wxOK | wxCENTER);
-            return;
-        }
-        PHPWorkspace::Get()->Create(newWspDlg.GetWorkspacePath());
-        DoOpenWorkspace(newWspDlg.GetWorkspacePath(), false /* create if missing */, false);
-    }
-}
-
 void PhpPlugin::OnIsWorkspaceOpen(clCommandEvent& e)
 {
     e.Skip();
@@ -353,40 +312,6 @@ void PhpPlugin::OnCloseWorkspace(clCommandEvent& e)
 
     } else {
         e.Skip();
-    }
-}
-
-void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing, bool createProjectFromSources)
-{
-    // notify CodeLite to close the currently opened workspace
-    wxCommandEvent eventClose(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
-    eventClose.SetEventObject(FRAME);
-    FRAME->GetEventHandler()->ProcessEvent(eventClose);
-
-    // Open the PHP workspace
-    if (!PHPWorkspace::Get()->Open(filename, m_workspaceView, createIfMissing)) {
-        clMessageBox(_("Failed to open workspace: corrupted workspace file"),
-                     wxT("CodeLite"),
-                     wxOK | wxICON_WARNING | wxCENTER,
-                     FRAME);
-        return;
-    }
-
-    m_workspaceView->LoadWorkspaceView();
-
-    // Select the 'PHP' tab
-    m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
-
-    if (createProjectFromSources) {
-        PHPConfigurationData conf;
-        PHPProject::CreateData cd;
-        conf.Load();
-        cd.importFilesUnderPath = true;
-        cd.name = PHPWorkspace::Get()->GetWorkspaceName();
-        cd.phpExe = conf.GetPhpExe();
-        cd.path = PHPWorkspace::Get()->GetFilename().GetPath();
-        cd.projectType = PHPProjectSettingsData::kRunAsCLI;
-        m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, cd);
     }
 }
 
@@ -460,19 +385,6 @@ void PhpPlugin::OnGetWorkspaceFiles(wxCommandEvent& e)
 
     } else
         e.Skip();
-}
-
-void PhpPlugin::OnNewProject(clNewProjectEvent& e)
-{
-    if (!PHPWorkspace::Get()->IsOpen()) {
-        e.Skip();
-    } else {
-        // we have a PHP workspace opened - handle it ourself
-        NewPHPProjectWizard wiz(EventNotifier::Get()->TopFrame());
-        if (wiz.RunWizard(wiz.GetFirstPage())) {
-            m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, wiz.GetCreateData());
-        }
-    }
 }
 
 void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
@@ -623,35 +535,6 @@ void PhpPlugin::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
     }
     if (update) {
         m_mgr->GetDockingManager()->Update();
-    }
-}
-
-void PhpPlugin::OnNewProjectFinish(clNewProjectEvent& e)
-{
-    if (e.GetTemplateName() != "PHP Project") {
-        e.Skip();
-        return;
-    }
-
-    if (m_mgr->IsWorkspaceOpen()) {
-        ::clMessageBox(
-            _("Can't create PHP project. Close your current workspace first"), "PHP", wxOK | wxICON_ERROR | wxCENTER);
-        return;
-    }
-
-    if (!PHPWorkspace::Get()->IsOpen()) {
-        // No PHP workspace is open, create a new one
-        wxFileName workspacePath(e.GetProjectFolder(), e.GetProjectName());
-        workspacePath.SetExt(PHPStrings::PHP_WORKSPACE_EXT);
-        DoOpenWorkspace(workspacePath.GetFullPath(), true);
-    }
-
-    if (PHPWorkspace::Get()->IsOpen()) {
-        PHPProject::CreateData cd;
-        cd.importFilesUnderPath = true;
-        cd.name = e.GetProjectName();
-        cd.path = e.GetProjectFolder();
-        m_workspaceView->CallAfter(&PHPWorkspaceView::CreateNewProject, cd);
     }
 }
 

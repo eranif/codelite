@@ -115,7 +115,7 @@ protected:
     static wxString GetLanguageId(const IEditor& editor);
     void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
-    void HandleWorkspaceEdit(const JSONItem& changes);
+    void HandleWorkspaceEdit(const JSONItem& changes, size_t message_id);
     IEditor* GetEditor(const clCodeCompletionEvent& event) const;
 
     /**
@@ -272,6 +272,11 @@ public:
 
     void SendAck(size_t message_id);
     void SendMethodNotFound(size_t message_id);
+
+    /**
+     * @brief answer a `workspace/applyEdit` request with an `ApplyWorkspaceEditResult`
+     */
+    void SendApplyEditResult(size_t message_id, bool applied, const wxString& failure_reason);
 
     /**
      * @brief rename a symbol

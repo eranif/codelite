@@ -30,6 +30,7 @@ nlohmann::json LSP::InitializeRequest::ToJSON() const
 
     auto& capabilities = params["capabilities"] = nlohmann::json::object();
     capabilities["window"] = nlohmann::json{{"workDoneProgress", true}};
+    capabilities["workspace"]["applyEdit"] = true;
     // "delete" is not supported: it is not needed by any server we know of
     capabilities["workspace"]["workspaceEdit"] =
         nlohmann::json{{"documentChanges", true}, {"resourceOperations", nlohmann::json::array({"create", "rename"})}};
@@ -39,9 +40,9 @@ nlohmann::json LSP::InitializeRequest::ToJSON() const
     textDocumentCapabilities["hover"]["contentFormat"] = {"markdown", "plaintext"};
 
     auto& codeActionCapabilities = textDocumentCapabilities["codeAction"];
-    // Only the kinds that have been tested. Add the other "refactor.*" and "source.*" kinds once they are tested
-    codeActionCapabilities["codeActionLiteralSupport"]["codeActionKind"]["valueSet"] =
-        nlohmann::json::array({"", "quickfix", "refactor.extract", "source.organizeImports"});
+    // Only the kinds that have been tested. Add the other "source.*" kinds once they are tested
+    codeActionCapabilities["codeActionLiteralSupport"]["codeActionKind"]["valueSet"] = nlohmann::json::array(
+        {"", "quickfix", "refactor.extract", "refactor.inline", "refactor.rewrite", "source.organizeImports"});
     codeActionCapabilities["isPreferredSupport"] = true;
     codeActionCapabilities["disabledSupport"] = true;
     codeActionCapabilities["dataSupport"] = true;

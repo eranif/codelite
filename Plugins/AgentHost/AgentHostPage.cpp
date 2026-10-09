@@ -48,7 +48,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     GetSizer()->Add(m_infoBar, wxSizerFlags().Expand());
 
     // The main agent fills the page. The reviewer, when there is one, opens in a pane next to it.
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_splitter->SetMinimumPaneSize(FromDIP(150));
     m_splitter->SetSashGravity(0.5);
     GetSizer()->Add(m_splitter, wxSizerFlags(1).Expand());
@@ -386,12 +386,7 @@ wxString AgentHostPage::GetSelectedLine(wxTerminalViewCtrl* terminal) const
         return wxEmptyString;
     }
     // Use the first line of the selection only
-    return terminal->GetMouseSelection()
-        .value_or(wxEmptyString)
-        .BeforeFirst('\n')
-        .BeforeFirst('\r')
-        .Trim()
-        .Trim(false);
+    return terminal->GetMouseSelection().value_or(wxEmptyString).BeforeFirst('\n').BeforeFirst('\r').Trim().Trim(false);
 }
 
 void AgentHostPage::SearchInWorkspace(const wxString& text)
@@ -410,10 +405,7 @@ void AgentHostPage::SearchInWorkspace(const wxString& text)
         m_terminal->CallAfter(&wxWindow::SetFocus);
 }
 
-void AgentHostPage::OnShowTerminal(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void AgentHostPage::OnShowTerminal(wxCommandEvent& event) { event.Skip(); }
 
 void AgentHostPage::OnGrepWorkspace(wxCommandEvent& event)
 {

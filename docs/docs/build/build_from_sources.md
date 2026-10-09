@@ -21,6 +21,10 @@ git submodule update --init --recursive
     `build.sh` builds wxWidgets inside the build folder (`.build-release/wxWidgets-install`) and CMake finds it using
     its CMake package config. You do not need to install `wx-config` (or `wx-config-msys2`) on Windows.
 
+    To build a different wxWidgets version (a tag or a branch), set `CL_WX_VERSION` (Windows only), for example:
+    `CL_WX_VERSION=v3.2.11 ./build.sh`. If the existing build in `.build-release/wxWidgets-install` is of another
+    version, it is rebuilt.
+
 - To run the new CodeLite:
 
 ```bash

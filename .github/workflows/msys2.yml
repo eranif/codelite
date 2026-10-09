@@ -17,15 +17,22 @@ jobs:
   msys2:
     runs-on: ${{matrix.arch.runs-on}}
 
+    env:
+      MSYS_ARCH: ${{matrix.arch.msys-arch}}
+      CMAKE_POLICY_VERSION_MINIMUM: '3.5'
+      CL_WX_VERSION: ${{matrix.wx-version}}
+
     strategy:
       fail-fast: false
       matrix:
-        wx-version: ['3.2', 'master'] # <v3.2.7 cannot be compiled with clang-19
+        wx-version: ['v3.2.11', 'master']
         arch:
           - msystem: clang64
             runs-on: windows-latest
+            msys-arch: clang-x86_64
           - msystem: clangarm64
             runs-on: windows-11-arm
+            msys-arch: clang-aarch64
             package-suffix: '-arm64'
 
     steps:
@@ -41,6 +48,8 @@ jobs:
           bison
           flex
           patch
+        # These packages are installed here so they are cached. build.sh installs them too (already present, so they
+        # are skipped by --needed), plus a few more
         pacboy: >-
           cmake:p
           make:p
@@ -57,54 +66,19 @@ jobs:
           postgresql:p
           glew:p
 
-    # WxWidgets
-    - name: Checkout
-      uses: actions/checkout@v7
-      with:
-        repository: wxWidgets/wxWidgets
-        ref: ${{matrix.wx-version}}
-        submodules: recursive
-        path: wxWidgets
-
-    - name: build and install wxWidgets
-      shell: msys2 {0}
-      run: |
-        mkdir wxWidgets/build-release
-        cd wxWidgets/build-release
-        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxUSE_STL=1 -DwxBUILD_LOCALES=ON
-        mingw32-make -j$(nproc) && PATH="/${{matrix.arch.msystem}}/bin:$PATH" mingw32-make install
-
-    # wx-config-msys2
-    - name: Checkout
-      uses: actions/checkout@v7
-      with:
-        repository: eranif/wx-config-msys2
-        path: wx-config-msys2
-
-    - name: build and install wx-config-msys2
-      shell: msys2 {0}
-      run: |
-        mkdir wx-config-msys2/build-release
-        cd wx-config-msys2/build-release
-        cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root"
-        mingw32-make -j$(nproc) install
-        #add $HOME/root/bin to PATH
-
-    # CodeLite & wxCrafter
     - name: Checkout
       uses: actions/checkout@v7
       with:
         submodules: recursive
+
+    # build.sh builds wxWidgets inside the build folder and uses it for both wxCrafter and CodeLite
 
     # wxCrafter
     - name: build and create wxCrafter installer
       shell: msys2 {0}
       run: |
-        mkdir build-wxcrafter-release
-        cd build-wxcrafter-release
-        MSYS2_BASE=$(cygpath -u "${{steps.msys2.outputs.msys2-location}}") PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -DWXC_APP=1 -Wno-dev -DWITH_PCH=1 -DBUILD_TESTING=0 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
-        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
+        export MSYS2_BASE=$(cygpath -u "${{steps.msys2.outputs.msys2-location}}")
+        ./build.sh package_wxcrafter
 
     # Upload installer
     - name: artifact
@@ -112,18 +86,19 @@ jobs:
       with:
         name: wxcrafter-installer-wx-${{matrix.wx-version}}${{matrix.arch.package-suffix}}
         path: |
-          build-wxcrafter-release/installer/**.*
+          .build-release-wxcrafter/installer/**.*
 
     # CodeLite
-
-    - name: Build, test and create CodeLite installer
+    - name: Build and create CodeLite installer
       shell: msys2 {0}
       run: |
-        mkdir build-release
-        cd build-release
-        MSYS2_BASE=$(cygpath -u "${{steps.msys2.outputs.msys2-location}}") PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev -DWITH_PCH=1 -DBUILD_TESTING=1 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
-        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
+        export MSYS2_BASE=$(cygpath -u "${{steps.msys2.outputs.msys2-location}}")
+        ./build.sh --tests package
+
+    - name: Test
+      shell: msys2 {0}
+      run: |
+        cd .build-release
         ctest --output-on-failure
 
     # Upload and test installer
@@ -132,11 +107,11 @@ jobs:
       with:
         name: codelite-installer-wx-${{matrix.wx-version}}${{matrix.arch.package-suffix}}
         path: |
-          build-release/installer/**.*
+          .build-release/installer/**.*
     
     - name: Run installer
       shell: pwsh
-      run: Start-Process -wait -FilePath .\build-release\installer\codelite-*-*.exe -ArgumentList "/SILENT /SP- /SUPPRESSMSGBOXES /NOICONS /NORESTART"
+      run: Start-Process -wait -FilePath .\.build-release\installer\codelite-*-*.exe -ArgumentList "/SILENT /SP- /SUPPRESSMSGBOXES /NOICONS /NORESTART"
     
     - name: Show content of installation
       shell: bash

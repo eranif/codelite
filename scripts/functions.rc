@@ -25,8 +25,11 @@ function INFO() {
   echo -e "${_CLR_GREEN}[INFO]${_CLR_RESET} $*"
 }
 
-if [[ "${MSYSTEM}" == "clang64" ]]; then
-  MSYS_ARCH="clang-x86_64"
-else
-  MSYS_ARCH="clang-aarch64"
+# Respect a preset MSYS_ARCH. Otherwise, derive it from MSYSTEM (compare ignoring the case: it is CLANG64 in MSYS2)
+if [[ -z "${MSYS_ARCH}" ]]; then
+  if [[ "$(echo "${MSYSTEM}" | tr 'A-Z' 'a-z')" == "clang64" ]]; then
+    MSYS_ARCH="clang-x86_64"
+  else
+    MSYS_ARCH="clang-aarch64"
+  fi
 fi

@@ -87,7 +87,7 @@ endif(UNIX AND NOT APPLE)
 if(MINGW)
   execute_process(
     COMMAND sh -c
-            'ls ${WXWIN}/lib/clang_x64_dll/wxmsw*u_clang*custom.dll|tail -1'
+            'ls ${WXWIN}/lib/clang*_dll/wxmsw*u_clang*custom.dll|tail -1'
     OUTPUT_VARIABLE WXDLL
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 

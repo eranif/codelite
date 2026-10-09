@@ -97,24 +97,41 @@ function install_prerequistes_MSW() {
     mingw-w64-${MSYS_ARCH}-libmariadbclient \
     mingw-w64-${MSYS_ARCH}-postgresql \
     mingw-w64-${MSYS_ARCH}-ctags \
-    flex bison patch 2>${BUILD_DIR}/msys_install_packages_err.log
+    mingw-w64-${MSYS_ARCH}-glew \
+    flex bison patch 2>${BUILD_DIR}/msys_install_packages_err.log || {
+    cat "${BUILD_DIR}/msys_install_packages_err.log" >&2
+    ERROR "Failed to install the MSYS2 packages"
+    exit 1
+  }
   touch "${marker}"
 }
 
 function build_wx_widgets_MSW() {
   local wx_install_dir=${BUILD_DIR}/wxWidgets-install
+  # Windows only: CL_WX_VERSION (a wxWidgets tag or branch, e.g. v3.2.11) overrides the pinned version
+  local wx_version=${CL_WX_VERSION:-${WX_VERSION}}
+  local wx_version_file=${wx_install_dir}/.wx_version
 
   if ls ${wx_install_dir}/lib/clang*/wxmsw*.dll >/dev/null 2>&1; then
-    INFO "wxWidgets DLLs already found in ${wx_install_dir}; skipping build"
-    return 0
+    local built_version=""
+    [ -f "${wx_version_file}" ] && built_version=$(cat "${wx_version_file}")
+    if [ -z "${built_version}" ] || [ "${built_version}" == "${wx_version}" ]; then
+      INFO "wxWidgets DLLs already found in ${wx_install_dir} (version: ${built_version:-unknown}); skipping build"
+      return 0
+    fi
+    INFO "wxWidgets ${built_version} was built, but ${wx_version} was requested; rebuilding"
+    rm -fr "${wx_install_dir}"
+    # The CodeLite and wxCrafter build trees hold values computed from the old wxWidgets (version, DLL name, ...),
+    # remove their cache so they are configured again
+    rm -f "${BUILD_DIR}/CMakeCache.txt" "${WXCRAFTER_BUILD_DIR}/CMakeCache.txt"
   fi
 
   INFO "Building wxWidgets"
-  INFO "Checking out wxWidgets version: ${WX_VERSION}"
+  INFO "Checking out wxWidgets version: ${wx_version}"
   mkdir -p ${BUILD_DIR}
   cd $_
   rm -fr wxWidgets # in case we aborted earlier
-  git clone --depth 1 --branch ${WX_VERSION} https://github.com/wxWidgets/wxWidgets.git
+  git clone --depth 1 --branch ${wx_version} https://github.com/wxWidgets/wxWidgets.git
   cd wxWidgets
   git submodule update --init --depth 1
   mkdir .build-release
@@ -126,6 +143,7 @@ function build_wx_widgets_MSW() {
     -DCMAKE_INSTALL_PREFIX=${BUILD_DIR}/wxWidgets-install
 
   make -j$(nproc) install
+  echo "${wx_version}" >"${wx_version_file}"
   export WXWIN="${BUILD_DIR}/wxWidgets-install"
   INFO "WXWIN is set to '${WXWIN}'"
   cd ${ROOT_DIR}
@@ -398,6 +416,9 @@ function usage() {
   echo "  --cmake     Force the cmake configure stage even if it is up to date"
   echo "  --tests     Enable Tests"
   echo "  --no-build  Run cmake only, skip the build step (make)"
+  echo ""
+  echo "Environment:"
+  echo "  CL_WX_VERSION   Windows only: the wxWidgets tag or branch to build (e.g. v3.2.11 or master)"
   echo "  -h, --help  Show this help message"
 }
 

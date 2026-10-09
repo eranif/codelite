@@ -77,7 +77,6 @@ public:
     PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
 
 protected:
-    void DoOpenWorkspace(const wxString& filename, bool createIfMissing = false, bool createProjectFromSources = false);
     void DoPlaceMenuBar(wxMenuBar* menuBar);
     void DoEnsureXDebugPanesVisible(const wxString& selectWindow = "");
 
@@ -104,7 +103,6 @@ public:
     //////////////////////////////////////////////
     // Other common CodeLite events
     //////////////////////////////////////////////
-    void OnNewWorkspace(clCommandEvent& e);
     void OnIsWorkspaceOpen(clCommandEvent& e);
     void OnCloseWorkspace(clCommandEvent& e);
     void OnReloadWorkspace(clCommandEvent& e);
@@ -112,8 +110,6 @@ public:
     void OnGetWorkspaceFiles(wxCommandEvent& e);
     void OnGetCurrentFileProjectFiles(wxCommandEvent& e);
     void OnGetActiveProjectFiles(wxCommandEvent& e);
-    void OnNewProject(clNewProjectEvent& e);
-    void OnNewProjectFinish(clNewProjectEvent& e);
     void OnRunXDebugDiagnostics(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
     void OnXDebugSettings(wxCommandEvent& e);

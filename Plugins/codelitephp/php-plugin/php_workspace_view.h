@@ -52,7 +52,6 @@ private:
 
 protected:
     virtual void OnCollapse(wxCommandEvent& event);
-    void OnFolderDropped(clCommandEvent& event);
 
     virtual void OnCollapseUI(wxUpdateUIEvent& event);
     virtual void OnStartDebuggerListenerUI(wxUpdateUIEvent& event);

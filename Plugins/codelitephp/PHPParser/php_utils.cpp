@@ -1,44 +1,12 @@
 #include "php_utils.h"
 
-#include "PHP/PHPSourceFile.h"
 #include "StringUtils.h"
 #include "fileextmanager.h"
-#include "php_project.h"
-#include "php_workspace.h"
 
 #include <wx/base64.h>
 #include <wx/filename.h>
-#include <wx/stc/stc.h>
+#include <wx/regex.h>
 #include <wx/uri.h>
-
-bool IsPHPCommentOrString(int styleAtPos)
-{
-    if ((styleAtPos == wxSTC_HPHP_HSTRING) || (styleAtPos == wxSTC_HPHP_SIMPLESTRING) ||
-        (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE))
-        return true;
-    return false;
-}
-
-bool IsPHPSection(int styleAtPos)
-{
-    if ((styleAtPos == wxSTC_HPHP_DEFAULT) || (styleAtPos == wxSTC_HPHP_HSTRING) ||
-        (styleAtPos == wxSTC_HPHP_SIMPLESTRING) || (styleAtPos == wxSTC_HPHP_WORD) ||
-        (styleAtPos == wxSTC_HPHP_NUMBER) || (styleAtPos == wxSTC_HPHP_VARIABLE) ||
-        (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE) ||
-        (styleAtPos == wxSTC_HPHP_HSTRING_VARIABLE) || (styleAtPos == wxSTC_HPHP_OPERATOR))
-        return true;
-    return false;
-}
-
-bool IsPHPFile(IEditor* editor)
-{
-    if (!editor) {
-        return false;
-    }
-    wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    wxString buffer = ctrl->GetTextRange(0, ctrl->GetCurrentPos());
-    return ::IsPHPFileByExt(editor->GetFileName().GetFullPath()) && PHPSourceFile::IsInPHPSection(buffer);
-}
 
 bool IsPHPFileByExt(const wxString& filename)
 {

@@ -762,8 +762,24 @@ WXDLLIMPEXP_CL wxString FileNameToURI(const wxString& filename);
 /// Return the log handle of this library
 WXDLLIMPEXP_CL clModuleLogger& GetLogHandle();
 
-/// Parse the text edit from a response "result" field
-WXDLLIMPEXP_CL std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result);
+/// One change of a `WorkspaceEdit`: text edits for a file, or a resource operation (create, rename, delete)
+struct WXDLLIMPEXP_CL WorkspaceEditChange {
+    enum class Kind { kEdit, kCreate, kRename, kDelete };
+
+    Kind kind = Kind::kEdit;
+    wxString path;     // the file to edit, create or delete, or the old path of a rename
+    wxString new_path; // rename only
+    std::vector<LSP::TextEdit> edits;
+    bool overwrite = false;
+    bool ignore_if_exists = false; // create and rename. `overwrite` wins
+};
+
+/// The changes of a `WorkspaceEdit`. They must be applied in this order: the edits that follow a rename use the
+/// new path
+using WorkspaceEditChangeList = std::vector<WorkspaceEditChange>;
+
+/// Parse a `WorkspaceEdit`, for example the "result" of `textDocument/rename`
+WXDLLIMPEXP_CL WorkspaceEditChangeList ParseWorkspaceEdit(const JSONItem& result);
 
 /// An item from a `textDocument/codeAction` response. The server can reply with `CodeAction` literals or with
 /// plain `Command`s. A plain `Command` is stored as a code action that only has a command.
@@ -773,7 +789,7 @@ class WXDLLIMPEXP_CL CodeAction
     wxString m_kind;
     bool m_isPreferred = false;
     wxString m_disabledReason;
-    std::unordered_map<wxString, std::vector<LSP::TextEdit>> m_edit;
+    WorkspaceEditChangeList m_edit;
     std::optional<Command> m_command;
     bool m_hasEdit = false;
     bool m_hasData = false; // the "data" itself is kept in `m_json`
@@ -790,7 +806,7 @@ public:
     bool IsPreferred() const { return m_isPreferred; }
     bool IsDisabled() const { return !m_disabledReason.empty(); }
     const wxString& GetDisabledReason() const { return m_disabledReason; }
-    const std::unordered_map<wxString, std::vector<LSP::TextEdit>>& GetEdit() const { return m_edit; }
+    const WorkspaceEditChangeList& GetEdit() const { return m_edit; }
     const std::optional<Command>& GetCommand() const { return m_command; }
     const wxString& GetJSON() const { return m_json; }
     /// The server left out the edit and must fill it in with `codeAction/resolve`

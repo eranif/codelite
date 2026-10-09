@@ -30,6 +30,9 @@ nlohmann::json LSP::InitializeRequest::ToJSON() const
 
     auto& capabilities = params["capabilities"] = nlohmann::json::object();
     capabilities["window"] = nlohmann::json{{"workDoneProgress", true}};
+    // "delete" is not supported: it is not needed by any server we know of
+    capabilities["workspace"]["workspaceEdit"] =
+        nlohmann::json{{"documentChanges", true}, {"resourceOperations", nlohmann::json::array({"create", "rename"})}};
 
     auto& textDocumentCapabilities = capabilities["textDocument"];
     textDocumentCapabilities["completion"]["completionItem"]["documentationFormat"] = std::array{"plaintext"};

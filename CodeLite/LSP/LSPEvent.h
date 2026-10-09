@@ -30,8 +30,8 @@ protected:
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
     std::vector<LSP::Location> m_locations;     // used by wxEVT_LSP_REFERENCES
     std::vector<LSP::CodeAction> m_codeActions; // used by wxEVT_LSP_CODE_ACTIONS and wxEVT_LSP_CODE_ACTION_RESOLVED
-    std::unordered_map<wxString, std::vector<LSP::TextEdit>> m_changes; // list of changes per file
-    LSP::Progress m_progress;                                           // used by wxEVT_LSP_PROGRESS
+    LSP::WorkspaceEditChangeList m_changes;     // used by wxEVT_LSP_EDIT_FILES. Applied in order
+    LSP::Progress m_progress;                   // used by wxEVT_LSP_PROGRESS
     int m_logMessageSeverity = LSP_LOG_INFO;
     LSP::CompletionItem::eTriggerKind m_triggerKind =
         LSP::CompletionItem::kTriggerKindInvoked; // CC response is due to 24x7 cc
@@ -110,11 +110,8 @@ public:
     void SetCodeActions(const std::vector<LSP::CodeAction>& codeActions) { this->m_codeActions = codeActions; }
     const std::vector<LSP::CodeAction>& GetCodeActions() const { return m_codeActions; }
     std::vector<LSP::CodeAction>& GetCodeActions() { return m_codeActions; }
-    void SetChanges(const std::unordered_map<wxString, std::vector<LSP::TextEdit>>& changes)
-    {
-        this->m_changes = changes;
-    }
-    const std::unordered_map<wxString, std::vector<LSP::TextEdit>>& GetChanges() const { return m_changes; }
+    void SetChanges(const LSP::WorkspaceEditChangeList& changes) { this->m_changes = changes; }
+    const LSP::WorkspaceEditChangeList& GetChanges() const { return m_changes; }
 };
 
 using LSPEventFunction = void (wxEvtHandler::*)(LSPEvent&);

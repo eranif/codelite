@@ -401,7 +401,23 @@ void Command::FromJSON(const JSONItem& json)
     m_arguments = json["arguments"].format(false);
 }
 
-std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result)
+namespace
+{
+std::vector<LSP::TextEdit> ParseTextEdits(const JSONItem& json)
+{
+    std::vector<LSP::TextEdit> edits;
+    int count = json.arraySize();
+    edits.reserve(count);
+    for (int i = 0; i < count; ++i) {
+        LSP::TextEdit te;
+        te.FromJSON(json[i]);
+        edits.push_back(te);
+    }
+    return edits;
+}
+} // namespace
+
+WorkspaceEditChangeList ParseWorkspaceEdit(const JSONItem& result)
 {
     if (!result.isOk()) {
         return {};
@@ -409,48 +425,58 @@ std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(cons
 
     LOG_IF_TRACE { LSP_TRACE() << result.format(false) << endl; }
 
-    std::unordered_map<wxString, std::vector<LSP::TextEdit>> modifications;
-    // some LSPs will reply with "changes" and some with "documentChanges" -> we support them both
-    if (result.hasNamedObject("changes")) {
-        auto changes = result["changes"];
-        auto M = changes.GetAsMap();
-
-        modifications.reserve(M.size());
-        for (const auto& [filepath, json] : M) {
-            int count = json.arraySize();
-            std::vector<LSP::TextEdit> file_changes;
-            file_changes.reserve(count);
-            for (int i = 0; i < count; ++i) {
-                auto e = json[i];
-                LSP::TextEdit te;
-                te.FromJSON(e);
-                file_changes.push_back(te);
-            }
-            wxString path = FileUtils::FilePathFromURI(wxString(filepath.data(), filepath.length()));
-            modifications.erase(path);
-            modifications.insert({path, file_changes});
-        }
-    } else if (result.hasNamedObject("documentChanges")) {
+    WorkspaceEditChangeList workspace_edit;
+    // some LSPs will reply with "changes" and some with "documentChanges" -> we support them both. When both are
+    // present, "documentChanges" wins (it is the only one that can carry resource operations)
+    if (result.hasNamedObject("documentChanges")) {
         auto documentChanges = result["documentChanges"];
-        int files_count = documentChanges.arraySize();
-        for (int i = 0; i < files_count; ++i) {
-            auto edits = documentChanges[i]["edits"];
-            wxString filepath = documentChanges[i]["textDocument"]["uri"].toString();
-            filepath = FileUtils::FilePathFromURI(filepath);
-            std::vector<LSP::TextEdit> file_changes;
-            int edits_count = edits.arraySize();
-            file_changes.reserve(edits_count);
-            for (int j = 0; j < edits_count; ++j) {
-                auto e = edits[j];
-                LSP::TextEdit te;
-                te.FromJSON(e);
-                file_changes.push_back(te);
+        int count = documentChanges.arraySize();
+        workspace_edit.reserve(count);
+        for (int i = 0; i < count; ++i) {
+            auto json = documentChanges[i];
+            WorkspaceEditChange change;
+            wxString kind = json["kind"].toString();
+            if (kind.empty()) {
+                // TextDocumentEdit
+                change.kind = WorkspaceEditChange::Kind::kEdit;
+                change.path = FileUtils::FilePathFromURI(json["textDocument"]["uri"].toString());
+                change.edits = ParseTextEdits(json["edits"]);
+            } else if (kind == "create") {
+                change.kind = WorkspaceEditChange::Kind::kCreate;
+                change.path = FileUtils::FilePathFromURI(json["uri"].toString());
+            } else if (kind == "rename") {
+                change.kind = WorkspaceEditChange::Kind::kRename;
+                // a folder URI may end with a separator, drop it so the paths of the files below it can be
+                // matched against it
+                change.path = FileUtils::FilePathFromURI(json["oldUri"].toString());
+                change.new_path = FileUtils::FilePathFromURI(json["newUri"].toString());
+                for (wxString* path : {&change.path, &change.new_path}) {
+                    while (path->length() > 1 && wxFileName::IsPathSeparator(path->Last())) {
+                        path->RemoveLast();
+                    }
+                }
+            } else if (kind == "delete") {
+                change.kind = WorkspaceEditChange::Kind::kDelete;
+                change.path = FileUtils::FilePathFromURI(json["uri"].toString());
+            } else {
+                LSP_WARNING() << "Unknown workspace edit change kind:" << kind << endl;
+                continue;
             }
-            modifications.erase(filepath);
-            modifications.insert({filepath, file_changes});
+            change.overwrite = json["options"]["overwrite"].toBool(false);
+            change.ignore_if_exists = json["options"]["ignoreIfExists"].toBool(false);
+            workspace_edit.push_back(std::move(change));
+        }
+    } else if (result.hasNamedObject("changes")) {
+        auto M = result["changes"].GetAsMap();
+        workspace_edit.reserve(M.size());
+        for (const auto& [filepath, json] : M) {
+            WorkspaceEditChange change;
+            change.path = FileUtils::FilePathFromURI(wxString(filepath.data(), filepath.length()));
+            change.edits = ParseTextEdits(json);
+            workspace_edit.push_back(std::move(change));
         }
     }
-    return modifications;
+    return workspace_edit;
 }
 
 //===----------------------------------------------------------------------------------

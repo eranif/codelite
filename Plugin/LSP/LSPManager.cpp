@@ -1,6 +1,8 @@
 #include "LSP/LSPManager.hpp"
 
 #include "BlockTimer.hpp"
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "LSP/DiagnosticsData.hpp"
 #include "LSP/LSPEvent.h"
 #include "LSPOutlineViewDlg.h"
@@ -1505,6 +1507,176 @@ void Manager::ApplyCodeAction(const wxString& filepath, const LSP::CodeAction& a
     server->SendWorkspaceExecuteCommand(filepath, *action.GetCommand());
 }
 
+namespace
+{
+bool IsRemoteWorkspace()
+{
+    return clWorkspaceManager::Get().IsWorkspaceOpened() && clWorkspaceManager::Get().GetWorkspace()->IsRemote();
+}
+
+IEditor* OpenEditor(const wxString& filepath)
+{
+#if USE_SFTP
+    if (IsRemoteWorkspace()) {
+        return clSFTPManager::Get().OpenFile(filepath, clWorkspaceManager::Get().GetWorkspace()->GetSshAccount());
+    }
+#endif
+    return clGetManager()->OpenFile(filepath);
+}
+
+/// Return `path` as it is after `old_path` was renamed to `new_path`. `old_path` can be a file or a folder
+wxString MapRenamedPath(const wxString& path, const wxString& old_path, const wxString& new_path)
+{
+    if (path == old_path) {
+        return new_path;
+    }
+    wxString rest;
+    if (path.StartsWith(old_path + wxFILE_SEP_PATH, &rest)) {
+        return new_path + wxFILE_SEP_PATH + rest;
+    }
+    return path;
+}
+
+void ApplyTextEdits(const LSP::WorkspaceEditChange& change)
+{
+    if (change.edits.empty()) {
+        return;
+    }
+
+    IEditor* editor = OpenEditor(change.path);
+    if (!editor) {
+        LSP_WARNING() << "Could not open editor for file:" << change.path << endl;
+        return;
+    }
+
+    // Apply the changes
+    editor->GetCtrl()->BeginUndoAction();
+    for (auto iter = change.edits.rbegin(); iter != change.edits.rend(); ++iter) {
+        // apply the changes, in reverse order (to ensure that there is no skewing)
+        const LSP::TextEdit& text_edit = *iter;
+        editor->SelectRange(text_edit.GetRange());
+        editor->ReplaceSelection(text_edit.GetNewText());
+    }
+    editor->GetCtrl()->EndUndoAction();
+    editor->Save();
+}
+
+/// Create an empty file. The text edits that follow fill it
+bool ApplyCreateFile(const LSP::WorkspaceEditChange& change, wxString* error)
+{
+    wxFileName fn{change.path};
+    if (wxFileName::Exists(change.path)) {
+        if (!change.overwrite) {
+            if (change.ignore_if_exists) {
+                return true;
+            }
+            *error = wxString::Format(_("File already exists: %s"), change.path);
+            return false;
+        }
+
+        // An open editor would keep the old content
+        IEditor* editor = clGetManager()->FindEditor(change.path);
+        if (editor) {
+            editor->SetEditorText(wxEmptyString);
+            if (!editor->Save()) {
+                *error = wxString::Format(_("Could not write file: %s"), change.path);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    if (!wxFileName::Mkdir(fn.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL) ||
+        !FileUtils::WriteFileContent(fn, wxEmptyString)) {
+        *error = wxString::Format(_("Could not create file: %s"), change.path);
+        return false;
+    }
+
+    clFileSystemEvent created_event(wxEVT_FILE_CREATED);
+    created_event.SetPath(change.path);
+    created_event.SetFileName(fn.GetFullName());
+    created_event.GetPaths().Add(change.path);
+    EventNotifier::Get()->AddPendingEvent(created_event);
+    return true;
+}
+
+/// Rename a file or a folder. The editors of the files that move are closed and opened again with the new path, so
+/// the editor and the language server use the new path
+bool ApplyRenameFile(const LSP::WorkspaceEditChange& change, wxString* error)
+{
+    const wxString& old_path = change.path;
+    const wxString& new_path = change.new_path;
+    bool is_folder = wxFileName::DirExists(old_path);
+    if (!is_folder && !wxFileName::FileExists(old_path)) {
+        *error = wxString::Format(_("Can not rename %s: it does not exist"), old_path);
+        return false;
+    }
+
+    bool replace = false;
+    if (wxFileName::Exists(new_path)) {
+        if (!change.overwrite) {
+            if (change.ignore_if_exists) {
+                return true;
+            }
+            *error = wxString::Format(_("Can not rename %s: %s already exists"), old_path, new_path);
+            return false;
+        }
+        if (is_folder) {
+            *error = wxString::Format(_("Can not rename %s: folder %s already exists"), old_path, new_path);
+            return false;
+        }
+        replace = true;
+    }
+
+    // Save and close the editors of the moving files, and the editor of a file that is replaced
+    std::vector<std::pair<wxString, wxString>> moved_editors; // old path, new path
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    for (IEditor* editor : editors) {
+        wxString path = editor->GetFileName().GetFullPath();
+        if (replace && path == new_path) {
+            clGetManager()->CloseEditor(editor, false);
+            continue;
+        }
+
+        wxString moved_path = MapRenamedPath(path, old_path, new_path);
+        if (moved_path == path) {
+            continue;
+        }
+        if (editor->IsEditorModified() && !editor->Save()) {
+            *error = wxString::Format(_("Can not rename %s: could not save %s"), old_path, path);
+            return false;
+        }
+        moved_editors.push_back({path, moved_path});
+        clGetManager()->CloseEditor(editor, false);
+    }
+
+    bool renamed = false;
+    if (wxFileName::Mkdir(wxFileName{new_path}.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL)) {
+        // Let plugins do the rename (for example, a source control plugin)
+        clFileSystemEvent rename_event(wxEVT_FILE_RENAMED);
+        rename_event.SetPath(old_path);
+        rename_event.SetNewpath(new_path);
+        if (!EventNotifier::Get()->ProcessEvent(rename_event)) {
+            renamed = ::wxRenameFile(old_path, new_path, replace);
+        } else {
+            renamed = wxFileName::Exists(new_path);
+        }
+    }
+
+    // Open the closed editors again
+    for (const auto& [editor_old_path, editor_new_path] : moved_editors) {
+        clGetManager()->OpenFile(renamed ? editor_new_path : editor_old_path);
+    }
+
+    if (!renamed) {
+        *error = wxString::Format(_("Could not rename %s to %s"), old_path, new_path);
+        return false;
+    }
+    return true;
+}
+} // namespace
+
 void Manager::OnApplyEdits(LSPEvent& event)
 {
     wxBusyCursor bc;
@@ -1514,54 +1686,100 @@ void Manager::OnApplyEdits(LSPEvent& event)
         return;
     }
 
+    wxStringSet_t files;
+    bool has_resource_operations = false;
+    for (const auto& change : changes) {
+        files.insert(change.path);
+        if (change.kind != LSP::WorkspaceEditChange::Kind::kEdit) {
+            has_resource_operations = true;
+        }
+    }
+
+    if (has_resource_operations && IsRemoteWorkspace()) {
+        ::wxMessageBox(_("This change creates or renames files. This is not supported in a remote workspace"),
+                       "CodeLite",
+                       wxICON_WARNING | wxOK | wxCENTER);
+        return;
+    }
+
     // confirm with the user
     if (event.IsAnswer() /* prompt? */ &&
-        ::wxMessageBox(wxString() << "This will update: " << changes.size() << " files. Continue?",
+        ::wxMessageBox(wxString() << "This will update: " << files.size() << " files. Continue?",
                        "CodeLite",
                        wxICON_QUESTION | wxCANCEL | wxYES_NO | wxYES_DEFAULT) != wxYES) {
         return;
     }
 
-    // lock the book
-    wxWindowUpdateLocker book_locker{clGetManager()->GetMainNotebook()};
+    // A rename closes and opens editors again, so the active editor can only be restored by its path
+    IEditor* active_editor = clGetManager()->GetActiveEditor();
+    wxString active_path = active_editor ? active_editor->GetRemotePathOrLocal() : wxString{};
+    int active_position = active_editor ? active_editor->GetCurrentPosition() : wxNOT_FOUND;
 
-    // capture and restore the current editor state
-    clEditorStateLocker state_locker{};
+    {
+        // lock the book
+        wxWindowUpdateLocker book_locker{clGetManager()->GetMainNotebook()};
 
-    // capture the active editor
-    clEditorActiveLocker active_locker{};
-
-    for (const auto& [filepath, edit_arr] : changes) {
-        if (edit_arr.empty()) {
-            continue;
+        // capture and restore the current editor state. Both lockers keep a pointer to the active editor, which
+        // a rename may close
+        std::optional<clEditorStateLocker> state_locker;
+        std::optional<clEditorActiveLocker> active_locker;
+        if (!has_resource_operations) {
+            state_locker.emplace();
+            active_locker.emplace();
         }
 
-        IEditor* editor{nullptr};
-#if USE_SFTP
-        if (clWorkspaceManager::Get().IsWorkspaceOpened() && clWorkspaceManager::Get().GetWorkspace()->IsRemote()) {
-            editor = clSFTPManager::Get().OpenFile(filepath, clWorkspaceManager::Get().GetWorkspace()->GetSshAccount());
-        } else {
-            editor = clGetManager()->OpenFile(filepath);
-        }
-#else
-        editor = clGetManager()->OpenFile(filepath);
-#endif
+        for (const auto& change : changes) {
+            wxString error;
+            bool ok = true;
+            switch (change.kind) {
+            case LSP::WorkspaceEditChange::Kind::kEdit:
+                ApplyTextEdits(change);
+                break;
+            case LSP::WorkspaceEditChange::Kind::kCreate:
+                ok = ApplyCreateFile(change, &error);
+                break;
+            case LSP::WorkspaceEditChange::Kind::kRename:
+                ok = ApplyRenameFile(change, &error);
+                if (ok) {
+                    active_path = MapRenamedPath(active_path, change.path, change.new_path);
+                }
+                break;
+            case LSP::WorkspaceEditChange::Kind::kDelete:
+                ok = false;
+                error = wxString::Format(_("Deleting files is not supported: %s"), change.path);
+                break;
+            }
 
-        if (!editor) {
-            LSP_WARNING() << "Could not open editor for file:" << filepath << endl;
-            continue;
+            if (!ok) {
+                // the changes that follow may depend on this one (for example, edits to a renamed file), stop here
+                LSP_ERROR() << error << endl;
+                ::wxMessageBox(error + "\n" + _("The remaining changes were not applied"),
+                               "CodeLite",
+                               wxICON_ERROR | wxOK | wxCENTER);
+                break;
+            }
         }
+    }
 
-        // Apply the changes
-        editor->GetCtrl()->BeginUndoAction();
-        for (auto iter = edit_arr.rbegin(); iter != edit_arr.rend(); ++iter) {
-            // apply the changes, in reverse order (to ensure that there is no skewing)
-            const LSP::TextEdit& text_edit = *iter;
-            editor->SelectRange(text_edit.GetRange());
-            editor->ReplaceSelection(text_edit.GetNewText());
+    if (!has_resource_operations) {
+        return;
+    }
+
+    // restore the active editor
+    if (!active_path.empty()) {
+        IEditor* editor = OpenEditor(active_path);
+        if (editor) {
+            editor->SetCaretAt(std::min<long>(active_position, editor->GetCtrl()->GetLastPosition()));
+            editor->GetCtrl()->EnsureCaretVisible();
         }
-        editor->GetCtrl()->EndUndoAction();
-        editor->Save();
+    }
+
+    // the workspace has to see the new and the renamed files
+    if (clFileSystemWorkspace::Get().IsOpen()) {
+        if (clFileSystemWorkspace::Get().GetView()) {
+            clFileSystemWorkspace::Get().GetView()->RefreshTree();
+        }
+        clFileSystemWorkspace::Get().FileSystemUpdated();
     }
 }
 

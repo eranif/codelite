@@ -222,6 +222,22 @@ Multiple language servers can be configured for the same programming language. H
 
 ---
 
+## Code Actions
+
+Code actions are quick fixes and refactorings offered by the language server, for example "import class", "extract method" or "inline variable".
+
+- Right click in the editor and choose `Code actions...`, or press <kbd>Alt</kbd>+<kbd>Enter</kbd>. CodeLite asks the server for the actions that apply to the selection, or to the caret position when nothing is selected
+- Click an error or warning marker in the editor margin to see the quick fixes for that diagnostic
+
+When there are several actions, choose one from the list (the action the server prefers is selected by default). When there is only one, CodeLite shows it and asks you to `Apply` it.
+
+Some actions create or rename files, for example "extract interface" or renaming a PHP class. CodeLite saves and closes the editors of the files that move, and opens them again at the new path. Note:
+
+- The undo history of a renamed file is lost
+- Actions that create or rename files are not supported in a remote (SFTP) workspace
+
+---
+
 ## Restarting Language Servers
 
 To restart any language server:

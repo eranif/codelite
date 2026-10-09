@@ -497,17 +497,29 @@ if(MINGW)
     message(FATAL_ERROR "Missing -DWXWIN=<wxWidgets/root/install/dir>")
   endif()
 
-  # wxWidgets is never built as a debug build on Windows
-  set(WXCFG "clang_x64_dll/mswu")
-
   message(STATUS "WXWIN is set to ${WXWIN}")
-  message(STATUS "WXCFG is set to ${WXCFG}")
 
-  message(STATUS "Running: ${CL_WX_CONFIG} --cmake --prefix=${WXWIN} --wxcfg=${WXCFG}")
-  execute_process(
-    COMMAND ${CL_WX_CONFIG} --cmake --prefix=${WXWIN} --wxcfg=${WXCFG}
-    OUTPUT_VARIABLE wxWidgets_USE_FILE
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  # Locate wxWidgets using its CMake package config (no wx-config required).
+  # Use the latest version found under lib/cmake/
+  file(GLOB _WXWIDGETS_CMAKE_DIRS "${WXWIN}/lib/cmake/wxWidgets-*")
+  if(NOT _WXWIDGETS_CMAKE_DIRS)
+    message(FATAL_ERROR "No wxWidgets cmake config found in ${WXWIN}/lib/cmake/")
+  endif()
+  list(SORT _WXWIDGETS_CMAKE_DIRS COMPARE NATURAL)
+  list(GET _WXWIDGETS_CMAKE_DIRS -1 _LATEST_WXWIDGETS_DIR)
+  set(wxWidgets_DIR
+      "${_LATEST_WXWIDGETS_DIR}"
+      CACHE PATH "wxWidgets CMake directory" FORCE)
+  message(STATUS "wxWidgets_DIR is set to: ${wxWidgets_DIR}")
+  list(APPEND CMAKE_PREFIX_PATH "${wxWidgets_DIR}")
+
+  # The wxWidgets targets link against OpenGL::GL, so it must be defined before wxWidgets is loaded
+  find_package(OpenGL REQUIRED)
+  find_package(wxWidgets CONFIG REQUIRED)
+
+  # The sub-projects include ${wxWidgets_USE_FILE}: use our own file which sets the
+  # include directories and compile flags for them
+  set(wxWidgets_USE_FILE "${CMAKE_SOURCE_DIR}/cmake/Modules/wxWidgetsMSWUse.cmake")
   message(STATUS "wxWidgets_USE_FILE is set to: ${wxWidgets_USE_FILE}")
 
   find_file(

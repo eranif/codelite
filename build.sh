@@ -41,7 +41,6 @@ function run_make() {
 function check_prerequistes() {
   if [[ "${OS_NAME}" == *MINGW* ]]; then
     install_prerequistes_MSW
-    install_wx_config_MSW
   fi
 
   INFO "Checking build prerequisites"
@@ -100,25 +99,6 @@ function install_prerequistes_MSW() {
     mingw-w64-${MSYS_ARCH}-ctags \
     flex bison patch 2>${BUILD_DIR}/msys_install_packages_err.log
   touch "${marker}"
-}
-
-function install_wx_config_MSW() {
-  INFO "Building wx-config for Windows"
-  local wx_config_install_dir=${BUILD_DIR}/wx-config-msys2-install
-  if [ -f "${wx_config_install_dir}/bin/wx-config.exe" ]; then
-    INFO "${wx_config_install_dir}/bin/wx-config.exe exists; skipping"
-    export PATH=${wx_config_install_dir}/bin:$PATH
-    return 0
-  fi
-  mkdir -p ${BUILD_DIR}
-  cd $_
-  git clone --depth 1 https://github.com/eranif/wx-config-msys2.git
-  cd wx-config-msys2
-  mkdir .build-release
-  cd $_
-  cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DCMAKE_INSTALL_PREFIX="${wx_config_install_dir}"
-  mingw32-make -j$(nproc) install
-  export PATH=${wx_config_install_dir}/bin:$PATH
 }
 
 function build_wx_widgets_MSW() {

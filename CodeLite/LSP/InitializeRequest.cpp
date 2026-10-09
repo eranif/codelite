@@ -43,6 +43,8 @@ nlohmann::json LSP::InitializeRequest::ToJSON() const
         nlohmann::json::array({"", "quickfix"});
     codeActionCapabilities["isPreferredSupport"] = true;
     codeActionCapabilities["disabledSupport"] = true;
+    codeActionCapabilities["dataSupport"] = true;
+    codeActionCapabilities["resolveSupport"]["properties"] = nlohmann::json::array({"edit"});
 
     if (m_withTokenTypes) {
         textDocumentCapabilities["semanticTokens"]["tokenTypes"] = {

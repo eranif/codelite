@@ -280,6 +280,7 @@ protected:
     void OnWorkspaceScanCompleted(clWorkspaceEvent& event);
     void OnMarginClicked(clEditorEvent& event);
     void OnCodeActionAvailable(LSPEvent& event);
+    void OnCodeActionResolved(LSPEvent& event);
     void OnApplyEdits(LSPEvent& event);
     void OnGoinDown(clCommandEvent& event);
 
@@ -288,6 +289,11 @@ protected:
     void OnFindReferences(wxCommandEvent& event);
 
     void ShowQuickOutlineDialog(const LSPEvent& event);
+
+    /**
+     * @brief apply the edit of a code action, then send its command to the server
+     */
+    void ApplyCodeAction(const wxString& filepath, const LSP::CodeAction& action);
 
     /**
      * @brief find an editor either by local or remote path

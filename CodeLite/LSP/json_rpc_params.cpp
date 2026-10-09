@@ -125,6 +125,26 @@ nlohmann::json ExecuteCommandParams::ToJSON() const
 }
 
 //===----------------------------------------------------------------------------------
+// CodeActionResolveParams
+//===----------------------------------------------------------------------------------
+CodeActionResolveParams::CodeActionResolveParams(const wxString& codeAction)
+    : m_codeAction(codeAction)
+{
+}
+
+void CodeActionResolveParams::FromJSON(const JSONItem& json) { m_codeAction = json.format(false); }
+
+nlohmann::json CodeActionResolveParams::ToJSON() const
+{
+    auto json = nlohmann::json::parse(m_codeAction.ToStdString(wxConvUTF8), nullptr, false);
+    if (json.is_discarded()) {
+        LSP_WARNING() << "Failed to parse the code action to resolve:" << m_codeAction << endl;
+        return nlohmann::json::object();
+    }
+    return json;
+}
+
+//===----------------------------------------------------------------------------------
 // CodeActionParams
 //===----------------------------------------------------------------------------------
 

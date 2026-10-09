@@ -172,6 +172,23 @@ public:
 };
 
 //===----------------------------------------------------------------------------------
+// CodeActionResolveParams
+//===----------------------------------------------------------------------------------
+/// The params of `codeAction/resolve` are the code action, as it was received from the server
+class WXDLLIMPEXP_CL CodeActionResolveParams : public Params
+{
+    wxString m_codeAction;
+
+public:
+    explicit CodeActionResolveParams(const wxString& codeAction);
+    ~CodeActionResolveParams() override = default;
+    bool operator==(const CodeActionResolveParams&) const = default;
+
+    void FromJSON(const JSONItem& json) override;
+    nlohmann::json ToJSON() const override;
+};
+
+//===----------------------------------------------------------------------------------
 // CodeActionParams
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL CodeActionParams : public Params

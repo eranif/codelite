@@ -2,6 +2,7 @@
 
 #include "BlockTimer.hpp"
 #include "LSP/CodeActionRequest.hpp"
+#include "LSP/CodeActionResolveRequest.hpp"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -757,6 +758,9 @@ void LanguageServerProtocol::DrainOutputBuffer()
                     CheckCapability(res, "workspaceSymbolProvider", "workspace/symbol");
                     CheckCapability(res, "renameProvider", "textDocument/rename");
                     CheckCapability(res, "referencesProvider", "textDocument/references");
+                    if (res["result"]["capabilities"]["codeActionProvider"]["resolveProvider"].toBool(false)) {
+                        m_providers.insert("codeAction/resolve");
+                    }
                     // Check for textDocumentSync capability
                     // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocumentSyncOptions
                     if (res["result"]["capabilities"]["textDocumentSync"]["change"].toInt(wxNOT_FOUND) == 2) {
@@ -1181,6 +1185,11 @@ bool LanguageServerProtocol::IsReferencesSupported() const { return IsCapability
 
 bool LanguageServerProtocol::IsRenameSupported() const { return IsCapabilitySupported("textDocument/rename"); }
 
+bool LanguageServerProtocol::IsCodeActionResolveSupported() const
+{
+    return IsCapabilitySupported("codeAction/resolve");
+}
+
 bool LanguageServerProtocol::IsIncrementalChangeSupported() const { return m_incrementalChangeSupported; }
 
 void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command)
@@ -1196,6 +1205,22 @@ void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepat
         wxString filename = GetEditorFilePath(*editor);
         LSP::WorkspaceExecuteCommand::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::WorkspaceExecuteCommand(m_name, filename, command));
+        QueueMessage(req);
+    }
+}
+
+void LanguageServerProtocol::SendCodeActionResolveRequest(const wxString& filepath, const LSP::CodeAction& action)
+{
+    auto editor = clGetManager()->FindEditor(filepath);
+    if (!editor) {
+        LSP_ERROR() << "Could not send codeAction/resolve: could not locate editor for file:" << filepath << endl;
+        return;
+    }
+
+    if (ShouldHandleFile(*editor)) {
+        LSP_DEBUG() << "Sending `codeAction/resolve`" << endl;
+        LSP::CodeActionResolveRequest::Ptr_t req =
+            LSP::MessageWithParams::MakeRequest(new LSP::CodeActionResolveRequest(m_name, filepath, action));
         QueueMessage(req);
     }
 }

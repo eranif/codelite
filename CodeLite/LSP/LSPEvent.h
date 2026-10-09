@@ -28,8 +28,8 @@ protected:
     std::vector<LSP::Diagnostic> m_diagnostics;
     std::vector<LSP::SymbolInformation> m_symbolsInformation;
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
-    std::vector<LSP::Location> m_locations;                             // used by wxEVT_LSP_REFERENCES
-    std::vector<LSP::CodeAction> m_codeActions;                         // used by wxEVT_LSP_CODE_ACTIONS
+    std::vector<LSP::Location> m_locations;     // used by wxEVT_LSP_REFERENCES
+    std::vector<LSP::CodeAction> m_codeActions; // used by wxEVT_LSP_CODE_ACTIONS and wxEVT_LSP_CODE_ACTION_RESOLVED
     std::unordered_map<wxString, std::vector<LSP::TextEdit>> m_changes; // list of changes per file
     LSP::Progress m_progress;                                           // used by wxEVT_LSP_PROGRESS
     int m_logMessageSeverity = LSP_LOG_INFO;
@@ -145,6 +145,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, LSPEv
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REFERENCES, LSPEvent);            // EventNotifier
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REFERENCES_INPROGRESS, LSPEvent); // EventNotifier
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CODE_ACTIONS, LSPEvent);          // EventNotifier
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CODE_ACTION_RESOLVED, LSPEvent);  // EventNotifier
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_EDIT_FILES, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_PROGRESS, LSPEvent); // EventNotifier
 

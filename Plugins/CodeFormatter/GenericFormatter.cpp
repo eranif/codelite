@@ -123,6 +123,11 @@ void GenericFormatter::AsyncFormat(
 
 bool GenericFormatter::DoFormatFile(const wxString& filepath, wxEvtHandler* sink, wxString* output)
 {
+    if (IsLSPFormatter()) {
+        // no command to run, the CodeFormatter plugin formats the editor through the language server
+        return false;
+    }
+
     // Create a copy
     wxString cmd = GetCommandAsString();
 
@@ -148,7 +153,7 @@ bool GenericFormatter::FormatFile(const wxFileName& filepath, wxEvtHandler* sink
 bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* sink)
 {
 #if USE_SFTP
-    if (!CanHandleRemoteFile()) {
+    if (IsLSPFormatter() || !CanHandleRemoteFile()) {
         return false;
     }
 
@@ -178,7 +183,7 @@ bool GenericFormatter::FormatFile(const wxString& filepath, wxEvtHandler* sink)
 bool GenericFormatter::FormatString(const wxString& content, const wxString& fullpath, wxString* output)
 {
     auto file_type = FileExtManager::GetType(fullpath);
-    if (!CanHandle(file_type)) {
+    if (IsLSPFormatter() || !CanHandle(file_type)) {
         return false;
     }
 

@@ -320,6 +320,13 @@ public:
     bool SendOnTypeFormattingRequest(IEditor& editor, const wxString& ch);
 
     /**
+     * @brief ask the server to format the whole editor (`textDocument/formatting`). The reply fires
+     * `wxEVT_LSP_DOCUMENT_FORMATTED` on the EventNotifier
+     * @return false when the request was not sent (the server can not format this file)
+     */
+    bool SendDocumentFormattingRequest(IEditor& editor);
+
+    /**
      * @brief ask the server for semantic tokens
      */
     void SendSemanticTokensRequest(IEditor& editor);
@@ -339,6 +346,7 @@ public:
     bool IsCodeActionSupported() const;
     bool IsCodeActionResolveSupported() const;
     bool IsOnTypeFormattingSupported(const wxString& ch) const;
+    bool IsDocumentFormattingSupported() const;
 };
 
 #endif // CLLANGUAGESERVER_H

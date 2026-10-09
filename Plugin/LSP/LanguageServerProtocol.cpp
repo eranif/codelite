@@ -692,8 +692,8 @@ void LanguageServerProtocol::DrainOutputBuffer()
 
         } else if (message_method == "workspace/applyEdit") {
 
-            // the server is requesting us to apply an edit
-            HandleWorkspaceEdit(json_item["params"]["edit"]);
+            // the server is requesting us to apply an edit. LSP::Manager::OnApplyEdits sends the reply
+            HandleWorkspaceEdit(json_item["params"]["edit"], json_item["id"].toSize_t(0));
 
         } else if (message_method == "$/progress") {
             // Progress notifications associated with work-done progress tokens.
@@ -1016,6 +1016,30 @@ void LanguageServerProtocol::SendMethodNotFound(size_t message_id)
     m_network->Send(str);
 }
 
+void LanguageServerProtocol::SendApplyEditResult(size_t message_id, bool applied, const wxString& failure_reason)
+{
+    if (!m_network) {
+        LSP_ERROR() << GetLogPrefix() << "SendApplyEditResult(): no network available!" << endl;
+        return;
+    }
+
+    auto json = JSONItem::createObject();
+    json.addProperty("jsonrpc", "2.0");
+    json.addProperty("id", message_id);
+
+    auto result = JSONItem::createObject();
+    result.addProperty("applied", applied);
+    if (!applied && !failure_reason.empty()) {
+        result.addProperty("failureReason", failure_reason);
+    }
+    json.addProperty("result", result);
+
+    LSP::JSONRpcMessage message{std::move(json)};
+    auto str = message.ToString();
+    LSP_TRACE() << GetLogPrefix() << "==>" << str << endl;
+    m_network->Send(str);
+}
+
 void LanguageServerProtocol::FindReferences(IEditor& editor)
 {
     CHECK_EXPECTED_RETURN(IsReferencesSupported(), true);
@@ -1222,12 +1246,14 @@ void LanguageServerProtocol::SendCodeActionResolveRequest(const wxString& filepa
     }
 }
 
-void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
+void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes, size_t message_id)
 {
     auto edits = LSP::ParseWorkspaceEdit(changes);
 
     LSPEvent edit_event{wxEVT_LSP_EDIT_FILES};
     edit_event.SetChanges(edits);
+    edit_event.SetServerName(GetName());
+    edit_event.SetRequestId(message_id);
     edit_event.SetAnswer(false); // Do not prompt the user
     m_cluster->AddPendingEvent(edit_event);
 }

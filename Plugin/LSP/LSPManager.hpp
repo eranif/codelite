@@ -297,6 +297,14 @@ protected:
     void ApplyCodeAction(const wxString& filepath, const LSP::CodeAction& action);
 
     /**
+     * @brief apply a workspace edit, in order. Stops at the first change that fails
+     * @param prompt ask the user before changing the files
+     * @param failure_reason set when the edit was not (fully) applied
+     * @return true when every change was applied
+     */
+    bool ApplyEdits(const LSP::WorkspaceEditChangeList& changes, bool prompt, wxString* failure_reason);
+
+    /**
      * @brief find an editor either by local or remote path
      */
     IEditor* FindEditor(const wxString& path) const;

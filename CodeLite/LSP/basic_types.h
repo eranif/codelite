@@ -511,6 +511,9 @@ class WXDLLIMPEXP_CL Diagnostic
     Range m_range;
     wxString m_message;
     DiagnosticSeverity m_severity = DiagnosticSeverity::Error;
+    // raw JSON, sent back unchanged in `codeAction`. It keeps the fields that are not parsed above: `code`,
+    // `codeDescription`, `source`, `tags`, `relatedInformation` and `data`
+    wxString m_json;
 
 public:
     void FromJSON(const JSONItem& json);
@@ -523,21 +526,32 @@ public:
     }
     Diagnostic() = default;
     ~Diagnostic() = default;
-    bool operator==(const Diagnostic&) const = default;
+    // The raw JSON is not compared
+    bool operator==(const Diagnostic& other) const
+    {
+        return m_range == other.m_range && m_message == other.m_message && m_severity == other.m_severity;
+    }
 
+    // The setters drop the raw JSON, so ToJSON() sends the changed values
     Diagnostic& SetRange(const Range& range)
     {
         this->m_range = range;
+        this->m_json.clear();
         return *this;
     }
     const Range& GetRange() const { return m_range; }
     Diagnostic& SetMessage(const wxString& message)
     {
         this->m_message = message;
+        this->m_json.clear();
         return *this;
     }
     const wxString& GetMessage() const { return m_message; }
-    void SetSeverity(const DiagnosticSeverity& severity) { this->m_severity = severity; }
+    void SetSeverity(const DiagnosticSeverity& severity)
+    {
+        this->m_severity = severity;
+        this->m_json.clear();
+    }
     const DiagnosticSeverity& GetSeverity() const { return m_severity; }
 };
 

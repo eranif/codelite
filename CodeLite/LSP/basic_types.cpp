@@ -248,10 +248,18 @@ void Diagnostic::FromJSON(const JSONItem& json)
     m_range.FromJSON(json.namedObject("range"));
     m_message = json.namedObject("message").toString();
     m_severity = json.namedObject("severity").fromNumber(DiagnosticSeverity::Error);
+    m_json = json.format(false);
 }
 
 nlohmann::json Diagnostic::ToJSON() const
 {
+    if (!m_json.empty()) {
+        auto json = nlohmann::json::parse(m_json.ToStdString(wxConvUTF8), nullptr, false);
+        if (!json.is_discarded()) {
+            return json;
+        }
+        LSP_WARNING() << "Failed to parse the raw diagnostic, sending the parsed fields only:" << m_json << endl;
+    }
     return nlohmann::json{{"range", m_range.ToJSON()},
                           {"message", GetMessage().ToStdString(wxConvUTF8)},
                           {"severity", static_cast<int>(m_severity)}};

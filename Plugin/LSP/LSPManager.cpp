@@ -1537,16 +1537,16 @@ wxString MapRenamedPath(const wxString& path, const wxString& old_path, const wx
     return path;
 }
 
-void ApplyTextEdits(const LSP::WorkspaceEditChange& change)
+bool ApplyTextEdits(const LSP::WorkspaceEditChange& change, wxString* error)
 {
     if (change.edits.empty()) {
-        return;
+        return true;
     }
 
     IEditor* editor = OpenEditor(change.path);
     if (!editor) {
-        LSP_WARNING() << "Could not open editor for file:" << change.path << endl;
-        return;
+        *error = wxString::Format(_("Could not open file: %s"), change.path);
+        return false;
     }
 
     // Apply the changes
@@ -1559,6 +1559,7 @@ void ApplyTextEdits(const LSP::WorkspaceEditChange& change)
     }
     editor->GetCtrl()->EndUndoAction();
     editor->Save();
+    return true;
 }
 
 /// Create an empty file. The text edits that follow fill it
@@ -1679,11 +1680,25 @@ bool ApplyRenameFile(const LSP::WorkspaceEditChange& change, wxString* error)
 
 void Manager::OnApplyEdits(LSPEvent& event)
 {
+    wxString failure_reason;
+    bool applied = ApplyEdits(event.GetChanges(), event.IsAnswer(), &failure_reason);
+
+    if (!event.GetRequestId().has_value()) {
+        return;
+    }
+
+    // the edit came from a `workspace/applyEdit` request, tell the server whether it was applied
+    auto server = GetServerByName(event.GetServerName());
+    CHECK_PTR_RET(server);
+    server->SendApplyEditResult(*event.GetRequestId(), applied, failure_reason);
+}
+
+bool Manager::ApplyEdits(const LSP::WorkspaceEditChangeList& changes, bool prompt, wxString* failure_reason)
+{
     wxBusyCursor bc;
-    const auto& changes = event.GetChanges();
     if (changes.empty()) {
         LSP_WARNING() << "Apply Edits event was called with 0 changes" << endl;
-        return;
+        return true;
     }
 
     wxStringSet_t files;
@@ -1696,19 +1711,23 @@ void Manager::OnApplyEdits(LSPEvent& event)
     }
 
     if (has_resource_operations && IsRemoteWorkspace()) {
-        ::wxMessageBox(_("This change creates or renames files. This is not supported in a remote workspace"),
-                       "CodeLite",
-                       wxICON_WARNING | wxOK | wxCENTER);
-        return;
+        *failure_reason = _("This change creates or renames files. This is not supported in a remote workspace");
+        ::wxMessageBox(*failure_reason, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+        return false;
     }
 
     // confirm with the user
-    if (event.IsAnswer() /* prompt? */ &&
-        ::wxMessageBox(wxString() << "This will update: " << files.size() << " files. Continue?",
-                       "CodeLite",
-                       wxICON_QUESTION | wxCANCEL | wxYES_NO | wxYES_DEFAULT) != wxYES) {
-        return;
+    if (prompt && ::wxMessageBox(wxString::Format(wxPLURAL("This will update %zu file. Continue?",
+                                                           "This will update %zu files. Continue?",
+                                                           files.size()),
+                                                  files.size()),
+                                 "CodeLite",
+                                 wxICON_QUESTION | wxCANCEL | wxYES_NO | wxYES_DEFAULT) != wxYES) {
+        *failure_reason = "Cancelled by the user";
+        return false;
     }
+
+    bool applied = true;
 
     // A rename closes and opens editors again, so the active editor can only be restored by its path
     IEditor* active_editor = clGetManager()->GetActiveEditor();
@@ -1733,7 +1752,7 @@ void Manager::OnApplyEdits(LSPEvent& event)
             bool ok = true;
             switch (change.kind) {
             case LSP::WorkspaceEditChange::Kind::kEdit:
-                ApplyTextEdits(change);
+                ok = ApplyTextEdits(change, &error);
                 break;
             case LSP::WorkspaceEditChange::Kind::kCreate:
                 ok = ApplyCreateFile(change, &error);
@@ -1756,13 +1775,15 @@ void Manager::OnApplyEdits(LSPEvent& event)
                 ::wxMessageBox(error + "\n" + _("The remaining changes were not applied"),
                                "CodeLite",
                                wxICON_ERROR | wxOK | wxCENTER);
+                *failure_reason = error;
+                applied = false;
                 break;
             }
         }
     }
 
     if (!has_resource_operations) {
-        return;
+        return applied;
     }
 
     // restore the active editor
@@ -1781,6 +1802,7 @@ void Manager::OnApplyEdits(LSPEvent& event)
         }
         clFileSystemWorkspace::Get().FileSystemUpdated();
     }
+    return applied;
 }
 
 void Manager::OnFileSaved(clCommandEvent& event)

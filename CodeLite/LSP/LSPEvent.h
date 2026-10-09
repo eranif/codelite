@@ -7,6 +7,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
+#include <optional>
 #include <vector>
 
 #define LSP_LOG_ERROR 1
@@ -31,7 +32,9 @@ protected:
     std::vector<LSP::Location> m_locations;     // used by wxEVT_LSP_REFERENCES
     std::vector<LSP::CodeAction> m_codeActions; // used by wxEVT_LSP_CODE_ACTIONS and wxEVT_LSP_CODE_ACTION_RESOLVED
     LSP::WorkspaceEditChangeList m_changes;     // used by wxEVT_LSP_EDIT_FILES. Applied in order
-    LSP::Progress m_progress;                   // used by wxEVT_LSP_PROGRESS
+    std::optional<size_t> m_requestId; // used by wxEVT_LSP_EDIT_FILES. Set when the edit is a `workspace/applyEdit`
+                                       // request from the server, which must be answered
+    LSP::Progress m_progress;          // used by wxEVT_LSP_PROGRESS
     int m_logMessageSeverity = LSP_LOG_INFO;
     LSP::CompletionItem::eTriggerKind m_triggerKind =
         LSP::CompletionItem::kTriggerKindInvoked; // CC response is due to 24x7 cc
@@ -112,6 +115,8 @@ public:
     std::vector<LSP::CodeAction>& GetCodeActions() { return m_codeActions; }
     void SetChanges(const LSP::WorkspaceEditChangeList& changes) { this->m_changes = changes; }
     const LSP::WorkspaceEditChangeList& GetChanges() const { return m_changes; }
+    void SetRequestId(size_t requestId) { this->m_requestId = requestId; }
+    const std::optional<size_t>& GetRequestId() const { return m_requestId; }
 };
 
 using LSPEventFunction = void (wxEvtHandler::*)(LSPEvent&);

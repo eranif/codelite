@@ -235,6 +235,28 @@ TEST_CASE("LSP::Diagnostic")
     CHECK(actual == expected);
 }
 
+TEST_CASE("LSP::Diagnostic keeps unknown fields")
+{
+    const nlohmann::json expected = {
+        {"range", {{"start", {{"line", 1}, {"character", 2}}}, {"end", {{"line", 3}, {"character", 4}}}}},
+        {"message", "Unused import"},
+        {"severity", 2},
+        {"code", "unused_import"},
+        {"source", "phpantom"},
+        {"tags", {1}},
+        {"data", {{"edits", {1, 2}}}}};
+    LSP::Diagnostic diagnostic;
+
+    diagnostic.FromJSON(expected);
+
+    CHECK(diagnostic.ToJSON() == expected);
+
+    // A changed diagnostic sends the changed values
+    diagnostic.SetMessage("changed");
+    CHECK(diagnostic.ToJSON()["message"] == "changed");
+    CHECK_FALSE(diagnostic.ToJSON().contains("code"));
+}
+
 #if 0 // Unimplemented Command::ToJSON()
 TEST_CASE("LSP::Command")
 {

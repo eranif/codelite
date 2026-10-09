@@ -20,8 +20,7 @@ else(NOT CL_SRC_ROOT)
 endif(NOT CL_SRC_ROOT)
 
 # Include paths
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/PHPParser" "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/PHPParserUnitTests")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/PHPParser" "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin")
 
 if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     # Debug build of codelite
@@ -36,12 +35,6 @@ else(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 endif(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 
 wxcrafter_target(
-    PhpNewClass
-    "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin/new_class.wxcp"
-    "new_class.cpp"
-    "new_class.hpp")
-
-wxcrafter_target(
     PhpUi
     "${CMAKE_CURRENT_SOURCE_DIR}/php-plugin/php_ui.wxcp"
     "php_ui.cpp"
@@ -51,7 +44,7 @@ file(GLOB SRCS "php-plugin/*.cpp" "php-plugin/*.c")
 file(GLOB LIBSRC "PHPParser/*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_PhpNewClass_OUTPUTS} ${WXCRAFTER_PhpUi_OUTPUTS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_PhpUi_OUTPUTS})
 
 add_library(PHPParser STATIC ${LIBSRC})
 target_link_libraries(PHPParser PRIVATE libcodelite plugin)
@@ -61,57 +54,6 @@ if(UNIX OR APPLE)
     set_target_properties(PHPParser PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
-include(CTest)
-if(BUILD_TESTING)
-    file(GLOB UNIT_TESTS_SRC "PHPParserUnitTests/*.cpp")
-    set(PHPUNITTESTS_RES_FILES "")
-    if(WIN32)
-        set(PHPUNITTESTS_RES_FILES "PHPParserUnitTests/resources.rc")
-    endif()
-    add_executable(PHPUnitTests ${UNIT_TESTS_SRC} ${PHPUNITTESTS_RES_FILES})
-
-    target_link_libraries(
-        PHPUnitTests
-        ${LINKER_OPTIONS}
-        -L"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
-        -L"${CL_LIBPATH}"
-        doctest
-        PHPParser
-        libcodelite
-        plugin
-        ${ADDITIONAL_LIBRARIES}
-        wxsqlite3)
-
-    set_target_properties(PHPUnitTests PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/PHPParserUnitTests/Tests)
-if(UNIX AND NOT APPLE)
-    set_target_properties(PHPUnitTests PROPERTIES
-        SKIP_BUILD_RPATH FALSE
-        BUILD_WITH_INSTALL_RPATH FALSE)
-endif(UNIX AND NOT APPLE)
-if(MINGW)
-  execute_process(
-    COMMAND sh -c
-            'ls ${WXWIN}/lib/clang*_dll/wxmsw*u_clang*custom.dll|tail -1'
-    OUTPUT_VARIABLE WXDLL
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-  if(NOT WXDLL)
-    message(FATAL_ERROR "Could not locate wxWidgets DLL")
-  endif()
-
-  # Copy dlls near the executable
-  add_custom_command(TARGET PHPUnitTests
-    POST_BUILD
-    COMMAND cmake -E copy_if_different ${WXDLL} $<TARGET_FILE_DIR:PHPUnitTests>
-    COMMAND_EXPAND_LISTS)
-  add_custom_command(TARGET PHPUnitTests
-    POST_BUILD
-    COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:PHPUnitTests> $<TARGET_FILE_DIR:PHPUnitTests>
-    COMMAND_EXPAND_LISTS)
-endif(MINGW)
-    doctest_discover_tests(PHPUnitTests WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/PHPParserUnitTests/Tests)
-endif(BUILD_TESTING)
-
 set(ADDITIONAL_LIBRARIES "")
 if(UNIX)
     set(ADDITIONAL_LIBRARIES "-lutil")
@@ -119,8 +61,7 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_PhpNewClass_OUTPUTDIR}" "${WXCRAFTER_PhpUI_OUTPUTDIR}")
+target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_PhpUi_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} PHPParser libcodelite plugin)
 # Installation destination
 cl_install_plugin(${PLUGIN_NAME})
-cl_install_file_shared("${CL_SRC_ROOT}/Runtime/PHP.zip")

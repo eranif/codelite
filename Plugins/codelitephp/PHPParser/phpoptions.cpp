@@ -1,8 +1,6 @@
 #include "phpoptions.h"
 
 #include "cl_standard_paths.h"
-#include "codelite_events.h"
-#include "event_notifier.h"
 #include "fileutils.h"
 #include "json_utils.h"
 
@@ -81,10 +79,5 @@ PhpOptions& PhpOptions::Save()
 {
     clConfig config("php-general.conf");
     config.WriteItem(*this);
-
-    // Notify that the PHP settings were modified
-    clCommandEvent event(wxEVT_PHP_SETTINGS_CHANGED);
-    EventNotifier::Get()->AddPendingEvent(event);
-
     return *this;
 }

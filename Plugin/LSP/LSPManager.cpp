@@ -33,6 +33,8 @@
 
 #include "assistant/common/magic_enum.hpp"
 
+#include <algorithm>
+#include <numeric>
 #include <thread>
 #include <wx/app.h>
 #include <wx/arrstr.h>
@@ -163,6 +165,7 @@ Manager::Manager()
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &Manager::OnDocumentSymbolsForHighlight, this);
     Bind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
     Bind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
+    Bind(wxEVT_LSP_ON_TYPE_FORMATTED, &Manager::OnTypeFormatted, this);
 
     // Global accelerators
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindSymbol, this, XRCID("lsp_find_symbol"));
@@ -205,6 +208,7 @@ Manager::~Manager()
     Unbind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &Manager::OnDocumentSymbolsForHighlight, this);
     Unbind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
+    Unbind(wxEVT_LSP_ON_TYPE_FORMATTED, &Manager::OnTypeFormatted, this);
 
     if (m_quick_outline_dlg) {
         m_quick_outline_dlg->Destroy();
@@ -245,6 +249,18 @@ void Manager::ShowOutlineView(IEditor* editor)
         }
     };
     RequestSymbolsForEditor(editor, std::move(cb));
+}
+
+bool Manager::GenerateDocBlock(IEditor* editor)
+{
+    CHECK_PTR_RET_FALSE(editor);
+    auto server = GetServerForEditor(*editor);
+    if (server == nullptr || !server->SendOnTypeFormattingRequest(*editor, "\n")) {
+        return false;
+    }
+    // the reply arrives later, see OnTypeFormatted()
+    m_pendingDocBlocks[editor->GetRemotePathOrLocal()] = std::hash<wxString>{}(editor->GetEditorText());
+    return true;
 }
 
 void Manager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind kind)
@@ -1691,6 +1707,88 @@ void Manager::OnApplyEdits(LSPEvent& event)
     auto server = GetServerByName(event.GetServerName());
     CHECK_PTR_RET(server);
     server->SendApplyEditResult(*event.GetRequestId(), applied, failure_reason);
+}
+
+void Manager::OnTypeFormatted(LSPEvent& event)
+{
+    event.Skip();
+    auto where = m_pendingDocBlocks.find(event.GetFileName());
+    if (where == m_pendingDocBlocks.end()) {
+        return;
+    }
+    size_t sent_text_hash = where->second;
+    m_pendingDocBlocks.erase(where);
+
+    IEditor* editor = FindEditor(event.GetFileName());
+    CHECK_PTR_RET(editor);
+
+    // the edits are for the text that was sent to the server. Drop them if the user typed on
+    if (std::hash<wxString>{}(editor->GetEditorText()) != sent_text_hash) {
+        return;
+    }
+
+    if (event.GetChanges().empty() || event.GetChanges().front().edits.empty()) {
+        return;
+    }
+    const auto& edits = event.GetChanges().front().edits;
+
+    // The docblock is the edit that covers the caret line. Edits above it (for example a `use` statement for a
+    // `@throws` tag) move it down
+    auto ctrl = editor->GetCtrl();
+    int caret_line = ctrl->GetCurrentLine();
+    std::optional<int> block_line;
+    for (const auto& edit : edits) {
+        const auto& range = edit.GetRange();
+        if (range.GetStart().GetLine() <= caret_line && caret_line <= range.GetEnd().GetLine()) {
+            block_line = range.GetStart().GetLine();
+            break;
+        }
+    }
+
+    // Apply the edits from the end of the file to the start, so an edit does not move the ranges of the edits that
+    // are applied after it. Edits that start at the same position are applied last one first, so they end up in the
+    // order the server sent them
+    std::vector<size_t> order(edits.size());
+    std::iota(order.begin(), order.end(), 0);
+    std::ranges::sort(order, [&edits](size_t a, size_t b) {
+        const auto& start_a = edits[a].GetRange().GetStart();
+        const auto& start_b = edits[b].GetRange().GetStart();
+        if (start_a != start_b) {
+            return start_b < start_a;
+        }
+        return b < a;
+    });
+
+    int lines_added_above = 0;
+    ctrl->BeginUndoAction();
+    for (size_t index : order) {
+        const auto& range = edits[index].GetRange();
+        wxString text = edits[index].GetNewText();
+        text.Replace("\r\n", "\n");
+        auto lines = ::wxStringTokenize(text, "\n", wxTOKEN_RET_EMPTY_ALL);
+        if (block_line.has_value() && range.GetEnd().GetLine() < *block_line) {
+            lines_added_above +=
+                static_cast<int>(lines.size()) - 1 - (range.GetEnd().GetLine() - range.GetStart().GetLine());
+        }
+        editor->SelectRange(range);
+        editor->ReplaceSelection(StringUtils::clJoinLinesWithEOL(lines, editor->GetEOL()));
+    }
+    ctrl->EndUndoAction();
+    editor->NotifyTextUpdated();
+
+    if (!block_line.has_value()) {
+        return;
+    }
+
+    // Put the caret on the empty description line, or at the end of the `/**` line when there is none
+    int line = *block_line + lines_added_above;
+    wxString next_line = ctrl->GetLine(line + 1);
+    next_line.Trim().Trim(false);
+    if (next_line == "*") {
+        ++line;
+    }
+    editor->SetCaretAt(ctrl->GetLineEndPosition(line));
+    ctrl->ChooseCaretX();
 }
 
 bool Manager::ApplyEdits(const LSP::WorkspaceEditChangeList& changes, bool prompt, wxString* failure_reason)

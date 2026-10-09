@@ -189,6 +189,49 @@ void ContextBase::OnUserTypedXChars(int pos)
     LSP::Manager::GetInstance().CodeComplete(&GetCtrl(), LSP::CompletionItem::kTriggerKindInvoked);
 }
 
+bool ContextBase::CloseDocBlock(int startPos)
+{
+    clEditor& rCtrl = GetCtrl();
+    int line = rCtrl.GetCurrentLine();
+
+    // only on a new empty line
+    wxString lineText = rCtrl.GetTextRange(rCtrl.PositionFromLine(line), rCtrl.GetLineEndPosition(line));
+    if (!lineText.Trim().Trim(false).empty()) {
+        return false;
+    }
+
+    // the block is already closed when the next line that is not empty starts with "*"
+    for (int i = line + 1; i < rCtrl.GetLineCount(); ++i) {
+        wxString text = rCtrl.GetLine(i);
+        text.Trim().Trim(false);
+        if (text.empty()) {
+            continue;
+        }
+        if (text.StartsWith("*")) {
+            return false;
+        }
+        break;
+    }
+
+    int lineStartPos = rCtrl.PositionFromLine(line);
+    wxString whitespace = rCtrl.GetTextRange(rCtrl.PositionFromLine(rCtrl.LineFromPos(startPos)), startPos);
+    if (!wxString{whitespace}.Trim().empty()) {
+        return false; // there is code before the "/**"
+    }
+    wxString starLine = whitespace + " * ";
+
+    rCtrl.BeginUndoAction();
+    rCtrl.SetTargetStart(lineStartPos);
+    rCtrl.SetTargetEnd(rCtrl.GetLineEndPosition(line));
+    rCtrl.ReplaceTarget(starLine + rCtrl.GetEolString() + whitespace + " */");
+    rCtrl.EndUndoAction();
+    rCtrl.SetCaretAt(lineStartPos + starLine.length());
+    rCtrl.ChooseCaretX();
+
+    LSP::Manager::GetInstance().GenerateDocBlock(&rCtrl);
+    return true;
+}
+
 void ContextBase::AutoAddComment()
 {
     clEditor& rCtrl = GetCtrl();
@@ -269,6 +312,10 @@ void ContextBase::AutoAddComment()
                         }
                     }
                     rCtrl.EndUndoAction();
+                    return;
+                }
+
+                if (textTyped == "/**" && CloseDocBlock(startPos)) {
                     return;
                 }
             }

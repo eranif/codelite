@@ -22,7 +22,12 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
 #endif
 
 NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clAuiBook* book)
-    : NotebookNavigationDlgBase(parent)
+    : NotebookNavigationDlgBase(parent,
+                                wxID_ANY,
+                                wxEmptyString,
+                                wxDefaultPosition,
+                                parent ? parent->FromDIP(wxSize(400, 200)) : wxSize(400, 200),
+                                wxBORDER_SIMPLE)
     , m_aui_notebook(book)
     , m_selection(wxNOT_FOUND)
 {

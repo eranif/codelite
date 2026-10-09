@@ -30,10 +30,16 @@
 
 class ContextPhp : public ContextGeneric
 {
+    bool m_eventsBound = false;
+
 public:
     ContextPhp();
     explicit ContextPhp(clEditor* Editor);
-    ~ContextPhp() override = default;
+    ~ContextPhp() override;
+
+protected:
+    void OnCommentSelection(wxCommandEvent& event);
+    void OnCommentLine(wxCommandEvent& event);
 
 public:
     bool IsStringTriggerCodeComplete(const wxString& str) const override;

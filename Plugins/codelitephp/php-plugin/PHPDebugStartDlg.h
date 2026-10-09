@@ -25,6 +25,7 @@
 
 #ifndef PHPDEBUGSTARTDLG_H
 #define PHPDEBUGSTARTDLG_H
+#include "imanager.h"
 #include "php_project_settings_data.h"
 #include "php_ui.hpp"
 

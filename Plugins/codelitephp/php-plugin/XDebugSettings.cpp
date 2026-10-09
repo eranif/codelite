@@ -3,8 +3,6 @@
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "JSON.h"
 #include "clWorkspaceManager.h"
-#include "php_workspace.h"
-#include "ssh_workspace_settings.h"
 
 #include <memory>
 
@@ -27,15 +25,12 @@ void WriteProperty(const wxFileName& file, const wxString& name, const JSONItem&
 
 bool XDebugSettings::IsActive()
 {
-    if (PHPWorkspace::Get()->IsOpen()) {
-        return true;
-    }
     return GetSettingsFile().IsOk() && clWorkspaceManager::Get().GetWorkspace()->GetDebuggerName() == DEBUGGER_NAME;
 }
 
 wxFileName XDebugSettings::GetSettingsFile()
 {
-    if (PHPWorkspace::Get()->IsOpen() || !clWorkspaceManager::Get().IsWorkspaceOpened()) {
+    if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
         return {};
     }
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
@@ -79,41 +74,23 @@ bool XDebugSettings::Load()
     m_ok = false;
     m_data = {};
     m_fileMapping.clear();
-    m_projectName.clear();
-    m_file.Clear();
 
-    if (PHPWorkspace::Get()->IsOpen()) {
-        PHPProject::Ptr_t project = PHPWorkspace::Get()->GetActiveProject();
-        if (!project) {
-            return false;
-        }
-        m_projectName = project->GetName();
-        m_data = project->GetSettings();
-
-        SSHWorkspaceSettings sftpSettings;
-        sftpSettings.Load();
-        if (!sftpSettings.GetRemoteFolder().IsEmpty() && sftpSettings.IsRemoteUploadEnabled()) {
-            m_fileMapping.insert({PHPWorkspace::Get()->GetFilename().GetPath(), sftpSettings.GetRemoteFolder()});
-        }
-
+    m_file = GetSettingsFile();
+    if (!m_file.IsOk()) {
+        return false;
+    }
+    JSON root(m_file);
+    JSONItem settings = root.toElement().namedObject("settings");
+    if (settings.isOk()) {
+        m_data.FromJSON(settings);
     } else {
-        m_file = GetSettingsFile();
-        if (!m_file.IsOk()) {
-            return false;
-        }
-        JSON root(m_file);
-        JSONItem settings = root.toElement().namedObject("settings");
-        if (settings.isOk()) {
-            m_data.FromJSON(settings);
-        } else {
-            m_data.SetWorkingDirectory(clWorkspaceManager::Get().GetWorkspace()->GetDir());
-        }
+        m_data.SetWorkingDirectory(clWorkspaceManager::Get().GetWorkspace()->GetDir());
+    }
 
-        if (clFileSystemWorkspace::Get().IsOpen()) {
-            auto config = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
-            if (config && config->IsRemoteTargetEnabled() && !config->GetRemoteFolder().IsEmpty()) {
-                m_fileMapping.insert({clFileSystemWorkspace::Get().GetDir(), config->GetRemoteFolder()});
-            }
+    if (clFileSystemWorkspace::Get().IsOpen()) {
+        auto config = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
+        if (config && config->IsRemoteTargetEnabled() && !config->GetRemoteFolder().IsEmpty()) {
+            m_fileMapping.insert({clFileSystemWorkspace::Get().GetDir(), config->GetRemoteFolder()});
         }
     }
 
@@ -130,14 +107,5 @@ void XDebugSettings::Save()
     if (!m_ok) {
         return;
     }
-
-    if (!m_projectName.IsEmpty()) {
-        PHPProject::Ptr_t project = PHPWorkspace::Get()->GetProject(m_projectName);
-        if (project) {
-            project->GetSettings() = m_data;
-            project->Save();
-        }
-    } else {
-        WriteProperty(m_file, "settings", m_data.ToJSON());
-    }
+    WriteProperty(m_file, "settings", m_data.ToJSON());
 }

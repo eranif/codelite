@@ -1,13 +1,11 @@
 #include "xdebugbreakpointsmgr.h"
 
-#include "PHPUserWorkspace.h"
 #include "XDebugManager.h"
 #include "XDebugSettings.h"
 #include "bookmark_manager.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "php_workspace.h"
 #include "plugin.h"
 #include "xdebugevent.h"
 
@@ -111,7 +109,6 @@ void XDebugBreakpointsMgr::OnWorkspaceClosed(clWorkspaceEvent& e)
     e.Skip();
 
     // The breakpoints are saved on every change
-    m_phpWorkspacePath.Clear();
     m_settingsFile.Clear();
     m_breakpoints.clear();
 }
@@ -119,17 +116,8 @@ void XDebugBreakpointsMgr::OnWorkspaceClosed(clWorkspaceEvent& e)
 void XDebugBreakpointsMgr::OnWorkspaceOpened(clWorkspaceEvent& e)
 {
     e.Skip();
-    m_phpWorkspacePath.Clear();
-    m_settingsFile.Clear();
-
-    if (PHPWorkspace::Get()->IsOpen()) {
-        m_phpWorkspacePath = PHPWorkspace::Get()->GetFilename().GetFullPath();
-        PHPUserWorkspace userWorkspace(m_phpWorkspacePath);
-        m_breakpoints = userWorkspace.Load().GetBreakpoints();
-    } else {
-        m_settingsFile = XDebugSettings::GetSettingsFile();
-        m_breakpoints = XDebugSettings::LoadBreakpoints(m_settingsFile);
-    }
+    m_settingsFile = XDebugSettings::GetSettingsFile();
+    m_breakpoints = XDebugSettings::LoadBreakpoints(m_settingsFile);
 }
 
 void XDebugBreakpointsMgr::OnEditorChanged(wxCommandEvent& e)
@@ -180,10 +168,7 @@ void XDebugBreakpointsMgr::DeleteAllBreakpoints()
 void XDebugBreakpointsMgr::Save()
 {
     // Save the breakpoints to the file system
-    if (!m_phpWorkspacePath.IsEmpty()) {
-        PHPUserWorkspace userWorkspace(m_phpWorkspacePath);
-        userWorkspace.Load().SetBreakpoints(m_breakpoints).Save();
-    } else if (m_settingsFile.IsOk()) {
+    if (m_settingsFile.IsOk()) {
         XDebugSettings::SaveBreakpoints(m_settingsFile, m_breakpoints);
     }
 }

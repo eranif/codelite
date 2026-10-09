@@ -43,7 +43,6 @@ protected:
     wxString m_workingDirectory;
     wxString m_projectURL;
     wxString m_includePath;
-    wxString m_ccIncludePath;
     wxString m_phpIniFile;
     size_t m_flags;
     wxStringMap_t m_fileMapping;
@@ -101,8 +100,6 @@ public:
 
     void SetUseSystemBrowser(bool b) { return EnableFlag(kOpt_UseSystemDefaultBrowser, b); }
 
-    void SetCcIncludePath(const wxString& ccIncludePath) { this->m_ccIncludePath = ccIncludePath; }
-    const wxString& GetCcIncludePath() const { return m_ccIncludePath; }
     void SetArgs(const wxString& args) { this->m_args = args; }
     void SetIncludePath(const wxString& includePath) { this->m_includePath = includePath; }
     void SetIndexFile(const wxString& indexFile) { this->m_indexFile = indexFile; }
@@ -113,7 +110,6 @@ public:
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetIncludePath() const { return m_includePath; }
     wxArrayString GetIncludePathAsArray() const;
-    wxArrayString GetCCIncludePathAsArray() const;
 
     const wxString& GetIndexFile() const { return m_indexFile; }
     const wxString& GetPhpExe() const { return m_phpExe; }

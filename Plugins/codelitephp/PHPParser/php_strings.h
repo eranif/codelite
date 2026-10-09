@@ -32,13 +32,4 @@
 
 #define FRAME static_cast<wxFrame*>(static_cast<wxApp*>(wxApp::GetInstance())->GetTopWindow())
 
-namespace PHPStrings
-{
-
-const wxString PHP_WORKSPACE_EXT = wxT("workspace");
-const wxString PHP_WORKSPACE_VIEW_TITLE = wxT("PHP");
-const wxString PHP_WORKSPACE_VIEW_LABEL = _("PHP");
-
-}; // namespace PHPStrings
-
 #endif // PHP_STRINGS_H

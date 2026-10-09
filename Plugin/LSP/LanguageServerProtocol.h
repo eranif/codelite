@@ -83,6 +83,8 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
     bool m_displayDiagnostics = true;
     int m_lastCompletionRequestId = wxNOT_FOUND;
     wxArrayString m_semanticTokensTypes;
+    /// the characters that trigger `textDocument/onTypeFormatting`
+    wxStringSet_t m_onTypeFormattingTriggers;
     LSPOnConnectedCallback_t m_onServerStartedCallback = nullptr;
     bool m_incrementalChangeSupported = false;
 
@@ -311,6 +313,13 @@ public:
     void SendCodeActionResolveRequest(const wxString& filepath, const LSP::CodeAction& action);
 
     /**
+     * @brief tell the server that `ch` was typed at the caret (`textDocument/onTypeFormatting`). The reply fires
+     * `wxEVT_LSP_ON_TYPE_FORMATTED`
+     * @return false when the request was not sent (the server does not format on this character)
+     */
+    bool SendOnTypeFormattingRequest(IEditor& editor, const wxString& ch);
+
+    /**
      * @brief ask the server for semantic tokens
      */
     void SendSemanticTokensRequest(IEditor& editor);
@@ -329,6 +338,7 @@ public:
     bool IsRenameSupported() const;
     bool IsCodeActionSupported() const;
     bool IsCodeActionResolveSupported() const;
+    bool IsOnTypeFormattingSupported(const wxString& ch) const;
 };
 
 #endif // CLLANGUAGESERVER_H

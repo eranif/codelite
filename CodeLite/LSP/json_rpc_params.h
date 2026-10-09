@@ -323,5 +323,31 @@ public:
     const wxString& GetText() const { return m_text; }
 };
 
+//===----------------------------------------------------------------------------------
+// DocumentOnTypeFormattingParams
+//===----------------------------------------------------------------------------------
+/// The params of `textDocument/onTypeFormatting`
+class WXDLLIMPEXP_CL DocumentOnTypeFormattingParams : public TextDocumentPositionParams
+{
+    wxString m_ch;
+    size_t m_tabSize = 4;
+    bool m_insertSpaces = true;
+
+public:
+    DocumentOnTypeFormattingParams() = default;
+    ~DocumentOnTypeFormattingParams() override = default;
+    bool operator==(const DocumentOnTypeFormattingParams&) const = default;
+
+    void FromJSON(const JSONItem& json) override;
+    nlohmann::json ToJSON() const override;
+
+    void SetCh(const wxString& ch) { this->m_ch = ch; }
+    const wxString& GetCh() const { return m_ch; }
+    void SetTabSize(size_t tabSize) { this->m_tabSize = tabSize; }
+    size_t GetTabSize() const { return m_tabSize; }
+    void SetInsertSpaces(bool insertSpaces) { this->m_insertSpaces = insertSpaces; }
+    bool IsInsertSpaces() const { return m_insertSpaces; }
+};
+
 } // namespace LSP
 #endif // JSONRPC_PARAMS_H

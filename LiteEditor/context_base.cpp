@@ -101,6 +101,23 @@ bool ContextBase::GetHyperlinkRange(int& start, int& end)
     }
     wxPoint clientPt = rCtrl.ScreenToClient(pt);
     int mouse_pos = rCtrl.PositionFromPointClose(clientPt.x, clientPt.y);
+    if (mouse_pos == wxSTC_INVALID_POSITION) {
+        return false;
+    }
+
+    // a document link from the language server (for example the path of an `include` statement), also in a string
+    auto link = LSP::Manager::GetInstance().GetDocumentLinkAt(&rCtrl, mouse_pos);
+    if (link.has_value()) {
+        auto getPos = [&rCtrl](const LSP::Position& pos) {
+            return rCtrl.PositionRelative(rCtrl.PositionFromLine(pos.GetLine()), pos.GetCharacter());
+        };
+        start = getPos(link->GetRange().GetStart());
+        end = getPos(link->GetRange().GetEnd());
+        if (start < end) {
+            return true;
+        }
+    }
+
     if (!IsCommentOrString(mouse_pos)) {
         // get tag as hyperlink
         start = rCtrl.WordStartPos(mouse_pos, true);

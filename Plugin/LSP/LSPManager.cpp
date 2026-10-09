@@ -139,6 +139,7 @@ Manager::Manager()
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &Manager::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &Manager::OnWorkspaceOpen, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &Manager::OnEditorClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &Manager::OnAllEditorsClosed, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &Manager::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &Manager::OnGoinDown, this);
 
@@ -166,12 +167,14 @@ Manager::Manager()
     Bind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
     Bind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
     Bind(wxEVT_LSP_ON_TYPE_FORMATTED, &Manager::OnTypeFormatted, this);
+    Bind(wxEVT_LSP_DOCUMENT_LINKS, &Manager::OnDocumentLinks, this);
 
     // Global accelerators
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindSymbol, this, XRCID("lsp_find_symbol"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindReferences, this, XRCID("lsp_find_references"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnRenameSymbol, this, XRCID("lsp_rename_symbol"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnCodeActions, this, XRCID("lsp_code_actions"));
+    wxTheApp->Bind(wxEVT_MENU, &Manager::OnOpenDocumentLink, this, XRCID("lsp_open_document_link"));
 
     m_remoteHelper.reset(new CodeLiteRemoteHelper);
 }
@@ -182,6 +185,7 @@ Manager::~Manager()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &Manager::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &Manager::OnWorkspaceOpen, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &Manager::OnEditorClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &Manager::OnAllEditorsClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &Manager::OnActiveEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_FILES_SCANNED, &Manager::OnWorkspaceScanCompleted, this);
     EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &Manager::OnCompileCommandsGenerated, this);
@@ -209,6 +213,7 @@ Manager::~Manager()
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &Manager::OnDocumentSymbolsForHighlight, this);
     Unbind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
     Unbind(wxEVT_LSP_ON_TYPE_FORMATTED, &Manager::OnTypeFormatted, this);
+    Unbind(wxEVT_LSP_DOCUMENT_LINKS, &Manager::OnDocumentLinks, this);
 
     if (m_quick_outline_dlg) {
         m_quick_outline_dlg->Destroy();
@@ -330,7 +335,154 @@ void Manager::FindSymbol(IEditor* editor)
         return;
     }
 
+    // A document link (for example the file of an `include` statement) wins over the definition
+    if (server->IsDocumentLinkSupported()) {
+        int pos = editor->GetSelection().IsEmpty() ? editor->GetCurrentPosition() : editor->GetSelectionStart();
+        LSP::Position position{editor->LineFromPos(pos), editor->GetColumnInChars(pos)};
+        auto iter = m_documentLinks.find(editor->GetRemotePathOrLocal());
+        if (iter == m_documentLinks.end() || iter->second.modification_count != editor->GetModificationCount()) {
+            // The links are out of date. The reply opens the link, or goes to the definition
+            if (RequestDocumentLinks(editor, position)) {
+                return;
+            }
+        } else {
+            for (const auto& link : iter->second.links) {
+                if (link.Contains(position)) {
+                    OpenDocumentLink(link);
+                    return;
+                }
+            }
+        }
+    }
+
     server->FindDefinition(*editor);
+}
+
+const std::vector<LSP::DocumentLink>* Manager::GetDocumentLinks(IEditor* editor)
+{
+    if (editor == nullptr) {
+        return nullptr;
+    }
+    auto server = GetServerForEditor(*editor);
+    if (server == nullptr || !server->IsDocumentLinkSupported()) {
+        return nullptr;
+    }
+
+    const wxString path = editor->GetRemotePathOrLocal();
+    wxUint64 modification_count = editor->GetModificationCount();
+    auto iter = m_documentLinks.find(path);
+    if (iter != m_documentLinks.end() && iter->second.modification_count == modification_count) {
+        return &iter->second.links;
+    }
+
+    // out of date: ask once per text
+    auto pending = m_pendingDocumentLinks.find(path);
+    if (pending == m_pendingDocumentLinks.end() || pending->second != modification_count) {
+        RequestDocumentLinks(editor);
+    }
+    return nullptr;
+}
+
+std::optional<LSP::DocumentLink> Manager::GetDocumentLinkAt(IEditor* editor, int pos)
+{
+    const auto* links = GetDocumentLinks(editor);
+    if (links == nullptr) {
+        return std::nullopt;
+    }
+
+    LSP::Position position{editor->LineFromPos(pos), editor->GetColumnInChars(pos)};
+    for (const auto& link : *links) {
+        if (link.Contains(position)) {
+            return link;
+        }
+    }
+    return std::nullopt;
+}
+
+void Manager::OpenDocumentLink(const LSP::DocumentLink& link)
+{
+    wxString target = link.GetTarget();
+    if (target.StartsWith("http://") || target.StartsWith("https://")) {
+        ::wxLaunchDefaultBrowser(target);
+        return;
+    }
+
+    if (!target.StartsWith("file://")) {
+        LSP_WARNING() << "Can not open document link:" << target << endl;
+        return;
+    }
+
+    // A file link may end with a line number: `#L12` or `#12`
+    int line = 0;
+    wxString fragment = target.AfterLast('#');
+    if (fragment != target) {
+        target = target.BeforeLast('#');
+        fragment.StartsWith("L", &fragment);
+        long number = 0;
+        if (fragment.BeforeFirst(',').ToLong(&number) && number > 0) {
+            line = number - 1;
+        }
+    }
+    OpenLocation(LSP::Location{target, LSP::Range{LSP::Position{line, 0}, LSP::Position{line, 0}}});
+}
+
+bool Manager::RequestDocumentLinks(IEditor* editor, const std::optional<LSP::Position>& openAt)
+{
+    CHECK_PTR_RET_FALSE(editor);
+    auto server = GetServerForEditor(*editor);
+    if (server == nullptr) {
+        return false;
+    }
+    auto modification_count = server->SendDocumentLinkRequest(*editor, openAt);
+    if (!modification_count.has_value()) {
+        return false;
+    }
+    m_pendingDocumentLinks[editor->GetRemotePathOrLocal()] = *modification_count;
+    return true;
+}
+
+void Manager::OnDocumentLinks(LSPEvent& event)
+{
+    event.Skip();
+    IEditor* editor = FindEditor(event.GetFileName());
+    CHECK_PTR_RET(editor);
+
+    const wxString path = editor->GetRemotePathOrLocal();
+    auto pending = m_pendingDocumentLinks.find(path);
+    if (pending != m_pendingDocumentLinks.end() && pending->second == event.GetModificationCount()) {
+        m_pendingDocumentLinks.erase(pending);
+    }
+    m_documentLinks[path] = DocumentLinks{event.GetModificationCount(), event.GetDocumentLinks()};
+
+    if (!event.GetOpenAt().has_value() || editor != clGetManager()->GetActiveEditor()) {
+        return;
+    }
+
+    // The reply to Find Symbol: open the link at the position, else go to the definition
+    if (editor->GetModificationCount() == event.GetModificationCount()) {
+        for (const auto& link : event.GetDocumentLinks()) {
+            if (link.Contains(*event.GetOpenAt())) {
+                OpenDocumentLink(link);
+                return;
+            }
+        }
+    }
+
+    auto server = GetServerForEditor(*editor);
+    CHECK_PTR_RET(server);
+    server->FindDefinition(*editor);
+}
+
+void Manager::OnOpenDocumentLink(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    auto link = GetDocumentLinkAt(editor, editor->GetCurrentPosition());
+    if (link.has_value()) {
+        OpenDocumentLink(*link);
+    }
 }
 
 void Manager::FunctionCalltip(IEditor* editor)
@@ -480,7 +632,11 @@ void Manager::OnSymbolFound(LSPEvent& event)
     } else {
         location = event.GetLocations()[0];
     }
+    OpenLocation(location);
+}
 
+void Manager::OpenLocation(const LSP::Location& location)
+{
     // Manage the browser (BACK and FORWARD) ourself
     BrowseRecord from;
     IEditor* oldEditor = clGetManager()->GetActiveEditor();
@@ -931,6 +1087,8 @@ void Manager::OnWorkspaceClosed(clWorkspaceEvent& event)
     LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
     this->StopAll();
     m_symbols_to_file_cache.clear();
+    m_documentLinks.clear();
+    m_pendingDocumentLinks.clear();
 }
 
 void Manager::OnWorkspaceOpen(clWorkspaceEvent& event)
@@ -1326,12 +1484,23 @@ void Manager::OnEditorClosed(clCommandEvent& event)
     // clear the cache for the closed file
     m_symbols_to_file_cache.erase(event.GetFileName());
     m_diagnostics.erase(event.GetFileName());
+    m_documentLinks.erase(event.GetFileName());
+    m_pendingDocumentLinks.erase(event.GetFileName());
+}
+
+void Manager::OnAllEditorsClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    m_documentLinks.clear();
+    m_pendingDocumentLinks.clear();
 }
 
 void Manager::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     UpdateNavigationBar();
+    // keep the document links up to date for the editor context menu and Ctrl-click
+    GetDocumentLinks(clGetManager()->GetActiveEditor());
 }
 
 void Manager::UpdateNavigationBar()
@@ -1916,6 +2085,9 @@ void Manager::OnFileSaved(clCommandEvent& event)
             RestartServer("rust");
         }
     }
+
+    // keep the document links up to date for the editor context menu and Ctrl-click
+    GetDocumentLinks(FindEditor(event.GetFileName()));
 }
 
 void Manager::OnGoinDown(clCommandEvent& event)

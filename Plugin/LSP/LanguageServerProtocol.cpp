@@ -9,6 +9,7 @@
 #include "LSP/DidOpenTextDocumentRequest.h"
 #include "LSP/DidSaveTextDocumentRequest.h"
 #include "LSP/DocumentFormattingRequest.hpp"
+#include "LSP/DocumentLinkRequest.hpp"
 #include "LSP/DocumentOnTypeFormattingRequest.hpp"
 #include "LSP/DocumentSymbolsRequest.hpp"
 #include "LSP/FindReferencesRequest.hpp"
@@ -758,6 +759,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
                     if (res["result"]["capabilities"]["codeActionProvider"]["resolveProvider"].toBool(false)) {
                         m_providers.insert("codeAction/resolve");
                     }
+                    CheckCapability(res, "documentLinkProvider", "textDocument/documentLink");
                     if (CheckCapability(res, "documentOnTypeFormattingProvider", "textDocument/onTypeFormatting")) {
                         auto options = res["result"]["capabilities"]["documentOnTypeFormattingProvider"];
                         m_onTypeFormattingTriggers.insert(options["firstTriggerCharacter"].toString());
@@ -1237,6 +1239,11 @@ bool LanguageServerProtocol::IsDocumentRangeFormattingSupported() const
     return IsCapabilitySupported("textDocument/rangeFormatting");
 }
 
+bool LanguageServerProtocol::IsDocumentLinkSupported() const
+{
+    return IsCapabilitySupported("textDocument/documentLink");
+}
+
 bool LanguageServerProtocol::IsIncrementalChangeSupported() const { return m_incrementalChangeSupported; }
 
 void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command)
@@ -1307,6 +1314,24 @@ bool LanguageServerProtocol::SendDocumentFormattingRequest(IEditor& editor, cons
         new LSP::DocumentFormattingRequest(GetEditorFilePath(editor), ctrl->GetTabWidth(), !ctrl->GetUseTabs(), range));
     QueueMessage(req);
     return true;
+}
+
+std::optional<wxUint64> LanguageServerProtocol::SendDocumentLinkRequest(IEditor& editor,
+                                                                        const std::optional<LSP::Position>& openAt)
+{
+    if (!IsDocumentLinkSupported() || !ShouldHandleFile(editor)) {
+        return std::nullopt;
+    }
+
+    // make sure that the server has the latest content
+    SendOpenOrChangeRequest(editor, editor.GetEditorText(), GetLanguageId(editor));
+
+    wxUint64 modification_count = editor.GetModificationCount();
+    LSP_DEBUG() << "Sending a document link request for file:" << GetEditorFilePath(editor) << endl;
+    LSP::DocumentLinkRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+        new LSP::DocumentLinkRequest(GetEditorFilePath(editor), modification_count, openAt));
+    QueueMessage(req);
+    return modification_count;
 }
 
 void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes, size_t message_id)

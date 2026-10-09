@@ -878,9 +878,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PAGE_MODIFIED_UPDATE_UI, clComman
 // 2. Set the data using event.SetEditorConfig(...) method
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_CONFIG_LOADING, clEditorConfigEvent);
 
-// Sent when PHP settings have been saved to the file system
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PHP_SETTINGS_CHANGED, clCommandEvent);
-
 // Goto Anything item was selected
 // Use: clCommandEvent::GetString to get the selected item
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GOTO_ANYTHING_SELECTED, clGotoEvent);

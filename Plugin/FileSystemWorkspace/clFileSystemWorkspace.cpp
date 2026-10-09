@@ -12,6 +12,7 @@
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceView.hpp"
 #include "clFilesCollector.h"
+#include "clPHPWorkspaceConverter.hpp"
 #include "clSFTPEvent.h"
 #include "clShellHelper.hpp"
 #include "clWorkspaceManager.h"
@@ -247,6 +248,14 @@ void clFileSystemWorkspace::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
 void clFileSystemWorkspace::OnOpenWorkspace(clCommandEvent& event)
 {
     event.Skip();
+    if (!m_settings.IsOk(event.GetFileName()) && clPHPWorkspaceConverter::IsPHPWorkspace(event.GetFileName())) {
+        // Ours, also when the conversion fails: nothing else can open a PHP workspace
+        event.Skip(false);
+        if (!DoConvertPHPWorkspace(event.GetFileName())) {
+            return;
+        }
+    }
+
     if (OpenWorkspace(event.GetFileName())) {
         event.Skip(false);
     } else {
@@ -260,6 +269,26 @@ void clFileSystemWorkspace::OnCloseWorkspace(clCommandEvent& event)
     if (CloseWorkspace()) {
         event.Skip(false);
     }
+}
+
+bool clFileSystemWorkspace::DoConvertPHPWorkspace(const wxFileName& file)
+{
+    wxArrayString warnings;
+    wxFileName backup;
+    wxString error;
+    if (!clPHPWorkspaceConverter::Convert(file, warnings, backup, error)) {
+        ::clMessageBox(_("Failed to convert the PHP workspace:\n") + error, "CodeLite", wxOK | wxICON_ERROR);
+        return false;
+    }
+
+    wxString message;
+    message << _("This PHP workspace was converted to a File System Workspace, with XDebug as its debugger.\n")
+            << _("The old workspace file was renamed to: ") << backup.GetFullPath();
+    if (!warnings.IsEmpty()) {
+        message << "\n\n" << wxJoin(warnings, '\n');
+    }
+    ::clMessageBox(message, "CodeLite", wxOK | (warnings.IsEmpty() ? wxICON_INFORMATION : wxICON_WARNING));
+    return true;
 }
 
 bool clFileSystemWorkspace::Load(const wxFileName& file)

@@ -81,6 +81,10 @@ protected:
 
 protected:
     bool Load(const wxFileName& file);
+    /**
+     * @brief convert an old PHP workspace into a File System Workspace, and tell the user about it
+     */
+    bool DoConvertPHPWorkspace(const wxFileName& file);
     void DoOpen();
     void DoClose();
     void DoClear();

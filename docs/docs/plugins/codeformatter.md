@@ -20,6 +20,23 @@ Property name | Description
 `Working directory` | CodeLite executes the formatter from this directory. [Macros][3] are allowed. By default CodeLite uses `$(WorkspacePath)`
 `Command` | the command to execute. [Macros][3] are allowed
 
+## Formatting with the language server
+---
+
+The `LSP` formatter asks the [language server][4] of the file to format it (`textDocument/formatting`).
+It has only the `Enabled`, `Format on save?` and `Supported languages` properties. It is used when:
+
+- No formatter higher in the list is enabled for the file's language
+- The file's language is in its `Supported languages` list (all languages by default)
+- A language server is running for the file, and it supports formatting
+
+To use the language server instead of a command formatter (for example `clangd` instead of `clang-format`),
+disable the command formatter. To never use the language server for a language, remove that language from the
+`LSP` formatter's `Supported languages`.
+
+The language server can only format files that are open in an editor. Formatting a whole project or folder
+does not use it.
+
 ## Upgrading CodeLite
 ---
 
@@ -75,4 +92,5 @@ with the commands taken from [`codelite-remote.json`][2] configuration file.
  [1]: /plugins/remoty
  [2]: /plugins/remoty/#remote-configuration-codelite-remotejson
  [3]: /settings/macros
+ [4]: /plugins/lsp
 

@@ -8,6 +8,7 @@
 #include "LSP/DidCloseTextDocumentRequest.h"
 #include "LSP/DidOpenTextDocumentRequest.h"
 #include "LSP/DidSaveTextDocumentRequest.h"
+#include "LSP/DocumentFormattingRequest.hpp"
 #include "LSP/DocumentSymbolsRequest.hpp"
 #include "LSP/FindReferencesRequest.hpp"
 #include "LSP/GotoDeclarationRequest.h"
@@ -756,6 +757,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
                     if (res["result"]["capabilities"]["codeActionProvider"]["resolveProvider"].toBool(false)) {
                         m_providers.insert("codeAction/resolve");
                     }
+                    CheckCapability(res, "documentFormattingProvider", "textDocument/formatting");
                     // Check for textDocumentSync capability
                     // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocumentSyncOptions
                     if (res["result"]["capabilities"]["textDocumentSync"]["change"].toInt(wxNOT_FOUND) == 2) {
@@ -1211,6 +1213,11 @@ bool LanguageServerProtocol::IsCodeActionResolveSupported() const
     return IsCapabilitySupported("codeAction/resolve");
 }
 
+bool LanguageServerProtocol::IsDocumentFormattingSupported() const
+{
+    return IsCapabilitySupported("textDocument/formatting");
+}
+
 bool LanguageServerProtocol::IsIncrementalChangeSupported() const { return m_incrementalChangeSupported; }
 
 void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command)
@@ -1244,6 +1251,23 @@ void LanguageServerProtocol::SendCodeActionResolveRequest(const wxString& filepa
             LSP::MessageWithParams::MakeRequest(new LSP::CodeActionResolveRequest(m_name, filepath, action));
         QueueMessage(req);
     }
+}
+
+bool LanguageServerProtocol::SendDocumentFormattingRequest(IEditor& editor)
+{
+    if (!IsDocumentFormattingSupported() || !ShouldHandleFile(editor)) {
+        return false;
+    }
+
+    // make sure that the server has the latest content
+    SendOpenOrChangeRequest(editor, editor.GetEditorText(), GetLanguageId(editor));
+
+    auto ctrl = editor.GetCtrl();
+    LSP_DEBUG() << "Sending `textDocument/formatting` for file:" << GetEditorFilePath(editor) << endl;
+    LSP::DocumentFormattingRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+        new LSP::DocumentFormattingRequest(GetEditorFilePath(editor), ctrl->GetTabWidth(), !ctrl->GetUseTabs()));
+    QueueMessage(req);
+    return true;
 }
 
 void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes, size_t message_id)

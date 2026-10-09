@@ -44,6 +44,11 @@ void FormatterPage::Load(std::shared_ptr<GenericFormatter> formatter)
     AddHeader(m_cur_formatter->GetShortDescription());
     AddProperty(_("Enabled"), m_cur_formatter->IsEnabled(), UPDATE_BOOL_CB(SetEnabled));
     AddProperty(_("Format on save?"), m_cur_formatter->IsFormatOnSave(), UPDATE_BOOL_CB(SetFormatOnSave));
+    if (m_cur_formatter->IsLSPFormatter()) {
+        // no command: the language server of the file does the formatting
+        AddPropertyLanguagePicker(_("Supported languages"), m_cur_formatter->GetLanguages(), UPDATE_LANGS_CB());
+        return;
+    }
     AddProperty(_("Inplace edit"), m_cur_formatter->IsInplaceFormatter(), UPDATE_BOOL_CB(SetInplaceFormatter));
     AddProperty(_("Working directory"), m_cur_formatter->GetWorkingDirectory(), UPDATE_TEXT_CB(SetWorkingDirectory));
     AddPropertyLanguagePicker(_("Supported languages"), m_cur_formatter->GetLanguages(), UPDATE_LANGS_CB());

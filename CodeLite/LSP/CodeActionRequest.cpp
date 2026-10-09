@@ -3,17 +3,35 @@
 #include "LSP/LSPEvent.h"
 #include "event_notifier.h"
 
+#include <algorithm>
+
 LSP::CodeActionRequest::CodeActionRequest(const LSP::TextDocumentIdentifier& textDocument,
                                           const LSP::Range& range,
-                                          const std::vector<LSP::Diagnostic>& diags)
+                                          const std::vector<LSP::Diagnostic>& diags,
+                                          const wxArrayString& only)
 {
     SetMethod("textDocument/codeAction");
     m_params.reset(new CodeActionParams());
     m_params->As<CodeActionParams>()->SetTextDocument(textDocument);
     m_params->As<CodeActionParams>()->SetRange(range);
     m_params->As<CodeActionParams>()->SetDiagnostics(diags);
+    m_params->As<CodeActionParams>()->SetOnly(only);
     LSP_DEBUG() << wxString::FromUTF8(ToJSON().dump(2)) << endl;
 }
+
+namespace
+{
+/// `only` is hierarchical: "quickfix" matches "quickfix" and "quickfix.foo". Actions without a kind (for example
+/// plain commands) are kept, because we can not tell what they do
+bool IsKindRequested(const wxString& kind, const wxArrayString& only)
+{
+    if (only.empty() || kind.empty()) {
+        return true;
+    }
+    return std::ranges::any_of(
+        only, [&](const wxString& requested) { return kind == requested || kind.StartsWith(requested + "."); });
+}
+} // namespace
 
 std::optional<LSPEvent> LSP::CodeActionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
@@ -33,9 +51,15 @@ std::optional<LSPEvent> LSP::CodeActionRequest::OnResponse(const LSP::ResponseMe
     auto& actions = event.GetCodeActions();
     actions.reserve(count);
 
+    // Some servers ignore `context.only`, so filter here as well
+    const auto& only = m_params->As<CodeActionParams>()->GetOnly();
     for (size_t i = 0; i < count; ++i) {
         LSP::CodeAction action;
         action.FromJSON(result_arr[i]);
+        if (!IsKindRequested(action.GetKind(), only)) {
+            LSP_DEBUG() << "Skipping code action of kind" << action.GetKind() << ":" << action.GetTitle() << endl;
+            continue;
+        }
         actions.push_back(action);
     }
 

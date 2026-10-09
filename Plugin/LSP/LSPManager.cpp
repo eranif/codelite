@@ -166,6 +166,7 @@ Manager::Manager()
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindSymbol, this, XRCID("lsp_find_symbol"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindReferences, this, XRCID("lsp_find_references"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnRenameSymbol, this, XRCID("lsp_rename_symbol"));
+    wxTheApp->Bind(wxEVT_MENU, &Manager::OnCodeActions, this, XRCID("lsp_code_actions"));
 
     m_remoteHelper.reset(new CodeLiteRemoteHelper);
 }
@@ -1057,6 +1058,7 @@ void Manager::OnSetDiagnostics(LSPEvent& event)
         LSP_DEBUG() << "Setting diagnostics for file:" << editor->GetRemotePathOrLocal() << endl;
         // always clear old markers
         editor->DelAllCompilerMarkers();
+        m_diagnostics[editor->GetRemotePathOrLocal()] = event.GetDiagnostics();
 
         for (const LSP::Diagnostic& d : event.GetDiagnostics()) {
             // LSP uses 1 based line numbers
@@ -1083,11 +1085,13 @@ void Manager::OnClearDiagnostics(LSPEvent& event)
     IEditor* editor = FindEditor(event);
     if (editor) {
         editor->DelAllCompilerMarkers();
+        m_diagnostics.erase(editor->GetRemotePathOrLocal());
     }
 }
 
 void Manager::ClearAllDiagnostics()
 {
+    m_diagnostics.clear();
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
     for (IEditor* editor : editors) {
@@ -1303,6 +1307,7 @@ void Manager::OnEditorClosed(clCommandEvent& event)
     event.Skip();
     // clear the cache for the closed file
     m_symbols_to_file_cache.erase(event.GetFileName());
+    m_diagnostics.erase(event.GetFileName());
 }
 
 void Manager::OnActiveEditorChanged(wxCommandEvent& event)
@@ -1354,7 +1359,41 @@ void Manager::OnMarginClicked(clEditorEvent& event)
     auto server = GetServerForEditor(*editor);
 
     CHECK_PTR_RET(server);
-    server->SendCodeActionRequest(*editor, {cd->diagnostic});
+    // only offer fixes for the clicked diagnostic, not refactorings
+    wxArrayString only;
+    only.Add("quickfix");
+    server->SendCodeActionRequest(*editor, cd->diagnostic.GetRange(), {cd->diagnostic}, only);
+}
+
+void Manager::OnCodeActions(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    auto server = GetServerForEditor(*editor);
+    CHECK_PTR_RET(server);
+
+    // the selection, or the caret position when nothing is selected
+    auto ctrl = editor->GetCtrl();
+    int start_pos = ctrl->GetSelectionStart();
+    int end_pos = ctrl->GetSelectionEnd();
+    LSP::Range range{
+        LSP::Position{ctrl->LineFromPosition(start_pos), editor->GetColumnInChars(start_pos)},
+        LSP::Position{ctrl->LineFromPosition(end_pos), editor->GetColumnInChars(end_pos)},
+    };
+
+    // send the diagnostics that overlap the range, so the server can offer fixes for them
+    std::vector<LSP::Diagnostic> diags;
+    auto iter = m_diagnostics.find(editor->GetRemotePathOrLocal());
+    if (iter != m_diagnostics.end()) {
+        for (const auto& diag : iter->second) {
+            if (diag.GetRange().GetStart() <= range.GetEnd() && range.GetStart() <= diag.GetRange().GetEnd()) {
+                diags.push_back(diag);
+            }
+        }
+    }
+    server->SendCodeActionRequest(*editor, range, diags);
 }
 
 void Manager::OnCodeActionAvailable(LSPEvent& event)
@@ -1373,12 +1412,13 @@ void Manager::OnCodeActionAvailable(LSPEvent& event)
 
     // prompt the user
     if (actions.empty()) {
+        clGetManager()->SetStatusMessage(_("No code actions available"), 3);
         return;
     }
 
     const LSP::CodeAction* action_to_apply = nullptr;
     if (actions.size() > 1) {
-        // multiple fixes available, choose one
+        // multiple actions available, choose one
         wxArrayString choices;
         choices.reserve(actions.size());
         int preferred = wxNOT_FOUND;
@@ -1389,20 +1429,23 @@ void Manager::OnCodeActionAvailable(LSPEvent& event)
             choices.Add(action->GetTitle());
         }
 
-        // prompt the user to choose a fix
-        int selection = wxGetSingleChoiceIndex(
-            _("Choose a fix to apply:"), "CodeLite", choices, std::max(preferred, 0), EventNotifier::Get()->TopFrame());
+        // prompt the user to choose an action
+        int selection = wxGetSingleChoiceIndex(_("Choose a code action to apply:"),
+                                               "CodeLite",
+                                               choices,
+                                               std::max(preferred, 0),
+                                               EventNotifier::Get()->TopFrame());
         if (selection == wxNOT_FOUND) {
             return; // user hit cancel
         }
         action_to_apply = actions[selection];
     } else {
         wxRichMessageDialog dlg(wxTheApp->GetTopWindow(),
-                                _("A fix is available"),
+                                _("A code action is available"),
                                 "CodeLite",
                                 wxOK | wxCANCEL | wxOK_DEFAULT | wxCENTER | wxICON_QUESTION);
         dlg.SetExtendedMessage(actions[0]->GetTitle());
-        dlg.SetOKCancelLabels(_("Fix it!"), _("Cancel"));
+        dlg.SetOKCancelLabels(_("Apply"), _("Cancel"));
         if (dlg.ShowModal() != wxID_OK) {
             return;
         }

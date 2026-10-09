@@ -1172,7 +1172,8 @@ void clMainFrame::AddKeyboardAccelerators()
     mgr->AddAccelerator(_("Language Server"),
                         {{"lsp_find_symbol", _("Find Symbol")},
                          {"lsp_rename_symbol", _("Rename Symbol")},
-                         {"lsp_find_references", _("Find References")}});
+                         {"lsp_find_references", _("Find References")},
+                         {"lsp_code_actions", _("Code Actions..."), "Alt-ENTER"}});
     mgr->AddAccelerator(_("Search | Bookmarks"),
                         {
                             {"toggle_bookmark", _("Toggle Bookmark"), "Ctrl-B"},

@@ -156,9 +156,16 @@ nlohmann::json CodeActionParams::ToJSON() const
     for (const auto& diag : m_diagnostics) {
         diags_arr.push_back(diag.ToJSON());
     }
-    return nlohmann::json{{"textDocument", m_textDocument.ToJSON()},
-                          {"range", m_range.ToJSON()},
-                          {"context", nlohmann::json{{"diagnostics", std::move(diags_arr)}}}};
+    nlohmann::json context{{"diagnostics", std::move(diags_arr)}};
+    if (!m_only.empty()) {
+        auto only_arr = nlohmann::json::array();
+        for (const auto& kind : m_only) {
+            only_arr.push_back(kind.ToStdString(wxConvUTF8));
+        }
+        context["only"] = std::move(only_arr);
+    }
+    return nlohmann::json{
+        {"textDocument", m_textDocument.ToJSON()}, {"range", m_range.ToJSON()}, {"context", std::move(context)}};
 }
 
 //===----------------------------------------------------------------------------------

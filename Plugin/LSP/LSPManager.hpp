@@ -287,6 +287,7 @@ protected:
     void OnFindSymbol(wxCommandEvent& event);
     void OnRenameSymbol(wxCommandEvent& event);
     void OnFindReferences(wxCommandEvent& event);
+    void OnCodeActions(wxCommandEvent& event);
 
     void ShowQuickOutlineDialog(const LSPEvent& event);
 
@@ -315,6 +316,8 @@ protected:
     std::unordered_map<wxString, LanguageServerProtocol::Ptr_t> m_servers;
     std::unordered_map<wxString, CrashInfo> m_restartCounters;
     std::unordered_map<wxString, std::vector<LSP::SymbolInformation>> m_symbols_to_file_cache;
+    /// the last diagnostics per file (remote or local path). The editor keeps only one per line
+    std::unordered_map<wxString, std::vector<LSP::Diagnostic>> m_diagnostics;
     LSPOutlineViewDlg* m_quick_outline_dlg{nullptr};
     std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
     bool m_shutdown_in_progress{false};

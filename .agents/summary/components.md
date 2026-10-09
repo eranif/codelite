@@ -11,15 +11,19 @@
 | `sdk/` | Shared SDK/libraries | Includes data layer and other reusable code. |
 
 ## Feature modules
-- `Debugger/`: debugger integration and workflows.
-- `DatabaseExplorer/`: database browsing and related tooling.
-- `LanguageServer/`: language server integration.
-- `SmartCompletion/`: code completion and symbol assistance.
-- `SpellChecker/`: spelling support in the editor.
-- `Subversion2/`, `git/`: version control integrations.
-- `QmakePlugin/`, `CMakePlugin/`, `wxcrafter/`, `wxformbuilder/`: build and GUI tooling integrations.
-- `Rust/`, `PHPRefactoring/`, `codelitephp/`: language-specific tooling.
-- `ExternalTools/`, `ContinuousBuild/`, `AutoSave/`, `ZoomNavigator/`, `WordCompletion/`: productivity and utility extensions.
+All plug-ins live under `Plugins/`; `Plugins/CMakeLists.txt` lists them and shows which are platform-specific.
+- `Plugins/Debugger/`, `Plugins/DebugAdapterClient/`: debugger integration (GDB and DAP).
+- `Plugins/DatabaseExplorer/`: database browsing and related tooling.
+- `Plugins/LanguageServer/`: language server integration.
+- `Plugins/SmartCompletion/`: code completion and symbol assistance.
+- `Plugins/SpellChecker/`: spelling support in the editor.
+- `Plugins/Subversion2/`, `Plugins/git/`: version control integrations.
+- `Plugins/QmakePlugin/`, `Plugins/CMakePlugin/`, `Plugins/wxCrafter/`, `Plugins/wxformbuilder/`: build and GUI tooling integrations.
+- `Plugins/Rust/`, `Plugins/PHPRefactoring/`, `Plugins/codelitephp/`: language-specific tooling.
+- `Plugins/Remoty/`, `Plugins/SFTP/`, `Plugins/Docker/`: remote and container workflows.
+- `Plugins/ExternalTools/`, `Plugins/ContinuousBuild/`, `Plugins/AutoSave/`, `Plugins/ZoomNavigator/`, `Plugins/WordCompletion/`: productivity and utility extensions.
+
+Note: top-level `wxcrafter/` holds the wxCrafter shared libraries and standalone app, not the plug-in.
 
 ## Component relationships
 ```mermaid
@@ -47,6 +51,6 @@ classDiagram
 ```
 
 ## Navigation hints
-- Search in the module directory named after the feature you want to change.
+- Search in the `Plugins/` subdirectory named after the feature you want to change.
 - For cross-cutting behavior, inspect `Plugin/`, `Interfaces/`, and `Runtime/` first.
-- For parser-related issues, look at `CxxParser/`, `gdbparser/`, and `cppchecker/`.
+- For parser-related issues, look at `CxxParser/`, `Plugins/gdbparser/`, and `Plugins/cppchecker/`.

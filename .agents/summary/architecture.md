@@ -4,7 +4,7 @@
 CodeLite follows a modular desktop IDE architecture built around a core editor/application layer with many optional feature modules. The root CMake build coordinates these modules and integrates third-party libraries through git submodules.
 
 ## Architectural characteristics
-- Modular monorepo layout with separate directories per subsystem.
+- Modular monorepo layout: core subsystems in top-level directories, feature plugins in `Plugins/<name>/`.
 - Core UI/editor functionality is isolated from feature plugins and utilities.
 - Build-time composition is driven by CMake rather than a single application framework project file.
 - Platform-specific behavior is handled in build logic and packaging helpers.
@@ -43,7 +43,7 @@ graph TB
 
 ## Build architecture
 - Root `CMakeLists.txt` defines global constraints, toolchain requirements, and shared options.
-- Each major module exposes its own `CMakeLists.txt`, allowing incremental composition.
+- Each major module exposes its own `CMakeLists.txt`, allowing incremental composition. Plugins are added from `Plugins/CMakeLists.txt`.
 - `compile_commands.json` is generated for language tooling.
 - Platform-specific branches control install prefix behavior and dependency checks.
 

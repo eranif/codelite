@@ -40,9 +40,12 @@ graph TB
 
 ## Notable directories and roles
 - `LiteEditor/`, `CodeLite/`, `Runtime/`, `Plugin/`: primary IDE implementation layers.
-- Feature modules such as `Debugger/`, `DatabaseExplorer/`, `LanguageServer/`, `SmartCompletion/`, `SpellChecker/`, `Subversion2/`, `QmakePlugin/`, `CMakePlugin/`, `Rust/`, `PHPRefactoring/`.
-- Support libraries and SDKs: `sdk/`, `Interfaces/`, `PCH/`, `CxxParser/`, `gdbparser/`, `cscope/`, `outline/`-style components.
-- Packaging/build helpers: `cmake/`, `scripts/`, `Docker/`, `InnoSetup/`, `MacBundler/`, `weekly/`, `BuildInfo.txt`.
+- `Plugins/`: all feature plug-ins, one directory each (see `Plugins/CMakeLists.txt`), e.g. `Plugins/Debugger/`, `Plugins/DatabaseExplorer/`, `Plugins/LanguageServer/`, `Plugins/SmartCompletion/`, `Plugins/SpellChecker/`, `Plugins/Subversion2/`, `Plugins/git/`, `Plugins/CMakePlugin/`, `Plugins/Rust/`, `Plugins/PHPRefactoring/`, `Plugins/Docker/`, `Plugins/MacBundler/`.
+- Support libraries and SDKs: `sdk/` (`wxsqlite3`, `databaselayer`), `Interfaces/`, `PCH/`, `CxxParser/`. Parser-related code that ships as plug-ins: `Plugins/gdbparser/`, `Plugins/cscope/`, `Plugins/Outline/`.
+- `wxcrafter/`: wxCrafter shared libraries (`wxCrafterCommon`, `wxcgen`) and the standalone wxCrafter app; the IDE plug-in is `Plugins/wxCrafter/`.
+- Helper executables: `codelite_make/`, `codelite_makedir/`, `codelite_echo/`, `le_exec/`, `codelite-generate-themes/`.
+- Tests: `Tests/`.
+- Packaging/build helpers: `cmake/`, `scripts/`, `InnoSetup/`, `tools/macOS/`, `build.sh`, `BuildInfo.txt`.
 - Documentation and metadata: `docs/`, `README.md`, `TODO.md`, `AUTHORS`, `COPYING`, `LICENSE*`.
 - External dependencies: `submodules/` and assorted bundled components like `libssh`, `yaml-cpp`, `zlib`, `lua`, `lexilla`, `wxTerminalEmulator`.
 
@@ -67,7 +70,7 @@ graph TB
 - `README.md` and `docs/` provide user-facing setup information.
 
 ## Architecture notes
-- The repository uses a modular monorepo layout with the core IDE and feature plugins split into separate directories.
+- The repository uses a modular monorepo layout: the core IDE sits in top-level directories and every feature plugin has its own directory under `Plugins/`.
 - The build includes platform-specific branches and packaging logic.
 - Parser and language services are split into dedicated components rather than embedded in the UI layer.
 
@@ -95,14 +98,13 @@ graph TB
   D --> D1[Interfaces]
   D --> D2[sdk]
   D --> D3[CxxParser]
-  D --> D4[gdbparser]
+  D --> D4[Plugins/gdbparser]
   D --> D5[PCH]
 
   E --> E1[cmake]
   E --> E2[scripts]
-  E --> E3[Docker]
-  E --> E4[InnoSetup]
-  E --> E5[MacBundler]
+  E --> E3[InnoSetup]
+  E --> E4[tools/macOS]
 
   F --> F1[libssh]
   F --> F2[yaml-cpp]

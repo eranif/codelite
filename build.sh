@@ -8,6 +8,8 @@ OS_NAME="$(uname -s)"
 # MSYS2 (MinGW) provides mingw32-make; its CMake generates "MinGW Makefiles"
 if [[ "${OS_NAME}" == *MINGW* ]]; then
   MAKE_CMD=mingw32-make
+  # Without this, CMake picks Ninja (when available), but we build with mingw32-make
+  export CMAKE_GENERATOR="MinGW Makefiles"
 else
   MAKE_CMD=make
 fi

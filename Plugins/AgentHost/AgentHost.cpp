@@ -103,16 +103,12 @@ void AgentHost::OnSettings(wxCommandEvent& event)
     }
 }
 
-namespace
-{
-struct ExecResult {
-    std::optional<wxString> executable{std::nullopt};
-    std::optional<SSHAccountInfo> ssh_account{std::nullopt};
-};
-
-std::optional<ExecResult> ResolveExecutable(AgentType agent_type)
+std::optional<AgentExecutable> ResolveAgentExecutable(AgentType agent_type, bool warn)
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (workspace == nullptr) {
+        return std::nullopt;
+    }
     std::optional<wxString> tool_executable{std::nullopt};
     std::optional<SSHAccountInfo> sshAccount{std::nullopt};
 
@@ -142,20 +138,21 @@ std::optional<ExecResult> ResolveExecutable(AgentType agent_type)
             tool_executable = configured_tool_executable;
 
         if (!tool_executable) {
-            wxMessageBox(wxString::Format(_("Could not locate '%s' executable"), defaultExec),
-                         "CodeLite",
-                         wxICON_WARNING | wxOK | wxOK_DEFAULT);
+            if (warn) {
+                wxMessageBox(wxString::Format(_("Could not locate '%s' executable"), defaultExec),
+                             "CodeLite",
+                             wxICON_WARNING | wxOK | wxOK_DEFAULT);
+            }
             return std::nullopt;
         }
     }
 
-    return ExecResult{
-        .executable = tool_executable,
-        .ssh_account = sshAccount,
+    return AgentExecutable{
+        .executable = tool_executable.value(),
+        .sshAccount = sshAccount,
     };
 }
 
-} // namespace
 void AgentHost::ShowAgentTerminal(AgentType agent_type)
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
@@ -183,9 +180,9 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type)
         return;
     }
 
-    auto result = ResolveExecutable(agent_type);
+    auto result = ResolveAgentExecutable(agent_type);
     if (!result) {
-        // ResolveExecutable already prompts with an error message.
+        // ResolveAgentExecutable already prompts with an error message.
         return;
     }
 
@@ -204,9 +201,9 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type)
     }
     agentPage->StartAgentHost(AgentInfo{
         .agent_type = agent_type,
-        .executable = result->executable.value(),
+        .executable = result->executable,
         .workingDirectory = clWorkspaceManager::Get().GetWorkspace()->GetDir(),
-        .sshAccount = result->ssh_account,
+        .sshAccount = result->sshAccount,
     });
 }
 

@@ -3,6 +3,7 @@
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
+#include "ReviewBuddy.hpp"
 #include "ai/LLMManager.hpp"
 #include "clStrings.h"
 #include "globals.h"
@@ -42,6 +43,16 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
 #endif
 
+    // A notice from the review buddy (hidden until there is something to say)
+    m_infoBar = new wxInfoBar(this);
+    GetSizer()->Add(m_infoBar, wxSizerFlags().Expand());
+
+    // The main agent fills the page. The reviewer, when there is one, opens in a pane next to it.
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+    m_splitter->SetMinimumPaneSize(FromDIP(150));
+    m_splitter->SetSashGravity(0.5);
+    GetSizer()->Add(m_splitter, wxSizerFlags(1).Expand());
+
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
@@ -56,6 +67,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
 
 AgentHostPage::~AgentHostPage()
 {
+    m_review.reset(); // stops its timers
 #ifndef __WXMSW__
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
 #endif
@@ -79,9 +91,14 @@ void AgentHostPage::OnThemeChanged(clCommandEvent& event)
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     CHECK_COND_RET(lexer);
     auto font = lexer->GetFontForStyle(0, this);
-    auto theme = m_terminal->GetTheme();
-    theme.font = font;
-    m_terminal->SetTheme(theme);
+    for (auto* terminal : {m_terminal, m_reviewTerminal}) {
+        if (terminal == nullptr) {
+            continue;
+        }
+        auto theme = terminal->GetTheme();
+        theme.font = font;
+        terminal->SetTheme(theme);
+    }
 }
 
 void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
@@ -103,6 +120,12 @@ void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
 
 void AgentHostPage::OnTerminalTerminated(clCommandEvent& event)
 {
+    if (m_reviewTerminal != nullptr && event.GetEventObject() == m_reviewTerminal) {
+        // The reviewer quit: close its pane, as the page closes when the main agent exits.
+        event.Skip();
+        CallAfter(&AgentHostPage::CloseReviewBuddy);
+        return;
+    }
     CHECK_CAN_HANDLE_EVENT(event);
     CHECK_PTR_RET(m_terminal);
 
@@ -124,8 +147,10 @@ void AgentHostPage::OnTerminalBell(clCommandEvent& event)
 
 void AgentHostPage::OnTerminalLink(clCommandEvent& event)
 {
-    CHECK_CAN_HANDLE_EVENT(event);
-    CHECK_PTR_RET(m_terminal);
+    if (event.GetEventObject() != m_terminal && event.GetEventObject() != m_reviewTerminal) {
+        event.Skip();
+        return;
+    }
     OpenText(event.GetString());
 }
 
@@ -264,17 +289,21 @@ void AgentHostPage::OnBookPageChanged(wxBookCtrlEvent& event)
 
 void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
 {
-    wxUnusedVar(event);
+    // The menu is shown for the terminal that was clicked: the agent's or the reviewer's
+    auto* terminal = dynamic_cast<wxTerminalViewCtrl*>(event.GetEventObject());
+    if (terminal == nullptr) {
+        terminal = m_terminal;
+    }
     wxMenu menu;
 
-    const wxString selection = GetSelectedLine();
-    if (m_terminal->CanCopy()) {
+    const wxString selection = GetSelectedLine(terminal);
+    if (terminal->CanCopy()) {
         menu.Append(wxID_COPY);
-        menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_terminal->Copy(); }, wxID_COPY);
+        menu.Bind(wxEVT_MENU, [terminal](wxCommandEvent&) { terminal->Copy(); }, wxID_COPY);
     }
 
     menu.Append(wxID_PASTE);
-    menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_terminal->Paste(); }, wxID_PASTE);
+    menu.Bind(wxEVT_MENU, [terminal](wxCommandEvent&) { terminal->Paste(); }, wxID_PASTE);
     menu.AppendSeparator();
 
     if (!selection.empty()) {
@@ -305,15 +334,17 @@ void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
     menu.Append(wxID_REFRESH);
     menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::RestartAgentHost); }, wxID_REFRESH);
 
+    AppendReviewBuddyMenu(menu, terminal);
+
     clKeyboardManager::Get()->UpdateMenuShortcuts(menu);
-    m_terminal->PopupMenu(&menu);
+    terminal->PopupMenu(&menu);
 }
 
 void AgentHostPage::RestartAgentHost()
 {
     wxWindowUpdateLocker locker{this};
+    CloseReviewBuddy();
     if (m_terminal) {
-        GetSizer()->Detach(m_terminal);
         wxDELETE(m_terminal);
     }
 
@@ -341,21 +372,21 @@ void AgentHostPage::RestartAgentHost()
         command_to_run.Prepend(cd_command);
     }
     m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-        wxEmptyString, m_agentInfo.sshAccount, wxEmptyString, true, kShellCommand, this);
-    GetSizer()->Add(m_terminal, wxSizerFlags(1).Expand());
+        wxEmptyString, m_agentInfo.sshAccount, wxEmptyString, true, kShellCommand, m_splitter);
+    m_splitter->Initialize(m_terminal);
     GetSizer()->Layout();
     // Hook a custom context menu
     m_terminal->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
     m_terminal->SendCommand(command_to_run);
 }
 
-wxString AgentHostPage::GetSelectedLine() const
+wxString AgentHostPage::GetSelectedLine(wxTerminalViewCtrl* terminal) const
 {
-    if (m_terminal == nullptr || !m_terminal->CanCopy()) {
+    if (terminal == nullptr || !terminal->CanCopy()) {
         return wxEmptyString;
     }
     // Use the first line of the selection only
-    return m_terminal->GetMouseSelection()
+    return terminal->GetMouseSelection()
         .value_or(wxEmptyString)
         .BeforeFirst('\n')
         .BeforeFirst('\r')
@@ -387,7 +418,7 @@ void AgentHostPage::OnShowTerminal(wxCommandEvent& event)
 void AgentHostPage::OnGrepWorkspace(wxCommandEvent& event)
 {
     // Handle it only when the focus is in our terminal and we have a selection, otherwise let the frame handle it
-    const wxString selection = (wxWindow::FindFocus() == m_terminal) ? GetSelectedLine() : wxString();
+    const wxString selection = GetSelectedLine(GetFocusedTerminal());
     if (selection.empty()) {
         event.Skip();
         return;
@@ -398,10 +429,236 @@ void AgentHostPage::OnGrepWorkspace(wxCommandEvent& event)
 void AgentHostPage::OnGrepWorkspaceUI(wxUpdateUIEvent& event)
 {
     // Enable the item when our terminal has the focus and a selection, otherwise let the frame decide
-    if (wxWindow::FindFocus() == m_terminal && !GetSelectedLine().empty() &&
-        clWorkspaceManager::Get().GetWorkspace() != nullptr) {
+    if (!GetSelectedLine(GetFocusedTerminal()).empty() && clWorkspaceManager::Get().GetWorkspace() != nullptr) {
         event.Enable(true);
         return;
     }
     event.Skip();
+}
+
+wxTerminalViewCtrl* AgentHostPage::GetFocusedTerminal() const
+{
+    auto* focus = wxWindow::FindFocus();
+    if (focus == nullptr) {
+        return nullptr;
+    }
+    if (focus == m_terminal || focus == m_reviewTerminal) {
+        return static_cast<wxTerminalViewCtrl*>(focus);
+    }
+    return nullptr;
+}
+
+// ---------------------------------------------------------------------------
+// Review Buddy
+// ---------------------------------------------------------------------------
+
+void AgentHostPage::AppendReviewBuddyMenu(wxMenu& menu, wxTerminalViewCtrl* terminal)
+{
+    if (m_review) {
+        menu.AppendSeparator();
+        menu.Append(wxID_ANY, _("Review Buddy: ") + m_review->Describe())->Enable(false);
+        if (m_review->IsRunning() || m_review->HasStalled()) {
+            const int resend_id = wxWindow::NewControlId();
+            const int stop_id = wxWindow::NewControlId();
+            menu.Append(resend_id, _("Send the Request Again"));
+            menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_review->Resend(); }, resend_id);
+            menu.Append(stop_id, _("Stop the Review"));
+            menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_review->Stop(); }, stop_id);
+        }
+        const int open_id = wxWindow::NewControlId();
+        const int close_id = wxWindow::NewControlId();
+        menu.Append(open_id, _("Open the Latest Review"))->Enable(!m_review->CommentsPath().empty());
+        menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { OpenLatestReview(); }, open_id);
+        menu.Append(close_id, _("Close Review Buddy"));
+        menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::CloseReviewBuddy); }, close_id);
+        return;
+    }
+
+    // Only the main agent can get a reviewer
+    if (terminal != m_terminal) {
+        return;
+    }
+    menu.AppendSeparator();
+
+    wxString whyNot;
+    if (!CanHaveReviewBuddy(whyNot)) {
+        menu.Append(wxID_ANY, _("Launch Review Buddy") + " (" + whyNot + ")")->Enable(false);
+        return;
+    }
+
+    auto* submenu = new wxMenu();
+    const int claude_id = wxWindow::NewControlId();
+    const int kiro_id = wxWindow::NewControlId();
+    submenu->Append(claude_id, _("Claude Code"));
+    submenu->Append(kiro_id, _("Kiro CLI"));
+    // Bound on the submenu: its items send their events there first. Deferred: leave the menu's callback first.
+    submenu->Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&) { CallAfter(&AgentHostPage::LaunchReviewBuddy, AgentType::kClaudeCode); },
+        claude_id);
+    submenu->Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent&) { CallAfter(&AgentHostPage::LaunchReviewBuddy, AgentType::kKiroCli); },
+        kiro_id);
+    menu.AppendSubMenu(submenu, _("Launch Review Buddy"));
+}
+
+bool AgentHostPage::CanHaveReviewBuddy(wxString& whyNot)
+{
+    if (m_agentInfo.workingDirectory.empty()) {
+        whyNot = _("no working directory");
+        return false;
+    }
+    if (!HasGitRepo()) {
+        whyNot = _("not a git repository");
+        return false;
+    }
+    return true;
+}
+
+bool AgentHostPage::HasGitRepo()
+{
+    // Ask git: it also knows a sub-folder of a repository, and a worktree
+    const ReviewBuddy::Target target{m_agentInfo.workingDirectory, m_agentInfo.sshAccount, wxString{}};
+    if (!m_agentInfo.sshAccount.has_value()) {
+        return ReviewBuddy::IsInsideGitRepo(target);
+    }
+
+    // A remote check opens an SSH connection, so it is repeated at most every 30 seconds.
+    constexpr auto kRecheckAfter = std::chrono::seconds(30);
+    const auto now = std::chrono::steady_clock::now();
+    if (m_lastGitCheck.has_value() && now - *m_lastGitCheck < kRecheckAfter) {
+        return m_hasGit;
+    }
+    m_lastGitCheck = now;
+    m_hasGit = ReviewBuddy::IsInsideGitRepo(target);
+    return m_hasGit;
+}
+
+void AgentHostPage::LaunchReviewBuddy(AgentType reviewer)
+{
+    if (m_review || m_reviewTerminal != nullptr || m_terminal == nullptr) {
+        return;
+    }
+    if (m_agentInfo.workingDirectory.empty()) {
+        m_infoBar->ShowMessage(_("Cannot find the working directory of the agent"), wxICON_WARNING);
+        return;
+    }
+    clDEBUG() << "Launching review buddy for" << m_agentInfo.workingDirectory << endl;
+
+    // The name of the page, for the notifications
+    wxString pageName;
+    auto book = clGetManager()->GetMainNotebook();
+    if (int where = book->FindPage(this); where != wxNOT_FOUND) {
+        pageName = book->GetPageText(where);
+    }
+
+    // The reviewer's pane opens when the first request is ready (it is written first, possibly over SSH): the agent
+    // reads it as soon as it starts.
+    DismissNotice(); // The message about an earlier review
+    m_review = std::make_unique<ReviewBuddy>(
+        ReviewBuddy::Target{m_agentInfo.workingDirectory, m_agentInfo.sshAccount, pageName},
+        m_terminal,
+        [this, reviewer](const wxString& prompt) { return StartReviewer(reviewer, prompt); },
+        // Whether the user is looking at this page right now.
+        [this]() { return IsShownOnScreen() && m_book->GetCurrentPage() == this; },
+        [this](const wxString& message, bool problem) {
+            m_infoBar->ShowMessage(message, problem ? wxICON_WARNING : wxICON_INFORMATION);
+        },
+        [this](wxTerminalViewCtrl* terminal) { FocusTerminal(terminal); });
+    m_review->Begin();
+}
+
+wxTerminalViewCtrl* AgentHostPage::StartReviewer(AgentType reviewer, const wxString& prompt)
+{
+    if (m_reviewTerminal != nullptr || m_terminal == nullptr) {
+        return m_reviewTerminal;
+    }
+
+    // The reviewer runs on the same host as the main agent, so both see the same folder.
+    auto executable = ResolveAgentExecutable(reviewer);
+    if (!executable.has_value()) {
+        return nullptr;
+    }
+
+    // A new conversation (no --continue / --resume), started with the request as its first message
+    wxString command = StringUtils::WrapWithDoubleQuotes(executable->executable);
+    if (reviewer == AgentType::kKiroCli) {
+        command << " chat";
+    }
+    command << " " << StringUtils::WrapWithDoubleQuotes(prompt);
+    if (!m_agentInfo.workingDirectory.empty()) {
+        command.Prepend("cd \"" + m_agentInfo.workingDirectory + "\" && ");
+    }
+
+    m_reviewTerminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
+        wxEmptyString, m_agentInfo.sshAccount, wxEmptyString, true, kShellCommand, m_splitter);
+    if (m_reviewTerminal == nullptr) {
+        return nullptr;
+    }
+    m_reviewTerminal->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
+    m_reviewTerminal->SendCommand(command);
+
+    m_splitter->SplitVertically(m_terminal, m_reviewTerminal);
+    // The reviewer is the active agent now; it may ask for a permission.
+    FocusTerminal(m_reviewTerminal);
+    return m_reviewTerminal;
+}
+
+void AgentHostPage::DismissNotice()
+{
+    if (m_infoBar != nullptr && m_infoBar->IsShown()) {
+        m_infoBar->Dismiss();
+    }
+}
+
+void AgentHostPage::CloseReviewBuddy()
+{
+    if (m_review && m_review->IsBusy()) {
+        // Never destroy the loop while one of its functions is running
+        CallAfter(&AgentHostPage::CloseReviewBuddy);
+        return;
+    }
+    m_review.reset(); // stops its timers
+    DismissNotice();
+    if (m_reviewTerminal == nullptr) {
+        return;
+    }
+    wxWindowUpdateLocker locker{this};
+    if (m_splitter->IsSplit()) {
+        m_splitter->Unsplit(m_reviewTerminal);
+    }
+    m_reviewTerminal->Destroy(); // also ends the reviewer's process
+    m_reviewTerminal = nullptr;
+    if (m_terminal != nullptr) {
+        m_terminal->SetFocus();
+    }
+}
+
+void AgentHostPage::OpenLatestReview()
+{
+    CHECK_PTR_RET(m_review);
+    const wxString relative = m_review->CommentsPath();
+    CHECK_COND_RET(!relative.empty());
+
+    const wxString path = ReviewBuddy::JoinPath(m_agentInfo.workingDirectory, relative);
+    bool opened = false;
+    if (m_agentInfo.sshAccount.has_value()) {
+#if USE_SFTP
+        opened = clSFTPManager::Get().OpenFile(path, *m_agentInfo.sshAccount) != nullptr;
+#endif
+    } else if (wxFileName::FileExists(path)) {
+        opened = clGetManager()->OpenFile(path) != nullptr;
+    }
+    if (!opened) {
+        m_infoBar->ShowMessage(_("The review is not ready yet"), wxICON_INFORMATION);
+    }
+}
+
+void AgentHostPage::FocusTerminal(wxTerminalViewCtrl* terminal)
+{
+    // Only if the user is working in this page: do not take the focus away from another one.
+    if (terminal != nullptr && wxTheApp->IsActive() && IsShownOnScreen()) {
+        terminal->SetFocus();
+    }
 }

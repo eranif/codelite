@@ -682,6 +682,13 @@ void LanguageServerProtocol::DrainOutputBuffer()
             // {"jsonrpc":"2.0","method":"window/workDoneProgress/create","params":{"token":"find_references"},"id":1}
             SendAck(message_id);
 
+        } else if (message_method == "client/registerCapability" || message_method == "client/unregisterCapability") {
+            // We don't support dynamic registration, but the server may wait for the reply before it
+            // continues (e.g. PHPantom does not publish diagnostics until this request is answered)
+            auto message_id = json_item["id"].toSize_t(0);
+            LSP_DEBUG() << GetLogPrefix() << "Received" << message_method << ", id=" << message_id << endl;
+            SendAck(message_id);
+
         } else if (message_method == "telemetry/event") {
             // show dialog to the user
             // log this message
@@ -713,6 +720,12 @@ void LanguageServerProtocol::DrainOutputBuffer()
             } else {
                 LSP_DEBUG() << "Failed to parse progress object" << endl;
             }
+        } else if (!message_method.empty() && json_item.hasNamedObject("id")) {
+            // A request from the server that we don't handle. Every request must be answered.
+            auto message_id = json_item["id"].toSize_t(0);
+            LSP_DEBUG() << GetLogPrefix() << "Unsupported server request:" << message_method << ", id=" << message_id
+                        << endl;
+            SendMethodNotFound(message_id);
         } else {
             // other response
             LSP::ResponseMessage res(std::move(json));
@@ -975,6 +988,28 @@ void LanguageServerProtocol::SendAck(size_t message_id)
     json.addProperty("jsonrpc", "2.0");
     json.addProperty("id", message_id);
     json.addNull("result");
+
+    LSP::JSONRpcMessage message{std::move(json)};
+    auto str = message.ToString();
+    LSP_TRACE() << GetLogPrefix() << "==>" << str << endl;
+    m_network->Send(str);
+}
+
+void LanguageServerProtocol::SendMethodNotFound(size_t message_id)
+{
+    if (!m_network) {
+        LSP_ERROR() << GetLogPrefix() << "SendMethodNotFound(): no network available!" << endl;
+        return;
+    }
+
+    auto json = JSONItem::createObject();
+    json.addProperty("jsonrpc", "2.0");
+    json.addProperty("id", message_id);
+
+    auto error = JSONItem::createObject();
+    error.addProperty("code", -32601);
+    error.addProperty("message", "Method not found");
+    json.addProperty("error", error);
 
     LSP::JSONRpcMessage message{std::move(json)};
     auto str = message.ToString();

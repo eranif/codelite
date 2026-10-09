@@ -290,7 +290,7 @@ bool PHPWorkspace::RunProject(bool debugging,
     PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(projectToRun);
     CHECK_PTR_RET_FALSE(proj);
     // Error is reported inside 'Exec'
-    return m_executor.Exec(projectToRun, urlOrFilePath, xdebugSessionName, debugging);
+    return m_executor.Exec(proj->GetSettings(), urlOrFilePath, xdebugSessionName, debugging);
 }
 
 bool PHPWorkspace::HasProject(const wxString& projectname) const

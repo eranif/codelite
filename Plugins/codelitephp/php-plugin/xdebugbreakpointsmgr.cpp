@@ -2,11 +2,11 @@
 
 #include "PHPUserWorkspace.h"
 #include "XDebugManager.h"
+#include "XDebugSettings.h"
 #include "bookmark_manager.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "php_project.h"
 #include "php_workspace.h"
 #include "plugin.h"
 #include "xdebugevent.h"
@@ -18,8 +18,8 @@ XDebugBreakpointsMgr::XDebugBreakpointsMgr()
 {
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &XDebugBreakpointsMgr::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTING, &XDebugBreakpointsMgr::OnXDebugSessionStarting, this);
-    EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
-    EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), nullptr, this);
 }
@@ -28,8 +28,8 @@ XDebugBreakpointsMgr::~XDebugBreakpointsMgr()
 {
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &XDebugBreakpointsMgr::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTING, &XDebugBreakpointsMgr::OnXDebugSessionStarting, this);
-    EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
-    EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), nullptr, this);
 }
@@ -106,25 +106,30 @@ void XDebugBreakpointsMgr::OnXDebugSessionStarting(XDebugEvent& e)
     }
 }
 
-void XDebugBreakpointsMgr::OnWorkspaceClosed(PHPEvent& e)
+void XDebugBreakpointsMgr::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
 
-    // Save the breakpoints to the file system
-    if (!m_workspacePath.IsEmpty()) {
-        PHPUserWorkspace userWorkspace(m_workspacePath);
-        userWorkspace.Load().SetBreakpoints(m_breakpoints).Save();
-        m_workspacePath.Clear();
-    }
+    // The breakpoints are saved on every change
+    m_phpWorkspacePath.Clear();
+    m_settingsFile.Clear();
+    m_breakpoints.clear();
 }
 
-void XDebugBreakpointsMgr::OnWorkspaceOpened(PHPEvent& e)
+void XDebugBreakpointsMgr::OnWorkspaceOpened(clWorkspaceEvent& e)
 {
     e.Skip();
-    m_workspacePath = e.GetFileName();
+    m_phpWorkspacePath.Clear();
+    m_settingsFile.Clear();
 
-    PHPUserWorkspace userWorkspace(m_workspacePath);
-    m_breakpoints = userWorkspace.Load().GetBreakpoints();
+    if (PHPWorkspace::Get()->IsOpen()) {
+        m_phpWorkspacePath = PHPWorkspace::Get()->GetFilename().GetFullPath();
+        PHPUserWorkspace userWorkspace(m_phpWorkspacePath);
+        m_breakpoints = userWorkspace.Load().GetBreakpoints();
+    } else {
+        m_settingsFile = XDebugSettings::GetSettingsFile();
+        m_breakpoints = XDebugSettings::LoadBreakpoints(m_settingsFile);
+    }
 }
 
 void XDebugBreakpointsMgr::OnEditorChanged(wxCommandEvent& e)
@@ -174,9 +179,11 @@ void XDebugBreakpointsMgr::DeleteAllBreakpoints()
 
 void XDebugBreakpointsMgr::Save()
 {
-    if (!m_workspacePath.IsEmpty()) {
-        // Save the breakpoints to the file system
-        PHPUserWorkspace userWorkspace(m_workspacePath);
+    // Save the breakpoints to the file system
+    if (!m_phpWorkspacePath.IsEmpty()) {
+        PHPUserWorkspace userWorkspace(m_phpWorkspacePath);
         userWorkspace.Load().SetBreakpoints(m_breakpoints).Save();
+    } else if (m_settingsFile.IsOk()) {
+        XDebugSettings::SaveBreakpoints(m_settingsFile, m_breakpoints);
     }
 }

@@ -7,7 +7,7 @@
 ## Repository Overview
 - `CodeLite/`, `LiteEditor/`, `Runtime/`, `Plugin/`, and sister directories host the core IDE, editors, runtime libraries, and plug-in system.
 - `cmake/`, `scripts/`, and the `.build-release*` directories contain build helpers, toolchains, and configuration templates. The repository is driven by CMake (see `CMakeLists.txt`).
-- Feature plug-ins live under `Plugins/` (one directory each, listed in `Plugins/CMakeLists.txt`), for example `Plugins/LanguageServer/`, `Plugins/DatabaseExplorer/`, `Plugins/PHPRefactoring/`, and `Plugins/SmartCompletion/`.
+- Feature plug-ins live under `Plugins/` (one directory each, listed in `Plugins/CMakeLists.txt`), for example `Plugins/LanguageServer/`, `Plugins/DatabaseExplorer/`, and `Plugins/SmartCompletion/`.
 - `docs/`, `README.md`, and `TODO.md` describe coding standards, build steps, and outstanding work. Consult them when planning changes.
 
 ## Build & Tooling Notes

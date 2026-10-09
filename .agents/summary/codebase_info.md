@@ -40,7 +40,7 @@ graph TB
 
 ## Notable directories and roles
 - `LiteEditor/`, `CodeLite/`, `Runtime/`, `Plugin/`: primary IDE implementation layers.
-- `Plugins/`: all feature plug-ins, one directory each (see `Plugins/CMakeLists.txt`), e.g. `Plugins/Debugger/`, `Plugins/DatabaseExplorer/`, `Plugins/LanguageServer/`, `Plugins/SmartCompletion/`, `Plugins/SpellChecker/`, `Plugins/Subversion2/`, `Plugins/git/`, `Plugins/CMakePlugin/`, `Plugins/Rust/`, `Plugins/PHPRefactoring/`, `Plugins/Docker/`, `Plugins/MacBundler/`.
+- `Plugins/`: all feature plug-ins, one directory each (see `Plugins/CMakeLists.txt`), e.g. `Plugins/Debugger/`, `Plugins/DatabaseExplorer/`, `Plugins/LanguageServer/`, `Plugins/SmartCompletion/`, `Plugins/SpellChecker/`, `Plugins/Subversion2/`, `Plugins/git/`, `Plugins/CMakePlugin/`, `Plugins/Rust/`, `Plugins/Docker/`, `Plugins/MacBundler/`.
 - Support libraries and SDKs: `sdk/` (`wxsqlite3`, `databaselayer`), `Interfaces/`, `PCH/`, `CxxParser/`. Parser-related code that ships as plug-ins: `Plugins/gdbparser/`, `Plugins/cscope/`, `Plugins/Outline/`.
 - `wxcrafter/`: wxCrafter shared libraries (`wxCrafterCommon`, `wxcgen`) and the standalone wxCrafter app; the IDE plug-in is `Plugins/wxCrafter/`.
 - Helper executables: `codelite_make/`, `codelite_makedir/`, `codelite_echo/`, `le_exec/`, `codelite-generate-themes/`.

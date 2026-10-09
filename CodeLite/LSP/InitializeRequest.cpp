@@ -50,6 +50,7 @@ nlohmann::json LSP::InitializeRequest::ToJSON() const
 
     textDocumentCapabilities["onTypeFormatting"]["dynamicRegistration"] = false;
     textDocumentCapabilities["formatting"]["dynamicRegistration"] = false;
+    textDocumentCapabilities["rangeFormatting"]["dynamicRegistration"] = false;
 
     if (m_withTokenTypes) {
         textDocumentCapabilities["semanticTokens"]["tokenTypes"] = {

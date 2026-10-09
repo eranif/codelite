@@ -320,11 +320,11 @@ public:
     bool SendOnTypeFormattingRequest(IEditor& editor, const wxString& ch);
 
     /**
-     * @brief ask the server to format the whole editor (`textDocument/formatting`). The reply fires
-     * `wxEVT_LSP_DOCUMENT_FORMATTED` on the EventNotifier
-     * @return false when the request was not sent (the server can not format this file)
+     * @brief ask the server to format the whole editor (`textDocument/formatting`), or only `range` of it
+     * (`textDocument/rangeFormatting`). The reply fires `wxEVT_LSP_DOCUMENT_FORMATTED` on the EventNotifier
+     * @return false when the request was not sent (the server can not format this file, or not a range of it)
      */
-    bool SendDocumentFormattingRequest(IEditor& editor);
+    bool SendDocumentFormattingRequest(IEditor& editor, const std::optional<LSP::Range>& range = std::nullopt);
 
     /**
      * @brief ask the server for semantic tokens
@@ -347,6 +347,7 @@ public:
     bool IsCodeActionResolveSupported() const;
     bool IsOnTypeFormattingSupported(const wxString& ch) const;
     bool IsDocumentFormattingSupported() const;
+    bool IsDocumentRangeFormattingSupported() const;
 };
 
 #endif // CLLANGUAGESERVER_H

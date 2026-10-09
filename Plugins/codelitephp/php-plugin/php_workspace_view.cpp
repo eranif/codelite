@@ -112,7 +112,6 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
     m_treeCtrlView->Bind(wxEVT_TREE_BEGIN_DRAG, &PHPWorkspaceView::OnDragBegin, this);
     m_treeCtrlView->Bind(wxEVT_TREE_END_DRAG, &PHPWorkspaceView::OnDragEnd, this);
-    Bind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
 
     // Build the toolbar
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
@@ -185,7 +184,6 @@ PHPWorkspaceView::~PHPWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &PHPWorkspaceView::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &PHPWorkspaceView::OnFindInFilesDismissed, this);
-    Unbind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
     Unbind(wxEVT_MENU, &PHPWorkspaceView::OnStartDebuggerListener, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
@@ -199,99 +197,6 @@ PHPWorkspaceView::~PHPWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_FOLDER_CREATED, &PHPWorkspaceView::OnFolderChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_FOLDER_DELETED, &PHPWorkspaceView::OnFolderChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &PHPWorkspaceView::OnActiveProjectChanged, this);
-}
-
-void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
-{
-    const wxArrayString& folders = event.GetStrings();
-    if (folders.GetCount() != 1) {
-        ::wxMessageBox(_("Can only import one folder at a time"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
-        return;
-    }
-
-    // If a workspace is already exist at the selected path - load it
-    wxArrayString workspaceFiles;
-    wxString workspaceFile;
-    wxDir::GetAllFiles(folders.Item(0), &workspaceFiles, "*.workspace", wxDIR_FILES);
-    // Check the workspace type
-    for (size_t i = 0; i < workspaceFiles.size(); ++i) {
-        if (FileExtManager::GetType(workspaceFiles.Item(i)) == FileExtManager::TypeWorkspacePHP) {
-            workspaceFile = workspaceFiles.Item(i);
-            break;
-        }
-    }
-
-    wxFileName workspaceFileName;
-    wxFileName projectFileName(folders.Item(0), "");
-    projectFileName.SetName(projectFileName.GetDirs().Last());
-    projectFileName.SetExt("phprj");
-
-    if (!PHPWorkspace::Get()->IsOpen()) {
-        workspaceFileName = wxFileName(folders.Item(0), "");
-        workspaceFileName.SetName(workspaceFileName.GetDirs().Last());
-        workspaceFileName.SetExt("workspace");
-
-        if (!workspaceFile.IsEmpty()) {
-            workspaceFileName = wxFileName(workspaceFile);
-        }
-
-        if (!workspaceFileName.IsDirWritable()) {
-            wxString message;
-            message << _("Failed to create workspace '") << workspaceFileName.GetFullPath() << "'\n"
-                    << _("Permission denied.");
-            ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
-            return;
-        }
-        // Create an empty workspace
-        if (!PHPWorkspace::Get()->Open(workspaceFileName.GetFullPath(), this, true)) {
-            wxString message;
-            message << _("Failed to open workspace '") << workspaceFileName.GetFullPath() << "'\n" << _("File exists");
-            ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
-            return;
-        }
-
-        // // We just created and opened a new workspace, add it to the "Recently used"
-        // m_mgr->AddWorkspaceToRecentlyUsedList(workspaceFileName);
-        LoadWorkspaceView();
-
-        // Ensure that the view is visible
-        m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
-
-        // If we loaded an already existing workspace, we are done here
-        if (!workspaceFile.IsEmpty())
-            return;
-
-    } else {
-        if (!workspaceFile.IsEmpty()) {
-            // its the same workspace - do nothing
-            if (PHPWorkspace::Get()->GetFilename().GetFullPath() == workspaceFile)
-                return;
-            // Different workspaces, prompt the user to close its workspace before continuing
-            ::wxMessageBox(
-                _("The folder already contains a workspace file\nPlease close the current workspace before continuing"),
-                "CodeLite",
-                wxOK | wxICON_WARNING | wxCENTER);
-            return;
-        }
-        workspaceFileName = PHPWorkspace::Get()->GetFilename();
-    }
-
-    // Make sure that this folder is not part of any of the existing projects
-    if (!PHPWorkspace::Get()->CanCreateProjectAtPath(projectFileName, true)) {
-        return;
-    }
-
-    // We can safely create the project
-    PHPConfigurationData conf;
-    const wxString& phpExe = conf.Load().GetPhpExe();
-
-    PHPProject::CreateData cd;
-    cd.importFilesUnderPath = true;
-    cd.name = projectFileName.GetName();
-    cd.path = projectFileName.GetPath();
-    cd.phpExe = phpExe;
-    cd.projectType = PHPProjectSettingsData::kRunAsCLI;
-    CreateNewProject(cd);
 }
 
 void PHPWorkspaceView::OnMenu(wxTreeEvent& event)

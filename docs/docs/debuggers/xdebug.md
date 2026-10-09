@@ -1,7 +1,7 @@
 ## Quick guide
 ---
 
-- You will need an [open workspace for this](/workspaces/php/#create-your-first-workspace)
+- You will need an open [File System Workspace](/workspaces/file_system/) with `XDebug` selected as its debugger (see [below](#xdebug-with-a-file-system-workspace))
 - Now, configure PHP to enable XDebug debugging. From CodeLite menu bar, click on the `PHP` &#8594; `Run XDebug Setup Wizard`
 - At the end of the wizard, copy the text and paste it inside your `php.ini` file
 - Your `php.ini` should also have a section similar to this:
@@ -25,7 +25,7 @@ cd C:\Users\Eran\Documents\TestPHP
 php.exe -S 127.0.0.1:80 -t .
 ```
 
-- Right click on your project folder and add new PHP file, name it `test.php` with the following content:
+- Right click on the workspace folder in the tree view and add a new PHP file, name it `test.php` with the following content:
 
 ```php
 <?php
@@ -51,9 +51,7 @@ for($i = 0; $i < 10; $i++){
 ```
 
 - Place a breakpoint at the `for` loop (keyboard shortcut ++f9++)
-- Click on the `Wait for debugger to connect` button
-
-![wait to connect](images/xdebug_wait.png)
+- From the menu bar, click on `PHP` &#8594; `Wait for XDebug to Connect`
 
 - Open a web browser and type in the address bar: `http://127.0.0.1/test.php?XDEBUG_SESSION_START=codeliteide`
 - Clicking the `ENTER` button in the browser, the debug session starts

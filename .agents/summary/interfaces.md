@@ -3,16 +3,16 @@
 ## Primary integration surfaces
 - CMake build targets defined across root and module-specific `CMakeLists.txt` files.
 - Plugin interfaces under `Plugin/` and shared contracts under `Interfaces/`.
-- Generated code and parser interfaces from `CxxParser/`, `gdbparser/`, and related tools.
-- Language tooling and editor integration points in `SmartCompletion/`, `LanguageServer/`, and feature plugins.
+- Generated code and parser interfaces from `CxxParser/`, `Plugins/gdbparser/`, and related tools.
+- Language tooling and editor integration points in `Plugins/SmartCompletion/`, `Plugins/LanguageServer/`, and other feature plugins under `Plugins/`.
 - External library boundaries through `submodules/`.
 
 ## Important integration points
 | Surface | Role | Examples |
 |--------|------|----------|
 | Build configuration | Composes modules into the app | Root `CMakeLists.txt`, module `CMakeLists.txt` files |
-| Plugin API | Connects optional features to the IDE | `Plugin/`, feature module directories |
-| Parser/tool interfaces | Support analysis and code intelligence | `CxxParser/`, `gdbparser/`, `cppchecker/` |
+| Plugin API | Connects optional features to the IDE | `Plugin/`, `Plugins/*/` |
+| Parser/tool interfaces | Support analysis and code intelligence | `CxxParser/`, `Plugins/gdbparser/`, `Plugins/cppchecker/` |
 | Editor/runtime contracts | Shared behavior across modules | `Runtime/`, `Interfaces/`, `sdk/` |
 | External dependencies | Third-party code linked into the build | `submodules/libssh`, `submodules/yaml-cpp`, `submodules/zlib`, `submodules/lua` |
 

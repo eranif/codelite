@@ -101,19 +101,15 @@ The linters are configured in the project's `.phpantom.toml` file and in the too
 ## Code refactoring
 ---
 
-CodeLite relies on an external tool for providing PHP refactoring (rename variables, class properties etc) To enable refactoring, follow these steps:
+Refactoring (rename, extract method, optimize `use` statements and more) is provided by the PHPantom language server.
+See [Language Server Plugin][8] for how to install and enable `phpantom_lsp`.
 
-- Download the latest refactoring PHAR file [from here][4]
-- From the main menu open `Plugins` &#8594; `PHP Refactoring` &#8594; `Options...`, select the `phprefactor.phar` file and click `OK`
-- Make sure a valid PHP executable is selected from `PHP` &#8594; `Settings` &#8594; `General` &#8594; `PHP Executable`
-
-You now should be able to perform code refactoring (like renaming variables, moving selected code in to a separate method) 
-from the right click menu or from the project level context menu
+- Rename a symbol with the `Rename` entry of the editor context menu
+- Right click and choose `Code actions...` (or press `Alt-Enter`) to list the refactorings available for the caret position or the selection
 
 [1]: /debuggers/xdebug
 [2]: https://github.com/squizlabs/PHP_CodeSniffer
 [3]: https://github.com/phpmd/phpmd
-[4]: https://github.com/AJenbo/php-refactoring-browser/releases
 [6]: https://github.com/PHPantom-dev/phpantom_lsp
 [7]: https://phpstan.org/
 [8]: /plugins/lsp/#phpantom_lsp-php

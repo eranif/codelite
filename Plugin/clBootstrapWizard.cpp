@@ -75,7 +75,6 @@ const wxArrayString& GetWebPlugins()
         webPlugins.insert(webPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
         webPlugins.push_back("WebTools");
         webPlugins.push_back("PHP");
-        webPlugins.push_back("PHPRefactoring");
     }
     return webPlugins;
 }

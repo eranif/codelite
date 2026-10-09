@@ -19,7 +19,7 @@ All plug-ins live under `Plugins/`; `Plugins/CMakeLists.txt` lists them and show
 - `Plugins/SpellChecker/`: spelling support in the editor.
 - `Plugins/Subversion2/`, `Plugins/git/`: version control integrations.
 - `Plugins/QmakePlugin/`, `Plugins/CMakePlugin/`, `Plugins/wxCrafter/`, `Plugins/wxformbuilder/`: build and GUI tooling integrations.
-- `Plugins/Rust/`, `Plugins/PHPRefactoring/`, `Plugins/codelitephp/`: language-specific tooling.
+- `Plugins/Rust/`, `Plugins/codelitephp/`: language-specific tooling.
 - `Plugins/Remoty/`, `Plugins/SFTP/`, `Plugins/Docker/`: remote and container workflows.
 - `Plugins/ExternalTools/`, `Plugins/ContinuousBuild/`, `Plugins/AutoSave/`, `Plugins/ZoomNavigator/`, `Plugins/WordCompletion/`: productivity and utility extensions.
 

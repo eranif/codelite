@@ -80,6 +80,11 @@ protected:
     void DoGetSelectedItems(wxArrayTreeItemIds& items);
 
     wxString DoGetSelectedProject();
+    /**
+     * @brief ask the user what to run, and store the answer in the project settings
+     * @return false if the user cancelled
+     */
+    bool DoShowRunDialog(PHPProject::Ptr_t project, wxString& path);
     ItemData* DoGetItemData(const wxTreeItemId& item);
     const ItemData* DoGetItemData(const wxTreeItemId& item) const;
     bool IsFolderItem(const wxTreeItemId& item);

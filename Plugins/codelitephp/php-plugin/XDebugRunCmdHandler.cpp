@@ -34,7 +34,7 @@ void XDebugRunCmdHandler::Process(const wxXmlNode* response)
             wxString filename = msg->GetAttribute("filename");
             int line_number = XmlUtils::ReadLong(msg, "lineno");
 
-            wxString localFile = ::MapRemoteFileToLocalFile(filename);
+            wxString localFile = ::MapRemoteFileToLocalFile(filename, m_mgr->GetFileMapping());
             clDEBUG() << "Mapping remote file:" << filename << "->" << localFile << endl;
             wxFileName fnFilename(localFile);
             if (fnFilename.Exists()) {

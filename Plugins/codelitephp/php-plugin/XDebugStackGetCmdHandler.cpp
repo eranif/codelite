@@ -27,7 +27,7 @@ void XDebugStackGetCmdHandler::Process(const wxXmlNode* response)
             wxString filename = child->GetAttribute("filename");
             int line_number = XmlUtils::ReadLong(child, "lineno");
 
-            wxString localFile = ::MapRemoteFileToLocalFile(filename);
+            wxString localFile = ::MapRemoteFileToLocalFile(filename, m_mgr->GetFileMapping());
             // Use pipe to separate the attributes
             wxString stackEntry;
             stackEntry << level << "|" << where << "|" << localFile << "|" << line_number;

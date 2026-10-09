@@ -13,7 +13,7 @@
 PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     : PHPSettingsBaseDlg(parent)
 {
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("Default");
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if (lexer) {
         lexer->Apply(m_stcIncludePaths);
     }

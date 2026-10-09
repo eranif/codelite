@@ -195,7 +195,7 @@ void CodeFormatter::OnFormatEditor(wxCommandEvent& e)
 
     // get the editor that requires formatting
     CHECK_PTR_RET(editor);
-    DoFormatEditor(editor);
+    DoFormatEditor(editor, true);
 }
 
 std::shared_ptr<GenericFormatter> CodeFormatter::FindFormatter(const wxString& filepath, const wxString& content) const
@@ -223,7 +223,7 @@ std::shared_ptr<GenericFormatter> CodeFormatter::FindFormatter(const wxString& f
     return nullptr;
 }
 
-bool CodeFormatter::DoFormatEditor(IEditor* editor)
+bool CodeFormatter::DoFormatEditor(IEditor* editor, bool selection_only)
 {
     // sanity
     CHECK_PTR_RET_FALSE(editor);
@@ -235,7 +235,7 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     }
 
     if (f->IsLSPFormatter()) {
-        return DoFormatEditorWithLSP(editor);
+        return DoFormatEditorWithLSP(editor, selection_only);
     }
 
     wxString output;
@@ -265,10 +265,27 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     return res;
 }
 
-bool CodeFormatter::DoFormatEditorWithLSP(IEditor* editor)
+bool CodeFormatter::DoFormatEditorWithLSP(IEditor* editor, bool selection_only)
 {
     auto server = LSP::Manager::GetInstance().GetServerForEditor(*editor);
-    if (!server || !server->SendDocumentFormattingRequest(*editor)) {
+    CHECK_PTR_RET_FALSE(server);
+
+    std::optional<LSP::Range> range;
+    auto ctrl = editor->GetCtrl();
+    if (selection_only && ctrl->GetSelectionStart() != ctrl->GetSelectionEnd()) {
+        if (!server->IsDocumentRangeFormattingSupported()) {
+            m_mgr->SetStatusMessage(_("The language server can not format a selection"), 3);
+            return false;
+        }
+        int start_pos = ctrl->GetSelectionStart();
+        int end_pos = ctrl->GetSelectionEnd();
+        range = LSP::Range{
+            LSP::Position{ctrl->LineFromPosition(start_pos), editor->GetColumnInChars(start_pos)},
+            LSP::Position{ctrl->LineFromPosition(end_pos), editor->GetColumnInChars(end_pos)},
+        };
+    }
+
+    if (!server->SendDocumentFormattingRequest(*editor, range)) {
         clDEBUG() << "The language server can not format file:" << editor->GetRemotePathOrLocal() << endl;
         return false;
     }

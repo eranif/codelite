@@ -24,7 +24,7 @@ std::optional<LSPEvent> LSP::RenameRequest::OnResponse(const LSP::ResponseMessag
     }
     LOG_IF_TRACE { LSP_TRACE() << result.format(false) << endl; }
 
-    std::unordered_map<wxString, std::vector<LSP::TextEdit>> modifications = ParseWorkspaceEdit(result);
+    LSP::WorkspaceEditChangeList modifications = ParseWorkspaceEdit(result);
 
     LSPEvent event_edit_files{wxEVT_LSP_EDIT_FILES};
     event_edit_files.SetAnswer(true); // Prompt the user
@@ -33,11 +33,15 @@ std::optional<LSPEvent> LSP::RenameRequest::OnResponse(const LSP::ResponseMessag
 
     LOG_IF_DEBUG
     {
-        LSP_DEBUG() << "Updating" << modifications.size() << "files:" << endl;
-        for (const auto& [filepath, changes] : modifications) {
-            LSP_DEBUG() << "  " << filepath << modifications.size() << "changes:" << endl;
-            for (const auto& change : changes) {
-                LSP_DEBUG() << "    " << wxString::FromUTF8(change.ToJSON().dump(0)) << endl;
+        LSP_DEBUG() << "Applying" << modifications.size() << "changes:" << endl;
+        for (const auto& change : modifications) {
+            if (change.kind == LSP::WorkspaceEditChange::Kind::kRename) {
+                LSP_DEBUG() << "  rename" << change.path << "->" << change.new_path << endl;
+                continue;
+            }
+            LSP_DEBUG() << "  " << change.path << change.edits.size() << "edits:" << endl;
+            for (const auto& edit : change.edits) {
+                LSP_DEBUG() << "    " << wxString::FromUTF8(edit.ToJSON().dump(0)) << endl;
             }
         }
     }

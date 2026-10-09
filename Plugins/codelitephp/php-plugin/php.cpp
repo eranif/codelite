@@ -113,8 +113,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     EventNotifier::Get()->Connect(
         wxEVT_CMD_CLOSE_WORKSPACE, clCommandEventHandler(PhpPlugin::OnCloseWorkspace), nullptr, this);
     EventNotifier::Get()->Connect(
-        wxEVT_CMD_OPEN_WORKSPACE, clCommandEventHandler(PhpPlugin::OnOpenWorkspace), nullptr, this);
-    EventNotifier::Get()->Connect(
         wxEVT_CMD_RELOAD_WORKSPACE, clCommandEventHandler(PhpPlugin::OnReloadWorkspace), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_OPEN_RESOURCE_SHOWING, &PhpPlugin::OnOpenResource, this);
     EventNotifier::Get()->Connect(
@@ -227,8 +225,6 @@ void PhpPlugin::UnPlug()
         wxEVT_CMD_IS_WORKSPACE_OPEN, clCommandEventHandler(PhpPlugin::OnIsWorkspaceOpen), nullptr, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_CLOSE_WORKSPACE, clCommandEventHandler(PhpPlugin::OnCloseWorkspace), nullptr, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_OPEN_WORKSPACE, clCommandEventHandler(PhpPlugin::OnOpenWorkspace), nullptr, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_RELOAD_WORKSPACE, clCommandEventHandler(PhpPlugin::OnReloadWorkspace), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_OPEN_RESOURCE_SHOWING, &PhpPlugin::OnOpenResource, this);
@@ -356,30 +352,6 @@ void PhpPlugin::OnCloseWorkspace(clCommandEvent& e)
     } else {
         e.Skip();
     }
-}
-
-void PhpPlugin::OnOpenWorkspace(clCommandEvent& e)
-{
-    e.Skip();
-    wxFileName workspaceFile(e.GetFileName());
-    JSON root(workspaceFile);
-    if (!root.isOk())
-        return;
-
-    wxString type = root.toElement().namedObject("metadata").namedObject("type").toString();
-    bool hasProjects = root.toElement().hasNamedObject("projects");
-    if (type == "php" || hasProjects) {
-        // this is our to handle
-        e.Skip(false);
-    } else {
-        return;
-    }
-
-    // Check if this is a PHP workspace
-    if (PHPWorkspace::Get()->IsOpen()) {
-        PHPWorkspace::Get()->Close(true, true);
-    }
-    DoOpenWorkspace(workspaceFile.GetFullPath());
 }
 
 void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing, bool createProjectFromSources)

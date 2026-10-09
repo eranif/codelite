@@ -107,7 +107,6 @@ public:
     void OnNewWorkspace(clCommandEvent& e);
     void OnIsWorkspaceOpen(clCommandEvent& e);
     void OnCloseWorkspace(clCommandEvent& e);
-    void OnOpenWorkspace(clCommandEvent& e);
     void OnReloadWorkspace(clCommandEvent& e);
     void OnOpenResource(wxCommandEvent& e);
     void OnGetWorkspaceFiles(wxCommandEvent& e);

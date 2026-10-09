@@ -46,7 +46,8 @@ void XDebugRunCmdHandler::Process(const wxXmlNode* response)
             } else {
                 wxString message;
                 message << _("Failed to map remote file: ") << filename << "\n"
-                        << _("Check your project settings->Debug to define folder mapping");
+                        << _("Define folder mapping in Project Settings -> Debug (PHP workspace) or in PHP -> "
+                             "XDebug Settings... -> Debug (other workspaces)");
                 ::wxMessageBox(message, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
             }
         }

@@ -5,6 +5,12 @@ BUILD_TARGET=Release
 BUILD_DIR_NAME=.build-release
 BUILD_DIR=${ROOT_DIR}/${BUILD_DIR_NAME}
 OS_NAME="$(uname -s)"
+# MSYS2 (MinGW) provides mingw32-make; its CMake generates "MinGW Makefiles"
+if [[ "${OS_NAME}" == *MINGW* ]]; then
+  MAKE_CMD=mingw32-make
+else
+  MAKE_CMD=make
+fi
 FORCE_CMAKE=0
 WITH_TESTS=0
 NO_BUILD=0
@@ -35,7 +41,7 @@ function run_make() {
     INFO "--no-build was passed; skipping: make $*"
     return 0
   fi
-  make "$@"
+  ${MAKE_CMD} "$@"
 }
 
 function check_prerequistes() {
@@ -142,7 +148,7 @@ function build_wx_widgets_MSW() {
     -DCMAKE_TLS_VERIFY=OFF \
     -DCMAKE_INSTALL_PREFIX=${BUILD_DIR}/wxWidgets-install
 
-  make -j$(nproc) install
+  ${MAKE_CMD} -j$(nproc) install
   echo "${wx_version}" >"${wx_version_file}"
   export WXWIN="${BUILD_DIR}/wxWidgets-install"
   INFO "WXWIN is set to '${WXWIN}'"
@@ -380,7 +386,7 @@ function build_wxCrafter_MSW() {
 function package_wxCrafter_MSW() {
   build_wxCrafter_MSW
   cd ${WXCRAFTER_BUILD_DIR}
-  make -j$(nproc) setup
+  ${MAKE_CMD} -j$(nproc) setup
   cd ${ROOT_DIR}
 }
 
@@ -390,7 +396,7 @@ function clean() {
     return 0
   fi
   INFO "Cleaning build artifacts"
-  make -C "${BUILD_DIR}" clean
+  ${MAKE_CMD} -C "${BUILD_DIR}" clean
   INFO "Clean complete"
 }
 
@@ -445,7 +451,7 @@ function package() {
   build
   if [[ "${OS_NAME}" == *MINGW* ]]; then
     cd ${BUILD_DIR}
-    make -j$(nproc) setup/fast
+    ${MAKE_CMD} -j$(nproc) setup/fast
   elif [[ "${OS_NAME}" == "Darwin" ]]; then
     cd ${BUILD_DIR}
 

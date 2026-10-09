@@ -142,8 +142,9 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
     if (!conf.HasFlag(PHPConfigurationData::kDontPromptForMissingFileMapping) && GetFileMapping().empty()) {
         // Issue a warning
         wxString message;
-        message << _("This project has no file mapping defined. This may result in breakpoints not applied\n")
-                << _("To fix this, set file mapping from Project Settings -> Debug");
+        message << _("No file mapping is defined. This may result in breakpoints not applied\n")
+                << _("To fix this, set file mapping in Project Settings -> Debug (PHP workspace) or in PHP -> "
+                     "XDebug Settings... -> Debug (other workspaces)");
 
         wxRichMessageDialog dlg(
             EventNotifier::Get()->TopFrame(), message, "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCANCEL);

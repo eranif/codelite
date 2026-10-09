@@ -64,6 +64,7 @@ public:
         wxID_XDEBUG_DELETE_ALL_BREAKPOINTS,
         wxID_XDEBUG_SHOW_BREAKPOINTS_WINDOW,
         wxID_PHP_RUN_XDEBUG_DIAGNOSTICS,
+        wxID_XDEBUG_WAIT_FOR_CONNECTION,
     };
 
 public:
@@ -116,6 +117,10 @@ public:
     void OnNewProjectFinish(clNewProjectEvent& e);
     void OnRunXDebugDiagnostics(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
+    void OnXDebugSettings(wxCommandEvent& e);
+    void OnXDebugSettingsUI(wxUpdateUIEvent& e);
+    void OnXDebugWaitForConnection(wxCommandEvent& e);
+    void OnXDebugWaitForConnectionUI(wxUpdateUIEvent& e);
     void OnXDebugDeleteAllBreakpoints(clDebugEvent& e);
     void OnLoadURL(PHPEvent& e);
     void OnAllEditorsClosed(wxCommandEvent& e);

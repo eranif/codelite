@@ -1358,46 +1358,68 @@ void Manager::OnMarginClicked(clEditorEvent& event)
 void Manager::OnCodeActionAvailable(LSPEvent& event)
 {
     event.Skip();
+    // disabled actions can not be applied
+    std::vector<const LSP::CodeAction*> actions;
+    for (const auto& action : event.GetCodeActions()) {
+        if (action.IsDisabled()) {
+            LSP_DEBUG() << "Skipping disabled code action:" << action.GetTitle() << "-" << action.GetDisabledReason()
+                        << endl;
+            continue;
+        }
+        actions.push_back(&action);
+    }
+
     // prompt the user
-    if (event.GetCommands().empty()) {
+    if (actions.empty()) {
         return;
     }
 
-    const LSP::Command* command_to_apply = nullptr;
-    if (event.GetCommands().size() > 1) {
+    const LSP::CodeAction* action_to_apply = nullptr;
+    if (actions.size() > 1) {
         // multiple fixes available, choose one
         wxArrayString choices;
-        choices.reserve(event.GetCommands().size());
-
-        std::unordered_map<wxStringView, const LSP::Command*> M;
-        for (const auto& cmd : event.GetCommands()) {
-            choices.Add(cmd.GetTitle());
-            M.insert({wxStringView(cmd.GetTitle().data(), cmd.GetTitle().length()), &cmd});
+        choices.reserve(actions.size());
+        int preferred = wxNOT_FOUND;
+        for (const auto* action : actions) {
+            if (action->IsPreferred() && preferred == wxNOT_FOUND) {
+                preferred = static_cast<int>(choices.size());
+            }
+            choices.Add(action->GetTitle());
         }
 
         // prompt the user to choose a fix
-        wxString selection =
-            wxGetSingleChoice(_("Choose a fix to apply:"), "CodeLite", choices, EventNotifier::Get()->TopFrame());
-        if (selection.empty()) {
+        int selection = wxGetSingleChoiceIndex(
+            _("Choose a fix to apply:"), "CodeLite", choices, std::max(preferred, 0), EventNotifier::Get()->TopFrame());
+        if (selection == wxNOT_FOUND) {
             return; // user hit cancel
         }
-
-        wxStringView sv_selection{selection.data(), selection.length()};
-        command_to_apply = M[sv_selection];
+        action_to_apply = actions[selection];
     } else {
         wxRichMessageDialog dlg(wxTheApp->GetTopWindow(),
                                 _("A fix is available"),
                                 "CodeLite",
                                 wxOK | wxCANCEL | wxOK_DEFAULT | wxCENTER | wxICON_QUESTION);
-        dlg.SetExtendedMessage(event.GetCommands()[0].GetTitle());
+        dlg.SetExtendedMessage(actions[0]->GetTitle());
         dlg.SetOKCancelLabels(_("Fix it!"), _("Cancel"));
         if (dlg.ShowModal() != wxID_OK) {
             return;
         }
-        command_to_apply = &event.GetCommands()[0];
+        action_to_apply = actions[0];
     }
 
-    CHECK_PTR_RET(command_to_apply);
+    CHECK_PTR_RET(action_to_apply);
+
+    // apply the edit first, then run the command
+    if (!action_to_apply->GetEdit().empty()) {
+        LSPEvent edit_event{wxEVT_LSP_EDIT_FILES};
+        edit_event.SetChanges(action_to_apply->GetEdit());
+        edit_event.SetAnswer(false); // Do not prompt the user
+        ProcessEvent(edit_event);
+    }
+
+    if (!action_to_apply->GetCommand().has_value()) {
+        return;
+    }
 
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -1405,7 +1427,7 @@ void Manager::OnCodeActionAvailable(LSPEvent& event)
     auto server = GetServerForEditor(*editor);
     CHECK_PTR_RET(server);
 
-    server->SendWorkspaceExecuteCommand(event.GetFileName(), *command_to_apply);
+    server->SendWorkspaceExecuteCommand(event.GetFileName(), *action_to_apply->GetCommand());
 }
 
 void Manager::OnApplyEdits(LSPEvent& event)

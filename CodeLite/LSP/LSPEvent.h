@@ -29,7 +29,7 @@ protected:
     std::vector<LSP::SymbolInformation> m_symbolsInformation;
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
     std::vector<LSP::Location> m_locations;                             // used by wxEVT_LSP_REFERENCES
-    std::vector<LSP::Command> m_commands;                               // used by wxEVT_LSP_CODE_ACTIONS
+    std::vector<LSP::CodeAction> m_codeActions;                         // used by wxEVT_LSP_CODE_ACTIONS
     std::unordered_map<wxString, std::vector<LSP::TextEdit>> m_changes; // list of changes per file
     LSP::Progress m_progress;                                           // used by wxEVT_LSP_PROGRESS
     int m_logMessageSeverity = LSP_LOG_INFO;
@@ -107,9 +107,9 @@ public:
     void SetLocations(const std::vector<LSP::Location>& locations) { this->m_locations = locations; }
     const std::vector<LSP::Location>& GetLocations() const { return m_locations; }
     std::vector<LSP::Location>& GetLocations() { return m_locations; }
-    void SetCommands(const std::vector<LSP::Command>& commands) { this->m_commands = commands; }
-    const std::vector<LSP::Command>& GetCommands() const { return m_commands; }
-    std::vector<LSP::Command>& GetCommands() { return m_commands; }
+    void SetCodeActions(const std::vector<LSP::CodeAction>& codeActions) { this->m_codeActions = codeActions; }
+    const std::vector<LSP::CodeAction>& GetCodeActions() const { return m_codeActions; }
+    std::vector<LSP::CodeAction>& GetCodeActions() { return m_codeActions; }
     void SetChanges(const std::unordered_map<wxString, std::vector<LSP::TextEdit>>& changes)
     {
         this->m_changes = changes;

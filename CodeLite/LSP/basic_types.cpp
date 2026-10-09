@@ -453,6 +453,36 @@ std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(cons
     return modifications;
 }
 
+//===----------------------------------------------------------------------------------
+// CodeAction
+//===----------------------------------------------------------------------------------
+void CodeAction::FromJSON(const JSONItem& json)
+{
+    // A `Command` has a string "command", a `CodeAction` has an optional "command" object
+    if (json["command"].isString()) {
+        Command command;
+        command.FromJSON(json);
+        m_title = command.GetTitle();
+        m_command = command;
+        return;
+    }
+
+    m_title = json["title"].toString();
+    m_kind = json["kind"].toString();
+    m_isPreferred = json["isPreferred"].toBool(false);
+    if (json.hasNamedObject("disabled")) {
+        m_disabledReason = json["disabled"]["reason"].toString();
+    }
+    if (json.hasNamedObject("edit")) {
+        m_edit = ParseWorkspaceEdit(json["edit"]);
+    }
+    if (json["command"].isObject()) {
+        Command command;
+        command.FromJSON(json["command"]);
+        m_command = command;
+    }
+}
+
 // =====---------------
 // Progress
 // =====---------------

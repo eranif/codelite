@@ -146,6 +146,7 @@ Manager::Manager()
     EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &Manager::OnClearDiagnostics, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_MARGIN_CLICKED, &Manager::OnMarginClicked, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_CODE_ACTIONS, &Manager::OnCodeActionAvailable, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_CODE_ACTION_RESOLVED, &Manager::OnCodeActionResolved, this);
 
     Bind(wxEVT_LSP_DEFINITION, &Manager::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &Manager::OnCompletionReady, this);
@@ -186,6 +187,7 @@ Manager::~Manager()
     EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &Manager::OnClearDiagnostics, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_MARGIN_CLICKED, &Manager::OnMarginClicked, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_CODE_ACTIONS, &Manager::OnCodeActionAvailable, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_CODE_ACTION_RESOLVED, &Manager::OnCodeActionResolved, this);
 
     Unbind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &Manager::OnShowQuickOutlineDlg, this);
     Unbind(wxEVT_LSP_DEFINITION, &Manager::OnSymbolFound, this);
@@ -1409,15 +1411,45 @@ void Manager::OnCodeActionAvailable(LSPEvent& event)
 
     CHECK_PTR_RET(action_to_apply);
 
+    if (action_to_apply->NeedsResolve()) {
+        auto editor = clGetManager()->GetActiveEditor();
+        CHECK_PTR_RET(editor);
+
+        auto server = GetServerForEditor(*editor);
+        CHECK_PTR_RET(server);
+
+        if (server->IsCodeActionResolveSupported()) {
+            // the edit is applied when the resolved action arrives, see OnCodeActionResolved
+            server->SendCodeActionResolveRequest(event.GetFileName(), *action_to_apply);
+            return;
+        }
+        LSP_WARNING() << "Code action has no edit and the server does not support codeAction/resolve:"
+                      << action_to_apply->GetTitle() << endl;
+    }
+
+    ApplyCodeAction(event.GetFileName(), *action_to_apply);
+}
+
+void Manager::OnCodeActionResolved(LSPEvent& event)
+{
+    event.Skip();
+    if (event.GetCodeActions().empty()) {
+        return;
+    }
+    ApplyCodeAction(event.GetFileName(), event.GetCodeActions()[0]);
+}
+
+void Manager::ApplyCodeAction(const wxString& filepath, const LSP::CodeAction& action)
+{
     // apply the edit first, then run the command
-    if (!action_to_apply->GetEdit().empty()) {
+    if (!action.GetEdit().empty()) {
         LSPEvent edit_event{wxEVT_LSP_EDIT_FILES};
-        edit_event.SetChanges(action_to_apply->GetEdit());
+        edit_event.SetChanges(action.GetEdit());
         edit_event.SetAnswer(false); // Do not prompt the user
         ProcessEvent(edit_event);
     }
 
-    if (!action_to_apply->GetCommand().has_value()) {
+    if (!action.GetCommand().has_value()) {
         return;
     }
 
@@ -1427,7 +1459,7 @@ void Manager::OnCodeActionAvailable(LSPEvent& event)
     auto server = GetServerForEditor(*editor);
     CHECK_PTR_RET(server);
 
-    server->SendWorkspaceExecuteCommand(event.GetFileName(), *action_to_apply->GetCommand());
+    server->SendWorkspaceExecuteCommand(filepath, *action.GetCommand());
 }
 
 void Manager::OnApplyEdits(LSPEvent& event)

@@ -296,6 +296,11 @@ public:
     void SendCodeActionRequest(IEditor& editor, const std::vector<LSP::Diagnostic>& diags);
 
     /**
+     * @brief ask the server to fill in the missing edit of a code action (`codeAction/resolve`)
+     */
+    void SendCodeActionResolveRequest(const wxString& filepath, const LSP::CodeAction& action);
+
+    /**
      * @brief ask the server for semantic tokens
      */
     void SendSemanticTokensRequest(IEditor& editor);
@@ -312,6 +317,7 @@ public:
     bool IsDeclarationSupported() const;
     bool IsReferencesSupported() const;
     bool IsRenameSupported() const;
+    bool IsCodeActionResolveSupported() const;
 };
 
 #endif // CLLANGUAGESERVER_H

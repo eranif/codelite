@@ -467,13 +467,16 @@ void CodeAction::FromJSON(const JSONItem& json)
         return;
     }
 
+    m_json = json.format(false);
     m_title = json["title"].toString();
     m_kind = json["kind"].toString();
     m_isPreferred = json["isPreferred"].toBool(false);
     if (json.hasNamedObject("disabled")) {
         m_disabledReason = json["disabled"]["reason"].toString();
     }
-    if (json.hasNamedObject("edit")) {
+    m_hasData = json.hasNamedObject("data");
+    m_hasEdit = json.hasNamedObject("edit");
+    if (m_hasEdit) {
         m_edit = ParseWorkspaceEdit(json["edit"]);
     }
     if (json["command"].isObject()) {

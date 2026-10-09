@@ -775,6 +775,9 @@ class WXDLLIMPEXP_CL CodeAction
     wxString m_disabledReason;
     std::unordered_map<wxString, std::vector<LSP::TextEdit>> m_edit;
     std::optional<Command> m_command;
+    bool m_hasEdit = false;
+    bool m_hasData = false; // the "data" itself is kept in `m_json`
+    wxString m_json;        // raw JSON, sent back to the server in `codeAction/resolve`
 
 public:
     void FromJSON(const JSONItem& json);
@@ -789,6 +792,9 @@ public:
     const wxString& GetDisabledReason() const { return m_disabledReason; }
     const std::unordered_map<wxString, std::vector<LSP::TextEdit>>& GetEdit() const { return m_edit; }
     const std::optional<Command>& GetCommand() const { return m_command; }
+    const wxString& GetJSON() const { return m_json; }
+    /// The server left out the edit and must fill it in with `codeAction/resolve`
+    bool NeedsResolve() const { return !m_hasEdit && m_hasData; }
 };
 
 } // namespace LSP

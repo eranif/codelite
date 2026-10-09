@@ -126,4 +126,15 @@ void CodeFormatterDlg::OnDelete(wxCommandEvent& event)
     InitDialog();
 }
 
-void CodeFormatterDlg::OnDeleteUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->GetSelectedItemsCount() > 0); }
+void CodeFormatterDlg::OnDeleteUI(wxUpdateUIEvent& event)
+{
+    auto item = m_dvListCtrl->GetSelection();
+    if (!item.IsOk()) {
+        event.Enable(false);
+        return;
+    }
+
+    // the LSP formatter is added again when the settings are loaded. Disable it instead
+    auto formatter = m_formatter_manager.GetFormatterByName(m_dvListCtrl->GetItemText(item));
+    event.Enable(!formatter || !formatter->IsLSPFormatter());
+}

@@ -49,6 +49,7 @@ nlohmann::json LSP::InitializeRequest::ToJSON() const
     codeActionCapabilities["resolveSupport"]["properties"] = nlohmann::json::array({"edit"});
 
     textDocumentCapabilities["onTypeFormatting"]["dynamicRegistration"] = false;
+    textDocumentCapabilities["formatting"]["dynamicRegistration"] = false;
 
     if (m_withTokenTypes) {
         textDocumentCapabilities["semanticTokens"]["tokenTypes"] = {

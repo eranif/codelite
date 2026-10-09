@@ -1,11 +1,11 @@
 #include "CodeFormatterManager.hpp"
 
+#include "LSP/LSPManager.hpp"
 #include "fmtBlack.hpp"
 #include "fmtCMakeFormat.hpp"
 #include "fmtClangFormat.hpp"
 #include "fmtJQ.hpp"
-#include "fmtPHPCBF.hpp"
-#include "fmtPHPCSFixer.hpp"
+#include "fmtLSP.hpp"
 #include "fmtRustfmt.hpp"
 #include "fmtShfmtFormat.hpp"
 #include "fmtXmlLint.hpp"
@@ -14,11 +14,37 @@
 #include <algorithm>
 #include <wx/filename.h>
 
+namespace
+{
+/// Can `formatter` format a file of type `type` right now? The LSP formatter also needs a running language server
+/// that supports `textDocument/formatting`
+bool can_format(const GenericFormatter& formatter, FileExtManager::FileType type)
+{
+    if (!formatter.IsEnabled() || !formatter.CanHandle(type)) {
+        return false;
+    }
+
+    if (!formatter.IsLSPFormatter()) {
+        return true;
+    }
+
+    auto server = LSP::Manager::GetInstance().GetServerForFileType(type);
+    return server && server->IsDocumentFormattingSupported();
+}
+
+/// Formatters that CodeLite no longer ships. They are dropped from the saved configuration when it is loaded
+const wxStringSet_t removed_formatters = {
+    // replaced by the language server (PHPantom picks phpcbf / php-cs-fixer from the project itself)
+    "PHPCBF",
+    "PHP-CS-Fixer",
+};
+} // namespace
+
 std::shared_ptr<GenericFormatter> CodeFormatterManager::GetFormatter(const wxString& filepath) const
 {
     auto type = FileExtManager::GetType(filepath);
     for (auto f : m_formatters) {
-        if (f->IsEnabled() && f->CanHandle(type)) {
+        if (can_format(*f, type)) {
             return f;
         }
     }
@@ -31,8 +57,6 @@ void CodeFormatterManager::initialize_defaults()
 {
     clear();
     push_back(std::make_shared<fmtClangFormat>());
-    push_back(std::make_shared<fmtPHPCBF>());
-    push_back(std::make_shared<fmtPHPCSFixer>());
     push_back(std::make_shared<fmtJQ>());
     push_back(std::make_shared<fmtXmlLint>());
     push_back(std::make_shared<fmtRustfmt>());
@@ -40,6 +64,8 @@ void CodeFormatterManager::initialize_defaults()
     push_back(std::make_shared<fmtYQ>());
     push_back(std::make_shared<fmtCMakeFormat>());
     push_back(std::make_shared<fmtShfmtFormat>());
+    // last, so the formatters above win when they are enabled
+    push_back(std::make_shared<fmtLSP>());
 }
 
 void CodeFormatterManager::push_back(std::shared_ptr<GenericFormatter> formatter)
@@ -78,7 +104,15 @@ void CodeFormatterManager::Load()
     for (int i = 0; i < count; ++i) {
         auto formatter = std::make_shared<GenericFormatter>();
         formatter->FromJSON(arr[i]);
+        if (removed_formatters.contains(formatter->GetName())) {
+            continue;
+        }
         push_back(std::move(formatter));
+    }
+
+    // configurations saved before the LSP formatter existed do not have it
+    if (std::ranges::none_of(m_formatters, &GenericFormatter::IsLSPFormatter)) {
+        push_back(std::make_shared<fmtLSP>());
     }
 }
 
@@ -106,9 +140,10 @@ std::shared_ptr<GenericFormatter> CodeFormatterManager::GetFormatterByName(const
 
 bool CodeFormatterManager::CanFormat(const wxString& filepath) const
 {
+    // used for batch formatting: the LSP formatter is skipped, it can only format open files
     auto file_type = FileExtManager::GetType(filepath);
     for (auto f : m_formatters) {
-        if (f->IsEnabled() && f->CanHandle(file_type)) {
+        if (!f->IsLSPFormatter() && f->IsEnabled() && f->CanHandle(file_type)) {
             return true;
         }
     }
@@ -136,7 +171,7 @@ std::shared_ptr<GenericFormatter> CodeFormatterManager::GetFormatterByContent(co
     }
 
     for (auto f : m_formatters) {
-        if (f->IsEnabled() && f->CanHandle(type)) {
+        if (can_format(*f, type)) {
             return f;
         }
     }

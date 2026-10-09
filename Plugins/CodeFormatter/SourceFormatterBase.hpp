@@ -24,6 +24,9 @@ enum class FormatterFlags {
 
     // trigger a formatting after saving the file
     FORMAT_ON_SAVE = (1 << 3),
+
+    // Format with the language server of the file (`textDocument/formatting`) instead of a command
+    LSP = (1 << 4),
 };
 
 #define __HAS_FLAG(flags, bit) (flags & (size_t)bit)
@@ -76,6 +79,9 @@ public:
 
     void SetInplaceFormatter(bool b) { SetFlag(FormatterFlags::INPLACE_EDIT, b); }
     bool IsInplaceFormatter() const { return HasFlag(FormatterFlags::INPLACE_EDIT); }
+
+    void SetLSPFormatter(bool b) { SetFlag(FormatterFlags::LSP, b); }
+    bool IsLSPFormatter() const { return HasFlag(FormatterFlags::LSP); }
 
     virtual bool FormatFile(const wxFileName& file_path, wxEvtHandler* sink) = 0;
     virtual bool FormatFile(const wxString& file_path, wxEvtHandler* sink) = 0;

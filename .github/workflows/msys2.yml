@@ -7,11 +7,13 @@ on:
       - '**'
       - '!.github/**'
       - '.github/workflows/msys2.yml'
+      - '!**.md'
   pull_request:
     paths:
       - '**'
       - '!.github/**'
       - '.github/workflows/msys2.yml'
+      - '!**.md'
 
 jobs:
   msys2:

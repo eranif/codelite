@@ -291,9 +291,14 @@ public:
     void SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command);
 
     /**
-     * @brief request a code action from the server
+     * @brief request the code actions for a range from the server
+     * @param diags the diagnostics that overlap the range
+     * @param only the code action kinds to ask for. Empty means all kinds
      */
-    void SendCodeActionRequest(IEditor& editor, const std::vector<LSP::Diagnostic>& diags);
+    void SendCodeActionRequest(IEditor& editor,
+                               const LSP::Range& range,
+                               const std::vector<LSP::Diagnostic>& diags,
+                               const wxArrayString& only = {});
 
     /**
      * @brief ask the server to fill in the missing edit of a code action (`codeAction/resolve`)
@@ -317,6 +322,7 @@ public:
     bool IsDeclarationSupported() const;
     bool IsReferencesSupported() const;
     bool IsRenameSupported() const;
+    bool IsCodeActionSupported() const;
     bool IsCodeActionResolveSupported() const;
 };
 

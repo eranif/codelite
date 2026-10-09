@@ -36,11 +36,9 @@ nlohmann::json LSP::InitializeRequest::ToJSON() const
     textDocumentCapabilities["hover"]["contentFormat"] = {"markdown", "plaintext"};
 
     auto& codeActionCapabilities = textDocumentCapabilities["codeAction"];
-    // Only the kinds that CodeLite can start and apply today. Add "refactor.*" and "source.*" once code actions can
-    // be requested for the cursor / selection range, workspace edits support resource operations and
-    // `workspace/applyEdit` is answered
+    // Only the kinds that have been tested. Add the other "refactor.*" and "source.*" kinds once they are tested
     codeActionCapabilities["codeActionLiteralSupport"]["codeActionKind"]["valueSet"] =
-        nlohmann::json::array({"", "quickfix"});
+        nlohmann::json::array({"", "quickfix", "refactor.extract", "source.organizeImports"});
     codeActionCapabilities["isPreferredSupport"] = true;
     codeActionCapabilities["disabledSupport"] = true;
     codeActionCapabilities["dataSupport"] = true;

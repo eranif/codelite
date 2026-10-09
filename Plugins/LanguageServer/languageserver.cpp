@@ -216,13 +216,19 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     bool add_find_symbol = !lsp->CanHandle(FileExtManager::TypePhp);
     bool add_find_references = lsp->IsReferencesSupported();
     bool add_rename_symbol = lsp->IsRenameSupported();
+    bool add_code_actions = lsp->IsCodeActionSupported();
 
     // nothing to be done here
-    if (!add_find_symbol && !add_find_references && !add_rename_symbol) {
+    if (!add_find_symbol && !add_find_references && !add_rename_symbol && !add_code_actions) {
         return;
     }
 
     wxMenu* menu = event.GetMenu();
+    if (add_code_actions) {
+        menu->PrependSeparator();
+        menu->Prepend(XRCID("lsp_code_actions"), _("Code actions..."));
+    }
+
     if (add_find_references) {
         menu->PrependSeparator();
         menu->Prepend(XRCID("lsp_find_references"), _("Find references"));

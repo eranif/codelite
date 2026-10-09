@@ -196,6 +196,7 @@ class WXDLLIMPEXP_CL CodeActionParams : public Params
     TextDocumentIdentifier m_textDocument;
     Range m_range;
     std::vector<LSP::Diagnostic> m_diagnostics;
+    wxArrayString m_only;
 
 public:
     CodeActionParams() = default;
@@ -213,6 +214,10 @@ public:
 
     void SetDiagnostics(const std::vector<LSP::Diagnostic>& diagnostics) { this->m_diagnostics = diagnostics; }
     const std::vector<LSP::Diagnostic>& GetDiagnostics() const { return this->m_diagnostics; }
+
+    /// Only ask for these code action kinds. Empty means all kinds
+    void SetOnly(const wxArrayString& only) { this->m_only = only; }
+    const wxArrayString& GetOnly() const { return m_only; }
 };
 
 //===----------------------------------------------------------------------------------

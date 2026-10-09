@@ -372,25 +372,19 @@ void LanguageServerProtocol::SendSaveRequest(IEditor& editor, const wxString& fi
     }
 }
 
-namespace
-{
-LSP::Range GetFileRange(wxStyledTextCtrl* ctrl)
-{
-    int last_line = ctrl->LineFromPosition(ctrl->GetLastPosition());
-    int last_line_len = ctrl->LineLength(last_line);
-    LSP::Position start_pos{0, 0};
-    LSP::Position end_pos{last_line, last_line_len};
-    return LSP::Range{start_pos, end_pos};
-}
-} // namespace
-
-void LanguageServerProtocol::SendCodeActionRequest(IEditor& editor, const std::vector<LSP::Diagnostic>& diags)
+void LanguageServerProtocol::SendCodeActionRequest(IEditor& editor,
+                                                   const LSP::Range& range,
+                                                   const std::vector<LSP::Diagnostic>& diags,
+                                                   const wxArrayString& only)
 {
     LSP_DEBUG() << "Sending Code Action for file:" << GetEditorFilePath(editor) << endl;
     if (ShouldHandleFile(editor)) {
+        // make sure that the server has the latest content
+        SendOpenOrChangeRequest(editor, editor.GetEditorText(), GetLanguageId(editor));
+
         wxString filename = GetEditorFilePath(editor);
         LSP::CodeActionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-            new LSP::CodeActionRequest(LSP::TextDocumentIdentifier(filename), GetFileRange(editor.GetCtrl()), diags));
+            new LSP::CodeActionRequest(LSP::TextDocumentIdentifier(filename), range, diags, only));
         QueueMessage(req);
     }
 }
@@ -758,6 +752,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
                     CheckCapability(res, "workspaceSymbolProvider", "workspace/symbol");
                     CheckCapability(res, "renameProvider", "textDocument/rename");
                     CheckCapability(res, "referencesProvider", "textDocument/references");
+                    CheckCapability(res, "codeActionProvider", "textDocument/codeAction");
                     if (res["result"]["capabilities"]["codeActionProvider"]["resolveProvider"].toBool(false)) {
                         m_providers.insert("codeAction/resolve");
                     }
@@ -1184,6 +1179,8 @@ bool LanguageServerProtocol::IsLanguageSupported(const wxString& lang) const { r
 bool LanguageServerProtocol::IsReferencesSupported() const { return IsCapabilitySupported("textDocument/references"); }
 
 bool LanguageServerProtocol::IsRenameSupported() const { return IsCapabilitySupported("textDocument/rename"); }
+
+bool LanguageServerProtocol::IsCodeActionSupported() const { return IsCapabilitySupported("textDocument/codeAction"); }
 
 bool LanguageServerProtocol::IsCodeActionResolveSupported() const
 {

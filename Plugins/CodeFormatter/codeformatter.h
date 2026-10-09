@@ -51,8 +51,10 @@ private:
                                                     const wxString& content = wxEmptyString) const;
     bool DoFormatFile(const wxString& fileName, bool is_remote_format);
     bool DoFormatString(const wxString& content, const wxString& fileName, wxString* output);
-    bool DoFormatEditor(IEditor* editor);
-    bool DoFormatEditorWithLSP(IEditor* editor);
+    /// Format `editor`. With `selection_only`, only the selected text is formatted when the formatter can do that
+    /// (only the LSP formatter can). Without a selection, the whole file is formatted
+    bool DoFormatEditor(IEditor* editor, bool selection_only = false);
+    bool DoFormatEditorWithLSP(IEditor* editor, bool selection_only = false);
     void OnScanFilesCompleted(const std::vector<wxString>& files);
     void OnWorkspaceLoaded(clWorkspaceEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);

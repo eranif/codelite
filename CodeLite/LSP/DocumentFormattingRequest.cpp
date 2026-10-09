@@ -4,12 +4,16 @@
 #include "LSP/ResponseError.h"
 #include "event_notifier.h"
 
-LSP::DocumentFormattingRequest::DocumentFormattingRequest(const wxString& filepath, size_t tabSize, bool insertSpaces)
+LSP::DocumentFormattingRequest::DocumentFormattingRequest(const wxString& filepath,
+                                                          size_t tabSize,
+                                                          bool insertSpaces,
+                                                          const std::optional<LSP::Range>& range)
     : m_filepath(filepath)
 {
-    SetMethod("textDocument/formatting");
+    SetMethod(range.has_value() ? "textDocument/rangeFormatting" : "textDocument/formatting");
     m_params.reset(new DocumentFormattingParams());
     m_params->As<DocumentFormattingParams>()->SetTextDocument(TextDocumentIdentifier(filepath));
+    m_params->As<DocumentFormattingParams>()->SetRange(range);
     m_params->As<DocumentFormattingParams>()->SetTabSize(tabSize);
     m_params->As<DocumentFormattingParams>()->SetInsertSpaces(insertSpaces);
 }
@@ -46,7 +50,7 @@ void LSP::DocumentFormattingRequest::HandleError(const LSP::ResponseMessage& res
                                                  [[maybe_unused]] wxEvtHandler* owner)
 {
     LSP::ResponseError errMsg(response.ToString());
-    LSP_WARNING() << "textDocument/formatting failed for" << m_filepath << ":" << errMsg.GetMessage() << endl;
+    LSP_WARNING() << GetMethod() << "failed for" << m_filepath << ":" << errMsg.GetMessage() << endl;
 
     // tell the formatter, so it stops waiting. The message is the error
     LSPEvent event{wxEVT_LSP_DOCUMENT_FORMATTED};

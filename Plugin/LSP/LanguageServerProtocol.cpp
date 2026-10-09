@@ -758,6 +758,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
                         m_providers.insert("codeAction/resolve");
                     }
                     CheckCapability(res, "documentFormattingProvider", "textDocument/formatting");
+                    CheckCapability(res, "documentRangeFormattingProvider", "textDocument/rangeFormatting");
                     // Check for textDocumentSync capability
                     // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocumentSyncOptions
                     if (res["result"]["capabilities"]["textDocumentSync"]["change"].toInt(wxNOT_FOUND) == 2) {
@@ -1218,6 +1219,11 @@ bool LanguageServerProtocol::IsDocumentFormattingSupported() const
     return IsCapabilitySupported("textDocument/formatting");
 }
 
+bool LanguageServerProtocol::IsDocumentRangeFormattingSupported() const
+{
+    return IsCapabilitySupported("textDocument/rangeFormatting");
+}
+
 bool LanguageServerProtocol::IsIncrementalChangeSupported() const { return m_incrementalChangeSupported; }
 
 void LanguageServerProtocol::SendWorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command)
@@ -1253,9 +1259,10 @@ void LanguageServerProtocol::SendCodeActionResolveRequest(const wxString& filepa
     }
 }
 
-bool LanguageServerProtocol::SendDocumentFormattingRequest(IEditor& editor)
+bool LanguageServerProtocol::SendDocumentFormattingRequest(IEditor& editor, const std::optional<LSP::Range>& range)
 {
-    if (!IsDocumentFormattingSupported() || !ShouldHandleFile(editor)) {
+    bool supported = range.has_value() ? IsDocumentRangeFormattingSupported() : IsDocumentFormattingSupported();
+    if (!supported || !ShouldHandleFile(editor)) {
         return false;
     }
 
@@ -1263,9 +1270,9 @@ bool LanguageServerProtocol::SendDocumentFormattingRequest(IEditor& editor)
     SendOpenOrChangeRequest(editor, editor.GetEditorText(), GetLanguageId(editor));
 
     auto ctrl = editor.GetCtrl();
-    LSP_DEBUG() << "Sending `textDocument/formatting` for file:" << GetEditorFilePath(editor) << endl;
+    LSP_DEBUG() << "Sending a formatting request for file:" << GetEditorFilePath(editor) << endl;
     LSP::DocumentFormattingRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-        new LSP::DocumentFormattingRequest(GetEditorFilePath(editor), ctrl->GetTabWidth(), !ctrl->GetUseTabs()));
+        new LSP::DocumentFormattingRequest(GetEditorFilePath(editor), ctrl->GetTabWidth(), !ctrl->GetUseTabs(), range));
     QueueMessage(req);
     return true;
 }

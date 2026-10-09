@@ -212,14 +212,23 @@ nlohmann::json RenameParams::ToJSON() const
 void DocumentFormattingParams::FromJSON(const JSONItem& json)
 {
     m_textDocument.FromJSON(json["textDocument"]);
+    m_range.reset();
+    if (json.hasNamedObject("range")) {
+        m_range.emplace();
+        m_range->FromJSON(json["range"]);
+    }
     m_tabSize = json["options"]["tabSize"].toSize_t(m_tabSize);
     m_insertSpaces = json["options"]["insertSpaces"].toBool(m_insertSpaces);
 }
 
 nlohmann::json DocumentFormattingParams::ToJSON() const
 {
-    return nlohmann::json{{"textDocument", m_textDocument.ToJSON()},
-                          {"options", {{"tabSize", m_tabSize}, {"insertSpaces", m_insertSpaces}}}};
+    nlohmann::json json{{"textDocument", m_textDocument.ToJSON()},
+                        {"options", {{"tabSize", m_tabSize}, {"insertSpaces", m_insertSpaces}}}};
+    if (m_range.has_value()) {
+        json["range"] = m_range->ToJSON();
+    }
+    return json;
 }
 
 } // namespace LSP

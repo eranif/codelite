@@ -37,6 +37,10 @@ disable the command formatter. To never use the language server for a language, 
 The language server can only format files that are open in an editor. Formatting a whole project or folder
 does not use it.
 
+When text is selected, `Format Current Source` (++ctrl+i++) formats only the selection
+(`textDocument/rangeFormatting`). If the language server can not format a selection, nothing is changed and the
+status bar says so. Without a selection, and when formatting on save, the whole file is formatted.
+
 ## Upgrading CodeLite
 ---
 

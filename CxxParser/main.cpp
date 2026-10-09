@@ -1,6 +1,9 @@
 // test the parser
 #include "code_completion_api.h"
 
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 void testScopeParser(char* buf);

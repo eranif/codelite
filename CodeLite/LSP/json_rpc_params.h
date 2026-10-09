@@ -6,6 +6,7 @@
 #include "codelite_exports.h"
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace LSP
@@ -326,9 +327,11 @@ public:
 //===----------------------------------------------------------------------------------
 // DocumentFormattingParams
 //===----------------------------------------------------------------------------------
+/// The params of `textDocument/formatting`, or of `textDocument/rangeFormatting` when a range is set
 class WXDLLIMPEXP_CL DocumentFormattingParams : public Params
 {
     TextDocumentIdentifier m_textDocument;
+    std::optional<Range> m_range;
     size_t m_tabSize = 4;
     bool m_insertSpaces = true;
 
@@ -342,6 +345,8 @@ public:
 
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
+    void SetRange(const std::optional<Range>& range) { this->m_range = range; }
+    const std::optional<Range>& GetRange() const { return m_range; }
     void SetTabSize(size_t tabSize) { this->m_tabSize = tabSize; }
     size_t GetTabSize() const { return m_tabSize; }
     void SetInsertSpaces(bool insertSpaces) { this->m_insertSpaces = insertSpaces; }

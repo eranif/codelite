@@ -6,12 +6,15 @@
 namespace LSP
 {
 
-/// Ask the server to format a whole document (`textDocument/formatting`). The reply fires
-/// `wxEVT_LSP_DOCUMENT_FORMATTED` with the text edits
+/// Ask the server to format a whole document (`textDocument/formatting`), or only `range` of it
+/// (`textDocument/rangeFormatting`). The reply fires `wxEVT_LSP_DOCUMENT_FORMATTED` with the text edits
 class WXDLLIMPEXP_CL DocumentFormattingRequest : public Request
 {
 public:
-    DocumentFormattingRequest(const wxString& filepath, size_t tabSize, bool insertSpaces);
+    DocumentFormattingRequest(const wxString& filepath,
+                              size_t tabSize,
+                              bool insertSpaces,
+                              const std::optional<LSP::Range>& range = std::nullopt);
     ~DocumentFormattingRequest() override = default;
 
     std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;

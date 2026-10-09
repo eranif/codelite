@@ -26,20 +26,20 @@ std::optional<LSPEvent> LSP::CodeActionRequest::OnResponse(const LSP::ResponseMe
         return std::nullopt;
     }
 
-    // expected array of commands
+    // expected array of `CodeAction` or `Command`
     size_t count = result_arr.arraySize();
 
     LSPEvent event{wxEVT_LSP_CODE_ACTIONS};
-    auto& commands = event.GetCommands();
-    commands.reserve(count);
+    auto& actions = event.GetCodeActions();
+    actions.reserve(count);
 
     for (size_t i = 0; i < count; ++i) {
-        LSP::Command cmd;
-        cmd.FromJSON(result_arr[i]);
-        commands.push_back(cmd);
+        LSP::CodeAction action;
+        action.FromJSON(result_arr[i]);
+        actions.push_back(action);
     }
 
-    LSP_DEBUG() << "Read" << commands.size() << "code actions" << endl;
+    LSP_DEBUG() << "Read" << actions.size() << "code actions" << endl;
     event.SetFileName(m_params->As<CodeActionParams>()->GetTextDocument().GetPath());
     EventNotifier::Get()->AddPendingEvent(event);
     return event;

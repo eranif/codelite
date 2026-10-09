@@ -35,6 +35,15 @@ nlohmann::json LSP::InitializeRequest::ToJSON() const
     textDocumentCapabilities["completion"]["completionItem"]["documentationFormat"] = std::array{"plaintext"};
     textDocumentCapabilities["hover"]["contentFormat"] = {"markdown", "plaintext"};
 
+    auto& codeActionCapabilities = textDocumentCapabilities["codeAction"];
+    // Only the kinds that CodeLite can start and apply today. Add "refactor.*" and "source.*" once code actions can
+    // be requested for the cursor / selection range, workspace edits support resource operations and
+    // `workspace/applyEdit` is answered
+    codeActionCapabilities["codeActionLiteralSupport"]["codeActionKind"]["valueSet"] =
+        nlohmann::json::array({"", "quickfix"});
+    codeActionCapabilities["isPreferredSupport"] = true;
+    codeActionCapabilities["disabledSupport"] = true;
+
     if (m_withTokenTypes) {
         textDocumentCapabilities["semanticTokens"]["tokenTypes"] = {
             "type",     "class",    "enum",       "interface", "struct",   "typeParameter", "parameter",

@@ -765,5 +765,31 @@ WXDLLIMPEXP_CL clModuleLogger& GetLogHandle();
 /// Parse the text edit from a response "result" field
 WXDLLIMPEXP_CL std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result);
 
+/// An item from a `textDocument/codeAction` response. The server can reply with `CodeAction` literals or with
+/// plain `Command`s. A plain `Command` is stored as a code action that only has a command.
+class WXDLLIMPEXP_CL CodeAction
+{
+    wxString m_title;
+    wxString m_kind;
+    bool m_isPreferred = false;
+    wxString m_disabledReason;
+    std::unordered_map<wxString, std::vector<LSP::TextEdit>> m_edit;
+    std::optional<Command> m_command;
+
+public:
+    void FromJSON(const JSONItem& json);
+
+    CodeAction() = default;
+    ~CodeAction() = default;
+
+    const wxString& GetTitle() const { return m_title; }
+    const wxString& GetKind() const { return m_kind; }
+    bool IsPreferred() const { return m_isPreferred; }
+    bool IsDisabled() const { return !m_disabledReason.empty(); }
+    const wxString& GetDisabledReason() const { return m_disabledReason; }
+    const std::unordered_map<wxString, std::vector<LSP::TextEdit>>& GetEdit() const { return m_edit; }
+    const std::optional<Command>& GetCommand() const { return m_command; }
+};
+
 } // namespace LSP
 #endif // JSONRPC_BASICTYPES_H

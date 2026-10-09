@@ -9,15 +9,13 @@
 #include <wx/string.h>
 
 /**
- * @brief the Xdebug settings of the open workspace
- * For a PHP workspace, these are the settings of the active project. For any other (local) workspace, they are
- * stored in <workspace folder>/.codelite/xdebug.json, together with the Xdebug breakpoints
+ * @brief the Xdebug settings of the open (local) workspace
+ * They are stored in <workspace folder>/.codelite/xdebug.json, together with the Xdebug breakpoints
  */
 class XDebugSettings
 {
     PHPProjectSettingsData m_data;
     wxStringMap_t m_fileMapping;
-    wxString m_projectName;
     wxFileName m_file;
     bool m_ok = false;
 
@@ -33,8 +31,7 @@ public:
     static bool IsActive();
 
     /**
-     * @brief return the Xdebug settings file of the open workspace. Not valid for a PHP workspace or when no local
-     * workspace is open
+     * @brief return the Xdebug settings file of the open workspace. Not valid when no local workspace is open
      */
     static wxFileName GetSettingsFile();
 
@@ -46,7 +43,7 @@ public:
 
     /**
      * @brief load the settings of the open workspace
-     * @return false if there is no workspace or no active PHP project
+     * @return false if there is no local workspace
      */
     bool Load();
     void Save();

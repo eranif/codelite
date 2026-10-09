@@ -36,9 +36,7 @@
 class XDebugBreakpointsMgr : public wxEvtHandler
 {
     XDebugBreakpoint::List_t m_breakpoints;
-    // Where the breakpoints are stored: the user file of a PHP workspace, or the Xdebug settings file of any other
-    // workspace
-    wxString m_phpWorkspacePath;
+    // Where the breakpoints are stored: the Xdebug settings file of the workspace
     wxFileName m_settingsFile;
 
 protected:

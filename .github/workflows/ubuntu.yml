@@ -7,11 +7,13 @@ on:
       - '**'
       - '!.github/**'
       - '.github/workflows/ubuntu.yml'
+      - '!**.md'
   pull_request:
     paths:
       - '**'
       - '!.github/**'
       - '.github/workflows/ubuntu.yml'
+      - '!**.md'
 
 jobs:
   linux:

@@ -7,11 +7,13 @@ on:
       - '**'
       - '!.github/**'
       - '.github/workflows/macos.yml'
+      - '!**.md'
   pull_request:
     paths:
       - '**'
       - '!.github/**'
       - '.github/workflows/macos.yml'
+      - '!**.md'
 
 jobs:
   macos:

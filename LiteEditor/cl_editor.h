@@ -1042,8 +1042,6 @@ private:
     void DoMarkHyperlink(wxMouseEvent& event, bool isMiddle);
     void DoQuickJump(wxMouseEvent& event, bool isMiddle);
     bool DoFindAndSelect(const wxString& pattern, const wxString& what, int start_pos, NavMgr* navmgr);
-    void DoSaveMarkers();
-    void DoRestoreMarkers();
     int GetFirstNonWhitespacePos(bool backward = false);
     wxMenu* DoCreateDebuggerWatchMenu(const wxString& word);
 
@@ -1089,8 +1087,6 @@ private:
     void OnDragEnd(wxStyledTextEvent& e);
     void DoSetCaretAt(long pos);
     static void DoSetCaretAt(wxStyledTextCtrl* ctrl, long pos);
-    void OnFileFormatDone(wxCommandEvent& e);
-    void OnFileFormatStarting(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& event);
     void OnEditorConfigChanged(wxCommandEvent& event);
     void OnColoursAndFontsUpdated(clCommandEvent& event);
@@ -1132,7 +1128,6 @@ private:
     int m_lastCharEnteredPos;
     bool m_isFocused;
     BOM m_fileBom;
-    std::vector<std::pair<int, int>> m_savedMarkers;
     bool m_findBookmarksActive;
     std::map<int, CompilerMessage> m_compilerMessagesMap;
     CLCommandProcessor m_commandsProcessor;

@@ -223,7 +223,6 @@ void FileExtManager::Init()
                                    TypeWorkspaceFileSystem,
                                    TypeWxCrafter,
                                    TypeWorkspaceDocker,
-                                   TypeWorkspaceNodeJS,
                                    TypeWorkspacePHP}});
         m_language_bundle.insert({"Rust", {TypeRust}});
         m_language_bundle.insert({"Ruby", {TypeRuby}});
@@ -323,9 +322,7 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
                 JSON root(content);
                 if (!root.isOk())
                     return TypeWorkspace;
-                if (root.toElement().hasNamedObject("NodeJS")) {
-                    return TypeWorkspaceNodeJS;
-                } else if (root.toElement().hasNamedObject("Docker")) {
+                if (root.toElement().hasNamedObject("Docker")) {
                     return TypeWorkspaceDocker;
                 } else if (root.toElement().namedObject("workspace_type").toString() == "File System Workspace") {
                     return TypeWorkspaceFileSystem;

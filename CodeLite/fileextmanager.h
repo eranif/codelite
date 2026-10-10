@@ -79,7 +79,6 @@ public:
         TypeWorkspacePHP,
         TypeWorkspaceFileSystem,
         TypeWorkspaceDocker,
-        TypeWorkspaceNodeJS,
         TypeWorkspacePHPTags,
         TypeWorkspaceDatabase,
         TypeAsm,

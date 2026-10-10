@@ -152,6 +152,18 @@ protected:
      */
     void OnDebugIsRunning(clDebugEvent& e);
     /**
+     * @brief run the script (or open the URL) without debugging
+     */
+    void OnExecute(clExecuteEvent& e);
+    /**
+     * @brief set e.SetAnswer to true if a script started by us is running
+     */
+    void OnIsProgramRunning(clExecuteEvent& e);
+    /**
+     * @brief stop the script started by us
+     */
+    void OnStopExecutedProgram(clExecuteEvent& e);
+    /**
      * @brief user placed a breakpoint (either by the keyboard shortcut or by clicking on the margin)
      */
     void OnToggleBreakpoint(clDebugEvent& e);

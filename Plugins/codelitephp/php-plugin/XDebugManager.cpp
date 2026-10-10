@@ -42,6 +42,9 @@ XDebugManager::XDebugManager()
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &XDebugManager::OnStopDebugger, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &XDebugManager::OnDebugStartOrContinue, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &XDebugManager::OnDebugIsRunning, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &XDebugManager::OnExecute, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &XDebugManager::OnIsProgramRunning, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &XDebugManager::OnStopExecutedProgram, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &XDebugManager::OnToggleBreakpoint, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &XDebugManager::OnDebugNext, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT_INST, &XDebugManager::OnVoid, this);
@@ -66,6 +69,9 @@ XDebugManager::~XDebugManager()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &XDebugManager::OnStopDebugger, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &XDebugManager::OnDebugStartOrContinue, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &XDebugManager::OnDebugIsRunning, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &XDebugManager::OnExecute, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &XDebugManager::OnIsProgramRunning, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &XDebugManager::OnStopExecutedProgram, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &XDebugManager::OnToggleBreakpoint, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &XDebugManager::OnDebugNext, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT_INST, &XDebugManager::OnVoid, this);
@@ -182,6 +188,57 @@ void XDebugManager::OnDebugIsRunning(clDebugEvent& e)
 {
     if (XDebugSettings::IsActive()) {
         e.SetAnswer((m_readerThread != nullptr));
+    } else {
+        // Not ours to handle
+        e.Skip();
+    }
+}
+
+void XDebugManager::OnExecute(clExecuteEvent& e)
+{
+    if (!XDebugSettings::IsActive()) {
+        // Not ours to handle
+        e.Skip();
+        return;
+    }
+
+    XDebugSettings settings;
+    if (!settings.Load()) {
+        return;
+    }
+
+    wxString path;
+    int dlgResult = wxID_CANCEL;
+    {
+        // The dialog stores its values in the settings when it is destroyed
+        PHPDebugStartDlg dlg(EventNotifier::Get()->TopFrame(), settings.GetData(), m_plugin->GetManager());
+        dlg.SetLabel(_("Run"));
+        dlgResult = dlg.ShowModal();
+        path = dlg.GetPath();
+    }
+    settings.Save();
+    if (dlgResult != wxID_OK) {
+        return;
+    }
+
+    // Errors are reported inside 'Exec'
+    m_executor.Exec(settings.GetData(), path, wxEmptyString, false);
+}
+
+void XDebugManager::OnIsProgramRunning(clExecuteEvent& e)
+{
+    if (XDebugSettings::IsActive()) {
+        e.SetAnswer(m_executor.IsRunning());
+    } else {
+        // Not ours to handle
+        e.Skip();
+    }
+}
+
+void XDebugManager::OnStopExecutedProgram(clExecuteEvent& e)
+{
+    if (XDebugSettings::IsActive() && m_executor.IsRunning()) {
+        m_executor.Stop();
     } else {
         // Not ours to handle
         e.Skip();

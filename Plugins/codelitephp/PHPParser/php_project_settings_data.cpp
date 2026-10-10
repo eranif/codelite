@@ -1,15 +1,11 @@
 #include "php_project_settings_data.h"
 
-#include "clToolBar.h"
 #include "globals.h"
 #include "json_utils.h"
 #include "php_configuration_data.h"
 #include "php_utils.h"
 
-#include <map>
-#include <set>
 #include <wx/tokenzr.h>
-#include <wx/uri.h>
 
 PHPProjectSettingsData::PHPProjectSettingsData()
     : m_runAs(0)
@@ -75,9 +71,7 @@ void PHPProjectSettingsData::MergeWithGlobalSettings()
     m_includePath = ::wxJoin(paths, '\n');
 }
 
-wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath,
-                                              bool useUrlScheme,
-                                              const wxStringMap_t& additionalMapping) const
+wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath, const wxStringMap_t& additionalMapping) const
 {
     wxFileName fnSource(sourcePath);
     wxStringMap_t fullMapping;
@@ -91,32 +85,12 @@ wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath,
             sourceFullPath.Prepend(p.second + "/");
             sourceFullPath.Replace("\\", "/");
             while (sourceFullPath.Replace("//", "/")) {}
-
-            if (useUrlScheme) {
-                sourceFullPath = ::FileNameToURI(sourceFullPath);
-            }
-            return sourceFullPath;
+            return ::FileNameToURI(sourceFullPath);
         }
     }
 
-    if (useUrlScheme) {
-
-        wxString asUrlScheme = sourcePath;
-        asUrlScheme.Replace("\\", "/");
-
-        while (asUrlScheme.Replace("//", "/"))
-            ;
-
-        asUrlScheme = ::FileNameToURI(asUrlScheme);
-        return asUrlScheme;
-
-    } else {
-        wxString filePath;
-        if (sourcePath.Contains(" ")) {
-            filePath = sourcePath;
-            filePath.Prepend('"').Append('"');
-        }
-        // return the path without changing it
-        return filePath;
-    }
+    wxString asUrlScheme = sourcePath;
+    asUrlScheme.Replace("\\", "/");
+    while (asUrlScheme.Replace("//", "/")) {}
+    return ::FileNameToURI(asUrlScheme);
 }

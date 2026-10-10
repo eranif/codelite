@@ -65,8 +65,6 @@ public:
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update = false);
     void FinalizeStartup();
 
-    PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
-
 protected:
     void DoPlaceMenuBar(wxMenuBar* menuBar);
     void DoEnsureXDebugPanesVisible(const wxString& selectWindow = "");

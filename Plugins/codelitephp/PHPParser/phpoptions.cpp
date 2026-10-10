@@ -9,7 +9,6 @@
 PhpOptions::PhpOptions()
     : clConfigItem("PHPConfigurationData")
     , m_phpExe("")
-    , m_errorReporting("E_ALL & ~E_NOTICE")
 {
     wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
                                wxFileName::GetPathSeparator() + "php-general.conf";
@@ -28,7 +27,6 @@ PhpOptions::PhpOptions()
         }
 
         m_includePaths = oldJson.namedObject("m_includePaths").toArrayString();
-        m_errorReporting = oldJson.namedObject("m_errorReporting").toString(m_errorReporting);
 
         // Save it
         wxString buf;
@@ -44,7 +42,6 @@ PhpOptions::PhpOptions()
         JSONItem e = JSONItem::createObject();
         e.addProperty("m_phpExe", m_phpExe);
         e.addProperty("m_includePaths", m_includePaths);
-        e.addProperty("m_errorReporting", m_errorReporting);
         newRoot.toElement().addProperty(GetName(), e);
         newRoot.save(newConfigFile);
     }
@@ -57,15 +54,13 @@ void PhpOptions::FromJSON(const JSONItem& json)
         m_phpExe = FileUtils::FindExe("php").value_or(wxFileName{}).GetFullPath();
     }
 
-    m_errorReporting = json.namedObject("m_errorReporting").toString(m_errorReporting);
     m_includePaths = json.namedObject("m_includePaths").toArrayString();
 }
 
 JSONItem PhpOptions::ToJSON() const
 {
-    return nlohmann::json{{"m_phpExe", m_phpExe.ToStdString(wxConvUTF8)},
-                          {"m_errorReporting", m_errorReporting.ToStdString(wxConvUTF8)},
-                          {"m_includePaths", JsonUtils::ToJson(m_includePaths)}};
+    return nlohmann::json{
+        {"m_phpExe", m_phpExe.ToStdString(wxConvUTF8)}, {"m_includePaths", JsonUtils::ToJson(m_includePaths)}};
 }
 
 PhpOptions& PhpOptions::Load()

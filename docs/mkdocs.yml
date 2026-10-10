@@ -28,7 +28,6 @@ nav:
       - C/C++: workspaces/default.md
       - File System Workspace: workspaces/file_system.md
       - Remote File System Workspace: /plugins/remoty
-      - PHP: workspaces/php.md
   - Plugins:
       - Language Server Protocol: plugins/lsp.md
       - Debug Adapter Client: plugins/dap.md
@@ -43,6 +42,7 @@ nav:
       - UnitTest++: plugins/ut.md
       - Remoty: plugins/remoty.md
       - Rust: plugins/rust.md
+      - PHP: workspaces/php.md
       - Source Code Formatter: plugins/codeformatter.md
   - Debugging:
       - gdb: debuggers/gdb.md

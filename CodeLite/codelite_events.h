@@ -345,22 +345,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SELECTION_MADE, clCodeCompl
 // via the event.SetEntries();
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SHOWING, clCodeCompletionEvent);
 
-// The code completion box has been dismissed
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED, clCodeCompletionEvent);
-
 // User has requested to display the current files' outline
 // Use m_mgr->GetActiveEditor() to get the active editor
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_SHOW_QUICK_OUTLINE, clCodeCompletionEvent);
-
-// Send a clCodeCompletionEvent
-// CodeLite is about to show the completion box for language keywords
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, clCodeCompletionEvent);
-
-// Send clCodeCompletionEvent
-// User clicked on hyper link inside the editor
-// If the plugin wants to handle it, simple avoid calling event.Skip()
-// Use event.GetString() to get the hyperlink text
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_JUMP_HYPER_LINK, clCodeCompletionEvent);
 
 //===----------------------------------------------------------------------------------------------
 // CC events
@@ -414,12 +401,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_WORKSPACE_SYMBOLS, clCodeCompl
 //===----------------------------------------------------------------------------------------------
 //===----------------------------------------------------------------------------------------------
 
-// Event type: clCodeCompletionEvent
-// Sent by CodeLite to generate documentation block for class or function
-// after the user has typed "/**" followed by ENTER
-// Use event.SetTooltip(...) to provide the Doxygen block comment
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_GENERATE_DOXY_BLOCK, clCodeCompletionEvent);
-
 // An update to the navigation bar is required
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_UPDATE_NAVBAR, clCodeCompletionEvent);
 
@@ -467,10 +448,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_CLOSE_WORKSPACE, clCommandEve
 // The workspace name should also returned in the evt.SetString(..)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_IS_WORKSPACE_OPEN, clCommandEvent);
 
-// User has requested a retagging for the workspace
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_RETAG_WORKSPACE, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_RETAG_WORKSPACE_FULL, wxCommandEvent);
-
 // CodeLite has requested a complete list of the workspace files.
 // The result should be wxArrayString that contains a list of files
 // in their ABSOLUTE path.
@@ -485,12 +462,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_RETAG_WORKSPACE_FULL, wxComma
 // }
 // </code>
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_GET_WORKSPACE_FILES, wxCommandEvent);
-// Same as the above event, however you should return
-// a list of the current active project files
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_GET_ACTIVE_PROJECT_FILES, wxCommandEvent);
-// Same as the above event, however you should return
-// a list of the current files' project files list
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES, wxCommandEvent);
 
 /////////////////////////////////////////////////
 // Search events
@@ -820,7 +791,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, 
 // Sent when CodeLite requires to store the current workspace session
 // Call event.Skip(false) to instruct CodeLite to skip the default session-save
 // action (this is useful if the session is managed by an external plugin)
-// A good example for this is the PHP plugin which manages its own session
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SAVE_SESSION_NEEDED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SESSION_LOADING, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SESSION_LOADED, clCommandEvent);

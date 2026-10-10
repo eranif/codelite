@@ -1,7 +1,7 @@
 ## Quick guide
 ---
 
-- You will need an open [File System Workspace](/workspaces/file_system/) with `XDebug` selected as its debugger (see [below](#xdebug-with-a-file-system-workspace))
+- You will need an open [File System Workspace](/workspaces/file_system/) with `XDebug` selected as its debugger (see [below](#xdebug-settings-and-running-scripts))
 - Now, configure PHP to enable XDebug debugging. From CodeLite menu bar, click on the `PHP` &#8594; `Run XDebug Setup Wizard`
 - At the end of the wizard, copy the text and paste it inside your `php.ini` file
 - Your `php.ini` should also have a section similar to this:
@@ -18,7 +18,7 @@ xdebug.client_port=9003
 
 CodeLite supports Xdebug 3 (required by PHP 8). If you still use Xdebug 2, keep your current `php.ini` settings (`xdebug.remote_*`) and set the port in `PHP` &#8594; `XDebug Settings...` to match.
 
-- Next, change directory to the workspace folder (in my case it was: `C:\Users\Eran\Documents\TestPHP` and start PHP debug web server like this
+- Next, change directory to the workspace folder (in my case it was: `C:\Users\Eran\Documents\TestPHP`) and start PHP debug web server like this
 
 ```
 cd C:\Users\Eran\Documents\TestPHP
@@ -58,10 +58,10 @@ for($i = 0; $i < 10; $i++){
 
 ![xdebug session](images/xdebug.png)
 
-## Xdebug with a File System Workspace
+## XDebug settings and running scripts
 ---
 
-XDebug also works with a [File System Workspace](/workspaces/file_system/) on the local machine:
+XDebug works with a [File System Workspace](/workspaces/file_system/) on the local machine:
 
 - Open the workspace settings and select `XDebug` as the debugger of the build configuration
 - From the menu bar, click on `PHP` &#8594; `XDebug Settings...` to choose how to run the code (command line script or web site), the PHP executable, the include path and the file mapping

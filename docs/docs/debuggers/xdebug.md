@@ -8,18 +8,21 @@
 
 ```ini
 [xdebug]
-zend_extension=C:\php74\ext\php_xdebug.dll
-xdebug.remote_enable=1
+zend_extension=xdebug
+xdebug.mode=debug
+xdebug.start_with_request=trigger
 xdebug.idekey="codeliteide"
-xdebug.remote_host=127.0.0.1
-xdebug.remote_port=9000
+xdebug.client_host=127.0.0.1
+xdebug.client_port=9003
 ```
+
+CodeLite supports Xdebug 3 (required by PHP 8). If you still use Xdebug 2, keep your current `php.ini` settings (`xdebug.remote_*`) and set the port in `PHP` &#8594; `XDebug Settings...` to match.
 
 - Next, change directory to the workspace folder (in my case it was: `C:\Users\Eran\Documents\TestPHP` and start PHP debug web server like this
 
 ```
 cd C:\Users\Eran\Documents\TestPHP
-C:\php74\php.exe -S 127.0.0.1:80 -t .
+php.exe -S 127.0.0.1:80 -t .
 ```
 
 - Right click on your project folder and add new PHP file, name it `test.php` with the following content:
@@ -56,4 +59,16 @@ for($i = 0; $i < 10; $i++){
 - Clicking the `ENTER` button in the browser, the debug session starts
 
 ![xdebug session](images/xdebug.png)
+
+## Xdebug with a File System Workspace
+---
+
+XDebug also works with a [File System Workspace](/workspaces/file_system/) on the local machine:
+
+- Open the workspace settings and select `XDebug` as the debugger of the build configuration
+- From the menu bar, click on `PHP` &#8594; `XDebug Settings...` to choose how to run the code (command line script or web site), the PHP executable, the include path and the file mapping
+- Start the debugger (++f5++). CodeLite asks for the script or URL to debug, and then starts it
+- To start the session from a web browser instead, click on `PHP` &#8594; `Wait for XDebug to Connect`, and then open the URL with `?XDEBUG_SESSION_START=codeliteide`
+
+The settings and the breakpoints are stored in the file `.codelite/xdebug.json` in the workspace folder.
 

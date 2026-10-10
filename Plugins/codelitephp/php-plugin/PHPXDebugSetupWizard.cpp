@@ -19,10 +19,11 @@ void PHPXDebugSetupWizard::OnPageChanging(wxWizardEvent& event)
     if (event.GetDirection() && event.GetPage() == m_wizardPageIDEKey) {
         // build the text to copy
         wxString content;
-        content << "xdebug.remote_enable=1\n";
+        content << "xdebug.mode=debug\n";
+        content << "xdebug.start_with_request=trigger\n";
         content << "xdebug.idekey=\"" << m_textCtrlKey->GetValue() << "\"\n";
-        content << "xdebug.remote_host=" << m_textCtrlIP->GetValue() << "\n";
-        content << "xdebug.remote_port=" << m_textCtrlPort->GetValue() << "\n";
+        content << "xdebug.client_host=" << m_textCtrlIP->GetValue() << "\n";
+        content << "xdebug.client_port=" << m_textCtrlPort->GetValue() << "\n";
 
         m_textCtrlPHPIni->ChangeValue(content);
         CallAfter(&PHPXDebugSetupWizard::SelectAllIniText);
@@ -35,7 +36,7 @@ void PHPXDebugSetupWizard::OnFinished(wxWizardEvent& event)
     PHPConfigurationData conf;
     conf.Load();
 
-    long portNum(9000);
+    long portNum(9003);
     m_textCtrlPort->GetValue().ToCLong(&portNum);
     conf.SetXdebugIdeKey(m_textCtrlKey->GetValue()).SetXdebugPort(portNum).SetXdebugHost(m_textCtrlIP->GetValue());
     conf.Save();

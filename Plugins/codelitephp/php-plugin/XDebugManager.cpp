@@ -10,9 +10,7 @@
 #include "php.h"
 #include "php_configuration_data.h"
 #include "php_utils.h"
-#include "php_workspace.h"
 #include "plugin.h"
-#include "ssh_workspace_settings.h"
 #include "xml/xmlutils.h"
 
 #include <wx/msgdlg.h>
@@ -88,7 +86,7 @@ XDebugManager::~XDebugManager()
 
 void XDebugManager::OnDebugStartOrContinue(clDebugEvent& e)
 {
-    if (!PHPWorkspace::Get()->IsOpen()) {
+    if (!XDebugSettings::IsActive()) {
         // Call skip so CodeLite will continue to handle this event
         // by passing it to other debuggers
         e.Skip();
@@ -112,13 +110,22 @@ void XDebugManager::OnDebugStartOrContinue(clDebugEvent& e)
 
 void XDebugManager::DoStartDebugger(bool ideInitiate)
 {
-    CHECK_COND_RET(PHPWorkspace::Get()->GetActiveProject());
+    if (!m_settings.Load()) {
+        return;
+    }
 
     // Test which file we want to debug
-    PHPDebugStartDlg debugDlg(
-        EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_plugin->GetManager());
+    wxString pathToDebug;
     if (ideInitiate) {
-        if (debugDlg.ShowModal() != wxID_OK) {
+        int dlgResult = wxID_CANCEL;
+        {
+            // The dialog stores its values in the settings when it is destroyed
+            PHPDebugStartDlg debugDlg(EventNotifier::Get()->TopFrame(), m_settings.GetData(), m_plugin->GetManager());
+            dlgResult = debugDlg.ShowModal();
+            pathToDebug = debugDlg.GetPath();
+        }
+        m_settings.Save();
+        if (dlgResult != wxID_OK) {
             return;
         }
     }
@@ -132,12 +139,12 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
 
     PHPConfigurationData conf;
     conf.Load();
-    if (!conf.HasFlag(PHPConfigurationData::kDontPromptForMissingFileMapping) &&
-        GetFileMapping(PHPWorkspace::Get()->GetActiveProject()).empty()) {
+    if (!conf.HasFlag(PHPConfigurationData::kDontPromptForMissingFileMapping) && GetFileMapping().empty()) {
         // Issue a warning
         wxString message;
-        message << _("This project has no file mapping defined. This may result in breakpoints not applied\n")
-                << _("To fix this, set file mapping from Project Settings -> Debug");
+        message << _("No file mapping is defined. This may result in breakpoints not applied\n")
+                << _("To fix this, set file mapping in Project Settings -> Debug (PHP workspace) or in PHP -> "
+                     "XDebug Settings... -> Debug (other workspaces)");
 
         wxRichMessageDialog dlg(
             EventNotifier::Get()->TopFrame(), message, "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCANCEL);
@@ -154,7 +161,7 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
 
     if (ideInitiate) {
         // Now we can run the project
-        if (!PHPWorkspace::Get()->RunProject(true, debugDlg.GetPath(), "", conf.GetXdebugIdeKey())) {
+        if (!m_executor.Exec(m_settings.GetData(), pathToDebug, conf.GetXdebugIdeKey(), true)) {
             DoStopDebugger();
             return;
         }
@@ -173,7 +180,7 @@ void XDebugManager::OnSocketInput(const std::string& reply) { ProcessDebuggerMes
 
 void XDebugManager::OnDebugIsRunning(clDebugEvent& e)
 {
-    if (PHPWorkspace::Get()->IsOpen()) {
+    if (XDebugSettings::IsActive()) {
         e.SetAnswer((m_readerThread != nullptr));
     } else {
         // Not ours to handle
@@ -262,15 +269,6 @@ void XDebugManager::DoApplyBreakpoints()
         return;
     }
 
-    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetActiveProject();
-    if (!pProject) {
-        clDEBUG() << "CodeLite (PHP): No active project!" << endl;
-        return;
-    }
-
-    const PHPProjectSettingsData& settings = pProject->GetSettings();
-    // bool bRunAsWebserver = (pProject->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite);
-
     XDebugBreakpoint::List_t& breakpoints = m_breakpointsMgr.GetBreakpoints();
     if (breakpoints.empty()) {
         clDEBUG() << "CodeLite (PHP): No breakpoints to apply" << endl;
@@ -284,16 +282,9 @@ void XDebugManager::DoApplyBreakpoints()
             continue;
         }
 
-        wxStringMap_t sftpMapping;
-        SSHWorkspaceSettings sftpSettings;
-        sftpSettings.Load();
-        if (!sftpSettings.GetRemoteFolder().IsEmpty() && sftpSettings.IsRemoteUploadEnabled()) {
-            sftpMapping.insert({PHPWorkspace::Get()->GetFilename().GetPath(), sftpSettings.GetRemoteFolder()});
-        }
-
         wxString command;
         XDebugCommandHandler::Ptr_t handler(new XDebugBreakpointCmdHandler(this, ++TransactionId, bp));
-        wxString filepath = settings.GetMappdPath(bp.GetFileName(), true, sftpMapping);
+        wxString filepath = m_settings.GetData().GetMappdPath(bp.GetFileName(), true, GetFileMapping());
         command << "breakpoint_set -t line -f " << filepath << " -n " << bp.GetLine() << " -i "
                 << handler->GetTransactionId();
         DoSocketWrite(command);
@@ -386,7 +377,7 @@ void XDebugManager::SendStopCommand()
 
 void XDebugManager::OnToggleBreakpoint(clDebugEvent& e)
 {
-    if (!PHPWorkspace::Get()->IsOpen()) {
+    if (!XDebugSettings::IsActive()) {
         e.Skip();
         return;
     }
@@ -588,22 +579,6 @@ void XDebugManager::OnStackTraceItemActivated(PHPEvent& e)
     DoRefreshDebuggerViews(depth);
 }
 
-wxStringMap_t XDebugManager::GetFileMapping(PHPProject::Ptr_t pProject) const
-{
-    wxASSERT(pProject);
-    wxStringMap_t mappings;
-    const PHPProjectSettingsData& settings = pProject->GetSettings();
-    mappings = settings.GetFileMapping();
-
-    // Add the SFTP mappings
-    SSHWorkspaceSettings sftpSettings;
-    sftpSettings.Load();
-    if (!sftpSettings.GetRemoteFolder().IsEmpty() && sftpSettings.IsRemoteUploadEnabled()) {
-        mappings.insert(std::make_pair(PHPWorkspace::Get()->GetFilename().GetPath(), sftpSettings.GetRemoteFolder()));
-    }
-    return mappings;
-}
-
 void XDebugManager::OnDeleteAllBreakpoints(PHPEvent& e)
 {
     e.Skip();
@@ -637,7 +612,7 @@ void XDebugManager::OnDeleteBreakpoint(PHPEvent& e)
     m_breakpointsMgr.DeleteBreakpoint(filename, line);
 }
 
-bool XDebugManager::IsDebugSessionRunning() const { return PHPWorkspace::Get()->IsOpen() && (m_readerThread != nullptr); }
+bool XDebugManager::IsDebugSessionRunning() const { return m_readerThread != nullptr; }
 
 void XDebugManager::OnBreakpointItemActivated(PHPEvent& e)
 {

@@ -3,12 +3,11 @@
 #include "imanager.h"
 #include "windowattrmanager.h"
 
-PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject, IManager* manager)
+PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProjectSettingsData& settings, IManager* manager)
     : PHPDebugStartDlgBase(parent)
-    , m_project(pProject)
+    , m_settings(settings)
     , m_manager(manager)
 {
-    PHPProjectSettingsData& settings = m_project->GetSettings();
 #ifdef __WXOSX__
     // On OSX, remove the 'show effect' or we will see a noticeable delay
     // when showing this dialog
@@ -42,14 +41,12 @@ PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject,
 
 PHPDebugStartDlg::~PHPDebugStartDlg()
 {
-    // Store the settings
-    PHPProjectSettingsData& settings = m_project->GetSettings();
-    settings.EnableFlag(PHPProjectSettingsData::kOpt_RunCurrentEditor, GetCheckBoxDebugActiveEditor()->IsChecked());
-    settings.SetIndexFile(GetTextCtrlScriptToDebug()->GetValue());
-    settings.SetProjectURL(GetComboBoxURL()->GetValue());
-    settings.SetRunAs(m_choice->GetSelection() == 0 ? PHPProjectSettingsData::kRunAsWebsite
-                                                    : PHPProjectSettingsData::kRunAsCLI);
-    m_project->Save();
+    // Store the settings, the caller saves them
+    m_settings.EnableFlag(PHPProjectSettingsData::kOpt_RunCurrentEditor, GetCheckBoxDebugActiveEditor()->IsChecked());
+    m_settings.SetIndexFile(GetTextCtrlScriptToDebug()->GetValue());
+    m_settings.SetProjectURL(GetComboBoxURL()->GetValue());
+    m_settings.SetRunAs(m_choice->GetSelection() == 0 ? PHPProjectSettingsData::kRunAsWebsite
+                                                      : PHPProjectSettingsData::kRunAsCLI);
 }
 
 void PHPDebugStartDlg::OnDebugMethodChanged(wxCommandEvent& event)
@@ -58,11 +55,11 @@ void PHPDebugStartDlg::OnDebugMethodChanged(wxCommandEvent& event)
     if (event.GetSelection() == 0) {
         // Debug URL
         CallAfter(&PHPDebugStartDlg::SetBookSelection, 0);
-        m_project->GetSettings().SetRunAs(PHPProjectSettingsData::kRunAsWebsite);
+        m_settings.SetRunAs(PHPProjectSettingsData::kRunAsWebsite);
     } else {
         // Command line script
         CallAfter(&PHPDebugStartDlg::SetBookSelection, 1);
-        m_project->GetSettings().SetRunAs(PHPProjectSettingsData::kRunAsCLI);
+        m_settings.SetRunAs(PHPProjectSettingsData::kRunAsCLI);
     }
 }
 

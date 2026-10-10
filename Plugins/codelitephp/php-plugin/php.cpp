@@ -1,8 +1,10 @@
 #include "php.h"
 
+#include "Debugger/debuggermanager.h"
 #include "NewPHPProjectWizard.h"
 #include "PHPDebugPane.h"
 #include "PHPXDebugSetupWizard.h"
+#include "XDebugSettingsDlg.h"
 #include "XDebugTester.h"
 #include "Zip/clZipReader.h"
 #include "bookmark_manager.h"
@@ -78,6 +80,11 @@ PhpPlugin::PhpPlugin(IManager* manager)
     PHPWorkspace::Get()->SetPluginManager(m_mgr);
     XDebugManager::Initialize(this);
 
+    // Let the user pick XDebug as the debugger of a File System Workspace
+    wxArrayString debuggers;
+    debuggers.Add(XDebugSettings::DEBUGGER_NAME);
+    DebuggerMgr::Get().RegisterDebuggers(m_shortName, debuggers);
+
     // Add our UI
     // create tab (possibly detached)
     m_workspaceView = new PHPWorkspaceView(m_mgr->GetWorkspaceView()->GetBook(), m_mgr);
@@ -133,6 +140,10 @@ PhpPlugin::PhpPlugin(IManager* manager)
     // Menu bar actions
     wxTheApp->Bind(wxEVT_MENU, &PhpPlugin::OnRunXDebugDiagnostics, this, wxID_PHP_RUN_XDEBUG_DIAGNOSTICS);
     wxTheApp->Bind(wxEVT_MENU, &PhpPlugin::OnMenuCommand, this, wxID_PHP_SETTINGS);
+    wxTheApp->Bind(wxEVT_MENU, &PhpPlugin::OnXDebugSettings, this, wxID_XDEBUG_SETTING);
+    wxTheApp->Bind(wxEVT_UPDATE_UI, &PhpPlugin::OnXDebugSettingsUI, this, wxID_XDEBUG_SETTING);
+    wxTheApp->Bind(wxEVT_MENU, &PhpPlugin::OnXDebugWaitForConnection, this, wxID_XDEBUG_WAIT_FOR_CONNECTION);
+    wxTheApp->Bind(wxEVT_UPDATE_UI, &PhpPlugin::OnXDebugWaitForConnectionUI, this, wxID_XDEBUG_WAIT_FOR_CONNECTION);
 
     CallAfter(&PhpPlugin::FinalizeStartup);
 
@@ -201,6 +212,7 @@ void PhpPlugin::UnPlug()
 #if USE_SFTP
     m_sftpHandler.reset();
 #endif // USE_SFTP
+    DebuggerMgr::Get().UnregisterDebuggers(m_shortName);
     XDebugManager::Free();
     EventNotifier::Get()->Disconnect(
         wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, clDebugEventHandler(PhpPlugin::OnXDebugDeleteAllBreakpoints), nullptr, this);
@@ -243,6 +255,10 @@ void PhpPlugin::UnPlug()
     // Menu bar actions
     wxTheApp->Unbind(wxEVT_MENU, &PhpPlugin::OnRunXDebugDiagnostics, this, wxID_PHP_RUN_XDEBUG_DIAGNOSTICS);
     wxTheApp->Unbind(wxEVT_MENU, &PhpPlugin::OnMenuCommand, this, wxID_PHP_SETTINGS);
+    wxTheApp->Unbind(wxEVT_MENU, &PhpPlugin::OnXDebugSettings, this, wxID_XDEBUG_SETTING);
+    wxTheApp->Unbind(wxEVT_UPDATE_UI, &PhpPlugin::OnXDebugSettingsUI, this, wxID_XDEBUG_SETTING);
+    wxTheApp->Unbind(wxEVT_MENU, &PhpPlugin::OnXDebugWaitForConnection, this, wxID_XDEBUG_WAIT_FOR_CONNECTION);
+    wxTheApp->Unbind(wxEVT_UPDATE_UI, &PhpPlugin::OnXDebugWaitForConnectionUI, this, wxID_XDEBUG_WAIT_FOR_CONNECTION);
 
     SafelyDetachAndDestroyPane(m_debuggerPane, "XDebug");
     SafelyDetachAndDestroyPane(m_xdebugLocalsView, "XDebugLocals");
@@ -492,6 +508,10 @@ void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
     // Add our menu bar
     wxMenu* phpMenuBarMenu = new wxMenu();
     phpMenuBarMenu->Append(wxID_PHP_SETTINGS, _("PHP Settings..."), _("PHP Settings..."));
+    phpMenuBarMenu->Append(wxID_XDEBUG_SETTING, _("XDebug Settings..."), _("XDebug settings of the open workspace"));
+    phpMenuBarMenu->Append(wxID_XDEBUG_WAIT_FOR_CONNECTION,
+                           _("Wait for XDebug to Connect"),
+                           _("Start a debug session when XDebug connects, for example from a web browser"));
     phpMenuBarMenu->Append(
         wxID_PHP_RUN_XDEBUG_DIAGNOSTICS, _("Run XDebug Setup Wizard..."), _("Run XDebug Setup Wizard..."));
 
@@ -512,6 +532,29 @@ void PhpPlugin::OnMenuCommand(wxCommandEvent& e)
         e.Skip();
         break;
     }
+}
+
+void PhpPlugin::OnXDebugSettings(wxCommandEvent& e)
+{
+    XDebugSettings settings;
+    if (!settings.Load()) {
+        return;
+    }
+    XDebugSettingsDlg dlg(FRAME, settings);
+    dlg.ShowModal();
+}
+
+void PhpPlugin::OnXDebugSettingsUI(wxUpdateUIEvent& e)
+{
+    // A PHP workspace keeps these settings in its project settings
+    e.Enable(XDebugSettings::GetSettingsFile().IsOk());
+}
+
+void PhpPlugin::OnXDebugWaitForConnection(wxCommandEvent& e) { XDebugManager::Get().StartListener(); }
+
+void PhpPlugin::OnXDebugWaitForConnectionUI(wxUpdateUIEvent& e)
+{
+    e.Enable(XDebugSettings::IsActive() && !XDebugManager::Get().IsDebugSessionRunning());
 }
 
 void PhpPlugin::OnReloadWorkspace(clCommandEvent& e)

@@ -167,6 +167,7 @@ using write_callback_t = std::function<void(const wxString&, const Style&, bool)
 class Parser
 {
     write_callback_t write_cb = nullptr;
+    wxString m_codeblock_lang;
 
 private:
     void flush_buffer(wxString& buffer, const Style& font, bool is_eol);
@@ -174,6 +175,8 @@ private:
 
 public:
     void parse(const wxString& input_str, write_callback_t on_write);
+    /// the language from the fence of the current code block (e.g. "php" for ```php)
+    const wxString& codeblock_lang() const { return m_codeblock_lang; }
 };
 } // namespace mdparser
 

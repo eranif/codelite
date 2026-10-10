@@ -187,6 +187,7 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
             case T_CODEBLOCK:
                 state = (tok.first == T_CODE ? STATE_CODE : STATE_CODEBLOCK_HEADER);
                 flush_buffer(buffer, style, false);
+                m_codeblock_lang.clear();
                 style.toggle_property(tok.first);
                 tokenizer.enable_backslash_esc(false);
                 break;
@@ -214,9 +215,11 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
             switch (tok.first) {
             case T_EOL:
                 state = STATE_CODEBLOCK;
+                m_codeblock_lang.Trim().Trim(false);
                 break;
             default:
-                // ignore anything else
+                // the fence language, e.g. ```php
+                m_codeblock_lang << tok.second;
                 break;
             }
             break;

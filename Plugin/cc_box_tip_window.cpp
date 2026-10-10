@@ -149,21 +149,22 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                     if (curline == "```") {
                         // starting a codeblock
                         state = kCodeBlockLanguage;
-                        lines.Add(curline);
-                        curline.clear();
                     }
                     break;
                 }
             }
             break;
         case kCodeBlockLanguage:
-            // sometimes, a codeblock prefix is followed by the language
-            // skip it (e.g. "```cpp")
+            // sometimes, a codeblock prefix is followed by the language (e.g. "```cpp")
+            // keep it, it is used for syntax highlighting
             switch (ch) {
             case '\n':
+                lines.Add(curline);
+                curline.clear();
                 state = kCodeBlock;
                 break;
             default:
+                curline << ch;
                 break;
             }
             break;

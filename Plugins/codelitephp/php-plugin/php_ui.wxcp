@@ -5759,7 +5759,7 @@
                                 {
                                   "type": "multi-string",
                                   "m_label": "Tooltip:",
-                                  "m_value": "The port on which CodeLite is accepting debug sessions from XDebug\\nThis value must be the same as the value set in the 'xdebug.remote_port'\\ndirective "
+                                  "m_value": "The port on which CodeLite is accepting debug sessions from XDebug\\nThis value must be the same as the value set in the 'xdebug.client_port'\\ndirective"
                                 },
                                 {
                                   "type": "colour",
@@ -5859,7 +5859,7 @@
                                 {
                                   "type": "multi-string",
                                   "m_label": "Tooltip:",
-                                  "m_value": "The port on which CodeLite is accepting debug sessions from XDebug\\nThis value must be the same as the value set in the 'xdebug.remote_port'\\ndirective "
+                                  "m_value": "The port on which CodeLite is accepting debug sessions from XDebug\\nThis value must be the same as the value set in the 'xdebug.client_port'\\ndirective"
                                 },
                                 {
                                   "type": "colour",
@@ -21794,7 +21794,7 @@
                         {
                           "type": "multi-string",
                           "m_label": "Tooltip:",
-                          "m_value": "Set the port on which CodeLite will be listening for new connections from XDebug. The default port is 9000"
+                          "m_value": "Set the port on which CodeLite will be listening for new connections from XDebug. The default port is 9003"
                         },
                         {
                           "type": "colour",
@@ -21844,7 +21844,7 @@
                         {
                           "type": "string",
                           "m_label": "Value:",
-                          "m_value": "9000"
+                          "m_value": "9003"
                         },
                         {
                           "type": "string",

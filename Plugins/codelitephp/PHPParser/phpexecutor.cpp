@@ -86,7 +86,8 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
     clDEBUG() << "Arguments:" << cmd << endl;
 
     // Apply the environment variables
-    // export XDEBUG_CONFIG="idekey=session_name remote_host=localhost profiler_enable=1"
+    // Xdebug 3: XDEBUG_SESSION starts the session, XDEBUG_CONFIG passes the connection settings
+    // export XDEBUG_SESSION=session_name XDEBUG_CONFIG="idekey=session_name client_host=127.0.0.1 client_port=9003"
     wxStringMap_t om;
     if (!xdebugSessionName.IsEmpty()) {
 
@@ -94,10 +95,16 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
         phpGlobalSettings.Load();
         int port = phpGlobalSettings.GetXdebugPort();
 
-        wxString envname = "XDEBUG_CONFIG";
+        // The listen host can be 0.0.0.0 (or ::), which is not an address to connect to
+        wxString host = phpGlobalSettings.GetXdebugHost();
+        if (host.IsEmpty() || host == "0.0.0.0" || host == "::") {
+            host = "127.0.0.1";
+        }
+
         wxString envvalue;
-        envvalue << "idekey=" << xdebugSessionName << " remote_port=" << port;
-        om.insert(std::make_pair(envname, envvalue));
+        envvalue << "idekey=" << xdebugSessionName << " client_host=" << host << " client_port=" << port;
+        om.insert(std::make_pair("XDEBUG_SESSION", xdebugSessionName));
+        om.insert(std::make_pair("XDEBUG_CONFIG", envvalue));
     }
 
     EnvSetter serrter(&om);

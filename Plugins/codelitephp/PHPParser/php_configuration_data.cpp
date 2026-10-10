@@ -6,7 +6,7 @@
 
 PHPConfigurationData::PHPConfigurationData()
     : clConfigItem("PHPConfigurationData")
-    , m_xdebugPort(9000)
+    , m_xdebugPort(9003)
     , m_xdebugIdeKey("codeliteide")
     , m_xdebugHost("127.0.0.1")
     , m_findInFilesMask("*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess;*."

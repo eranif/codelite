@@ -26,7 +26,6 @@
 #ifndef __PHP__
 #define __PHP__
 
-#include "PhpSFTPHandler.h"
 #include "XDebugManager.h"
 #include "cl_command_event.h"
 #include "php_event.h"
@@ -37,25 +36,17 @@
 class EvalPane;
 class LocalsView;
 class PHPDebugPane;
-class BrowserPanel;
-class PHPWorkspaceView;
 class wxMenuBar;
 
 class PhpPlugin : public IPlugin
 {
 protected:
-    PHPWorkspaceView* m_workspaceView;
-    BrowserPanel* m_browser;
     wxString m_savedPerspective;
 
     /// Debugger panes
     PHPDebugPane* m_debuggerPane;
     LocalsView* m_xdebugLocalsView;
     EvalPane* m_xdebugEvalPane;
-    bool m_showWelcomePage;
-#if USE_SFTP
-    PhpSFTPHandler::Ptr_t m_sftpHandler;
-#endif // USE_SFTP
 
 public:
     enum {
@@ -64,6 +55,7 @@ public:
         wxID_XDEBUG_DELETE_ALL_BREAKPOINTS,
         wxID_XDEBUG_SHOW_BREAKPOINTS_WINDOW,
         wxID_PHP_RUN_XDEBUG_DIAGNOSTICS,
+        wxID_XDEBUG_WAIT_FOR_CONNECTION,
     };
 
 public:
@@ -73,10 +65,7 @@ public:
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update = false);
     void FinalizeStartup();
 
-    PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
-
 protected:
-    void DoOpenWorkspace(const wxString& filename, bool createIfMissing = false, bool createProjectFromSources = false);
     void DoPlaceMenuBar(wxMenuBar* menuBar);
     void DoEnsureXDebugPanesVisible(const wxString& selectWindow = "");
 
@@ -92,38 +81,17 @@ public:
 
     IManager* GetManager() { return m_mgr; }
     // Event handlers
-
-    void SetEditorActive(IEditor* editor);
-
-    //////////////////////////////////////////////
-    // Code completion related events
-    //////////////////////////////////////////////
-    void OnShowQuickOutline(clCodeCompletionEvent& e);
-
-    //////////////////////////////////////////////
-    // Other common CodeLite events
-    //////////////////////////////////////////////
-    void OnNewWorkspace(clCommandEvent& e);
-    void OnIsWorkspaceOpen(clCommandEvent& e);
-    void OnCloseWorkspace(clCommandEvent& e);
-    void OnOpenWorkspace(clCommandEvent& e);
-    void OnReloadWorkspace(clCommandEvent& e);
-    void OnOpenResource(wxCommandEvent& e);
-    void OnGetWorkspaceFiles(wxCommandEvent& e);
-    void OnGetCurrentFileProjectFiles(wxCommandEvent& e);
-    void OnGetActiveProjectFiles(wxCommandEvent& e);
-    void OnNewProject(clNewProjectEvent& e);
-    void OnNewProjectFinish(clNewProjectEvent& e);
+    void OnMarginContextMenu(clContextMenuEvent& e);
     void OnRunXDebugDiagnostics(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
+    void OnXDebugSettings(wxCommandEvent& e);
+    void OnXDebugSettingsUI(wxUpdateUIEvent& e);
+    void OnXDebugWaitForConnection(wxCommandEvent& e);
+    void OnXDebugWaitForConnectionUI(wxUpdateUIEvent& e);
     void OnXDebugDeleteAllBreakpoints(clDebugEvent& e);
     void OnLoadURL(PHPEvent& e);
-    void OnAllEditorsClosed(wxCommandEvent& e);
-    void OnGoingDown(clCommandEvent& event);
     void OnDebugStarted(XDebugEvent& e);
     void OnDebugEnded(XDebugEvent& e);
-    void OnFileSystemUpdated(clFileSystemEvent& event);
-    void OnSaveSession(clCommandEvent& event);
 };
 
 #endif // PHP

@@ -5,7 +5,6 @@
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "php_configuration_data.h"
-#include "php_workspace.h"
 #include "windowattrmanager.h"
 
 #include <wx/dirdlg.h>
@@ -13,7 +12,7 @@
 PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     : PHPSettingsBaseDlg(parent)
 {
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("Default");
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if (lexer) {
         lexer->Apply(m_stcIncludePaths);
     }
@@ -21,10 +20,8 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     PHPConfigurationData data;
     data.Load();
 
-    m_textCtrlErrorReporting->ChangeValue(data.GetErrorReporting());
     m_filePickerPHPPath->SetPath(data.GetPhpExe());
     m_stcIncludePaths->SetText(data.GetIncludePathsAsString());
-    m_textCtrCClIncludePath->ChangeValue(data.GetCCIncludePathsAsString());
     m_textCtrlIdeKey->ChangeValue(data.GetXdebugIdeKey());
     wxString strPort;
     strPort << data.GetXdebugPort();
@@ -50,9 +47,8 @@ void PHPSettingsDlg::OnBrowseForIncludePath(wxCommandEvent& event)
 void PHPSettingsDlg::OnOK(wxCommandEvent& event)
 {
     PHPConfigurationData data;
-    data.SetErrorReporting(m_textCtrlErrorReporting->GetValue());
+    data.Load();
     data.SetIncludePaths(wxStringTokenize(m_stcIncludePaths->GetText(), wxT("\n\r"), wxTOKEN_STRTOK));
-    data.SetCcIncludePath(wxStringTokenize(m_textCtrCClIncludePath->GetValue(), wxT("\n\n"), wxTOKEN_STRTOK));
     data.SetPhpExe(m_filePickerPHPPath->GetPath());
     data.SetXdebugIdeKey(m_textCtrlIdeKey->GetValue());
     data.SetXdebugHost(m_textCtrlHost->GetValue());
@@ -63,29 +59,5 @@ void PHPSettingsDlg::OnOK(wxCommandEvent& event)
     }
 
     data.Save();
-
-    // Send an event to trigger a retag, but only if we got a PHP workspace opened
-    if (PHPWorkspace::Get()->IsOpen()) {
-        wxCommandEvent evtRetag(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtRetag);
-    }
     EndModal(wxID_OK);
 }
-
-void PHPSettingsDlg::OnAddCCPath(wxCommandEvent& event)
-{
-    wxString path = wxDirSelector();
-    if (path.IsEmpty() == false) {
-
-        wxString curpath = m_textCtrCClIncludePath->GetValue();
-        curpath.Trim().Trim(false);
-
-        if (!curpath.IsEmpty()) {
-            curpath << wxT("\n");
-        }
-        curpath << path;
-        m_textCtrCClIncludePath->SetValue(curpath);
-    }
-}
-
-void PHPSettingsDlg::OnUpdateApplyUI(wxCommandEvent& event) { event.Skip(); }

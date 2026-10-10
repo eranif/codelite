@@ -1,74 +1,14 @@
 #include "php_utils.h"
 
-#include "PHP/PHPSourceFile.h"
 #include "StringUtils.h"
 #include "fileextmanager.h"
-#include "php_project.h"
-#include "php_workspace.h"
 
 #include <wx/base64.h>
 #include <wx/filename.h>
-#include <wx/stc/stc.h>
+#include <wx/regex.h>
 #include <wx/uri.h>
 
-bool IsPHPCommentOrString(int styleAtPos)
-{
-    if ((styleAtPos == wxSTC_HPHP_HSTRING) || (styleAtPos == wxSTC_HPHP_SIMPLESTRING) ||
-        (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE))
-        return true;
-    return false;
-}
-
-bool IsPHPSection(int styleAtPos)
-{
-    if ((styleAtPos == wxSTC_HPHP_DEFAULT) || (styleAtPos == wxSTC_HPHP_HSTRING) ||
-        (styleAtPos == wxSTC_HPHP_SIMPLESTRING) || (styleAtPos == wxSTC_HPHP_WORD) ||
-        (styleAtPos == wxSTC_HPHP_NUMBER) || (styleAtPos == wxSTC_HPHP_VARIABLE) ||
-        (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE) ||
-        (styleAtPos == wxSTC_HPHP_HSTRING_VARIABLE) || (styleAtPos == wxSTC_HPHP_OPERATOR))
-        return true;
-    return false;
-}
-
-bool IsPHPFile(IEditor* editor)
-{
-    if (!editor) {
-        return false;
-    }
-    wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    wxString buffer = ctrl->GetTextRange(0, ctrl->GetCurrentPos());
-    return ::IsPHPFileByExt(editor->GetFileName().GetFullPath()) && PHPSourceFile::IsInPHPSection(buffer);
-}
-
-bool IsPHPFileByExt(const wxString& filename)
-{
-    return (FileExtManager::GetType(filename) == FileExtManager::TypePhp);
-    // wxFileName fileName = filename;
-    // LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer(wxT("php"));
-    // wxString fileSpec;
-
-    // if(!lexer) {
-    //    // Incase somehow we failed in retrieving the lexer (corrupted XML file)
-    //    // use some hardcoded file spec
-    //    fileSpec = wxT("*.php;*.inc;*.phtml");
-
-    //} else {
-    //    fileSpec = lexer->GetFileSpec();
-    //}
-
-    // wxStringTokenizer tkz(fileSpec, wxT(";"));
-    // while(tkz.HasMoreTokens()) {
-    //    wxString fileExt = tkz.NextToken();
-    //    wxString fullname = fileName.GetFullName();
-
-    //    fileExt.MakeLower();
-    //    fullname.MakeLower();
-    //    if(wxMatchWild(fileExt, fullname)) {
-    //        return true;
-    //    }
-    //}
-    // return false;
-}
+bool IsPHPFileByExt(const wxString& filename) { return (FileExtManager::GetType(filename) == FileExtManager::TypePhp); }
 
 wxString URIToFileName(const wxString& uriFileName)
 {
@@ -107,17 +47,8 @@ wxString Base64Encode(const wxString& str)
 
 static void DecodeFileName(wxString& filename) { filename = StringUtils::DecodeURI(filename); }
 
-wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
+wxString MapRemoteFileToLocalFile(const wxString& remoteFile, const wxStringMap_t& fileMapping)
 {
-    // Check that a workspace is opened
-    if (!PHPWorkspace::Get()->IsOpen())
-        return remoteFile;
-
-    // Sanity
-    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetActiveProject();
-    if (!pProject)
-        return remoteFile;
-
     // Map filename file attribute returned by xdebug to local filename
     wxString filename = remoteFile;
 
@@ -140,8 +71,7 @@ wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
         return wxFileName(filename).GetFullPath();
     }
 
-    // Use the active project file mapping
-    for (const auto& [localFolder, remoteFolder] : pProject->GetSettings().GetFileMapping()) {
+    for (const auto& [localFolder, remoteFolder] : fileMapping) {
         if (filename.StartsWith(remoteFolder)) {
             filename.Replace(remoteFolder, localFolder);
             return wxFileName(filename).GetFullPath();

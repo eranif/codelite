@@ -40,8 +40,6 @@
 #include "resources/clXmlResource.hpp"
 
 #include <vector>
-#include <wx/regex.h>
-#include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
 ContextBase::ContextBase(clEditor* container)
@@ -101,6 +99,23 @@ bool ContextBase::GetHyperlinkRange(int& start, int& end)
     }
     wxPoint clientPt = rCtrl.ScreenToClient(pt);
     int mouse_pos = rCtrl.PositionFromPointClose(clientPt.x, clientPt.y);
+    if (mouse_pos == wxSTC_INVALID_POSITION) {
+        return false;
+    }
+
+    // a document link from the language server (for example the path of an `include` statement), also in a string
+    auto link = LSP::Manager::GetInstance().GetDocumentLinkAt(&rCtrl, mouse_pos);
+    if (link.has_value()) {
+        auto getPos = [&rCtrl](const LSP::Position& pos) {
+            return rCtrl.PositionRelative(rCtrl.PositionFromLine(pos.GetLine()), pos.GetCharacter());
+        };
+        start = getPos(link->GetRange().GetStart());
+        end = getPos(link->GetRange().GetEnd());
+        if (start < end) {
+            return true;
+        }
+    }
+
     if (!IsCommentOrString(mouse_pos)) {
         // get tag as hyperlink
         start = rCtrl.WordStartPos(mouse_pos, true);
@@ -189,6 +204,49 @@ void ContextBase::OnUserTypedXChars(int pos)
     LSP::Manager::GetInstance().CodeComplete(&GetCtrl(), LSP::CompletionItem::kTriggerKindInvoked);
 }
 
+bool ContextBase::CloseDocBlock(int startPos)
+{
+    clEditor& rCtrl = GetCtrl();
+    int line = rCtrl.GetCurrentLine();
+
+    // only on a new empty line
+    wxString lineText = rCtrl.GetTextRange(rCtrl.PositionFromLine(line), rCtrl.GetLineEndPosition(line));
+    if (!lineText.Trim().Trim(false).empty()) {
+        return false;
+    }
+
+    // the block is already closed when the next line that is not empty starts with "*"
+    for (int i = line + 1; i < rCtrl.GetLineCount(); ++i) {
+        wxString text = rCtrl.GetLine(i);
+        text.Trim().Trim(false);
+        if (text.empty()) {
+            continue;
+        }
+        if (text.StartsWith("*")) {
+            return false;
+        }
+        break;
+    }
+
+    int lineStartPos = rCtrl.PositionFromLine(line);
+    wxString whitespace = rCtrl.GetTextRange(rCtrl.PositionFromLine(rCtrl.LineFromPos(startPos)), startPos);
+    if (!wxString{whitespace}.Trim().empty()) {
+        return false; // there is code before the "/**"
+    }
+    wxString starLine = whitespace + " * ";
+
+    rCtrl.BeginUndoAction();
+    rCtrl.SetTargetStart(lineStartPos);
+    rCtrl.SetTargetEnd(rCtrl.GetLineEndPosition(line));
+    rCtrl.ReplaceTarget(starLine + rCtrl.GetEolString() + whitespace + " */");
+    rCtrl.EndUndoAction();
+    rCtrl.SetCaretAt(lineStartPos + starLine.length());
+    rCtrl.ChooseCaretX();
+
+    LSP::Manager::GetInstance().GenerateDocBlock(&rCtrl);
+    return true;
+}
+
 void ContextBase::AutoAddComment()
 {
     clEditor& rCtrl = GetCtrl();
@@ -228,47 +286,7 @@ void ContextBase::AutoAddComment()
         if (startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
             if (((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsert()) {
-                // Let the plugins/codelite check if they can provide a doxy comment
-                // for the current entry
-                clCodeCompletionEvent event(wxEVT_CC_GENERATE_DOXY_BLOCK);
-                event.SetFileName(GetCtrl().GetFileName().GetFullPath());
-                if (EventNotifier::Get()->ProcessEvent(event) && !event.GetTooltip().IsEmpty()) {
-                    rCtrl.BeginUndoAction();
-
-                    // To make the doxy block fit in, we need to prepend each line
-                    // with the exact whitespace of the line that starts with "/**"
-                    int lineStartPos = rCtrl.PositionFromLine(rCtrl.LineFromPos(startPos));
-                    wxString whitespace = rCtrl.GetTextRange(lineStartPos, startPos);
-                    // Break the comment, for each line, prepend the 'whitespace' buffer
-                    wxArrayString lines = ::wxStringTokenize(event.GetTooltip(), "\n", wxTOKEN_STRTOK);
-                    for (size_t i = 0; i < lines.GetCount(); ++i) {
-                        if (i) { // don't add it to the first line (it already exists in the editor)
-                            lines.Item(i).Prepend(whitespace);
-                        }
-                    }
-
-                    // Join the lines back
-                    wxString doxyBlock = StringUtils::clJoinLinesWithEOL(lines, rCtrl.GetEOL());
-
-                    rCtrl.SetSelection(startPos, curpos);
-                    rCtrl.ReplaceSelection(doxyBlock);
-
-                    // Try to place the caret after the @brief
-                    wxRegEx reBrief("[@\\]brief[ \t]*");
-                    if (reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
-                        wxString match = reBrief.GetMatch(doxyBlock);
-                        // Get the index
-                        int where = doxyBlock.Find(match);
-                        if (where != wxNOT_FOUND) {
-                            where += match.length();
-                            int caretPos = startPos + where;
-                            rCtrl.SetCaretAt(caretPos);
-
-                            // Remove the @brief as its non standard in the PHP world
-                            rCtrl.DeleteRange(caretPos - match.length(), match.length());
-                        }
-                    }
-                    rCtrl.EndUndoAction();
+                if (textTyped == "/**" && CloseDocBlock(startPos)) {
                     return;
                 }
             }

@@ -444,7 +444,6 @@ std::optional<LexerConf::Ptr_t> ColoursAndFontsManager::GetLexerForFileType(File
         return GetLexer("makrdown");
     case FileExtManager::TypeWorkspaceDocker:
     case FileExtManager::TypeWorkspaceFileSystem:
-    case FileExtManager::TypeWorkspaceNodeJS:
     case FileExtManager::TypeWorkspacePHP:
     case FileExtManager::TypeWxCrafter:
     case FileExtManager::TypeJSON:

@@ -97,6 +97,13 @@ public:
     void ShowOutlineView(IEditor* editor);
 
     /**
+     * @brief ask the server to fill in the empty docblock at the caret (`textDocument/onTypeFormatting` with a
+     * newline). The edits are applied when the reply arrives, unless the editor was changed meanwhile
+     * @return false when the request was not sent (no server, or it does not format on a newline)
+     */
+    bool GenerateDocBlock(IEditor* editor);
+
+    /**
      * @brief Attempts to locate the definition of the symbol under the caret in the given editor.
      *
      * The function first validates the @a editor pointer, then retrieves the appropriate LSP
@@ -106,11 +113,24 @@ public:
      * its position, and the file name.
      *
      * If a suitable server is found, the request is forwarded to the server via
-     * @c server->FindDefinition(*editor).
+     * @c server->FindDefinition(*editor). When the caret is on a document link (for example the file of an
+     * @c include statement), the link is opened instead.
      *
      * @param editor Pointer to the editor instance where the symbol lookup should be performed.
      */
     void FindSymbol(IEditor* editor);
+
+    /**
+     * @brief return the document link at `pos` in the editor, from the links of the last reply
+     * When the editor text changed since then, new links are requested and nothing is returned. The next call
+     * after the reply arrives finds them
+     */
+    std::optional<LSP::DocumentLink> GetDocumentLinkAt(IEditor* editor, int pos);
+
+    /**
+     * @brief open the target of a document link: a file in an editor, a web page in the browser
+     */
+    void OpenDocumentLink(const LSP::DocumentLink& link);
 
     /**
      * @brief Finds the declaration of a symbol in the given editor.
@@ -282,12 +302,33 @@ protected:
     void OnCodeActionAvailable(LSPEvent& event);
     void OnCodeActionResolved(LSPEvent& event);
     void OnApplyEdits(LSPEvent& event);
+    void OnTypeFormatted(LSPEvent& event);
+    void OnDocumentLinks(LSPEvent& event);
     void OnGoinDown(clCommandEvent& event);
 
     void OnFindSymbol(wxCommandEvent& event);
     void OnRenameSymbol(wxCommandEvent& event);
     void OnFindReferences(wxCommandEvent& event);
     void OnCodeActions(wxCommandEvent& event);
+    void OnOpenDocumentLink(wxCommandEvent& event);
+
+    /**
+     * @brief open the location in an editor, and update the navigation (back / forward)
+     */
+    void OpenLocation(const LSP::Location& location);
+
+    /**
+     * @brief ask for the document links of the editor
+     * @param openAt open the link at this position when the reply arrives, else go to the definition
+     * @return false when the request was not sent
+     */
+    bool RequestDocumentLinks(IEditor* editor, const std::optional<LSP::Position>& openAt = std::nullopt);
+
+    /**
+     * @brief return the document links of the editor, or nullptr when they are out of date (the editor text
+     * changed since the last reply). Out of date links are requested again
+     */
+    const std::vector<LSP::DocumentLink>* GetDocumentLinks(IEditor* editor);
 
     void ShowQuickOutlineDialog(const LSPEvent& event);
 
@@ -326,6 +367,16 @@ protected:
     std::unordered_map<wxString, std::vector<LSP::SymbolInformation>> m_symbols_to_file_cache;
     /// the last diagnostics per file (remote or local path). The editor keeps only one per line
     std::unordered_map<wxString, std::vector<LSP::Diagnostic>> m_diagnostics;
+    /// files that wait for a docblock (remote or local path), with the hash of the text that was sent
+    std::unordered_map<wxString, size_t> m_pendingDocBlocks;
+    struct DocumentLinks {
+        size_t text_hash = 0;
+        std::vector<LSP::DocumentLink> links;
+    };
+    /// the document links per file (remote or local path), with the hash of the text they are for
+    std::unordered_map<wxString, DocumentLinks> m_documentLinks;
+    /// files with a document link request in flight (remote or local path), with the hash of the text that was sent
+    std::unordered_map<wxString, size_t> m_pendingDocumentLinks;
     LSPOutlineViewDlg* m_quick_outline_dlg{nullptr};
     std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
     bool m_shutdown_in_progress{false};

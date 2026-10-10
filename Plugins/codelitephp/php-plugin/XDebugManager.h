@@ -27,10 +27,11 @@
 #define XDEBUGMANAGER_H
 
 #include "XDebugCommandHandler.h"
+#include "XDebugSettings.h"
 #include "cl_command_event.h"
 #include "macros.h"
 #include "php_event.h"
-#include "php_project.h"
+#include "phpexecutor.h"
 #include "xdebugbreakpointsmgr.h"
 
 #include <memory>
@@ -44,23 +45,18 @@ class wxStyledTextCtrl;
 class PhpPlugin;
 class XDebugManager;
 
-// ----------------------------------------------
-// ----------------------------------------------
-// ----------------------------------------------
-
-struct xInitStruct {
-    wxString filename;
-};
-
 class XDebugManager : public wxEvtHandler
 {
-    friend class SocketServer;
     size_t TransactionId = 0;
     XDebugCommandHandler::Map_t m_handlers;
     XDebugBreakpointsMgr m_breakpointsMgr;
     PhpPlugin* m_plugin = nullptr;
     XDebugComThread* m_readerThread = nullptr;
     bool m_connected = false;
+    // The settings of the current debug session, loaded when it starts
+    XDebugSettings m_settings;
+    // Runs the script (or opens the URL) that is debugged
+    PHPExecutor m_executor;
 
 public:
     using Ptr_t = std::shared_ptr<XDebugManager>;
@@ -111,10 +107,12 @@ public:
     void ClearDebuggerMarker();
 
     /**
-     * @brief return all the file mapping for a given project
-     * the mapping will include the xdebug mapping + SFTP mapping
+     * @brief return the file mapping of the current debug session
+     * the mapping will include the xdebug mapping + the remote folder of the File System Workspace
      */
-    wxStringMap_t GetFileMapping(PHPProject::Ptr_t pProject) const;
+    const wxStringMap_t& GetFileMapping() const { return m_settings.GetFileMapping(); }
+
+    TerminalEmulator* GetTerminalEmulator() { return m_executor.GetTerminalEmulator(); }
 
 protected:
     void DoStartDebugger(bool ideInitiate = true);
@@ -125,7 +123,6 @@ protected:
     void DoApplyBreakpoints();
     void DoNegotiateFeatures();
     void DoDeleteBreakpoint(int bpid);
-    xInitStruct ParseInitXML(wxXmlNode* init);
 
     // Handlers based on the tx id
     void AddHandler(XDebugCommandHandler::Ptr_t handler);
@@ -144,6 +141,18 @@ protected:
      * @brief set e.SetAnswer to true if an active XDebug session is currently in progress
      */
     void OnDebugIsRunning(clDebugEvent& e);
+    /**
+     * @brief run the script (or open the URL) without debugging
+     */
+    void OnExecute(clExecuteEvent& e);
+    /**
+     * @brief set e.SetAnswer to true if a script started by us is running
+     */
+    void OnIsProgramRunning(clExecuteEvent& e);
+    /**
+     * @brief stop the script started by us
+     */
+    void OnStopExecutedProgram(clExecuteEvent& e);
     /**
      * @brief user placed a breakpoint (either by the keyboard shortcut or by clicking on the margin)
      */
@@ -229,7 +238,6 @@ public:
      */
     bool IsDebugSessionRunning() const;
 
-    PhpPlugin* GetPlugin() { return m_plugin; }
     XDebugBreakpointsMgr& GetBreakpointsMgr() { return m_breakpointsMgr; }
 
     const XDebugBreakpointsMgr& GetBreakpointsMgr() const { return m_breakpointsMgr; }

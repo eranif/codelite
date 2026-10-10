@@ -27,7 +27,7 @@
 #define PHPEXECUTOR_H
 
 #include "TerminalEmulator/TerminalEmulator.h"
-#include "php_project.h"
+#include "php_project_settings_data.h"
 
 #include <wx/event.h>
 #include <wx/process.h>
@@ -37,26 +37,22 @@ class PHPExecutor : public wxEvtHandler
     TerminalEmulator m_terminal;
 
 protected:
-    bool RunRUL(PHPProject::Ptr_t pProject, const wxString& urlToRun, const wxString& xdebugSessionName);
-    bool
-    DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const wxString& xdebugSessionName, bool neverPauseOnExit);
-    std::pair<wxString, wxString> DoGetCLICommand(const wxString& script, PHPProject::Ptr_t proj, wxString& errmsg);
+    bool RunRUL(const wxString& urlToRun, const wxString& xdebugSessionName);
+    bool DoRunCLI(const wxString& script, const PHPProjectSettingsData* settings, const wxString& xdebugSessionName);
+    std::pair<wxString, wxString>
+    DoGetCLICommand(const wxString& script, const PHPProjectSettingsData* settings, wxString& errmsg);
 
 public:
     PHPExecutor() = default;
     virtual ~PHPExecutor() = default;
 
     /**
-     * @brief execute project. This function takes into account the project settings
-     * @param projectName the project name
+     * @brief execute a script or load a URL, using the given settings
+     * @param settings the Xdebug settings
      * @param xdebugSessionName if debugging, use this xdebug-session name
-     * @param neverPauseOnExit should we display a console with message 'Hit any key?'
      * @return true on success, false otherwise
      */
-    bool Exec(const wxString& projectName,
-              const wxString& urlOrFilePath,
-              const wxString& xdebugSessionName,
-              bool neverPauseOnExit);
+    bool Exec(const PHPProjectSettingsData& settings, const wxString& urlOrFilePath, const wxString& xdebugSessionName);
     /**
      * @brief return true if a script is currently being executed using this instance
      */
@@ -65,11 +61,6 @@ public:
      * @brief stop any executed php script
      */
     void Stop();
-
-    /**
-     * @brief run simple script using the global settings only and return its output
-     */
-    bool RunScript(const wxString& script, wxString& php_output);
 
     TerminalEmulator* GetTerminalEmulator() { return &m_terminal; }
 };

@@ -1,0 +1,37 @@
+#ifndef PHPOPTIONS_H
+#define PHPOPTIONS_H
+
+#include "cl_config.h" // Base class: clConfigItem
+
+#include <wx/arrstr.h>
+
+class PhpOptions : public clConfigItem
+{
+    wxString m_phpExe;
+    wxArrayString m_includePaths;
+
+public:
+    PhpOptions();
+    ~PhpOptions() override = default;
+
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
+
+    PhpOptions& Load();
+    PhpOptions& Save();
+
+    PhpOptions& SetIncludePaths(const wxArrayString& includePaths)
+    {
+        this->m_includePaths = includePaths;
+        return *this;
+    }
+    PhpOptions& SetPhpExe(const wxString& phpExe)
+    {
+        this->m_phpExe = phpExe;
+        return *this;
+    }
+    const wxArrayString& GetIncludePaths() const { return m_includePaths; }
+    const wxString& GetPhpExe() const { return m_phpExe; }
+};
+
+#endif // PHPOPTIONS_H

@@ -14,13 +14,8 @@ flex_target(
   IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/include_finder.l"
   "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp"
   COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
-flex_target(
-  PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PHP/PhpLexer.l"
-  "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
-  COMPILE_FLAGS "-Pphp --noline --yylineno --batch")
 
-set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}"
-             "${FLEX_PhpFlex_OUTPUTS}")
+set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}")
 
 file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp")
 

@@ -12,6 +12,7 @@
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceView.hpp"
 #include "clFilesCollector.h"
+#include "clPHPWorkspaceConverter.hpp"
 #include "clSFTPEvent.h"
 #include "clShellHelper.hpp"
 #include "clWorkspaceManager.h"
@@ -84,6 +85,10 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
             wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, &clFileSystemWorkspace::OnQuickDebugDlgDismissed, this);
 
         EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
+        EventNotifier::Get()->Bind(wxEVT_FILE_RENAMED, &clFileSystemWorkspace::OnFileRenamed, this);
+        EventNotifier::Get()->Bind(wxEVT_FILE_DELETED, &clFileSystemWorkspace::OnFileDeleted, this);
+        EventNotifier::Get()->Bind(
+            wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &clFileSystemWorkspace::OnReplaceInFiles, this);
         EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &clFileSystemWorkspace::OnDebug, this);
 
         EventNotifier::Get()->Bind(wxEVT_FILE_CREATED, &clFileSystemWorkspace::OnFileSystemUpdated, this);
@@ -129,6 +134,10 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(
             wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, &clFileSystemWorkspace::OnQuickDebugDlgDismissed, this);
         EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
+        EventNotifier::Get()->Unbind(wxEVT_FILE_RENAMED, &clFileSystemWorkspace::OnFileRenamed, this);
+        EventNotifier::Get()->Unbind(wxEVT_FILE_DELETED, &clFileSystemWorkspace::OnFileDeleted, this);
+        EventNotifier::Get()->Unbind(
+            wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &clFileSystemWorkspace::OnReplaceInFiles, this);
         EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &clFileSystemWorkspace::OnDebug, this);
 
         EventNotifier::Get()->Unbind(wxEVT_FILE_CREATED, &clFileSystemWorkspace::OnFileSystemUpdated, this);
@@ -239,6 +248,14 @@ void clFileSystemWorkspace::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
 void clFileSystemWorkspace::OnOpenWorkspace(clCommandEvent& event)
 {
     event.Skip();
+    if (!m_settings.IsOk(event.GetFileName()) && clPHPWorkspaceConverter::IsPHPWorkspace(event.GetFileName())) {
+        // Ours, also when the conversion fails: nothing else can open a PHP workspace
+        event.Skip(false);
+        if (!DoConvertPHPWorkspace(event.GetFileName())) {
+            return;
+        }
+    }
+
     if (OpenWorkspace(event.GetFileName())) {
         event.Skip(false);
     } else {
@@ -252,6 +269,26 @@ void clFileSystemWorkspace::OnCloseWorkspace(clCommandEvent& event)
     if (CloseWorkspace()) {
         event.Skip(false);
     }
+}
+
+bool clFileSystemWorkspace::DoConvertPHPWorkspace(const wxFileName& file)
+{
+    wxArrayString warnings;
+    wxFileName backup;
+    wxString error;
+    if (!clPHPWorkspaceConverter::Convert(file, warnings, backup, error)) {
+        ::clMessageBox(_("Failed to convert the PHP workspace:\n") + error, "CodeLite", wxOK | wxICON_ERROR);
+        return false;
+    }
+
+    wxString message;
+    message << _("This PHP workspace was converted to a File System Workspace, with XDebug as its debugger.\n")
+            << _("The old workspace file was renamed to: ") << backup.GetFullPath();
+    if (!warnings.IsEmpty()) {
+        message << "\n\n" << wxJoin(warnings, '\n');
+    }
+    ::clMessageBox(message, "CodeLite", wxOK | (warnings.IsEmpty() ? wxICON_INFORMATION : wxICON_WARNING));
+    return true;
 }
 
 bool clFileSystemWorkspace::Load(const wxFileName& file)
@@ -819,49 +856,100 @@ void clFileSystemWorkspace::DoCreate(const wxString& path, const wxString& name,
     }
 }
 
+wxString clFileSystemWorkspace::GetRemoteSyncPath(const wxString& localPath) const
+{
+    if (!IsOpen() || !GetSettings().GetSelectedConfig()) {
+        return wxEmptyString;
+    }
+
+    if (!GetConfig()->IsRemoteTargetEnabled() || !GetConfig()->IsSyncOnSave()) {
+        return wxEmptyString;
+    }
+
+    // Files outside of our root folder are not synced
+    wxString filePath = wxFileName(localPath).GetPath();
+    if (!filePath.StartsWith(GetDir())) {
+        return wxEmptyString;
+    }
+
+    // Make the local file path relative to the workspace location
+    wxFileName fnLocalFile(localPath);
+    fnLocalFile.MakeRelativeTo(GetDir());
+
+    wxString remoteFilePath = fnLocalFile.GetFullPath(wxPATH_UNIX);
+    remoteFilePath.Prepend(GetConfig()->GetRemoteFolder() + "/");
+    return wxFileName(remoteFilePath).GetFullPath(wxPATH_UNIX);
+}
+
+void clFileSystemWorkspace::DoUploadFile(const wxString& localPath)
+{
+    wxString remotePath = GetRemoteSyncPath(localPath);
+    if (remotePath.empty()) {
+        return;
+    }
+
+    clSFTPEvent eventSave(wxEVT_SFTP_SAVE_FILE);
+    eventSave.SetAccount(GetConfig()->GetRemoteAccount());
+    eventSave.SetLocalFile(localPath);
+    eventSave.SetRemoteFile(remotePath);
+    EventNotifier::Get()->QueueEvent(eventSave.Clone());
+}
+
 void clFileSystemWorkspace::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
-    CHECK_ACTIVE_CONFIG();
 
-    if (GetConfig()->IsRemoteTargetEnabled() && GetConfig()->IsSyncOnSave()) {
-        const wxString& filename = event.GetFileName();
+    // If the file was opened by the sftp plugin, don't attempt to save it remotely
+    // it will be done by the sftp plugin. These files are marked with client data
+    // set with the "sftp" key
+    const wxString& filename = event.GetFileName();
+    IEditor* editor = clGetManager()->FindEditor(filename);
+    if (editor && editor->GetClientData("sftp")) {
+        return;
+    }
+    DoUploadFile(filename);
+}
 
-        // There are 2 cases where we don't want to trigger remote save:
-        // 1. if the file was opened by the sftp plugin, don't attempt to save it remotely
-        // it will be done by the sftp plugin. These files are marked with client data
-        // set with the "sftp" key
-        // 2. if the file is not located under our root folder -> don't attempt to save it
-        bool managedBySftp = false;
-        IEditor* editor = clGetManager()->FindEditor(filename);
-        if (editor && editor->GetClientData("sftp")) {
-            managedBySftp = true;
+void clFileSystemWorkspace::OnFileRenamed(clFileSystemEvent& event)
+{
+    // This event is sent before the rename. Always skip it: a handler that does not skip
+    // tells the sender that it did the rename itself
+    event.Skip();
+
+    wxString oldRemotePath = GetRemoteSyncPath(event.GetPath());
+    wxString newRemotePath = GetRemoteSyncPath(event.GetNewpath());
+    if (oldRemotePath.empty() || newRemotePath.empty()) {
+        return;
+    }
+
+    clSFTPEvent eventRename(wxEVT_SFTP_RENAME_FILE);
+    eventRename.SetAccount(GetConfig()->GetRemoteAccount());
+    eventRename.SetRemoteFile(oldRemotePath);
+    eventRename.SetNewRemoteFile(newRemotePath);
+    EventNotifier::Get()->QueueEvent(eventRename.Clone());
+}
+
+void clFileSystemWorkspace::OnFileDeleted(clFileSystemEvent& event)
+{
+    event.Skip();
+    for (const wxString& path : event.GetPaths()) {
+        wxString remotePath = GetRemoteSyncPath(path);
+        if (remotePath.empty()) {
+            continue;
         }
 
-        wxString rootPath = GetDir();
-        wxString filePath = wxFileName(filename).GetPath();
-        bool doRemoteSave = filePath.StartsWith(rootPath) && !managedBySftp;
+        clSFTPEvent eventDelete(wxEVT_SFTP_DELETE_FILE);
+        eventDelete.SetAccount(GetConfig()->GetRemoteAccount());
+        eventDelete.SetRemoteFile(remotePath);
+        EventNotifier::Get()->QueueEvent(eventDelete.Clone());
+    }
+}
 
-        if (doRemoteSave) {
-            wxString remoteFilePath;
-            const wxString& account = GetConfig()->GetRemoteAccount();
-            const wxString& remotePath = GetConfig()->GetRemoteFolder();
-
-            // Make the local file path relative to the workspace location
-            wxFileName fnLocalFile(event.GetFileName());
-            fnLocalFile.MakeRelativeTo(GetDir());
-
-            remoteFilePath = fnLocalFile.GetFullPath(wxPATH_UNIX);
-            remoteFilePath.Prepend(remotePath + "/");
-            wxFileName fnRemoteFile(remoteFilePath);
-
-            // Build the remote filename
-            clSFTPEvent eventSave(wxEVT_SFTP_SAVE_FILE);
-            eventSave.SetAccount(account);
-            eventSave.SetLocalFile(filename);
-            eventSave.SetRemoteFile(fnRemoteFile.GetFullPath(wxPATH_UNIX));
-            EventNotifier::Get()->QueueEvent(eventSave.Clone());
-        }
+void clFileSystemWorkspace::OnReplaceInFiles(clFileSystemEvent& event)
+{
+    event.Skip();
+    for (const wxString& filename : event.GetStrings()) {
+        DoUploadFile(filename);
     }
 }
 

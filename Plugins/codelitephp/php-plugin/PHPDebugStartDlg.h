@@ -25,19 +25,20 @@
 
 #ifndef PHPDEBUGSTARTDLG_H
 #define PHPDEBUGSTARTDLG_H
-#include "php_project.h"
+#include "imanager.h"
+#include "php_project_settings_data.h"
 #include "php_ui.hpp"
 
 class PHPDebugStartDlg : public PHPDebugStartDlgBase
 {
-    PHPProject::Ptr_t m_project;
+    PHPProjectSettingsData& m_settings;
     IManager* m_manager;
 
 protected:
     void SetBookSelection(int sel) { m_simpleBook->SetSelection(sel); }
 
 public:
-    PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject, IManager* manager);
+    PHPDebugStartDlg(wxWindow* parent, PHPProjectSettingsData& settings, IManager* manager);
     virtual ~PHPDebugStartDlg();
     wxString GetPath() const;
 

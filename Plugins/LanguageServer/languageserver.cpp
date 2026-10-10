@@ -15,6 +15,7 @@
 #include "clSTCHelper.hpp"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "ieditor.h"
 #include "macros.h"
 
@@ -208,20 +209,12 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     CHECK_PTR_RET(editor);
 
     LanguageServerProtocol::Ptr_t lsp = LSP::Manager::GetInstance().GetServerForEditor(*editor);
-    if (!lsp) {
-        wxMenu* menu = event.GetMenu();
-        return;
-    }
+    CHECK_PTR_RET(lsp);
 
-    bool add_find_symbol = !lsp->CanHandle(FileExtManager::TypePhp);
     bool add_find_references = lsp->IsReferencesSupported();
     bool add_rename_symbol = lsp->IsRenameSupported();
     bool add_code_actions = lsp->IsCodeActionSupported();
-
-    // nothing to be done here
-    if (!add_find_symbol && !add_find_references && !add_rename_symbol && !add_code_actions) {
-        return;
-    }
+    auto link = LSP::Manager::GetInstance().GetDocumentLinkAt(editor, editor->GetCurrentPosition());
 
     wxMenu* menu = event.GetMenu();
     if (add_code_actions) {
@@ -239,6 +232,16 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
         menu->Prepend(XRCID("lsp_rename_symbol"), _("Rename symbol"));
     }
     menu->Prepend(XRCID("lsp_find_symbol"), _("Find symbol"));
+
+    if (link.has_value()) {
+        // name the file, or the web page
+        wxString target = link->GetTarget();
+        if (target.StartsWith("file://")) {
+            target = wxFileName(FileUtils::FilePathFromURI(target.BeforeFirst('#'))).GetFullName();
+        }
+        menu->PrependSeparator();
+        menu->Prepend(XRCID("lsp_open_document_link"), wxString::Format(_("Open '%s'"), target));
+    }
 }
 
 void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)

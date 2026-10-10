@@ -34,7 +34,7 @@ void XDebugRunCmdHandler::Process(const wxXmlNode* response)
             wxString filename = msg->GetAttribute("filename");
             int line_number = XmlUtils::ReadLong(msg, "lineno");
 
-            wxString localFile = ::MapRemoteFileToLocalFile(filename);
+            wxString localFile = ::MapRemoteFileToLocalFile(filename, m_mgr->GetFileMapping());
             clDEBUG() << "Mapping remote file:" << filename << "->" << localFile << endl;
             wxFileName fnFilename(localFile);
             if (fnFilename.Exists()) {
@@ -46,7 +46,7 @@ void XDebugRunCmdHandler::Process(const wxXmlNode* response)
             } else {
                 wxString message;
                 message << _("Failed to map remote file: ") << filename << "\n"
-                        << _("Check your project settings->Debug to define folder mapping");
+                        << _("Define folder mapping in PHP -> XDebug Settings... -> Debug");
                 ::wxMessageBox(message, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
             }
         }

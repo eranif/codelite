@@ -8,18 +8,21 @@
 
 ```ini
 [xdebug]
-zend_extension=C:\php74\ext\php_xdebug.dll
-xdebug.remote_enable=1
+zend_extension=xdebug
+xdebug.mode=debug
+xdebug.start_with_request=trigger
 xdebug.idekey="codeliteide"
-xdebug.remote_host=127.0.0.1
-xdebug.remote_port=9000
+xdebug.client_host=127.0.0.1
+xdebug.client_port=9003
 ```
+
+CodeLite supports Xdebug 3 (required by PHP 8). If you still use Xdebug 2, keep your current `php.ini` settings (`xdebug.remote_*`) and set the port in `PHP` &#8594; `XDebug Settings...` to match.
 
 - Next, change directory to the workspace folder (in my case it was: `C:\Users\Eran\Documents\TestPHP` and start PHP debug web server like this
 
 ```
 cd C:\Users\Eran\Documents\TestPHP
-C:\php74\php.exe -S 127.0.0.1:80 -t .
+php.exe -S 127.0.0.1:80 -t .
 ```
 
 - Right click on your project folder and add new PHP file, name it `test.php` with the following content:

@@ -189,7 +189,6 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("php-workspace", 16), FileExtManager::TypeWorkspacePHP);
         m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow", 16), FileExtManager::TypeWorkspaceFileSystem);
         m_mimeBitmaps.AddBitmap(LoadBitmap("docker", 16), FileExtManager::TypeWorkspaceDocker);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("nodejs-workspace", 16), FileExtManager::TypeWorkspaceNodeJS);
         m_mimeBitmaps.AddBitmap(LoadBitmap("project", 16), FileExtManager::TypeProject);
         m_mimeBitmaps.AddBitmap(LoadBitmap("project-opened", 16), FileExtManager::TypeProjectExpanded);
         m_mimeBitmaps.AddBitmap(LoadBitmap("blocks", 16), FileExtManager::TypeWxCrafter);

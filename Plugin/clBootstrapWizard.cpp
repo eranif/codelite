@@ -73,7 +73,6 @@ const wxArrayString& GetWebPlugins()
 {
     if (webPlugins.empty()) {
         webPlugins.insert(webPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
-        webPlugins.push_back("WebTools");
         webPlugins.push_back("PHP");
     }
     return webPlugins;

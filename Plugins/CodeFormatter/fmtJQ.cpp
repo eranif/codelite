@@ -11,7 +11,6 @@ fmtJQ::fmtJQ()
                   FileExtManager::TypeWorkspaceFileSystem,
                   FileExtManager::TypeWorkspaceDocker,
                   FileExtManager::TypeWxCrafter,
-                  FileExtManager::TypeWorkspaceNodeJS,
                   FileExtManager::TypeWorkspacePHP});
 
     SetDescription(_("commandline JSON processor"));

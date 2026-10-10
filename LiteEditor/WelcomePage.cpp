@@ -194,9 +194,6 @@ void WelcomePage::UpdateRecentWorkspaces()
         case FileExtManager::TypeWorkspaceDocker:
             workspace_type = _("Docker");
             break;
-        case FileExtManager::TypeWorkspaceNodeJS:
-            workspace_type = _("NodeJS");
-            break;
         case FileExtManager::TypeWorkspacePHP:
             workspace_type = _("PHP");
             break;

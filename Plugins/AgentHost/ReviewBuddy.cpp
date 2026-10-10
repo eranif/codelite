@@ -7,8 +7,6 @@
 #include "procutils.h"
 #include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
 
-#include <wx/richmsgdlg.h>
-
 #if USE_SFTP
 #include "clSFTPManager.hpp"
 #endif
@@ -38,7 +36,7 @@ constexpr auto kStallTimeout = std::chrono::minutes(20);
 constexpr int kRemoveRetryMs = 3000;
 // Keeps our files out of `git status`. It has no leading slash: the agents may run in a sub-folder of the repository.
 const wxString kExcludeRule = "**/.agents/reviews/";
-// The user's last answer to "close the review buddy agent" in the dialog at the end of a review
+// Whether the last answer in the dialog at the end of a review was "Ok & Close Review Buddy"
 const wxString kCloseAgentOption = "ReviewBuddy/CloseAgentWhenDone";
 
 /// A timer that runs a function once and then deletes itself. wxWidgets (3.2 and 3.3) has no `CallLater` for a
@@ -341,21 +339,22 @@ void ReviewBuddy::NotifyUser(const wxString& title, const wxString& message, boo
         // the pane), and the caller must not go on using freed members when it ends. The lambda keeps `self` only
         // to send the close event, and uses it only while `*alive` is true.
         wxTheApp->CallAfter([text, title, problem, alive = m_alive, self = this]() {
-            wxRichMessageDialog dlg(wxTheApp != nullptr ? wxTheApp->GetTopWindow() : nullptr,
-                                    text,
-                                    title,
-                                    wxOK | (problem ? wxICON_WARNING : wxICON_INFORMATION));
             // Only when the review is finished: after a problem the user may want to read the review files, and
             // closing the pane removes them.
-            if (!problem) {
-                // The last answer is the default for the next review
-                dlg.ShowCheckBox(_("Close the review buddy agent"), clConfig::Get().Read(kCloseAgentOption, false));
+            if (problem) {
+                wxMessageBox(
+                    text, title, wxOK | wxICON_WARNING, wxTheApp != nullptr ? wxTheApp->GetTopWindow() : nullptr);
+                return;
             }
-            dlg.ShowModal();
-            const bool closeAgent = !problem && dlg.IsCheckBoxChecked();
-            if (!problem) {
-                clConfig::Get().Write(kCloseAgentOption, closeAgent);
-            }
+            // "No" is the plain Ok: it is also the answer for Escape. The last answer is the default button.
+            const bool lastClosed = clConfig::Get().Read(kCloseAgentOption, false);
+            wxMessageDialog dlg(wxTheApp != nullptr ? wxTheApp->GetTopWindow() : nullptr,
+                                text,
+                                title,
+                                wxYES_NO | (lastClosed ? wxYES_DEFAULT : wxNO_DEFAULT) | wxICON_INFORMATION);
+            dlg.SetYesNoLabels(_("Ok && Close Review Buddy"), _("Ok"));
+            const bool closeAgent = dlg.ShowModal() == wxID_YES;
+            clConfig::Get().Write(kCloseAgentOption, closeAgent);
             // The pane may be closed already while the dialog was open
             if (closeAgent && *alive) {
                 self->QueueEvent(new wxCommandEvent(wxEVT_REVIEW_BUDDY_CLOSE));

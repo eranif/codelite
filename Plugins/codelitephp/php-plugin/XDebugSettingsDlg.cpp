@@ -22,7 +22,6 @@ XDebugSettingsDlg::XDebugSettingsDlg(wxWindow* parent, XDebugSettings& settings)
     m_textCtrlProgramArgs19->ChangeValue(data.GetArgs());
     m_checkBoxPauseWhenExecutionEnds21->SetValue(data.IsPauseWhenExeTerminates());
     m_textCtrlWebSiteURL25->ChangeValue(data.GetProjectURL());
-    m_checkBoxSystemBrowser27->SetValue(data.IsUseSystemBrowser());
     m_textCtrlPHPIncludePath34->ChangeValue(data.GetIncludePath());
 
     for (const auto& [source, target] : data.GetFileMapping()) {
@@ -66,7 +65,6 @@ void XDebugSettingsDlg::Save()
     data.SetArgs(m_textCtrlProgramArgs19->GetValue());
     data.SetPauseWhenExeTerminates(m_checkBoxPauseWhenExecutionEnds21->IsChecked());
     data.SetProjectURL(m_textCtrlWebSiteURL25->GetValue());
-    data.SetUseSystemBrowser(m_checkBoxSystemBrowser27->IsChecked());
     data.SetIncludePath(m_textCtrlPHPIncludePath34->GetValue());
 
     wxStringMap_t mapping;

@@ -5,7 +5,7 @@
 #include "php_ui.hpp"
 
 /**
- * @brief edit the Xdebug settings of a workspace that is not a PHP workspace (stored in .codelite/xdebug.json)
+ * @brief edit the Xdebug settings of the open workspace (stored in .codelite/xdebug.json)
  */
 class XDebugSettingsDlg : public XDebugSettingsDlgBase
 {

@@ -150,7 +150,7 @@ void clDockerWorkspace::Open(const wxFileName& path)
         // Finalize the workspace open process:
         //===------------------------------------------
 
-        // Notify CodeLite that NodeJS workspace is opened
+        // Notify CodeLite that Docker workspace is opened
         clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
         clWorkspaceManager::Get().SetWorkspace(this);
 
@@ -201,7 +201,7 @@ void clDockerWorkspace::OnNewWorkspace(clCommandEvent& event)
     if (event.GetString() == GetWorkspaceType()) {
         event.Skip(false);
 
-        // Create a new NodeJS workspace
+        // Create a new Docker workspace
         NewDockerWorkspaceDlg dlg(EventNotifier::Get()->TopFrame());
         if (dlg.ShowModal() != wxID_OK)
             return;

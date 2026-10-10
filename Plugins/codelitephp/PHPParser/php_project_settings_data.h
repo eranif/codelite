@@ -43,7 +43,6 @@ protected:
     wxString m_workingDirectory;
     wxString m_projectURL;
     wxString m_includePath;
-    wxString m_ccIncludePath;
     wxString m_phpIniFile;
     size_t m_flags;
     wxStringMap_t m_fileMapping;
@@ -51,7 +50,7 @@ protected:
 public:
     enum {
         kOpt_PauseWhenExeTermiantes = (1 << 0),
-        kOpt_UseSystemDefaultBrowser = (1 << 1),
+        // (1 << 1) was "use system default browser", do not reuse it
         kOpt_RunCurrentEditor = (1 << 2),
     };
 
@@ -79,15 +78,15 @@ public:
     bool HasFlag(int flag) const { return m_flags & flag; }
 
     /**
-     * @brief copy the global settings and append them to the project settings
+     * @brief copy the global settings and append them to these settings
      */
     void MergeWithGlobalSettings();
 
     /**
      * @brief convert path to its mapped path based on the
-     * fileMapping of the project
+     * file mapping, and return it as a file:// URI
      */
-    wxString GetMappdPath(const wxString& sourcePath, bool useUrlScheme, const wxStringMap_t& additionalMapping) const;
+    wxString GetMappdPath(const wxString& sourcePath, const wxStringMap_t& additionalMapping) const;
     const wxStringMap_t& GetFileMapping() const { return m_fileMapping; }
     void SetFileMapping(const wxStringMap_t& fileMapping) { this->m_fileMapping = fileMapping; }
     void SetPhpIniFile(const wxString& phpIniFile) { this->m_phpIniFile = phpIniFile; }
@@ -97,12 +96,7 @@ public:
         EnableFlag(kOpt_PauseWhenExeTermiantes, pauseWhenExeTerminates);
     }
     bool IsPauseWhenExeTerminates() const { return HasFlag(kOpt_PauseWhenExeTermiantes); }
-    bool IsUseSystemBrowser() const { return HasFlag(kOpt_UseSystemDefaultBrowser); }
 
-    void SetUseSystemBrowser(bool b) { return EnableFlag(kOpt_UseSystemDefaultBrowser, b); }
-
-    void SetCcIncludePath(const wxString& ccIncludePath) { this->m_ccIncludePath = ccIncludePath; }
-    const wxString& GetCcIncludePath() const { return m_ccIncludePath; }
     void SetArgs(const wxString& args) { this->m_args = args; }
     void SetIncludePath(const wxString& includePath) { this->m_includePath = includePath; }
     void SetIndexFile(const wxString& indexFile) { this->m_indexFile = indexFile; }
@@ -113,7 +107,6 @@ public:
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetIncludePath() const { return m_includePath; }
     wxArrayString GetIncludePathAsArray() const;
-    wxArrayString GetCCIncludePathAsArray() const;
 
     const wxString& GetIndexFile() const { return m_indexFile; }
     const wxString& GetPhpExe() const { return m_phpExe; }

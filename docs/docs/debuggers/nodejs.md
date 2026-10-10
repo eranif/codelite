@@ -1,1 +1,0 @@
-Debugging with Node.js is [covered here](/workspaces/nodejs/#debugging)

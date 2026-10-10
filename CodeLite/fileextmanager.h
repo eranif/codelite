@@ -79,8 +79,6 @@ public:
         TypeWorkspacePHP,
         TypeWorkspaceFileSystem,
         TypeWorkspaceDocker,
-        TypeWorkspaceNodeJS,
-        TypeWorkspacePHPTags,
         TypeWorkspaceDatabase,
         TypeAsm,
         TypeJava,
@@ -136,12 +134,6 @@ public:
      */
     static bool IsJavascriptFile(const wxString& filename);
     static bool IsJavascriptFile(const wxFileName& filename) { return IsJavascriptFile(filename.GetFullPath()); }
-
-    /**
-     * @param return true if a file is a PHP file
-     */
-    static bool IsPHPFile(const wxString& filename);
-    static bool IsPHPFile(const wxFileName& filename) { return IsPHPFile(filename.GetFullPath()); }
 
     /**
      * @param return true if a file is a Java file

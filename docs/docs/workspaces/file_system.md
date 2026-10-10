@@ -31,11 +31,11 @@ Here you can set the the following properties:
 
 | Property              | Description                                      |
 |:-------------------   |--------------------------------------------------|
-| `Executable`          | A path to the executable to use when debugging or running your program. Note that if you choose to use relative paths here, it should be relative to the workspace file path|
+| `Executable`          | A path to the executable to use when debugging or running your program. Note that if you choose to use relative paths here, it should be relative to the workspace file path. Not used when the debugger is `XDebug`|
 | `Working directory`   | When running your program, use this path as the working directory. When left empty, the workspace path is used as the working directory|
 | `Arguments`           | Arguments to pass to your program. One line per argument |
 | `Tool chain`          | Choose the tool chain to use. Note that CodeLite uses the tool chain settings mainly for parsing build output|
-| `Debugger`            | Choose the debugger to use |
+| `Debugger`            | Choose the debugger to use. With `XDebug`, the run and debug settings come from `PHP` &#8594; `XDebug Settings...`, see [XDebug](/debuggers/xdebug/) |
 | `File extensions`     | List of extensions to include in the workspace. Only files with the extensions specified here, are considered for code completion, find in files and other operations|
 | `Exclude paths`       | List of folders to exclude from the workspace|
 
@@ -93,7 +93,7 @@ Define here any environment variables you wish to use when working with this wor
 This page allows you to sync this workspace with a remote workspace using the SSH manager.
 It enables the following features:
 
-1. Optionally, every file you save is synced to the remote file located on the remote machine (see `Sync File On Save` below)
+1. Optionally, every file you save, rename, delete or change with Replace in Files is synced to the remote machine (see `Sync File On Save` below)
 2. Optionally, you can choose that all the build commands are executed remotely and not locally (over SSH)
 
 To enable this:
@@ -101,7 +101,7 @@ To enable this:
 - Check the option `Enable remote development`
 - Select the SSH account to use from the drop down list (or create a new one by using the ssh account manager)
 - `Remote folder` : specify the path on the remote machine where the workspace file is located. Usually, you want the remote directory structure to be a mirror to the local one
-- `Sync File On Save` : by checking this option, every file that you save locally is also uploaded to the remote machine. This option is off by default, so after upgrading, enable it if you want your workspace to sync files on save
+- `Sync File On Save` : by checking this option, every file that you save locally is also uploaded to the remote machine. Files changed by Replace in Files are uploaded too, and renamed or deleted files are renamed or deleted on the remote machine. Renamed or deleted folders are not synced. This option is off by default, so after upgrading, enable it if you want your workspace to sync files on save
 - `Use remote build` : by checking this option, the build commands defined in the [build page](#build) are executed on the remote machine
 
 [1]: https://releases.llvm.org/8.0.0/tools/clang/tools/extra/docs/clangd/Installation.html

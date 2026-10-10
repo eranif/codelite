@@ -184,8 +184,6 @@ void FileExtManager::Init()
 
         m_map[wxT("sql")] = TypeSQL;
         m_map[wxT("sqlite")] = TypeSLite;
-        m_map[wxT("phpwsp")] = TypeWorkspacePHP;
-        m_map[wxT("phptags")] = TypeDatabase;
 
         m_map["pro"] = TypeQMake;
         m_map["pri"] = TypeQMake;
@@ -223,7 +221,6 @@ void FileExtManager::Init()
                                    TypeWorkspaceFileSystem,
                                    TypeWxCrafter,
                                    TypeWorkspaceDocker,
-                                   TypeWorkspaceNodeJS,
                                    TypeWorkspacePHP}});
         m_language_bundle.insert({"Rust", {TypeRust}});
         m_language_bundle.insert({"Ruby", {TypeRuby}});
@@ -323,9 +320,7 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
                 JSON root(content);
                 if (!root.isOk())
                     return TypeWorkspace;
-                if (root.toElement().hasNamedObject("NodeJS")) {
-                    return TypeWorkspaceNodeJS;
-                } else if (root.toElement().hasNamedObject("Docker")) {
+                if (root.toElement().hasNamedObject("Docker")) {
                     return TypeWorkspaceDocker;
                 } else if (root.toElement().namedObject("workspace_type").toString() == "File System Workspace") {
                     return TypeWorkspaceFileSystem;
@@ -422,8 +417,6 @@ bool FileExtManager::IsFileType(const wxString& filename, FileExtManager::FileTy
 }
 
 bool FileExtManager::IsJavascriptFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypeJS); }
-
-bool FileExtManager::IsPHPFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypePhp); }
 
 bool FileExtManager::IsJavaFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypeJava); }
 

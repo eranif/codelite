@@ -287,6 +287,30 @@ public:
 };
 
 //===----------------------------------------------------------------------------------
+// DocumentLink
+//===----------------------------------------------------------------------------------
+/// A range in a document that links to a file or a web page (`textDocument/documentLink`)
+class WXDLLIMPEXP_CL DocumentLink
+{
+    Range m_range;
+    wxString m_target;
+
+public:
+    DocumentLink() = default;
+    ~DocumentLink() = default;
+    bool operator==(const DocumentLink&) const = default;
+    void FromJSON(const JSONItem& json);
+
+    const Range& GetRange() const { return m_range; }
+    /// the target URI, as sent by the server
+    const wxString& GetTarget() const { return m_target; }
+    /// a link without a target needs `documentLink/resolve`, which is not supported
+    bool IsOk() const { return m_range.IsOk() && !m_target.empty(); }
+    /// true if `pos` is inside the link (the end is included, so the caret right after the link matches)
+    bool Contains(const Position& pos) const { return m_range.GetStart() <= pos && pos <= m_range.GetEnd(); }
+};
+
+//===----------------------------------------------------------------------------------
 // TextDocumentItem
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL TextDocumentItem

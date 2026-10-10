@@ -546,10 +546,6 @@ clEditor::clEditor(wxWindow* parent)
     m_deltas = new EditorDeltasHolder;
     EventNotifier::Get()->Connect(
         wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(clEditor::OnHighlightWordChecked), nullptr, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(clEditor::OnFileFormatStarting), nullptr, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(clEditor::OnFileFormatDone), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clEditor::OnColoursAndFontsUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditor::OnActiveEditorChanged, this);
     Bind(wxEVT_COMMAND_MENU_SELECTED,
@@ -578,10 +574,6 @@ clEditor::~clEditor()
 
     EventNotifier::Get()->Disconnect(
         wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(clEditor::OnHighlightWordChecked), nullptr, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(clEditor::OnFileFormatStarting), nullptr, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(clEditor::OnFileFormatDone), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clEditor::OnColoursAndFontsUpdated, this);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,
            wxCommandEventHandler(clEditor::OnChangeActiveBookmarkType),
@@ -5109,55 +5101,6 @@ size_t clEditor::GetCodeNavModifier()
     if (GetOptions()->HasOption(OptionsConfig::Opt_NavKey_Shift))
         mod |= wxMOD_ALT;
     return mod;
-}
-
-void clEditor::OnFileFormatDone(wxCommandEvent& e)
-{
-    if (e.GetString() != FileUtils::RealPath(GetFileName().GetFullPath())) {
-        // not this file
-        e.Skip();
-        return;
-    }
-
-    // Restore the markers
-    DoRestoreMarkers();
-}
-
-void clEditor::OnFileFormatStarting(wxCommandEvent& e)
-{
-    if (e.GetString() != FileUtils::RealPath(GetFileName().GetFullPath())) {
-        // not this file
-        e.Skip();
-        return;
-    }
-    DoSaveMarkers();
-}
-
-void clEditor::DoRestoreMarkers()
-{
-    MarkerDeleteAll(mmt_all_bookmarks);
-    for (size_t i = smt_FIRST_BMK_TYPE; i < m_savedMarkers.size(); ++i) {
-        MarkerAdd(m_savedMarkers.at(i).first, m_savedMarkers.at(i).second);
-    }
-    m_savedMarkers.clear();
-    NotifyMarkerChanged();
-}
-
-void clEditor::DoSaveMarkers()
-{
-    m_savedMarkers.clear();
-    int nLine = LineFromPosition(0);
-
-    int nFoundLine = MarkerNext(nLine, mmt_all_bookmarks);
-    while (nFoundLine >= 0) {
-        for (size_t type = smt_FIRST_BMK_TYPE; type < smt_LAST_BMK_TYPE; ++type) {
-            int mask = (1 << type);
-            if (MarkerGet(nLine) & mask) {
-                m_savedMarkers.push_back(std::make_pair(nFoundLine, type));
-            }
-        }
-        nFoundLine = MarkerNext(nFoundLine + 1, mmt_all_bookmarks);
-    }
 }
 
 void clEditor::ToggleBreakpointEnablement()

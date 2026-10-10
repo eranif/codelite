@@ -8,7 +8,6 @@
 #include "lexer_configuration.h"
 #include "php_event.h"
 #include "php_utils.h"
-#include "php_workspace.h"
 #include "xdebugevent.h"
 
 #include <wx/tokenzr.h>
@@ -22,7 +21,6 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTING, &PHPDebugPane::OnXDebugSessionStarting, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_BREAKPOINTS_UPDATED, &PHPDebugPane::OnRefreshBreakpointsView, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PHPDebugPane::OnXDebugSessionEnded, this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &PHPDebugPane::OnSettingsChanged, this);
     m_console = new TerminalEmulatorUI(m_auiBook);
 
 #if !MAINBOOK_AUIBOOK
@@ -61,7 +59,6 @@ PHPDebugPane::~PHPDebugPane()
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTING, &PHPDebugPane::OnXDebugSessionStarting, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_BREAKPOINTS_UPDATED, &PHPDebugPane::OnRefreshBreakpointsView, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &PHPDebugPane::OnXDebugSessionEnded, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &PHPDebugPane::OnSettingsChanged, this);
 }
 
 void PHPDebugPane::OnUpdateStackTrace(XDebugEvent& e)
@@ -213,12 +210,10 @@ void PHPDebugPane::OnXDebugSessionStarted(XDebugEvent& e)
 void PHPDebugPane::OnXDebugSessionStarting(XDebugEvent& event)
 {
     event.Skip();
-    m_console->SetTerminal(PHPWorkspace::Get()->GetTerminalEmulator());
+    m_console->SetTerminal(XDebugManager::Get().GetTerminalEmulator());
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
     if (phpLexer) {
         phpLexer->Apply(m_console->GetTerminalOutputWindow());
     }
 }
 void PHPDebugPane::OnCallStackMenu(wxDataViewEvent& event) {}
-
-void PHPDebugPane::OnSettingsChanged(wxCommandEvent& event) { event.Skip(); }

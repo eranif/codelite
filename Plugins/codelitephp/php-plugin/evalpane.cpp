@@ -12,7 +12,6 @@ EvalPane::EvalPane(wxWindow* parent)
     Hide();
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_EVAL_EXPRESSION, &EvalPane::OnExpressionEvaluate, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_UNKNOWN_RESPONSE, &EvalPane::OnDBGPCommandEvaluated, this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &EvalPane::OnSettingsChanged, this);
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("text");
     if (lex) {
         lex->Apply(m_stcOutput);
@@ -30,7 +29,6 @@ EvalPane::~EvalPane()
 {
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_EVAL_EXPRESSION, &EvalPane::OnExpressionEvaluate, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_UNKNOWN_RESPONSE, &EvalPane::OnDBGPCommandEvaluated, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &EvalPane::OnSettingsChanged, this);
 }
 
 void EvalPane::OnEnter(wxCommandEvent& event)
@@ -100,5 +98,3 @@ void EvalPane::OnDBGPCommandEvaluated(XDebugEvent& e)
     m_stcOutputXDebug->SetEditable(true);
     m_stcOutputXDebug->ScrollToEnd();
 }
-
-void EvalPane::OnSettingsChanged(wxCommandEvent& event) { event.Skip(); }

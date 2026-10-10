@@ -16,6 +16,7 @@
 #include <wx/dir.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
+#include <wx/msgdlg.h>
 #include <wx/notifmsg.h>
 #include <wx/toplevel.h>
 #include <wx/utils.h>
@@ -329,10 +330,11 @@ void ReviewBuddy::Finished()
     m_pollTimer.Stop();
     clDEBUG() << "Review buddy ended:" << m_loop->Message() << endl;
     const bool done = m_loop->GetState() == ReviewLoop::State::Done;
-    NotifyUser(done ? _("Review finished") : _("Review needs your attention"), m_loop->Message(), !done);
+    NotifyUser(
+        done ? _("Review finished") : _("Review needs your attention"), m_loop->Message(), !done, ShowDialog::Yes);
 }
 
-void ReviewBuddy::NotifyUser(const wxString& title, const wxString& message, bool problem)
+void ReviewBuddy::NotifyUser(const wxString& title, const wxString& message, bool problem, ShowDialog dialog)
 {
     if (wxTheApp == nullptr) {
         return;
@@ -357,6 +359,17 @@ void ReviewBuddy::NotifyUser(const wxString& title, const wxString& message, boo
             title, text, wxTheApp->GetTopWindow(), problem ? wxICON_WARNING : wxICON_INFORMATION);
         notification.Show();
 #endif
+    }
+
+    if (dialog == ShowDialog::Yes) {
+        // Later, and without `this`: the dialog is modal, so it runs an event loop in which this object may be
+        // destroyed (the user closes the pane), and the caller must not go on using freed members when it ends.
+        wxTheApp->CallAfter([text, title, problem]() {
+            wxMessageBox(text,
+                         title,
+                         wxOK | (problem ? wxICON_WARNING : wxICON_INFORMATION),
+                         wxTheApp != nullptr ? wxTheApp->GetTopWindow() : nullptr);
+        });
     }
 
     // CodeLite is in the background: the Dock icon bounces on macOS, the taskbar button flashes on Windows.

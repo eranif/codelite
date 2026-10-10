@@ -100,9 +100,13 @@ private:
     void Execute(Actions actions);
     void PasteLine(wxTerminalViewCtrl* terminal, const wxString& line);
     void Finished();
-    /// Tells the user about the loop: a notice in the page (it stays until closed), the status bar, and, when they
-    /// are not looking at this page, a system notification.
-    void NotifyUser(const wxString& title, const wxString& message, bool problem);
+    /// Should NotifyUser() also show a modal dialog?
+    enum class ShowDialog { No, Yes };
+    /// Tells the user about the loop: a notice in the page (it stays until closed), the status bar, a system
+    /// notification when they are not looking at this page, and, with ShowDialog::Yes, a modal dialog. The dialog is
+    /// shown later, not inside this call: the caller may be a timer handler or the action loop of Execute(), and
+    /// a modal dialog runs an event loop in which this object can be destroyed.
+    void NotifyUser(const wxString& title, const wxString& message, bool problem, ShowDialog dialog = ShowDialog::No);
 
     bool WriteFile(const wxString& relPath, const wxString& text);
     bool FileExists(const wxString& relPath) const;

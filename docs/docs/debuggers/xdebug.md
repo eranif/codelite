@@ -66,6 +66,7 @@ XDebug also works with a [File System Workspace](/workspaces/file_system/) on th
 - Open the workspace settings and select `XDebug` as the debugger of the build configuration
 - From the menu bar, click on `PHP` &#8594; `XDebug Settings...` to choose how to run the code (command line script or web site), the PHP executable, the include path and the file mapping
 - Start the debugger (++f5++). CodeLite asks for the script or URL to debug, and then starts it
+- To run the script or open the URL without debugging, use `Build` &#8594; `Run` (++ctrl+f5++). The executable of the build configuration is not used in this case
 - To start the session from a web browser instead, click on `PHP` &#8594; `Wait for XDebug to Connect`, and then open the URL with `?XDEBUG_SESSION_START=codeliteide`
 
 The settings and the breakpoints are stored in the file `.codelite/xdebug.json` in the workspace folder.

@@ -7,7 +7,7 @@
 
 namespace
 {
-constexpr const char* kReviewsDir = ".agents/reviews";
+constexpr const char* kReviewsDir = ".agents/reviews"; // The reviewer reaches the project from here with ../../..
 
 // The one line typed into a terminal: it points at a file with the details, so
 // the line itself stays short and the same for every agent.
@@ -94,9 +94,11 @@ std::vector<ReviewLoop::Action> ReviewLoop::Start()
 std::vector<ReviewLoop::Action> ReviewLoop::AskForReview()
 {
     const wxString file = NumberedPath(Folder(), "review-request", m_dir, "md");
+    // The reviewer runs in the loop folder, so it reads the request from there.
+    const wxString reviewerFile = NumberedPath(".", "review-request", m_dir, "md");
     return {
-        {Action::Kind::WriteFile, file, BuildReviewRequest(Folder(), m_dir, m_round)},
-        {Action::Kind::PasteToReviewer, wxEmptyString, FollowLine(file)},
+        {Action::Kind::WriteFile, file, BuildReviewRequest(".", m_dir, m_round)},
+        {Action::Kind::PasteToReviewer, wxEmptyString, FollowLine(reviewerFile)},
     };
 }
 
@@ -126,7 +128,10 @@ std::vector<ReviewLoop::Action> ReviewLoop::OnMarkerFound(const wxString& conten
                           "missing or empty"));
         }
         if (ParseVerdict(content) == Verdict::Clean) {
-            return Finish(State::Done, wxString::Format(_("Review is clean after %d round(s)"), m_round));
+            auto actions = Finish(State::Done, wxString::Format(_("Review is clean after %d round(s)"), m_round));
+            // The reviewer runs in this folder, so its owner deletes it after the pane closes.
+            actions.push_back({Action::Kind::RemoveFolder, Folder(), wxEmptyString});
+            return actions;
         }
         // "Findings" and "Unknown" both go to the main agent: a review that forgot
         // its STATUS line still has something to say, and the round limit stops a
@@ -200,6 +205,29 @@ void ReviewLoop::Stop()
     m_message.clear();
 }
 
+bool ReviewLoop::IsReviewFolder(const wxString& path)
+{
+    const wxString prefix = wxString(kReviewsDir) + "/";
+    if (!path.StartsWith(prefix)) {
+        return false;
+    }
+
+    const wxString id = path.Mid(prefix.length());
+    if (id.length() != 36) {
+        return false;
+    }
+
+    for (size_t i = 0; i < id.length(); ++i) {
+        const wxUniChar c = id[i];
+        const bool dash = i == 8 || i == 13 || i == 18 || i == 23;
+        const bool hex = (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f');
+        if (dash ? c != '-' : !hex) {
+            return false;
+        }
+    }
+    return true;
+}
+
 ReviewLoop::Verdict ReviewLoop::ParseVerdict(const wxString& comments)
 {
     // The first line that has text must be "STATUS: CLEAN" or "STATUS: FINDINGS". Markdown decoration around it is
@@ -229,17 +257,20 @@ ReviewLoop::Verdict ReviewLoop::ParseVerdict(const wxString& comments)
 
 wxString ReviewLoop::BuildReviewRequest(const wxString& folder, int n, int round)
 {
+    // The reviewer starts in the loop folder, so its history does not mix with the main agent's history.
     wxString text;
     text << "# Code review request (round " << round << ")\n\n"
-         << "You are a code reviewer. Another agent wrote the code in this "
-            "folder. Review its work that is **not pushed yet**:\n\n"
+         << "You are a code reviewer. Another agent wrote the code in the "
+            "project, which is three folders above your current folder (`../../..`). "
+            "Your current folder is only for this review. Review work that is "
+            "**not pushed yet** and run git commands from the project folder:\n\n"
          << "- uncommitted changes in the working tree, staged and unstaged, and "
             "new untracked files (`git status`, `git diff HEAD`)\n"
          << "- commits that are not on the upstream branch "
             "(`git log @{upstream}..HEAD`, `git diff @{upstream}...HEAD`). If "
             "the branch has no upstream, compare with the default branch of the "
             "remote (for example `origin/main` or `origin/master`).\n\n"
-         << "Ignore the `.agents/` folder: it holds the files of this review.\n";
+         << "Ignore the `.agents/` folder of the project: it holds the files of this review.\n";
     if (round > 1) {
         text << "\nThis is not the first round. First read the comments of the "
                 "earlier rounds (`"
@@ -275,6 +306,7 @@ wxString ReviewLoop::BuildFixRequest(const wxString& folder, int n, int round)
          << NumberedPath(folder, "response", n, "md") << "`.\n"
          << "- Do not edit anything under `.agents/reviews/` except that "
             "response file.\n"
+         << "- You must not commit anything until the user approves.\n"
          << "- When you are done, create the empty file `" << NumberedPath(folder, "comments-addressed", n, "marker")
          << "`.\n\n"
          << "Then stop and wait.\n";

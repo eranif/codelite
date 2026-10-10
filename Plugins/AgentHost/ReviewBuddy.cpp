@@ -10,7 +10,10 @@
 #include "clSFTPManager.hpp"
 #endif
 
+#include <functional>
+#include <utility>
 #include <wx/app.h>
+#include <wx/dir.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/notifmsg.h>
@@ -25,8 +28,69 @@ constexpr int kRemotePollMs = 4000;
 // paste, and do not submit it.
 constexpr int kEnterDelayMs = 400;
 constexpr auto kStallTimeout = std::chrono::minutes(20);
+// On Windows the reviewer's process may need a moment to let go of its working directory
+constexpr int kRemoveRetryMs = 3000;
 // Keeps our files out of `git status`. It has no leading slash: the agents may run in a sub-folder of the repository.
 const wxString kExcludeRule = "**/.agents/reviews/";
+
+/// A timer that runs a function once and then deletes itself. wxWidgets (3.2 and 3.3) has no `CallLater` for a
+/// wxEvtHandler, and the owner of the function (ReviewBuddy) is gone when it runs.
+class OneShotTimer : public wxTimer
+{
+public:
+    explicit OneShotTimer(std::function<void()> func)
+        : m_func(std::move(func))
+    {
+    }
+
+    void Notify() override
+    {
+        // The application is shutting down: do nothing. The timer object is lost, but so is the whole process.
+        if (wxTheApp == nullptr) {
+            return;
+        }
+        m_func();
+        // Not "delete this": we are inside the timer's own callback
+        wxTheApp->CallAfter([this]() { delete this; });
+    }
+
+private:
+    std::function<void()> m_func;
+};
+
+/// Runs `func` once, after `ms` milliseconds, if the application still runs by then.
+void RunLater(int ms, std::function<void()> func) { (new OneShotTimer(std::move(func)))->StartOnce(ms); }
+
+/// Removes the review folder `relFolder` of the project in `projectDir`, then the `.agents/reviews` and `.agents`
+/// folders if they are empty. A symbolic link is never followed: if the folder, or one of its two parents, is a link,
+/// nothing is removed. Returns false when the folder could not be removed and it is worth trying again later (the
+/// reviewer's process may still use it).
+bool RemoveLocalReviewFolder(const wxString& projectDir, const wxString& relFolder)
+{
+    const wxString folder = ReviewBuddy::JoinPath(projectDir, relFolder);
+    const wxString reviews = ReviewBuddy::JoinPath(projectDir, ".agents/reviews");
+    const wxString agents = ReviewBuddy::JoinPath(projectDir, ".agents");
+    for (const wxString& path : {agents, reviews, folder}) {
+        if (wxFileName::Exists(path, wxFILE_EXISTS_SYMLINK | wxFILE_EXISTS_NO_FOLLOW)) {
+            clWARNING() << "Review buddy: refusing to remove, a symbolic link is in the way:" << path << endl;
+            return true; // Nothing to retry
+        }
+    }
+
+    if (wxDir::Exists(folder) && !wxFileName::Rmdir(folder, wxPATH_RMDIR_RECURSIVE)) {
+        return false;
+    }
+
+    // Remove the parents only when they are empty, leaving other review folders untouched
+    for (const wxString& parent : {reviews, agents}) {
+        wxDir dir(parent);
+        if (dir.IsOpened() && !dir.HasFiles() && !dir.HasSubDirs()) {
+            dir.Close();
+            wxFileName::Rmdir(parent);
+        }
+    }
+    return true;
+}
 
 #ifdef __WXOSX__
 /// `text` as an AppleScript string literal (in double quotes).
@@ -112,6 +176,9 @@ ReviewBuddy::~ReviewBuddy()
 {
     m_pollTimer.Stop();
     m_enterTimer.Stop();
+    if (!m_removeOnClose.empty()) {
+        RemoveFolder(m_removeOnClose);
+    }
 }
 
 bool ReviewBuddy::IsRunning() const { return m_loop && m_loop->IsActive(); }
@@ -203,7 +270,7 @@ void ReviewBuddy::Execute(Actions actions)
             if (m_reviewer == nullptr) {
                 // The first request: the reviewer starts with it as its first message, so there is nothing to wait
                 // for. The request file is written already (the actions run in order).
-                m_reviewer = m_launchReviewer ? m_launchReviewer(action.text) : nullptr;
+                m_reviewer = m_launchReviewer ? m_launchReviewer(action.text, m_loop->Folder()) : nullptr;
                 if (m_reviewer == nullptr) {
                     Execute(m_loop->Fail(_("Could not start the reviewer")));
                     return;
@@ -214,6 +281,14 @@ void ReviewBuddy::Execute(Actions actions)
             break;
         case ReviewLoop::Action::Kind::PasteToMain:
             PasteLine(m_main, action.text);
+            break;
+        case ReviewLoop::Action::Kind::RemoveFolder:
+            if (!ReviewLoop::IsReviewFolder(action.path)) {
+                clWARNING() << "Review buddy: refusing to remove unexpected folder" << action.path << endl;
+                break;
+            }
+            // The reviewer runs in this folder, so leave it until its pane is closed.
+            m_removeOnClose = action.path;
             break;
         case ReviewLoop::Action::Kind::Notify:
             clDEBUG() << "Review buddy:" << action.text << endl;
@@ -364,6 +439,52 @@ wxString ReviewBuddy::ReadFile(const wxString& relPath) const
         file.ReadAll(&content, wxConvUTF8);
     }
     return content;
+}
+
+void ReviewBuddy::RemoveFolder(const wxString& relPath)
+{
+    if (m_remote) {
+        RemoveRemoteFolder(relPath);
+    } else {
+        RemoveLocalFolder(relPath);
+    }
+}
+
+void ReviewBuddy::RemoveLocalFolder(const wxString& relPath)
+{
+    if (RemoveLocalReviewFolder(m_target.workingDir, relPath)) {
+        return;
+    }
+
+    // Try once more later. This object is gone by then, so the retry uses copies of what it needs. If it fails again,
+    // or the application ends first, the folder stays: it is safe to delete.
+    clWARNING() << "Review buddy: could not remove" << relPath << ", will try again" << endl;
+    RunLater(kRemoveRetryMs, [workingDir = m_target.workingDir, relPath]() {
+        if (!RemoveLocalReviewFolder(workingDir, relPath)) {
+            clWARNING() << "Review buddy: could not remove" << relPath << ". It is safe to delete it" << endl;
+        }
+    });
+}
+
+void ReviewBuddy::RemoveRemoteFolder(const wxString& relPath)
+{
+#if USE_SFTP
+    // This waits for one SSH command on the UI thread, in the destructor. It is accepted: the folder can be removed
+    // only after the reviewer's pane is closed, and the destructor is the last place that knows about the folder.
+    // Same rules as for a local folder: no symbolic links in the way, and the parents go only when they are empty.
+    // The command is for a POSIX shell: the remote host is Unix. When a link is in the way, the checks fail and
+    // nothing is removed; the warning below is expected then.
+    const wxString folder = StringUtils::WrapWithDoubleQuotes(relPath);
+    const wxString command = "[ ! -L .agents ] && [ ! -L .agents/reviews ] && [ ! -L " + folder + " ] && rm -rf " +
+                             folder + " && { rmdir .agents/reviews .agents 2>/dev/null || true; }";
+    const auto result =
+        clSFTPManager::Get().AwaitExecute(m_target.sshAccount->GetAccountName(), command, m_target.workingDir);
+    if (std::get<2>(result) != 0) {
+        clWARNING() << "Review buddy: could not remove remote folder" << relPath << endl;
+    }
+#else
+    wxUnusedVar(relPath);
+#endif
 }
 
 void ReviewBuddy::AddIgnoreRule() const

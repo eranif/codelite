@@ -67,7 +67,10 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
 
 AgentHostPage::~AgentHostPage()
 {
-    m_review.reset(); // stops its timers
+    // The review folder is deleted with ReviewBuddy only after its terminal is asked to close. On Windows the
+    // process may still hold the directory briefly; ReviewBuddy logs and leaves it if removal then fails.
+    DestroyReviewPane();
+    m_review.reset();
 #ifndef __WXMSW__
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
 #endif
@@ -551,7 +554,8 @@ void AgentHostPage::LaunchReviewBuddy(AgentType reviewer)
     m_review = std::make_unique<ReviewBuddy>(
         ReviewBuddy::Target{m_agentInfo.workingDirectory, m_agentInfo.sshAccount, pageName},
         m_terminal,
-        [this, reviewer](const wxString& prompt) { return StartReviewer(reviewer, prompt); },
+        [this, reviewer](
+            const wxString& prompt, const wxString& folder) { return StartReviewer(reviewer, prompt, folder); },
         // Whether the user is looking at this page right now.
         [this]() { return IsShownOnScreen() && m_book->GetCurrentPage() == this; },
         [this](const wxString& message, bool problem) {
@@ -561,13 +565,16 @@ void AgentHostPage::LaunchReviewBuddy(AgentType reviewer)
     m_review->Begin();
 }
 
-wxTerminalViewCtrl* AgentHostPage::StartReviewer(AgentType reviewer, const wxString& prompt)
+wxTerminalViewCtrl* AgentHostPage::StartReviewer(AgentType reviewer, const wxString& prompt, const wxString& folder)
 {
     if (m_reviewTerminal != nullptr || m_terminal == nullptr) {
         return m_reviewTerminal;
     }
 
-    // The reviewer runs on the same host as the main agent, so both see the same folder.
+    // The reviewer runs in its review folder: agent resume history is keyed by working directory.
+    const wxString reviewerDir = ReviewBuddy::JoinPath(m_agentInfo.workingDirectory, folder);
+
+    // The reviewer runs on the same host as the main agent, so both see the same project.
     auto executable = ResolveAgentExecutable(reviewer);
     if (!executable.has_value()) {
         return nullptr;
@@ -579,9 +586,7 @@ wxTerminalViewCtrl* AgentHostPage::StartReviewer(AgentType reviewer, const wxStr
         command << " chat";
     }
     command << " " << StringUtils::WrapWithDoubleQuotes(prompt);
-    if (!m_agentInfo.workingDirectory.empty()) {
-        command.Prepend("cd \"" + m_agentInfo.workingDirectory + "\" && ");
-    }
+    command.Prepend("cd " + StringUtils::WrapWithDoubleQuotes(reviewerDir) + " && ");
 
     m_reviewTerminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
         wxEmptyString, m_agentInfo.sshAccount, wxEmptyString, true, kShellCommand, m_splitter);
@@ -604,6 +609,14 @@ void AgentHostPage::DismissNotice()
     }
 }
 
+void AgentHostPage::DestroyReviewPane()
+{
+    if (m_reviewTerminal != nullptr) {
+        m_reviewTerminal->Destroy(); // also ends the reviewer's process
+    }
+    m_reviewTerminal = nullptr;
+}
+
 void AgentHostPage::CloseReviewBuddy()
 {
     if (m_review && m_review->IsBusy()) {
@@ -611,17 +624,16 @@ void AgentHostPage::CloseReviewBuddy()
         CallAfter(&AgentHostPage::CloseReviewBuddy);
         return;
     }
-    m_review.reset(); // stops its timers
     DismissNotice();
-    if (m_reviewTerminal == nullptr) {
-        return;
+    if (m_reviewTerminal != nullptr) {
+        wxWindowUpdateLocker locker{this};
+        if (m_splitter->IsSplit()) {
+            m_splitter->Unsplit(m_reviewTerminal);
+        }
+        DestroyReviewPane();
     }
-    wxWindowUpdateLocker locker{this};
-    if (m_splitter->IsSplit()) {
-        m_splitter->Unsplit(m_reviewTerminal);
-    }
-    m_reviewTerminal->Destroy(); // also ends the reviewer's process
-    m_reviewTerminal = nullptr;
+    // Destroy after the reviewer terminal: cleanup may remove its working directory.
+    m_review.reset();
     if (m_terminal != nullptr) {
         m_terminal->SetFocus();
     }

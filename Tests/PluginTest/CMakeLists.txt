@@ -4,11 +4,14 @@ project("PluginTest")
 include("${wxWidgets_USE_FILE}")
 
 file(GLOB_RECURSE SRC "*.cpp")
+# ReviewLoop (Agent Host) is a pure class that has no GUI: the tests build it from its source
+list(APPEND SRC "${CL_SRC_ROOT}/Plugins/AgentHost/ReviewLoop.cpp")
 set(RES_FILES "")
 if(WIN32)
   set(RES_FILES "resources.rc")
 endif()
 add_executable(PluginTest ${SRC} ${RES_FILES})
+target_include_directories(PluginTest PRIVATE "${CL_SRC_ROOT}/Plugins/AgentHost")
 
 target_link_libraries(PluginTest ${LINKER_OPTIONS} doctest libcodelite plugin)
 

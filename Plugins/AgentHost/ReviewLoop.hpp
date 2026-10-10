@@ -39,6 +39,7 @@ public:
             WriteFile,       // Write `text` to `path`, creating folders as needed
             PasteToReviewer, // Type the line `text` into the reviewer's terminal
             PasteToMain,     // Type the line `text` into the main agent's terminal
+            RemoveFolder,    // Delete the completed loop's folder after the reviewer pane closes
             Notify,          // Still waiting after a long time: tell the user
             Finished,        // The loop ended (Done, LimitReached or Stalled): tell the user
         };
@@ -87,6 +88,8 @@ public:
     wxString Folder() const;
     // Where the reviewer writes the comments of the current round.
     wxString CommentsPath() const;
+    // Whether `path` is a review folder created by NewId(). The owner checks this before deleting it.
+    static bool IsReviewFolder(const wxString& path);
 
     static Verdict ParseVerdict(const wxString& comments);
     // `n` is the number in the file names, `round` the round shown to the user.

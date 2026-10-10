@@ -73,8 +73,10 @@ protected:
     bool CanHaveReviewBuddy(wxString& whyNot);
     bool HasGitRepo();
     void LaunchReviewBuddy(AgentType reviewer);
-    /// Starts the reviewer with `prompt` as its first message in a new pane. Returns its terminal.
-    wxTerminalViewCtrl* StartReviewer(AgentType reviewer, const wxString& prompt);
+    /// Starts the reviewer with `prompt` as its first message in `folder`, relative to the working directory.
+    wxTerminalViewCtrl* StartReviewer(AgentType reviewer, const wxString& prompt, const wxString& folder);
+    /// Destroys the reviewer's pane and terminal without changing focus or splitter state.
+    void DestroyReviewPane();
     void CloseReviewBuddy();
     void OpenLatestReview();
     void DismissNotice();

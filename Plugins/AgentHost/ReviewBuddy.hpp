@@ -34,9 +34,9 @@ public:
         wxString sessionName;                     // For the notifications
     };
 
-    /// Starts the reviewer's agent with `prompt` as its first message and returns its terminal (nullptr if that
-    /// failed).
-    using LaunchFn = std::function<wxTerminalViewCtrl*(const wxString& prompt)>;
+    /// Starts the reviewer's agent with `prompt` as its first message in `folder`, relative to the working
+    /// directory. The separate folder keeps its history isolated from the main agent's history.
+    using LaunchFn = std::function<wxTerminalViewCtrl*(const wxString& prompt, const wxString& folder)>;
 
     /// Shows `message` in the main agent's page until the user closes it.
     /// `problem` is true when the loop needs the user, false when it is finished.
@@ -109,6 +109,9 @@ private:
     wxString ReadFile(const wxString& relPath) const;
     wxString FullPath(const wxString& relPath) const;
     void AddIgnoreRule() const;
+    void RemoveFolder(const wxString& relPath);
+    void RemoveLocalFolder(const wxString& relPath);
+    void RemoveRemoteFolder(const wxString& relPath);
 
     Target m_target;
     bool m_remote;
@@ -125,4 +128,6 @@ private:
     wxTerminalViewCtrl* m_enterTarget{nullptr};
     std::chrono::steady_clock::time_point m_lastProgress;
     int m_busyDepth{0};
+    // The clean review folder is removed when this object is destroyed, after the reviewer pane has closed.
+    wxString m_removeOnClose;
 };

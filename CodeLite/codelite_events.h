@@ -565,14 +565,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommand
 // User changed the default theme color of CodeLite
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CL_THEME_CHANGED, wxCommandEvent);
 
-// Sent from the CodeFormatter plugin when a file indentation was completed
-// event.GetString() will return the name of the indented file
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEvent);
-
-// Sent from the CodeFormatter plugin when a file indentation is about to begin
-// event.GetString() will return the name of the indented file
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEvent);
-
 // Sent when CodeLite's main frame gains the focus
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, wxCommandEvent);
 

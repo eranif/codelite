@@ -244,7 +244,7 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
         }
         in_codeblock = false;
         if (!codeblock_line.empty()) {
-            codeblock_lines.push_back(codeblock_line);
+            codeblock_lines.push_back(std::move(codeblock_line));
             codeblock_line.clear();
         }
 

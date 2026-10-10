@@ -35,7 +35,7 @@ Here you can set the the following properties:
 | `Working directory`   | When running your program, use this path as the working directory. When left empty, the workspace path is used as the working directory|
 | `Arguments`           | Arguments to pass to your program. One line per argument |
 | `Tool chain`          | Choose the tool chain to use. Note that CodeLite uses the tool chain settings mainly for parsing build output|
-| `Debugger`            | Choose the debugger to use. With `XDebug`, the debug settings come from `PHP` &#8594; `XDebug Settings...`, see [XDebug](/debuggers/xdebug/) |
+| `Debugger`            | Choose the debugger to use. With `XDebug`, the run and debug settings come from `PHP` &#8594; `XDebug Settings...`, see [XDebug](/debuggers/xdebug/) |
 | `File extensions`     | List of extensions to include in the workspace. Only files with the extensions specified here, are considered for code completion, find in files and other operations|
 | `Exclude paths`       | List of folders to exclude from the workspace|
 

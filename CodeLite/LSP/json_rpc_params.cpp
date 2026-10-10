@@ -206,4 +206,23 @@ nlohmann::json RenameParams::ToJSON() const
     return json;
 }
 
+//===----------------------------------------------------------------------------------
+// DocumentOnTypeFormattingParams
+//===----------------------------------------------------------------------------------
+void DocumentOnTypeFormattingParams::FromJSON(const JSONItem& json)
+{
+    TextDocumentPositionParams::FromJSON(json);
+    m_ch = json["ch"].toString();
+    m_tabSize = json["options"]["tabSize"].toSize_t(m_tabSize);
+    m_insertSpaces = json["options"]["insertSpaces"].toBool(m_insertSpaces);
+}
+
+nlohmann::json DocumentOnTypeFormattingParams::ToJSON() const
+{
+    auto json = TextDocumentPositionParams::ToJSON();
+    json["ch"] = m_ch.ToStdString(wxConvUTF8);
+    json["options"] = {{"tabSize", m_tabSize}, {"insertSpaces", m_insertSpaces}};
+    return json;
+}
+
 } // namespace LSP

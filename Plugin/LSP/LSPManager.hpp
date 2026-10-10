@@ -97,6 +97,13 @@ public:
     void ShowOutlineView(IEditor* editor);
 
     /**
+     * @brief ask the server to fill in the empty docblock at the caret (`textDocument/onTypeFormatting` with a
+     * newline). The edits are applied when the reply arrives, unless the editor was changed meanwhile
+     * @return false when the request was not sent (no server, or it does not format on a newline)
+     */
+    bool GenerateDocBlock(IEditor* editor);
+
+    /**
      * @brief Attempts to locate the definition of the symbol under the caret in the given editor.
      *
      * The function first validates the @a editor pointer, then retrieves the appropriate LSP
@@ -282,6 +289,7 @@ protected:
     void OnCodeActionAvailable(LSPEvent& event);
     void OnCodeActionResolved(LSPEvent& event);
     void OnApplyEdits(LSPEvent& event);
+    void OnTypeFormatted(LSPEvent& event);
     void OnGoinDown(clCommandEvent& event);
 
     void OnFindSymbol(wxCommandEvent& event);
@@ -326,6 +334,8 @@ protected:
     std::unordered_map<wxString, std::vector<LSP::SymbolInformation>> m_symbols_to_file_cache;
     /// the last diagnostics per file (remote or local path). The editor keeps only one per line
     std::unordered_map<wxString, std::vector<LSP::Diagnostic>> m_diagnostics;
+    /// files that wait for a docblock (remote or local path), with the hash of the text that was sent
+    std::unordered_map<wxString, size_t> m_pendingDocBlocks;
     LSPOutlineViewDlg* m_quick_outline_dlg{nullptr};
     std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
     bool m_shutdown_in_progress{false};

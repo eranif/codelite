@@ -238,6 +238,14 @@ Some actions create or rename files, for example "extract interface" or renaming
 
 ---
 
+## Docblocks
+
+Type `/**` above a function, class, property or constant and press <kbd>Enter</kbd>. CodeLite closes the comment block, and when the language server supports it (for example `phpantom_lsp`), the server fills it in with the `@param`, `@return` and `@throws` tags. The caret moves to the description line, or to the end of the `/**` line when the block has only tags.
+
+This needs both `Settings` &#8594; `Preferences` &#8594; `Code` &#8594; `Hitting ENTER in C comment, adds '*'` and `Auto generate on ENTER`.
+
+---
+
 ## Restarting Language Servers
 
 To restart any language server:

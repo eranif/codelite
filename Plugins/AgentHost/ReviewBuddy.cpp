@@ -1,10 +1,13 @@
 #include "ReviewBuddy.hpp"
 
+#include "cl_config.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
 #include "procutils.h"
 #include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
+
+#include <wx/richmsgdlg.h>
 
 #if USE_SFTP
 #include "clSFTPManager.hpp"
@@ -21,6 +24,8 @@
 #include <wx/toplevel.h>
 #include <wx/utils.h>
 
+wxDEFINE_EVENT(wxEVT_REVIEW_BUDDY_CLOSE, wxCommandEvent);
+
 namespace
 {
 constexpr int kLocalPollMs = 1000;
@@ -33,6 +38,8 @@ constexpr auto kStallTimeout = std::chrono::minutes(20);
 constexpr int kRemoveRetryMs = 3000;
 // Keeps our files out of `git status`. It has no leading slash: the agents may run in a sub-folder of the repository.
 const wxString kExcludeRule = "**/.agents/reviews/";
+// The user's last answer to "close the review buddy agent" in the dialog at the end of a review
+const wxString kCloseAgentOption = "ReviewBuddy/CloseAgentWhenDone";
 
 /// A timer that runs a function once and then deletes itself. wxWidgets (3.2 and 3.3) has no `CallLater` for a
 /// wxEvtHandler, and the owner of the function (ReviewBuddy) is gone when it runs.
@@ -93,35 +100,6 @@ bool RemoveLocalReviewFolder(const wxString& projectDir, const wxString& relFold
     return true;
 }
 
-#ifdef __WXOSX__
-/// `text` as an AppleScript string literal (in double quotes).
-wxString AppleScriptString(const wxString& text)
-{
-    wxString quoted = "\"";
-    for (const wxUniChar c : text) {
-        if (c == '"' || c == '\\') {
-            quoted << '\\';
-            quoted << c;
-        } else if (c == '\n' || c == '\r') {
-            quoted << ' ';
-        } else {
-            quoted << c;
-        }
-    }
-    quoted << '"';
-    return quoted;
-}
-
-/// wxNotificationMessage uses NSUserNotification here, which macOS has deprecated for years, and the notification
-/// does not show up. This one goes through osascript. The arguments are passed as a list, not through a shell.
-void ShowMacNotification(const wxString& title, const wxString& text)
-{
-    const std::string script =
-        ("display notification " + AppleScriptString(text) + " with title " + AppleScriptString(title)).utf8_string();
-    const char* argv[] = {"osascript", "-e", script.c_str(), nullptr};
-    wxExecute(argv, wxEXEC_ASYNC | wxEXEC_NODISABLE);
-}
-#endif
 } // namespace
 
 wxString ReviewBuddy::JoinPath(const wxString& dir, const wxString& name)
@@ -175,6 +153,7 @@ ReviewBuddy::ReviewBuddy(const Target& target,
 
 ReviewBuddy::~ReviewBuddy()
 {
+    *m_alive = false;
     m_pollTimer.Stop();
     m_enterTimer.Stop();
     if (!m_removeOnClose.empty()) {
@@ -352,23 +331,35 @@ void ReviewBuddy::NotifyUser(const wxString& title, const wxString& message, boo
     // Outside the page the user is looking at: a system notification.
     const bool looking = wxTheApp->IsActive() && m_isShown && m_isShown();
     if (!looking) {
-#ifdef __WXOSX__
-        ShowMacNotification(title, text);
-#else
         wxNotificationMessage notification(
             title, text, wxTheApp->GetTopWindow(), problem ? wxICON_WARNING : wxICON_INFORMATION);
         notification.Show();
-#endif
     }
 
     if (dialog == ShowDialog::Yes) {
-        // Later, and without `this`: the dialog is modal, so it runs an event loop in which this object may be
-        // destroyed (the user closes the pane), and the caller must not go on using freed members when it ends.
-        wxTheApp->CallAfter([text, title, problem]() {
-            wxMessageBox(text,
-                         title,
-                         wxOK | (problem ? wxICON_WARNING : wxICON_INFORMATION),
-                         wxTheApp != nullptr ? wxTheApp->GetTopWindow() : nullptr);
+        // Later: the dialog is modal, so it runs an event loop in which this object may be destroyed (the user closes
+        // the pane), and the caller must not go on using freed members when it ends. The lambda keeps `self` only
+        // to send the close event, and uses it only while `*alive` is true.
+        wxTheApp->CallAfter([text, title, problem, alive = m_alive, self = this]() {
+            wxRichMessageDialog dlg(wxTheApp != nullptr ? wxTheApp->GetTopWindow() : nullptr,
+                                    text,
+                                    title,
+                                    wxOK | (problem ? wxICON_WARNING : wxICON_INFORMATION));
+            // Only when the review is finished: after a problem the user may want to read the review files, and
+            // closing the pane removes them.
+            if (!problem) {
+                // The last answer is the default for the next review
+                dlg.ShowCheckBox(_("Close the review buddy agent"), clConfig::Get().Read(kCloseAgentOption, false));
+            }
+            dlg.ShowModal();
+            const bool closeAgent = !problem && dlg.IsCheckBoxChecked();
+            if (!problem) {
+                clConfig::Get().Write(kCloseAgentOption, closeAgent);
+            }
+            // The pane may be closed already while the dialog was open
+            if (closeAgent && *alive) {
+                self->QueueEvent(new wxCommandEvent(wxEVT_REVIEW_BUDDY_CLOSE));
+            }
         });
     }
 

@@ -562,6 +562,7 @@ void AgentHostPage::LaunchReviewBuddy(AgentType reviewer)
             m_infoBar->ShowMessage(message, problem ? wxICON_WARNING : wxICON_INFORMATION);
         },
         [this](wxTerminalViewCtrl* terminal) { FocusTerminal(terminal); });
+    m_review->Bind(wxEVT_REVIEW_BUDDY_CLOSE, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::CloseReviewBuddy); });
     m_review->Begin();
 }
 

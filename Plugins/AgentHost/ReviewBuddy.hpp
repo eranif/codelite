@@ -13,6 +13,10 @@
 
 class wxTerminalViewCtrl;
 
+/// Sent (queued) by a ReviewBuddy when the user asks to close the review buddy agent, in the dialog that shows the
+/// end of the loop.
+wxDECLARE_EVENT(wxEVT_REVIEW_BUDDY_CLOSE, wxCommandEvent);
+
 /// Runs a ReviewLoop for one AgentHostPage: the main agent's terminal plus the
 /// reviewer's terminal next to it. It writes the request files and checks every
 /// second (every few seconds over SSH) for the marker the loop waits for. The
@@ -125,6 +129,8 @@ private:
     std::function<bool()> m_isShown;
     FocusFn m_focusTerminal;
     NoticeFn m_showNotice;
+    // Tells the dialog (it outlives a call) whether this object is still there
+    std::shared_ptr<bool> m_alive{std::make_shared<bool>(true)};
 
     std::unique_ptr<ReviewLoop> m_loop;
     wxTimer m_pollTimer;

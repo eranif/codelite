@@ -18,7 +18,6 @@
 #include <wx/sckaddr.h>
 #include <wx/sstream.h>
 #include <wx/stc/stc.h>
-#include <wx/uri.h>
 
 // Handlers
 #include "XDebugBreakpointCmdHandler.h"
@@ -149,8 +148,7 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
         // Issue a warning
         wxString message;
         message << _("No file mapping is defined. This may result in breakpoints not applied\n")
-                << _("To fix this, set file mapping in Project Settings -> Debug (PHP workspace) or in PHP -> "
-                     "XDebug Settings... -> Debug (other workspaces)");
+                << _("To fix this, set file mapping in PHP -> XDebug Settings... -> Debug");
 
         wxRichMessageDialog dlg(
             EventNotifier::Get()->TopFrame(), message, "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCANCEL);
@@ -166,8 +164,8 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
     }
 
     if (ideInitiate) {
-        // Now we can run the project
-        if (!m_executor.Exec(m_settings.GetData(), pathToDebug, conf.GetXdebugIdeKey(), true)) {
+        // Now we can run the script
+        if (!m_executor.Exec(m_settings.GetData(), pathToDebug, conf.GetXdebugIdeKey())) {
             DoStopDebugger();
             return;
         }
@@ -222,7 +220,7 @@ void XDebugManager::OnExecute(clExecuteEvent& e)
     }
 
     // Errors are reported inside 'Exec'
-    m_executor.Exec(settings.GetData(), path, wxEmptyString, false);
+    m_executor.Exec(settings.GetData(), path, wxEmptyString);
 }
 
 void XDebugManager::OnIsProgramRunning(clExecuteEvent& e)
@@ -299,9 +297,6 @@ bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
 
     if (root->GetName() == "init") {
 
-        // Parse the content and notify CodeLite to open the main file
-        xInitStruct initData = ParseInitXML(root);
-
         // Negotiate features with the IDE
         DoNegotiateFeatures();
 
@@ -341,7 +336,7 @@ void XDebugManager::DoApplyBreakpoints()
 
         wxString command;
         XDebugCommandHandler::Ptr_t handler(new XDebugBreakpointCmdHandler(this, ++TransactionId, bp));
-        wxString filepath = m_settings.GetData().GetMappdPath(bp.GetFileName(), true, GetFileMapping());
+        wxString filepath = m_settings.GetData().GetMappdPath(bp.GetFileName(), GetFileMapping());
         command << "breakpoint_set -t line -f " << filepath << " -n " << bp.GetLine() << " -i "
                 << handler->GetTransactionId();
         DoSocketWrite(command);
@@ -384,14 +379,6 @@ void XDebugManager::DoSocketWrite(const wxString& command)
 {
     CHECK_PTR_RET(m_readerThread);
     m_readerThread->SendMsg(command);
-}
-
-xInitStruct XDebugManager::ParseInitXML(wxXmlNode* init)
-{
-    xInitStruct initData;
-    wxURI fileuri(init->GetAttribute("fileuri"));
-    initData.filename = fileuri.BuildUnescapedURI();
-    return initData;
 }
 
 void XDebugManager::AddHandler(XDebugCommandHandler::Ptr_t handler)
@@ -762,7 +749,7 @@ void XDebugManager::XDebugNotConnecting()
                             _("XDebug did not connect in a timely manner"),
                             "CodeLite",
                             wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
-    dlg.SetOKCancelLabels(_("Run XDebug Test"), _("OK"));
+    dlg.SetOKCancelLabels(_("Run XDebug Setup Wizard"), _("OK"));
     if (dlg.ShowModal() == wxID_OK) {
         m_plugin->CallAfter(&PhpPlugin::RunXDebugDiagnostics);
     }
@@ -816,12 +803,7 @@ void XDebugManager::SendGetProperty(const wxString& propertyName)
     AddHandler(handler);
 }
 
-void XDebugManager::SetConnected(bool connected)
-{
-    this->m_connected = connected;
-    XDebugEvent event(wxEVT_XDEBUG_CONNECTED);
-    EventNotifier::Get()->AddPendingEvent(event);
-}
+void XDebugManager::SetConnected(bool connected) { this->m_connected = connected; }
 
 void XDebugManager::CenterEditor(wxStyledTextCtrl* ctrl, int lineNo)
 {

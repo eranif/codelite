@@ -20,7 +20,6 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     PHPConfigurationData data;
     data.Load();
 
-    m_textCtrlErrorReporting->ChangeValue(data.GetErrorReporting());
     m_filePickerPHPPath->SetPath(data.GetPhpExe());
     m_stcIncludePaths->SetText(data.GetIncludePathsAsString());
     m_textCtrlIdeKey->ChangeValue(data.GetXdebugIdeKey());
@@ -48,7 +47,7 @@ void PHPSettingsDlg::OnBrowseForIncludePath(wxCommandEvent& event)
 void PHPSettingsDlg::OnOK(wxCommandEvent& event)
 {
     PHPConfigurationData data;
-    data.SetErrorReporting(m_textCtrlErrorReporting->GetValue());
+    data.Load();
     data.SetIncludePaths(wxStringTokenize(m_stcIncludePaths->GetText(), wxT("\n\r"), wxTOKEN_STRTOK));
     data.SetPhpExe(m_filePickerPHPPath->GetPath());
     data.SetXdebugIdeKey(m_textCtrlIdeKey->GetValue());

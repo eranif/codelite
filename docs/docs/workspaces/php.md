@@ -1,4 +1,4 @@
-# General
+# PHP
 ---
 
 PHP code is edited in a [File System Workspace][4]. The PHP language server ([`phpantom_lsp`][6]) provides code completion, navigation, syntax checking, formatting and refactoring, and the PHP plugin provides debugging with [XDebug][1].
@@ -38,11 +38,11 @@ The linters are configured in the project's `.phpantom.toml` file and in the too
 Refactoring (rename, extract method, optimize `use` statements and more) is provided by the PHPantom language server.
 See [Language Server Plugin][8] for how to install and enable `phpantom_lsp`.
 
-- Rename a symbol with the `Rename` entry of the editor context menu
+- Rename a symbol with the `Rename symbol` entry of the editor context menu
 - Right click and choose `Code actions...` (or press `Alt-Enter`) to list the refactorings available for the caret position or the selection
 
 [1]: /debuggers/xdebug
-[2]: https://github.com/squizlabs/PHP_CodeSniffer
+[2]: https://github.com/PHPCSStandards/PHP_CodeSniffer
 [3]: https://github.com/phpmd/phpmd
 [4]: /workspaces/file_system
 [6]: https://github.com/PHPantom-dev/phpantom_lsp

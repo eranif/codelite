@@ -61,7 +61,6 @@ public:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnEditorChanged(wxCommandEvent& e);
 
-    bool GetBreakpoint(const wxString& filename, int line, XDebugBreakpoint& bp);
     bool GetBreakpoint(const wxString& filename, int line, XDebugBreakpoint& bp) const;
     size_t GetBreakpointsForFile(const wxString& filename, XDebugBreakpoint::List_t& bps) const;
 };

@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wx-version: ['v3.2.11', 'master']
+        wx-version: ['3.2', 'master']
         arch:
           - msystem: clang64
             runs-on: windows-latest

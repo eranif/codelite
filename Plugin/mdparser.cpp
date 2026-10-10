@@ -138,11 +138,21 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
     Style style;
     Type last_state = T_EOF;
     wxString buffer;
+    // the line break that ends a closing code block fence is not an empty line
+    bool skip_eol = false;
     while (true) {
         auto tok = tokenizer.next();
         if (tok.first == T_EOF) {
             flush_buffer(buffer, style, false);
             break;
+        }
+
+        if (skip_eol) {
+            skip_eol = false;
+            if (tok.first == T_EOL) {
+                last_state = T_EOL;
+                continue;
+            }
         }
 
         switch (state) {
@@ -218,6 +228,7 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
                 flush_buffer(buffer, style, false);
                 style.toggle_property(tok.first);
                 tokenizer.enable_backslash_esc(true);
+                skip_eol = (tok.first == T_CODEBLOCK);
             } else if (tok.first == T_EOL) {
                 flush_buffer(buffer, style, true);
             } else {

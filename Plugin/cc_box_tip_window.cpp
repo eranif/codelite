@@ -71,10 +71,26 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
     constexpr int MAX_LINE_WIDTH = 80;
 
     str.Replace("\t", " ");
-    str.Replace("/**", wxEmptyString);
-    str.Replace("/*", wxEmptyString);
-    str.Replace("/*!", wxEmptyString);
-    str.Replace("*/", wxEmptyString);
+
+    // Strip comment markers, but only outside of code blocks
+    {
+        wxArrayString input_lines = wxSplit(str, '\n', 0);
+        bool in_code_block = false;
+        for (wxString& line : input_lines) {
+            if (line.Strip(wxString::leading).StartsWith("```")) {
+                in_code_block = !in_code_block;
+                continue;
+            }
+            if (in_code_block) {
+                continue;
+            }
+            line.Replace("/**", wxEmptyString);
+            line.Replace("/*!", wxEmptyString);
+            line.Replace("/*", wxEmptyString);
+            line.Replace("*/", wxEmptyString);
+        }
+        str = wxJoin(input_lines, '\n', 0);
+    }
 
     if (strip_html_tags && re.IsValid()) {
         re.ReplaceAll(&str, wxEmptyString);
@@ -82,6 +98,8 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
 
     wxString curline;
     wxArrayString lines;
+    // number of line breaks seen since the last non-empty line, used to keep paragraph breaks
+    int newlines = 0;
     enum State { kNormal, kCodeBlockLanguage, kCodeBlock } state = kNormal;
     for (const wxChar& ch : str) {
         switch (state) {
@@ -90,11 +108,18 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                 switch (ch) {
                     // ignore leading white spaces
                 case '\n':
+                    ++newlines;
+                    break;
                 case '\r':
                 case '\t':
                 case ' ':
                     break;
                 default:
+                    // keep a single empty line between paragraphs
+                    if (newlines > 1 && !lines.empty() && !lines.Last().empty()) {
+                        lines.Add(wxEmptyString);
+                    }
+                    newlines = 0;
                     curline << ch;
                     break;
                 }
@@ -105,6 +130,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                 case '\n':
                     lines.Add(curline);
                     curline.clear();
+                    newlines = 1;
                     break;
                 case ' ':
                 case '.':
@@ -115,6 +141,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                     if (curline.size() >= MAX_LINE_WIDTH) {
                         lines.Add(curline);
                         curline.clear();
+                        newlines = 0;
                     }
                     break;
                 default:
@@ -141,10 +168,8 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
             }
             break;
         case kCodeBlock:
-            // Unformatted code block. Only handle LF and the special char backslash
+            // Unformatted code block. Only handle LF
             switch (ch) {
-            case '\\':
-                break;
             case '\n':
                 lines.Add(curline);
                 curline.clear();
@@ -155,6 +180,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                     lines.Add(curline);
                     curline.clear();
                     state = kNormal;
+                    newlines = 0;
                 }
                 break;
             }
@@ -202,7 +228,6 @@ void CCBoxTipWindow::DoInitialize(size_t numOfTips)
         InflateSize(sz, m_ratio);
         text_rect.SetSize(sz);
     }
-    text_rect.Inflate(5);
 
     wxSize shrinked_size = text_rect.GetSize();
     ShrinkToScreen(shrinked_size);

@@ -311,6 +311,13 @@ public:
     void SendCodeActionResolveRequest(const wxString& filepath, const LSP::CodeAction& action);
 
     /**
+     * @brief ask the server to format the whole editor (`textDocument/formatting`), or only `range` of it
+     * (`textDocument/rangeFormatting`). The reply fires `wxEVT_LSP_DOCUMENT_FORMATTED` on the EventNotifier
+     * @return false when the request was not sent (the server can not format this file, or not a range of it)
+     */
+    bool SendDocumentFormattingRequest(IEditor& editor, const std::optional<LSP::Range>& range = std::nullopt);
+
+    /**
      * @brief ask the server for semantic tokens
      */
     void SendSemanticTokensRequest(IEditor& editor);
@@ -329,6 +336,8 @@ public:
     bool IsRenameSupported() const;
     bool IsCodeActionSupported() const;
     bool IsCodeActionResolveSupported() const;
+    bool IsDocumentFormattingSupported() const;
+    bool IsDocumentRangeFormattingSupported() const;
 };
 
 #endif // CLLANGUAGESERVER_H

@@ -31,7 +31,8 @@ protected:
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
     std::vector<LSP::Location> m_locations;     // used by wxEVT_LSP_REFERENCES
     std::vector<LSP::CodeAction> m_codeActions; // used by wxEVT_LSP_CODE_ACTIONS and wxEVT_LSP_CODE_ACTION_RESOLVED
-    LSP::WorkspaceEditChangeList m_changes;     // used by wxEVT_LSP_EDIT_FILES. Applied in order
+    // used by wxEVT_LSP_EDIT_FILES (applied in order) and wxEVT_LSP_DOCUMENT_FORMATTED
+    LSP::WorkspaceEditChangeList m_changes;
     std::optional<size_t> m_requestId; // used by wxEVT_LSP_EDIT_FILES. Set when the edit is a `workspace/applyEdit`
                                        // request from the server, which must be answered
     LSP::Progress m_progress;          // used by wxEVT_LSP_PROGRESS
@@ -150,5 +151,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CODE_ACTIONS, LSPEvent);     
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CODE_ACTION_RESOLVED, LSPEvent);  // EventNotifier
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_EDIT_FILES, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_PROGRESS, LSPEvent); // EventNotifier
+// The reply to `textDocument/formatting`: GetChanges() has one change with the text edits. On error, GetMessage()
+// is the error and there are no changes
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_FORMATTED, LSPEvent); // EventNotifier
 
 #endif // LSPEVENT_H

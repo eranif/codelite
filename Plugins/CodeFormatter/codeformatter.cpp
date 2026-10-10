@@ -26,6 +26,7 @@
 
 #include "JSON.h"
 #include "Keyboard/clKeyboardManager.h"
+#include "LSP/LSPManager.hpp"
 #include "StringUtils.h"
 #include "clEditorStateLocker.h"
 #include "clFileSystemEvent.h"
@@ -39,7 +40,11 @@
 #include "macros.h"
 #include "workspace.h"
 
+#include <algorithm>
+#include <functional>
+#include <numeric>
 #include <thread>
+#include <utility>
 #include <wx/filename.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
@@ -136,6 +141,7 @@ CodeFormatter::CodeFormatter(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &CodeFormatter::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &CodeFormatter::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &CodeFormatter::OnInitDone, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_DOCUMENT_FORMATTED, &CodeFormatter::OnLSPFormatCompleted, this);
 
     Bind(wxEVT_FORMAT_INPLACE_COMPELTED, &CodeFormatter::OnInplaceFormatCompleted, this);
     Bind(wxEVT_FORMAT_COMPELTED, &CodeFormatter::OnFormatCompleted, this);
@@ -189,7 +195,7 @@ void CodeFormatter::OnFormatEditor(wxCommandEvent& e)
 
     // get the editor that requires formatting
     CHECK_PTR_RET(editor);
-    DoFormatEditor(editor);
+    DoFormatEditor(editor, true);
 }
 
 std::shared_ptr<GenericFormatter> CodeFormatter::FindFormatter(const wxString& filepath, const wxString& content) const
@@ -217,7 +223,7 @@ std::shared_ptr<GenericFormatter> CodeFormatter::FindFormatter(const wxString& f
     return nullptr;
 }
 
-bool CodeFormatter::DoFormatEditor(IEditor* editor)
+bool CodeFormatter::DoFormatEditor(IEditor* editor, bool selection_only)
 {
     // sanity
     CHECK_PTR_RET_FALSE(editor);
@@ -226,6 +232,10 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     if (!f) {
         clDEBUG() << "Could not locate formatter for file:" << editor->GetRemotePathOrLocal() << endl;
         return false;
+    }
+
+    if (f->IsLSPFormatter()) {
+        return DoFormatEditorWithLSP(editor, selection_only);
     }
 
     wxString output;
@@ -255,6 +265,37 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     return res;
 }
 
+bool CodeFormatter::DoFormatEditorWithLSP(IEditor* editor, bool selection_only)
+{
+    auto server = LSP::Manager::GetInstance().GetServerForEditor(*editor);
+    CHECK_PTR_RET_FALSE(server);
+
+    std::optional<LSP::Range> range;
+    auto ctrl = editor->GetCtrl();
+    if (selection_only && ctrl->GetSelectionStart() != ctrl->GetSelectionEnd()) {
+        if (!server->IsDocumentRangeFormattingSupported()) {
+            m_mgr->SetStatusMessage(_("The language server can not format a selection"), 3);
+            return false;
+        }
+        int start_pos = ctrl->GetSelectionStart();
+        int end_pos = ctrl->GetSelectionEnd();
+        range = LSP::Range{
+            LSP::Position{ctrl->LineFromPosition(start_pos), editor->GetColumnInChars(start_pos)},
+            LSP::Position{ctrl->LineFromPosition(end_pos), editor->GetColumnInChars(end_pos)},
+        };
+    }
+
+    if (!server->SendDocumentFormattingRequest(*editor, range)) {
+        clDEBUG() << "The language server can not format file:" << editor->GetRemotePathOrLocal() << endl;
+        return false;
+    }
+
+    // the reply arrives later, see OnLSPFormatCompleted()
+    m_lspPendingFiles[editor->GetRemotePathOrLocal()] = std::hash<wxString>{}(editor->GetEditorText());
+    m_mgr->SetStatusMessage(_("Formatting..."), 0);
+    return true;
+}
+
 bool CodeFormatter::DoFormatString(const wxString& content, const wxString& fileName, wxString* output)
 {
     if (content.empty()) {
@@ -275,6 +316,12 @@ bool CodeFormatter::DoFormatFile(const wxString& fileName, bool is_remote_format
     if (!f) {
         clDEBUG() << "Could not find suitable formatter for file:" << fileName << endl;
         return false;
+    }
+
+    if (f->IsLSPFormatter()) {
+        // the language server can only format open files
+        auto editor = m_mgr->FindEditor(fileName);
+        return editor && DoFormatEditorWithLSP(editor);
     }
 
     if (is_remote_format) {
@@ -339,6 +386,7 @@ void CodeFormatter::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &CodeFormatter::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &CodeFormatter::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_DOCUMENT_FORMATTED, &CodeFormatter::OnLSPFormatCompleted, this);
 
     Unbind(wxEVT_FORMAT_INPLACE_COMPELTED, &CodeFormatter::OnInplaceFormatCompleted, this);
     Unbind(wxEVT_FORMAT_COMPELTED, &CodeFormatter::OnFormatCompleted, this);
@@ -575,6 +623,67 @@ void CodeFormatter::OnInplaceFormatCompleted(clSourceFormatEvent& event)
     event_modified.SetFileName(filepath);
     event_modified.SetIsRemoteFile(!wxFileName::FileExists(filepath));
     EventNotifier::Get()->AddPendingEvent(event_modified);
+}
+
+void CodeFormatter::OnLSPFormatCompleted(LSPEvent& event)
+{
+    event.Skip();
+    const wxString& filepath = event.GetFileName();
+    auto where = m_lspPendingFiles.find(filepath);
+    if (where == m_lspPendingFiles.end()) {
+        // not our request
+        return;
+    }
+    size_t sent_text_hash = where->second;
+    m_lspPendingFiles.erase(where);
+
+    if (!event.GetMessage().empty()) {
+        wxString errmsg;
+        errmsg << wxT("\u26A0") << _(" format error: ") << event.GetMessage();
+        m_mgr->SetStatusMessage(errmsg, 3);
+        return;
+    }
+
+    auto editor = m_mgr->FindEditor(filepath);
+    CHECK_PTR_RET(editor);
+
+    // the edits are for the text that was sent to the server
+    if (std::hash<wxString>{}(editor->GetEditorText()) != sent_text_hash) {
+        m_mgr->SetStatusMessage(_("The file was changed while it was formatted, the changes were not applied"), 3);
+        return;
+    }
+
+    std::vector<LSP::TextEdit> edits;
+    if (!event.GetChanges().empty()) {
+        edits = event.GetChanges().front().edits;
+    }
+
+    if (!edits.empty()) {
+        // Apply the edits from the end of the file to the start, so an edit does not move the ranges of the edits that
+        // are applied after it. Edits that start at the same position are applied last one first, so they end up in
+        // the order the server sent them
+        std::vector<size_t> order(edits.size());
+        std::iota(order.begin(), order.end(), 0);
+        std::ranges::sort(
+            order, std::greater<>{}, [&edits](size_t a) { return std::pair{edits[a].GetRange().GetStart(), a}; });
+
+        wxWindowUpdateLocker window_locker{editor->GetCtrl()->GetParent()};
+        clEditorStateLocker locker{editor->GetCtrl()};
+        editor->GetCtrl()->BeginUndoAction();
+        for (size_t index : order) {
+            editor->SelectRange(edits[index].GetRange());
+            editor->ReplaceSelection(edits[index].GetNewText());
+        }
+        editor->GetCtrl()->EndUndoAction();
+        editor->NotifyTextUpdated();
+    }
+    m_mgr->SetStatusMessage(_("Done"), 0);
+
+    if (editor->IsEditorModified()) {
+        // set the editor back to "saved" status, like the other formatters do
+        editor->Save();
+        inc_save_count(filepath);
+    }
 }
 
 void CodeFormatter::OnInitDone(wxCommandEvent& e)

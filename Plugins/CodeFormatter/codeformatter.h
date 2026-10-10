@@ -27,16 +27,21 @@
 
 #include "CodeFormatterManager.hpp"
 #include "CodeLiteRemoteHelper.hpp"
+#include "LSP/LSPEvent.h"
 #include "cl_command_event.h"
 #include "fileextmanager.h"
 #include "plugin.h"
 
 #include <memory>
+#include <unordered_map>
 
 class CodeFormatter : public IPlugin
 {
     CodeFormatterManager m_manager;
     std::shared_ptr<CodeLiteRemoteHelper> m_remoteHelper;
+    /// Files waiting for a `textDocument/formatting` reply, and the hash of the editor text that was sent. The reply
+    /// is dropped if the text changed in the meantime
+    std::unordered_map<wxString, size_t> m_lspPendingFiles;
 
 protected:
     wxString m_selectedFolder;
@@ -46,7 +51,10 @@ private:
                                                     const wxString& content = wxEmptyString) const;
     bool DoFormatFile(const wxString& fileName, bool is_remote_format);
     bool DoFormatString(const wxString& content, const wxString& fileName, wxString* output);
-    bool DoFormatEditor(IEditor* editor);
+    /// Format `editor`. With `selection_only`, only the selected text is formatted when the formatter can do that
+    /// (only the LSP formatter can). Without a selection, the whole file is formatted
+    bool DoFormatEditor(IEditor* editor, bool selection_only = false);
+    bool DoFormatEditorWithLSP(IEditor* editor, bool selection_only = false);
     void OnScanFilesCompleted(const std::vector<wxString>& files);
     void OnWorkspaceLoaded(clWorkspaceEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
@@ -54,6 +62,7 @@ private:
 
     void OnFormatCompleted(clSourceFormatEvent& event);
     void OnInplaceFormatCompleted(clSourceFormatEvent& event);
+    void OnLSPFormatCompleted(LSPEvent& event);
     void OnInitDone(wxCommandEvent& e);
 
 public:

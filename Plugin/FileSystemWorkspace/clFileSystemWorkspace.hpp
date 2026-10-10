@@ -70,6 +70,9 @@ protected:
     void OnCustomTargetMenu(clContextMenuEvent& event);
     void OnMenuCustomTarget(wxCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
+    void OnFileRenamed(clFileSystemEvent& event);
+    void OnFileDeleted(clFileSystemEvent& event);
+    void OnReplaceInFiles(clFileSystemEvent& event);
     void OnSourceControlPulled(clSourceControlEvent& event);
     void OnDebug(clDebugEvent& event);
     void OnFileSystemUpdated(clFileSystemEvent& event);
@@ -85,6 +88,13 @@ protected:
     void RestoreSession();
     void DoBuild(const wxString& target);
     clFileSystemWorkspaceConfig::Ptr_t GetConfig() const;
+    /**
+     * @brief return the remote path of a local file, or an empty string if the file should not be synced to the
+     * remote target (the workspace is closed, remote development or "Sync File On Save" is off, or the file is
+     * outside the workspace folder)
+     */
+    wxString GetRemoteSyncPath(const wxString& localPath) const;
+    void DoUploadFile(const wxString& localPath);
 
 public:
     ///===--------------------------

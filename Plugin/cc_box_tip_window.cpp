@@ -76,6 +76,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
     {
         wxArrayString input_lines = wxSplit(str, '\n', 0);
         bool in_code_block = false;
+        bool in_block_comment = false;
         for (wxString& line : input_lines) {
             if (line.Strip(wxString::leading).StartsWith("```")) {
                 in_code_block = !in_code_block;
@@ -84,10 +85,32 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
             if (in_code_block) {
                 continue;
             }
-            line.Replace("/**", wxEmptyString);
-            line.Replace("/*!", wxEmptyString);
-            line.Replace("/*", wxEmptyString);
-            line.Replace("*/", wxEmptyString);
+            wxString trimmed = line;
+            trimmed.Trim(false);
+            // only strip markers that start the line (ignoring leading spaces) or end it
+            if (in_block_comment) {
+                // continuation marker: " * text"
+                if (trimmed.StartsWith("*") && !trimmed.StartsWith("*/")) {
+                    trimmed.Remove(0, 1);
+                }
+            } else {
+                for (const wxString& marker : {"/**", "/*!", "/*", "///", "//!", "//"}) {
+                    if (trimmed.StartsWith(marker)) {
+                        trimmed.Remove(0, marker.length());
+                        in_block_comment = marker.StartsWith("/*");
+                        break;
+                    }
+                }
+            }
+            if (in_block_comment) {
+                wxString tail = trimmed;
+                tail.Trim();
+                if (tail.EndsWith("*/")) {
+                    trimmed = tail.RemoveLast(2);
+                    in_block_comment = false;
+                }
+            }
+            line = trimmed;
         }
         str = wxJoin(input_lines, '\n', 0);
     }

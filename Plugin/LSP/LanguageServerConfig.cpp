@@ -1,14 +1,8 @@
 #include "LanguageServerConfig.h"
 
-#include "NodeJSLocator.h"
-
-#include <algorithm>
-
 LanguageServerConfig::LanguageServerConfig()
     : clConfigItem("LSPConfig")
 {
-    NodeJSLocator locator;
-    locator.Locate();
 }
 
 LanguageServerConfig& LanguageServerConfig::Load()

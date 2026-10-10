@@ -84,17 +84,6 @@ bool XDebugBreakpointsMgr::GetBreakpoint(const wxString& filename, int line, XDe
     return false;
 }
 
-bool XDebugBreakpointsMgr::GetBreakpoint(const wxString& filename, int line, XDebugBreakpoint& bp)
-{
-    XDebugBreakpoint::List_t::iterator iter =
-        std::find_if(m_breakpoints.begin(), m_breakpoints.end(), XDebugBreakpoint::Equal(filename, line));
-    if (iter != m_breakpoints.end()) {
-        bp = *iter;
-        return true;
-    }
-    return false;
-}
-
 void XDebugBreakpointsMgr::OnXDebugSessionStarting(XDebugEvent& e)
 {
     e.Skip();
@@ -154,7 +143,7 @@ size_t XDebugBreakpointsMgr::GetBreakpointsForFile(const wxString& filename, XDe
 
 void XDebugBreakpointsMgr::Notify()
 {
-    PHPEvent e(wxEVT_XDEBUG_BREAKPOINTS_UPDATED);
+    XDebugEvent e(wxEVT_XDEBUG_BREAKPOINTS_UPDATED);
     EventNotifier::Get()->AddPendingEvent(e);
 }
 

@@ -719,218 +719,6 @@
                               ],
                               "m_events": [],
                               "m_children": []
-                            },
-                            {
-                              "m_type": 4405,
-                              "proportion": 0,
-                              "border": 5,
-                              "gbSpan": ",",
-                              "gbPosition": ",",
-                              "m_styles": [],
-                              "m_sizerFlags": [
-                                "wxRIGHT",
-                                "wxTOP",
-                                "wxBOTTOM",
-                                "wxALIGN_RIGHT",
-                                "wxALIGN_CENTER_VERTICAL"
-                              ],
-                              "m_properties": [
-                                {
-                                  "type": "winid",
-                                  "m_label": "ID:",
-                                  "m_winid": "wxID_ANY"
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Size:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Minimum Size:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Name:",
-                                  "m_value": "m_staticText11"
-                                },
-                                {
-                                  "type": "multi-string",
-                                  "m_label": "Tooltip:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "colour",
-                                  "m_label": "Bg Colour:",
-                                  "colour": "<Default>"
-                                },
-                                {
-                                  "type": "colour",
-                                  "m_label": "Fg Colour:",
-                                  "colour": "<Default>"
-                                },
-                                {
-                                  "type": "font",
-                                  "m_label": "Font:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "bool",
-                                  "m_label": "Hidden",
-                                  "m_value": false
-                                },
-                                {
-                                  "type": "bool",
-                                  "m_label": "Disabled",
-                                  "m_value": false
-                                },
-                                {
-                                  "type": "bool",
-                                  "m_label": "Focused",
-                                  "m_value": false
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Class Name:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Include File:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Style:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "multi-string",
-                                  "m_label": "Label:",
-                                  "m_value": "error_reporting:"
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Wrap:",
-                                  "m_value": "-1"
-                                }
-                              ],
-                              "m_events": [],
-                              "m_children": []
-                            },
-                            {
-                              "m_type": 4406,
-                              "proportion": 0,
-                              "border": 5,
-                              "gbSpan": ",",
-                              "gbPosition": ",",
-                              "m_styles": [],
-                              "m_sizerFlags": [
-                                "wxLEFT",
-                                "wxTOP",
-                                "wxBOTTOM",
-                                "wxEXPAND"
-                              ],
-                              "m_properties": [
-                                {
-                                  "type": "winid",
-                                  "m_label": "ID:",
-                                  "m_winid": "wxID_ANY"
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Size:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Minimum Size:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Name:",
-                                  "m_value": "m_textCtrlErrorReporting"
-                                },
-                                {
-                                  "type": "multi-string",
-                                  "m_label": "Tooltip:",
-                                  "m_value": "Set the PHP error reporting level (affects command line only)"
-                                },
-                                {
-                                  "type": "colour",
-                                  "m_label": "Bg Colour:",
-                                  "colour": "<Default>"
-                                },
-                                {
-                                  "type": "colour",
-                                  "m_label": "Fg Colour:",
-                                  "colour": "<Default>"
-                                },
-                                {
-                                  "type": "font",
-                                  "m_label": "Font:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "bool",
-                                  "m_label": "Hidden",
-                                  "m_value": false
-                                },
-                                {
-                                  "type": "bool",
-                                  "m_label": "Disabled",
-                                  "m_value": false
-                                },
-                                {
-                                  "type": "bool",
-                                  "m_label": "Focused",
-                                  "m_value": false
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Class Name:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Include File:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Style:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Value:",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Text Hint",
-                                  "m_value": ""
-                                },
-                                {
-                                  "type": "string",
-                                  "m_label": "Max Length:",
-                                  "m_value": "0"
-                                },
-                                {
-                                  "type": "bool",
-                                  "m_label": "Auto Complete Directories:",
-                                  "m_value": false
-                                },
-                                {
-                                  "type": "bool",
-                                  "m_label": "Auto Complete Files:",
-                                  "m_value": false
-                                }
-                              ],
-                              "m_events": [],
-                              "m_children": []
                             }
                           ]
                         },
@@ -11398,7 +11186,7 @@
                             {
                               "type": "multi-string",
                               "m_label": "Label:",
-                              "m_value": "Select the project execution mode:"
+                              "m_value": "Select how to run the code:"
                             },
                             {
                               "type": "string",
@@ -11582,7 +11370,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Label:",
-                                  "m_value": "Run project as command line"
+                                  "m_value": "Run as a command line script"
                                 },
                                 {
                                   "type": "bool",
@@ -11851,7 +11639,7 @@
                                             {
                                               "type": "multi-string",
                                               "m_label": "Tooltip:",
-                                              "m_value": "Select the PHP interperter to use for running this project"
+                                              "m_value": "Select the PHP interpreter that runs the code"
                                             },
                                             {
                                               "type": "colour",
@@ -12271,7 +12059,7 @@
                                             {
                                               "type": "multi-string",
                                               "m_label": "Tooltip:",
-                                              "m_value": "Select the project index file"
+                                              "m_value": "Select the file to run"
                                             },
                                             {
                                               "type": "colour",
@@ -12980,7 +12768,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Label:",
-                                  "m_value": "Run project as web site"
+                                  "m_value": "Run as a web site"
                                 },
                                 {
                                   "type": "bool",
@@ -13146,7 +12934,7 @@
                                         {
                                           "type": "multi-string",
                                           "m_label": "Label:",
-                                          "m_value": "Project URL:"
+                                          "m_value": "URL:"
                                         },
                                         {
                                           "type": "string",
@@ -13267,134 +13055,6 @@
                                           "type": "bool",
                                           "m_label": "Auto Complete Files:",
                                           "m_value": false
-                                        }
-                                      ],
-                                      "m_events": [],
-                                      "m_children": []
-                                    },
-                                    {
-                                      "m_type": 4454,
-                                      "proportion": 1,
-                                      "border": 5,
-                                      "gbSpan": "1,1",
-                                      "gbPosition": "0,0",
-                                      "m_styles": [],
-                                      "m_sizerFlags": [
-                                        "wxALL",
-                                        "wxLEFT",
-                                        "wxRIGHT",
-                                        "wxTOP",
-                                        "wxBOTTOM"
-                                      ],
-                                      "m_properties": [
-                                        {
-                                          "type": "string",
-                                          "m_label": "Name:",
-                                          "m_value": "Spacer9326"
-                                        },
-                                        {
-                                          "type": "string",
-                                          "m_label": "Size:",
-                                          "m_value": "0,0"
-                                        }
-                                      ],
-                                      "m_events": [],
-                                      "m_children": []
-                                    },
-                                    {
-                                      "m_type": 4415,
-                                      "proportion": 0,
-                                      "border": 5,
-                                      "gbSpan": "1,1",
-                                      "gbPosition": "0,0",
-                                      "m_styles": [],
-                                      "m_sizerFlags": [
-                                        "wxALL",
-                                        "wxLEFT",
-                                        "wxRIGHT",
-                                        "wxTOP",
-                                        "wxBOTTOM"
-                                      ],
-                                      "m_properties": [
-                                        {
-                                          "type": "winid",
-                                          "m_label": "ID:",
-                                          "m_winid": "wxID_ANY"
-                                        },
-                                        {
-                                          "type": "string",
-                                          "m_label": "Size:",
-                                          "m_value": "-1,-1"
-                                        },
-                                        {
-                                          "type": "string",
-                                          "m_label": "Minimum Size:",
-                                          "m_value": "-1,-1"
-                                        },
-                                        {
-                                          "type": "string",
-                                          "m_label": "Name:",
-                                          "m_value": "m_checkBoxSystemBrowser27"
-                                        },
-                                        {
-                                          "type": "multi-string",
-                                          "m_label": "Tooltip:",
-                                          "m_value": ""
-                                        },
-                                        {
-                                          "type": "colour",
-                                          "m_label": "Bg Colour:",
-                                          "colour": "<Default>"
-                                        },
-                                        {
-                                          "type": "colour",
-                                          "m_label": "Fg Colour:",
-                                          "colour": "<Default>"
-                                        },
-                                        {
-                                          "type": "font",
-                                          "m_label": "Font:",
-                                          "m_value": ""
-                                        },
-                                        {
-                                          "type": "bool",
-                                          "m_label": "Hidden",
-                                          "m_value": false
-                                        },
-                                        {
-                                          "type": "bool",
-                                          "m_label": "Disabled",
-                                          "m_value": true
-                                        },
-                                        {
-                                          "type": "bool",
-                                          "m_label": "Focused",
-                                          "m_value": false
-                                        },
-                                        {
-                                          "type": "string",
-                                          "m_label": "Class Name:",
-                                          "m_value": ""
-                                        },
-                                        {
-                                          "type": "string",
-                                          "m_label": "Include File:",
-                                          "m_value": ""
-                                        },
-                                        {
-                                          "type": "string",
-                                          "m_label": "Style:",
-                                          "m_value": ""
-                                        },
-                                        {
-                                          "type": "string",
-                                          "m_label": "Label:",
-                                          "m_value": "Use system default browser"
-                                        },
-                                        {
-                                          "type": "bool",
-                                          "m_label": "Value:",
-                                          "m_value": true
                                         }
                                       ],
                                       "m_events": [],
@@ -13905,7 +13565,7 @@
                                 {
                                   "type": "multi-string",
                                   "m_label": "Tooltip:",
-                                  "m_value": "When running project with PHP CLI tool, pass the following\\ninclude paths"
+                                  "m_value": "When running a script with the PHP CLI, pass these\\ninclude paths"
                                 },
                                 {
                                   "type": "colour",

@@ -36,7 +36,7 @@ class PHPConfigurationData : public clConfigItem
 {
 protected:
     size_t m_xdebugPort;
-    size_t m_flags;
+    size_t m_flags = 0;
     wxString m_xdebugIdeKey;
     wxString m_xdebugHost;
     PhpOptions m_phpOptions;
@@ -71,11 +71,6 @@ public:
     // ----------------------------------------------------
     // Setters
     // ----------------------------------------------------
-    PHPConfigurationData& SetErrorReporting(const wxString& errorReporting)
-    {
-        m_phpOptions.SetErrorReporting(errorReporting);
-        return *this;
-    }
     PHPConfigurationData& SetIncludePaths(const wxArrayString& includePaths)
     {
         m_phpOptions.SetIncludePaths(includePaths);
@@ -91,11 +86,6 @@ public:
         this->m_xdebugPort = xdebugPort;
         return *this;
     }
-    PHPConfigurationData& SetFlags(size_t flags)
-    {
-        this->m_flags = flags;
-        return *this;
-    }
     PHPConfigurationData& SetXdebugIdeKey(const wxString& xdebugIdeKey)
     {
         this->m_xdebugIdeKey = xdebugIdeKey;
@@ -106,13 +96,11 @@ public:
     // Getters
     // ----------------------------------------------------
 
-    const wxString& GetErrorReporting() const { return m_phpOptions.GetErrorReporting(); }
     const wxArrayString& GetIncludePaths() const { return m_phpOptions.GetIncludePaths(); }
     wxString GetIncludePathsAsString() const;
     const wxString& GetPhpExe() const { return m_phpOptions.GetPhpExe(); }
     size_t GetXdebugPort() const { return m_xdebugPort; }
 
-    size_t GetFlags() const { return m_flags; }
     const wxString& GetXdebugIdeKey() const { return m_xdebugIdeKey; }
     PHPConfigurationData& SetXdebugHost(const wxString& xdebugHost)
     {

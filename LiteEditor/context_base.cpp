@@ -40,8 +40,6 @@
 #include "resources/clXmlResource.hpp"
 
 #include <vector>
-#include <wx/regex.h>
-#include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
 ContextBase::ContextBase(clEditor* container)
@@ -288,50 +286,6 @@ void ContextBase::AutoAddComment()
         if (startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
             if (((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsert()) {
-                // Let the plugins/codelite check if they can provide a doxy comment
-                // for the current entry
-                clCodeCompletionEvent event(wxEVT_CC_GENERATE_DOXY_BLOCK);
-                event.SetFileName(GetCtrl().GetFileName().GetFullPath());
-                if (EventNotifier::Get()->ProcessEvent(event) && !event.GetTooltip().IsEmpty()) {
-                    rCtrl.BeginUndoAction();
-
-                    // To make the doxy block fit in, we need to prepend each line
-                    // with the exact whitespace of the line that starts with "/**"
-                    int lineStartPos = rCtrl.PositionFromLine(rCtrl.LineFromPos(startPos));
-                    wxString whitespace = rCtrl.GetTextRange(lineStartPos, startPos);
-                    // Break the comment, for each line, prepend the 'whitespace' buffer
-                    wxArrayString lines = ::wxStringTokenize(event.GetTooltip(), "\n", wxTOKEN_STRTOK);
-                    for (size_t i = 0; i < lines.GetCount(); ++i) {
-                        if (i) { // don't add it to the first line (it already exists in the editor)
-                            lines.Item(i).Prepend(whitespace);
-                        }
-                    }
-
-                    // Join the lines back
-                    wxString doxyBlock = StringUtils::clJoinLinesWithEOL(lines, rCtrl.GetEOL());
-
-                    rCtrl.SetSelection(startPos, curpos);
-                    rCtrl.ReplaceSelection(doxyBlock);
-
-                    // Try to place the caret after the @brief
-                    wxRegEx reBrief("[@\\]brief[ \t]*");
-                    if (reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
-                        wxString match = reBrief.GetMatch(doxyBlock);
-                        // Get the index
-                        int where = doxyBlock.Find(match);
-                        if (where != wxNOT_FOUND) {
-                            where += match.length();
-                            int caretPos = startPos + where;
-                            rCtrl.SetCaretAt(caretPos);
-
-                            // Remove the @brief as its non standard in the PHP world
-                            rCtrl.DeleteRange(caretPos - match.length(), match.length());
-                        }
-                    }
-                    rCtrl.EndUndoAction();
-                    return;
-                }
-
                 if (textTyped == "/**" && CloseDocBlock(startPos)) {
                     return;
                 }

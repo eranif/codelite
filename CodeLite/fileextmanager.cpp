@@ -184,8 +184,6 @@ void FileExtManager::Init()
 
         m_map[wxT("sql")] = TypeSQL;
         m_map[wxT("sqlite")] = TypeSLite;
-        m_map[wxT("phpwsp")] = TypeWorkspacePHP;
-        m_map[wxT("phptags")] = TypeDatabase;
 
         m_map["pro"] = TypeQMake;
         m_map["pri"] = TypeQMake;
@@ -419,8 +417,6 @@ bool FileExtManager::IsFileType(const wxString& filename, FileExtManager::FileTy
 }
 
 bool FileExtManager::IsJavascriptFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypeJS); }
-
-bool FileExtManager::IsPHPFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypePhp); }
 
 bool FileExtManager::IsJavaFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypeJava); }
 

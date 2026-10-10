@@ -26,7 +26,6 @@
 #ifndef PHP_UTILS_H
 #define PHP_UTILS_H
 
-#include "ieditor.h"
 #include "macros.h"
 
 #include <wx/wx.h>

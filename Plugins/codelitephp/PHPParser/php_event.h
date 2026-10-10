@@ -31,7 +31,6 @@
 class PHPEvent : public clCommandEvent
 {
     wxString m_url;
-    bool m_useDefaultBrowser = false;
     int m_lineNumber = -1;
 
 public:
@@ -45,8 +44,6 @@ public:
     int GetLineNumber() const { return m_lineNumber; }
     void SetUrl(const wxString& url) { this->m_url = url; }
     const wxString& GetUrl() const { return m_url; }
-    void SetUseDefaultBrowser(bool useDefaultBrowser) { this->m_useDefaultBrowser = useDefaultBrowser; }
-    bool IsUseDefaultBrowser() const { return m_useDefaultBrowser; }
 };
 
 using PHPEventFunction = void (wxEvtHandler::*)(PHPEvent&);

@@ -1,10 +1,7 @@
 #include "phpexecutor.h"
 
-#include "AsyncProcess/asyncprocess.h"
 #include "Console/clConsoleBase.h"
 #include "StringUtils.h"
-#include "TerminalEmulator/TerminalEmulatorFrame.h"
-#include "clplatform.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -19,14 +16,13 @@
 
 bool PHPExecutor::Exec(const PHPProjectSettingsData& settings,
                        const wxString& urlOrFilePath,
-                       const wxString& xdebugSessionName,
-                       bool neverPauseOnExit)
+                       const wxString& xdebugSessionName)
 {
     if (settings.GetRunAs() == PHPProjectSettingsData::kRunAsWebsite) {
-        return RunRUL(settings, urlOrFilePath, xdebugSessionName);
+        return RunRUL(urlOrFilePath, xdebugSessionName);
 
     } else {
-        return DoRunCLI(urlOrFilePath, &settings, xdebugSessionName, neverPauseOnExit);
+        return DoRunCLI(urlOrFilePath, &settings, xdebugSessionName);
     }
 }
 
@@ -34,9 +30,7 @@ bool PHPExecutor::IsRunning() const { return m_terminal.IsRunning(); }
 
 void PHPExecutor::Stop() { m_terminal.Terminate(); }
 
-bool PHPExecutor::RunRUL(const PHPProjectSettingsData& settings,
-                         const wxString& urlToRun,
-                         const wxString& xdebugSessionName)
+bool PHPExecutor::RunRUL(const wxString& urlToRun, const wxString& xdebugSessionName)
 {
     wxURI uri(urlToRun);
 
@@ -52,15 +46,13 @@ bool PHPExecutor::RunRUL(const PHPProjectSettingsData& settings,
 
     PHPEvent evtLoadURL(wxEVT_PHP_LOAD_URL);
     evtLoadURL.SetUrl(url);
-    evtLoadURL.SetUseDefaultBrowser(settings.IsUseSystemBrowser());
     EventNotifier::Get()->AddPendingEvent(evtLoadURL);
     return true;
 }
 
 bool PHPExecutor::DoRunCLI(const wxString& script,
                            const PHPProjectSettingsData* settings,
-                           const wxString& xdebugSessionName,
-                           bool neverPauseOnExit)
+                           const wxString& xdebugSessionName)
 {
     if (IsRunning()) {
         ::wxMessageBox(_("Another process is already running"),
@@ -118,27 +110,10 @@ bool PHPExecutor::DoRunCLI(const wxString& script,
         auto console = clConsoleBase::GetTerminal();
         console->SetTerminalNeeded(true);
         console->SetWorkingDirectory(wd);
-        console->SetWaitWhenDone(true);
+        console->SetWaitWhenDone(!settings || settings->IsPauseWhenExeTerminates());
         console->SetCommand(php, cmd);
         return console->Start();
     }
-}
-
-bool PHPExecutor::RunScript(const wxString& script, wxString& php_output)
-{
-    wxString errmsg;
-    auto [php, cmd] = DoGetCLICommand(script, nullptr, errmsg);
-    if (cmd.IsEmpty()) {
-        ::wxMessageBox(errmsg, wxT("CodeLite"), wxOK | wxICON_INFORMATION, wxTheApp->GetTopWindow());
-        return false;
-    }
-
-    IProcess::Ptr_t phpcli(
-        ::CreateSyncProcess(php + " " + cmd, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
-    CHECK_PTR_RET_FALSE(phpcli);
-
-    phpcli->WaitForTerminate(php_output);
-    return true;
 }
 
 std::pair<wxString, wxString>
@@ -173,14 +148,14 @@ PHPExecutor::DoGetCLICommand(const wxString& script, const PHPProjectSettingsDat
     }
 
     if (index.empty()) {
-        errmsg = _("Please set an index file to execute in the project settings");
+        errmsg = _("No file to run was selected");
         return {};
     }
 
     if (php.empty()) {
         php = globalConf.GetPhpExe();
         if (php.empty()) {
-            errmsg = _("Could not find any PHP binary to execute. Please set one in from: 'PHP | Settings'");
+            errmsg = _("Could not find any PHP binary to execute. Please set one in: PHP -> PHP Settings...");
             return {};
         }
     }
@@ -203,7 +178,7 @@ PHPExecutor::DoGetCLICommand(const wxString& script, const PHPProjectSettingsDat
     if (includePath.empty() == false) {
         cmd << wxT("-d include_path=\"");
         for (size_t i = 0; i < includePath.GetCount(); i++) {
-            cmd << includePath.Item(i) << clPlatform::PathSeparator;
+            cmd << includePath.Item(i) << wxPATH_SEP;
         }
         cmd << wxT("\" ");
     }

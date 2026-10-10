@@ -45,17 +45,8 @@ class wxStyledTextCtrl;
 class PhpPlugin;
 class XDebugManager;
 
-// ----------------------------------------------
-// ----------------------------------------------
-// ----------------------------------------------
-
-struct xInitStruct {
-    wxString filename;
-};
-
 class XDebugManager : public wxEvtHandler
 {
-    friend class SocketServer;
     size_t TransactionId = 0;
     XDebugCommandHandler::Map_t m_handlers;
     XDebugBreakpointsMgr m_breakpointsMgr;
@@ -117,7 +108,7 @@ public:
 
     /**
      * @brief return the file mapping of the current debug session
-     * the mapping will include the xdebug mapping + the remote folder (SFTP) mapping
+     * the mapping will include the xdebug mapping + the remote folder of the File System Workspace
      */
     const wxStringMap_t& GetFileMapping() const { return m_settings.GetFileMapping(); }
 
@@ -132,7 +123,6 @@ protected:
     void DoApplyBreakpoints();
     void DoNegotiateFeatures();
     void DoDeleteBreakpoint(int bpid);
-    xInitStruct ParseInitXML(wxXmlNode* init);
 
     // Handlers based on the tx id
     void AddHandler(XDebugCommandHandler::Ptr_t handler);
@@ -248,7 +238,6 @@ public:
      */
     bool IsDebugSessionRunning() const;
 
-    PhpPlugin* GetPlugin() { return m_plugin; }
     XDebugBreakpointsMgr& GetBreakpointsMgr() { return m_breakpointsMgr; }
 
     const XDebugBreakpointsMgr& GetBreakpointsMgr() const { return m_breakpointsMgr; }

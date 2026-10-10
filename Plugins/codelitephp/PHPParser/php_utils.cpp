@@ -8,35 +8,7 @@
 #include <wx/regex.h>
 #include <wx/uri.h>
 
-bool IsPHPFileByExt(const wxString& filename)
-{
-    return (FileExtManager::GetType(filename) == FileExtManager::TypePhp);
-    // wxFileName fileName = filename;
-    // LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer(wxT("php"));
-    // wxString fileSpec;
-
-    // if(!lexer) {
-    //    // Incase somehow we failed in retrieving the lexer (corrupted XML file)
-    //    // use some hardcoded file spec
-    //    fileSpec = wxT("*.php;*.inc;*.phtml");
-
-    //} else {
-    //    fileSpec = lexer->GetFileSpec();
-    //}
-
-    // wxStringTokenizer tkz(fileSpec, wxT(";"));
-    // while(tkz.HasMoreTokens()) {
-    //    wxString fileExt = tkz.NextToken();
-    //    wxString fullname = fileName.GetFullName();
-
-    //    fileExt.MakeLower();
-    //    fullname.MakeLower();
-    //    if(wxMatchWild(fileExt, fullname)) {
-    //        return true;
-    //    }
-    //}
-    // return false;
-}
+bool IsPHPFileByExt(const wxString& filename) { return (FileExtManager::GetType(filename) == FileExtManager::TypePhp); }
 
 wxString URIToFileName(const wxString& uriFileName)
 {

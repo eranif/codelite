@@ -33,6 +33,8 @@
 
 #include "assistant/common/magic_enum.hpp"
 
+#include <algorithm>
+#include <numeric>
 #include <thread>
 #include <wx/app.h>
 #include <wx/arrstr.h>
@@ -163,12 +165,15 @@ Manager::Manager()
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &Manager::OnDocumentSymbolsForHighlight, this);
     Bind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
     Bind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
+    Bind(wxEVT_LSP_ON_TYPE_FORMATTED, &Manager::OnTypeFormatted, this);
+    Bind(wxEVT_LSP_DOCUMENT_LINKS, &Manager::OnDocumentLinks, this);
 
     // Global accelerators
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindSymbol, this, XRCID("lsp_find_symbol"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindReferences, this, XRCID("lsp_find_references"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnRenameSymbol, this, XRCID("lsp_rename_symbol"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnCodeActions, this, XRCID("lsp_code_actions"));
+    wxTheApp->Bind(wxEVT_MENU, &Manager::OnOpenDocumentLink, this, XRCID("lsp_open_document_link"));
 
     m_remoteHelper.reset(new CodeLiteRemoteHelper);
 }
@@ -205,6 +210,8 @@ Manager::~Manager()
     Unbind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &Manager::OnDocumentSymbolsForHighlight, this);
     Unbind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
+    Unbind(wxEVT_LSP_ON_TYPE_FORMATTED, &Manager::OnTypeFormatted, this);
+    Unbind(wxEVT_LSP_DOCUMENT_LINKS, &Manager::OnDocumentLinks, this);
 
     if (m_quick_outline_dlg) {
         m_quick_outline_dlg->Destroy();
@@ -245,6 +252,18 @@ void Manager::ShowOutlineView(IEditor* editor)
         }
     };
     RequestSymbolsForEditor(editor, std::move(cb));
+}
+
+bool Manager::GenerateDocBlock(IEditor* editor)
+{
+    CHECK_PTR_RET_FALSE(editor);
+    auto server = GetServerForEditor(*editor);
+    if (server == nullptr || !server->SendOnTypeFormattingRequest(*editor, "\n")) {
+        return false;
+    }
+    // the reply arrives later, see OnTypeFormatted()
+    m_pendingDocBlocks[editor->GetRemotePathOrLocal()] = std::hash<wxString>{}(editor->GetEditorText());
+    return true;
 }
 
 void Manager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind kind)
@@ -314,7 +333,154 @@ void Manager::FindSymbol(IEditor* editor)
         return;
     }
 
+    // A document link (for example the file of an `include` statement) wins over the definition
+    if (server->IsDocumentLinkSupported()) {
+        int pos = editor->GetSelection().IsEmpty() ? editor->GetCurrentPosition() : editor->GetSelectionStart();
+        LSP::Position position{editor->LineFromPos(pos), editor->GetColumnInChars(pos)};
+        auto iter = m_documentLinks.find(editor->GetRemotePathOrLocal());
+        if (iter == m_documentLinks.end() || iter->second.text_hash != std::hash<wxString>{}(editor->GetEditorText())) {
+            // The links are out of date. The reply opens the link, or goes to the definition
+            if (RequestDocumentLinks(editor, position)) {
+                return;
+            }
+        } else {
+            for (const auto& link : iter->second.links) {
+                if (link.Contains(position)) {
+                    OpenDocumentLink(link);
+                    return;
+                }
+            }
+        }
+    }
+
     server->FindDefinition(*editor);
+}
+
+const std::vector<LSP::DocumentLink>* Manager::GetDocumentLinks(IEditor* editor)
+{
+    if (editor == nullptr) {
+        return nullptr;
+    }
+    auto server = GetServerForEditor(*editor);
+    if (server == nullptr || !server->IsDocumentLinkSupported()) {
+        return nullptr;
+    }
+
+    const wxString path = editor->GetRemotePathOrLocal();
+    size_t text_hash = std::hash<wxString>{}(editor->GetEditorText());
+    auto iter = m_documentLinks.find(path);
+    if (iter != m_documentLinks.end() && iter->second.text_hash == text_hash) {
+        return &iter->second.links;
+    }
+
+    // out of date: ask once per text
+    auto pending = m_pendingDocumentLinks.find(path);
+    if (pending == m_pendingDocumentLinks.end() || pending->second != text_hash) {
+        RequestDocumentLinks(editor);
+    }
+    return nullptr;
+}
+
+std::optional<LSP::DocumentLink> Manager::GetDocumentLinkAt(IEditor* editor, int pos)
+{
+    const auto* links = GetDocumentLinks(editor);
+    if (links == nullptr) {
+        return std::nullopt;
+    }
+
+    LSP::Position position{editor->LineFromPos(pos), editor->GetColumnInChars(pos)};
+    for (const auto& link : *links) {
+        if (link.Contains(position)) {
+            return link;
+        }
+    }
+    return std::nullopt;
+}
+
+void Manager::OpenDocumentLink(const LSP::DocumentLink& link)
+{
+    wxString target = link.GetTarget();
+    if (target.StartsWith("http://") || target.StartsWith("https://")) {
+        ::wxLaunchDefaultBrowser(target);
+        return;
+    }
+
+    if (!target.StartsWith("file://")) {
+        LSP_WARNING() << "Can not open document link:" << target << endl;
+        return;
+    }
+
+    // A file link may end with a line number: `#L12` or `#12`
+    int line = 0;
+    wxString fragment = target.AfterLast('#');
+    if (fragment != target) {
+        target = target.BeforeLast('#');
+        fragment.StartsWith("L", &fragment);
+        long number = 0;
+        if (fragment.BeforeFirst(',').ToLong(&number) && number > 0) {
+            line = number - 1;
+        }
+    }
+    OpenLocation(LSP::Location{target, LSP::Range{LSP::Position{line, 0}, LSP::Position{line, 0}}});
+}
+
+bool Manager::RequestDocumentLinks(IEditor* editor, const std::optional<LSP::Position>& openAt)
+{
+    CHECK_PTR_RET_FALSE(editor);
+    auto server = GetServerForEditor(*editor);
+    if (server == nullptr) {
+        return false;
+    }
+    auto text_hash = server->SendDocumentLinkRequest(*editor, openAt);
+    if (!text_hash.has_value()) {
+        return false;
+    }
+    m_pendingDocumentLinks[editor->GetRemotePathOrLocal()] = *text_hash;
+    return true;
+}
+
+void Manager::OnDocumentLinks(LSPEvent& event)
+{
+    event.Skip();
+    IEditor* editor = FindEditor(event.GetFileName());
+    CHECK_PTR_RET(editor);
+
+    const wxString path = editor->GetRemotePathOrLocal();
+    auto pending = m_pendingDocumentLinks.find(path);
+    if (pending != m_pendingDocumentLinks.end() && pending->second == event.GetTextHash()) {
+        m_pendingDocumentLinks.erase(pending);
+    }
+    m_documentLinks[path] = DocumentLinks{event.GetTextHash(), event.GetDocumentLinks()};
+
+    if (!event.GetOpenAt().has_value() || editor != clGetManager()->GetActiveEditor()) {
+        return;
+    }
+
+    // The reply to Find Symbol: open the link at the position, else go to the definition
+    if (std::hash<wxString>{}(editor->GetEditorText()) == event.GetTextHash()) {
+        for (const auto& link : event.GetDocumentLinks()) {
+            if (link.Contains(*event.GetOpenAt())) {
+                OpenDocumentLink(link);
+                return;
+            }
+        }
+    }
+
+    auto server = GetServerForEditor(*editor);
+    CHECK_PTR_RET(server);
+    server->FindDefinition(*editor);
+}
+
+void Manager::OnOpenDocumentLink(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    auto link = GetDocumentLinkAt(editor, editor->GetCurrentPosition());
+    if (link.has_value()) {
+        OpenDocumentLink(*link);
+    }
 }
 
 void Manager::FunctionCalltip(IEditor* editor)
@@ -464,7 +630,11 @@ void Manager::OnSymbolFound(LSPEvent& event)
     } else {
         location = event.GetLocations()[0];
     }
+    OpenLocation(location);
+}
 
+void Manager::OpenLocation(const LSP::Location& location)
+{
     // Manage the browser (BACK and FORWARD) ourself
     BrowseRecord from;
     IEditor* oldEditor = clGetManager()->GetActiveEditor();
@@ -1310,12 +1480,16 @@ void Manager::OnEditorClosed(clCommandEvent& event)
     // clear the cache for the closed file
     m_symbols_to_file_cache.erase(event.GetFileName());
     m_diagnostics.erase(event.GetFileName());
+    m_documentLinks.erase(event.GetFileName());
+    m_pendingDocumentLinks.erase(event.GetFileName());
 }
 
 void Manager::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     UpdateNavigationBar();
+    // keep the document links up to date for the editor context menu and Ctrl-click
+    GetDocumentLinks(clGetManager()->GetActiveEditor());
 }
 
 void Manager::UpdateNavigationBar()
@@ -1693,6 +1867,88 @@ void Manager::OnApplyEdits(LSPEvent& event)
     server->SendApplyEditResult(*event.GetRequestId(), applied, failure_reason);
 }
 
+void Manager::OnTypeFormatted(LSPEvent& event)
+{
+    event.Skip();
+    auto where = m_pendingDocBlocks.find(event.GetFileName());
+    if (where == m_pendingDocBlocks.end()) {
+        return;
+    }
+    size_t sent_text_hash = where->second;
+    m_pendingDocBlocks.erase(where);
+
+    IEditor* editor = FindEditor(event.GetFileName());
+    CHECK_PTR_RET(editor);
+
+    // the edits are for the text that was sent to the server. Drop them if the user typed on
+    if (std::hash<wxString>{}(editor->GetEditorText()) != sent_text_hash) {
+        return;
+    }
+
+    if (event.GetChanges().empty() || event.GetChanges().front().edits.empty()) {
+        return;
+    }
+    const auto& edits = event.GetChanges().front().edits;
+
+    // The docblock is the edit that covers the caret line. Edits above it (for example a `use` statement for a
+    // `@throws` tag) move it down
+    auto ctrl = editor->GetCtrl();
+    int caret_line = ctrl->GetCurrentLine();
+    std::optional<int> block_line;
+    for (const auto& edit : edits) {
+        const auto& range = edit.GetRange();
+        if (range.GetStart().GetLine() <= caret_line && caret_line <= range.GetEnd().GetLine()) {
+            block_line = range.GetStart().GetLine();
+            break;
+        }
+    }
+
+    // Apply the edits from the end of the file to the start, so an edit does not move the ranges of the edits that
+    // are applied after it. Edits that start at the same position are applied last one first, so they end up in the
+    // order the server sent them
+    std::vector<size_t> order(edits.size());
+    std::iota(order.begin(), order.end(), 0);
+    std::ranges::sort(order, [&edits](size_t a, size_t b) {
+        const auto& start_a = edits[a].GetRange().GetStart();
+        const auto& start_b = edits[b].GetRange().GetStart();
+        if (start_a != start_b) {
+            return start_b < start_a;
+        }
+        return b < a;
+    });
+
+    int lines_added_above = 0;
+    ctrl->BeginUndoAction();
+    for (size_t index : order) {
+        const auto& range = edits[index].GetRange();
+        wxString text = edits[index].GetNewText();
+        text.Replace("\r\n", "\n");
+        auto lines = ::wxStringTokenize(text, "\n", wxTOKEN_RET_EMPTY_ALL);
+        if (block_line.has_value() && range.GetEnd().GetLine() < *block_line) {
+            lines_added_above +=
+                static_cast<int>(lines.size()) - 1 - (range.GetEnd().GetLine() - range.GetStart().GetLine());
+        }
+        editor->SelectRange(range);
+        editor->ReplaceSelection(StringUtils::clJoinLinesWithEOL(lines, editor->GetEOL()));
+    }
+    ctrl->EndUndoAction();
+    editor->NotifyTextUpdated();
+
+    if (!block_line.has_value()) {
+        return;
+    }
+
+    // Put the caret on the empty description line, or at the end of the `/**` line when there is none
+    int line = *block_line + lines_added_above;
+    wxString next_line = ctrl->GetLine(line + 1);
+    next_line.Trim().Trim(false);
+    if (next_line == "*") {
+        ++line;
+    }
+    editor->SetCaretAt(ctrl->GetLineEndPosition(line));
+    ctrl->ChooseCaretX();
+}
+
 bool Manager::ApplyEdits(const LSP::WorkspaceEditChangeList& changes, bool prompt, wxString* failure_reason)
 {
     wxBusyCursor bc;
@@ -1818,6 +2074,9 @@ void Manager::OnFileSaved(clCommandEvent& event)
             RestartServer("rust");
         }
     }
+
+    // keep the document links up to date for the editor context menu and Ctrl-click
+    GetDocumentLinks(FindEditor(event.GetFileName()));
 }
 
 void Manager::OnGoinDown(clCommandEvent& event)

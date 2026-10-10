@@ -135,6 +135,12 @@ nlohmann::json Location::ToJSON() const
                           {"name", m_name.ToStdString(wxConvUTF8)}};
 }
 
+void DocumentLink::FromJSON(const JSONItem& json)
+{
+    m_range.FromJSON(json["range"]);
+    m_target = json["target"].toString();
+}
+
 void TextEdit::FromJSON(const JSONItem& json)
 {
     m_range.FromJSON(json.namedObject("range"));

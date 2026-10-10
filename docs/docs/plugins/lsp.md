@@ -238,6 +238,26 @@ Some actions create or rename files, for example "extract interface" or renaming
 
 ---
 
+## Docblocks
+
+Type `/**` above a function, class, property or constant and press <kbd>Enter</kbd>. CodeLite closes the comment block, and when the language server supports it (for example `phpantom_lsp`), the server fills it in with the `@param`, `@return` and `@throws` tags. The caret moves to the description line, or to the end of the `/**` line when the block has only tags.
+
+This needs both `Settings` &#8594; `Preferences` &#8594; `Code` &#8594; `Hitting ENTER in C comment, adds '*'` and `Auto generate on ENTER`.
+
+---
+
+## Document Links
+
+Some language servers mark parts of the code as links, for example the file of an `#include` (`clangd`) or of a `require` / `include` statement (`phpantom_lsp`). To open a link:
+
+- Hold <kbd>Ctrl</kbd> and click on it. A link is shown when the mouse is over it, also inside a string
+- Or put the caret on it, right click and select `Open '<file>'`
+- `Find symbol` also opens the link when the caret is on one, instead of going to the definition
+
+A link to a web page opens in the web browser.
+
+---
+
 ## Restarting Language Servers
 
 To restart any language server:

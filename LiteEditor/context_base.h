@@ -134,6 +134,13 @@ public:
     virtual bool IsAtLineComment() const { return false; }
     virtual void AutoIndent(const wxChar&);
     virtual void AutoAddComment();
+    /**
+     * @brief the user pressed ENTER after "/**" and no plugin made a docblock: close the block, and ask the language
+     * server to fill it in
+     * @param startPos the position of the "/**"
+     * @return false when nothing was done (the block is already closed, or there is text after the caret)
+     */
+    bool CloseDocBlock(int startPos);
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) { return nullptr; }
     virtual void SemicolonShift() {}
     virtual int DoGetCalltipParameterIndex();

@@ -743,7 +743,13 @@ void clTreeCtrlPanel::OnRenameFile(wxCommandEvent& event)
                 wxFileName oldpath = d->GetPath();
                 wxFileName newpath = oldpath;
                 newpath.SetFullName(newname);
-                if (::wxRenameFile(oldpath.GetFullPath(), newpath.GetFullPath(), false)) {
+                // Let plugins do the rename (for example, a source control plugin)
+                clFileSystemEvent renameEvent(wxEVT_FILE_RENAMED);
+                renameEvent.SetPath(oldpath.GetFullPath());
+                renameEvent.SetNewpath(newpath.GetFullPath());
+                renameEvent.SetIsRemoteFile(false);
+                if (EventNotifier::Get()->ProcessEvent(renameEvent) ||
+                    ::wxRenameFile(oldpath.GetFullPath(), newpath.GetFullPath(), false)) {
                     DoRenameItem(fileItems.Item(i), oldname.GetFullName(), newname);
                 }
             }

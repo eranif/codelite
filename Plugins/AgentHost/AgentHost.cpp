@@ -100,6 +100,8 @@ void AgentHost::OnSettings(wxCommandEvent& event)
     if (dlg.ShowModal() == wxID_OK) {
         auto claude_exec = dlg.GetClaudeCodeExecutable();
         clConfig::Get().Write(kAgentHostClaudeCodeExecutable, claude_exec);
+        clConfig::Get().Write(kAgentHostClaudeCodeReviewArgs, dlg.GetClaudeCodeReviewArgs());
+        clConfig::Get().Write(kAgentHostKiroCliReviewArgs, dlg.GetKiroCliReviewArgs());
     }
 }
 

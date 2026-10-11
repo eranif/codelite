@@ -1,11 +1,13 @@
 #include "AgentHostPage.hpp"
 
+#include "AgentHostSettgingsDlg.hpp"
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "ReviewBuddy.hpp"
 #include "ai/LLMManager.hpp"
 #include "clStrings.h"
+#include "cl_config.h"
 #include "globals.h"
 #include "open_resource_dialog.h"
 #include "search_thread.h"
@@ -585,6 +587,14 @@ wxTerminalViewCtrl* AgentHostPage::StartReviewer(AgentType reviewer, const wxStr
     wxString command = StringUtils::WrapWithDoubleQuotes(executable->executable);
     if (reviewer == AgentType::kKiroCli) {
         command << " chat";
+    }
+    // The user's extra arguments, as typed in the settings (for example, a custom agent). They are shell text: the
+    // user does the quoting.
+    wxString extraArgs = clConfig::Get().Read(
+        reviewer == AgentType::kKiroCli ? kAgentHostKiroCliReviewArgs : kAgentHostClaudeCodeReviewArgs, wxString{});
+    extraArgs.Trim().Trim(false);
+    if (!extraArgs.empty()) {
+        command << " " << extraArgs;
     }
     command << " " << StringUtils::WrapWithDoubleQuotes(prompt);
     command.Prepend("cd " + StringUtils::WrapWithDoubleQuotes(reviewerDir) + " && ");

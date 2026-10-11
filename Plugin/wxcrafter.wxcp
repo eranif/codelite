@@ -1669,7 +1669,7 @@
                 {
                   "type": "string",
                   "m_label": "Include File:",
-                  "m_value": "clFileViwerTreeCtrl.h"
+                  "m_value": "clFileViewerTreeCtrl.h"
                 },
                 {
                   "type": "string",

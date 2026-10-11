@@ -29,7 +29,7 @@
 #include "bitmap_loader.h"
 #include "clEnhancedToolBar.hpp"
 #include "clFileSystemEvent.h"
-#include "clFileViwerTreeCtrl.h"
+#include "clFileViewerTreeCtrl.h"
 #include "clToolBar.h"
 #include "cl_command_event.h"
 #include "cl_config.h"

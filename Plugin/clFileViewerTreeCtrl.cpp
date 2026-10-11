@@ -1,4 +1,4 @@
-#include "clFileViwerTreeCtrl.h"
+#include "clFileViewerTreeCtrl.h"
 
 clFileViewerTreeCtrl::clFileViewerTreeCtrl(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

@@ -13,7 +13,7 @@
 #include <wx/panel.h>
 
 /// A thin native wxDataViewTreeCtrl subclass exposing the (invisible) root item,
-/// mirroring clFileViewerTreeCtrl::GetRootItem() (see Plugin/clFileViwerTreeCtrl.h).
+/// mirroring clFileViewerTreeCtrl::GetRootItem() (see Plugin/clFileViewerTreeCtrl.h).
 class WXDLLIMPEXP_SDK clRemoteDirTreeCtrl : public wxDataViewTreeCtrl
 {
 public:
@@ -32,7 +32,7 @@ public:
             }
         }
 
-        // See clFileViewerTreeCtrl::OnLeftDown (Plugin/clFileViwerTreeCtrl.cpp) for why this is needed.
+        // See clFileViewerTreeCtrl::OnLeftDown (Plugin/clFileViewerTreeCtrl.cpp) for why this is needed.
         Bind(wxEVT_LEFT_DOWN, &clRemoteDirTreeCtrl::OnLeftDown, this);
     }
     virtual ~clRemoteDirTreeCtrl() = default;

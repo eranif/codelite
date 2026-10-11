@@ -6,7 +6,6 @@ set COPY_WXC_RESOURCES=0
 set CODELITE_SRC_DIR=C:\src\codelite
 set LIB_DIR=%CODELITE_SRC_DIR%\build-Win_x64_Release\lib
 set RUNTIME_DIR=%CODELITE_SRC_DIR%\Runtime
-set WX_CONFIG_DIR=%MSYS2_HOME%\devl\wx-config-msys2\bin
 set WXWIN=%MSYS2_HOME%\root
 set LLVM_BIN=C:\LLVM\bin
 
@@ -59,7 +58,6 @@ copy %RUNTIME_DIR%\codelite-exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-make.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\rm.exe "%TARGET_DIR%\CodeLite\" /Y
-copy %WX_CONFIG_DIR%\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
 
 :END
 

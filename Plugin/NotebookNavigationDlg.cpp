@@ -27,7 +27,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clAuiBook* book)
                                 wxEmptyString,
                                 wxDefaultPosition,
                                 parent ? parent->FromDIP(wxSize(400, 200)) : wxSize(400, 200),
-                                wxBORDER_SIMPLE)
+                                wxDEFAULT_DIALOG_STYLE)
     , m_aui_notebook(book)
     , m_selection(wxNOT_FOUND)
 {

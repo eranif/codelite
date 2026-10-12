@@ -27,13 +27,19 @@
 #define XDEBUGBREAKPOINTSMGR_H
 
 #include "XDebugBreakpoint.h"
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "xdebugevent.h"
+
+#include <wx/filename.h>
 
 class XDebugBreakpointsMgr : public wxEvtHandler
 {
     XDebugBreakpoint::List_t m_breakpoints;
-    wxString m_workspacePath;
+    // Where the breakpoints are stored: the user file of a PHP workspace, or the Xdebug settings file of any other
+    // workspace
+    wxString m_phpWorkspacePath;
+    wxFileName m_settingsFile;
 
 protected:
     void Notify();
@@ -53,8 +59,8 @@ public:
 
     void OnXDebugSessionEnded(XDebugEvent& e);
     void OnXDebugSessionStarting(XDebugEvent& e);
-    void OnWorkspaceOpened(PHPEvent& e);
-    void OnWorkspaceClosed(PHPEvent& e);
+    void OnWorkspaceOpened(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnEditorChanged(wxCommandEvent& e);
 
     bool GetBreakpoint(const wxString& filename, int line, XDebugBreakpoint& bp);

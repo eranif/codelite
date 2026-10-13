@@ -112,6 +112,45 @@ std::vector<std::pair<wxString, wxString>> LocateDefaultTerminals()
 
     return terminals;
 }
+
+/// The modifiers of `event`, as the flags of a wxAcceleratorEntry
+int GetAcceleratorFlags(const wxKeyEvent& event)
+{
+    int flags = wxACCEL_NORMAL;
+    if (event.AltDown()) {
+        flags |= wxACCEL_ALT;
+    }
+    if (event.ShiftDown()) {
+        flags |= wxACCEL_SHIFT;
+    }
+    // On macOS these are two different keys (Cmd and Ctrl), elsewhere they are the same
+    if (event.ControlDown()) {
+        flags |= wxACCEL_CTRL;
+    }
+    if (event.RawControlDown()) {
+        flags |= wxACCEL_RAW_CTRL;
+    }
+    return flags;
+}
+
+/// Is `shortcut` the key combination of `event`?
+bool IsShortcutPressed(const clKeyboardShortcut& shortcut, const wxKeyEvent& event)
+{
+    if (!shortcut.IsOk()) {
+        return false;
+    }
+    auto accel = shortcut.ToAccelerator(wxEmptyString);
+    if (!accel) {
+        return false;
+    }
+
+    // The key code of a letter in an accelerator is always upper case
+    int key_code = event.GetKeyCode();
+    if (key_code >= 'a' && key_code <= 'z') {
+        key_code = key_code - 'a' + 'A';
+    }
+    return accel->GetFlags() == GetAcceleratorFlags(event) && accel->GetKeyCode() == key_code;
+}
 } // namespace
 
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TERMINATED, clCommandEvent);
@@ -185,6 +224,8 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clBuiltinTerminalPane::OnInitDone, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &clBuiltinTerminalPane::OnKeyboardShortcutsUpdated, this);
 
 #ifdef __WXMAC__
     wxTheApp->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCopy, this, wxID_COPY);
@@ -197,6 +238,8 @@ clBuiltinTerminalPane::~clBuiltinTerminalPane()
     m_book->Unbind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &clBuiltinTerminalPane::OnKeyboardShortcutsUpdated, this);
 }
 
 void clBuiltinTerminalPane::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
@@ -276,6 +319,9 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxWindow* parent,
     // handler for a given event on an object first), so we can reserve those specific combinations
     // for the main frame before the terminal ever sees them.
     ctrl->Bind(wxEVT_CHAR_HOOK, &clBuiltinTerminalPane::OnTerminalShortcutCharHook, this);
+
+    // Let the main frame handle its shortcuts (F6, ...) while this terminal has the focus
+    ctrl->RegisterKeyEventFilter([this](const wxKeyEvent& event) { return HandleTerminalShortcut(event); });
 
     // Add the page to the notebook
     wxBookCtrlBase* book = dynamic_cast<wxBookCtrlBase*>(parent);
@@ -609,6 +655,73 @@ void clBuiltinTerminalPane::OnTerminalShortcutCharHook(wxKeyEvent& e)
     }
 
     e.Skip();
+}
+
+const std::vector<std::pair<int, clKeyboardShortcut>>& clBuiltinTerminalPane::GetFrameActions()
+{
+    if (!m_frameActions.has_value()) {
+        // The actions that can be triggered while a terminal has the focus. Do not add actions whose shortcut is needed
+        // by the shell or by the program running in the terminal (Ctrl-C, Ctrl-A, Ctrl-W, ...)
+        const std::vector<int> candidates = {
+            XRCID("show_terminal_pane"),
+            XRCID("build_active_project"),
+            XRCID("output_pane"),
+            XRCID("workspace_pane"),
+            XRCID("debugger_pane"),
+            XRCID("toggle_panes"),
+            XRCID("distraction_free_mode"),
+            XRCID("full_screen"),
+            XRCID("next_tab"),
+            XRCID("prev_tab"),
+            XRCID("find_in_files"),
+            XRCID("find_resource"),
+            XRCID("find_symbol"),
+            XRCID("ID_GOTO_ANYTHING"),
+            XRCID("grep_current_workspace"),
+            wxID_ZOOM_IN,
+            wxID_ZOOM_OUT,
+            wxID_ZOOM_FIT,
+        };
+
+        // Keep only the actions that have a shortcut
+        std::vector<std::pair<int, clKeyboardShortcut>> table;
+        for (int action : candidates) {
+            auto shortcut = clKeyboardManager::Get()->GetShortcutForCommand(action);
+            if (shortcut.IsOk()) {
+                table.emplace_back(action, shortcut);
+            }
+        }
+        m_frameActions = std::move(table);
+    }
+    return m_frameActions.value();
+}
+
+void clBuiltinTerminalPane::OnKeyboardShortcutsUpdated(clCommandEvent& event)
+{
+    event.Skip();
+    // The table is rebuilt on the next key
+    m_frameActions.reset();
+}
+
+bool clBuiltinTerminalPane::HandleTerminalShortcut(const wxKeyEvent& event)
+{
+    auto* frame = EventNotifier::Get()->TopFrame();
+    if (frame == nullptr) {
+        return false;
+    }
+
+    for (const auto& [action, shortcut] : GetFrameActions()) {
+        if (!IsShortcutPressed(shortcut, event)) {
+            continue;
+        }
+
+        // Let the frame handle it, as if the user selected the menu item
+        wxCommandEvent menu_event{wxEVT_MENU, action};
+        menu_event.SetEventObject(frame);
+        frame->GetEventHandler()->AddPendingEvent(menu_event);
+        return true; // consumed: the terminal must not see this key
+    }
+    return false;
 }
 
 void clBuiltinTerminalPane::OnCtrlR(wxCommandEvent& e)

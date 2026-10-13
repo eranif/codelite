@@ -1,6 +1,7 @@
 #ifndef CLBUILTINTERMINALPANE_HPP
 #define CLBUILTINTERMINALPANE_HPP
 
+#include "Keyboard/clKeyboardManager.h"
 #include "clAuiBook.hpp"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
@@ -38,7 +39,7 @@ class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 {
 public:
     clBuiltinTerminalPane(wxWindow* parent, wxWindowID id = wxID_ANY);
-    virtual ~clBuiltinTerminalPane();
+    ~clBuiltinTerminalPane() override;
 
     /**
      * @brief Open a new terminal tab with the specified working directory
@@ -149,6 +150,15 @@ protected:
     void OnCtrlE(wxCommandEvent& e);
     void OnCtrlLetter(wxCommandEvent& e);
     void OnTerminalShortcutCharHook(wxKeyEvent& e);
+    /// The terminal consumes its special keys (function keys, Ctrl-<key>, ...), so the shortcuts of the main frame do
+    /// not work while it has the focus. The terminal calls this filter for these keys: if the key is the shortcut of
+    /// one of the frame's actions (for example F6: "show_terminal_pane"), fire the action and return true, so the
+    /// terminal ignores the key. Otherwise return false.
+    bool HandleTerminalShortcut(const wxKeyEvent& event);
+    /// The actions (command IDs) of the main frame that can be triggered from a terminal, with their shortcuts. Built
+    /// on first use, and rebuilt after the user changes the shortcuts
+    const std::vector<std::pair<int, clKeyboardShortcut>>& GetFrameActions();
+    void OnKeyboardShortcutsUpdated(clCommandEvent& event);
     void OnPaste(wxCommandEvent& e);
 #ifdef __WXMAC__
     void OnCopy(wxCommandEvent& e);
@@ -175,6 +185,7 @@ private:
     std::optional<wxTerminalTheme> m_activeTheme{std::nullopt};
     wxFont m_activeFont;
     TerminalSettings m_terminalSettings;
+    std::optional<std::vector<std::pair<int, clKeyboardShortcut>>> m_frameActions{std::nullopt};
 };
 
 #endif // CLBUILTINTERMINALPANE_HPP

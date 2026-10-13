@@ -133,6 +133,20 @@ To launch CodeLite:
 
 ----------
 
+## Shell completion for `build.sh`
+----
+
+On all platforms (Bash only, in the `MSYS2` terminal on Windows), you can get tab completion for the options and
+targets of `build.sh`. Add this line to your `~/.bashrc` (replace the path with your CodeLite sources folder):
+
+```bash
+source /path/to/codelite/scripts/build-completion.bash
+```
+
+Open a new shell, then type `./build.sh --<TAB>` to see the options, or `./build.sh <TAB>` to see the targets.
+
+----------
+
  [1]: https://codelite.org
  [2]: https://codelite.org/support.php
  [3]: https://codelite.org

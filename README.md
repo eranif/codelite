@@ -24,7 +24,8 @@ Additional resources
 
 # Building & Installation
 
-If you prefer to compile CodeLite from source, detailed guides are available for each supported platform:
+If you prefer to compile CodeLite from source, see **[BUILDING.md](BUILDING.md)** for the quick start and the `build.sh` options.
+Detailed guides are also available for each supported platform:
 
 - **[Windows][build-windows]**
 - **[Linux][build-linux]**
@@ -39,6 +40,7 @@ If you prefer to compile CodeLite from source, detailed guides are available for
 | **[website]** | Home page of CodeLite |
 | **[download]** | Pre‑built binaries & installers |
 | **[docs]** | Full documentation, tutorials, and API reference |
+| **[BUILDING.md](BUILDING.md)** | How to build CodeLite from source (all platforms) |
 | **[build-windows]** | Build from source on Windows |
 | **[build-linux]** | Build from source on Linux |
 | **[build-macos]** | Build from source on macOS |

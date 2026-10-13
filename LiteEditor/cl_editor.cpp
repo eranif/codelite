@@ -4058,8 +4058,25 @@ void clEditor::DoHighlightWord()
         return;
     }
 
-    // Search only the visible areas
-    StringHighlighterJob j;
+    // Search only the visible areas, with the control's own search: its positions are in the same units as the
+    // indicators (bytes, not characters), so a multi-byte character before a match does not move the highlight.
+    StringHighlightOutput output;
+    const int savedTargetStart = GetTargetStart();
+    const int savedTargetEnd = GetTargetEnd();
+    const int savedSearchFlags = GetSearchFlags();
+    SetSearchFlags(wxSTC_FIND_MATCHCASE | wxSTC_FIND_WHOLEWORD);
+    auto search_range = [this, &word, &output](int start, int end) {
+        while (start < end) {
+            SetTargetRange(start, end);
+            if (SearchInTarget(word) == wxNOT_FOUND) {
+                break;
+            }
+            const int matchStart = GetTargetStart();
+            const int matchEnd = GetTargetEnd();
+            output.matches.push_back({matchStart, matchEnd - matchStart});
+            start = std::max(matchEnd, matchStart + 1);
+        }
+    };
     int firstVisibleLine = GetFirstVisibleLine();
     int lastDocLine = LineFromPosition(GetLength());
     int offset = PositionFromLine(firstVisibleLine);
@@ -4067,13 +4084,9 @@ void clEditor::DoHighlightWord()
     if (GetAllLinesVisible()) {
         // The simple case: there aren't any folds
         int lastLine = firstVisibleLine + LinesOnScreen();
-        if (lastLine > lastDocLine) {
-            lastLine = lastDocLine;
-        }
+        lastLine = std::min(lastLine, lastDocLine);
         int lastPos = PositionFromLine(lastLine) + LineLength(lastLine);
-        wxString text = GetTextRange(offset, lastPos);
-        j.Set(text, word, offset);
-        j.Process();
+        search_range(offset, lastPos);
     } else {
 
         // There are folds, so we have to process each visible section separately
@@ -4104,23 +4117,22 @@ void clEditor::DoHighlightWord()
                     break;
                 }
             }
-            if (line > lastDocLine) {
-                line = lastDocLine;
-            }
+            line = std::min(line, lastDocLine);
             nextLineToProcess = line;
 
             int lastPos = PositionFromLine(nextLineToProcess) + LineLength(nextLineToProcess);
-            wxString text = GetTextRange(offset, lastPos);
-            j.Set(text, word, offset);
-            j.Process();
+            search_range(offset, lastPos);
         }
     }
+
+    SetSearchFlags(savedSearchFlags);
+    SetTargetRange(savedTargetStart, savedTargetEnd);
 
     // Keep the first offset
     m_highlightedWordInfo.Clear();
     m_highlightedWordInfo.SetFirstOffset(offset);
     m_highlightedWordInfo.SetWord(word);
-    HighlightWord(j.GetOutput());
+    HighlightWord(output);
 }
 
 void clEditor::HighlightWord(bool highlight)

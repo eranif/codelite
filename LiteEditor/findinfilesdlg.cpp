@@ -74,12 +74,18 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
 {
     // Load the find-in-files data
     SessionManager::Get().LoadFindInFilesSession(&m_data);
-    auto lex = ColoursAndFontsManager::Get().GetLexer("text");
-    lex->ApplyFont(m_findString);
-    lex->ApplyFont(m_replaceString);
-    lex->ApplyFont(m_fileTypes);
-    lex->ApplyFont(m_comboBoxEncoding);
-    lex->ApplyFont(m_comboBoxWhere);
+
+#ifdef __WXMSW__
+    auto font = ColoursAndFontsManager::Get().GetLexer("text")->GetFontForStyle(0, nullptr);
+    font.SetFractionalPointSize(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize() +
+                                wxTheApp->GetTopWindow()->FromDIP(2));
+
+    m_findString->SetFont(font);
+    m_replaceString->SetFont(font);
+    m_fileTypes->SetFont(font);
+    m_comboBoxEncoding->SetFont(font);
+    m_comboBoxWhere->SetFont(font);
+#endif
 
     // "Find"
     UpdateComboBox(m_findString, m_data.find_what_array, m_data.find_what);

@@ -7,7 +7,7 @@
     "m_firstWindowId": 8000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 671,
+    "m_objCounter": 672,
     "m_outputFileName": "wxcrafter",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -923,11 +923,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                          "m_functionNameAndSignature": "OnCheckAll(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnCheckAll(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -1052,11 +1050,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                          "m_functionNameAndSignature": "OnUncheckAll(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnUncheckAll(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -1339,11 +1335,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1596,11 +1590,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_SIZE event",
           "m_eventClass": "wxSizeEvent",
           "m_eventName": "wxEVT_SIZE",
-          "m_functionNameAndSignature": "OnSize(wxSizeEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnSize(wxSizeEvent& event)"
         }
       ],
       "m_children": [
@@ -2083,11 +2075,9 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                                   "m_eventClass": "wxCommandEvent",
                                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                                  "m_functionNameAndSignature": "OnCloseButtonClicked(wxCommandEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnCloseButtonClicked(wxCommandEvent& event)"
                                 }
                               ],
                               "m_children": []
@@ -2423,14 +2413,14 @@
                       "m_events": [],
                       "m_children": [
                         {
-                          "m_type": 4422,
+                          "m_type": 4469,
                           "proportion": 1,
                           "border": 5,
                           "gbSpan": "1,1",
                           "gbPosition": "0,0",
                           "m_styles": [
-                            "wxTR_DEFAULT_STYLE",
-                            "wxBORDER_SIMPLE"
+                            "wxDV_ROW_LINES",
+                            "wxDV_SINGLE"
                           ],
                           "m_sizerFlags": [
                             "wxEXPAND"
@@ -2444,7 +2434,7 @@
                             {
                               "type": "string",
                               "m_label": "Size:",
-                              "m_value": "-1,200"
+                              "m_value": "-1,-1"
                             },
                             {
                               "type": "string",
@@ -2489,17 +2479,17 @@
                             {
                               "type": "bool",
                               "m_label": "Focused",
-                              "m_value": true
+                              "m_value": false
                             },
                             {
                               "type": "string",
                               "m_label": "Class Name:",
-                              "m_value": "clThemedTreeCtrl"
+                              "m_value": ""
                             },
                             {
                               "type": "string",
                               "m_label": "Include File:",
-                              "m_value": "clThemedTreeCtrl.h"
+                              "m_value": ""
                             },
                             {
                               "type": "string",
@@ -2509,11 +2499,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "An item has been activated (e.g. double clicked).",
-                              "m_eventClass": "wxTreeEvent",
-                              "m_eventName": "wxEVT_COMMAND_TREE_ITEM_ACTIVATED",
-                              "m_functionNameAndSignature": "OnWorkspaceActivated(wxTreeEvent& event)",
-                              "m_noBody": false
+                              "m_eventClass": "wxDataViewEvent",
+                              "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+                              "m_functionNameAndSignature": "OnWorkspaceActivated(wxDataViewEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -3596,18 +3584,14 @@
                                       ],
                                       "m_events": [
                                         {
-                                          "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
                                           "m_eventClass": "wxDataViewEvent",
                                           "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
-                                          "m_functionNameAndSignature": "OnPinnedCxxProjectContextMenu(wxDataViewEvent& event)",
-                                          "m_noBody": false
+                                          "m_functionNameAndSignature": "OnPinnedCxxProjectContextMenu(wxDataViewEvent& event)"
                                         },
                                         {
-                                          "m_description": "Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event",
                                           "m_eventClass": "wxDataViewEvent",
                                           "m_eventName": "wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
-                                          "m_functionNameAndSignature": "OnPinnedCxxProjectSelected(wxDataViewEvent& event)",
-                                          "m_noBody": false
+                                          "m_functionNameAndSignature": "OnPinnedCxxProjectSelected(wxDataViewEvent& event)"
                                         }
                                       ],
                                       "m_children": [
@@ -5462,11 +5446,9 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                   "m_eventClass": "wxDataViewEvent",
                   "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
-                  "m_functionNameAndSignature": "OnSelectionActivated(wxDataViewEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnSelectionActivated(wxDataViewEvent& event)"
                 }
               ],
               "m_children": [
@@ -5726,18 +5708,14 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)"
                     },
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnOK(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOK(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []

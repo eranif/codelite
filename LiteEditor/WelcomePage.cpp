@@ -25,6 +25,7 @@
 
 #include "WelcomePage.h"
 
+#include "DataViewTypeHelper.h"
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
@@ -35,6 +36,7 @@
 #include "macros.h"
 #include "manager.h"
 
+#include <algorithm>
 #include <wx/arrstr.h>
 
 wxDEFINE_EVENT(wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, clCommandEvent);
@@ -42,15 +44,45 @@ wxDEFINE_EVENT(wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, clCommandEvent);
 namespace
 {
 
-std::unordered_map<wxString, wxColour> colours;
+// The columns of the workspaces list
+constexpr unsigned kColName = 0;
+constexpr unsigned kColAccount = 1;
+constexpr unsigned kColType = 2;
+constexpr unsigned kColPath = 3;
 
-/// Return a random colour for account
-wxColour GetColourForAccount(const wxString& accountName)
+const wxString kLocalHost = "localhost";
+
+/// Symbol shown before the account name: a house for this machine, a network symbol for a remote one
+wxString GetAccountSymbol(bool is_local)
 {
-    if (colours.count(accountName) == 0) {
-        colours.insert({accountName, DrawingUtils::GetRandomColour()});
+    // U+1F3E1 (house with garden) and U+1F5A7 (three networked computers)
+    return is_local ? wxString::FromUTF8("\xF0\x9F\x8F\xA1") : wxString::FromUTF8("\xF0\x9F\x96\xA7");
+}
+
+/// The account name. A workspace without an account is a workspace on this machine
+wxString GetAccountName(const WelcomePageItemData& cd) { return cd.account.empty() ? kLocalHost : cd.account; }
+
+/// The text of the cell of `cd` in column `column`
+wxString GetCellText(const WelcomePageItemData& cd, unsigned column)
+{
+    switch (column) {
+    case kColName:
+        return cd.name;
+    case kColAccount:
+        return GetAccountSymbol(cd.account.empty()) + " " + GetAccountName(cd);
+    case kColType:
+        return cd.workspace_type;
+    case kColPath:
+        return cd.path;
+    default:
+        return wxEmptyString;
     }
-    return colours.find(accountName)->second;
+}
+
+/// The text to sort by. Same as the cell text, but without the account symbol
+wxString GetSortKey(const WelcomePageItemData& cd, unsigned column)
+{
+    return column == kColAccount ? GetAccountName(cd) : GetCellText(cd, column);
 }
 
 } // namespace
@@ -58,26 +90,31 @@ wxColour GetColourForAccount(const wxString& accountName)
 WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
 {
+    ::AdjustDataViewAlternateColour(m_dvTreeCtrlWorkspaces);
     GetSizer()->Fit(this);
     EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, &WelcomePage::OnThemeChanged, this);
 
     m_closeButton->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("file_close", 24));
-    m_dvTreeCtrlWorkspaces->AddHeader(_("Name"));
-    m_dvTreeCtrlWorkspaces->AddHeader(_("Account"));
-    m_dvTreeCtrlWorkspaces->AddHeader(_("Type"));
-    m_dvTreeCtrlWorkspaces->AddHeader(_("Path"));
 
-    m_dvTreeCtrlWorkspaces->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    // Add the columns only if the base class did not create them
+    if (m_dvTreeCtrlWorkspaces->GetColumnCount() == 0) {
+        m_dvTreeCtrlWorkspaces->AppendIconTextColumn(
+            _("Name"), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+        m_dvTreeCtrlWorkspaces->AppendTextColumn(
+            _("Account"), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+        m_dvTreeCtrlWorkspaces->AppendTextColumn(
+            _("Type"), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+        m_dvTreeCtrlWorkspaces->AppendTextColumn(
+            _("Path"), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    }
 
-    long curstyle = m_dvTreeCtrlWorkspaces->GetTreeStyle();
-    curstyle |= wxTR_HIDE_ROOT;
-    curstyle &= ~wxTR_FULL_ROW_HIGHLIGHT;
-
-    m_dvTreeCtrlWorkspaces->SetTreeStyle(curstyle);
-    m_dvTreeCtrlWorkspaces->SetShowHeader(false);
-    m_dvTreeCtrlWorkspaces->AddRoot(_("Workspaces"));
-
-    m_dvTreeCtrlWorkspaces->SetSortFunction(nullptr);
+    // All the columns can be sorted by clicking their header. The sorting is done by us (see OnColumnHeaderClick), as
+    // the default sorting of the control cannot compare the "Name" column (icon + text)
+    for (unsigned i = 0; i < m_dvTreeCtrlWorkspaces->GetColumnCount(); ++i) {
+        m_dvTreeCtrlWorkspaces->GetColumn(i)->SetSortable(true);
+    }
+    m_dvTreeCtrlWorkspaces->Bind(wxEVT_DATAVIEW_COLUMN_HEADER_CLICK, &WelcomePage::OnColumnHeaderClick, this);
+    m_typeHelper = std::make_unique<DataViewTypeHelper>(m_dvTreeCtrlWorkspaces);
 
     // create the buttons
     m_buttonOpenWorkspace = new wxCommandLinkButton(m_buttonsPage,
@@ -116,13 +153,10 @@ WelcomePage::WelcomePage(wxWindow* parent)
 #endif
     GetSizer()->Layout();
     // set the focus to the tree
-    m_dvTreeCtrlWorkspaces->CallAfter(&clTreeCtrl::SetFocus);
+    m_dvTreeCtrlWorkspaces->CallAfter(&wxWindow::SetFocus);
 }
 
-WelcomePage::~WelcomePage()
-{
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &WelcomePage::OnThemeChanged, this);
-}
+WelcomePage::~WelcomePage() { EventNotifier::Get()->Unbind(wxEVT_BITMAPS_UPDATED, &WelcomePage::OnThemeChanged, this); }
 
 void WelcomePage::OnSize(wxSizeEvent& event) { event.Skip(); }
 
@@ -133,8 +167,8 @@ void WelcomePage::OnThemeChanged(clCommandEvent& e)
 #ifndef __WXMAC__
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     GetMainPanel()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    GetDvTreeCtrlWorkspaces()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    GetDvTreeCtrlWorkspaces()->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    // The icons are part of the rows, reload them
+    UpdateRecentWorkspaces();
     Refresh();
 #endif
 }
@@ -158,8 +192,7 @@ void WelcomePage::OnOpenWorkspace(wxCommandEvent& event)
 
 void WelcomePage::UpdateRecentWorkspaces()
 {
-    m_dvTreeCtrlWorkspaces->Begin();
-    m_dvTreeCtrlWorkspaces->DeleteChildren(m_dvTreeCtrlWorkspaces->GetRootItem());
+    m_items.clear();
 
     // get the recently opened workspaces (local)
     wxArrayString files;
@@ -169,15 +202,7 @@ void WelcomePage::UpdateRecentWorkspaces()
     clRecentWorkspaceEvent other_workspaces_event{wxEVT_RECENT_WORKSPACE};
     EventNotifier::Get()->ProcessEvent(other_workspaces_event);
 
-    wxColour local_workspace_colour{"GOLD"};
-    wxColour remote_workspace_colour{"CYAN"};
-
-    // TODO: fire event here to collect other workspaces as well
-    auto locals = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(), _("Local workspaces"));
-    int image_index = wxNOT_FOUND;
-
     for (const wxString& filepath : files) {
-
         wxFileName fn{filepath};
         if (!fn.FileExists()) {
             // exclude non existing files
@@ -186,7 +211,7 @@ void WelcomePage::UpdateRecentWorkspaces()
 
         wxString workspace_type;
         auto type = FileExtManager::GetType(fn.GetFullPath());
-        image_index = clGetManager()->GetStdIcons()->GetMimeImageId(type);
+        int image_index = clGetManager()->GetStdIcons()->GetMimeImageId(type);
         switch (type) {
         case FileExtManager::TypeWorkspaceFileSystem:
             workspace_type = _("File System");
@@ -206,63 +231,100 @@ void WelcomePage::UpdateRecentWorkspaces()
             break;
         }
 
-        auto cd = new WelcomePageItemData();
-        cd->type = WorkspaceSource::BUILTIN;
-        cd->path = fn.GetFullPath();
-
-        auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(locals, fn.GetName(), image_index, image_index, cd);
-        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, "localhost", 1);
-        m_dvTreeCtrlWorkspaces->SetItemTextColour(workspaceItem, GetColourForAccount("localhost"), 1);
-
-        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, workspace_type, 2);
-        m_dvTreeCtrlWorkspaces->SetItemTextColour(workspaceItem, clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 2);
-        m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, filepath, 3);
+        WelcomePageItemData cd;
+        cd.type = WorkspaceSource::BUILTIN;
+        cd.path = fn.GetFullPath();
+        cd.name = fn.GetName();
+        cd.workspace_type = workspace_type;
+        cd.image_index = image_index;
+        m_items.push_back(cd);
     }
-    m_dvTreeCtrlWorkspaces->Expand(locals);
 
     // Add the plugin base workspaces
-    auto other_workspaces = other_workspaces_event.GetWorkspaces();
-    std::unordered_map<wxString, std::vector<RecentWorkspace>> M;
-    for (const auto& e : other_workspaces) {
-        if (M.count(e.m_category) == 0) {
-            M.insert({e.m_category, {}});
-        }
-        M[e.m_category].push_back(e);
+    const int plugin_image_index =
+        clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeWorkspaceFileSystem);
+    for (const auto& w : other_workspaces_event.GetWorkspaces()) {
+        WelcomePageItemData cd;
+        cd.type = WorkspaceSource::PLUGIN;
+        cd.path = w.path;
+        cd.account = w.m_account;
+
+        cd.name = cd.path;
+        cd.name.Replace("\\", "/");
+        cd.name = cd.name.AfterLast('/');
+        cd.name = cd.name.BeforeLast('.');
+        cd.workspace_type = w.m_category;
+        cd.image_index = plugin_image_index;
+        m_items.push_back(cd);
     }
-
-    image_index = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeWorkspaceFileSystem);
-    for (const auto& [category, entries] : M) {
-        auto parent_item = m_dvTreeCtrlWorkspaces->AppendItem(m_dvTreeCtrlWorkspaces->GetRootItem(), category);
-        for (const auto& w : entries) {
-            auto cd = new WelcomePageItemData();
-            cd->path = w.path;
-            cd->account = w.m_account;
-            cd->type = WorkspaceSource::PLUGIN;
-
-            wxString name = cd->path;
-            name.Replace("\\", "/");
-            name = name.AfterLast('/');
-            name = name.BeforeLast('.');
-
-            if (colours.count(cd->account) == 0) {
-                colours.insert({cd->account, DrawingUtils::GetRandomColour()});
-            }
-
-            auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(parent_item, name, image_index, image_index, cd);
-            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, cd->account, 1);
-            m_dvTreeCtrlWorkspaces->SetItemTextColour(workspaceItem, GetColourForAccount(cd->account), 1);
-
-            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, _("Other"), 2);
-            m_dvTreeCtrlWorkspaces->SetItemTextColour(
-                workspaceItem, clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 2);
-            m_dvTreeCtrlWorkspaces->SetItemText(workspaceItem, w.path, 3);
-        }
-        m_dvTreeCtrlWorkspaces->Expand(parent_item);
-    }
-    m_dvTreeCtrlWorkspaces->Commit();
+    PopulateList();
 }
 
-void WelcomePage::OnWorkspaceActivated(wxTreeEvent& event)
+void WelcomePage::PopulateList()
+{
+    // Sort the items. The rows keep the index of their data in `m_items`, so sort before adding them
+    if (m_sortColumn != wxNOT_FOUND) {
+        const unsigned column = static_cast<unsigned>(m_sortColumn);
+        const bool ascending = m_sortAscending;
+        std::stable_sort(m_items.begin(),
+                         m_items.end(),
+                         [column, ascending](const WelcomePageItemData& a, const WelcomePageItemData& b) {
+                             const int res = GetSortKey(a, column).CmpNoCase(GetSortKey(b, column));
+                             return ascending ? res < 0 : res > 0;
+                         });
+    }
+
+    m_dvTreeCtrlWorkspaces->Freeze();
+    m_dvTreeCtrlWorkspaces->DeleteAllItems();
+
+    const auto* bitmaps = clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr();
+    for (size_t i = 0; i < m_items.size(); ++i) {
+        const WelcomePageItemData& cd = m_items[i];
+
+        // Build the "Name" cell: icon + text
+        wxIcon icon;
+        if (bitmaps != nullptr && cd.image_index >= 0 && static_cast<size_t>(cd.image_index) < bitmaps->size()) {
+            icon.CopyFromBitmap(bitmaps->at(cd.image_index));
+        }
+        wxVariant name_cell;
+        name_cell << wxDataViewIconText(cd.name, icon);
+
+        wxVector<wxVariant> cols;
+        cols.resize(kColPath + 1);
+        cols[kColName] = name_cell;
+        cols[kColAccount] = wxVariant(GetCellText(cd, kColAccount));
+        cols[kColType] = wxVariant(cd.workspace_type);
+        cols[kColPath] = wxVariant(cd.path);
+        m_dvTreeCtrlWorkspaces->AppendItem(cols, static_cast<wxUIntPtr>(i));
+    }
+    m_dvTreeCtrlWorkspaces->Thaw();
+}
+
+void WelcomePage::OnColumnHeaderClick(wxDataViewEvent& event)
+{
+    // Do not call event.Skip(): we handle the sorting
+    const int column = event.GetColumn();
+    if (column < 0 || static_cast<unsigned>(column) >= m_dvTreeCtrlWorkspaces->GetColumnCount()) {
+        return;
+    }
+
+    // Clicking the current sort column toggles the order, any other column is sorted in ascending order
+    m_sortAscending = (column == m_sortColumn) ? !m_sortAscending : true;
+    m_sortColumn = column;
+
+    // Show the sort indicator on the column
+    for (unsigned i = 0; i < m_dvTreeCtrlWorkspaces->GetColumnCount(); ++i) {
+        auto* col = m_dvTreeCtrlWorkspaces->GetColumn(i);
+        if (static_cast<int>(i) == m_sortColumn) {
+            col->SetSortOrder(m_sortAscending);
+        } else {
+            col->UnsetAsSortKey();
+        }
+    }
+    PopulateList();
+}
+
+void WelcomePage::OnWorkspaceActivated(wxDataViewEvent& event)
 {
     event.Skip();
     auto cd = GetWorkspaceItemData(event.GetItem());
@@ -278,17 +340,17 @@ void WelcomePage::OnWorkspaceActivated(wxTreeEvent& event)
     }
 }
 
-WelcomePageItemData* WelcomePage::GetWorkspaceItemData(const wxTreeItemId& item)
+const WelcomePageItemData* WelcomePage::GetWorkspaceItemData(const wxDataViewItem& item) const
 {
-    CHECK_ITEM_RET_NULL(item);
+    CHECK_COND_RET_NULL(item.IsOk());
 
-    auto cd = m_dvTreeCtrlWorkspaces->GetItemData(item);
-    CHECK_PTR_RET_NULL(cd);
-
-    return dynamic_cast<WelcomePageItemData*>(cd);
+    // The row index in m_items is kept as the item data
+    const size_t index = static_cast<size_t>(m_dvTreeCtrlWorkspaces->GetItemData(item));
+    CHECK_COND_RET_NULL(index < m_items.size());
+    return &m_items[index];
 }
 
-void WelcomePage::OpenBuiltinWorkspace(WelcomePageItemData* cd)
+void WelcomePage::OpenBuiltinWorkspace(const WelcomePageItemData* cd)
 {
     // post an event to the main frame requesting a workspace open
     wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("switch_to_workspace"));
@@ -297,7 +359,7 @@ void WelcomePage::OpenBuiltinWorkspace(WelcomePageItemData* cd)
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
 }
 
-void WelcomePage::OpenPluginWorkspace(WelcomePageItemData* cd)
+void WelcomePage::OpenPluginWorkspace(const WelcomePageItemData* cd)
 {
     clWorkspaceEvent open_event{wxEVT_WORKSPACE_PLUGIN_OPEN};
     open_event.SetIsRemote(!cd->account.empty());

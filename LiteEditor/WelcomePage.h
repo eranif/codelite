@@ -29,19 +29,24 @@
 #include "wxcrafter.hpp"
 
 #include <map>
+#include <memory>
+#include <vector>
 #include <wx/commandlinkbutton.h>
+
+class DataViewTypeHelper;
 
 enum class WorkspaceSource {
     BUILTIN,
     PLUGIN,
 };
 
-struct WelcomePageItemData : public wxTreeItemData {
+struct WelcomePageItemData {
     WorkspaceSource type = WorkspaceSource::BUILTIN;
     wxString path;
     wxString account; // for remote workspaces
-    WelcomePageItemData() = default;
-    ~WelcomePageItemData() override = default;
+    wxString name;
+    wxString workspace_type;
+    int image_index = wxNOT_FOUND;
 };
 
 class WelcomePage : public WelcomePageBase
@@ -60,11 +65,14 @@ protected:
     void OnOpenWorkspace(wxCommandEvent& event);
     void OnGitHub(wxCommandEvent& event);
     void OnGitter(wxCommandEvent& event);
-    void OnWorkspaceActivated(wxTreeEvent& event) override;
+    void OnWorkspaceActivated(wxDataViewEvent& event) override;
     void UpdateRecentWorkspaces();
-    WelcomePageItemData* GetWorkspaceItemData(const wxTreeItemId& item);
-    void OpenBuiltinWorkspace(WelcomePageItemData* cd);
-    void OpenPluginWorkspace(WelcomePageItemData* cd);
+    /// Sort `m_items` by the current sort column and fill the list. Each row keeps the index of its data in `m_items`
+    void PopulateList();
+    void OnColumnHeaderClick(wxDataViewEvent& event);
+    const WelcomePageItemData* GetWorkspaceItemData(const wxDataViewItem& item) const;
+    void OpenBuiltinWorkspace(const WelcomePageItemData* cd);
+    void OpenPluginWorkspace(const WelcomePageItemData* cd);
     void DoSomethingSomething();
     void OnSize(wxSizeEvent& event) override;
     void OnThemeChanged(clCommandEvent& e);
@@ -73,6 +81,10 @@ protected:
     wxCommandLinkButton* m_buttonNewWorkspace{nullptr};
     wxCommandLinkButton* m_buttonOpenWorkspace{nullptr};
     wxCommandLinkButton* m_buttonGitter{nullptr};
+    std::vector<WelcomePageItemData> m_items;
+    int m_sortColumn = wxNOT_FOUND; // wxNOT_FOUND: keep the original order
+    bool m_sortAscending = true;
+    std::unique_ptr<DataViewTypeHelper> m_typeHelper;
 };
 
 wxDECLARE_EVENT(wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, clCommandEvent);

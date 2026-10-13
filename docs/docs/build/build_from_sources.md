@@ -33,12 +33,13 @@ git submodule update --init --recursive
 
 ## Linux
 ----
-- To build CodeLite on your computer you will first need to install wXWidget 3.1+ (sudo apt install libwxgtk3.2-dev libgtk-3-dev) or [Build wxWidgets from sources][6]
-- Install `libssh-dev` and `libsqlite3-dev` packages (or similar, depending on your distro). On **Ubuntu / Debian**, you can use this command:
+- You do not need to install wxWidgets: `build.sh` builds it inside the build folder (`.build-release/wxWidgets-install`). It needs the GTK 3 development package (`libgtk-3-dev` on Ubuntu / Debian).
+- Install the build tools and the libraries (the package names depend on your distro). On **Ubuntu / Debian**, you can use this command:
 
 ```bash
 sudo apt install build-essential            \
                  git cmake                  \
+                 libgtk-3-dev               \
                  libssh-dev libsqlite3-dev  \
                  libmariadb-dev             \
                  libpq-dev                  \
@@ -58,6 +59,15 @@ git clone https://github.com/eranif/codelite.git
 cd codelite
 git submodule update --init --recursive
 ./build.sh
+```
+
+!!! Note
+    The first build is slow, because it also builds wxWidgets. The next builds reuse it.
+
+- To run the new CodeLite:
+
+```bash
+.build-release/bin/codelite
 ```
 
 - To uninstall CodeLite:

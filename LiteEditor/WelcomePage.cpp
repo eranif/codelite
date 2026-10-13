@@ -55,8 +55,8 @@ const wxString kLocalHost = "localhost";
 /// Symbol shown before the account name: a house for this machine, a network symbol for a remote one
 wxString GetAccountSymbol(bool is_local)
 {
-    // U+1F3E1 (house with garden) and U+1F5A7 (three networked computers)
-    return is_local ? wxString::FromUTF8("\xF0\x9F\x8F\xA1") : wxString::FromUTF8("\xF0\x9F\x96\xA7");
+    // U+1F3E1 (house with garden) and U+1F310 (globe with meridians)
+    return is_local ? wxT("🏡") : wxT("🌐");
 }
 
 /// The account name. A workspace without an account is a workspace on this machine

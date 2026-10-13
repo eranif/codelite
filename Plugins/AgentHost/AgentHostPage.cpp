@@ -17,6 +17,7 @@
 #include "clSFTPManager.hpp"
 #endif
 
+#include <vector>
 #include <wx/sizer.h>
 #include <wx/xrc/xmlres.h>
 
@@ -27,6 +28,45 @@ const wxString kShellCommand = "CMD";
 #else
 const wxString kShellCommand = "/bin/bash --login -i";
 #endif
+
+/// The modifiers of `event`, as the flags of a wxAcceleratorEntry
+int GetAcceleratorFlags(const wxKeyEvent& event)
+{
+    int flags = wxACCEL_NORMAL;
+    if (event.AltDown()) {
+        flags |= wxACCEL_ALT;
+    }
+    if (event.ShiftDown()) {
+        flags |= wxACCEL_SHIFT;
+    }
+    // On macOS these are two different keys (Cmd and Ctrl), elsewhere they are the same
+    if (event.ControlDown()) {
+        flags |= wxACCEL_CTRL;
+    }
+    if (event.RawControlDown()) {
+        flags |= wxACCEL_RAW_CTRL;
+    }
+    return flags;
+}
+
+/// Is `shortcut` the key combination of `event`?
+bool IsShortcutPressed(const clKeyboardShortcut& shortcut, const wxKeyEvent& event)
+{
+    if (!shortcut.IsOk()) {
+        return false;
+    }
+    auto accel = shortcut.ToAccelerator(wxEmptyString);
+    if (!accel) {
+        return false;
+    }
+
+    // The key code of a letter in an accelerator is always upper case
+    int key_code = event.GetKeyCode();
+    if (key_code >= 'a' && key_code <= 'z') {
+        key_code = key_code - 'a' + 'A';
+    }
+    return accel->GetFlags() == GetAcceleratorFlags(event) && accel->GetKeyCode() == key_code;
+}
 } // namespace
 
 #define CHECK_CAN_HANDLE_EVENT(event)           \
@@ -60,6 +100,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_BELL, &AgentHostPage::OnTerminalBell, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &AgentHostPage::OnKeyboardShortcutsUpdated, this);
     if (auto frame = EventNotifier::Get()->TopFrame()) {
         frame->Bind(wxEVT_MENU, &AgentHostPage::OnGrepWorkspace, this, XRCID("grep_current_workspace"));
         frame->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnGrepWorkspaceUI, this, XRCID("grep_current_workspace"));
@@ -77,6 +118,7 @@ AgentHostPage::~AgentHostPage()
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
 #endif
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &AgentHostPage::OnKeyboardShortcutsUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
@@ -86,6 +128,48 @@ AgentHostPage::~AgentHostPage()
         frame->Unbind(wxEVT_UPDATE_UI, &AgentHostPage::OnGrepWorkspaceUI, this, XRCID("grep_current_workspace"));
         frame->Unbind(wxEVT_MENU, &AgentHostPage::OnShowTerminal, this, XRCID("show_terminal_pane"));
     }
+}
+
+/// The actions of the main frame that can be triggered while a terminal has the focus. The terminal does not let the
+/// frame see its keys, so it asks us first (see AgentHostPage::HandleTerminalShortcut). The shortcut of each action is
+/// the one configured by the user, we only list the actions (their command IDs) here.
+/// Do not add actions whose shortcut is needed by the shell or by the agent (Ctrl-C, Ctrl-A, Ctrl-W, ...)
+const std::vector<AgentHostPage::FrameAction>& AgentHostPage::GetFrameActions()
+{
+    // Built on first use
+    if (!m_actions.has_value()) {
+        const std::vector<int> candidates = {
+            XRCID("show_terminal_pane"),
+            XRCID("build_active_project"),
+            XRCID("output_pane"),
+            XRCID("workspace_pane"),
+            XRCID("debugger_pane"),
+            XRCID("toggle_panes"),
+            XRCID("distraction_free_mode"),
+            XRCID("full_screen"),
+            XRCID("next_tab"),
+            XRCID("prev_tab"),
+            XRCID("find_in_files"),
+            XRCID("find_resource"),
+            XRCID("find_symbol"),
+            XRCID("ID_GOTO_ANYTHING"),
+            XRCID("grep_current_workspace"),
+            wxID_ZOOM_IN,
+            wxID_ZOOM_OUT,
+            wxID_ZOOM_FIT,
+        };
+
+        // build the table
+        std::vector<AgentHostPage::FrameAction> table;
+        for (auto action : candidates) {
+            auto keyboardShortcut = clKeyboardManager::Get()->GetShortcutForCommand(action);
+            if (keyboardShortcut.IsOk()) {
+                table.push_back({action, keyboardShortcut});
+            }
+        }
+        m_actions = std::move(table);
+    }
+    return m_actions.value();
 }
 
 void AgentHostPage::OnThemeChanged(clCommandEvent& event)
@@ -382,7 +466,36 @@ void AgentHostPage::RestartAgentHost()
     GetSizer()->Layout();
     // Hook a custom context menu
     m_terminal->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
+    InstallKeyEventFilter(m_terminal);
     m_terminal->SendCommand(command_to_run);
+}
+
+void AgentHostPage::InstallKeyEventFilter(wxTerminalViewCtrl* terminal)
+{
+    CHECK_PTR_RET(terminal);
+    terminal->RegisterKeyEventFilter([this](const wxKeyEvent& event) { return HandleTerminalShortcut(event); });
+}
+
+bool AgentHostPage::HandleTerminalShortcut(const wxKeyEvent& event)
+{
+    auto* frame = EventNotifier::Get()->TopFrame();
+    if (frame == nullptr) {
+        return false;
+    }
+
+    for (const auto& [action, keyboard_shortcut] : GetFrameActions()) {
+        // The table is rebuilt when the user changes the shortcuts (see OnKeyboardShortcutsUpdated)
+        if (!IsShortcutPressed(keyboard_shortcut, event)) {
+            continue;
+        }
+
+        // Let the frame handle it, as if the user selected the menu item
+        wxCommandEvent menu_event{wxEVT_MENU, action};
+        menu_event.SetEventObject(frame);
+        frame->GetEventHandler()->AddPendingEvent(menu_event);
+        return true; // consumed: the terminal must not see this key
+    }
+    return false;
 }
 
 wxString AgentHostPage::GetSelectedLine(wxTerminalViewCtrl* terminal) const
@@ -605,6 +718,7 @@ wxTerminalViewCtrl* AgentHostPage::StartReviewer(AgentType reviewer, const wxStr
         return nullptr;
     }
     m_reviewTerminal->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
+    InstallKeyEventFilter(m_reviewTerminal);
     m_reviewTerminal->SendCommand(command);
 
     m_splitter->SplitVertically(m_terminal, m_reviewTerminal);
@@ -676,4 +790,11 @@ void AgentHostPage::FocusTerminal(wxTerminalViewCtrl* terminal)
     if (terminal != nullptr && wxTheApp->IsActive() && IsShownOnScreen()) {
         terminal->SetFocus();
     }
+}
+
+void AgentHostPage::OnKeyboardShortcutsUpdated(clCommandEvent& event)
+{
+    event.Skip();
+    // Need to rebuild the table
+    m_actions.reset();
 }

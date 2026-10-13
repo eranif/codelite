@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AgentHostUI.hpp"
+#include "Keyboard/clKeyboardManager.h"
 #include "cl_command_event.h"
 #include "ssh_account_info.h"
 
@@ -55,6 +56,18 @@ protected:
     void OnTerminalTerminated(clCommandEvent& event);
     void OnTerminalTitleChanged(clCommandEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
+    struct FrameAction {
+        int actionId;
+        clKeyboardShortcut shortcut;
+    };
+    void OnKeyboardShortcutsUpdated(clCommandEvent& event);
+    const std::vector<FrameAction>& GetFrameActions();
+    /// Let the terminal pass its special keys to us before it handles them (see HandleTerminalShortcut)
+    void InstallKeyEventFilter(wxTerminalViewCtrl* terminal);
+    /// Called by a terminal for its special keys (function keys, Ctrl-<key>, ...). If the key is the shortcut of one
+    /// of the frame's actions (for example F6: "show_terminal_pane"), fire the action and return true, so the
+    /// terminal ignores the key. Otherwise return false.
+    bool HandleTerminalShortcut(const wxKeyEvent& event);
     /// Open `text` as a URL, folder, file or symbol (same as clicking a link in the terminal)
     void OpenText(const wxString& text);
     void RestartAgentHost();
@@ -94,4 +107,5 @@ private:
     // The result of the last "is this a git repository?" check of a remote working directory (cached, it is slow)
     bool m_hasGit{false};
     std::optional<std::chrono::steady_clock::time_point> m_lastGitCheck;
+    std::optional<std::vector<FrameAction>> m_actions{std::nullopt};
 };

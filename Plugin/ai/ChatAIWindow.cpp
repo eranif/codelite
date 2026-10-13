@@ -671,22 +671,22 @@ void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
             switch (event.GetOutputReason().value()) {
             case assistant::Reason::kToolDenied:
                 content.Trim().Trim(false).Append("\n");
-                AppendTextWithLF(IconType_ToString(IconType::kError) + " " + content);
+                AppendTextWithLF(GetUnicodeSymbol(IconType::kError) + " " + content);
                 reported = true;
                 break;
             case assistant::Reason::kToolAllowed:
                 content.Trim().Trim(false).Append("\n");
-                AppendTextWithLF(IconType_ToString(IconType::kSuccess) + " " + content);
+                AppendTextWithLF(GetUnicodeSymbol(IconType::kSuccess) + " " + content);
                 reported = true;
                 break;
             case assistant::Reason::kServerCompaction:
                 content.Trim().Trim(false).Append("\n");
-                AppendTextWithLF(IconType_ToString(IconType::kInfo) + " " + content);
+                AppendTextWithLF(GetUnicodeSymbol(IconType::kInfo) + " " + content);
                 reported = true;
                 break;
             case assistant::Reason::kRetry:
                 content.Trim().Trim(false).Append("\n");
-                AppendTextWithLF(IconType_ToString(IconType::kWarning) + " " + content);
+                AppendTextWithLF(GetUnicodeSymbol(IconType::kWarning) + " " + content);
                 reported = true;
                 break;
             default:
@@ -1077,8 +1077,8 @@ void AppendCompactedNotice(ChatAIWindow* window, const wxString& reason, size_t 
 {
     wxString notice;
     notice << "\n"
-           << IconType_ToString(IconType::kInfo) << " **Context history " << reason << " compacted** (freed ~"
-           << trimmed << " tokens)\n\n";
+           << GetUnicodeSymbol(IconType::kInfo) << " **Context history " << reason << " compacted** (freed ~" << trimmed
+           << " tokens)\n\n";
     window->AppendTextWithLF(notice);
 }
 } // namespace

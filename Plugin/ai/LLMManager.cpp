@@ -1637,7 +1637,7 @@ Manager::PromptFuture Manager::PromptUser(const wxString& msg, IconType icon)
 
     auto cb = [msg, icon, this]() -> Manager::PromptFuture {
         auto chat_win = GetChatWindow(false);
-        wxString symbol = IconType_ToString(icon);
+        wxString symbol = GetUnicodeSymbol(icon);
         if (!symbol.empty()) {
             symbol << " ";
         }
@@ -1668,7 +1668,7 @@ void Manager::PrintMessage(const wxString& msg, IconType icon)
 
     auto cb = [msg, icon, this]() {
         auto chat_win = GetChatWindow(false);
-        wxString symbol = IconType_ToString(icon) + " ";
+        wxString symbol = GetUnicodeSymbol(icon) + " ";
 
         wxString current_text = chat_win->GetText();
         wxString message_to_add;

@@ -3,7 +3,6 @@
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
-#include "Debugger/debuggermanager.h"
 #include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "JSON.h"
@@ -14,6 +13,7 @@
 #include "RemotyWorkspaceView.hpp"
 #include "SFTPClientData.hpp"
 #include "StringUtils.h"
+#include "UnicodeSymbols.hpp"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
@@ -1210,22 +1210,14 @@ void RemotyWorkspace::OnSftpSaveError(clCommandEvent& event)
     }
 }
 
-namespace
-{
-#ifdef __WXMSW__
-const wxString NETWORK_SYMBOL = wxT("🖧 ");
-#else
-const wxString NETWORK_SYMBOL = wxT("🖥 ");
-#endif
-} // namespace
-
 void RemotyWorkspace::OnFrameTitle(clCommandEvent& event)
 {
     event.Skip();
     if (IsOpened()) {
         wxString current_title = event.GetString();
         wxString new_title;
-        new_title << current_title << " (" << NETWORK_SYMBOL << GetAccount().GetAccountName() << ")";
+        new_title << current_title << " (" << GetUnicodeSymbol(IconType::kNetwork) << GetAccount().GetAccountName()
+                  << ")";
         event.SetString(new_title);
     }
 }

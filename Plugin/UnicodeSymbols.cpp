@@ -1,6 +1,6 @@
 #include "UnicodeSymbols.hpp"
 
-wxString IconType_ToString(IconType type)
+wxString GetUnicodeSymbol(IconType type)
 {
     wxString symbol;
     switch (type) {
@@ -21,6 +21,12 @@ wxString IconType_ToString(IconType type)
         break;
     case IconType::kNoIcon:
         symbol = "";
+        break;
+    case IconType::kHouse:
+        symbol = wxT("🏡");
+        break;
+    case IconType::kNetwork:
+        symbol = wxT("🌐");
         break;
     }
     return symbol;

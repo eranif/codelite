@@ -10,6 +10,8 @@ enum class IconType {
     kError,
     kWarning,
     kSuccess,
+    kHouse,
+    kNetwork,
 };
 
-WXDLLIMPEXP_SDK wxString IconType_ToString(IconType type);
+WXDLLIMPEXP_SDK wxString GetUnicodeSymbol(IconType type);

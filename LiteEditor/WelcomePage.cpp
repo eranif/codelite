@@ -26,6 +26,7 @@
 #include "WelcomePage.h"
 
 #include "DataViewTypeHelper.h"
+#include "UnicodeSymbols.hpp"
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
@@ -49,15 +50,10 @@ constexpr unsigned kColName = 0;
 constexpr unsigned kColAccount = 1;
 constexpr unsigned kColType = 2;
 constexpr unsigned kColPath = 3;
-
 const wxString kLocalHost = "localhost";
 
 /// Symbol shown before the account name: a house for this machine, a network symbol for a remote one
-wxString GetAccountSymbol(bool is_local)
-{
-    // U+1F3E1 (house with garden) and U+1F310 (globe with meridians)
-    return is_local ? wxT("🏡") : wxT("🌐");
-}
+wxString GetAccountSymbol(bool is_local) { return GetUnicodeSymbol(is_local ? IconType::kHouse : IconType::kNetwork); }
 
 /// The account name. A workspace without an account is a workspace on this machine
 wxString GetAccountName(const WelcomePageItemData& cd) { return cd.account.empty() ? kLocalHost : cd.account; }

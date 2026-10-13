@@ -45,7 +45,7 @@ graph TB
 - `wxcrafter/`: wxCrafter shared libraries (`wxCrafterCommon`, `wxcgen`) and the standalone wxCrafter app; the IDE plug-in is `Plugins/wxCrafter/`.
 - Helper executables: `codelite_make/`, `codelite_makedir/`, `codelite_echo/`, `le_exec/`, `codelite-generate-themes/`.
 - Tests: `Tests/`.
-- Packaging/build helpers: `cmake/`, `scripts/`, `InnoSetup/`, `tools/macOS/`, `build.sh`, `BuildInfo.txt`.
+- Packaging/build helpers: `cmake/`, `scripts/`, `InnoSetup/`, `tools/macOS/`, `build.sh`, `BUILDING.md`.
 - Documentation and metadata: `docs/`, `README.md`, `TODO.md`, `AUTHORS`, `COPYING`, `LICENSE*`.
 - External dependencies: `submodules/` and assorted bundled components like `libssh`, `yaml-cpp`, `zlib`, `lua`, `lexilla`, `wxTerminalEmulator`.
 

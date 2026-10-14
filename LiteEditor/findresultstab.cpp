@@ -63,7 +63,7 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
 {
     // A line that describes the search (and, when it ends, its summary), below the toolbar
     m_statusLine = new FindResultsStatusLine(this);
-    m_vSizer->Insert(1, m_statusLine, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP | wxBOTTOM, 3);
+    m_vSizer->Insert(1, m_statusLine, 0, wxEXPAND, 0);
     m_statusLine->ApplyTheme(m_sci->StyleGetFont(0));
 
     // The width of the horizontal scrollbar is calculated once, when the search ends (see OnSearchEnded). Do not

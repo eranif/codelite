@@ -3,6 +3,7 @@
 #include "UnicodeSymbols.hpp"
 #include "drawingutils.h"
 
+#include <wx/dcbuffer.h>
 #include <wx/dcclient.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
@@ -25,18 +26,22 @@ wxString FormatSearchOptions(const SearchData& data)
 }
 } // namespace
 
+#ifdef __WXMSW__
+constexpr long kBorderStyle = wxFULL_REPAINT_ON_RESIZE | wxBORDER_SIMPLE;
+#else
+constexpr long kBorderStyle = wxFULL_REPAINT_ON_RESIZE | wxBORDER_NONE;
+#endif
+
 FindResultsStatusLine::FindResultsStatusLine(wxWindow* parent)
-    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, kBorderStyle)
 {
     m_label = new wxStaticText(
         this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxST_ELLIPSIZE_END | wxBORDER_NONE);
     m_label->SetMinSize(wxSize(1, wxNOT_FOUND));
 
     auto* sizer = new wxBoxSizer(wxHORIZONTAL);
-    sizer->Add(m_label, 1, wxEXPAND | wxALL, FromDIP(4));
+    sizer->Add(m_label, wxSizerFlags(1).Expand().Border(wxALL, 5));
     SetSizer(sizer);
-
-    Bind(wxEVT_PAINT, &FindResultsStatusLine::OnPaint, this);
 }
 
 void FindResultsStatusLine::SetStatus(const wxString& text, const wxString& tooltip)
@@ -89,10 +94,6 @@ void FindResultsStatusLine::ShowHistory(const SearchData& data, size_t matches)
 
 void FindResultsStatusLine::ApplyTheme(const wxFont& font)
 {
-    const wxColour bg = DrawingUtils::GetOutputPaneBgColour();
-    SetBackgroundColour(bg);
-    m_label->SetBackgroundColour(bg);
-    m_label->SetForegroundColour(DrawingUtils::GetOutputPaneFgColour());
     // The face of the results font, but with the size of the default GUI font (a fractional point size)
     wxFont statusFont = font;
     statusFont.SetFractionalPointSize(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize());
@@ -104,8 +105,8 @@ void FindResultsStatusLine::ApplyTheme(const wxFont& font)
 void FindResultsStatusLine::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
-    wxPaintDC dc(this);
+    wxAutoBufferedPaintDC dc(this);
     dc.SetPen(wxPen(DrawingUtils::GetThemeBorderColour()));
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawRectangle(GetClientSize());
+    dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.DrawRectangle(GetClientRect());
 }

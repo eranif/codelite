@@ -505,12 +505,18 @@ void ReplaceInFilesPanel::OnMouseDClick(wxStyledTextEvent& e)
 void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
 {
     FindResultsTab::SetStyles(sci);
-
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("c++");
     if (!lexer) {
         lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
-    lexer->ApplyFont(m_replaceWith);
+
+#ifdef __WXMSW__
+    auto font = lexer->GetFontForStyle(0, nullptr);
+    font.SetFractionalPointSize(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize() +
+                                wxTheApp->GetTopWindow()->FromDIP(2));
+
+    m_replaceWith->SetFont(font);
+#endif
 
     const StyleProperty& styleProperty = lexer->GetProperty(0);
     wxColour bgColour = styleProperty.GetBgColour();

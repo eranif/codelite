@@ -12,6 +12,8 @@ enum class IconType {
     kSuccess,
     kHouse,
     kNetwork,
+    kSearch,
+    kWarningSign,
 };
 
 WXDLLIMPEXP_SDK wxString GetUnicodeSymbol(IconType type);

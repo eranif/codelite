@@ -46,30 +46,10 @@
 #include "search_thread.h"
 
 #include <algorithm>
-#include <wx/dcclient.h>
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
-
-namespace
-{
-// The symbols of the status line
-wxString SearchIcon() { return wxString::FromUTF8("\xF0\x9F\x94\x8E"); }  // U+1F50E: magnifier
-wxString YesIcon() { return wxString::FromUTF8("\xE2\x9C\x94"); }         // U+2714: check mark
-wxString NoIcon() { return wxString::FromUTF8("\xE2\x9D\x8C"); }          // U+274C: cross mark
-wxString WarningIcon() { return wxString::FromUTF8("\xE2\x9A\xA0"); }     // U+26A0: warning sign
-
-/// The search options, for example: "Regex: <yes>   Match-Case: <no>   Whole-Word: <no>"
-wxString FormatSearchOptions(const SearchData& data)
-{
-    auto mark = [](bool enabled) { return enabled ? YesIcon() : NoIcon(); };
-    return wxString::Format(_("Regex: %s   Match-Case: %s   Whole-Word: %s"),
-                            mark(data.IsRegularExpression()),
-                            mark(data.IsMatchCase()),
-                            mark(data.IsMatchWholeWord()));
-}
-} // namespace
 
 FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name, bool checkable)
     : wxPanel(parent, id)
@@ -101,27 +81,14 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
     m_tb->SetToolDropDown(XRCID("recent_searches"), true);
     m_tb->Realize();
 
-    // A line that describes the search (and, when it ends, its summary). It is inside a panel that draws a border
-    m_statusPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE);
-    m_status = new wxStaticText(
-        m_statusPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxST_ELLIPSIZE_END | wxBORDER_NONE);
-    m_status->SetMinSize(wxSize(1, wxNOT_FOUND));
-    auto* statusSizer = new wxBoxSizer(wxHORIZONTAL);
-    statusSizer->Add(m_status, 1, wxEXPAND | wxALL, FromDIP(4));
-    m_statusPanel->SetSizer(statusSizer);
-    m_statusPanel->Bind(wxEVT_PAINT, [this](wxPaintEvent& event) {
-        wxUnusedVar(event);
-        wxPaintDC dc(m_statusPanel);
-        dc.SetPen(wxPen(DrawingUtils::GetThemeBorderColour()));
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.DrawRectangle(m_statusPanel->GetClientSize());
-    });
+    // A line that describes the search (and, when it ends, its summary)
+    m_statusLine = new FindResultsStatusLine(this);
 
     m_view = new FindResultsView(this, checkable);
 
     m_vSizer->Add(m_tb, 0, wxEXPAND);
     m_vSizer->Add(m_view, 1, wxEXPAND);
-    m_vSizer->Add(m_statusPanel, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP | wxBOTTOM, 3);
+    m_vSizer->Add(m_statusLine, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP | wxBOTTOM, 3);
     m_vSizer->Layout();
 
     BindSearchEvents(this);
@@ -188,19 +155,9 @@ void FindResultsTab::ApplyTheme()
     m_view->ApplyTheme();
 
     // The status line uses the system colours (not the lexer ones), with the font of the results
-    const wxColour bg = DrawingUtils::GetOutputPaneBgColour();
-    SetBackgroundColour(bg);
-    m_statusPanel->SetBackgroundColour(bg);
-    m_status->SetBackgroundColour(bg);
-    m_status->SetForegroundColour(DrawingUtils::GetOutputPaneFgColour());
-    m_status->SetFont(m_view->GetFont());
+    SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
+    m_statusLine->ApplyTheme(m_view->GetFont());
     Refresh();
-}
-
-void FindResultsTab::SetStatus(const wxString& text, const wxString& tooltip)
-{
-    m_status->SetLabel(text);
-    m_status->SetToolTip(tooltip.empty() ? text : tooltip);
 }
 
 void FindResultsTab::Clear()
@@ -208,7 +165,7 @@ void FindResultsTab::Clear()
     m_view->GetResultsModel()->Clear();
     m_currentMatch = nullptr;
     m_searchTitle.clear();
-    SetStatus(wxEmptyString);
+    m_statusLine->Clear();
 }
 
 void FindResultsTab::FoldResults()
@@ -241,9 +198,7 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
     if (data) {
         m_searchData = *data;
         m_searchTitle = data->GetFindString();
-
-        SetStatus(wxString::Format(_("%s Searching for '%s'..."), SearchIcon(), data->GetFindString()) + "   " +
-                  FormatSearchOptions(*data));
+        m_statusLine->ShowSearching(m_searchData);
     }
     wxDELETE(data);
 
@@ -277,27 +232,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     if (!summary)
         return;
 
-    // For example: "<magnifier> 'foo'   Files scanned: 120   Matches: 45   Time: 0.31 seconds   Regex: <yes> ..."
-    wxString message;
-    message << SearchIcon() << " '" << m_searchTitle << "'";
-    if (summary->GetNumFileScanned() > 0) {
-        message << "   " << wxString::Format(_("Files scanned: %d"), summary->GetNumFileScanned());
-    }
-    message << "   " << wxString::Format(_("Matches: %d"), summary->GetNumMatchesFound());
-    message << "   " << wxString::Format(_("Time: %.2f seconds"), summary->GetElapsedTime() / 1000.0);
-    message << "   " << FormatSearchOptions(m_searchData);
-
-    wxString tooltip;
-    const wxArrayString& failedFiles = summary->GetFailedFiles();
-    if (!failedFiles.IsEmpty()) {
-        message << "   " << WarningIcon() << " "
-                << wxString::Format(_("Failed to open %d files"), static_cast<int>(failedFiles.size()));
-        tooltip << message << "\n\n" << _("Failed to open the following files for scan:");
-        for (const wxString& file : failedFiles) {
-            tooltip << "\n" << file;
-        }
-    }
-    SetStatus(message, tooltip);
+    m_statusLine->ShowSummary(*summary, m_searchData);
     FoldResults();
 
     wxDELETE(summary);
@@ -318,7 +253,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 void FindResultsTab::OnSearchCancel(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    SetStatus(SearchIcon() + " " + _("Search cancelled by user"));
+    m_statusLine->ShowCancelled();
 }
 
 void FindResultsTab::OnClearAll(wxCommandEvent& e)
@@ -647,9 +582,7 @@ void FindResultsTab::LoadSearch(const History& h)
     m_view->GetResultsModel()->Clear();
     m_view->GetResultsModel()->AddResults(h.results);
     FoldResults();
-    SetStatus(SearchIcon() + wxString::Format(" '%s'   ", h.title) +
-              wxString::Format(_("Matches: %d"), static_cast<int>(h.results.size())) + "   " +
-              FormatSearchOptions(m_searchData));
+    m_statusLine->ShowHistory(m_searchData, h.results.size());
 }
 
 void FindResultsTab::OnRecentSearchesUI(wxUpdateUIEvent& e) { e.Enable(!m_history.IsEmpty() && !m_searchInProgress); }

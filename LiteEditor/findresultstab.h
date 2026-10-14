@@ -25,6 +25,7 @@
 #ifndef __findresultstab__
 #define __findresultstab__
 
+#include "FindResultsStatusLine.hpp"
 #include "FindResultsView.hpp"
 #include "Notebook.h"
 #include "clToolBar.h"
@@ -64,8 +65,7 @@ protected:
 protected:
     wxString m_name;
     wxAuiToolBar* m_tb = nullptr;
-    wxPanel* m_statusPanel = nullptr;  // draws a border around the status line
-    wxStaticText* m_status = nullptr; // describes the search (or its summary)
+    FindResultsStatusLine* m_statusLine = nullptr; // describes the search (or its summary)
     FindResultsView* m_view = nullptr;
     wxBoxSizer* m_vSizer = nullptr;
     // The match that was opened last. Used by NextMatch() / PrevMatch(). It is only compared, never accessed
@@ -76,8 +76,6 @@ protected:
     void UnbindSearchEvents(wxEvtHandler* binder);
     void BindSearchEvents(wxEvtHandler* binder);
 
-    /// Set the status line. The tooltip defaults to the text
-    void SetStatus(const wxString& text, const wxString& tooltip = wxEmptyString);
     /// Remove all the results
     void Clear();
     void SaveSearchData();

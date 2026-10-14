@@ -28,6 +28,12 @@ wxString GetUnicodeSymbol(IconType type)
     case IconType::kNetwork:
         symbol = wxT("🌐");
         break;
+    case IconType::kSearch:
+        symbol = wxT("🔎");
+        break;
+    case IconType::kWarningSign:
+        symbol = wxT("⚠");
+        break;
     }
     return symbol;
 }

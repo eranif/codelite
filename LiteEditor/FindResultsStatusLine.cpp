@@ -101,12 +101,3 @@ void FindResultsStatusLine::ApplyTheme(const wxFont& font)
     Layout();
     Refresh();
 }
-
-void FindResultsStatusLine::OnPaint(wxPaintEvent& event)
-{
-    wxUnusedVar(event);
-    wxAutoBufferedPaintDC dc(this);
-    dc.SetPen(wxPen(DrawingUtils::GetThemeBorderColour()));
-    dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.DrawRectangle(GetClientRect());
-}

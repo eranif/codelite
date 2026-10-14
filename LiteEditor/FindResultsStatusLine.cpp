@@ -4,6 +4,7 @@
 #include "drawingutils.h"
 
 #include <wx/dcclient.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/translation.h>
 
@@ -92,7 +93,10 @@ void FindResultsStatusLine::ApplyTheme(const wxFont& font)
     SetBackgroundColour(bg);
     m_label->SetBackgroundColour(bg);
     m_label->SetForegroundColour(DrawingUtils::GetOutputPaneFgColour());
-    m_label->SetFont(font);
+    // The face of the results font, but with the size of the default GUI font (a fractional point size)
+    wxFont statusFont = font;
+    statusFont.SetFractionalPointSize(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize());
+    m_label->SetFont(statusFont);
     Layout();
     Refresh();
 }

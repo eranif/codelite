@@ -284,6 +284,8 @@ public:
     void SetNumFileScanned(int num) { m_fileScanned = num; }
     void SetNumMatchesFound(int num) { m_matchesFound = num; }
     void SetElapsedTime(long elapsed) { m_elapsed = elapsed; }
+    /// The time the search took, in milliseconds
+    int GetElapsedTime() const { return m_elapsed; }
     wxString GetMessage() const
     {
         wxString msg;

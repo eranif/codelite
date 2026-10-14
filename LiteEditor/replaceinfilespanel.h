@@ -37,10 +37,11 @@ protected:
     wxComboBox* m_replaceWith;
     wxGauge* m_progress;
     wxArrayString m_filesModified;
-    bool m_bmpsForDarkTheme = false;
 
 protected:
-    void DoSaveResults(wxStyledTextCtrl* sci, MatchInfo_t::iterator begin, MatchInfo_t::iterator end);
+    /// Save the changes made to the file `sci` and mark its matches (`fileMatches`) as done or failed.
+    /// `sci` is deleted if it is a temporary editor
+    void DoSaveResults(wxStyledTextCtrl* sci, const std::vector<FindResultsNode*>& fileMatches);
     wxStyledTextCtrl* DoGetEditor(const wxString& fileName);
 
     /*
@@ -52,9 +53,8 @@ protected:
     void OnSearchStart(wxCommandEvent& e) override;
     void OnSearchMatch(wxCommandEvent& e) override;
     void OnSearchEnded(wxCommandEvent& e) override;
-    void OnMarginClick(wxStyledTextEvent& e) override;
     void OnHoldOpenUpdateUI(wxUpdateUIEvent& e) override;
-    void OnMouseDClick(wxStyledTextEvent& e) override;
+    void ApplyTheme() override;
 
     virtual void OnMarkAll(wxCommandEvent& e);
     virtual void OnUnmarkAll(wxCommandEvent& e);
@@ -68,8 +68,6 @@ protected:
 public:
     ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString& name);
     ~ReplaceInFilesPanel() override = default;
-
-    void SetStyles(wxStyledTextCtrl* sci) override;
 };
 
 #endif // __replaceinfilespanel__

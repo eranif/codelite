@@ -25,7 +25,9 @@
 #ifndef __findresultstab__
 #define __findresultstab__
 
+#include "FindResultsView.hpp"
 #include "Notebook.h"
+#include "clToolBar.h"
 #include "clWorkspaceEvent.hpp"
 #include "findinfilesdlg.h"
 #include "outputtabwindow.h"
@@ -37,72 +39,92 @@
 #include <vector>
 #include <wx/aui/auibar.h>
 #include <wx/debug.h>
+#include <wx/panel.h>
+#include <wx/stattext.h>
 #include <wx/stc/stc.h>
 
-// Map between the line numbers and a search results
-using MatchInfo_t = std::map<int, SearchResult>;
-
-class FindResultsTab : public OutputTabWindow
+/// The "Find In Files" results: a tree. The files are the top level items, and the matches are their children
+class FindResultsTab : public wxPanel
 {
 protected:
     SearchData m_searchData;
     wxString m_searchTitle;
-    std::vector<int> m_indicators;
     bool m_searchInProgress;
     bool m_searchEventsConnected = false;
 
     struct History {
         wxString title;
         SearchData searchData;
-        wxString text;
-        MatchInfo_t matchInfo;
-        std::vector<int> indicators;
+        SearchResultList results;
         using Map_t = wxOrderedMap<wxString, History>;
     };
 
     History::Map_t m_history;
 
 protected:
-    MatchInfo_t m_matchInfo;
+    wxString m_name;
+    wxAuiToolBar* m_tb = nullptr;
+    wxPanel* m_statusPanel = nullptr;  // draws a border around the status line
+    wxStaticText* m_status = nullptr; // describes the search (or its summary)
+    FindResultsView* m_view = nullptr;
+    wxBoxSizer* m_vSizer = nullptr;
+    // The match that was opened last. Used by NextMatch() / PrevMatch(). It is only compared, never accessed
+    const FindResultsNode* m_currentMatch = nullptr;
+    // True while we select a match in the view ourselves: this selection must not open the match again
+    bool m_selectingMatch = false;
+
     void UnbindSearchEvents(wxEvtHandler* binder);
     void BindSearchEvents(wxEvtHandler* binder);
 
-    void AppendLine(const wxString& line, bool scroll_to_bottom = true);
-    void Clear() override;
+    /// Set the status line. The tooltip defaults to the text
+    void SetStatus(const wxString& text, const wxString& tooltip = wxEmptyString);
+    /// Remove all the results
+    void Clear();
     void SaveSearchData();
     void LoadSearch(const History& h);
+    /// Fold the files according to the user settings
+    void FoldResults();
     virtual void OnFindInFiles(wxCommandEvent& e);
-    virtual void OnRecentSearches(wxCommandEvent& e);
+    virtual void OnRecentSearches(wxAuiToolBarEvent& e);
     virtual void OnSearchStart(wxCommandEvent& e);
     virtual void OnSearchMatch(wxCommandEvent& e);
     virtual void OnSearchEnded(wxCommandEvent& e);
     virtual void OnSearchCancel(wxCommandEvent& e);
-    void OnClearAll(wxCommandEvent& e) override;
-    void OnRepeatOutput(wxCommandEvent& e) override;
+    virtual void OnClearAll(wxCommandEvent& e);
+    virtual void OnRepeatOutput(wxCommandEvent& e);
+    virtual void OnCollapseAll(wxCommandEvent& e);
+    virtual void OnToggleHoldOpen(wxCommandEvent& e);
 
-    void OnClearAllUI(wxUpdateUIEvent& e) override;
+    virtual void OnClearAllUI(wxUpdateUIEvent& e);
     virtual void OnRecentSearchesUI(wxUpdateUIEvent& e);
-    void OnRepeatOutputUI(wxUpdateUIEvent& e) override;
-    void OnMouseDClick(wxStyledTextEvent& e) override;
+    virtual void OnRepeatOutputUI(wxUpdateUIEvent& e);
+    virtual void OnCollapseAllUI(wxUpdateUIEvent& e);
 
     virtual void OnStopSearch(wxCommandEvent& e);
     virtual void OnStopSearchUI(wxUpdateUIEvent& e);
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-    virtual void OnStyleNeeded(wxStyledTextEvent& e);
+    void OnItemActivated(wxDataViewEvent& e);
+    void OnSelectionChanged(wxDataViewEvent& e);
+    void OnEdit(wxCommandEvent& e);
+    void OnEditUI(wxUpdateUIEvent& e);
+    bool IsFocused() const;
     SearchData* GetSearchData();
-    void DoOpenSearchResult(const SearchResult& result, wxStyledTextCtrl* sci, int markerLine);
-    void OnThemeChanged(wxCommandEvent& e) override;
+    /// Open the match in an editor
+    void OpenMatch(const FindResultsNode* node);
+    void DoOpenSearchResult(const SearchResult& result);
+    /// Open the next (`direction` is 1) or the previous (-1) match
+    void OpenRelativeMatch(int direction);
+    /// Use the colours and font of the output pane
+    virtual void ApplyTheme();
+    void OnThemeChanged(wxCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
-    DECLARE_EVENT_TABLE()
 
 public:
-    FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name);
+    /// If `checkable` is true, each match has a check box (used by the "Replace In Files" tab)
+    FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name, bool checkable = false);
     ~FindResultsTab() override;
 
-    virtual void SetStyles(wxStyledTextCtrl* sci);
-    void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope = false);
-    void ResetStyler();
-
+    const wxString& GetCaption() const { return m_name; }
     void NextMatch();
     void PrevMatch();
 };

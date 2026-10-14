@@ -38,6 +38,7 @@
 #include "macros.h"
 #include "manager.h"
 
+#include <set>
 #include <vector>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
@@ -46,10 +47,9 @@
 #include <wx/renderer.h>
 #include <wx/xrc/xmlres.h>
 
-ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxString& name)
-    : FindResultsTab(parent, id, name)
+ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString& name)
+    : FindResultsTab(parent, id, name, true)
 {
-    Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnHoldOpenUpdateUI, this, XRCID("hold_pane_open"));
     wxBoxSizer* horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
     wxButton* unmark = new wxButton(this, wxID_ANY, _("&Unmark All"));
@@ -72,24 +72,19 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     button_replace->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnReplace, this);
     button_replace->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceUI, this);
 
-    wxBoxSizer* vertSizer = new wxBoxSizer(wxVERTICAL);
-    vertSizer->Add(horzSizer, 0, wxEXPAND | wxTOP | wxBOTTOM);
-
-    // grab the base class scintilla and put our sizer in its place
-    wxSizer* mainSizer = m_vSizer;
-    mainSizer->Detach(m_sci);
-    vertSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
-
-    m_tb->DeleteById(XRCID("repeat_output"));
-    m_tb->DeleteById(XRCID("recent_searches"));
+    m_tb->DeleteTool(XRCID("repeat_output"));
+    m_tb->DeleteTool(XRCID("recent_searches"));
     m_tb->Realize();
-    mainSizer->Add(vertSizer, 1, wxEXPAND);
+
+    // The order is: toolbar, this row, results, progress bar, status line
+    m_vSizer->Insert(1, horzSizer, 0, wxEXPAND | wxTOP | wxBOTTOM);
 
     m_progress = new wxGauge(this, wxID_ANY, 1, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL);
     m_progress->Hide();
-    m_vSizer->Add(m_progress, wxSizerFlags().Expand().Border(wxALL, 5));
+    m_vSizer->Insert(3, m_progress, wxSizerFlags().Expand().Border(wxALL, 5));
 
-    mainSizer->Layout();
+    m_vSizer->Layout();
+    ReplaceInFilesPanel::ApplyTheme();
 }
 
 void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
@@ -97,7 +92,9 @@ void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
     e.Skip();
     // set the "Replace With" field with the user value
     SearchData* data = (SearchData*)e.GetClientData();
-    m_replaceWith->SetValue(data->GetReplaceWith());
+    if (data) {
+        m_replaceWith->SetValue(data->GetReplaceWith());
+    }
     FindResultsTab::OnSearchStart(e);
 
     // Make sure that the Output view & the "Replace" tab
@@ -111,9 +108,12 @@ void ReplaceInFilesPanel::OnSearchMatch(wxCommandEvent& e)
 {
     e.Skip();
     FindResultsTab::OnSearchMatch(e);
-    if (m_matchInfo.size() != 1 || !m_replaceWith->GetValue().IsEmpty())
+
+    // With a single match, use the matched text as the replacement
+    auto* model = m_view->GetResultsModel();
+    if (model->GetMatchCount() != 1 || !m_replaceWith->GetValue().IsEmpty())
         return;
-    m_replaceWith->SetValue(m_matchInfo.begin()->second.GetFindWhat());
+    m_replaceWith->SetValue(model->GetMatches().front()->result.GetFindWhat());
     m_replaceWith->SetFocus();
 }
 
@@ -133,62 +133,56 @@ void ReplaceInFilesPanel::OnSearchEnded(wxCommandEvent& e)
     m_replaceWith->CallAfter(&wxComboBox::SetFocus);
 }
 
-void ReplaceInFilesPanel::OnMarginClick(wxStyledTextEvent& e)
-{
-    int line = m_sci->LineFromPosition(e.GetPosition());
-    if (m_matchInfo.find(line) == m_matchInfo.end()) {
-        FindResultsTab::OnMarginClick(e);
-
-    } else if (m_sci->MarkerGet(line) & 7 << 0x7) {
-        m_sci->MarkerDelete(line, 0x7);
-    } else {
-        m_sci->MarkerAdd(line, 0x7);
-    }
-}
-
 void ReplaceInFilesPanel::OnMarkAll(wxCommandEvent& e)
 {
-    for (const auto& p : m_matchInfo) {
-        if (m_sci->MarkerGet(p.first) & 7 << 0x7)
-            continue;
-        m_sci->MarkerAdd(p.first, 0x7);
-    }
+    wxUnusedVar(e);
+    m_view->GetResultsModel()->SetAllChecked(true);
 }
 
-void ReplaceInFilesPanel::OnMarkAllUI(wxUpdateUIEvent& e) { e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress); }
-void ReplaceInFilesPanel::OnUnmarkAll(wxCommandEvent& e) { m_sci->MarkerDeleteAll(0x7); }
+void ReplaceInFilesPanel::OnMarkAllUI(wxUpdateUIEvent& e)
+{
+    e.Enable(!m_view->GetResultsModel()->IsEmpty() && !m_searchInProgress);
+}
+
+void ReplaceInFilesPanel::OnUnmarkAll(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    m_view->GetResultsModel()->SetAllChecked(false);
+}
+
 void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e)
 {
-    e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress);
+    e.Enable(!m_view->GetResultsModel()->IsEmpty() && !m_searchInProgress);
 }
 
-void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci, MatchInfo_t::iterator begin, MatchInfo_t::iterator end)
+void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci, const std::vector<FindResultsNode*>& fileMatches)
 {
-    if (!sci || begin == end)
+    if (!sci || fileMatches.empty())
         return;
     bool ok = true;
+    const wxString fileName = fileMatches.front()->result.GetFileName();
     if (dynamic_cast<clEditor*>(sci) == nullptr) {
         // it's a temp editor, check if we have any changes to save
         wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-        if (sci->GetModify() &&
-            !FileUtils::WriteFileContent(begin->second.GetFileName(), sci->GetText(), fontEncConv)) {
-            wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(),
-                         _("CodeLite - Replace"),
-                         wxICON_ERROR | wxOK);
-            clDEBUG() << "Replace: Failed to write file" << begin->second.GetFileName();
+        if (sci->GetModify() && !FileUtils::WriteFileContent(fileName, sci->GetText(), fontEncConv)) {
+            wxMessageBox(_("Failed to save file:\n") + fileName, _("CodeLite - Replace"), wxICON_ERROR | wxOK);
+            clDEBUG() << "Replace: Failed to write file" << fileName;
             ok = false;
         }
 
         if (sci && ok) {
             // Keep the modified file name
-            m_filesModified.Add(begin->second.GetFileName());
+            m_filesModified.Add(fileName);
         }
 
         delete sci;
     }
-    for (; begin != end; begin++) {
-        if ((m_sci->MarkerGet(begin->first) & 7 << 0x7) == 1 << 0x7) {
-            m_sci->MarkerAdd(begin->first, ok ? 0x9 : 0x8);
+
+    // The matches that were selected and were not marked as failed already, are done (or failed to be saved)
+    for (FindResultsNode* node : fileMatches) {
+        if (node->checked && node->state == FindResultsNode::State::kPending) {
+            node->state = ok ? FindResultsNode::State::kDone : FindResultsNode::State::kFailed;
+            m_view->GetResultsModel()->NodeChanged(node);
         }
     }
 }
@@ -249,6 +243,7 @@ wxString ReplaceInFilesPanel::DoGetReplaceWith(const SearchResult& res) const
 
 void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 {
+    wxUnusedVar(e);
     if (!m_progress->IsShown()) {
         m_progress->Show();
         GetSizer()->Layout();
@@ -274,27 +269,30 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     long lastLine = 0;
     long delta = 0, deltaInChars = 0;
 
-    // remembers first entry in the file being updated
-    MatchInfo_t::iterator firstInFile = m_matchInfo.begin();
+    auto* model = m_view->GetResultsModel();
+    const std::vector<FindResultsNode*> matches = model->GetMatches();
 
-    m_progress->SetRange(m_matchInfo.size());
+    // the matches of the file being updated
+    std::vector<FindResultsNode*> fileMatches;
+
+    m_progress->SetRange(matches.size());
 
     // Disable the 'buffer limit' feature during replace
     clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(false);
-    MatchInfo_t::iterator i = firstInFile;
-    for (; i != m_matchInfo.end(); ++i) {
-        SearchResult& res = i->second;
+    for (FindResultsNode* node : matches) {
+        SearchResult& res = node->result;
         m_progress->SetValue(m_progress->GetValue() + 1);
         m_progress->Update();
 
         if (res.GetFileName() != lastFile) {
             // about to start a different file, save current results
-            DoSaveResults(sci, firstInFile, i);
-            firstInFile = i;
+            DoSaveResults(sci, fileMatches);
+            fileMatches.clear();
             lastFile = res.GetFileName();
             lastLine = 0;
             sci = nullptr;
         }
+        fileMatches.push_back(node);
 
         if (res.GetLineNumber() == lastLine) {
             // prior substitutions affected the location of this one
@@ -303,9 +301,10 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         } else {
             delta = deltaInChars = 0;
         }
-        if ((m_sci->MarkerGet(i->first) & 1 << 0x7) == 0)
+        if (!node->checked) {
             // not selected for application
             continue;
+        }
 
         wxString replaceText = DoGetReplaceWith(res);
         int replaceLenInChars = (int)replaceText.Len();
@@ -323,14 +322,14 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         }
         if (!sci) {
             // couldn't open file
-            m_sci->MarkerAdd(i->first, 0x8);
+            node->state = FindResultsNode::State::kFailed;
             continue;
         }
 
         long pos = sci->PositionFromLine(res.GetLineNumber() - 1);
         if (pos < 0) {
             // invalid line number
-            m_sci->MarkerAdd(i->first, 0x8);
+            node->state = FindResultsNode::State::kFailed;
             continue;
         }
         pos += res.GetColumn();
@@ -338,7 +337,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         sci->SetSelection(pos, pos + res.GetLen());
         if (sci->GetSelectedText() != text) {
             // couldn't locate the original match (file may have been modified)
-            m_sci->MarkerAdd(i->first, 0x8);
+            node->state = FindResultsNode::State::kFailed;
             continue;
         }
         sci->ReplaceSelection(replaceText);
@@ -347,7 +346,6 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         deltaInChars += replaceLenInChars - res.GetLenInChars();
         lastLine = res.GetLineNumber();
 
-        res.SetPattern(m_sci->GetLine(i->first)); // includes prior updates to same line
         res.SetLen(replaceLen);
         res.SetLenInChars(replaceLenInChars);
     }
@@ -357,66 +355,33 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     m_progress->Hide();
     GetSizer()->Layout();
 
-    DoSaveResults(sci, firstInFile, m_matchInfo.end());
+    DoSaveResults(sci, fileMatches);
 
     // Disable the 'buffer limit' feature during replace
     clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(true);
 
-    // Step 2: Update the Replace pane
+    // Step 2: Update the Replace pane: remove the matches that were replaced
 
     std::set<wxString> updatedEditors;
-    delta = 0;    // offset from old line number to new
-    lastLine = 1; // points to the filename line
-    lastFile.Clear();
-    m_sci->MarkerDeleteAll(0x7);
-    m_sci->SetReadOnly(false);
+    std::vector<FindResultsNode*> done;
+    for (FindResultsNode* node : matches) {
+        if (node->state != FindResultsNode::State::kDone) {
+            continue;
+        }
+        const wxString& fileName = node->result.GetFileName();
+        clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fileName);
+        if (editor && editor->GetModify()) {
+            updatedEditors.insert(fileName);
+        }
+        done.push_back(node);
+    }
+
+    // `matches` and `done` must not be used after the nodes are removed
+    m_currentMatch = nullptr;
+    model->RemoveMatches(done);
+    model->SetAllChecked(false);
     m_replaceWith->SetValue(wxEmptyString);
-
-    std::vector<int> itemsToRemove;
-    for (const auto& p : m_matchInfo) {
-        int line = p.first + delta;
-        if (p.second.GetFileName() != lastFile) {
-            if (lastLine == line - 2) {
-                // previous file's replacements are all done, so remove its filename line
-                m_sci->SetCurrentPos(m_sci->PositionFromLine(lastLine));
-                m_sci->LineDelete();
-                delta--;
-                line--;
-            } else {
-                lastLine = line - 1;
-            }
-            lastFile = p.second.GetFileName();
-        }
-
-        if (m_sci->MarkerGet(line) & 1 << 0x9) {
-            clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(lastFile);
-            if (editor && editor->GetModify()) {
-                updatedEditors.insert(lastFile);
-            }
-            // replacement done, remove from map
-            m_sci->MarkerDelete(line, 0x9);
-            m_sci->SetCurrentPos(m_sci->PositionFromLine(line));
-            m_sci->LineDelete();
-            itemsToRemove.push_back(p.first);
-            delta--;
-        } else if (line != p.first) {
-            // need to adjust line number
-            m_matchInfo[line] = p.second;
-            itemsToRemove.push_back(p.first);
-        }
-    }
-
-    // update the match info map
-    for (const auto itemId : itemsToRemove) {
-        MatchInfo_t::iterator iter = m_matchInfo.find(itemId);
-        if (iter != m_matchInfo.end()) {
-            m_matchInfo.erase(iter);
-        }
-    }
-
-    m_sci->SetReadOnly(true);
-    m_sci->GotoLine(0);
-    if (m_matchInfo.empty()) {
+    if (model->IsEmpty()) {
         Clear();
     }
 
@@ -458,11 +423,14 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     }
 }
 
-void ReplaceInFilesPanel::OnReplaceUI(wxUpdateUIEvent& e) { e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress); }
+void ReplaceInFilesPanel::OnReplaceUI(wxUpdateUIEvent& e)
+{
+    e.Enable(!m_view->GetResultsModel()->IsEmpty() && !m_searchInProgress);
+}
 
 void ReplaceInFilesPanel::OnReplaceWithComboUI(wxUpdateUIEvent& e)
 {
-    e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress);
+    e.Enable(!m_view->GetResultsModel()->IsEmpty() && !m_searchInProgress);
 }
 
 void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
@@ -482,41 +450,15 @@ void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
     }
 }
 
-void ReplaceInFilesPanel::OnMouseDClick(wxStyledTextEvent& e)
+void ReplaceInFilesPanel::ApplyTheme()
 {
-    int clickedLine = wxNOT_FOUND;
-    m_styler->HitTest(m_sci, e, clickedLine);
-
-    // Did we clicked on a togglable line?
-    int toggleLine = m_styler->TestToggle(m_sci, e);
-    if (toggleLine != wxNOT_FOUND) {
-        m_sci->ToggleFold(toggleLine);
-
-    } else {
-        MatchInfo_t::const_iterator m = m_matchInfo.find(clickedLine);
-        if (m != m_matchInfo.end()) {
-            DoOpenSearchResult(m->second, nullptr, m->first);
-        }
-    }
-}
-
-void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
-{
-    FindResultsTab::SetStyles(sci);
+    FindResultsTab::ApplyTheme();
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
     if (!lexer) {
         lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
-    lexer->ApplyFont(m_replaceWith);
-
-    const StyleProperty& styleProperty = lexer->GetProperty(0);
-    wxColour bgColour = styleProperty.GetBgColour();
-
-    sci->SetMarginWidth(3, clGetSize(1, sci)); // separator margin
-    sci->SetMarginBackground(3, lexer->IsDark() ? bgColour.ChangeLightness(130) : bgColour.ChangeLightness(50));
-
-    sci->MarkerDefine(7, wxSTC_MARK_ARROW);
-    sci->MarkerSetBackground(7, lexer->IsDark() ? "WHITE" : "DARK GREY");
-    sci->MarkerSetForeground(7, lexer->IsDark() ? "WHITE" : "DARK GREY");
+    if (lexer && m_replaceWith != nullptr) {
+        lexer->ApplyFont(m_replaceWith);
+    }
 }

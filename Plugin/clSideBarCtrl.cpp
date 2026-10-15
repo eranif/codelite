@@ -311,10 +311,6 @@ void clSideBarCtrl::AddActionButton(const wxString& bmpname,
     }
 
     auto tb = m_buttonsBar->GetButtonsToolBar();
-    if (tb->GetToolCount() == 0) {
-        tb->AddSeparator();
-    }
-
     const wxString displayed_tooltip = BuildActionButtonTooltip(tooltip, action_name);
     const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark() ? dark_theme_bmp : light_theme_bmp;
     auto tool = tb->AddTool(wxID_ANY, displayed_tooltip, wxBitmapBundle(bmp), displayed_tooltip);

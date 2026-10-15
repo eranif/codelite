@@ -49,7 +49,7 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
     }
 
     // ensure that the BUILD_IN is visible
-    ManagerST::Get()->ShowOutputPane(BUILD_WIN, true, false);
+    ManagerST::Get()->ShowOutputPane(BUILD_WIN, true, true);
 
     m_buffer.clear();
     if (e.IsCleanLog()) {

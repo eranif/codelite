@@ -407,6 +407,10 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
         wd = workingDirectory;
     }
 
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (!wd.has_value() && workspace && !workspace->IsRemote())
+        wd = workspace->GetDir();
+
     bool usingInternalBook = parent == nullptr || parent == m_book;
     wxTerminalViewCtrl* ctrl = CreateTerminal(parent == nullptr ? m_book : parent, cmd, finalTabTitle, makeVisible, wd);
     if (!ctrl) {

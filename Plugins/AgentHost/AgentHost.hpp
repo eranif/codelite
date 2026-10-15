@@ -58,11 +58,9 @@ protected:
     void OnShowKiroCli(wxCommandEvent& event);
     void OnShowOpenCode(wxCommandEvent& event);
     void OnAllPagesClosed(wxCommandEvent& event);
-    void OnKeyboardShortcutsUpdated(clCommandEvent& event);
-    void UpdateActionButtonTooltips();
+    /// Show a menu with the available agents, at the mouse position
+    void ShowAgentsMenu();
 
     std::unordered_map<AgentType, AgentHostPage*> m_pages;
-    std::shared_ptr<std::function<void()>> m_showClaudeCode;
-    std::shared_ptr<std::function<void()>> m_showKiroCli;
-    std::shared_ptr<std::function<void()>> m_showOpenCode;
+    std::shared_ptr<std::function<void()>> m_showAgentsMenu;
 };

@@ -25,28 +25,17 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 AgentHost::AgentHost(IManager* manager)
     : IPlugin(manager)
 {
-    m_showClaudeCode = std::make_shared<std::function<void()>>(
-        [this]() { CallAfter(&AgentHost::ShowAgentTerminal, AgentType::kClaudeCode); });
-    m_showKiroCli = std::make_shared<std::function<void()>>(
-        [this]() { CallAfter(&AgentHost::ShowAgentTerminal, AgentType::kKiroCli); });
-    m_showOpenCode = std::make_shared<std::function<void()>>(
-        [this]() { CallAfter(&AgentHost::ShowAgentTerminal, AgentType::kOpenCode); });
+    m_showAgentsMenu = std::make_shared<std::function<void()>>([this]() { CallAfter(&AgentHost::ShowAgentsMenu); });
     m_mgr->GetLeftSideBarCtrl()->AddActionButton(
-        "claude-code", _("Launch Claude Code for the Current Workspace"), "launch_claude_code", m_showClaudeCode);
-    m_mgr->GetLeftSideBarCtrl()->AddActionButton(
-        "kiro", _("Launch Kiro Cli for the Current Workspace"), "launch_kiro_cli", m_showKiroCli);
-    m_mgr->GetLeftSideBarCtrl()->AddActionButton(
-        "opencode", _("Launch OpenCode for the Current Workspace"), "launch_open_code", m_showOpenCode);
+        "claude-code", _("Launch an AI Agent for the Current Workspace"), m_showAgentsMenu);
     EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &AgentHost::OnPageClosing, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &AgentHost::OnAllPagesClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &AgentHost::OnKeyboardShortcutsUpdated, this);
 }
 
 AgentHost::~AgentHost()
 {
     EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &AgentHost::OnPageClosing, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &AgentHost::OnAllPagesClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &AgentHost::OnKeyboardShortcutsUpdated, this);
 }
 
 void AgentHost::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -83,24 +72,41 @@ void AgentHost::CreatePluginMenu(wxMenu* pluginsMenu)
                                                  {"launch_open_code", _("Launch OpenCode"), ""},
                                                  {"agent_host_settings", _("Options...")},
                                              });
-    UpdateActionButtonTooltips();
 }
 
 void AgentHost::UnPlug() {}
 
-void AgentHost::OnKeyboardShortcutsUpdated(clCommandEvent& event)
-{
-    event.Skip();
-    UpdateActionButtonTooltips();
-}
-
-void AgentHost::UpdateActionButtonTooltips()
+void AgentHost::ShowAgentsMenu()
 {
     auto sidebar = m_mgr->GetLeftSideBarCtrl();
     CHECK_PTR_RET(sidebar);
 
-    sidebar->UpdateActionButtonTooltip("launch_claude_code");
-    sidebar->UpdateActionButtonTooltip("launch_kiro_cli");
+    const struct {
+        const char* action;
+        wxString label;
+        const char* icon;
+        AgentType type;
+    } agents[] = {
+        {"launch_claude_code", _("Claude Code"), "claude-code", AgentType::kClaudeCode},
+        {"launch_kiro_cli", _("Kiro CLI"), "kiro", AgentType::kKiroCli},
+        {"launch_open_code", _("OpenCode"), "opencode", AgentType::kOpenCode},
+    };
+
+    wxMenu menu;
+    for (const auto& agent : agents) {
+        const int id = XRCID(agent.action);
+        auto* item = new wxMenuItem(&menu, id, agent.label);
+        item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap(agent.icon));
+        menu.Append(item);
+        menu.Bind(
+            wxEVT_MENU,
+            [this, type = agent.type](wxCommandEvent&) { CallAfter(&AgentHost::ShowAgentTerminal, type); },
+            id);
+    }
+
+    // Show the shortcuts of the actions (if any)
+    clKeyboardManager::Get()->UpdateMenuShortcuts(menu);
+    sidebar->PopupMenu(&menu, sidebar->ScreenToClient(::wxGetMousePosition()));
 }
 
 void AgentHost::OnSettings(wxCommandEvent& event)

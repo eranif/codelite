@@ -2,6 +2,7 @@
 
 #include "AgentHostUI.hpp"
 #include "cl_command_event.h"
+#include "macros.h"
 #include "ssh_account_info.h"
 
 #include <chrono>
@@ -14,8 +15,9 @@ class ReviewBuddy;
 class wxTerminalViewCtrl;
 
 enum class AgentType {
-    kClaudeCode = 0,
-    kKiroCli = 1,
+    kClaudeCode,
+    kKiroCli,
+    kOpenCode,
 };
 
 /// The executable of an agent and, for a remote workspace, the SSH account it runs on
@@ -34,6 +36,14 @@ struct AgentInfo {
     wxString executable;
     wxString workingDirectory;
     std::optional<SSHAccountInfo> sshAccount;
+};
+
+/// How to pass the system prompt to an agent
+struct SystemPromptCli {
+    /// Arguments to append to the agent command line
+    wxString args;
+    /// Environment variables to set for the agent process
+    wxStringMap_t env;
 };
 
 class AgentHostPage : public AgentHostPageBase
@@ -66,7 +76,7 @@ protected:
     /// The agent terminal (main or reviewer) that has the keyboard focus, or nullptr
     wxTerminalViewCtrl* GetFocusedTerminal() const;
     void SearchInWorkspace(const wxString& text);
-    std::optional<wxString> BuildSystemPrompt(const AgentInfo& info);
+    std::optional<SystemPromptCli> BuildSystemPrompt(const AgentInfo& info);
 
     // Review Buddy: a second agent that reviews the unpushed work of the main one, in a pane next to it
     /// Can a review buddy be launched from this page? If not, `whyNot` says why.

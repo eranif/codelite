@@ -8,6 +8,7 @@
 #include "ai/LLMManager.hpp"
 #include "clStrings.h"
 #include "cl_config.h"
+#include "environmentconfig.h"
 #include "globals.h"
 #include "open_resource_dialog.h"
 #include "search_thread.h"
@@ -226,7 +227,7 @@ void AgentHostPage::StartAgentHost(const AgentInfo& info)
     RestartAgentHost();
 }
 
-std::optional<wxString> AgentHostPage::BuildSystemPrompt(const AgentInfo& info)
+std::optional<SystemPromptCli> AgentHostPage::BuildSystemPrompt(const AgentInfo& info)
 {
     wxBusyCursor bc{};
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
@@ -234,7 +235,8 @@ std::optional<wxString> AgentHostPage::BuildSystemPrompt(const AgentInfo& info)
         return std::nullopt;
 
     wxString systemPromptFilePath;
-    wxString systemPromptArgs;
+    SystemPromptCli cli;
+    wxString& systemPromptArgs = cli.args;
     wxString systemPrompt = llm::Manager::GetInstance().GetConfig().GetSystemPrompt();
     if (systemPrompt.empty())
         return std::nullopt;
@@ -256,8 +258,27 @@ std::optional<wxString> AgentHostPage::BuildSystemPrompt(const AgentInfo& info)
         FileManager::CreateDir(dirpath);
         systemPromptArgs.clear();
     } break;
-    default:
-        return std::nullopt;
+    case AgentType::kOpenCode: {
+        // OpenCode has no command line option for this. Point it to a config file that lists the system prompt file
+        // under "instructions", using the OPENCODE_CONFIG environment variable (the file is merged with the other
+        // config files). The prompt file is written below.
+        systemPromptFilePath = FileManager::GetSettingFileFullPath("SYSTEM_PROMPT.md");
+        wxString configFilePath = FileManager::GetSettingFileFullPath("opencode.json");
+
+        // Use forward slashes: it works on all the platforms and needs no escaping inside the JSON string
+        wxString promptPathInJson = systemPromptFilePath;
+        promptPathInJson.Replace("\\", "/");
+        wxString configPathInEnv = configFilePath;
+        configPathInEnv.Replace("\\", "/");
+        cli.env.insert({"OPENCODE_CONFIG", configPathInEnv});
+
+        const wxString configContent = wxString::Format(
+            R"({ "$schema": "https://opencode.ai/config.json", "instructions": ["%s"]})", promptPathInJson);
+        if (!FileManager::WriteContent(configFilePath, configContent, true)) {
+            clWARNING() << "Failed to write OpenCode config file:" << configFilePath << endl;
+            return std::nullopt;
+        }
+    } break;
     }
 
     if (!FileManager::WriteContent(systemPromptFilePath, systemPrompt, true)) {
@@ -266,7 +287,7 @@ std::optional<wxString> AgentHostPage::BuildSystemPrompt(const AgentInfo& info)
     }
     clDEBUG() << "Successfully written system prompt file:" << systemPromptFilePath << endl;
     clDEBUG() << "Will add the following args to agent CLI:" << systemPromptArgs << endl;
-    return systemPromptArgs;
+    return cli;
 }
 
 void AgentHostPage::OnFocus(wxFocusEvent& event)
@@ -359,12 +380,13 @@ void AgentHostPage::RestartAgentHost()
     wxString command_to_run;
 
     // Append the system prompt args to the base command.
-    auto systemPromptArgs = BuildSystemPrompt(m_agentInfo);
-    if (systemPromptArgs && !systemPromptArgs->empty())
-        baseCommand << " " << systemPromptArgs.value();
+    auto systemPromptCli = BuildSystemPrompt(m_agentInfo);
+    if (systemPromptCli && !systemPromptCli->args.empty())
+        baseCommand << " " << systemPromptCli->args;
 
     switch (m_agentInfo.agent_type) {
     case AgentType::kClaudeCode:
+    case AgentType::kOpenCode:
         command_to_run = wxString::Format("%s --continue || %s", baseCommand, baseCommand);
         break;
     case AgentType::kKiroCli:
@@ -375,6 +397,13 @@ void AgentHostPage::RestartAgentHost()
         wxString cd_command;
         cd_command << "cd \"" << m_agentInfo.workingDirectory << "\" && ";
         command_to_run.Prepend(cd_command);
+    }
+    // The terminal inherits the environment of CodeLite, set the agent variables until it is launched
+    wxStringMap_t envMap;
+    std::unique_ptr<EnvSetter> env;
+    if (systemPromptCli && !systemPromptCli->env.empty()) {
+        envMap = systemPromptCli->env;
+        env = std::make_unique<EnvSetter>(&envMap);
     }
     m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
         wxEmptyString, m_agentInfo.sshAccount, wxEmptyString, true, kShellCommand, m_splitter);
@@ -590,8 +619,19 @@ wxTerminalViewCtrl* AgentHostPage::StartReviewer(AgentType reviewer, const wxStr
     }
     // The user's extra arguments, as typed in the settings (for example, a custom agent). They are shell text: the
     // user does the quoting.
-    wxString extraArgs = clConfig::Get().Read(
-        reviewer == AgentType::kKiroCli ? kAgentHostKiroCliReviewArgs : kAgentHostClaudeCodeReviewArgs, wxString{});
+    wxString extraArgsKey;
+    switch (reviewer) {
+    case AgentType::kClaudeCode:
+        extraArgsKey = kAgentHostClaudeCodeReviewArgs;
+        break;
+    case AgentType::kKiroCli:
+        extraArgsKey = kAgentHostKiroCliReviewArgs;
+        break;
+    case AgentType::kOpenCode:
+        extraArgsKey = kAgentHostOpenCodeReviewArgs;
+        break;
+    }
+    wxString extraArgs = clConfig::Get().Read(extraArgsKey, wxString{});
     extraArgs.Trim().Trim(false);
     if (!extraArgs.empty()) {
         command << " " << extraArgs;

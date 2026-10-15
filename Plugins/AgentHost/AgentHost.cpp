@@ -29,10 +29,14 @@ AgentHost::AgentHost(IManager* manager)
         [this]() { CallAfter(&AgentHost::ShowAgentTerminal, AgentType::kClaudeCode); });
     m_showKiroCli = std::make_shared<std::function<void()>>(
         [this]() { CallAfter(&AgentHost::ShowAgentTerminal, AgentType::kKiroCli); });
+    m_showOpenCode = std::make_shared<std::function<void()>>(
+        [this]() { CallAfter(&AgentHost::ShowAgentTerminal, AgentType::kOpenCode); });
     m_mgr->GetLeftSideBarCtrl()->AddActionButton(
         "claude-code", _("Launch Claude Code for the Current Workspace"), "launch_claude_code", m_showClaudeCode);
     m_mgr->GetLeftSideBarCtrl()->AddActionButton(
         "kiro", _("Launch Kiro Cli for the Current Workspace"), "launch_kiro_cli", m_showKiroCli);
+    m_mgr->GetLeftSideBarCtrl()->AddActionButton(
+        "opencode", _("Launch OpenCode for the Current Workspace"), "launch_open_code", m_showOpenCode);
     EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &AgentHost::OnPageClosing, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &AgentHost::OnAllPagesClosed, this);
     EventNotifier::Get()->Bind(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &AgentHost::OnKeyboardShortcutsUpdated, this);
@@ -59,6 +63,10 @@ void AgentHost::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(
         menu, XRCID("launch_kiro_cli"), _("Launch Kiro Cli\tCtrl-Shift-K"), _("Launch Kiro Cli"), wxITEM_NORMAL);
     menu->Append(item);
+
+    item = new wxMenuItem(menu, XRCID("launch_open_code"), _("Launch OpenCode"), _("Launch OpenCode"), wxITEM_NORMAL);
+    menu->Append(item);
+
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("agent_host_settings"), _("Settings..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
@@ -66,11 +74,13 @@ void AgentHost::CreatePluginMenu(wxMenu* pluginsMenu)
     menu->Bind(wxEVT_MENU, &AgentHost::OnSettings, this, XRCID("agent_host_settings"));
     menu->Bind(wxEVT_MENU, &AgentHost::OnShowClaudeCode, this, XRCID("launch_claude_code"));
     menu->Bind(wxEVT_MENU, &AgentHost::OnShowKiroCli, this, XRCID("launch_kiro_cli"));
+    menu->Bind(wxEVT_MENU, &AgentHost::OnShowOpenCode, this, XRCID("launch_open_code"));
 
     clKeyboardManager::Get()->AddAccelerator(_("Agent Host"),
                                              {
                                                  {"launch_claude_code", _("Launch Claude Code"), "Ctrl-Shift-C"},
                                                  {"launch_kiro_cli", _("Launch Kiro Cli"), "Ctrl-Shift-K"},
+                                                 {"launch_open_code", _("Launch OpenCode"), ""},
                                                  {"agent_host_settings", _("Options...")},
                                              });
     UpdateActionButtonTooltips();
@@ -98,10 +108,12 @@ void AgentHost::OnSettings(wxCommandEvent& event)
     wxUnusedVar(event);
     AgentHostSettgingsDlg dlg{EventNotifier::Get()->TopFrame()};
     if (dlg.ShowModal() == wxID_OK) {
-        auto claude_exec = dlg.GetClaudeCodeExecutable();
-        clConfig::Get().Write(kAgentHostClaudeCodeExecutable, claude_exec);
+        clConfig::Get().Write(kAgentHostClaudeCodeExecutable, dlg.GetClaudeCodeExecutable());
+        clConfig::Get().Write(kAgentHostKiroCliExecutable, dlg.GetKiroCliExecutable());
+        clConfig::Get().Write(kAgentHostOpenCodeExecutable, dlg.GetOpenCodeExecutable());
         clConfig::Get().Write(kAgentHostClaudeCodeReviewArgs, dlg.GetClaudeCodeReviewArgs());
         clConfig::Get().Write(kAgentHostKiroCliReviewArgs, dlg.GetKiroCliReviewArgs());
+        clConfig::Get().Write(kAgentHostOpenCodeReviewArgs, dlg.GetOpenCodeReviewArgs());
     }
 }
 
@@ -124,6 +136,10 @@ std::optional<AgentExecutable> ResolveAgentExecutable(AgentType agent_type, bool
     case AgentType::kKiroCli:
         defaultExec = "kiro-cli";
         configParam = kAgentHostKiroCliExecutable;
+        break;
+    case AgentType::kOpenCode:
+        defaultExec = "opencode";
+        configParam = kAgentHostOpenCodeExecutable;
         break;
     }
     if (workspace->IsRemote()) {
@@ -167,6 +183,9 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type)
         case AgentType::kKiroCli:
             agent_name = "Kiro CLI";
             break;
+        case AgentType::kOpenCode:
+            agent_name = "OpenCode";
+            break;
         }
         wxMessageBox(wxString::Format(_("Launching %s requires a workspace"), agent_name),
                      "CodeLite",
@@ -199,6 +218,9 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type)
         break;
     case AgentType::kKiroCli:
         clGetManager()->GetMainNotebook()->AddPage(agentPage, _("Kiro"), true);
+        break;
+    case AgentType::kOpenCode:
+        clGetManager()->GetMainNotebook()->AddPage(agentPage, _("OpenCode"), true);
         break;
     }
     agentPage->StartAgentHost(AgentInfo{
@@ -239,4 +261,10 @@ void AgentHost::OnShowKiroCli(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     ShowAgentTerminal(AgentType::kKiroCli);
+}
+
+void AgentHost::OnShowOpenCode(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    ShowAgentTerminal(AgentType::kOpenCode);
 }

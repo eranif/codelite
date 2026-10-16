@@ -198,7 +198,8 @@ DebuggerAsciiViewer::~DebuggerAsciiViewer()
         wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), nullptr, this);
     wxTheApp->Disconnect(
         wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DebuggerAsciiViewer::OnEdit), nullptr, this);
-    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), nullptr, this);
+    wxTheApp->Disconnect(
+        wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), nullptr, this);
     wxTheApp->Disconnect(
         wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DebuggerAsciiViewer::OnEditUI), nullptr, this);
     EventNotifier::Get()->Disconnect(

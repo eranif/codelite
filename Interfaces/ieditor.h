@@ -416,7 +416,8 @@ public:
     /**
      * @brief Similar to the above but returns void, and is implemented asynchronously
      */
-    virtual void FindAndSelectV(const wxString& pattern, const wxString& what, int pos = 0, NavMgr* navmgr = nullptr) = 0;
+    virtual void
+    FindAndSelectV(const wxString& pattern, const wxString& what, int pos = 0, NavMgr* navmgr = nullptr) = 0;
 
     /**
      * @brief set a lexer to the editor

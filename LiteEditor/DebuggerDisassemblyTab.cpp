@@ -25,8 +25,6 @@
 
 #include "DebuggerDisassemblyTab.h"
 
-#include <algorithm>
-
 #include "BreakpointsView.hpp"
 #include "Debugger/debuggermanager.h"
 #include "breakpointsmgr.h"
@@ -39,6 +37,8 @@
 #include "macros.h"
 #include "manager.h"
 #include "plugin.h"
+
+#include <algorithm>
 
 #define CURLINE_MARKER 7
 #define BREAKPOINT_MARKER 8
@@ -66,8 +66,10 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
         wxEVT_DEBUGGER_DISASSEMBLE_OUTPUT, clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), nullptr, this);
     EventNotifier::Get()->Connect(
         wxEVT_DEBUGGER_DISASSEMBLE_CURLINE, clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), nullptr, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_QUERY_FILELINE, clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), nullptr, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_QUERY_FILELINE,
+                                  clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone),
+                                  nullptr,
+                                  this);
     EventNotifier::Get()->Connect(
         wxEVT_DEBUGGER_LIST_REGISTERS, clCommandEventHandler(DebuggerDisassemblyTab::OnShowRegisters), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &DebuggerDisassemblyTab::OnDebuggerStopped, this);
@@ -89,8 +91,10 @@ DebuggerDisassemblyTab::~DebuggerDisassemblyTab()
         wxEVT_DEBUGGER_DISASSEMBLE_OUTPUT, clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), nullptr, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_DEBUGGER_DISASSEMBLE_CURLINE, clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), nullptr, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DEBUGGER_QUERY_FILELINE, clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), nullptr, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_QUERY_FILELINE,
+                                     clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone),
+                                     nullptr,
+                                     this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &DebuggerDisassemblyTab::OnDebuggerStopped, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED,
                                      wxCommandEventHandler(DebuggerDisassemblyTab::OnAllBreakpointsDeleted),

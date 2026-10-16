@@ -89,7 +89,8 @@ WorkspaceTab::~WorkspaceTab()
 
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WorkspaceTab::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WorkspaceTab::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_ADDED, clCommandEventHandler(WorkspaceTab::OnProjectAdded), nullptr, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PROJ_ADDED, clCommandEventHandler(WorkspaceTab::OnProjectAdded), nullptr, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_PROJ_REMOVED, clCommandEventHandler(WorkspaceTab::OnProjectRemoved), nullptr, this);
     EventNotifier::Get()->Disconnect(

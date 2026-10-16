@@ -355,7 +355,8 @@ TEST_CASE("toDoubleArray")
     CHECK(v == root.toElement().toDoubleArray());
 }
 
-TEST_CASE("toStringMap") {
+TEST_CASE("toStringMap")
+{
     const wxStringMap_t map{{"1", "one"}, {"2", "two"}};
 
     JSON root(JsonType::Object);
@@ -365,7 +366,8 @@ TEST_CASE("toStringMap") {
     CHECK(map == JSONItem{JsonUtils::ToJson(map)}.toStringMap());
 }
 
-TEST_CASE("GetAsVector") {
+TEST_CASE("GetAsVector")
+{
     JSON root("[1,2,3]");
     const auto v = root.toElement().GetAsVector();
     REQUIRE(v.size() == 3);
@@ -374,7 +376,8 @@ TEST_CASE("GetAsVector") {
     CHECK(3 == v[2].toInt());
 }
 
-TEST_CASE("GetAsMap") {
+TEST_CASE("GetAsMap")
+{
     JSON root(R"({"age":42,"name":"Doe"})");
     const auto m = root.toElement().GetAsMap();
     REQUIRE(m.size() == 2);

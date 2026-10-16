@@ -5,7 +5,4 @@ MainDialog::MainDialog(wxWindow* parent)
 {
 }
 
-MainDialog::~MainDialog()
-{
-}
-
+MainDialog::~MainDialog() {}

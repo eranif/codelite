@@ -208,7 +208,7 @@ TEST_CASE("MarkdownStyler OnStyle styles multiple markdown constructs")
 TEST_CASE("MarkdownStyler OnStyle handles nested diff content inside a fenced block")
 {
     MarkdownStyler styler{nullptr};
-    const std::string &text = GetNestedDiffSample();
+    const std::string& text = GetNestedDiffSample();
     MockAccessor accessor{wxString::FromUTF8(text)};
     styler.OnStyle(accessor);
 

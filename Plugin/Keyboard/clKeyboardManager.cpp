@@ -551,7 +551,8 @@ void clKeyboardManager::DoFixMenuShortcuts(wxMenu* menu, const MenuItemDataIntMa
 
         const clKeyboardShortcut& expected = where->second.accel;
         const wxString text = label.BeforeFirst('\t');
-        const std::unique_ptr<wxAcceleratorEntry> shown{label.Contains("\t") ? wxAcceleratorEntry::Create(label) : nullptr};
+        const std::unique_ptr<wxAcceleratorEntry> shown{label.Contains("\t") ? wxAcceleratorEntry::Create(label)
+                                                                             : nullptr};
         if (!expected.IsOk()) {
             // No shortcut is assigned, remove the shortcut text (if any)
             if (label.Contains("\t")) {
@@ -561,8 +562,8 @@ void clKeyboardManager::DoFixMenuShortcuts(wxMenu* menu, const MenuItemDataIntMa
         }
 
         const auto wanted = expected.ToAccelerator(text);
-        const bool is_same = shown && wanted && shown->GetFlags() == wanted->GetFlags() &&
-                             shown->GetKeyCode() == wanted->GetKeyCode();
+        const bool is_same =
+            shown && wanted && shown->GetFlags() == wanted->GetFlags() && shown->GetKeyCode() == wanted->GetKeyCode();
         if (!is_same) {
             item->SetItemLabel(text + "\t" + expected.ToString());
         }

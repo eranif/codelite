@@ -84,8 +84,7 @@ LanguageServerLogView::LanguageServerLogView(wxWindow* parent)
 
     GetDvListCtrlProgress()->AppendTextColumn(_("Server"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(120));
     GetDvListCtrlProgress()->AppendColumn(
-        new wxDataViewColumn(_("Progress"), new ProgressGaugeRenderer(), 1, WXC_FROM_DIP(150), wxALIGN_LEFT),
-        "long");
+        new wxDataViewColumn(_("Progress"), new ProgressGaugeRenderer(), 1, WXC_FROM_DIP(150), wxALIGN_LEFT), "long");
     GetDvListCtrlProgress()->AppendTextColumn(
         _("Message"), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
 

@@ -11,12 +11,12 @@ protected:
      * @brief parse the command line here
      * @return true on success, false otherwise
      */
-    bool DoParseCommandLine(wxCmdLineParser &parser);
-    
+    bool DoParseCommandLine(wxCmdLineParser& parser);
+
 public:
     MainApp();
     ~MainApp() override;
-    
+
     /**
      * @brief intialize the application
      */

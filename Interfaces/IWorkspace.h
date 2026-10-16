@@ -69,7 +69,7 @@ public:
 
     /**
      * @brief set the workspace type
-     * For example: "C++ Workspace", "PHP Workspace" etc
+     * For example: "C++ Workspace", "File System Workspace" etc
      */
     void SetWorkspaceType(const wxString& type) { this->m_workspaceType = type; }
 
@@ -86,7 +86,6 @@ public:
 
     /**
      * @brief is this workspace support the build concept?
-     * e.g. for C++ workspace, the answer is 'true', for PHP workspace, this will be 'false'
      */
     virtual bool IsBuildSupported() const = 0;
 

@@ -37,11 +37,8 @@ class PHPExecutor : public wxEvtHandler
     TerminalEmulator m_terminal;
 
 protected:
-    bool RunRUL(const PHPProjectSettingsData& settings, const wxString& urlToRun, const wxString& xdebugSessionName);
-    bool DoRunCLI(const wxString& script,
-                  const PHPProjectSettingsData* settings,
-                  const wxString& xdebugSessionName,
-                  bool neverPauseOnExit);
+    bool RunRUL(const wxString& urlToRun, const wxString& xdebugSessionName);
+    bool DoRunCLI(const wxString& script, const PHPProjectSettingsData* settings, const wxString& xdebugSessionName);
     std::pair<wxString, wxString>
     DoGetCLICommand(const wxString& script, const PHPProjectSettingsData* settings, wxString& errmsg);
 
@@ -51,15 +48,11 @@ public:
 
     /**
      * @brief execute a script or load a URL, using the given settings
-     * @param settings the project (or Xdebug) settings
+     * @param settings the Xdebug settings
      * @param xdebugSessionName if debugging, use this xdebug-session name
-     * @param neverPauseOnExit should we display a console with message 'Hit any key?'
      * @return true on success, false otherwise
      */
-    bool Exec(const PHPProjectSettingsData& settings,
-              const wxString& urlOrFilePath,
-              const wxString& xdebugSessionName,
-              bool neverPauseOnExit);
+    bool Exec(const PHPProjectSettingsData& settings, const wxString& urlOrFilePath, const wxString& xdebugSessionName);
     /**
      * @brief return true if a script is currently being executed using this instance
      */
@@ -68,11 +61,6 @@ public:
      * @brief stop any executed php script
      */
     void Stop();
-
-    /**
-     * @brief run simple script using the global settings only and return its output
-     */
-    bool RunScript(const wxString& script, wxString& php_output);
 
     TerminalEmulator* GetTerminalEmulator() { return &m_terminal; }
 };

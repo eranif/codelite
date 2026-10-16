@@ -26,23 +26,14 @@
 #ifndef PHP_UTILS_H
 #define PHP_UTILS_H
 
-#include "ieditor.h"
 #include "macros.h"
 
 #include <wx/wx.h>
 
 /**
- * @brief return true of the editor holds a file of type PHP
- */
-bool IsPHPFile(IEditor* editor);
-
-/**
  * @brief return true if this is a PHP file
  */
 bool IsPHPFileByExt(const wxString& fileName);
-
-bool IsPHPSection(int styleAtPos);
-bool IsPHPCommentOrString(int styleAtPos);
 
 #define FILE_SCHEME "file://"
 

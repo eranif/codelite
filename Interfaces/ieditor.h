@@ -115,7 +115,8 @@ public:
     virtual bool IsEditorModified() const = 0;
 
     /**
-     * @brief Get the editor's modification count
+     * @brief Get the editor's modification count. It goes up each time text is inserted or deleted (also by undo
+     * and redo), so two equal counts mean the text did not change
      */
     virtual wxUint64 GetModificationCount() const = 0;
 

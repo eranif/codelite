@@ -4577,9 +4577,12 @@ void clEditor::SetEOL()
 void clEditor::OnChange(wxStyledTextEvent& event)
 {
     event.Skip();
-    ++m_modificationCount;
 
     int modification_flags = event.GetModificationType();
+    if (modification_flags & (wxSTC_MOD_INSERTTEXT | wxSTC_MOD_DELETETEXT)) {
+        // count only text changes, not style changes
+        ++m_modificationCount;
+    }
     bool isCoalesceStart = modification_flags & wxSTC_STARTACTION;
     bool isInsert = modification_flags & wxSTC_MOD_INSERTTEXT;
     bool isDelete = modification_flags & wxSTC_MOD_DELETETEXT;

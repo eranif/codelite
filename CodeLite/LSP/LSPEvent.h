@@ -36,6 +36,11 @@ protected:
     std::optional<size_t> m_requestId; // used by wxEVT_LSP_EDIT_FILES. Set when the edit is a `workspace/applyEdit`
                                        // request from the server, which must be answered
     LSP::Progress m_progress;          // used by wxEVT_LSP_PROGRESS
+    // used by wxEVT_LSP_DOCUMENT_LINKS: the links, the editor modification count they are for, and the position of the
+    // link to open (if any)
+    std::vector<LSP::DocumentLink> m_documentLinks;
+    wxUint64 m_modificationCount = 0;
+    std::optional<LSP::Position> m_openAt;
     int m_logMessageSeverity = LSP_LOG_INFO;
     LSP::CompletionItem::eTriggerKind m_triggerKind =
         LSP::CompletionItem::kTriggerKindInvoked; // CC response is due to 24x7 cc
@@ -118,6 +123,12 @@ public:
     const LSP::WorkspaceEditChangeList& GetChanges() const { return m_changes; }
     void SetRequestId(size_t requestId) { this->m_requestId = requestId; }
     const std::optional<size_t>& GetRequestId() const { return m_requestId; }
+    void SetDocumentLinks(const std::vector<LSP::DocumentLink>& links) { this->m_documentLinks = links; }
+    const std::vector<LSP::DocumentLink>& GetDocumentLinks() const { return m_documentLinks; }
+    void SetModificationCount(wxUint64 modificationCount) { this->m_modificationCount = modificationCount; }
+    wxUint64 GetModificationCount() const { return m_modificationCount; }
+    void SetOpenAt(const std::optional<LSP::Position>& openAt) { this->m_openAt = openAt; }
+    const std::optional<LSP::Position>& GetOpenAt() const { return m_openAt; }
 };
 
 using LSPEventFunction = void (wxEvtHandler::*)(LSPEvent&);
@@ -156,5 +167,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_ON_TYPE_FORMATTED, LSPEvent);
 // The reply to `textDocument/formatting`: GetChanges() has one change with the text edits. On error, GetMessage()
 // is the error and there are no changes
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_FORMATTED, LSPEvent); // EventNotifier
+// The reply to `textDocument/documentLink`: GetDocumentLinks(), GetModificationCount() and GetOpenAt()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_LINKS, LSPEvent);
 
 #endif // LSPEVENT_H

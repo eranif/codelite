@@ -51,6 +51,8 @@ nlohmann::json LSP::InitializeRequest::ToJSON() const
     textDocumentCapabilities["onTypeFormatting"]["dynamicRegistration"] = false;
     textDocumentCapabilities["formatting"]["dynamicRegistration"] = false;
     textDocumentCapabilities["rangeFormatting"]["dynamicRegistration"] = false;
+    // `documentLink/resolve` is not supported, so links without a target are ignored
+    textDocumentCapabilities["documentLink"]["dynamicRegistration"] = false;
 
     if (m_withTokenTypes) {
         textDocumentCapabilities["semanticTokens"]["tokenTypes"] = {

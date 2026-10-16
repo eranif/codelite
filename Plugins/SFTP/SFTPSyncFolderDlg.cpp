@@ -20,61 +20,12 @@ const wxString kLastRemoteFolder = "sftp/sync-folder/last-remote-folder";
 } // namespace
 
 SFTPSyncFolderDlg::SFTPSyncFolderDlg(wxWindow* parent, const wxString& localFolder)
-    : wxDialog(parent,
-               wxID_ANY,
-               _("Sync Folder with Remote"),
-               wxDefaultPosition,
-               wxDefaultSize,
-               wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+    : SFTPSyncFolderDlgBase(parent, wxID_ANY, _("Sync Folder with Remote"))
     , m_localFolder(localFolder)
 {
-    const int border = FromDIP(10);
-    auto* mainSizer = new wxBoxSizer(wxVERTICAL);
-
-    // Account + remote folder
-    auto* grid = new wxFlexGridSizer(2, border, border);
-    grid->AddGrowableCol(1);
-
-    m_choiceAccount = new wxChoice(this, wxID_ANY);
-    m_textCtrlRemoteFolder = new wxTextCtrl(this, wxID_ANY);
-    m_buttonBrowse = new wxButton(this, wxID_ANY, _("Browse..."));
-
-    grid->Add(new wxStaticText(this, wxID_ANY, _("Account:")), 0, wxALIGN_CENTER_VERTICAL);
-    grid->Add(m_choiceAccount, 1, wxEXPAND);
-
-    auto* folderSizer = new wxBoxSizer(wxHORIZONTAL);
-    folderSizer->Add(m_textCtrlRemoteFolder, 1, wxEXPAND);
-    folderSizer->Add(m_buttonBrowse, 0, wxLEFT, border);
-    grid->Add(new wxStaticText(this, wxID_ANY, _("Remote folder:")), 0, wxALIGN_CENTER_VERTICAL);
-    grid->Add(folderSizer, 1, wxEXPAND);
-    mainSizer->Add(grid, 0, wxEXPAND | wxALL, border);
-
-    // The filter
-    m_searchCtrlFilter = new wxSearchCtrl(this, wxID_ANY);
-    m_searchCtrlFilter->SetDescriptiveText(_("Filter files..."));
-    m_searchCtrlFilter->ShowCancelButton(true);
-    mainSizer->Add(m_searchCtrlFilter, 0, wxEXPAND | wxLEFT | wxRIGHT, border);
-
-    // The files, with the Select All | Unselect All buttons on the right
-    m_dvListCtrlFiles = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_ROW_LINES);
     m_dvListCtrlFiles->AppendToggleColumn(wxEmptyString, wxDATAVIEW_CELL_ACTIVATABLE, FromDIP(40));
     m_dvListCtrlFiles->AppendTextColumn(_("File Name"), wxDATAVIEW_CELL_INERT, FromDIP(380));
     m_dvListCtrlFiles->AppendTextColumn(_("Size"), wxDATAVIEW_CELL_INERT, FromDIP(100), wxALIGN_RIGHT);
-
-    m_buttonSelectAll = new wxButton(this, wxID_ANY, _("Select All"));
-    m_buttonUnselectAll = new wxButton(this, wxID_ANY, _("Unselect All"));
-    auto* selectionSizer = new wxBoxSizer(wxVERTICAL);
-    selectionSizer->Add(m_buttonSelectAll, 0, wxEXPAND);
-    selectionSizer->Add(m_buttonUnselectAll, 0, wxEXPAND | wxTOP, border);
-
-    auto* filesSizer = new wxBoxSizer(wxHORIZONTAL);
-    filesSizer->Add(m_dvListCtrlFiles, 1, wxEXPAND);
-    filesSizer->Add(selectionSizer, 0, wxLEFT, border);
-    mainSizer->Add(filesSizer, 1, wxEXPAND | wxALL, border);
-
-    // OK | Cancel
-    mainSizer->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, border);
-    SetSizer(mainSizer);
 
     // Fill the account list and restore the last values (the folder specific values come first)
     SFTPSettings settings;
@@ -96,15 +47,6 @@ SFTPSyncFolderDlg::SFTPSyncFolderDlg(wxWindow* parent, const wxString& localFold
 
     PopulateFiles();
     UpdateTitle();
-
-    m_buttonBrowse->Bind(wxEVT_BUTTON, &SFTPSyncFolderDlg::OnBrowse, this);
-    m_buttonSelectAll->Bind(wxEVT_BUTTON, &SFTPSyncFolderDlg::OnSelectAll, this);
-    m_buttonUnselectAll->Bind(wxEVT_BUTTON, &SFTPSyncFolderDlg::OnUnselectAll, this);
-    m_dvListCtrlFiles->Bind(wxEVT_KEY_DOWN, &SFTPSyncFolderDlg::OnListKeyDown, this);
-    m_searchCtrlFilter->Bind(wxEVT_TEXT, &SFTPSyncFolderDlg::OnFilterChanged, this);
-    m_textCtrlRemoteFolder->Bind(wxEVT_TEXT, &SFTPSyncFolderDlg::OnRemoteFolderChanged, this);
-    Bind(wxEVT_UPDATE_UI, &SFTPSyncFolderDlg::OnOKUI, this, wxID_OK);
-    Bind(wxEVT_BUTTON, &SFTPSyncFolderDlg::OnOK, this, wxID_OK);
 
     SetMinSize(FromDIP(wxSize(500, 350)));
     SetSize(FromDIP(wxSize(650, 500)));

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UI.hpp"
+
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/button.h>
@@ -12,7 +14,7 @@
 /// Prompts the user for the target account, the remote folder and the files (of a local folder) to upload.
 /// Nested folders are not listed. The file list can be filtered (case insensitive, "contains"): only the files that are
 /// displayed are uploaded.
-class SFTPSyncFolderDlg : public wxDialog
+class SFTPSyncFolderDlg : public SFTPSyncFolderDlgBase
 {
 public:
     SFTPSyncFolderDlg(wxWindow* parent, const wxString& localFolder);
@@ -35,14 +37,14 @@ public:
     void SaveSelection() const;
 
 private:
-    void OnBrowse(wxCommandEvent& event);
-    void OnOKUI(wxUpdateUIEvent& event);
-    void OnOK(wxCommandEvent& event);
-    void OnSelectAll(wxCommandEvent& event);
-    void OnUnselectAll(wxCommandEvent& event);
-    void OnListKeyDown(wxKeyEvent& event);
-    void OnFilterChanged(wxCommandEvent& event);
-    void OnRemoteFolderChanged(wxCommandEvent& event);
+    void OnBrowse(wxCommandEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
+    void OnOK(wxCommandEvent& event) override;
+    void OnSelectAll(wxCommandEvent& event) override;
+    void OnUnselectAll(wxCommandEvent& event) override;
+    void OnListKeyDown(wxKeyEvent& event) override;
+    void OnFilterChanged(wxCommandEvent& event) override;
+    void OnRemoteFolderChanged(wxCommandEvent& event) override;
     void SetAllChecked(bool checked);
     void PopulateFiles();
     void ApplyFilter();
@@ -51,14 +53,6 @@ private:
     wxString ConfigKey(const wxString& name) const;
 
     wxString m_localFolder;
-    wxChoice* m_choiceAccount = nullptr;
-    wxTextCtrl* m_textCtrlRemoteFolder = nullptr;
-    wxButton* m_buttonBrowse = nullptr;
-    wxButton* m_buttonSelectAll = nullptr;
-    wxButton* m_buttonUnselectAll = nullptr;
-    wxSearchCtrl* m_searchCtrlFilter = nullptr;
-    wxDataViewListCtrl* m_dvListCtrlFiles = nullptr;
-
     struct FileEntry {
         wxString path;
         wxString name;

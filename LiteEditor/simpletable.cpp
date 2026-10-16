@@ -55,8 +55,11 @@ WatchesTable::WatchesTable(wxWindow* parent)
 
     // Load the right click menu
     m_rclickMenu = clXmlResource::Get().LoadMenu(wxT("dbg_watch_rmenu"));
-    Connect(
-        XRCID("del_expr"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnDeleteWatch), nullptr, this);
+    Connect(XRCID("del_expr"),
+            wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(WatchesTable::OnDeleteWatch),
+            nullptr,
+            this);
     Connect(XRCID("del_expr_all"),
             wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(WatchesTable::OnDeleteAll),

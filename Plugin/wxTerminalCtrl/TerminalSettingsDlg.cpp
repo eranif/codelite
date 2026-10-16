@@ -5,7 +5,8 @@
 
 TerminalSettings::TerminalSettings()
     : m_defaultShell(kTerminalCommand)
-{}
+{
+}
 
 TerminalSettings::TerminalSettings(bool optimizedDrawings, const wxString& lastUsedTerminalCommand, int scrollBackLines)
     : m_optimizedDrawings(optimizedDrawings)

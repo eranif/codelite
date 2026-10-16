@@ -1,4 +1,5 @@
 #include "MainFrame.hpp"
+
 #include <wx/aboutdlg.h>
 
 MainFrame::MainFrame(wxWindow* parent)
@@ -6,9 +7,7 @@ MainFrame::MainFrame(wxWindow* parent)
 {
 }
 
-MainFrame::~MainFrame()
-{
-}
+MainFrame::~MainFrame() {}
 
 void MainFrame::OnAbout(wxCommandEvent& event)
 {

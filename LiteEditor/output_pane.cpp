@@ -62,7 +62,8 @@ OutputPane::OutputPane(wxWindow* parent, const wxString& caption, long style)
 {
     Hide();
     CreateGUIControls();
-    EventNotifier::Get()->Connect(wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), nullptr, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), nullptr, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTED, clBuildEventHandler(OutputPane::OnBuildStarted), nullptr, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(OutputPane::OnBuildEnded), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &OutputPane::OnSettingsChanged, this);
@@ -76,7 +77,8 @@ OutputPane::~OutputPane()
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &OutputPane::OnPageChanged, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), nullptr, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(OutputPane::OnBuildStarted), nullptr, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_BUILD_STARTED, clBuildEventHandler(OutputPane::OnBuildStarted), nullptr, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(OutputPane::OnBuildEnded), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &OutputPane::OnSettingsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_OUTPUT_TAB, &OutputPane::OnToggleTab, this);

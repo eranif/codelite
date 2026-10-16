@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     quit.setFont(QFont("Times", 18, QFont::Bold));
 
     QObject::connect(&quit, SIGNAL(clicked()), &app, SLOT(quit()));
-	
+
     quit.show();
 
     return app.exec();

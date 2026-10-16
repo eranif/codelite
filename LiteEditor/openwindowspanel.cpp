@@ -95,7 +95,8 @@ OpenWindowsPanel::~OpenWindowsPanel()
 
     // clear list now, or wxGTK seems to crash on exit
     Clear();
-    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(OpenWindowsPanel::OnInitDone), nullptr, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_INIT_DONE, wxCommandEventHandler(OpenWindowsPanel::OnInitDone), nullptr, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), nullptr, this);
     EventNotifier::Get()->Disconnect(

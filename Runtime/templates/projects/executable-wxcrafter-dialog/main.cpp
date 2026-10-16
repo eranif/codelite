@@ -1,4 +1,5 @@
 #include "MainDialog.hpp"
+
 #include <wx/app.h>
 #include <wx/event.h>
 #include <wx/image.h>
@@ -16,7 +17,7 @@ public:
         wxImage::AddHandler(new wxPNGHandler);
         wxImage::AddHandler(new wxJPEGHandler);
 
-        MainDialog mainDialog{ nullptr };
+        MainDialog mainDialog{nullptr};
         mainDialog.ShowModal();
         return false;
     }

@@ -195,8 +195,8 @@ public:
     clStatusBar* GetStatusBar() override;
     clEditorBar* GetNavigationBar() override;
     clWorkspaceView* GetWorkspaceView() override;
-    clSideBarCtrl *GetLeftSideBarCtrl() override;
-    clSideBarCtrl *GetRightSideBarCtrl() override;
+    clSideBarCtrl* GetLeftSideBarCtrl() override;
+    clSideBarCtrl* GetRightSideBarCtrl() override;
     bool IsToolBarShown() const override;
     void ShowToolBar(bool show = true) override;
     void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId) override;

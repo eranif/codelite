@@ -1,4 +1,5 @@
 #include "MainFrame.hpp"
+
 #include <wx/app.h>
 #include <wx/event.h>
 #include <wx/image.h>
@@ -16,7 +17,7 @@ public:
         wxImage::AddHandler(new wxPNGHandler);
         wxImage::AddHandler(new wxJPEGHandler);
 
-        MainFrame* mainFrame = new MainFrame{ nullptr };
+        MainFrame* mainFrame = new MainFrame{nullptr};
         SetTopWindow(mainFrame);
         return GetTopWindow()->Show();
     }

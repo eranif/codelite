@@ -2,26 +2,19 @@
 
 IMPLEMENT_APP_CONSOLE(MainApp)
 
-MainApp::MainApp()
-{
-}
+MainApp::MainApp() {}
 
-MainApp::~MainApp()
-{
-}
+MainApp::~MainApp() {}
 
-int MainApp::OnExit()
-{
-    return TRUE;
-}
+int MainApp::OnExit() { return TRUE; }
 
 bool MainApp::OnInit()
 {
     wxCmdLineParser parser(wxAppConsole::argc, wxAppConsole::argv);
-    if ( !DoParseCommandLine(parser) ) {
+    if (!DoParseCommandLine(parser)) {
         return false;
     }
-    
+
     // place your initialization code here
     return true;
 }

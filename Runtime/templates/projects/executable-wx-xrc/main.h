@@ -2,9 +2,9 @@
     Name:       main.h
     Purpose:    Declares simple wxWidgets application with GUI
                 created using wxCrafter.
-    Author:    
-    Created:   
-    Copyright: 
+    Author:
+    Created:
+    Copyright:
     License:    wxWidgets license (www.wxwidgets.org)
 
     Notes:      Note that all GUI creation code is contained in
@@ -15,7 +15,7 @@
 #define __MAIN_H__
 
 ////////////////////////////////////////////////////////////////////////////////
-// application class declaration 
+// application class declaration
 ////////////////////////////////////////////////////////////////////////////////
 
 class MainApp : public wxApp
@@ -28,15 +28,15 @@ public:
 DECLARE_APP(MainApp)
 
 ////////////////////////////////////////////////////////////////////////////////
-// main application frame declaration 
+// main application frame declaration
 ////////////////////////////////////////////////////////////////////////////////
 
 class MainFrame : public wxFrame
 {
 public:
-    MainFrame(wxWindow *parent = nullptr);
+    MainFrame(wxWindow* parent = nullptr);
     ~MainFrame();
-    
+
 private:
     void OnCloseFrame(wxCloseEvent& event);
     void OnExitClick(wxCommandEvent& event);

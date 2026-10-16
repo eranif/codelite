@@ -1078,7 +1078,8 @@ private:
     /** @brief Adds the "AI-Powered Options" sub-menu to the editor's context menu, if an LLM is available. */
     void OnEditorContextMenu(clContextMenuEvent& event);
 
-    /** @brief Adds the "AI Options" sub-menu (add to context) to the file-view context menu when Markdown files are selected. */
+    /** @brief Adds the "AI Options" sub-menu (add to context) to the file-view context menu when Markdown files are
+     * selected. */
     void OnFileViewFileContextMenu(clContextMenuEvent& event);
 
     /**

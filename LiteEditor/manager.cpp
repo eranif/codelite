@@ -268,8 +268,10 @@ Manager::Manager()
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
 
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), nullptr, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
+                                  clProjectSettingsEventHandler(Manager::OnProjectSettingsModified),
+                                  nullptr,
+                                  this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), nullptr, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), nullptr, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), nullptr, this);
@@ -302,11 +304,15 @@ Manager::~Manager()
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
 
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), nullptr, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
+                                     clProjectSettingsEventHandler(Manager::OnProjectSettingsModified),
+                                     nullptr,
+                                     this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), nullptr, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), nullptr, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), nullptr, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), nullptr, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &Manager::OnFindInFilesDismissed, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &Manager::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);

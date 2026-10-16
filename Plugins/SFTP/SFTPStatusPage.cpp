@@ -117,7 +117,7 @@ void SFTPStatusPage::OnCancelSync(wxCommandEvent& event)
     wxUnusedVar(event);
     m_buttonCancelSync->Disable();
     m_buttonCancelSync->SetLabel(_("Cancelling..."));
-    m_plugin->CancelFolderSync();
+    m_plugin->CancelSync();
 }
 
 void SFTPStatusPage::OnContentMenu(wxContextMenuEvent& event)

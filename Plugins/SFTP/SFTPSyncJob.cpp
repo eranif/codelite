@@ -7,14 +7,23 @@
 
 #include <wx/filename.h>
 
-SFTPSyncJob::SFTPSyncJob(SFTP* plugin,
-                         const wxString& account,
-                         const wxString& remoteFolder,
-                         const wxArrayString& localFiles)
+namespace
+{
+/// Return the folder part of a remote path (`/a/b/c.txt` -> `/a/b`)
+wxString GetParentFolder(const wxString& remotePath)
+{
+    const int pos = remotePath.Find('/', true);
+    if (pos == wxNOT_FOUND) {
+        return wxEmptyString;
+    }
+    return pos == 0 ? wxString('/') : remotePath.Left(pos);
+}
+} // namespace
+
+SFTPSyncJob::SFTPSyncJob(SFTP* plugin, const wxString& account, std::vector<SFTPSyncItem> items)
     : m_plugin(plugin)
     , m_account(account)
-    , m_remoteFolder(remoteFolder)
-    , m_files(localFiles)
+    , m_items(std::move(items))
 {
     Bind(wxEVT_SFTP_NEW_FOLDER_COMPLETED, &SFTPSyncJob::OnFolderCreated, this);
     Bind(wxEVT_SFTP_NEW_FOLDER_ERROR, &SFTPSyncJob::OnFolderError, this);
@@ -33,12 +42,24 @@ SFTPSyncJob::~SFTPSyncJob()
 void SFTPSyncJob::Start()
 {
     auto* page = m_plugin->GetOutputPane();
-    page->BeginSync(m_files.GetCount());
+    page->BeginSync(m_items.size());
     Log(SFTPThreadMessage::STATUS_NONE,
-        wxString::Format(_("Syncing %d file(s) to %s"), static_cast<int>(m_files.GetCount()), m_remoteFolder));
+        wxString::Format(_("Syncing %d file(s) using account %s"), static_cast<int>(m_items.size()), m_account));
 
-    // The queue is FIFO: the uploads start only after the folder is created
-    clSFTPManager::Get().AsyncNewFolder(m_remoteFolder, m_account, this);
+    // Create each remote folder once. The uploads start after all the folders are created
+    std::set<wxString> folders;
+    for (const auto& item : m_items) {
+        folders.insert(GetParentFolder(item.remote));
+    }
+
+    m_pendingFolders = folders.size();
+    if (m_pendingFolders == 0) {
+        UploadNext();
+        return;
+    }
+    for (const auto& folder : folders) {
+        clSFTPManager::Get().AsyncNewFolder(folder, m_account, this);
+    }
 }
 
 void SFTPSyncJob::Detach()
@@ -59,27 +80,40 @@ void SFTPSyncJob::Cancel()
 void SFTPSyncJob::OnFolderCreated(clSFTPEvent& event)
 {
     wxUnusedVar(event);
-    UploadNext();
+    if (--m_pendingFolders == 0) {
+        UploadNext();
+    }
 }
 
 void SFTPSyncJob::OnFolderError(clSFTPEvent& event)
 {
     Log(SFTPThreadMessage::STATUS_ERROR,
-        wxString::Format(_("Failed to create remote folder %s. %s"), m_remoteFolder, event.GetString()));
-    m_failed = m_files.GetCount();
-    Finish();
+        wxString::Format(_("Failed to create remote folder %s. %s"), event.GetRemoteFile(), event.GetString()));
+    m_failedFolders.insert(event.GetRemoteFile());
+    if (--m_pendingFolders == 0) {
+        UploadNext();
+    }
 }
 
 void SFTPSyncJob::UploadNext()
 {
-    if (m_cancelled || m_plugin == nullptr || m_next >= m_files.GetCount()) {
+    // Files whose remote folder could not be created are failed without trying
+    while (m_plugin != nullptr && !m_cancelled && m_next < m_items.size() &&
+           m_failedFolders.count(GetParentFolder(m_items[m_next].remote)) > 0) {
+        Log(SFTPThreadMessage::STATUS_ERROR,
+            wxString::Format(_("Failed to upload: %s. The remote folder was not created"), m_items[m_next].local));
+        ++m_failed;
+        ++m_next;
+    }
+
+    if (m_cancelled || m_plugin == nullptr || m_next >= m_items.size()) {
         Finish();
         return;
     }
 
-    const wxString& local_file = m_files[m_next];
-    m_plugin->GetOutputPane()->UpdateSync(m_next, m_files.GetCount(), wxFileName(local_file).GetFullName());
-    clSFTPManager::Get().AsyncSaveFile(local_file, GetRemotePath(local_file), m_account, this);
+    const SFTPSyncItem& item = m_items[m_next];
+    m_plugin->GetOutputPane()->UpdateSync(m_next, m_items.size(), wxFileName(item.local).GetFullName());
+    clSFTPManager::Get().AsyncSaveFile(item.local, item.remote, m_account, this);
 }
 
 void SFTPSyncJob::OnUploadCompleted(clCommandEvent& event)
@@ -107,7 +141,7 @@ void SFTPSyncJob::Finish()
         return;
     }
 
-    size_t skipped = m_files.GetCount() - (m_succeeded + m_failed);
+    size_t skipped = m_items.size() - (m_succeeded + m_failed);
     wxString summary = wxString::Format(
         _("Sync finished: %d uploaded, %d failed"), static_cast<int>(m_succeeded), static_cast<int>(m_failed));
     if (skipped > 0) {
@@ -132,13 +166,4 @@ void SFTPSyncJob::Log(int status, const wxString& message)
     msg->SetMessage(message);
     msg->SetStatus(status);
     m_plugin->GetOutputPane()->AddLine(msg); // takes ownership
-}
-
-wxString SFTPSyncJob::GetRemotePath(const wxString& localFile) const
-{
-    wxString remote = m_remoteFolder;
-    if (!remote.EndsWith("/")) {
-        remote << "/";
-    }
-    return remote + wxFileName(localFile).GetFullName();
 }

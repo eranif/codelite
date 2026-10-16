@@ -1,7 +1,9 @@
 #include "SFTPSyncFolderDlg.h"
 
 #include "SFTPBrowserDlg.h"
+#include "SFTPSyncPaths.h"
 #include "cl_config.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "sftp_settings.h"
 #include "ssh/ssh_account_info.h"
@@ -19,12 +21,21 @@ const wxString kLastAccount = "sftp/sync-folder/last-account";
 const wxString kLastRemoteFolder = "sftp/sync-folder/last-remote-folder";
 } // namespace
 
-SFTPSyncFolderDlg::SFTPSyncFolderDlg(wxWindow* parent, const wxString& localFolder)
-    : SFTPSyncFolderDlgBase(parent, wxID_ANY, _("Sync Folder with Remote"))
+SFTPSyncFolderDlg::SFTPSyncFolderDlg(wxWindow* parent,
+                                     const wxString& localFolder,
+                                     const wxArrayString& files,
+                                     bool useLastRemoteFolder)
+    : SFTPSyncFolderDlgBase(parent, wxID_ANY, _("Sync with Remote"))
     , m_localFolder(localFolder)
+    , m_useLastRemoteFolder(useLastRemoteFolder)
 {
+    // The local folder is for display only
+    m_textCtrlLocalFolder->SetEditable(false);
+    m_textCtrlLocalFolder->ChangeValue(m_localFolder);
+
     m_dvListCtrlFiles->AppendToggleColumn(wxEmptyString, wxDATAVIEW_CELL_ACTIVATABLE, FromDIP(40));
-    m_dvListCtrlFiles->AppendTextColumn(_("File Name"), wxDATAVIEW_CELL_INERT, FromDIP(380));
+    m_dvListCtrlFiles->AppendTextColumn(_("Local Path"), wxDATAVIEW_CELL_INERT, FromDIP(260));
+    m_dvListCtrlFiles->AppendTextColumn(_("Remote Path"), wxDATAVIEW_CELL_INERT, FromDIP(260));
     m_dvListCtrlFiles->AppendTextColumn(_("Size"), wxDATAVIEW_CELL_INERT, FromDIP(100), wxALIGN_RIGHT);
 
     // Fill the account list and restore the last values (the folder specific values come first)
@@ -36,7 +47,9 @@ SFTPSyncFolderDlg::SFTPSyncFolderDlg(wxWindow* parent, const wxString& localFold
 
     auto& conf = clConfig::Get();
     wxString lastAccount = conf.Read(ConfigKey("account"), conf.Read(kLastAccount, wxString{}));
-    wxString lastRemoteFolder = conf.Read(ConfigKey("remote-folder"), conf.Read(kLastRemoteFolder, wxString{}));
+    // The last remote folder of another local folder is a guess, use it only if the caller wants it
+    const wxString fallbackRemoteFolder = m_useLastRemoteFolder ? conf.Read(kLastRemoteFolder, wxString{}) : wxString{};
+    wxString lastRemoteFolder = conf.Read(ConfigKey("remote-folder"), fallbackRemoteFolder);
     int where = m_choiceAccount->FindString(lastAccount);
     if (where != wxNOT_FOUND) {
         m_choiceAccount->SetSelection(where);
@@ -45,7 +58,7 @@ SFTPSyncFolderDlg::SFTPSyncFolderDlg(wxWindow* parent, const wxString& localFold
     }
     m_textCtrlRemoteFolder->ChangeValue(lastRemoteFolder);
 
-    PopulateFiles();
+    PopulateFiles(files);
     UpdateTitle();
 
     SetMinSize(FromDIP(wxSize(500, 350)));
@@ -56,11 +69,11 @@ SFTPSyncFolderDlg::SFTPSyncFolderDlg(wxWindow* parent, const wxString& localFold
     m_textCtrlRemoteFolder->SetFocus();
 }
 
-void SFTPSyncFolderDlg::PopulateFiles()
+wxArrayString SFTPSyncFolderDlg::ListFolderFiles(const wxString& folder)
 {
     // Only the files that are directly under the folder, nested folders are not included
     wxArrayString names;
-    wxDir dir(m_localFolder);
+    wxDir dir(folder);
     if (dir.IsOpened()) {
         wxString name;
         bool cont = dir.GetFirst(&name, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN);
@@ -71,11 +84,29 @@ void SFTPSyncFolderDlg::PopulateFiles()
     }
     names.Sort();
 
+    wxArrayString files;
     for (const auto& name : names) {
-        wxFileName fn(m_localFolder, name);
+        files.Add(wxFileName(folder, name).GetFullPath());
+    }
+    return files;
+}
+
+void SFTPSyncFolderDlg::PopulateFiles(const wxArrayString& files)
+{
+    for (const auto& file : files) {
+        // A file outside of the local folder has no place in the remote folder. Do not guess one (files with the same
+        // name would overwrite each other)
+        auto relative = SFTPRelativePath(file, m_localFolder);
+        if (!relative) {
+            clWARNING() << "SFTP: skipping" << file << ", it is not under" << m_localFolder << endl;
+            continue;
+        }
+
+        wxFileName fn(file);
         FileEntry entry;
         entry.path = fn.GetFullPath();
-        entry.name = name;
+        entry.localPath = relative->GetFullPath();
+        entry.remotePath = relative->GetFullPath(wxPATH_UNIX);
         entry.size = wxFileName::GetHumanReadableSize(fn.GetSize());
         m_entries.push_back(std::move(entry));
     }
@@ -101,13 +132,14 @@ void SFTPSyncFolderDlg::ApplyFilter()
     m_visible.clear();
     for (size_t i = 0; i < m_entries.size(); ++i) {
         const FileEntry& entry = m_entries[i];
-        if (!filter.empty() && !entry.name.Lower().Contains(filter)) {
+        if (!filter.empty() && !entry.localPath.Lower().Contains(filter)) {
             continue;
         }
 
         wxVector<wxVariant> cols;
         cols.push_back(entry.checked);
-        cols.push_back(entry.name);
+        cols.push_back(entry.localPath);
+        cols.push_back(entry.remotePath);
         cols.push_back(entry.size);
         m_dvListCtrlFiles->AppendItem(cols);
         m_visible.push_back(i);
@@ -169,22 +201,45 @@ wxString SFTPSyncFolderDlg::GetRemoteFolder() const
     return folder;
 }
 
-wxArrayString SFTPSyncFolderDlg::GetSelectedFiles() const
+bool SFTPSyncFolderDlg::HasSelectedItems() const
 {
-    wxArrayString files;
     for (size_t row = 0; row < m_visible.size(); ++row) {
         if (m_dvListCtrlFiles->GetToggleValue(static_cast<unsigned>(row), 0)) {
-            files.Add(m_entries[m_visible[row]].path);
+            return true;
         }
     }
-    return files;
+    return false;
+}
+
+std::vector<SFTPSyncItem> SFTPSyncFolderDlg::GetSelectedItems() const
+{
+    wxString remoteFolder = GetRemoteFolder();
+    // Remote paths always use "/": fix the separators and collapse the repeated ones
+    remoteFolder.Replace("\\", "/");
+    while (remoteFolder.Contains("//")) {
+        remoteFolder.Replace("//", "/");
+    }
+    if (!remoteFolder.EndsWith("/")) {
+        remoteFolder << "/";
+    }
+
+    std::vector<SFTPSyncItem> items;
+    for (size_t row = 0; row < m_visible.size(); ++row) {
+        if (m_dvListCtrlFiles->GetToggleValue(static_cast<unsigned>(row), 0)) {
+            const FileEntry& entry = m_entries[m_visible[row]];
+            items.push_back({entry.path, remoteFolder + entry.remotePath});
+        }
+    }
+    return items;
 }
 
 void SFTPSyncFolderDlg::SaveSelection() const
 {
     auto& conf = clConfig::Get();
     conf.Write(kLastAccount, GetAccount());
-    conf.Write(kLastRemoteFolder, GetRemoteFolder());
+    if (m_useLastRemoteFolder) {
+        conf.Write(kLastRemoteFolder, GetRemoteFolder());
+    }
     conf.Write(ConfigKey("account"), GetAccount());
     conf.Write(ConfigKey("remote-folder"), GetRemoteFolder());
 }
@@ -248,8 +303,7 @@ void SFTPSyncFolderDlg::OnListKeyDown(wxKeyEvent& event)
 
 void SFTPSyncFolderDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable(m_choiceAccount->GetSelection() != wxNOT_FOUND && !GetRemoteFolder().empty() &&
-                 !GetSelectedFiles().IsEmpty());
+    event.Enable(m_choiceAccount->GetSelection() != wxNOT_FOUND && !GetRemoteFolder().empty() && HasSelectedItems());
 }
 
 void SFTPSyncFolderDlg::OnOK(wxCommandEvent& event)

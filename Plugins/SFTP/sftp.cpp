@@ -32,9 +32,11 @@
 #include "SFTPStatusPage.h"
 #include "SFTPSyncFolderDlg.h"
 #include "SFTPSyncJob.h"
+#include "SFTPSyncPaths.h"
 #include "SFTPTreeView.h"
 #include "SSHAccountManagerDlg.h"
 #include "clFilesCollector.h"
+#include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
 #include "detachedpanesinfo.h"
@@ -50,6 +52,7 @@
 
 #include <algorithm>
 #include <optional>
+#include <set>
 #include <wx/log.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
@@ -120,6 +123,7 @@ SFTP::SFTP(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &SFTP::OnEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &SFTP::OnFolderContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &SFTP::OnFileContextMenu, this);
 
     // API support
     EventNotifier::Get()->Bind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
@@ -255,6 +259,7 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &SFTP::OnEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &SFTP::OnFolderContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &SFTP::OnFileContextMenu, this);
 
     EventNotifier::Get()->Unbind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_RENAME_FILE, &SFTP::OnRenameFile, this);
@@ -676,6 +681,54 @@ std::optional<std::pair<wxString, wxString>> GetWorkspaceRemoteTarget(const wxSt
     }
     return std::make_pair(config->GetRemoteAccount(), remote);
 }
+
+/// Return the folder that the paths of `files` are relative to: the root of the open (local) workspace if all the files
+/// are under it, otherwise their common parent folder. Returns std::nullopt if there is no such folder (for example,
+/// the files are on different drives).
+std::optional<wxString> GetFilesBaseFolder(const wxArrayString& files)
+{
+    if (files.IsEmpty()) {
+        return std::nullopt;
+    }
+
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (workspace != nullptr && !workspace->IsRemote()) {
+        const wxString dir = workspace->GetDir();
+        if (!dir.empty() && std::all_of(files.begin(), files.end(), [&dir](const wxString& file) {
+                return SFTPRelativePath(file, dir).has_value();
+            })) {
+            return dir;
+        }
+    }
+
+    // Find the common parent folder: compare the volume and the folders of the files, one part at a time
+    const bool caseSensitive = wxFileName::IsCaseSensitive();
+    const wxFileName first(files[0]);
+    const wxString volume = first.GetVolume();
+    wxArrayString common = first.GetDirs();
+    for (size_t i = 1; i < files.GetCount(); ++i) {
+        const wxFileName fn(files[i]);
+        if (!fn.GetVolume().IsSameAs(volume, caseSensitive)) {
+            return std::nullopt;
+        }
+
+        const wxArrayString& dirs = fn.GetDirs();
+        size_t n = 0;
+        while (n < common.GetCount() && n < dirs.GetCount() && common[n].IsSameAs(dirs[n], caseSensitive)) {
+            ++n;
+        }
+        if (n < common.GetCount()) {
+            common.RemoveAt(n, common.GetCount() - n);
+        }
+    }
+
+    // `common` is a prefix of the folders of the first file, remove the other folders
+    wxFileName base = wxFileName::DirName(first.GetPath());
+    while (base.GetDirCount() > common.GetCount()) {
+        base.RemoveLastDir();
+    }
+    return base.GetDirCount() == 0 ? base.GetFullPath() : base.GetPath();
+}
 } // namespace
 
 void SFTP::OnFolderContextMenu(clContextMenuEvent& event)
@@ -704,23 +757,97 @@ void SFTP::OnFolderContextMenu(clContextMenuEvent& event)
         id);
 }
 
-void SFTP::SyncFolderWithRemote(const wxString& folder)
+void SFTP::OnFileContextMenu(clContextMenuEvent& event)
 {
-    if (m_syncJob) {
-        ::wxMessageBox(_("A folder sync is already running"), "CodeLite", wxICON_INFORMATION | wxOK | wxCENTER);
+    event.Skip();
+
+    wxMenu* menu = event.GetMenu();
+    if (menu == nullptr) {
         return;
     }
 
-    SFTPSyncFolderDlg dlg(EventNotifier::Get()->TopFrame(), folder);
-    if (!dlg.HasFiles()) {
+    // Some views show files that are not on the local disk, keep only the local files. A file can be selected more
+    // than once (for example, a file that belongs to several projects): keep it once
+    wxArrayString files;
+    std::set<wxString> seen;
+    for (const wxString& file : event.GetStrings()) {
+        wxString key = wxFileName(file).GetFullPath();
+        if (!wxFileName::IsCaseSensitive()) {
+            key.MakeLower();
+        }
+        if (seen.insert(key).second && wxFileName::FileExists(file)) {
+            files.Add(file);
+        }
+    }
+    if (files.IsEmpty()) {
+        return;
+    }
+
+    const int id = XRCID("sftp_sync_files_with_remote");
+    menu->AppendSeparator();
+    const wxString label = files.GetCount() > 1 ? _("Sync Files with Remote") : _("Sync File with Remote");
+    auto* item = new wxMenuItem(menu, id, label);
+    item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("debugger_restart"));
+    menu->Append(item);
+    menu->Bind(
+        wxEVT_MENU,
+        [this, files](wxCommandEvent& e) {
+            e.Skip();
+            // let the menu close before displaying the dialog
+            CallAfter(&SFTP::SyncFilesWithRemote, files);
+        },
+        id);
+}
+
+bool SFTP::WarnIfSyncRunning()
+{
+    if (!m_syncJob) {
+        return false;
+    }
+    ::wxMessageBox(_("A sync is already running"), "CodeLite", wxICON_INFORMATION | wxOK | wxCENTER);
+    return true;
+}
+
+void SFTP::SyncFolderWithRemote(const wxString& folder)
+{
+    if (WarnIfSyncRunning()) {
+        return;
+    }
+
+    const wxArrayString files = SFTPSyncFolderDlg::ListFolderFiles(folder);
+    if (files.IsEmpty()) {
         ::wxMessageBox(_("There are no files to upload in this folder.\nNested folders are not included."),
                        _("Nothing to Sync"),
                        wxICON_INFORMATION | wxOK | wxCENTER);
         return;
     }
+    ShowSyncDialog(folder, files, true);
+}
+
+void SFTP::SyncFilesWithRemote(const wxArrayString& files)
+{
+    if (WarnIfSyncRunning()) {
+        return;
+    }
+
+    auto base = GetFilesBaseFolder(files);
+    if (!base) {
+        ::wxMessageBox(_("The files must be on the same drive"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+        return;
+    }
+    ShowSyncDialog(base.value(), files, false);
+}
+
+void SFTP::ShowSyncDialog(const wxString& localFolder, const wxArrayString& files, bool useLastRemoteFolder)
+{
+    SFTPSyncFolderDlg dlg(EventNotifier::Get()->TopFrame(), localFolder, files, useLastRemoteFolder);
+    if (!dlg.HasFiles()) {
+        ::wxMessageBox(_("There are no files to upload"), _("Nothing to Sync"), wxICON_INFORMATION | wxOK | wxCENTER);
+        return;
+    }
 
     // In a file system workspace, the target is derived from the workspace settings (it may be empty)
-    if (auto target = GetWorkspaceRemoteTarget(folder)) {
+    if (auto target = GetWorkspaceRemoteTarget(localFolder)) {
         dlg.SetTarget(target->first, target->second);
     }
 
@@ -731,11 +858,11 @@ void SFTP::SyncFolderWithRemote(const wxString& folder)
     // Show the output pane with the "SFTP Log" tab selected, it displays the progress
     m_mgr->ShowOutputPane(_("SFTP Log"));
 
-    m_syncJob = std::make_unique<SFTPSyncJob>(this, dlg.GetAccount(), dlg.GetRemoteFolder(), dlg.GetSelectedFiles());
+    m_syncJob = std::make_unique<SFTPSyncJob>(this, dlg.GetAccount(), dlg.GetSelectedItems());
     m_syncJob->Start();
 }
 
-void SFTP::CancelFolderSync()
+void SFTP::CancelSync()
 {
     if (m_syncJob) {
         m_syncJob->Cancel();

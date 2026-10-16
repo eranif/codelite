@@ -95,8 +95,10 @@ You can upload the files of a local folder to a remote machine in one step:
     - Choose the target **account**
     - Enter the **remote folder**, or click the `Browse...` button to choose it from the remote machine
     - In the file list, uncheck the files that you do not want to upload. Use the `Select All` and `Unselect All` buttons on the right of the list, or press ++space++ to check or uncheck the selected file
-    - To find files quickly, type in the filter field above the list. Only the file names that contain the text are displayed (the search is not case sensitive). For example, type `.cpp` to display only the `.cpp` files
+    - To find files quickly, type in the filter field above the list. Only the paths that contain the text are displayed (the search is not case sensitive). For example, type `.cpp` to display only the `.cpp` files
 - Click `OK`
+
+The file list has three columns: `Local Path`, `Remote Path` and `Size`. The paths are relative to the local folder (shown in the read-only `Local Folder` field) and to the `Remote Folder`. A file is uploaded to `<remote folder>/<remote path>`.
 
 Notes:
 
@@ -107,5 +109,28 @@ Notes:
 - CodeLite remembers the account and the remote folder that you entered, and fills them in next time.
 - In a **File System Workspace** that has a remote folder and an SSH account (the `Remote` page of the workspace settings, with remote enabled), the dialog is already filled for you. The remote folder is `<remote workspace folder>/<selected folder, relative to the workspace root>`. For example, if the workspace root is `/home/me/project`, the remote workspace folder is `/srv/project`, and you sync `/home/me/project/src/ui`, the remote folder is `/srv/project/src/ui`. You can still change it. If remote development is disabled for the workspace, or no remote folder is set, the `Remote folder` field is left empty.
 - When the sync starts, the `SFTP Log` view opens and shows the progress. It does not block the rest of the IDE. Click `Cancel` to stop. The file that is being uploaded is not interrupted, but the next files are skipped.
+
+## Sync Files with Remote
+---
+
+**Since CodeLite 19.0.0**
+
+You can also upload only some files, even if they are in different folders:
+
+- In a file view (for example the `File Explorer` tab, or the C++ workspace tree), select one or more files, right-click, and select `Sync Files with Remote`
+- The dialog is the same as the one of [Sync Folder with Remote](#sync-folder-with-remote). The `Local Folder` field shows the folder that the paths in the list are relative to:
+    - If a workspace is open and all the files are inside it, this is the workspace root folder
+    - Otherwise, it is the closest folder that contains all the files. If the files are on different drives, CodeLite shows a message and nothing is uploaded
+- Enter the `Remote Folder`, the remote machine folder that matches the `Local Folder`. Each file keeps its path relative to this folder, so files with the same name in different folders do not overwrite each other. For example:
+
+    | Local Path | Remote Path |
+    |------------|-------------|
+    | `a\b\file1.cpp` | `a/b/file1.cpp` |
+    | `c\d\file2.cpp` | `c/d/file2.cpp` |
+
+    With the `Remote Folder` set to `/home/eran/myworkspace`, the files are uploaded to `/home/eran/myworkspace/a/b/file1.cpp` and `/home/eran/myworkspace/c/d/file2.cpp`
+- The remote folders are created if they do not exist. Everything else (the filter, `Select All`, the `SFTP Log` progress and `Cancel`) works like in the folder sync
+- CodeLite remembers the account, and the `Remote Folder` for the same `Local Folder`. Unlike the folder sync, the `Remote Folder` that you used for other folders is not suggested, because the paths in the list are relative to the `Local Folder`. The first time you sync files of a folder, the `Remote Folder` can be empty
+- In a **File System Workspace** with a remote folder, the `Remote Folder` is filled in for you, as described above
 
 [1]: https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse

@@ -65,8 +65,8 @@ public:
 
     void OpenFile(const wxString& remotePath, int lineNumber = wxNOT_FOUND);
 
-    /// Cancel the running "Sync Folder with Remote" job (if any). The file that is being uploaded is not interrupted
-    void CancelFolderSync();
+    /// Cancel the running "Sync with Remote" job (if any). The file that is being uploaded is not interrupted
+    void CancelSync();
 
     /// Called by the sync job when it is done, deletes the job
     void OnSyncJobFinished();
@@ -87,7 +87,15 @@ protected:
     void MSWInitiateConnection();
     void OnInitDone(wxCommandEvent& event);
     void OnFolderContextMenu(clContextMenuEvent& event);
+    void OnFileContextMenu(clContextMenuEvent& event);
+    /// Return true (after telling the user) if a sync job is already running
+    bool WarnIfSyncRunning();
     void SyncFolderWithRemote(const wxString& folder);
+    /// The files can be located in different folders
+    void SyncFilesWithRemote(const wxArrayString& files);
+    /// Prompt for the target and start the sync job. `localFolder` is the base folder of `files` (full paths).
+    /// See the SFTPSyncFolderDlg constructor for `useLastRemoteFolder`
+    void ShowSyncDialog(const wxString& localFolder, const wxArrayString& files, bool useLastRemoteFolder);
     void DoFileSaved(const wxString& filename);
     bool IsWorkspaceOpened() const { return m_workspaceFile.IsOk(); }
     void DoSaveRemoteFile(const RemoteFileInfo& remoteFile);

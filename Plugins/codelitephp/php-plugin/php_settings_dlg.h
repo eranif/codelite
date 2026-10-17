@@ -33,8 +33,6 @@ class PHPSettingsDlg : public PHPSettingsBaseDlg
 protected:
     // Handlers for PHPSettingsBaseDlg events.
     void OnBrowseForIncludePath(wxCommandEvent& event);
-    void OnAddCCPath(wxCommandEvent& event);
-    void OnUpdateApplyUI(wxCommandEvent& event);
 
 public:
     PHPSettingsDlg(wxWindow* parent);

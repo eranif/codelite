@@ -416,6 +416,8 @@ void AgentHostPage::RestartAgentHost()
     m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
         wxEmptyString, m_agentInfo.sshAccount, wxEmptyString, true, kShellCommand, m_splitter);
     m_splitter->Initialize(m_terminal);
+    m_terminal->RegisterTextClickedFilter([](const std::string&) -> bool { return true; });
+
     GetSizer()->Layout();
     // Hook a custom context menu
     m_terminal->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);

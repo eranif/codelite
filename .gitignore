@@ -36,3 +36,4 @@ LiteEditor/autoversion.h
 .wxcgen.json
 *.lock
 .wxcrafter-environment
+.claude/

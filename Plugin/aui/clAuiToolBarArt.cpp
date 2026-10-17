@@ -93,8 +93,10 @@ void clAuiToolBarArt::AddTool(wxAuiToolBar* toolbar,
                               wxItemKind item_kind)
 {
     size_t brightness = DrawingUtils::IsThemeDark() ? 0 : 255;
-    auto disabled_bmp = bitmap.ConvertToDisabled(brightness);
-    wxBitmap::Rescale(disabled_bmp, wxSize(16, 16));
+    // ConvertToDisabled() keeps the size and the scale factor of `bitmap`. Do not rescale the result to a fixed size:
+    // that drops the scale factor and gives a low resolution image on high DPI displays.
+    wxBitmap disabled_bmp = bitmap.ConvertToDisabled(brightness);
+    disabled_bmp.SetScaleFactor(bitmap.GetScaleFactor());
     wxString help_string = shortHelpString.empty() ? label : shortHelpString;
     auto real_kind = item_kind;
     if (item_kind == wxITEM_DROPDOWN) {

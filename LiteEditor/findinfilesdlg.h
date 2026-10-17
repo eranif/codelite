@@ -82,7 +82,7 @@ public:
     ~FindInFilesDialog() override;
     void SetSearchPaths(const wxString& paths, bool transient = false);
     void SetFileMask(const wxString& mask);
-    int ShowDialog();
+    int ShowDialog(const wxString& findWhat = wxEmptyString, const wxString& replaceWith = wxEmptyString);
 };
 
 #endif // FIND_IN_FILES_DLG_H

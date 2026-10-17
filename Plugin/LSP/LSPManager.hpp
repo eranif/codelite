@@ -294,7 +294,7 @@ protected:
     void OnSemanticTokens(LSPEvent& event);
     void OnDocumentSymbolsForHighlight(LSPEvent& event);
     void OnBuildEnded(clBuildEvent& event);
-    void OnOpenResource(wxCommandEvent& event);
+    void OnOpenResourceShowing(clOpenResourceEvent& event);
     void OnEditorClosed(clCommandEvent& event);
     void OnAllEditorsClosed(wxCommandEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);

@@ -1161,8 +1161,8 @@ void clMainFrame::AddKeyboardAccelerators()
     mgr->AddAccelerator(_("Help"), {{"wxID_ABOUT", _("About...")}});
     mgr->AddAccelerator(_("Plugins"), {{"manage_plugins", _("Manage Plugins...")}});
     mgr->AddAccelerator(_("Search"),
-                        {{"grep_current_file", _("Grep Selection in the Current File")},
-                         {"grep_current_workspace", _("Grep Selection in the Workspace"), "Ctrl-Shift-G"},
+                        {{"grep_current_file", _("Grep Selection in the Current File"), "Ctrl-Shift-G"},
+                         {"grep_current_workspace", _("Grep Selection in the Workspace")},
                          {"web_search_selection", _("Search for Selection with default browser"), "Ctrl-Shift-W"},
                          {"ID_GOTO_ANYTHING", _("Goto Anything"), "Ctrl-Shift-P"},
                          {"find_previous", _("Find Previous"), "Shift-F3"},
@@ -4942,15 +4942,16 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
 
     // Determine the search type
     // Let the plugins a chance before we handle this event
-    wxCommandEvent eventOpenResource(wxEVT_CMD_OPEN_RESOURCE, GetId());
+    clOpenResourceEvent eventOpenResource{wxEVT_OPEN_RESOURCE_SHOWING};
     eventOpenResource.SetEventObject(this);
     if (EventNotifier::Get()->ProcessEvent(eventOpenResource)) {
         return;
     }
 
     wxString initialText;
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    if (editor && editor->HasSelection()) {
+    if (!eventOpenResource.GetFindWhat().empty())
+        initialText = eventOpenResource.GetFindWhat();
+    else if (auto* editor = GetMainBook()->GetActiveEditor(); editor && editor->HasSelection()) {
         int start = editor->GetSelectionNStart(0);
         int end = editor->GetSelectionNEnd(0);
         initialText = editor->GetTextRange(start, end);

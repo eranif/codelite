@@ -145,7 +145,7 @@ Manager::Manager()
 
     EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &Manager::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &Manager::OnBuildEnded, this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &Manager::OnOpenResource, this);
+    EventNotifier::Get()->Bind(wxEVT_OPEN_RESOURCE_SHOWING, &Manager::OnOpenResourceShowing, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &Manager::OnWorkspaceScanCompleted, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_SET_DIAGNOSTICS, &Manager::OnSetDiagnostics, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &Manager::OnClearDiagnostics, this);
@@ -192,7 +192,7 @@ Manager::~Manager()
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &Manager::OnBuildEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &Manager::OnGoinDown, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &Manager::OnOpenResource, this);
+    EventNotifier::Get()->Unbind(wxEVT_OPEN_RESOURCE_SHOWING, &Manager::OnOpenResourceShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &Manager::OnSetDiagnostics, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &Manager::OnClearDiagnostics, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_MARGIN_CLICKED, &Manager::OnMarginClicked, this);
@@ -1384,7 +1384,7 @@ void Manager::OnDocumentSymbolsForHighlight(LSPEvent& event)
     editor->SetSemanticTokens(classes, variables, methods, others);
 }
 
-void Manager::OnOpenResource(wxCommandEvent& event)
+void Manager::OnOpenResourceShowing(clOpenResourceEvent& event)
 {
     event.Skip();
     DiscoverWorkspaceType();

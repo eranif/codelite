@@ -61,9 +61,9 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_BELL, &AgentHostPage::OnTerminalBell, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &AgentHostPage::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_OPEN_RESOURCE_SHOWING, &AgentHostPage::OnOpenResourceShowing, this);
     if (auto frame = EventNotifier::Get()->TopFrame()) {
-        frame->Bind(wxEVT_MENU, &AgentHostPage::OnGrepWorkspace, this, XRCID("grep_current_workspace"));
-        frame->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnGrepWorkspaceUI, this, XRCID("grep_current_workspace"));
         frame->Bind(wxEVT_MENU, &AgentHostPage::OnShowTerminal, this, XRCID("show_terminal_pane"));
     }
 }
@@ -82,9 +82,9 @@ AgentHostPage::~AgentHostPage()
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_BELL, &AgentHostPage::OnTerminalBell, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &AgentHostPage::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_OPEN_RESOURCE_SHOWING, &AgentHostPage::OnOpenResourceShowing, this);
     if (auto frame = EventNotifier::Get()->TopFrame()) {
-        frame->Unbind(wxEVT_MENU, &AgentHostPage::OnGrepWorkspace, this, XRCID("grep_current_workspace"));
-        frame->Unbind(wxEVT_UPDATE_UI, &AgentHostPage::OnGrepWorkspaceUI, this, XRCID("grep_current_workspace"));
         frame->Unbind(wxEVT_MENU, &AgentHostPage::OnShowTerminal, this, XRCID("show_terminal_pane"));
     }
 }
@@ -143,6 +143,40 @@ void AgentHostPage::OnTerminalTerminated(clCommandEvent& event)
         }
     });
 }
+
+namespace
+{
+/// The first line of `text`, trimmed.
+wxString FirstLine(const wxString& text) { return text.BeforeFirst('\n').BeforeFirst('\r').Trim().Trim(false); }
+
+template <typename Event>
+void UpdateFindWhat(Event& event, const wxTerminalViewCtrl* terminal)
+{
+    event.Skip();
+    if (terminal == nullptr) {
+        return;
+    }
+
+    // Try both the default terminal selection, if it is empty try the app selection (e.g. tmux, TUI apps like claude)
+    wxString text;
+    if (auto selection = terminal->GetMouseSelection()) {
+        text = FirstLine(*selection);
+    }
+    if (text.empty()) {
+        if (auto selection = terminal->GetAppSelection()) {
+            text = FirstLine(*selection);
+        }
+    }
+
+    if (!text.empty()) {
+        event.SetFindWhat(text);
+    }
+}
+} // namespace
+
+// GetFocusedTerminal() returns nullptr unless the main terminal or the review terminal has the focus.
+void AgentHostPage::OnOpenResourceShowing(clOpenResourceEvent& event) { UpdateFindWhat(event, GetFocusedTerminal()); }
+void AgentHostPage::OnFindInFilesShowing(clFindInFilesEvent& event) { UpdateFindWhat(event, GetFocusedTerminal()); }
 
 void AgentHostPage::OnTerminalBell(clCommandEvent& event)
 {
@@ -331,33 +365,7 @@ void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
     menu.Append(wxID_PASTE);
     menu.Bind(wxEVT_MENU, [terminal](wxCommandEvent&) { terminal->Paste(); }, wxID_PASTE);
     menu.AppendSeparator();
-
-    if (!selection.empty()) {
-        // Keep long selections readable in the menu
-        wxString label = selection;
-        if (label.length() > 40) {
-            label = label.Left(37) + "...";
-        }
-        // Escape '&' so it is not used as a mnemonic
-        label.Replace("&", "&&");
-
-        const int symbol_id = wxWindow::NewControlId();
-        const int search_id = XRCID("grep_current_workspace");
-        wxString search_label = wxString::Format(_("Search '%s' in Workspace"), label);
-
-        menu.Append(search_id, search_label);
-        menu.Append(symbol_id, wxString::Format(_("Open Symbol '%s'"), label));
-        menu.Bind(
-            wxEVT_MENU,
-            [this, selection](wxCommandEvent&) { CallAfter(&AgentHostPage::SearchInWorkspace, selection); },
-            search_id);
-        menu.Bind(
-            wxEVT_MENU,
-            [this, selection](wxCommandEvent&) { CallAfter(&AgentHostPage::OpenText, selection); },
-            symbol_id);
-        menu.AppendSeparator();
-    }
-    menu.Append(wxID_REFRESH);
+    menu.Append(wxID_REFRESH, _("Restart Agent"));
     menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::RestartAgentHost); }, wxID_REFRESH);
 
     AppendReviewBuddyMenu(menu, terminal);
@@ -420,7 +428,7 @@ wxString AgentHostPage::GetSelectedLine(wxTerminalViewCtrl* terminal) const
         return wxEmptyString;
     }
     // Use the first line of the selection only
-    return terminal->GetMouseSelection().value_or(wxEmptyString).BeforeFirst('\n').BeforeFirst('\r').Trim().Trim(false);
+    return FirstLine(terminal->GetMouseSelection().value_or(wxEmptyString));
 }
 
 void AgentHostPage::SearchInWorkspace(const wxString& text)

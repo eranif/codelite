@@ -144,6 +144,14 @@ clFindEvent::clFindEvent(wxEventType commandType, int winid)
 }
 
 //------------------------------------------------------------------------
+// clOpenResourceEvent
+//------------------------------------------------------------------------
+clOpenResourceEvent::clOpenResourceEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+//------------------------------------------------------------------------
 // clFindInFilesEvent
 //------------------------------------------------------------------------
 

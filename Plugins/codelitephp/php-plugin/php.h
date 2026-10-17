@@ -109,7 +109,7 @@ public:
     void OnCloseWorkspace(clCommandEvent& e);
     void OnOpenWorkspace(clCommandEvent& e);
     void OnReloadWorkspace(clCommandEvent& e);
-    void OnOpenResource(wxCommandEvent& e);
+    void OnOpenResource(clOpenResourceEvent& e);
     void OnGetWorkspaceFiles(wxCommandEvent& e);
     void OnGetCurrentFileProjectFiles(wxCommandEvent& e);
     void OnGetActiveProjectFiles(wxCommandEvent& e);

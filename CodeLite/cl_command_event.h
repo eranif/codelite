@@ -733,6 +733,28 @@ using clFindEventFunction = void (wxEvtHandler::*)(clFindEvent&);
 #define clFindEventHandler(func) wxEVENT_HANDLER_CAST(clFindEventFunction, func)
 
 //---------------------------------------------------------------
+// Open resource event
+//---------------------------------------------------------------
+class WXDLLIMPEXP_CL clOpenResourceEvent : public clCommandEvent
+{
+public:
+    clOpenResourceEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clOpenResourceEvent(const clOpenResourceEvent&) = default;
+    clOpenResourceEvent& operator=(const clOpenResourceEvent&) = delete;
+    ~clOpenResourceEvent() override = default;
+    wxEvent* Clone() const override { return new clOpenResourceEvent(*this); }
+
+    void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat; }
+    const wxString& GetFindWhat() const { return m_findWhat; }
+
+private:
+    wxString m_findWhat;
+};
+
+using clOpenResourceEventFunction = void (wxEvtHandler::*)(clOpenResourceEvent&);
+#define clOpenResourceEventHandler(func) wxEVENT_HANDLER_CAST(clOpenResourceEventFunction, func)
+
+//---------------------------------------------------------------
 // Find in files event
 //---------------------------------------------------------------
 class WXDLLIMPEXP_CL clFindInFilesEvent : public clCommandEvent
@@ -758,6 +780,8 @@ protected:
     size_t m_options = 0;
     wxString m_transientPaths;
     Match::vec_t m_matches;
+    wxString m_findWhat;
+    wxString m_replaceWith;
 
 public:
     clFindInFilesEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -776,6 +800,10 @@ public:
     Match::vec_t& GetMatches() { return m_matches; }
     const Match::vec_t& GetMatches() const { return m_matches; }
     void SetMatches(const Match::vec_t& matches) { m_matches = matches; }
+    void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat; }
+    void SetReplaceWith(const wxString& replaceWith) { this->m_replaceWith = replaceWith; }
+    const wxString& GetFindWhat() const { return m_findWhat; }
+    const wxString& GetReplaceWith() const { return m_replaceWith; }
 };
 
 using clFindInFilesEventFunction = void (wxEvtHandler::*)(clFindInFilesEvent&);

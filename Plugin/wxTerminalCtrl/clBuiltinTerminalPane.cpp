@@ -681,7 +681,6 @@ const std::vector<std::pair<int, clKeyboardShortcut>>& clBuiltinTerminalPane::Ge
             XRCID("find_resource"),
             XRCID("find_symbol"),
             XRCID("ID_GOTO_ANYTHING"),
-            XRCID("grep_current_workspace"),
             wxID_ZOOM_IN,
             wxID_ZOOM_OUT,
             wxID_ZOOM_FIT,

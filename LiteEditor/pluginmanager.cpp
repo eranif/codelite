@@ -763,8 +763,10 @@ void PluginManager::OpenFindInFileForPaths(const wxArrayString& paths)
     if (!paths.empty()) {
         dlg.SetSearchPaths(wxJoin(paths, ';'), true);
     }
-    // Show it
-    if (dlg.ShowDialog() == wxID_OK) {
+
+    // Show it - use the values from the event. By default, these should be empty, unless they were set by the the
+    // wxEVT_FINDINFILES_DLG_SHOWING event.
+    if (dlg.ShowDialog(eventFifShowing.GetFindWhat(), eventFifShowing.GetReplaceWith()) == wxID_OK) {
         // Notify about the dialog dismissal
         clFindInFilesEvent eventDismiss(wxEVT_FINDINFILES_DLG_DISMISSED);
         EventNotifier::Get()->ProcessEvent(eventDismiss);

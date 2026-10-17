@@ -116,8 +116,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
         wxEVT_CMD_OPEN_WORKSPACE, clCommandEventHandler(PhpPlugin::OnOpenWorkspace), nullptr, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_RELOAD_WORKSPACE, clCommandEventHandler(PhpPlugin::OnReloadWorkspace), nullptr, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_OPEN_RESOURCE, wxCommandEventHandler(PhpPlugin::OnOpenResource), nullptr, this);
+    EventNotifier::Get()->Bind(wxEVT_OPEN_RESOURCE_SHOWING, &PhpPlugin::OnOpenResource, this);
     EventNotifier::Get()->Connect(
         wxEVT_CMD_GET_WORKSPACE_FILES, wxCommandEventHandler(PhpPlugin::OnGetWorkspaceFiles), nullptr, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES,
@@ -232,8 +231,7 @@ void PhpPlugin::UnPlug()
         wxEVT_CMD_OPEN_WORKSPACE, clCommandEventHandler(PhpPlugin::OnOpenWorkspace), nullptr, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_RELOAD_WORKSPACE, clCommandEventHandler(PhpPlugin::OnReloadWorkspace), nullptr, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_OPEN_RESOURCE, wxCommandEventHandler(PhpPlugin::OnOpenResource), nullptr, this);
+    EventNotifier::Get()->Unbind(wxEVT_OPEN_RESOURCE_SHOWING, &PhpPlugin::OnOpenResource, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_GET_WORKSPACE_FILES, wxCommandEventHandler(PhpPlugin::OnGetWorkspaceFiles), nullptr, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES,
@@ -418,13 +416,15 @@ void PhpPlugin::DoOpenWorkspace(const wxString& filename, bool createIfMissing, 
     }
 }
 
-void PhpPlugin::OnOpenResource(wxCommandEvent& e)
+void PhpPlugin::OnOpenResource(clOpenResourceEvent& evt)
 {
     if (!PHPWorkspace::Get()->IsOpen()) {
-        e.Skip();
+        evt.Skip();
         return;
     }
 
+    // Note: evt.GetFindWhat() is not used here. This dialog has no text filter (the box is hidden), so there is
+    // nowhere to put the initial text.
     OpenResourceDlg dlg(FRAME, m_mgr);
     CHECK_COND_RET(dlg.ShowModal() == wxID_OK);
 

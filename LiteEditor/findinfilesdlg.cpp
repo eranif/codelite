@@ -436,21 +436,26 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     }
 }
 
-int FindInFilesDialog::ShowDialog()
+int FindInFilesDialog::ShowDialog(const wxString& findWhat, const wxString& replaceWith)
 {
     // Update the combobox
     m_findString->Clear();
     m_findString->Append(m_data.find_what_array);
     m_findString->SetValue(m_data.find_what);
 
-    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if (editor) {
+    if (!findWhat.empty()) {
+        // Use the provided "find-what" string.
+        m_findString->SetValue(findWhat);
+    } else if (auto* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
         // if we have an open editor, and a selected text, make this text the search string
         wxString selText = editor->GetSelectedText();
-        if (!selText.IsEmpty()) {
+        if (!selText.empty()) {
             m_findString->SetValue(selText);
         }
     }
+
+    if (!replaceWith.empty())
+        m_replaceString->SetValue(replaceWith);
 
     m_findString->CallAfter(&wxTextCtrl::SetFocus);
     return wxDialog::ShowModal();

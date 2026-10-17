@@ -497,7 +497,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILE
 /////////////////////////////////////////////////
 
 // User requested to open the resource dialog
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_OPEN_RESOURCE, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_OPEN_RESOURCE_SHOWING, clOpenResourceEvent);
 
 // CodeLite is about to display the editor's context menu
 // A plugin can override the default menu display by catching this event and

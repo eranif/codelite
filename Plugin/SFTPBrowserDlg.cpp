@@ -28,6 +28,7 @@
 #include "SFTPBrowserDlg.h"
 
 #include "SSHAccountManagerDlg.h"
+#include "aui/clAuiToolBarArt.h"
 #include "bitmap_loader.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -106,12 +107,16 @@ SFTPBrowserDlg::SFTPBrowserDlg(
     }
 
     auto images = clGetManager()->GetStdIcons();
-    m_toolbar->AddTool(wxID_NEW, _("Create new folder"), images->LoadBitmap("plus"), _("Create new folder"));
-    m_toolbar->AddTool(XRCID("ID_CD_UP"), _("Parent folder"), images->LoadBitmap("up"), _("Parent folder"));
-    m_toolbar->AddTool(XRCID("ID_SSH_ACCOUNT_MANAGER"),
-                       _("Open SSH account manager"),
-                       images->LoadBitmap("user"),
-                       _("Open SSH account manager"));
+
+    clAuiToolBarArt::AddTool(
+        m_toolbar, wxID_NEW, _("Create new folder"), images->LoadBitmap("plus"), _("Create new folder"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("ID_CD_UP"), _("Parent folder"), images->LoadBitmap("up"), _("Parent folder"));
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             XRCID("ID_SSH_ACCOUNT_MANAGER"),
+                             _("Open SSH account manager"),
+                             images->LoadBitmap("user"),
+                             _("Open SSH account manager"));
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnCdUp, this, XRCID("ID_CD_UP"));

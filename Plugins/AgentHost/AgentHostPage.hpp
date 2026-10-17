@@ -77,6 +77,29 @@ protected:
     wxString GetSelectedLine(wxTerminalViewCtrl* terminal) const;
     /// The agent terminal (main or reviewer) that has the keyboard focus, or nullptr
     wxTerminalViewCtrl* GetFocusedTerminal() const;
+    /// The agent terminal (main or reviewer) that has a selection (the focused one first), or nullptr. The selection
+    /// is the mouse selection of the terminal or, if there is none, the text the application copied (OSC 52).
+    wxTerminalViewCtrl* GetSelectionTerminal() const;
+
+    // The toolbar
+    /// (Re)create the tools. Called again when the theme changes, to load the icons of the new theme.
+    void BuildToolbar();
+    void OnBitmapsUpdated(clCommandEvent& event);
+    void OnToolRestart(wxCommandEvent& event);
+    /// The button and its drop-down arrow: a menu to pick the agent of the review (or to manage the running review)
+    void OnToolReviewBuddy(wxAuiToolBarEvent& event);
+    void OnToolCopy(wxCommandEvent& event);
+    void OnToolPaste(wxCommandEvent& event);
+    void OnToolCopyUI(wxUpdateUIEvent& event);
+    /// The agent terminal (main or reviewer) that has something to copy (the focused one first), or nullptr: a mouse
+    /// selection, or the text the application copied (OSC 52)
+    wxTerminalViewCtrl* GetCopyTerminal() const;
+    void OnToolFindInFiles(wxCommandEvent& event);
+    void OnToolOpenResource(wxCommandEvent& event);
+    void OnToolHasTerminalUI(wxUpdateUIEvent& event);
+    void OnToolSelectionUI(wxUpdateUIEvent& event);
+    /// Run the main frame command `name` (a menu item), with the dialog filled from our selection
+    void RunFrameCommand(const char* name);
     void SearchInWorkspace(const wxString& text);
     std::optional<SystemPromptCli> BuildSystemPrompt(const AgentInfo& info);
 
@@ -93,7 +116,8 @@ protected:
     void OpenLatestReview();
     void DismissNotice();
     void FocusTerminal(wxTerminalViewCtrl* terminal);
-    void AppendReviewBuddyMenu(wxMenu& menu, wxTerminalViewCtrl* terminal);
+    /// Append the items to manage the current review (resend, stop, open the latest review, close) to `menu`
+    void AppendReviewControls(wxMenu& menu);
 
 private:
     wxBookCtrlBase* m_book{nullptr};
@@ -102,6 +126,9 @@ private:
     wxTerminalViewCtrl* m_terminal{nullptr};
     wxTerminalViewCtrl* m_reviewTerminal{nullptr};
     std::unique_ptr<ReviewBuddy> m_review;
+    // True while a toolbar button runs a main frame command: the toolbar click does not need the terminal to have the
+    // focus, so the dialog is filled from the terminal that has a selection
+    bool m_fillFromSelection{false};
     AgentInfo m_agentInfo;
     // The result of the last "is this a git repository?" check of a remote working directory (cached, it is slow)
     bool m_hasGit{false};

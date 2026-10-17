@@ -6,6 +6,9 @@
 #include "Keyboard/clKeyboardManager.h"
 #include "ReviewBuddy.hpp"
 #include "ai/LLMManager.hpp"
+#include "aui/clAuiToolBarArt.h"
+#include "aui/cl_aui_tool_stickness.h"
+#include "bitmap_loader.h"
 #include "clStrings.h"
 #include "cl_config.h"
 #include "environmentconfig.h"
@@ -28,6 +31,25 @@ const wxString kShellCommand = "CMD";
 #else
 const wxString kShellCommand = "/bin/bash --login -i";
 #endif
+
+// The toolbar buttons (the names are turned into IDs with XRCID)
+constexpr const char* kToolRestart = "agent_host_restart";
+constexpr const char* kToolReviewBuddy = "agent_host_review_buddy";
+constexpr const char* kToolFindInFiles = "agent_host_find_in_files";
+constexpr const char* kToolOpenResource = "agent_host_open_resource";
+constexpr const char* kToolCopy = "agent_host_copy";
+constexpr const char* kToolPaste = "agent_host_paste";
+
+/// `text` followed by the keyboard shortcut that is assigned to the command `command` in CodeLite, on its own row.
+/// No shortcut is added when `command` is nullptr (the button has no command) or no shortcut is assigned to it.
+wxString WithShortcut(const wxString& text, const char* command)
+{
+    if (command == nullptr) {
+        return text;
+    }
+    const auto shortcut = clKeyboardManager::Get()->GetShortcutForCommand(wxString(command));
+    return shortcut.IsOk() ? text + "\n" + shortcut.DisplayString() : text;
+}
 } // namespace
 
 #define CHECK_CAN_HANDLE_EVENT(event)           \
@@ -45,6 +67,22 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     // so we set the focus on the terminal when our page becomes the selected one.
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
 #endif
+
+    // The toolbar. The tools are created by BuildToolbar() (again on a theme change), the events are bound once.
+    m_auibar->Bind(wxEVT_MENU, &AgentHostPage::OnToolRestart, this, XRCID(kToolRestart));
+    m_auibar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &AgentHostPage::OnToolReviewBuddy, this, XRCID(kToolReviewBuddy));
+    m_auibar->Bind(wxEVT_MENU, &AgentHostPage::OnToolCopy, this, XRCID(kToolCopy));
+    m_auibar->Bind(wxEVT_MENU, &AgentHostPage::OnToolPaste, this, XRCID(kToolPaste));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnToolCopyUI, this, XRCID(kToolCopy));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnToolHasTerminalUI, this, XRCID(kToolPaste));
+    m_auibar->Bind(wxEVT_MENU, &AgentHostPage::OnToolFindInFiles, this, XRCID(kToolFindInFiles));
+    m_auibar->Bind(wxEVT_MENU, &AgentHostPage::OnToolOpenResource, this, XRCID(kToolOpenResource));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnToolHasTerminalUI, this, XRCID(kToolRestart));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnToolHasTerminalUI, this, XRCID(kToolReviewBuddy));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnToolSelectionUI, this, XRCID(kToolFindInFiles));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnToolSelectionUI, this, XRCID(kToolOpenResource));
+    EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, &AgentHostPage::OnBitmapsUpdated, this);
+    BuildToolbar();
 
     // A notice from the review buddy (hidden until there is something to say)
     m_infoBar = new wxInfoBar(this);
@@ -77,6 +115,7 @@ AgentHostPage::~AgentHostPage()
 #ifndef __WXMSW__
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &AgentHostPage::OnBookPageChanged, this);
 #endif
+    EventNotifier::Get()->Unbind(wxEVT_BITMAPS_UPDATED, &AgentHostPage::OnBitmapsUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, &AgentHostPage::OnTerminalLink, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
@@ -149,15 +188,14 @@ namespace
 /// The first line of `text`, trimmed.
 wxString FirstLine(const wxString& text) { return text.BeforeFirst('\n').BeforeFirst('\r').Trim().Trim(false); }
 
-template <typename Event>
-void UpdateFindWhat(Event& event, const wxTerminalViewCtrl* terminal)
+/// The text to search for, taken from the selection of `terminal`: first line of the terminal selection. If it is
+/// empty, the first line of the text the application copied (e.g. tmux, TUI apps like claude). Empty if there is none.
+wxString GetFindWhat(const wxTerminalViewCtrl* terminal)
 {
-    event.Skip();
     if (terminal == nullptr) {
-        return;
+        return wxEmptyString;
     }
 
-    // Try both the default terminal selection, if it is empty try the app selection (e.g. tmux, TUI apps like claude)
     wxString text;
     if (auto selection = terminal->GetMouseSelection()) {
         text = FirstLine(*selection);
@@ -167,16 +205,31 @@ void UpdateFindWhat(Event& event, const wxTerminalViewCtrl* terminal)
             text = FirstLine(*selection);
         }
     }
+    return text;
+}
 
+template <typename Event>
+void UpdateFindWhat(Event& event, const wxTerminalViewCtrl* terminal)
+{
+    event.Skip();
+    const wxString text = GetFindWhat(terminal);
     if (!text.empty()) {
         event.SetFindWhat(text);
     }
 }
 } // namespace
 
-// GetFocusedTerminal() returns nullptr unless the main terminal or the review terminal has the focus.
-void AgentHostPage::OnOpenResourceShowing(clOpenResourceEvent& event) { UpdateFindWhat(event, GetFocusedTerminal()); }
-void AgentHostPage::OnFindInFilesShowing(clFindInFilesEvent& event) { UpdateFindWhat(event, GetFocusedTerminal()); }
+// Normally, only a terminal that has the focus is used (the focus tells where the user is working). When a toolbar
+// button runs the command, use the terminal that has a selection instead.
+void AgentHostPage::OnOpenResourceShowing(clOpenResourceEvent& event)
+{
+    UpdateFindWhat(event, m_fillFromSelection ? GetSelectionTerminal() : GetFocusedTerminal());
+}
+
+void AgentHostPage::OnFindInFilesShowing(clFindInFilesEvent& event)
+{
+    UpdateFindWhat(event, m_fillFromSelection ? GetSelectionTerminal() : GetFocusedTerminal());
+}
 
 void AgentHostPage::OnTerminalBell(clCommandEvent& event)
 {
@@ -349,29 +402,9 @@ void AgentHostPage::OnBookPageChanged(wxBookCtrlEvent& event)
 
 void AgentHostPage::OnContextMenu(wxContextMenuEvent& event)
 {
-    // The menu is shown for the terminal that was clicked: the agent's or the reviewer's
-    auto* terminal = dynamic_cast<wxTerminalViewCtrl*>(event.GetEventObject());
-    if (terminal == nullptr) {
-        terminal = m_terminal;
-    }
-    wxMenu menu;
-
-    const wxString selection = GetSelectedLine(terminal);
-    if (terminal->CanCopy()) {
-        menu.Append(wxID_COPY);
-        menu.Bind(wxEVT_MENU, [terminal](wxCommandEvent&) { terminal->Copy(); }, wxID_COPY);
-    }
-
-    menu.Append(wxID_PASTE);
-    menu.Bind(wxEVT_MENU, [terminal](wxCommandEvent&) { terminal->Paste(); }, wxID_PASTE);
-    menu.AppendSeparator();
-    menu.Append(wxID_REFRESH, _("Restart Agent"));
-    menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::RestartAgentHost); }, wxID_REFRESH);
-
-    AppendReviewBuddyMenu(menu, terminal);
-
-    clKeyboardManager::Get()->UpdateMenuShortcuts(menu);
-    terminal->PopupMenu(&menu);
+    // There is no context menu: all the actions are in the toolbar. The event is not skipped, to also hide the default
+    // menu of the terminal (this handler is bound after the terminal's own handler, so it runs first).
+    wxUnusedVar(event);
 }
 
 void AgentHostPage::RestartAgentHost()
@@ -484,59 +517,210 @@ wxTerminalViewCtrl* AgentHostPage::GetFocusedTerminal() const
     return nullptr;
 }
 
+wxTerminalViewCtrl* AgentHostPage::GetSelectionTerminal() const
+{
+    for (auto* terminal : {GetFocusedTerminal(), m_terminal, m_reviewTerminal}) {
+        if (terminal != nullptr && !GetFindWhat(terminal).empty()) {
+            return terminal;
+        }
+    }
+    return nullptr;
+}
+
+// ---------------------------------------------------------------------------
+// The toolbar
+// ---------------------------------------------------------------------------
+
+void AgentHostPage::BuildToolbar()
+{
+    auto* icons = clGetManager()->GetStdIcons();
+    m_auibar->Clear();
+    // The tooltip of a button shows its keyboard shortcut. Restart and Review Buddy have no command in CodeLite, so
+    // they have no shortcut.
+    clAuiToolBarArt::AddTool(
+        m_auibar, XRCID(kToolRestart), _("Restart"), icons->LoadBitmap("file_reload"), _("Restart the agent"));
+    // A drop-down button: both the button and its arrow open the menu to pick the agent of the review
+    clAuiToolBarArt::AddTool(m_auibar,
+                             XRCID(kToolReviewBuddy),
+                             _("Review Buddy"),
+                             icons->LoadBitmap("agent-host-code-review"),
+                             _("Run Review Buddy"),
+                             wxITEM_DROPDOWN);
+    m_auibar->AddSeparator();
+    clAuiToolBarArt::AddTool(m_auibar,
+                             XRCID(kToolCopy),
+                             _("Copy"),
+                             icons->LoadBitmap("copy"),
+                             WithShortcut(_("Copy the selected text"), "wxID_COPY"));
+    clAuiToolBarArt::AddTool(m_auibar,
+                             XRCID(kToolPaste),
+                             _("Paste"),
+                             icons->LoadBitmap("paste"),
+                             WithShortcut(_("Paste the clipboard text"), "wxID_PASTE"));
+    m_auibar->AddSeparator();
+    clAuiToolBarArt::AddTool(m_auibar,
+                             XRCID(kToolFindInFiles),
+                             _("Find In Files"),
+                             icons->LoadBitmap("agent-host-find-in-files"),
+                             WithShortcut(_("Find In Files: search for the selected text"), "find_in_files"));
+    clAuiToolBarArt::AddTool(
+        m_auibar,
+        XRCID(kToolOpenResource),
+        _("Open Resource"),
+        icons->LoadBitmap("agent-host-open-resource"),
+        WithShortcut(_("Open Resource: find a file or a symbol with the selected text"), "find_resource"));
+    clAuiToolBarArt::Finalise(m_auibar);
+    m_auibar->Realize();
+    m_auibar->Refresh();
+}
+
+void AgentHostPage::OnBitmapsUpdated(clCommandEvent& event)
+{
+    event.Skip();
+    BuildToolbar();
+}
+
+void AgentHostPage::OnToolRestart(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    // Deferred: leave the toolbar's callback first, the restart destroys the terminal
+    CallAfter(&AgentHostPage::RestartAgentHost);
+}
+
+void AgentHostPage::OnToolReviewBuddy(wxAuiToolBarEvent& event)
+{
+    // Not skipped: the button and its arrow both open the menu (and no wxEVT_MENU is sent)
+    wxUnusedVar(event);
+    wxMenu menu;
+    if (m_review) {
+        // There is a review: the menu to manage it
+        AppendReviewControls(menu);
+    } else if (wxString whyNot; !CanHaveReviewBuddy(whyNot)) {
+        menu.Append(wxID_ANY, _("Review Buddy is not available") + " (" + whyNot + ")")->Enable(false);
+    } else {
+        // Pick the agent of the review
+        const int claude_id = wxWindow::NewControlId();
+        const int kiro_id = wxWindow::NewControlId();
+        menu.Append(claude_id, _("Review with Claude Code"));
+        menu.Append(kiro_id, _("Review with Kiro CLI"));
+        // Deferred: leave the menu's callback first
+        menu.Bind(
+            wxEVT_MENU,
+            [this](wxCommandEvent&) { CallAfter(&AgentHostPage::LaunchReviewBuddy, AgentType::kClaudeCode); },
+            claude_id);
+        menu.Bind(
+            wxEVT_MENU,
+            [this](wxCommandEvent&) { CallAfter(&AgentHostPage::LaunchReviewBuddy, AgentType::kKiroCli); },
+            kiro_id);
+    }
+
+    const int tool_id = XRCID(kToolReviewBuddy);
+    // Keep the button pressed while the menu is shown
+    clAuiToolStickness stickness{m_auibar, tool_id};
+    // Line up the menu with the button
+    const wxRect tool_rect = m_auibar->GetToolRect(tool_id);
+    m_auibar->PopupMenu(&menu, tool_rect.GetBottomLeft());
+}
+
+void AgentHostPage::OnToolCopy(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if (auto* terminal = GetCopyTerminal()) {
+        if (terminal->CanCopy()) {
+            // The text the user selected comes first
+            terminal->Copy();
+        } else if (auto selection = terminal->GetAppSelection()) {
+            // Otherwise, the text the application copied (e.g. tmux, TUI apps like claude): all of it, not only the
+            // first line
+            ::CopyToClipboard(*selection);
+        }
+        // The toolbar click may have moved the focus
+        terminal->CallAfter(&wxWindow::SetFocus);
+    }
+}
+
+void AgentHostPage::OnToolPaste(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    // Paste into the terminal that has the focus (the agent's or the reviewer's), the agent's by default
+    auto* terminal = GetFocusedTerminal();
+    if (terminal == nullptr) {
+        terminal = m_terminal;
+    }
+    if (terminal != nullptr) {
+        terminal->Paste();
+        terminal->CallAfter(&wxWindow::SetFocus);
+    }
+}
+
+void AgentHostPage::OnToolCopyUI(wxUpdateUIEvent& event) { event.Enable(GetCopyTerminal() != nullptr); }
+
+wxTerminalViewCtrl* AgentHostPage::GetCopyTerminal() const
+{
+    for (auto* terminal : {GetFocusedTerminal(), m_terminal, m_reviewTerminal}) {
+        if (terminal == nullptr) {
+            continue;
+        }
+        const auto app_selection = terminal->GetAppSelection();
+        if (terminal->CanCopy() || (app_selection.has_value() && !app_selection->empty())) {
+            return terminal;
+        }
+    }
+    return nullptr;
+}
+
+void AgentHostPage::OnToolFindInFiles(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    CallAfter(&AgentHostPage::RunFrameCommand, "find_in_files");
+}
+
+void AgentHostPage::OnToolOpenResource(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    CallAfter(&AgentHostPage::RunFrameCommand, "find_resource");
+}
+
+void AgentHostPage::OnToolHasTerminalUI(wxUpdateUIEvent& event) { event.Enable(m_terminal != nullptr); }
+
+void AgentHostPage::OnToolSelectionUI(wxUpdateUIEvent& event) { event.Enable(GetSelectionTerminal() != nullptr); }
+
+void AgentHostPage::RunFrameCommand(const char* name)
+{
+    auto* frame = EventNotifier::Get()->TopFrame();
+    CHECK_PTR_RET(frame);
+
+    // The command sends the "dialog is showing" event, our handlers fill the dialog from the selection
+    m_fillFromSelection = true;
+    wxCommandEvent event(wxEVT_MENU, XRCID(name));
+    event.SetEventObject(frame);
+    frame->GetEventHandler()->ProcessEvent(event);
+    m_fillFromSelection = false;
+}
+
 // ---------------------------------------------------------------------------
 // Review Buddy
 // ---------------------------------------------------------------------------
 
-void AgentHostPage::AppendReviewBuddyMenu(wxMenu& menu, wxTerminalViewCtrl* terminal)
+void AgentHostPage::AppendReviewControls(wxMenu& menu)
 {
-    if (m_review) {
-        menu.AppendSeparator();
-        menu.Append(wxID_ANY, _("Review Buddy: ") + m_review->Describe())->Enable(false);
-        if (m_review->IsRunning() || m_review->HasStalled()) {
-            const int resend_id = wxWindow::NewControlId();
-            const int stop_id = wxWindow::NewControlId();
-            menu.Append(resend_id, _("Send the Request Again"));
-            menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_review->Resend(); }, resend_id);
-            menu.Append(stop_id, _("Stop the Review"));
-            menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_review->Stop(); }, stop_id);
-        }
-        const int open_id = wxWindow::NewControlId();
-        const int close_id = wxWindow::NewControlId();
-        menu.Append(open_id, _("Open the Latest Review"))->Enable(!m_review->CommentsPath().empty());
-        menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { OpenLatestReview(); }, open_id);
-        menu.Append(close_id, _("Close Review Buddy"));
-        menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::CloseReviewBuddy); }, close_id);
-        return;
-    }
+    CHECK_PTR_RET(m_review);
 
-    // Only the main agent can get a reviewer
-    if (terminal != m_terminal) {
-        return;
+    menu.Append(wxID_ANY, _("Review Buddy: ") + m_review->Describe())->Enable(false);
+    if (m_review->IsRunning() || m_review->HasStalled()) {
+        const int resend_id = wxWindow::NewControlId();
+        const int stop_id = wxWindow::NewControlId();
+        menu.Append(resend_id, _("Send the Request Again"));
+        menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_review->Resend(); }, resend_id);
+        menu.Append(stop_id, _("Stop the Review"));
+        menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { m_review->Stop(); }, stop_id);
     }
-    menu.AppendSeparator();
-
-    wxString whyNot;
-    if (!CanHaveReviewBuddy(whyNot)) {
-        menu.Append(wxID_ANY, _("Launch Review Buddy") + " (" + whyNot + ")")->Enable(false);
-        return;
-    }
-
-    auto* submenu = new wxMenu();
-    const int claude_id = wxWindow::NewControlId();
-    const int kiro_id = wxWindow::NewControlId();
-    submenu->Append(claude_id, _("Claude Code"));
-    submenu->Append(kiro_id, _("Kiro CLI"));
-    // Bound on the submenu: its items send their events there first. Deferred: leave the menu's callback first.
-    submenu->Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent&) { CallAfter(&AgentHostPage::LaunchReviewBuddy, AgentType::kClaudeCode); },
-        claude_id);
-    submenu->Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent&) { CallAfter(&AgentHostPage::LaunchReviewBuddy, AgentType::kKiroCli); },
-        kiro_id);
-    menu.AppendSubMenu(submenu, _("Launch Review Buddy"));
+    const int open_id = wxWindow::NewControlId();
+    const int close_id = wxWindow::NewControlId();
+    menu.Append(open_id, _("Open the Latest Review"))->Enable(!m_review->CommentsPath().empty());
+    menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { OpenLatestReview(); }, open_id);
+    menu.Append(close_id, _("Close Review Buddy"));
+    menu.Bind(wxEVT_MENU, [this](wxCommandEvent&) { CallAfter(&AgentHostPage::CloseReviewBuddy); }, close_id);
 }
 
 bool AgentHostPage::CanHaveReviewBuddy(wxString& whyNot)

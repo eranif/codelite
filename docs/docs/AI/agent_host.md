@@ -94,14 +94,29 @@ CodeLite, without leaving the terminal:
 - Anything else, for example a class or symbol name, is looked up through the **Open Resource** dialog. You can jump straight
   to its definition even when the agent did not print a full file path.
 
-## Terminal Right-Click Menu
+## Toolbar
 
-Right-click inside the agent terminal to open its menu. Besides `Copy`, `Paste` and `Refresh` (restarts the agent), it has:
+The toolbar above the terminal has these buttons:
 
-- When text is selected: `Search '<text>' in Workspace` and `Open Symbol '<text>'`. Only the first line of the selection is used.
-  `Search ... in Workspace` shows the keyboard shortcut of `Grep Selection in the Workspace` (if you assigned one), and that
-  shortcut also works while the agent terminal has the focus.
-- The `Review Buddy` actions, see below.
+- `Restart`: restarts the agent.
+- `Run Review Buddy`: a drop-down button. Click it (or its arrow) to pick the agent of the review (`Claude Code` or
+  `Kiro CLI`). While a review exists, it opens the menu to manage it instead. See below.
+- `Copy`: copies the text selected in the terminal. If nothing is selected, it copies the text the agent copied itself (see
+  below). It is disabled when there is neither.
+- `Paste`: pastes the clipboard text into the terminal.
+- `Find In Files`: opens the **Find In Files** dialog with the selected text.
+- `Open Resource`: opens the **Open Resource** dialog with the selected text.
+
+The agent terminal has no right-click menu: all its actions are in the toolbar.
+
+The tooltip of a button shows the keyboard shortcut assigned to its command (if there is one), on its own line.
+
+`Find In Files` and `Open Resource` are disabled when nothing is selected. The selection is the text you selected with the
+mouse. If the agent uses the mouse itself (for example inside `tmux`), it is the text the agent copied (it must send it with the
+`OSC 52` terminal sequence). Only the first line is used. The two dialogs also use this text when you open them with their
+keyboard shortcuts while the agent terminal has the focus.
+
+## Keyboard Shortcuts
 
 The shortcuts of the main window (for example ++f6++, which toggles the terminal view) also work while the agent terminal has
 the focus.
@@ -109,7 +124,7 @@ the focus.
 ## Review Buddy
 
 **Review Buddy** starts a second agent (any of the supported agents) that reviews the work that is not pushed yet, in a pane next to
-the main agent. Start it from the right-click menu of the agent terminal.
+the main agent. Start it from the `Run Review Buddy` button of the toolbar.
 
 - The two agents work in the same folder and talk to each other through files in `.agents/reviews/<id>/`. The reviewer writes
   its comments, the main agent fixes them, and the reviewer checks again. This repeats until the review is clean, or for at most
@@ -117,7 +132,8 @@ the main agent. Start it from the right-click menu of the agent terminal.
 - CodeLite types the requests into the terminals for you. It tells you when the review is finished, when the round limit is
   reached (the last fixes are not reviewed in that case), or when an agent seems to wait for you for a long time. If you are not
   looking at the page, you get a system notification.
-- The right-click menu also has `Resend`, `Stop`, `Open the Latest Review` and `Close Review Buddy`.
+- While a review exists, the `Run Review Buddy` button opens a menu with `Resend`, `Stop`, `Open the Latest Review` and
+  `Close Review Buddy`.
 - It needs a working directory inside a git repository (a sub-folder or a worktree is fine). It works for remote workspaces too.
   The `.agents/reviews/` folder is added to `.git/info/exclude`, so it does not show in `git status`.
 

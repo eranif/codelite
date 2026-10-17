@@ -27,6 +27,7 @@
 #include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
 #include "clFilesCollector.h"
+#include "clStrings.h"
 #include "clWorkspaceManager.h"
 #include "frame.h"
 #include "globals.h"
@@ -482,12 +483,14 @@ void FindInFilesDialog::OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event)
 void FindInFilesDialog::OnFind(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    clGetManager()->ShowOutputPane(FIND_IN_FILES_WIN);
     DoSearch();
 }
 
 void FindInFilesDialog::OnReplace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    clGetManager()->ShowOutputPane(REPLACE_IN_FILES);
     DoSearchReplace();
 }
 

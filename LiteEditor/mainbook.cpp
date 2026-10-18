@@ -31,6 +31,7 @@
 #include "MarkdownEditor.hpp"
 #include "WelcomePage.h"
 #include "aui/clAuiFlatTabArt.hpp"
+#include "clEditorFromPage.hpp"
 #include "clFileSystemWatcher.h"
 #include "clIdleEventThrottler.hpp"
 #include "clImageViewer.h"
@@ -828,9 +829,8 @@ clEditor* MainBook::OpenFile(const wxString& file_name,
         wxWindow* page = nullptr;
         if (FileExtManager::GetType(fileName.GetFullPath()) == FileExtManager::TypeMarkdown) {
             // A Markdown file: a page that shows the document, or the editor
-            auto* markdown_page = new MarkdownEditor(m_book);
-            editor = markdown_page->GetEditor();
-            page = markdown_page;
+            page = new MarkdownEditor(m_book, [](wxWindow* parent) -> IEditor* { return new clEditor(parent); });
+            editor = clEditorFromPage(page);
         } else {
             editor = new clEditor(m_book);
             page = editor;

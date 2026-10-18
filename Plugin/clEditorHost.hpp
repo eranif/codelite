@@ -1,22 +1,24 @@
 #pragma once
 
-#include "cl_editor.h"
+#include "codelite_exports.h"
+#include "ieditor.h"
 
 #include <wx/window.h>
 
-/// A page of the main book that contains a clEditor inside it (and not the editor itself), for example the Markdown
+/// A page of the main book that contains an editor inside it (and not the editor itself), for example the Markdown
 /// page that can show the file as a document or as an editor.
 ///
 /// The code of the main book finds the editors of the pages with clEditorFromPage(), and it finds the page of an
 /// editor with MainBook::PageOf(), so the hosted editor works as any other editor: Save, Save All, the modified mark
 /// of the tab, closing, the session, find by file name, and so on.
-class clEditorHost
+class WXDLLIMPEXP_SDK clEditorHost : public wxWindow
 {
 public:
-    virtual ~clEditorHost() = default;
+    using wxWindow::wxWindow;
+    ~clEditorHost() override = default;
 
     /// The editor inside the page
-    virtual clEditor* GetHostedEditor() const = 0;
+    virtual IEditor* GetHostedEditor() const = 0;
 
     /// Make sure that the editor is visible. Called when the user wants to go to a place of the file (a line, a
     /// position) or runs a text command, and the page is showing the file in another way.
@@ -32,19 +34,3 @@ public:
 
 /// The host of the editor of `page`, or nullptr if the page is not a host
 inline clEditorHost* clEditorHostFromPage(wxWindow* page) { return dynamic_cast<clEditorHost*>(page); }
-
-/// The editor of a page of the main book: the page itself, or the editor that the page hosts. nullptr if the page has
-/// no editor (an image, the welcome page, ...)
-inline clEditor* clEditorFromPage(wxWindow* page)
-{
-    if (page == nullptr) {
-        return nullptr;
-    }
-    if (auto* editor = dynamic_cast<clEditor*>(page)) {
-        return editor;
-    }
-    if (auto* host = clEditorHostFromPage(page)) {
-        return host->GetHostedEditor();
-    }
-    return nullptr;
-}

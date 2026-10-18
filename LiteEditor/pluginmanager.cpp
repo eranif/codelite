@@ -31,7 +31,7 @@
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "clEditorBar.h"
-#include "clEditorHost.hpp"
+#include "clEditorFromPage.hpp"
 #include "clInfoBar.h"
 #include "clStrings.h"
 #include "cl_config.h"

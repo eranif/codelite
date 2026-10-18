@@ -43,7 +43,7 @@
 #include "bookmark_manager.h"
 #include "buildtabsettingsdata.h"
 #include "cc_box_tip_window.h"
-#include "clEditorHost.hpp"
+#include "clEditorFromPage.hpp"
 #include "clEditorStateLocker.h"
 #include "clFileSystemWatcher.h"
 #include "clIdleEventThrottler.hpp"

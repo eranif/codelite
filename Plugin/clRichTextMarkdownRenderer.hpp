@@ -93,10 +93,8 @@ public:
     /// editor). The headings, the bullets and the borders have colours of the C++ lexer of the current theme (a class,
     /// a number and the default style). The other colours (link, code background, ...) are made from the background,
     /// for a light or a dark background
-    static Theme MakeTheme(const wxFont& font,
-                           const wxFont& monospaceFont,
-                           const wxColour& text,
-                           const wxColour& background);
+    static Theme
+    MakeTheme(const wxFont& font, const wxFont& monospaceFont, const wxColour& text, const wxColour& background);
 
     /// The path of the local file that the address `url` (the address of a link or of an image) points to, or an empty
     /// string if it does not point to a local file. A document can come from an untrusted source (a README of a cloned
@@ -131,6 +129,17 @@ public:
     /// repeated name gets `-1`, `-2`, ...). Works after Render(), for the document that was rendered last
     /// \return false if there is no such heading
     bool GoToAnchor(const wxString& anchor);
+
+    /// A heading of the document, for a table of contents
+    struct Heading {
+        int level = 1;   ///< 1 for `# Title`, 2 for `## Title`, ...
+        wxString text;   ///< The text of the heading (without the format)
+        wxString anchor; ///< The name for GoToAnchor()
+    };
+
+    /// The headings of the document that was rendered last, in the order of the document. (A heading that has no
+    /// name for a link, because it has no letters or digits, is not in the list)
+    const std::vector<Heading>& GetHeadings() const { return m_headings; }
 
 protected:
     void OnEnterBlock(Block block, const BlockInfo& info) override;
@@ -193,6 +202,7 @@ private:
     // The headings, for the links to them. Valid until the next Render()
     std::map<wxString, wxRichTextParagraph*> m_anchors; ///< The name of a heading (see GoToAnchor()) and its paragraph
     std::map<wxString, int> m_anchorCount;              ///< How many headings have a name: the next one gets a suffix
+    std::vector<Heading> m_headings;                    ///< The headings, in the order of the document
     wxRichTextParagraph* m_headingPara = nullptr;       ///< The paragraph of the heading that is being written
     wxString m_headingText;                             ///< Its text (without the format)
 

@@ -60,7 +60,7 @@
 #include "clBootstrapWizard.h"
 #include "clCustomiseToolBarDlg.h"
 #include "clEditorBar.h"
-#include "clEditorHost.hpp"
+#include "clEditorFromPage.hpp"
 #include "clGotoAnythingManager.h"
 #include "clInfoBar.h"
 #include "clLocaleManager.hpp"

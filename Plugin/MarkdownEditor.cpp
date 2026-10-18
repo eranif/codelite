@@ -11,7 +11,6 @@
 #include "imanager.h"
 
 #include <algorithm>
-#include <memory>
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/stc/stc.h>
@@ -24,13 +23,17 @@ namespace
 // The buttons of the toolbar (the names are turned into IDs with XRCID)
 constexpr const char* kToolView = "markdown_editor_view";
 constexpr const char* kToolEdit = "markdown_editor_edit";
+constexpr const char* kToolContents = "markdown_editor_contents";
 
 /// The mode that the user chose with the buttons: true is the view (the document), false is the editor
 const wxString kConfigViewMode = "MarkdownEditor/ViewMode";
+
+/// Is the table of contents shown in the view?
+const wxString kConfigShowContents = "MarkdownEditor/ShowContents";
 } // namespace
 
-MarkdownEditor::MarkdownEditor(wxWindow* parent)
-    : wxWindow(parent, wxID_ANY)
+MarkdownEditor::MarkdownEditor(wxWindow* parent, const EditorFactory& createEditor)
+    : clEditorHost(parent, wxID_ANY)
 {
     auto* sizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(sizer);
@@ -41,22 +44,24 @@ MarkdownEditor::MarkdownEditor(wxWindow* parent)
     m_book = new wxSimplebook(this, wxID_ANY);
     sizer->Add(m_book, wxSizerFlags(1).Expand());
 
-    // Page 0: the rendered document. Read only, and no border: the book is inside the tab
-    m_view = new clMarkdownTextCtrl(
-        m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxRE_READONLY | wxBORDER_NONE);
+    // Page 0: the rendered document, with its table of contents
+    m_view = new MarkdownViewCtrl(m_book);
+    m_text = m_view->GetTextCtrl();
+    m_view->ShowContents(clConfig::Get().Read(kConfigShowContents, true));
     m_book->AddPage(m_view, _("View"));
 
-    // Page 1: the editor
-    m_editor = new clEditor(m_book);
+    // Page 1: the editor. The caller creates it: this class does not know the editor class of the application
+    m_hosted = createEditor(m_book);
+    m_editor = m_hosted->GetCtrl();
     m_book->AddPage(m_editor, _("Edit"));
-
-    m_renderer = std::make_unique<clRichTextMarkdownRenderer>(m_view);
 
     m_toolbar->Bind(wxEVT_MENU, &MarkdownEditor::OnShowView, this, XRCID(kToolView));
     m_toolbar->Bind(wxEVT_MENU, &MarkdownEditor::OnShowEdit, this, XRCID(kToolEdit));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &MarkdownEditor::OnModeUI, this, XRCID(kToolView));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &MarkdownEditor::OnModeUI, this, XRCID(kToolEdit));
-    m_view->Bind(wxEVT_TEXT_URL, &MarkdownEditor::OnLinkClicked, this);
+    m_toolbar->Bind(wxEVT_MENU, &MarkdownEditor::OnToggleContents, this, XRCID(kToolContents));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &MarkdownEditor::OnContentsUI, this, XRCID(kToolContents));
+    m_text->Bind(wxEVT_TEXT_URL, &MarkdownEditor::OnLinkClicked, this);
     // Any change of the text (typing, loading the file, reloading it from the disk) makes the view outdated
     m_editor->Bind(wxEVT_STC_MODIFIED, &MarkdownEditor::OnEditorChanged, this);
     m_editor->Bind(wxEVT_STC_ZOOM, &MarkdownEditor::OnEditorZoomed, this);
@@ -65,13 +70,13 @@ MarkdownEditor::MarkdownEditor(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &MarkdownEditor::OnThemeChanged, this);
 
     BuildToolbar();
-    m_view->Bind(wxEVT_CONTEXT_MENU, &MarkdownEditor::OnContextMenu, this);
+    m_text->Bind(wxEVT_CONTEXT_MENU, &MarkdownEditor::OnContextMenu, this);
 
     // The keyboard: the control has its own accelerators (Ctrl-C, Ctrl-A, ...). They send the menu event to the control
     // itself, and the event never gets to the application. Our handlers are bound to the control, they run before its
     // own handlers
-    m_view->Bind(wxEVT_MENU, &MarkdownEditor::OnCopy, this, wxID_COPY);
-    m_view->Bind(wxEVT_MENU, &MarkdownEditor::OnSelectAll, this, wxID_SELECTALL);
+    m_text->Bind(wxEVT_MENU, &MarkdownEditor::OnCopy, this, wxID_COPY);
+    m_text->Bind(wxEVT_MENU, &MarkdownEditor::OnSelectAll, this, wxID_SELECTALL);
     // The menu bar (Edit > Copy) and the context menu: the event goes to the frame and then to the application
     wxTheApp->Bind(wxEVT_MENU, &MarkdownEditor::OnCopy, this, wxID_COPY);
     wxTheApp->Bind(wxEVT_MENU, &MarkdownEditor::OnSelectAll, this, wxID_SELECTALL);
@@ -112,6 +117,13 @@ void MarkdownEditor::BuildToolbar()
                              icons->LoadBitmap("markdown-edit"),
                              _("Edit the text of the file"),
                              wxITEM_CHECK);
+    m_toolbar->AddSeparator();
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             XRCID(kToolContents),
+                             _("Contents"),
+                             icons->LoadBitmap("markdown-toc"),
+                             _("Show or hide the table of contents"),
+                             wxITEM_CHECK);
     clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
     // The new tools can have another size (a new theme has other icons): tell the sizer, or the toolbar keeps its old
@@ -141,7 +153,7 @@ void MarkdownEditor::SetMode(Mode mode)
 void MarkdownEditor::FocusContent()
 {
     if (m_mode == Mode::View) {
-        m_view->SetFocus();
+        m_text->SetFocus();
     } else {
         m_editor->SetFocus();
         m_editor->SetSTCFocus(true);
@@ -166,9 +178,7 @@ clRichTextMarkdownRenderer::Theme MarkdownEditor::MakeViewTheme() const
 void MarkdownEditor::RenderView()
 {
     m_viewOutdated = false;
-    m_renderer->SetTheme(MakeViewTheme());
-    m_renderer->SetBaseDir(m_editor->GetFileName().GetPath());
-    m_renderer->Render(m_editor->GetText());
+    m_view->Render(m_editor->GetText(), MakeViewTheme(), m_hosted->GetFileName().GetPath());
 }
 
 void MarkdownEditor::ScheduleRender()
@@ -198,7 +208,7 @@ void MarkdownEditor::OpenLink(const wxString& url)
 
     // A link to a heading of this document ("#some-heading"): scroll to it. It is not a path
     if (url.StartsWith("#")) {
-        if (!m_renderer->GoToAnchor(url.Mid(1))) {
+        if (!m_view->GoToAnchor(url.Mid(1))) {
             clDEBUG() << "Markdown: no such heading:" << url << endl;
         }
         return;
@@ -223,7 +233,7 @@ void MarkdownEditor::OpenLink(const wxString& url)
 
         wxFileName fn(path);
         if (fn.IsRelative()) {
-            fn.MakeAbsolute(m_editor->GetFileName().GetPath());
+            fn.MakeAbsolute(m_hosted->GetFileName().GetPath());
         }
         // The static function: the member function DirExists() asks about the directory part of the path (the folder
         // that holds the file), it is true for every path in an existing folder
@@ -254,6 +264,22 @@ void MarkdownEditor::OnShowEdit(wxCommandEvent& event)
     wxUnusedVar(event);
     SetMode(Mode::Edit);
     clConfig::Get().Write(kConfigViewMode, false);
+}
+
+void MarkdownEditor::OnToggleContents(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    // The user chose it: the next Markdown file shows the table of contents in the same way
+    const bool show = !m_view->IsContentsShown();
+    m_view->ShowContents(show);
+    clConfig::Get().Write(kConfigShowContents, show);
+}
+
+void MarkdownEditor::OnContentsUI(wxUpdateUIEvent& event)
+{
+    // The table of contents is part of the view
+    event.Enable(m_mode == Mode::View);
+    event.Check(m_view->IsContentsShown());
 }
 
 void MarkdownEditor::OnEditorZoomed(wxStyledTextEvent& event)
@@ -303,29 +329,30 @@ void MarkdownEditor::OnContextMenu(wxContextMenuEvent& event)
 
 void MarkdownEditor::OnCopy(wxCommandEvent& event)
 {
-    if (m_view == nullptr || m_view != wxWindow::FindFocus()) {
+    if (m_text == nullptr || m_text != wxWindow::FindFocus()) {
         event.Skip();
         return;
     }
 
-    if (m_view->CanCopy())
-        m_view->Copy();
+    if (m_text->CanCopy()) {
+        m_text->Copy();
+    }
 }
 
 void MarkdownEditor::OnCopyUI(wxUpdateUIEvent& event)
 {
-    if (m_view == nullptr || m_view != wxWindow::FindFocus()) {
+    if (m_text == nullptr || m_text != wxWindow::FindFocus()) {
         event.Skip();
         return;
     }
-    event.Enable(m_view->CanCopy());
+    event.Enable(m_text->CanCopy());
 }
 
 void MarkdownEditor::OnSelectAll(wxCommandEvent& event)
 {
-    if (m_view == nullptr || m_view != wxWindow::FindFocus()) {
+    if (m_text == nullptr || m_text != wxWindow::FindFocus()) {
         event.Skip();
         return;
     }
-    m_view->SelectAll();
+    m_text->SelectAll();
 }

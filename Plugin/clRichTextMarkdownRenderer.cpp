@@ -76,12 +76,8 @@ void SetBorders(wxRichTextAttr& attr, const wxColour& colour, int width_in_pixel
 }
 } // namespace
 
-clMarkdownTextCtrl::clMarkdownTextCtrl(wxWindow* parent,
-                                       wxWindowID id,
-                                       const wxString& value,
-                                       const wxPoint& pos,
-                                       const wxSize& size,
-                                       long style)
+clMarkdownTextCtrl::clMarkdownTextCtrl(
+    wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size, long style)
     : wxRichTextCtrl(parent, id, value, pos, size, style)
 {
     // Bound after the control's own handlers are set, so this one runs first
@@ -225,8 +221,9 @@ clRichTextMarkdownRenderer::Theme clRichTextMarkdownRenderer::MakeTheme(const wx
                            (text.Blue() * 6 + background.Blue() * 4) / 10);
     // Colours that are not the colour of the text or of the links
     theme.inlineCode = dark ? wxColour(240, 160, 110) : wxColour(176, 56, 56);
+
     // A little different from the background: lighter on a dark theme, darker on a light one
-    theme.codeBackground = background.ChangeLightness(dark ? 125 : 94);
+    theme.codeBackground = background.ChangeLightness(dark ? 105 : 95);
 
     // The other colours are the ones of the C++ lexer of the current theme, so they fit the colours of the editor
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
@@ -234,7 +231,8 @@ clRichTextMarkdownRenderer::Theme clRichTextMarkdownRenderer::MakeTheme(const wx
         lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
     // The headings have the colour of a class, the bullets the colour of a number
-    theme.heading = StyleColour(lexer, wxSTC_C_GLOBALCLASS, true, dark ? wxColour(120, 200, 170) : wxColour(0, 110, 90));
+    theme.heading =
+        StyleColour(lexer, wxSTC_C_GLOBALCLASS, true, dark ? wxColour(120, 200, 170) : wxColour(0, 110, 90));
     theme.bullet = StyleColour(lexer, wxSTC_C_NUMBER, true, theme.heading);
     // The border is the background colour of the default style, a little lighter on a dark theme and a little darker
     // on a light one
@@ -305,6 +303,7 @@ bool clRichTextMarkdownRenderer::Render(const wxString& markdown)
     // The paragraphs of the headings are deleted with the buffer
     m_anchors.clear();
     m_anchorCount.clear();
+    m_headings.clear();
     buffer.Clear();
     ResetState();
     m_container = &buffer;
@@ -498,8 +497,8 @@ wxRichTextParagraph* clRichTextMarkdownRenderer::EnsureParagraph()
     wxRichTextAttr attr = BuildParagraphAttr(first_in_item);
     m_para = AddParagraph(attr);
     if (m_para != nullptr && m_headingLevel > 0 && m_headingPara == nullptr && m_container == &m_ctrl->GetBuffer()) {
-        // The paragraph of a heading of the document: a link can go to it, see GoToAnchor(). (The text of the heading is
-        // not cleared here: OnText() adds the text of the heading before it creates the paragraph)
+        // The paragraph of a heading of the document: a link can go to it, see GoToAnchor(). (The text of the heading
+        // is not cleared here: OnText() adds the text of the heading before it creates the paragraph)
         m_headingPara = m_para;
     }
     if (m_para != nullptr && first_in_item && m_itemTask) {
@@ -823,6 +822,7 @@ void clRichTextMarkdownRenderer::OnLeaveBlock(Block block, const BlockInfo& info
                     name << '-' << used;
                 }
                 m_anchors[name] = m_headingPara;
+                m_headings.push_back({static_cast<int>(m_headingLevel), m_headingText.Strip(wxString::both), name});
             }
         }
         m_headingPara = nullptr;

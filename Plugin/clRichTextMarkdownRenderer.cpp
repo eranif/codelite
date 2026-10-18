@@ -1,5 +1,9 @@
 #include "clRichTextMarkdownRenderer.hpp"
 
+#include "ColoursAndFontsManager.h"
+#include "globals.h"
+#include "lexer_configuration.h"
+
 #include <algorithm>
 #include <iterator>
 #include <wx/filename.h>
@@ -8,6 +12,7 @@
 #include <wx/regex.h>
 #include <wx/settings.h>
 #include <wx/uri.h>
+#include <wx/wupdlock.h>
 
 namespace
 {
@@ -15,7 +20,7 @@ namespace
 constexpr int kBulletIndent = 100;   ///< Each level of a list moves the bullet by this
 constexpr int kBulletSubIndent = 60; ///< The text of an item starts this far after its bullet
 constexpr int kQuoteIndent = 80;
-constexpr int kCodeIndent = 40;
+constexpr int kCodePadding = 8; ///< In pixels
 constexpr int kParagraphSpacing = 40;
 constexpr int kTightSpacing = 5;
 constexpr int kHeadingSpacingBefore = 80;
@@ -29,19 +34,51 @@ bool IsDark(const wxColour& colour)
     return (colour.Red() * 299 + colour.Green() * 587 + colour.Blue() * 114) / 1000 < 128;
 }
 
-/// The path of the local file that `url` points to, or an empty string if `url` is not a local file. The document can
-/// come from an untrusted source (a README of a cloned repository, the answer of an assistant), so an address that
-/// would make us connect to another computer must never be accepted:
-/// - Only the `file` scheme is allowed (an allow-list: `http:`, `ftp:`, `data:`, ... are rejected).
-/// - A network path (`//server/share`, `\\server\share`) is rejected, also after the `file:` prefix is removed.
-wxString LocalImagePath(const wxString& url)
+/// The foreground (or the background) colour of the style `style` (a `wxSTC_*` value) of `lexer`.
+/// `fallback` if there is no lexer, no such style, or the colour is not valid
+wxColour StyleColour(const LexerConf::Ptr_t& lexer, int style, bool foreground, const wxColour& fallback)
+{
+    if (!lexer) {
+        return fallback;
+    }
+    const StyleProperty& property = lexer->GetProperty(style);
+    if (property.IsNull()) {
+        return fallback;
+    }
+    const wxColour colour(foreground ? property.GetFgColour() : property.GetBgColour());
+    return colour.IsOk() ? colour : fallback;
+}
+
+/// Set the style, the colour and the width of the 4 borders
+void SetBorders(wxRichTextAttr& attr, const wxColour& colour, int width_in_pixels)
+{
+    auto& borders = attr.GetTextBoxAttr().GetBorder();
+    borders.SetStyle(wxTEXT_BOX_ATTR_BORDER_SOLID);
+    borders.SetColour(colour);
+    borders.SetWidth(width_in_pixels, wxTEXT_ATTR_UNITS_PIXELS);
+}
+} // namespace
+
+void clMarkdownTextCtrl::Copy()
+{
+    wxString text = GetStringSelection();
+    if (text.empty()) {
+        return;
+    }
+    // A line break of a paragraph is the character wxRichTextLineBreakChar (GS), make it a new line
+    text.Replace(wxString(wxRichTextLineBreakChar), "\n");
+    ::CopyToClipboard(text);
+}
+
+wxString clRichTextMarkdownRenderer::LocalPathFromUrl(const wxString& url)
 {
     wxString path = url;
 
     // A scheme is 2 or more characters followed by ':'. One character is a drive letter ("C:\dir")
     static const wxRegEx kScheme("^[A-Za-z][A-Za-z0-9+.-]+:", wxRE_EXTENDED);
     if (kScheme.Matches(path)) {
-        if (!path.StartsWith("file://")) {
+        // The scheme is not case sensitive: "FILE://" is the same
+        if (!path.Lower().StartsWith("file://")) {
             return wxEmptyString;
         }
         // file:///C:/dir (or file:///home/user): the host is empty. file://host/dir has a host: not a local file
@@ -59,7 +96,8 @@ wxString LocalImagePath(const wxString& url)
     path = wxURI::Unescape(path);
 
     // Windows accepts '/' and '\' in any mix as separators, so "/\server\share", "\/server/share" and "//server/share"
-    // are all network paths (also with more than 2 separators). Check a copy that has only '/'
+    // are all network paths (also with more than 2 separators; also the device paths "\\?\" and "\\.\"). Check a copy
+    // that has only '/'
     wxString normalized = path;
     normalized.Replace("\\", "/");
     if (normalized.StartsWith("//")) {
@@ -67,16 +105,6 @@ wxString LocalImagePath(const wxString& url)
     }
     return path;
 }
-
-/// Set the style, the colour and the width of the 4 borders
-void SetBorders(wxRichTextAttr& attr, const wxColour& colour, int width_in_pixels)
-{
-    auto& borders = attr.GetTextBoxAttr().GetBorder();
-    borders.SetStyle(wxTEXT_BOX_ATTR_BORDER_SOLID);
-    borders.SetColour(colour);
-    borders.SetWidth(width_in_pixels, wxTEXT_ATTR_UNITS_PIXELS);
-}
-} // namespace
 
 clRichTextMarkdownRenderer::clRichTextMarkdownRenderer(wxRichTextCtrl* ctrl)
     : m_ctrl(ctrl)
@@ -86,17 +114,49 @@ clRichTextMarkdownRenderer::clRichTextMarkdownRenderer(wxRichTextCtrl* ctrl)
 
 clRichTextMarkdownRenderer::Theme clRichTextMarkdownRenderer::MakeDefaultTheme(const wxWindow* win)
 {
+    const wxFont font = win != nullptr ? win->GetFont() : wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    const wxFont monospace_font(wxFontInfo(font.GetFractionalPointSize()).Family(wxFONTFAMILY_TELETYPE));
+    return MakeTheme(font,
+                     monospace_font,
+                     wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),
+                     wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+}
+
+clRichTextMarkdownRenderer::Theme clRichTextMarkdownRenderer::MakeTheme(const wxFont& font,
+                                                                        const wxFont& monospaceFont,
+                                                                        const wxColour& text,
+                                                                        const wxColour& background)
+{
     Theme theme;
-    theme.font = win != nullptr ? win->GetFont() : wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    theme.monospaceFont = wxFont(wxFontInfo(theme.font.GetFractionalPointSize()).Family(wxFONTFAMILY_TELETYPE));
-    theme.text = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    theme.background = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-    theme.link = wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
-    theme.muted = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+    theme.font = font;
+    theme.monospaceFont = monospaceFont;
+    theme.text = text;
+    theme.background = background;
+
+    const bool dark = IsDark(background);
+    // A blue that can be read on the background
+    theme.link = dark ? wxColour(102, 178, 255) : wxColour(0, 102, 204);
+    // Between the text and the background
+    theme.muted = wxColour((text.Red() * 6 + background.Red() * 4) / 10,
+                           (text.Green() * 6 + background.Green() * 4) / 10,
+                           (text.Blue() * 6 + background.Blue() * 4) / 10);
+    // Colours that are not the colour of the text or of the links
+    theme.inlineCode = dark ? wxColour(240, 160, 110) : wxColour(176, 56, 56);
     // A little different from the background: lighter on a dark theme, darker on a light one
-    const bool dark = IsDark(theme.background);
-    theme.codeBackground = theme.background.ChangeLightness(dark ? 125 : 94);
-    theme.border = theme.background.ChangeLightness(dark ? 160 : 75);
+    theme.codeBackground = background.ChangeLightness(dark ? 125 : 94);
+
+    // The other colours are the ones of the C++ lexer of the current theme, so they fit the colours of the editor
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
+    if (!lexer) {
+        lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    }
+    // The headings have the colour of a class, the bullets the colour of a number
+    theme.heading = StyleColour(lexer, wxSTC_C_GLOBALCLASS, true, dark ? wxColour(120, 200, 170) : wxColour(0, 110, 90));
+    theme.bullet = StyleColour(lexer, wxSTC_C_NUMBER, true, theme.heading);
+    // The border is the background colour of the default style, a little lighter on a dark theme and a little darker
+    // on a light one
+    const wxColour default_background = StyleColour(lexer, wxSTC_C_DEFAULT, false, background);
+    theme.border = default_background.ChangeLightness(IsDark(default_background) ? 110 : 90);
     theme.quote = theme.muted;
     return theme;
 }
@@ -105,6 +165,7 @@ void clRichTextMarkdownRenderer::ResetState()
 {
     m_container = nullptr;
     m_para = nullptr;
+    m_codeOwner = nullptr;
     m_lists.clear();
     m_quoteDepth = 0;
     m_headingLevel = 0;
@@ -131,16 +192,8 @@ bool clRichTextMarkdownRenderer::Render(const wxString& markdown)
 {
     wxCHECK_MSG(m_ctrl != nullptr, false, "clRichTextMarkdownRenderer: no control");
 
-    // Thaw() when we are done, whatever happens
-    struct FreezeGuard {
-        explicit FreezeGuard(wxRichTextCtrl* ctrl)
-            : m_ctrl(ctrl)
-        {
-            m_ctrl->Freeze();
-        }
-        ~FreezeGuard() { m_ctrl->Thaw(); }
-        wxRichTextCtrl* m_ctrl;
-    } freeze_guard{m_ctrl};
+    // No drawing while the content is built
+    wxWindowUpdateLocker locker(m_ctrl);
 
     // The style of the text that has no style of its own
     wxRichTextAttr basic_style;
@@ -158,6 +211,10 @@ bool clRichTextMarkdownRenderer::Render(const wxString& markdown)
     buffer.Clear();
     ResetState();
     m_container = &buffer;
+
+    // The margins are attributes of the document. (They are set after the commands are reset, to be sure that they
+    // are not lost)
+    m_ctrl->SetMargins(m_ctrl->FromDIP(m_marginHorizontal), m_ctrl->FromDIP(m_marginVertical));
 
     const bool ok = Parse(markdown);
 
@@ -203,9 +260,18 @@ wxRichTextAttr clRichTextMarkdownRenderer::BuildCharAttr() const
 
     wxRichTextAttr attr;
     attr.SetFont(font);
-    attr.SetTextColour(m_links.empty() ? m_theme.text : m_theme.link);
-    if (m_code > 0 && !m_inCodeBlock) {
-        // Inline code. The background of a code block is the one of its paragraph
+    const bool inline_code = m_code > 0 && !m_inCodeBlock;
+    if (!m_links.empty()) {
+        attr.SetTextColour(m_theme.link);
+    } else if (inline_code) {
+        attr.SetTextColour(m_theme.inlineCode);
+    } else if (m_headingLevel > 0) {
+        attr.SetTextColour(m_theme.heading);
+    } else {
+        attr.SetTextColour(m_theme.text);
+    }
+    if (inline_code) {
+        // The background of a code block is the one of its box, see OnEnterBlock()
         attr.SetBackgroundColour(m_theme.codeBackground);
     }
     if (!m_links.empty()) {
@@ -218,6 +284,14 @@ wxRichTextAttr clRichTextMarkdownRenderer::BuildParagraphAttr(bool firstInListIt
 {
     wxRichTextAttr attr;
 
+    if (m_inCodeBlock) {
+        // The paragraphs of a code block are inside a box (see OnEnterBlock()). The box has the background and the
+        // padding, and the paragraph that holds the box has the indent, so here there is nothing to add
+        attr.SetParagraphSpacingBefore(0);
+        attr.SetParagraphSpacingAfter(0);
+        return attr;
+    }
+
     const int depth = static_cast<int>(m_lists.size());
     const int quote_indent = m_quoteDepth * kQuoteIndent;
     int spacing_before = 0;
@@ -228,6 +302,9 @@ wxRichTextAttr clRichTextMarkdownRenderer::BuildParagraphAttr(bool firstInListIt
         const int bullet_position = quote_indent + (depth - 1) * kBulletIndent;
         if (firstInListItem) {
             attr.SetLeftIndent(bullet_position, kBulletSubIndent);
+            // The bullet (or the number) is drawn with the text colour of the paragraph. The text of the item has
+            // its own colour: every piece of text has it
+            attr.SetTextColour(m_theme.bullet);
             const ListState& list = m_lists.back();
             if (m_itemTask) {
                 // A task item has a check box (a character) instead of a bullet, see EnsureParagraph()
@@ -259,11 +336,6 @@ wxRichTextAttr clRichTextMarkdownRenderer::BuildParagraphAttr(bool firstInListIt
     if (m_headingLevel > 0) {
         spacing_before = kHeadingSpacingBefore;
         spacing_after = kHeadingSpacingAfter;
-    }
-
-    if (m_inCodeBlock) {
-        attr.SetBackgroundColour(m_theme.codeBackground);
-        attr.SetLeftIndent(quote_indent + (depth > 0 ? depth * kBulletIndent : 0) + kCodeIndent, 0);
     }
 
     switch (m_cellAlign) {
@@ -315,9 +387,11 @@ wxRichTextParagraph* clRichTextMarkdownRenderer::EnsureParagraph()
     wxRichTextAttr attr = BuildParagraphAttr(first_in_item);
     m_para = AddParagraph(attr);
     if (m_para != nullptr && first_in_item && m_itemTask) {
-        // The check box of a task item
+        // The check box of a task item: it takes the place of the bullet, so it has the colour of the bullets
+        wxRichTextAttr check_box_attr = BuildCharAttr();
+        check_box_attr.SetTextColour(m_theme.bullet);
         AppendText(m_itemTaskChecked ? wxString::FromUTF8("\xE2\x98\x91 ") : wxString::FromUTF8("\xE2\x98\x90 "),
-                   BuildCharAttr());
+                   check_box_attr);
     }
     return m_para;
 }
@@ -359,9 +433,9 @@ void clRichTextMarkdownRenderer::AppendMultilineText(const wxString& text, const
     }
 }
 
-wxImage clRichTextMarkdownRenderer::LoadImage(const wxString& url) const
+wxImage clRichTextMarkdownRenderer::LoadLocalImage(const wxString& url) const
 {
-    const wxString path = LocalImagePath(url);
+    const wxString path = LocalPathFromUrl(url);
     if (path.empty()) {
         return wxNullImage;
     }
@@ -391,7 +465,7 @@ wxImage clRichTextMarkdownRenderer::LoadImage(const wxString& url) const
 
 void clRichTextMarkdownRenderer::AppendImage(const wxString& url, const wxString& alt)
 {
-    wxImage image = LoadImage(url);
+    wxImage image = LoadLocalImage(url);
     if (!image.IsOk()) {
         // Show the alternative text instead, or the address
         wxRichTextAttr attr = BuildCharAttr();
@@ -469,7 +543,7 @@ void clRichTextMarkdownRenderer::OnEnterBlock(Block block, const BlockInfo& info
     // A list item that starts with a block that is not text (a nested list, a table, a rule) has no text of its own:
     // write its bullet now. Otherwise, the next paragraph (it can be the one of a table cell) takes the bullet
     if (m_itemPending && (block == Block::UnorderedList || block == Block::OrderedList || block == Block::Table ||
-                          block == Block::HorizontalRule)) {
+                          block == Block::HorizontalRule || block == Block::CodeBlock)) {
         EnsureParagraph();
     }
 
@@ -510,10 +584,38 @@ void clRichTextMarkdownRenderer::OnEnterBlock(Block block, const BlockInfo& info
     case Block::Heading:
         m_headingLevel = info.level;
         break;
-    case Block::CodeBlock:
+    case Block::CodeBlock: {
+        if (m_container == nullptr) {
+            break;
+        }
+        // The background must cover the whole width, so the code is in a box that is 100% wide, and the box is in a
+        // paragraph. (The background of a paragraph covers only its text). That paragraph has the indent of the list
+        // or of the quote, and the spacing after the block
+        wxRichTextAttr holder_attr = BuildParagraphAttr(false);
+        wxRichTextParagraph* holder = AddParagraph(holder_attr);
+        if (holder == nullptr) {
+            break;
+        }
+
+        auto* box = new wxRichTextBox(holder);
+        wxRichTextAttr box_attr;
+        box_attr.GetTextBoxAttr().GetWidth().SetValue(100, wxTEXT_ATTR_UNITS_PERCENTAGE);
+        box_attr.SetBackgroundColour(m_theme.codeBackground);
+        SetBorders(box_attr, m_theme.border, 1);
+        auto& padding = box_attr.GetTextBoxAttr().GetPadding();
+        padding.GetLeft().SetValue(kCodePadding, wxTEXT_ATTR_UNITS_PIXELS);
+        padding.GetRight().SetValue(kCodePadding, wxTEXT_ATTR_UNITS_PIXELS);
+        padding.GetTop().SetValue(kCodePadding, wxTEXT_ATTR_UNITS_PIXELS);
+        padding.GetBottom().SetValue(kCodePadding, wxTEXT_ATTR_UNITS_PIXELS);
+        box->SetAttributes(box_attr);
+        holder->AppendChild(box);
+
+        m_codeOwner = m_container;
+        m_container = box;
         m_inCodeBlock = true;
         m_pendingBreaks = 0;
         break;
+    }
     case Block::HtmlBlock:
         m_inHtmlBlock = true;
         m_pendingBreaks = 0;
@@ -524,12 +626,19 @@ void clRichTextMarkdownRenderer::OnEnterBlock(Block block, const BlockInfo& info
         if (m_container == nullptr) {
             break;
         }
+        // A table is an object that lives inside a paragraph (as WriteTable() of the control does). It must not be
+        // added directly to the document: the document lays out its children as paragraphs, and it would not draw it
+        wxRichTextAttr holder_attr = BuildParagraphAttr(false);
+        wxRichTextParagraph* holder = AddParagraph(holder_attr);
+        if (holder == nullptr) {
+            break;
+        }
         m_tableOwner = m_container;
-        m_table = new wxRichTextTable(m_container);
+        m_table = new wxRichTextTable(holder);
         wxRichTextAttr table_attr;
         table_attr.GetTextBoxAttr().GetWidth().SetValue(100, wxTEXT_ATTR_UNITS_PERCENTAGE);
         m_table->SetAttributes(table_attr);
-        m_container->AppendChild(m_table);
+        holder->AppendChild(m_table);
         m_tableColumns = info.columns;
         m_tableRows = 0;
         break;
@@ -590,6 +699,15 @@ void clRichTextMarkdownRenderer::OnLeaveBlock(Block block, const BlockInfo& info
         m_headingLevel = 0;
         break;
     case Block::CodeBlock:
+        if (m_codeOwner != nullptr) {
+            // An empty code block: the box still needs a paragraph
+            if (m_container != nullptr && m_container->GetChildCount() == 0) {
+                wxRichTextAttr attr;
+                m_container->AddParagraph(wxEmptyString, &attr);
+            }
+            m_container = m_codeOwner;
+            m_codeOwner = nullptr;
+        }
         m_inCodeBlock = false;
         m_pendingBreaks = 0;
         break;

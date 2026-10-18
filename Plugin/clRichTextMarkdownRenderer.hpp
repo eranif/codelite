@@ -9,7 +9,18 @@
 #include <wx/richtext/richtextctrl.h>
 #include <wx/string.h>
 
-/// Show a Markdown document in a wxRichTextCtrl.
+/// A wxRichTextCtrl for a rendered document. It copies the selected text as plain text with `\n` for a line break (the
+/// control keeps a line break inside a paragraph as a special character, wxRichTextLineBreakChar, and the standard copy
+/// gives that character: it is not a new line when it is pasted somewhere else).
+class WXDLLIMPEXP_SDK clMarkdownTextCtrl : public wxRichTextCtrl
+{
+public:
+    using wxRichTextCtrl::wxRichTextCtrl;
+
+    void Copy() override;
+};
+
+/// Show a Markdown document in a wxRichTextCtrl (use a clMarkdownTextCtrl to copy text with the right line breaks).
 ///
 /// It is a clMarkdownParser that builds the content of the control while the document is parsed.
 ///
@@ -38,8 +49,11 @@ public:
         wxColour background;
         wxColour link;
         wxColour muted;          ///< Raw HTML and the images that could not be loaded
+        wxColour heading;        ///< The text of the headings
+        wxColour bullet;         ///< The bullets and the numbers of the lists
+        wxColour inlineCode;     ///< The text of an inline code (`code`). A code block uses `text`
         wxColour codeBackground; ///< Code, and the header of a table
-        wxColour border;         ///< Tables and horizontal rules
+        wxColour border;         ///< Tables, code blocks and horizontal rules
         wxColour quote;          ///< The bar at the left of a quote
     };
 
@@ -51,11 +65,38 @@ public:
     /// from the background colour, for a light or a dark background
     static Theme MakeDefaultTheme(const wxWindow* win);
 
+    /// A theme from the given fonts and from the colour of the text and of the background (for example the ones of an
+    /// editor). The headings, the bullets and the borders have colours of the C++ lexer of the current theme (a class,
+    /// a number and the default style). The other colours (link, code background, ...) are made from the background,
+    /// for a light or a dark background
+    static Theme MakeTheme(const wxFont& font,
+                           const wxFont& monospaceFont,
+                           const wxColour& text,
+                           const wxColour& background);
+
+    /// The path of the local file that the address `url` (the address of a link or of an image) points to, or an empty
+    /// string if it does not point to a local file. A document can come from an untrusted source (a README of a cloned
+    /// repository, the answer of an assistant), so an address that would make us connect to another computer is never
+    /// accepted. It is an allow-list:
+    /// - A scheme other than `file` (`http:`, `ftp:`, `data:`, ...) is rejected, `file://host/...` too.
+    /// - A network path is rejected (`//server/share`, `\\server\share`, in any mix of '/' and '\', also when it is
+    ///   percent-encoded or after the `file:` prefix).
+    /// Use it before the file system is touched with an address of a document. The result can be relative.
+    static wxString LocalPathFromUrl(const wxString& url);
+
     void SetTheme(const Theme& theme) { m_theme = theme; }
     const Theme& GetTheme() const { return m_theme; }
 
     /// The folder to which the paths of the images are relative
     void SetBaseDir(const wxString& dir) { m_baseDir = dir; }
+
+    /// The space between the document and the border of the control: `horizontal` at the left and at the right,
+    /// `vertical` at the top and at the bottom. In DIP. Default: 24 and 12
+    void SetMargins(int horizontal, int vertical)
+    {
+        m_marginHorizontal = horizontal;
+        m_marginVertical = vertical;
+    }
 
     /// Replace the content of the control with `markdown`. Call it from the GUI thread.
     /// \return false if the document could not be parsed
@@ -89,17 +130,21 @@ private:
     /// line of a block is dropped
     void AppendMultilineText(const wxString& text, const wxRichTextAttr& attr);
     void AppendImage(const wxString& url, const wxString& alt);
-    wxImage LoadImage(const wxString& url) const;
+    wxImage LoadLocalImage(const wxString& url) const;
     void EnterTableCell(bool header, Align align);
     void LeaveTableCell();
 
     wxRichTextCtrl* m_ctrl = nullptr;
     Theme m_theme;
     wxString m_baseDir;
+    int m_marginHorizontal = 24;
+    int m_marginVertical = 12;
 
     // Where we write: the document, or a table cell
     wxRichTextParagraphLayoutBox* m_container = nullptr;
     wxRichTextParagraph* m_para = nullptr;
+    /// While a code block is written: the container of the block, the code is in a box inside it
+    wxRichTextParagraphLayoutBox* m_codeOwner = nullptr;
 
     // The state of the parser
     std::vector<ListState> m_lists;

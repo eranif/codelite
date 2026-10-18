@@ -90,7 +90,8 @@ target_link_libraries(
   ${GTK_LIBS}
   ${ADDITIONAL_LIBRARIES}
   ${LIBUCHARDET_LIB}
-  assistantlib)
+  assistantlib
+  md4c)
 
 if(MINGW)
   set_target_properties(

@@ -47,7 +47,7 @@ MarkdownEditor::MarkdownEditor(wxWindow* parent, const EditorFactory& createEdit
     // Page 0: the rendered document, with its table of contents
     m_view = new MarkdownViewCtrl(m_book);
     m_text = m_view->GetTextCtrl();
-    m_view->ShowContents(clConfig::Get().Read(kConfigShowContents, true));
+    m_view->ShowContents(clConfig::Get().Read(kConfigShowContents, false));
     m_book->AddPage(m_view, _("View"));
 
     // Page 1: the editor. The caller creates it: this class does not know the editor class of the application

@@ -21,6 +21,7 @@ MarkdownViewCtrl::MarkdownViewCtrl(wxWindow* parent)
     // The table of contents keeps its width when the window is resized
     SetSashGravity(1.0);
     SplitVertically(m_text, m_contents);
+    Unsplit(m_contents);
 
     // A click, or Enter, on a heading
     m_contents->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MarkdownViewCtrl::OnContentsSelected, this);

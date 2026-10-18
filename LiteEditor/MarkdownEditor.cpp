@@ -2,6 +2,7 @@
 
 #include "aui/clAuiToolBarArt.h"
 #include "bitmap_loader.h"
+#include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -23,6 +24,9 @@ namespace
 // The buttons of the toolbar (the names are turned into IDs with XRCID)
 constexpr const char* kToolView = "markdown_editor_view";
 constexpr const char* kToolEdit = "markdown_editor_edit";
+
+/// The mode that the user chose with the buttons: true is the view (the document), false is the editor
+const wxString kConfigViewMode = "MarkdownEditor/ViewMode";
 } // namespace
 
 MarkdownEditor::MarkdownEditor(wxWindow* parent)
@@ -62,8 +66,11 @@ MarkdownEditor::MarkdownEditor(wxWindow* parent)
 
     BuildToolbar();
 
-    // Show the document. The file is loaded by the caller after the constructor, so render when it is done
-    m_book->SetSelection(0);
+    // Start in the mode that the user chose the last time (the document, by default). The file is loaded by the caller
+    // after the constructor, so render when it is done (in the edit mode the document is rendered when the user
+    // switches to it)
+    m_mode = clConfig::Get().Read(kConfigViewMode, true) ? Mode::View : Mode::Edit;
+    m_book->SetSelection(m_mode == Mode::View ? 0 : 1);
     ScheduleRender();
 }
 
@@ -212,12 +219,16 @@ void MarkdownEditor::OnShowView(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     SetMode(Mode::View);
+    // The user chose it: the next Markdown file opens in this mode too. (A command that shows the editor, like Find or
+    // go to line, does not change the choice)
+    clConfig::Get().Write(kConfigViewMode, true);
 }
 
 void MarkdownEditor::OnShowEdit(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     SetMode(Mode::Edit);
+    clConfig::Get().Write(kConfigViewMode, false);
 }
 
 void MarkdownEditor::OnEditorZoomed(wxStyledTextEvent& event)

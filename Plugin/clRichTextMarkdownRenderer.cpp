@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <wx/dcclient.h>
 #include <wx/filename.h>
 #include <wx/image.h>
 #include <wx/log.h>
@@ -194,6 +195,15 @@ bool clRichTextMarkdownRenderer::Render(const wxString& markdown)
 
     // No drawing while the content is built
     wxWindowUpdateLocker locker(m_ctrl);
+
+    // The scroll unit of the control is a number of pixels, and it is only 5 by default: a turn of the mouse wheel is
+    // 3 units, so the document moves very slowly. Use the height of one line of text: a scroll bar step is one line,
+    // and a turn of the mouse wheel (3 steps) is 3 lines
+    {
+        wxClientDC dc(m_ctrl);
+        dc.SetFont(m_theme.font);
+        m_ctrl->SetLineHeight(std::max(1, dc.GetCharHeight()));
+    }
 
     // The style of the text that has no style of its own
     wxRichTextAttr basic_style;

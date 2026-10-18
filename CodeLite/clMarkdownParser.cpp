@@ -71,6 +71,11 @@ struct clMarkdownParser::Impl {
     static wxString ToString(const MD_ATTRIBUTE& attr)
     {
         wxString result;
+        // An empty attribute may have no pieces at all. For example, md4c leaves the attributes of an indented
+        // code block (it has no info string) zeroed: `substr_offsets` is null
+        if (attr.size == 0 || attr.substr_offsets == nullptr || attr.substr_types == nullptr) {
+            return result;
+        }
         for (unsigned i = 0; attr.substr_offsets[i] < attr.size; ++i) {
             const MD_OFFSET offset = attr.substr_offsets[i];
             const MD_SIZE size = attr.substr_offsets[i + 1] - offset;
@@ -274,12 +279,14 @@ struct clMarkdownParser::Impl {
 
     static int EnterBlock(MD_BLOCKTYPE type, void* detail, void* userdata)
     {
-        return Run(userdata, [&](clMarkdownParser& self) { self.OnEnterBlock(ToBlock(type), ToBlockInfo(type, detail)); });
+        return Run(
+            userdata, [&](clMarkdownParser& self) { self.OnEnterBlock(ToBlock(type), ToBlockInfo(type, detail)); });
     }
 
     static int LeaveBlock(MD_BLOCKTYPE type, void* detail, void* userdata)
     {
-        return Run(userdata, [&](clMarkdownParser& self) { self.OnLeaveBlock(ToBlock(type), ToBlockInfo(type, detail)); });
+        return Run(
+            userdata, [&](clMarkdownParser& self) { self.OnLeaveBlock(ToBlock(type), ToBlockInfo(type, detail)); });
     }
 
     static int EnterSpan(MD_SPANTYPE type, void* detail, void* userdata)

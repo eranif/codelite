@@ -571,6 +571,10 @@ void AgentHostPage::BuildToolbar()
         WithShortcut(_("Open Resource: find a file or a symbol with the selected text"), "find_resource"));
     clAuiToolBarArt::Finalise(m_auibar);
     m_auibar->Realize();
+    // The new tools can have another size (a new theme has other icons): tell the sizer, or the toolbar keeps its old
+    // size until the window is resized
+    m_auibar->InvalidateBestSize();
+    Layout();
     m_auibar->Refresh();
 }
 

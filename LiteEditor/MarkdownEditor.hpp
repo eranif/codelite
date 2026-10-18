@@ -71,6 +71,10 @@ private:
     void OnEditorChanged(wxStyledTextEvent& event);
     void OnEditorZoomed(wxStyledTextEvent& event);
     void OnThemeChanged(clCommandEvent& event);
+    void OnContextMenu(wxContextMenuEvent& event);
+    void OnCopy(wxCommandEvent& event);
+    void OnCopyUI(wxUpdateUIEvent& event);
+    void OnSelectAll(wxCommandEvent& event);
 
     wxAuiToolBar* m_toolbar = nullptr;
     wxSimplebook* m_book = nullptr;

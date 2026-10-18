@@ -65,6 +65,17 @@ MarkdownEditor::MarkdownEditor(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &MarkdownEditor::OnThemeChanged, this);
 
     BuildToolbar();
+    m_view->Bind(wxEVT_CONTEXT_MENU, &MarkdownEditor::OnContextMenu, this);
+
+    // The keyboard: the control has its own accelerators (Ctrl-C, Ctrl-A, ...). They send the menu event to the control
+    // itself, and the event never gets to the application. Our handlers are bound to the control, they run before its
+    // own handlers
+    m_view->Bind(wxEVT_MENU, &MarkdownEditor::OnCopy, this, wxID_COPY);
+    m_view->Bind(wxEVT_MENU, &MarkdownEditor::OnSelectAll, this, wxID_SELECTALL);
+    // The menu bar (Edit > Copy) and the context menu: the event goes to the frame and then to the application
+    wxTheApp->Bind(wxEVT_MENU, &MarkdownEditor::OnCopy, this, wxID_COPY);
+    wxTheApp->Bind(wxEVT_MENU, &MarkdownEditor::OnSelectAll, this, wxID_SELECTALL);
+    wxTheApp->Bind(wxEVT_UPDATE_UI, &MarkdownEditor::OnCopyUI, this, wxID_COPY);
 
     // Start in the mode that the user chose the last time (the document, by default). The file is loaded by the caller
     // after the constructor, so render when it is done (in the edit mode the document is rendered when the user
@@ -76,6 +87,10 @@ MarkdownEditor::MarkdownEditor(wxWindow* parent)
 
 MarkdownEditor::~MarkdownEditor()
 {
+    wxTheApp->Unbind(wxEVT_MENU, &MarkdownEditor::OnCopy, this, wxID_COPY);
+    wxTheApp->Unbind(wxEVT_MENU, &MarkdownEditor::OnSelectAll, this, wxID_SELECTALL);
+    wxTheApp->Unbind(wxEVT_UPDATE_UI, &MarkdownEditor::OnCopyUI, this, wxID_COPY);
+
     EventNotifier::Get()->Unbind(wxEVT_BITMAPS_UPDATED, &MarkdownEditor::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MarkdownEditor::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &MarkdownEditor::OnThemeChanged, this);
@@ -275,4 +290,42 @@ void MarkdownEditor::OnThemeChanged(clCommandEvent& event)
     // The icons of the toolbar have the colours of the theme, and so has the view
     BuildToolbar();
     ScheduleRender();
+}
+
+void MarkdownEditor::OnContextMenu(wxContextMenuEvent& event)
+{
+    wxUnusedVar(event);
+    wxMenu menu;
+    menu.Append(wxID_COPY);
+    menu.Append(wxID_SELECTALL);
+    PopupMenu(&menu);
+}
+
+void MarkdownEditor::OnCopy(wxCommandEvent& event)
+{
+    if (m_view == nullptr || m_view != wxWindow::FindFocus()) {
+        event.Skip();
+        return;
+    }
+
+    if (m_view->CanCopy())
+        m_view->Copy();
+}
+
+void MarkdownEditor::OnCopyUI(wxUpdateUIEvent& event)
+{
+    if (m_view == nullptr || m_view != wxWindow::FindFocus()) {
+        event.Skip();
+        return;
+    }
+    event.Enable(m_view->CanCopy());
+}
+
+void MarkdownEditor::OnSelectAll(wxCommandEvent& event)
+{
+    if (m_view == nullptr || m_view != wxWindow::FindFocus()) {
+        event.Skip();
+        return;
+    }
+    m_view->SelectAll();
 }

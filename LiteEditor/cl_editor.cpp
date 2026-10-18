@@ -43,6 +43,7 @@
 #include "bookmark_manager.h"
 #include "buildtabsettingsdata.h"
 #include "cc_box_tip_window.h"
+#include "clEditorHost.hpp"
 #include "clEditorStateLocker.h"
 #include "clFileSystemWatcher.h"
 #include "clIdleEventThrottler.hpp"
@@ -2353,8 +2354,14 @@ void clEditor::SetActive()
 #endif
     DoUpdateTLWTitle(raise);
 
-    SetFocus();
-    SetSTCFocus(true);
+    // The editor can be inside a page that shows it in another way (the Markdown page can show the rendered document):
+    // the focus goes to what is visible. Focusing a hidden editor does nothing, or it leaves the focus nowhere
+    if (auto* host = clEditorHostFromPage(clMainFrame::Get()->GetMainBook()->PageOf(this))) {
+        host->FocusContent();
+    } else {
+        SetFocus();
+        SetSTCFocus(true);
+    }
 
     m_context->SetActive();
 

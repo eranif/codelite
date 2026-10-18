@@ -31,6 +31,7 @@
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "clEditorBar.h"
+#include "clEditorHost.hpp"
 #include "clInfoBar.h"
 #include "clStrings.h"
 #include "cl_config.h"
@@ -1301,7 +1302,7 @@ wxPanel* PluginManager::GetMainPanel() { return clMainFrame::Get()->GetMainPanel
 
 IEditor* PluginManager::GetEditorFromWindow(wxWindow* win)
 {
-    clEditor* editor = dynamic_cast<clEditor*>(win);
+    clEditor* editor = clEditorFromPage(win);
     CHECK_COND_RET_NULL(editor);
 
     return dynamic_cast<IEditor*>(editor);

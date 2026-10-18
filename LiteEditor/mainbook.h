@@ -121,6 +121,23 @@ public:
     wxWindow* GetPage(size_t page);
     size_t GetPageCount() const;
     wxWindow* FindPage(const wxString& text);
+
+    /**
+     * @brief return the page of the book that is `win` or that contains it. For an editor that is the page itself,
+     * or the window that hosts the editor (the Markdown page, see clEditorHost)
+     * @return nullptr if `win` is not in the book
+     */
+    wxWindow* PageOf(wxWindow* win) const;
+    /**
+     * @brief the index of the page of `win` (see PageOf()), or wxNOT_FOUND
+     */
+    int PageIndexOf(wxWindow* win) const;
+    /**
+     * @brief the editor of the page of `win` (see PageOf()): the editor itself, or the one that the page hosts.
+     * nullptr if the page has no editor
+     */
+    clEditor* EditorOf(wxWindow* win) const;
+
     /**
      * @brief return the bitmap index or add it if it is missing and then return its index
      */

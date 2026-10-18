@@ -60,6 +60,7 @@
 #include "clBootstrapWizard.h"
 #include "clCustomiseToolBarDlg.h"
 #include "clEditorBar.h"
+#include "clEditorHost.hpp"
 #include "clGotoAnythingManager.h"
 #include "clInfoBar.h"
 #include "clLocaleManager.hpp"
@@ -743,14 +744,14 @@ clEditor* GetEditorFromEvent(MainBook* book, wxEvent& event)
 {
     // Check if the menu contains the window to close, if not close the active tab
     auto win = GetWindowFromEvent(book, event);
-    return dynamic_cast<clEditor*>(win);
+    return clEditorFromPage(win);
 }
 
 IEditor* GetIEditorFromEvent(MainBook* book, wxEvent& event)
 {
     // Check if the menu contains the window to close, if not close the active tab
     auto win = GetWindowFromEvent(book, event);
-    auto cl_editor = dynamic_cast<clEditor*>(win);
+    auto cl_editor = clEditorFromPage(win);
     if (!cl_editor) {
         return nullptr;
     }
@@ -1896,6 +1897,34 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
     }
 
     clEditor* editor = GetMainBook()->GetActiveEditor();
+
+    // On a page that shows the editor in another way (the Markdown page that shows the rendered document), a text
+    // command (delete line, comment, go to line, find, ...) must act on an editor that the user can see: show it first
+    // (it does nothing if the editor is already shown).
+    if (editor != nullptr) {
+        if (auto* host = clEditorHostFromPage(GetMainBook()->PageOf(editor))) {
+            switch (event.GetId()) {
+            case wxID_CUT:
+            case wxID_COPY:
+            case wxID_PASTE:
+            case wxID_UNDO:
+            case wxID_REDO:
+            case wxID_SELECTALL:
+                // These are for the control that has the focus, and IsEditorEvent() lets them come here only when the
+                // focus is not in another control (for example, when a menu is open). They must not change a text that
+                // the user does not see, and they must not switch the page
+                if (!host->IsHostedEditorShown()) {
+                    event.Skip();
+                    return;
+                }
+                break;
+            default:
+                host->ShowHostedEditor();
+                break;
+            }
+        }
+    }
+
     if (event.GetId() == XRCID("id_find")) {
         wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(wxWindow::FindFocus());
         if (stc) {

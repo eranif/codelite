@@ -28,6 +28,7 @@
 #include "FindAndReplaceDialog.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "LSP/LSPManager.hpp"
+#include "MarkdownEditor.hpp"
 #include "WelcomePage.h"
 #include "aui/clAuiFlatTabArt.hpp"
 #include "clFileSystemWatcher.h"
@@ -303,7 +304,7 @@ void MainBook::OnPageClosing(wxBookCtrlEvent& e)
 {
     e.Skip();
     auto win = m_book->GetPage(e.GetSelection());
-    clEditor* editor = dynamic_cast<clEditor*>(win);
+    clEditor* editor = clEditorFromPage(win);
     if (editor) {
         if (AskUserToSave(editor)) {
             SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
@@ -339,7 +340,7 @@ void MainBook::OnPageClosed(wxBookCtrlEvent& e)
     // any editors left open?
     clEditor* editor = nullptr;
     for (size_t i = 0; i < m_book->GetPageCount() && editor == nullptr; i++) {
-        editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
+        editor = clEditorFromPage(m_book->GetPage(i));
     }
 
     if (m_book->GetPageCount() == 0) {
@@ -351,7 +352,7 @@ void MainBook::OnPageClosed(wxBookCtrlEvent& e)
     DoUpdateNotebookTheme();
 
 #if wxHAS_MINIMAP
-    SelectMinimapForEditor(dynamic_cast<clEditor*>(m_book->GetCurrentPage()));
+    SelectMinimapForEditor(clEditorFromPage(m_book->GetCurrentPage()));
 #endif
 }
 
@@ -510,6 +511,29 @@ void MainBook::RestoreSession(const SessionEntry& session)
     CallAfter(&MainBook::DoRestoreSession, session);
 }
 
+wxWindow* MainBook::PageOf(wxWindow* win) const
+{
+    // `win` is a page, or a window inside a page (the editor of a Markdown page)
+    for (; win != nullptr && win != m_book; win = win->GetParent()) {
+        if (m_book->GetPageIndex(win) != wxNOT_FOUND) {
+            return win;
+        }
+    }
+    return nullptr;
+}
+
+int MainBook::PageIndexOf(wxWindow* win) const
+{
+    wxWindow* page = PageOf(win);
+    return page == nullptr ? static_cast<int>(wxNOT_FOUND) : m_book->GetPageIndex(page);
+}
+
+clEditor* MainBook::EditorOf(wxWindow* win) const
+{
+    wxWindow* page = PageOf(win);
+    return clEditorFromPage(page != nullptr ? page : win);
+}
+
 clEditor* MainBook::GetActiveEditor()
 {
     if (m_book == nullptr) {
@@ -519,7 +543,7 @@ clEditor* MainBook::GetActiveEditor()
     if (!GetCurrentPage()) {
         return nullptr;
     }
-    return dynamic_cast<clEditor*>(GetCurrentPage());
+    return clEditorFromPage(GetCurrentPage());
 }
 
 void MainBook::GetAllTabs(clTab::Vec_t& tabs)
@@ -535,7 +559,7 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
         t.text = tabInfo->GetLabel();
         t.window = tabInfo->GetWindow();
 
-        clEditor* editor = dynamic_cast<clEditor*>(t.window);
+        clEditor* editor = clEditorFromPage(t.window);
         if (editor) {
             t.isFile = true;
             t.isModified = editor->GetModify();
@@ -552,7 +576,7 @@ clEditor::Vec_t MainBook::GetAllEditors()
 
     // Collect booked editors
     for (size_t i = 0; i < m_book->GetPageCount(); i++) {
-        clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
+        clEditor* editor = clEditorFromPage(m_book->GetPage(i));
         if (editor) {
             editors.push_back(editor);
         }
@@ -568,7 +592,7 @@ int MainBook::FindEditorIndexByFullPath(const wxString& fullpath)
 #endif
 
     for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
-        clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
+        clEditor* editor = clEditorFromPage(m_book->GetPage(i));
         if (editor) {
             // are we a remote path?
             if (editor->IsRemoteFile()) {
@@ -613,7 +637,7 @@ clEditor* MainBook::FindEditor(const wxString& fileName)
 {
     int index = FindEditorIndexByFullPath(fileName);
     if (index != wxNOT_FOUND) {
-        return dynamic_cast<clEditor*>(m_book->GetPage(index));
+        return clEditorFromPage(m_book->GetPage(index));
     }
     return nullptr;
 }
@@ -621,9 +645,10 @@ clEditor* MainBook::FindEditor(const wxString& fileName)
 wxWindow* MainBook::FindPage(const wxString& text)
 {
     for (size_t i = 0; i < m_book->GetPageCount(); i++) {
-        clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
+        clEditor* editor = clEditorFromPage(m_book->GetPage(i));
         if (editor && FileUtils::RealPath(editor->GetFileName().GetFullPath()).CmpNoCase(text) == 0) {
-            return editor;
+            // The page of the editor, it can be a window that hosts the editor
+            return m_book->GetPage(i);
         }
 
         if (m_book->GetPageText(i) == text) {
@@ -799,7 +824,17 @@ clEditor* MainBook::OpenFile(const wxString& file_name,
         if (m_book->GetPageCount() == 0)
             hidden = GetSizer()->Hide(m_book);
 #endif
-        editor = new clEditor(m_book);
+        // The window that goes into the book: the editor, or a window that has the editor inside it
+        wxWindow* page = nullptr;
+        if (FileExtManager::GetType(fileName.GetFullPath()) == FileExtManager::TypeMarkdown) {
+            // A Markdown file: a page that shows the document, or the editor
+            auto* markdown_page = new MarkdownEditor(m_book);
+            editor = markdown_page->GetEditor();
+            page = markdown_page;
+        } else {
+            editor = new clEditor(m_book);
+            page = editor;
+        }
         editor->SetEditorBitmap(bmp);
         editor->Create(projName, fileName);
 
@@ -808,9 +843,9 @@ clEditor* MainBook::OpenFile(const wxString& file_name,
         // The tab label is the filename + last dir
         wxString label = CreateLabel(fileName, false);
         if ((extra & OF_PlaceNextToCurrent) && (sel != wxNOT_FOUND)) {
-            AddBookPage(editor, label, tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp, false, sel + 1);
+            AddBookPage(page, label, tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp, false, sel + 1);
         } else {
-            AddBookPage(editor, label, tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp, false, wxNOT_FOUND);
+            AddBookPage(page, label, tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp, false, wxNOT_FOUND);
         }
         editor->SetSyntaxHighlight();
         ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(editor);
@@ -842,6 +877,13 @@ clEditor* MainBook::OpenFile(const wxString& file_name,
             if (lineno == editor->GetLineCount()) {
                 lineno = 1; // makes sure a navigation record gets saved
             }
+        }
+    }
+
+    if (position != wxNOT_FOUND || lineno != wxNOT_FOUND) {
+        // The caller wants to go to a place of the file: it must see the editor (and not the rendered document)
+        if (auto* host = clEditorHostFromPage(PageOf(editor))) {
+            host->ShowHostedEditor();
         }
     }
 
@@ -906,7 +948,7 @@ bool MainBook::SelectPage(wxWindow* win)
         return false;
     }
 
-    int index = m_book->GetPageIndex(win);
+    int index = PageIndexOf(win);
     if (index != wxNOT_FOUND && m_book->GetSelection() != index) {
 #if !CL_USE_NATIVEBOOK
         m_book->ChangeSelection(index);
@@ -1070,7 +1112,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
 
 bool MainBook::ClosePage(wxWindow* page)
 {
-    int pos = m_book->GetPageIndex(page);
+    int pos = PageIndexOf(page);
     if (pos != wxNOT_FOUND && m_book->GetPage(pos) == m_welcomePage) {
         m_book->RemovePage(pos, false);
         return true;
@@ -1086,11 +1128,14 @@ bool MainBook::CloseAllButThis(wxWindow* page)
 
     clEditor::Vec_t editors = GetAllEditors();
 
+    // `page` can be an editor, or the page that hosts it
+    wxWindow* keep_page = PageOf(page);
+
     std::vector<std::pair<wxFileName, bool>> files;
     std::unordered_map<wxString, clEditor*> M;
     for (clEditor* editor : editors) {
         // collect all modified files, except for "page"
-        if (editor->IsEditorModified() && editor->GetCtrl() != page) {
+        if (editor->IsEditorModified() && PageOf(editor) != keep_page) {
             const wxFileName& fn = editor->GetFileName();
             files.push_back({fn, true});
             M[fn.GetFullPath()] = editor;
@@ -1113,7 +1158,7 @@ bool MainBook::CloseAllButThis(wxWindow* page)
     }
 
     for (clEditor* editor : editors) {
-        if (editor->GetCtrl() == page) {
+        if (PageOf(editor) == keep_page) {
             continue;
         }
         ClosePage(editor, true);
@@ -1187,7 +1232,7 @@ bool MainBook::CloseAll(bool cancellable)
 
 wxString MainBook::GetPageTitle(wxWindow* page) const
 {
-    int selection = m_book->GetPageIndex(page);
+    int selection = PageIndexOf(page);
     if (selection != wxNOT_FOUND)
         return m_book->GetPageText(selection);
     return wxEmptyString;
@@ -1195,7 +1240,7 @@ wxString MainBook::GetPageTitle(wxWindow* page) const
 
 void MainBook::SetPageTitle(wxWindow* page, const wxString& name)
 {
-    int selection = m_book->GetPageIndex(page);
+    int selection = PageIndexOf(page);
     if (selection == wxNOT_FOUND) {
         return;
     }
@@ -1317,7 +1362,7 @@ void MainBook::MarkEditorReadOnly(clEditor* editor, std::optional<bool> readOnly
     if (readOnly.has_value())
         editor->SetReadOnly(readOnly.value());
 
-    int where = m_book->FindPage(editor);
+    int where = PageIndexOf(editor);
     CHECK_COND_RET(where != wxNOT_FOUND);
 
     const wxBitmap& bmp = clGetManager()->GetStdIcons()->LoadBitmap("lock");
@@ -1336,8 +1381,9 @@ bool MainBook::DoSelectPage(wxWindow* win)
         return false;
     }
 
-    clEditor* editor = dynamic_cast<clEditor*>(win);
+    clEditor* editor = EditorOf(win);
     if (editor) {
+        // SetActive() moves the focus to what is visible, also for a page that hosts the editor
         editor->SetActive();
     }
 
@@ -1415,7 +1461,7 @@ void MainBook::ShowMiniMap(bool show)
 void MainBook::SelectMinimapForCurrentPage()
 {
     wxWindow* curpage = m_book->GetCurrentPage();
-    auto editor = curpage == nullptr ? nullptr : dynamic_cast<clEditor*>(curpage);
+    auto editor = curpage == nullptr ? nullptr : clEditorFromPage(curpage);
     if (editor) {
         // an editor
         auto ctrl = editor->GetCtrl();
@@ -1501,7 +1547,7 @@ bool MainBook::IsMiniMapInSync()
         return true;
     }
 
-    auto ctrl = dynamic_cast<clEditor*>(m_book->GetCurrentPage());
+    auto ctrl = clEditorFromPage(m_book->GetCurrentPage());
     if (ctrl == nullptr) {
         // No editor? the mini-map should be hidden.
         return m_miniMapsBook->IsShown() == false;
@@ -1792,7 +1838,7 @@ bool MainBook::ClosePage(IEditor* editor, bool notify)
     wxWindow* page = dynamic_cast<wxWindow*>(editor->GetCtrl());
     if (!page)
         return false;
-    int pos = m_book->GetPageIndex(page);
+    int pos = PageIndexOf(page);
     return (pos != wxNOT_FOUND) && (m_book->DeletePage(pos, true));
 }
 
@@ -1865,7 +1911,7 @@ void MainBook::DoShowTabLabelContextMenu(size_t tabIdx)
         return;
     }
 
-    clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(tabIdx));
+    clEditor* editor = clEditorFromPage(m_book->GetPage(tabIdx));
     wxMenu* contextMenu{nullptr};
     if (editor == nullptr)
         contextMenu = clXmlResource::Get().LoadMenu(wxT("non_editor_tab_right_click"));
@@ -2068,7 +2114,7 @@ clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(
         bool is_active = GetActiveEditor() == editor;
         if (!is_active) {
             // make this file the active
-            int index = m_book->GetPageIndex(editor);
+            int index = PageIndexOf(editor);
             m_book->SetSelection(index);
         }
     } else {
@@ -2079,7 +2125,14 @@ clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(
     }
 
     if (editor && !m_restoringSession) {
-        editor->GetCtrl()->CallAfter(&clEditor::SetFocus);
+        // Deferred. The focus goes to what is visible: for a page that hosts the editor it can be the document
+        editor->CallAfter([editor, this]() {
+            if (auto* host = clEditorHostFromPage(PageOf(editor))) {
+                host->FocusContent();
+            } else {
+                editor->SetFocus();
+            }
+        });
     }
     return editor;
 }

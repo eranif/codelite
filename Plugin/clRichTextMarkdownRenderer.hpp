@@ -3,6 +3,7 @@
 #include "clMarkdownParser.hpp"
 #include "codelite_exports.h"
 
+#include <map>
 #include <vector>
 #include <wx/colour.h>
 #include <wx/font.h>
@@ -12,12 +13,35 @@
 /// A wxRichTextCtrl for a rendered document. It copies the selected text as plain text with `\n` for a line break (the
 /// control keeps a line break inside a paragraph as a special character, wxRichTextLineBreakChar, and the standard copy
 /// gives that character: it is not a new line when it is pasted somewhere else).
+///
+/// It also shows the address of a link in a tooltip when the mouse is over the link.
 class WXDLLIMPEXP_SDK clMarkdownTextCtrl : public wxRichTextCtrl
 {
 public:
-    using wxRichTextCtrl::wxRichTextCtrl;
+    clMarkdownTextCtrl(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxString& value = wxEmptyString,
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxDefaultSize,
+                       long style = wxRE_MULTILINE);
 
     void Copy() override;
+
+protected:
+    bool ProcessMouseMovement(wxRichTextParagraphLayoutBox* container,
+                              wxRichTextObject* obj,
+                              long position,
+                              const wxPoint& pos) override;
+
+private:
+    void OnMouseMove(wxMouseEvent& event);
+    /// Show `url` in the tooltip of the control. An empty string removes the tooltip
+    void SetHoveredUrl(const wxString& url);
+
+    wxString m_hoveredUrl;
+    /// ProcessMouseMovement() was called for the last mouse move: the mouse is over some text
+    bool m_overText = false;
+    bool m_checkQueued = false;
 };
 
 /// Show a Markdown document in a wxRichTextCtrl (use a clMarkdownTextCtrl to copy text with the right line breaks).
@@ -102,6 +126,12 @@ public:
     /// \return false if the document could not be parsed
     bool Render(const wxString& markdown);
 
+    /// Scroll the document to the heading that `anchor` names (a link like `[text](#some-heading)`): the same name that
+    /// GitHub makes from the text of the heading (lower case, spaces become '-', most punctuation is removed, and a
+    /// repeated name gets `-1`, `-2`, ...). Works after Render(), for the document that was rendered last
+    /// \return false if there is no such heading
+    bool GoToAnchor(const wxString& anchor);
+
 protected:
     void OnEnterBlock(Block block, const BlockInfo& info) override;
     void OnLeaveBlock(Block block, const BlockInfo& info) override;
@@ -159,6 +189,12 @@ private:
     int m_strikethrough = 0;
     int m_code = 0;
     std::vector<wxString> m_links;
+
+    // The headings, for the links to them. Valid until the next Render()
+    std::map<wxString, wxRichTextParagraph*> m_anchors; ///< The name of a heading (see GoToAnchor()) and its paragraph
+    std::map<wxString, int> m_anchorCount;              ///< How many headings have a name: the next one gets a suffix
+    wxRichTextParagraph* m_headingPara = nullptr;       ///< The paragraph of the heading that is being written
+    wxString m_headingText;                             ///< Its text (without the format)
 
     // A list item
     bool m_itemPending = false; ///< The first paragraph of the item is not created yet

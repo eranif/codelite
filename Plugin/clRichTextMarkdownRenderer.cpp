@@ -50,6 +50,22 @@ wxColour StyleColour(const LexerConf::Ptr_t& lexer, int style, bool foreground, 
     return colour.IsOk() ? colour : fallback;
 }
 
+/// The name that a heading has in a link to it ("#name"), as GitHub makes it: lower case, a space is '-', letters,
+/// digits, '-' and '_' stay, and the rest of the punctuation is removed
+wxString MakeAnchorName(const wxString& heading)
+{
+    wxString name;
+    for (const wxUniChar ch : heading.Lower()) {
+        if (ch == ' ') {
+            name << '-';
+        } else if (ch == '-' || ch == '_' || ch.GetValue() > 127 || wxIsalnum(ch.GetValue())) {
+            // The characters that are not ASCII (letters of other languages) stay
+            name << ch;
+        }
+    }
+    return name;
+}
+
 /// Set the style, the colour and the width of the 4 borders
 void SetBorders(wxRichTextAttr& attr, const wxColour& colour, int width_in_pixels)
 {
@@ -59,6 +75,72 @@ void SetBorders(wxRichTextAttr& attr, const wxColour& colour, int width_in_pixel
     borders.SetWidth(width_in_pixels, wxTEXT_ATTR_UNITS_PIXELS);
 }
 } // namespace
+
+clMarkdownTextCtrl::clMarkdownTextCtrl(wxWindow* parent,
+                                       wxWindowID id,
+                                       const wxString& value,
+                                       const wxPoint& pos,
+                                       const wxSize& size,
+                                       long style)
+    : wxRichTextCtrl(parent, id, value, pos, size, style)
+{
+    // Bound after the control's own handlers are set, so this one runs first
+    Bind(wxEVT_MOTION, &clMarkdownTextCtrl::OnMouseMove, this);
+    Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& event) {
+        event.Skip();
+        SetHoveredUrl(wxEmptyString);
+    });
+}
+
+bool clMarkdownTextCtrl::ProcessMouseMovement(wxRichTextParagraphLayoutBox* container,
+                                              wxRichTextObject* obj,
+                                              long position,
+                                              const wxPoint& pos)
+{
+    // The control changes the cursor over a link. We also show the address of the link
+    const bool result = wxRichTextCtrl::ProcessMouseMovement(container, obj, position, pos);
+    m_overText = true;
+
+    wxString url;
+    wxRichTextAttr attr;
+    if (container != nullptr && GetStyle(position, attr, container) && attr.HasFlag(wxTEXT_ATTR_URL)) {
+        url = attr.GetURL();
+    }
+    SetHoveredUrl(url);
+    return result;
+}
+
+void clMarkdownTextCtrl::OnMouseMove(wxMouseEvent& event)
+{
+    event.Skip();
+
+    // The control calls ProcessMouseMovement() only when the mouse is over some text. When it is not (the empty space
+    // around the text), the tooltip of the link that the mouse left must go: check after the control handled the event
+    m_overText = false;
+    if (!m_checkQueued) {
+        m_checkQueued = true;
+        CallAfter([this]() {
+            m_checkQueued = false;
+            if (!m_overText) {
+                SetHoveredUrl(wxEmptyString);
+            }
+        });
+    }
+}
+
+void clMarkdownTextCtrl::SetHoveredUrl(const wxString& url)
+{
+    if (url == m_hoveredUrl) {
+        // Do not touch the tooltip while the mouse moves over the same link: it would restart the delay
+        return;
+    }
+    m_hoveredUrl = url;
+    if (url.empty()) {
+        UnsetToolTip();
+    } else {
+        SetToolTip(url);
+    }
+}
 
 void clMarkdownTextCtrl::Copy()
 {
@@ -170,6 +252,8 @@ void clRichTextMarkdownRenderer::ResetState()
     m_lists.clear();
     m_quoteDepth = 0;
     m_headingLevel = 0;
+    m_headingPara = nullptr;
+    m_headingText.clear();
     m_inCodeBlock = false;
     m_inHtmlBlock = false;
     m_pendingBreaks = 0;
@@ -218,6 +302,9 @@ bool clRichTextMarkdownRenderer::Render(const wxString& markdown)
     // Forget the undo/redo commands too: they point to objects that are deleted now. It leaves one empty paragraph,
     // we want an empty buffer: our paragraphs are added at the end
     buffer.ResetAndClearCommands();
+    // The paragraphs of the headings are deleted with the buffer
+    m_anchors.clear();
+    m_anchorCount.clear();
     buffer.Clear();
     ResetState();
     m_container = &buffer;
@@ -239,6 +326,20 @@ bool clRichTextMarkdownRenderer::Render(const wxString& markdown)
     m_ctrl->SetInsertionPoint(0);
     m_ctrl->Refresh();
     return ok;
+}
+
+bool clRichTextMarkdownRenderer::GoToAnchor(const wxString& anchor)
+{
+    // The name in a link can be percent-encoded, and it is not case sensitive
+    const auto where = m_anchors.find(wxURI::Unescape(anchor).Lower());
+    if (m_ctrl == nullptr || where == m_anchors.end()) {
+        return false;
+    }
+
+    // The scroll unit of the control is one line (see Render()): scroll so that the heading is at the top
+    const int unit = std::max(1, m_ctrl->GetLineHeight());
+    m_ctrl->Scroll(-1, std::max(0, where->second->GetRect().y / unit));
+    return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -396,6 +497,11 @@ wxRichTextParagraph* clRichTextMarkdownRenderer::EnsureParagraph()
 
     wxRichTextAttr attr = BuildParagraphAttr(first_in_item);
     m_para = AddParagraph(attr);
+    if (m_para != nullptr && m_headingLevel > 0 && m_headingPara == nullptr && m_container == &m_ctrl->GetBuffer()) {
+        // The paragraph of a heading of the document: a link can go to it, see GoToAnchor(). (The text of the heading is
+        // not cleared here: OnText() adds the text of the heading before it creates the paragraph)
+        m_headingPara = m_para;
+    }
     if (m_para != nullptr && first_in_item && m_itemTask) {
         // The check box of a task item: it takes the place of the bullet, so it has the colour of the bullets
         wxRichTextAttr check_box_attr = BuildCharAttr();
@@ -593,6 +699,8 @@ void clRichTextMarkdownRenderer::OnEnterBlock(Block block, const BlockInfo& info
     }
     case Block::Heading:
         m_headingLevel = info.level;
+        m_headingPara = nullptr;
+        m_headingText.clear();
         break;
     case Block::CodeBlock: {
         if (m_container == nullptr) {
@@ -706,6 +814,19 @@ void clRichTextMarkdownRenderer::OnLeaveBlock(Block block, const BlockInfo& info
         }
         break;
     case Block::Heading:
+        if (m_headingPara != nullptr) {
+            // The name of the heading for the links ("#name"). A name that is used again gets a number
+            wxString name = MakeAnchorName(m_headingText);
+            if (!name.empty()) {
+                const int used = m_anchorCount[name]++;
+                if (used > 0) {
+                    name << '-' << used;
+                }
+                m_anchors[name] = m_headingPara;
+            }
+        }
+        m_headingPara = nullptr;
+        m_headingText.clear();
         m_headingLevel = 0;
         break;
     case Block::CodeBlock:
@@ -836,6 +957,9 @@ void clRichTextMarkdownRenderer::OnText(TextType type, const wxString& text)
 
     switch (type) {
     case TextType::Normal:
+        if (m_headingLevel > 0) {
+            m_headingText << text;
+        }
         AppendText(text, BuildCharAttr());
         break;
     case TextType::Break:
@@ -846,6 +970,10 @@ void clRichTextMarkdownRenderer::OnText(TextType type, const wxString& text)
         break;
     case TextType::Code:
     case TextType::LatexMath:
+        if (m_headingLevel > 0) {
+            // An inline code in a heading is part of the name of the heading
+            m_headingText << text;
+        }
         AppendMultilineText(text, BuildCharAttr());
         break;
     case TextType::Html: {

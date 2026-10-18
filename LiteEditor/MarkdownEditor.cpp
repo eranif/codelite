@@ -181,6 +181,14 @@ void MarkdownEditor::OpenLink(const wxString& url)
         return;
     }
 
+    // A link to a heading of this document ("#some-heading"): scroll to it. It is not a path
+    if (url.StartsWith("#")) {
+        if (!m_renderer->GoToAnchor(url.Mid(1))) {
+            clDEBUG() << "Markdown: no such heading:" << url << endl;
+        }
+        return;
+    }
+
     // A path. The text of the link is tried as it is first (a file name can have a '#' or a '?'), and then without
     // the fragment and the query. (A link inside the document, "#section", is not supported yet)
     wxArrayString candidates;
@@ -202,7 +210,9 @@ void MarkdownEditor::OpenLink(const wxString& url)
         if (fn.IsRelative()) {
             fn.MakeAbsolute(m_editor->GetFileName().GetPath());
         }
-        if (fn.DirExists()) {
+        // The static function: the member function DirExists() asks about the directory part of the path (the folder
+        // that holds the file), it is true for every path in an existing folder
+        if (wxFileName::DirExists(fn.GetFullPath())) {
             FileUtils::OpenFileExplorer(fn.GetFullPath());
             return;
         }

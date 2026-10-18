@@ -6023,6 +6023,10 @@ void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
 
 namespace
 {
+// The navigation dialog that is shown now, if any. It is modeless and destroys itself when it closes
+wxWeakRef<NotebookNavigationDlg> s_navigationDlg;
+
+bool IsNavDialogShown() { return s_navigationDlg && s_navigationDlg->IsShown(); }
 
 #if !MAINBOOK_AUIBOOK // If Notebook == clAuiBook, it is similar to the below method.
 void ShowNavDialog(Notebook* book)
@@ -6035,10 +6039,13 @@ void ShowNavDialog(Notebook* book)
         return;
     }
 
-    NotebookNavigationDlg dlg(EventNotifier::Get()->TopFrame(), book);
-    if (dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) {
-        book->SetSelection(dlg.GetSelection());
+    if (IsNavDialogShown()) {
+        return;
     }
+    // The dialog selects the chosen tab and destroys itself
+    s_navigationDlg = new NotebookNavigationDlg(EventNotifier::Get()->TopFrame(), book);
+    s_navigationDlg->Show();
+    s_navigationDlg->Raise();
 }
 #endif
 
@@ -6052,10 +6059,13 @@ void ShowNavDialog(clAuiBook* book)
         return;
     }
 
-    NotebookNavigationDlg dlg(book->GetParent(), book);
-    if (dlg.ShowModal() == wxID_OK && dlg.GetSelection() != wxNOT_FOUND) {
-        book->SetSelection(dlg.GetSelection());
+    if (IsNavDialogShown()) {
+        return;
     }
+    // The dialog selects the chosen tab and destroys itself
+    s_navigationDlg = new NotebookNavigationDlg(book->GetParent(), book);
+    s_navigationDlg->Show();
+    s_navigationDlg->Raise();
 }
 } // namespace
 

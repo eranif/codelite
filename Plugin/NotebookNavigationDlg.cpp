@@ -16,7 +16,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     , m_selection(wxNOT_FOUND)
 {
     ::AdjustDataViewAlternateColour(m_dvListCtrl);
-    Initialise(m_notebook);
+    Initialise(book);
     FinalizeCtor();
 }
 #endif
@@ -32,7 +32,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clAuiBook* book)
     , m_selection(wxNOT_FOUND)
 {
     ::AdjustDataViewAlternateColour(m_dvListCtrl);
-    Initialise(m_aui_notebook);
+    Initialise(book);
     FinalizeCtor();
 }
 
@@ -59,12 +59,66 @@ NotebookNavigationDlg::~NotebookNavigationDlg()
 void NotebookNavigationDlg::CloseDialog()
 {
     LOG_IF_TRACE { clDEBUG1() << "NotebookNavigationDlg::CloseDialog" << endl; }
-    wxDataViewItem selection = m_dvListCtrl->GetSelection();
-    if (selection.IsOk()) {
-        TabData* d = (TabData*)m_dvListCtrl->GetItemData(selection);
-        m_selection = d->index;
+    Dismiss(true);
+}
+
+void NotebookNavigationDlg::CancelDialog() { Dismiss(false); }
+
+void NotebookNavigationDlg::Dismiss(bool apply)
+{
+    // Selecting a tab moves the focus, so this dialog is deactivated: OnActivate() calls us again
+    if (m_dismissed) {
+        return;
     }
-    EndModal(wxID_OK);
+    m_dismissed = true;
+
+    if (apply) {
+        wxDataViewItem selection = m_dvListCtrl->GetSelection();
+        if (selection.IsOk()) {
+            TabData* d = (TabData*)m_dvListCtrl->GetItemData(selection);
+            m_selection = d->index;
+        }
+    }
+
+    Hide();
+    if (apply && m_selection != wxNOT_FOUND) {
+        // The tabs may have changed while the dialog was shown
+#if !MAINBOOK_AUIBOOK
+        if (m_notebook && m_selection < static_cast<int>(m_notebook->GetPageCount())) {
+            m_notebook->SetSelection(m_selection);
+        }
+#endif
+        if (m_aui_notebook && m_selection < static_cast<int>(m_aui_notebook->GetPageCount())) {
+            m_aui_notebook->SetSelection(m_selection);
+        }
+    }
+    // A top level window is deleted later, when the application is idle
+    Destroy();
+}
+
+void NotebookNavigationDlg::OnActivate(wxActivateEvent& event)
+{
+    event.Skip();
+    // The user clicked somewhere else
+    if (!event.GetActive()) {
+        CancelDialog();
+    }
+}
+
+void NotebookNavigationDlg::OnCharHook(wxKeyEvent& event)
+{
+    // For a modeless dialog, Escape only hides it: cancel it ourselves
+    if (event.GetKeyCode() == WXK_ESCAPE) {
+        CancelDialog();
+        return;
+    }
+    event.Skip();
+}
+
+void NotebookNavigationDlg::OnCloseWindow(wxCloseEvent& event)
+{
+    wxUnusedVar(event);
+    CancelDialog();
 }
 
 void NotebookNavigationDlg::FinalizeCtor()
@@ -90,6 +144,9 @@ void NotebookNavigationDlg::FinalizeCtor()
 #endif
     m_dvListCtrl->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
     m_dvListCtrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlg::OnItemActivated, this);
+    Bind(wxEVT_ACTIVATE, &NotebookNavigationDlg::OnActivate, this);
+    Bind(wxEVT_CHAR_HOOK, &NotebookNavigationDlg::OnCharHook, this);
+    Bind(wxEVT_CLOSE_WINDOW, &NotebookNavigationDlg::OnCloseWindow, this);
 
     m_dvListCtrl->CallAfter(&wxDataViewListCtrl::SetFocus);
     WindowAttrManager::Load(this);

@@ -65,7 +65,3 @@ Low:
 - Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
 - MarkdownStyler: ensure that all types of checkmarks are coloured in green (same for `x` symbols)
 
-BUGS
-----
-
-- Application hangs when renaming a symbol & the `MiniMap` editor is loaded...

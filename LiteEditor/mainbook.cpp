@@ -112,6 +112,14 @@ public:
         m_edit = nullptr;
     }
 
+    // The map never takes the focus when asked to. wxSimplebook gives the focus to the page that it shows, and
+    // OnSetFocus() would send it back to the editor later. That moves the focus to an editor that may no longer be the
+    // current page, and wxAuiNotebook then selects its page: the page change shows another map, and so on, forever
+    // (seen when renaming a symbol, which opens several editors)
+    void SetFocus() override {}
+    bool AcceptsFocus() const override { return false; }
+    bool AcceptsFocusFromKeyboard() const override { return false; }
+
 private:
     void OnSetFocus(wxFocusEvent& event)
     {

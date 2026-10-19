@@ -14,7 +14,17 @@
 class WXDLLIMPEXP_SDK clEditorHost : public wxWindow
 {
 public:
-    using wxWindow::wxWindow;
+    /// The only constructor, so every host is created in the same way.
+    ///
+    /// The host is hidden when it is created. A new window is shown at once, but the page is added to the book later,
+    /// and the book shows its pages when they are selected: without this the page would flash at the top left corner of
+    /// the book. Hiding the host is enough for its children (a child is not visible if its parent is hidden), so they
+    /// do not need to hide themselves.
+    explicit clEditorHost(wxWindow* parent, wxWindowID id = wxID_ANY)
+        : wxWindow(parent, id)
+    {
+        Hide();
+    }
     ~clEditorHost() override = default;
 
     /// The editor inside the page

@@ -7,7 +7,6 @@
 MarkdownViewCtrl::MarkdownViewCtrl(wxWindow* parent)
     : wxSplitterWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3DSASH)
 {
-    Hide();
     // No border: the control is inside a tab
     m_text = new clMarkdownTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxRE_READONLY);
     m_contents = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE | wxDV_ROW_LINES);

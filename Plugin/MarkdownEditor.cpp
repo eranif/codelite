@@ -178,7 +178,11 @@ clRichTextMarkdownRenderer::Theme MarkdownEditor::MakeViewTheme() const
 void MarkdownEditor::RenderView()
 {
     m_viewOutdated = false;
+    wxBusyCursor bc{};
+    clGetManager()->SetStatusMessage(_("Rendering Markdown..."));
+    wxSafeYield();
     m_view->Render(m_editor->GetText(), MakeViewTheme(), m_hosted->GetFileName().GetPath());
+    clGetManager()->SetStatusMessage(wxEmptyString);
 }
 
 void MarkdownEditor::ScheduleRender()

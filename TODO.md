@@ -19,6 +19,7 @@ others:
 High:
 -----
 
+- Diff View: Open it inside a tab and not as a separate wxFrame.
 - wxCrafter: we should be able to provide relative path for the generated files
 - GDB: use the new terminal to launch and avoid opening custom terminals for this purpose.
 
@@ -27,34 +28,8 @@ Medium:
 
 - Implement `code_symbols` tool for AI.
 - AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
-- AI: Add a system-message that instruct the model to NEVER create a summary file
 - Terminal: when changing a terminal theme, apply it to newly opened terminals only.
 - Terminal: remember, on per terminal type, the last theme used for it.
-- Extend the single agent and add sub-agents that will offload heavy tasks, such as code browsing and reading large files.
-
-An example of such tool:
-
-```json
-{
-  "name": "query_code_browser",
-  "description": "Ask the specialized Code-Browser agent to find, read, or analyze source code files in its isolated sandbox.",
-  "inputSchema": {
-    "type": "object",
-    "properties": {
-      "query": {
-        "type": "string",
-        "description": "The specific question or search command (e.g., 'Find where the global mutex is locked in editor.cpp')."
-      },
-      "files": {
-        "type": "array",
-        "items": { "type": "string" },
-        "description": "Optional list of specific files to focus on."
-      }
-    },
-    "required": ["query"]
-  }
-}
-```
 
 Low:
 ----

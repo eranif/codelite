@@ -40,6 +40,7 @@
 #include "ai/LLMManager.hpp"
 #include "bitmap_loader.h"
 #include "clEditorBar.h"
+#include "clFileSystemWatcher.h"
 #include "clSideBarCtrl.hpp"
 #include "clStatusBar.h"
 #include "clStrings.h"
@@ -88,6 +89,8 @@ wxString GetDirFromPath(const wxString& path)
     return p.BeforeLast('/');
 }
 const wxString kGitTerminalTitle = _("Git");
+// The file watcher checks the files every 500 ms: a stream of file events is over when none comes for this long
+constexpr int kFileEventsQuietPeriodMs = 1500;
 
 class MockProcess : public IProcess
 {
@@ -246,6 +249,8 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &GitPlugin::OnEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_MODIFIED_EXTERNALLY, &GitPlugin::OnFileModifiedExternally, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_MODIFIED, &GitPlugin::OnWatchedFileChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_NOT_FOUND, &GitPlugin::OnWatchedFileChanged, this);
     EventNotifier::Get()->Bind(wxEVT_SIDEBAR_SELECTION_CHANGED, &GitPlugin::OnSideBarPageChanged, this);
 
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
@@ -278,6 +283,8 @@ GitPlugin::GitPlugin(IManager* manager)
     m_console = new GitView(m_mgr->BookGet(PaneId::SIDE_BAR), this);
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_console, _("Git"), "git-orange");
     m_progressTimer.SetOwner(this);
+    m_fileEventsTimer.SetOwner(this);
+    Bind(wxEVT_TIMER, &GitPlugin::OnFileEventsTimer, this, m_fileEventsTimer.GetId());
 
     m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);
     m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
@@ -496,6 +503,10 @@ void GitPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &GitPlugin::OnEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_MODIFIED_EXTERNALLY, &GitPlugin::OnFileModifiedExternally, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_MODIFIED, &GitPlugin::OnWatchedFileChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_NOT_FOUND, &GitPlugin::OnWatchedFileChanged, this);
+    m_fileEventsTimer.Stop();
+    Unbind(wxEVT_TIMER, &GitPlugin::OnFileEventsTimer, this, m_fileEventsTimer.GetId());
     EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &GitPlugin::OnUpdateNavBar, this);
 
     EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_PUSHED, &GitPlugin::OnGitActionDone, this);
@@ -1071,18 +1082,47 @@ void GitPlugin::OnFileModifiedExternally(clFileSystemEvent& e)
     DoAnyFileModified();
 }
 
+void GitPlugin::OnWatchedFileChanged(clFileSystemEvent& e)
+{
+    e.Skip();
+    // Also in a remote workspace: the global watcher checks the remote files too, and the refresh runs only once per
+    // stream of events
+    if (!IsPaneShown()) {
+        return;
+    }
+
+    // Wait until the events stop: each event restarts the timer
+    m_viewRefreshCountAtLastFileEvent = m_viewRefreshCount;
+    m_fileEventsTimer.StartOnce(kFileEventsQuietPeriodMs);
+}
+
+void GitPlugin::OnFileEventsTimer(wxTimerEvent& e)
+{
+    wxUnusedVar(e);
+    // The view was refreshed after the last event (for example, a file was saved): it shows the changes already
+    if (m_viewRefreshCount != m_viewRefreshCountAtLastFileEvent || !IsPaneShown()) {
+        return;
+    }
+    DoRefreshModifiedFiles();
+}
+
 void GitPlugin::DoAnyFileModified()
 {
     if (m_isRemoteWorkspace || !IsPaneShown()) {
         return;
     }
+    DoRefreshModifiedFiles();
+}
 
+void GitPlugin::DoRefreshModifiedFiles()
+{
     DoLoadBlameInfo(true);
     gitAction ga(gitListModified, wxT(""));
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
     RefreshFileListView();
 }
+
 void GitPlugin::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
@@ -2141,6 +2181,7 @@ void GitPlugin::UndoAddFiles(const wxArrayString& files)
 
 void GitPlugin::RefreshFileListView()
 {
+    ++m_viewRefreshCount;
     gitAction ga;
     ga.action = gitStatus;
     m_gitActionQueue.push_back(ga);

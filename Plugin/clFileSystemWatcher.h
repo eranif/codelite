@@ -57,8 +57,10 @@ class WXDLLIMPEXP_SDK clFileSystemWatcher : public wxEvtHandler
 public:
     /**
      * @brief Construct a new file-system watcher (timer-based).
+     * @param notifyGlobally also send the events to EventNotifier. Only the global watcher (Get()) does this, so a
+     * global listener gets each change once, and only for the files of the editors
      */
-    clFileSystemWatcher();
+    explicit clFileSystemWatcher(bool notifyGlobally = false);
 
     /**
      * @brief Destructor. Automatically stops the watcher and unbinds the timer event.
@@ -108,8 +110,8 @@ public:
 
     /**
      * @brief start to watching list of files.
-     * This object fires the following events (clFileSystemEvent):
-     * wxEVT_FILE_MODIFIED, wxEVT_FILE_DELETED
+     * This object sends the following events (clFileSystemEvent) to the owner of the file:
+     * wxEVT_FILE_MODIFIED, wxEVT_FILE_NOT_FOUND. The global watcher (Get()) also sends them to EventNotifier
      */
     void Start();
 
@@ -132,8 +134,11 @@ protected:
     void OnTimer(wxTimerEvent& event);
     void HandleLocalFiles();
     void HandleRemoteFiles();
+    /// Send `event` to `owner` (if any), and to EventNotifier if this watcher notifies globally
+    void PostEvent(wxEvtHandler* owner, const clFileSystemEvent& event);
 
 private:
+    bool m_notifyGlobally{false};
     WatchedFilesMap m_files;
     WatchedFilesMap m_inFlightChecks; // When SFTP is not used, this is always empty
     wxTimer m_timer;

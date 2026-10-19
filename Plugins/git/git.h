@@ -160,6 +160,13 @@ class GitPlugin : public IPlugin
     wxString m_currentBranch;
     std::list<gitAction> m_gitActionQueue;
     wxTimer m_progressTimer;
+    // The file watcher may send many wxEVT_FILE_MODIFIED / wxEVT_FILE_NOT_FOUND events (an AI agent, a build, ...).
+    // They are collected, and the view is refreshed once they stop. See OnWatchedFileChanged()
+    wxTimer m_fileEventsTimer;
+    // Incremented each time a refresh of the view is queued (RefreshFileListView())
+    size_t m_viewRefreshCount = 0;
+    // The value of m_viewRefreshCount when the last file event arrived
+    size_t m_viewRefreshCountAtLastFileEvent = 0;
     wxString m_progressMessage;
     wxString m_commandOutput;
     bool m_bActionRequiresTreUpdate;
@@ -241,6 +248,11 @@ private:
     void OnEditorChanged(wxCommandEvent& event);
     void OnFileSaved(clCommandEvent& e);
     void OnFileModifiedExternally(clFileSystemEvent& e);
+    void OnWatchedFileChanged(clFileSystemEvent& e);
+    void OnFileEventsTimer(wxTimerEvent& e);
+    /// Reload the blame info, the list of modified files and the view. Unlike DoAnyFileModified(), it also works in a
+    /// remote workspace
+    void DoRefreshModifiedFiles();
     void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(clCommandEvent& e);
     void OnWorkspaceLoaded(clWorkspaceEvent& e);

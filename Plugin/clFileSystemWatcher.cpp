@@ -1,5 +1,6 @@
 #include "clFileSystemWatcher.h"
 
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
 
@@ -13,9 +14,10 @@ wxDEFINE_EVENT(wxEVT_FILE_MODIFIED, clFileSystemEvent);
 wxDEFINE_EVENT(wxEVT_FILE_NOT_FOUND, clFileSystemEvent);
 
 // In milliseconds
-constexpr int FILE_CHECK_INTERVAL = 250;
+constexpr int FILE_CHECK_INTERVAL = 500;
 
-clFileSystemWatcher::clFileSystemWatcher()
+clFileSystemWatcher::clFileSystemWatcher(bool notifyGlobally)
+    : m_notifyGlobally{notifyGlobally}
 {
     m_timer.SetOwner(this);
     Bind(wxEVT_TIMER, &clFileSystemWatcher::OnTimer, this, m_timer.GetId());
@@ -69,14 +71,11 @@ void clFileSystemWatcher::HandleLocalFiles()
         const wxString fullpath = fn.GetFullPath();
         if (!fn.Exists()) {
 
-            // fire file not found event
-            if (f.m_owner != nullptr) {
-                clFileSystemEvent evt(wxEVT_FILE_NOT_FOUND);
-                evt.SetPath(fullpath);
-                f.m_owner->AddPendingEvent(evt);
-            } else {
-                clERROR() << "(NotFound) null find handler for file:" << fullpath << endl;
-            }
+            // Fire a file not found event
+            clFileSystemEvent evt{wxEVT_FILE_NOT_FOUND};
+            evt.SetPath(fullpath);
+            PostEvent(f.m_owner, evt);
+
             // add the missing file to a set
             nonExistingFiles.insert(fullpath);
 
@@ -88,13 +87,9 @@ void clFileSystemWatcher::HandleLocalFiles()
 
             if (old_modified_time != curr_modified_time || old_size != file_size) {
                 // Fire a modified event
-                if (f.m_owner != nullptr) {
-                    clFileSystemEvent evt(wxEVT_FILE_MODIFIED);
-                    evt.SetPath(fullpath);
-                    f.m_owner->AddPendingEvent(evt);
-                } else {
-                    clERROR() << "(Modified) null find handler for file:" << fullpath << endl;
-                }
+                clFileSystemEvent evt{wxEVT_FILE_MODIFIED};
+                evt.SetPath(fullpath);
+                PostEvent(f.m_owner, evt);
             }
             f.m_fileSize = file_size;
             f.m_lastModified = curr_modified_time;
@@ -143,7 +138,7 @@ void clFileSystemWatcher::HandleRemoteFiles()
                     if (StatusIsNotFound(result.status())) {
                         clFileSystemEvent evt{wxEVT_FILE_NOT_FOUND};
                         evt.SetPath(file.m_filename);
-                        file.m_owner->AddPendingEvent(evt);
+                        PostEvent(file.m_owner, evt);
                     } else {
                         clWARNING() << result.error_message() << endl;
                         file.m_consecutiveFailures++;
@@ -160,10 +155,10 @@ void clFileSystemWatcher::HandleRemoteFiles()
                 auto curr_modified_time = result.value().attr->GetLastModified();
                 auto file_size = result.value().attr->GetSize();
 
-                if (file.m_owner && (old_modified_time != curr_modified_time || old_size != file_size)) {
+                if (old_modified_time != curr_modified_time || old_size != file_size) {
                     clFileSystemEvent evt{wxEVT_FILE_MODIFIED};
                     evt.SetPath(file.m_filename);
-                    file.m_owner->AddPendingEvent(evt);
+                    PostEvent(file.m_owner, evt);
                 }
 
                 file.m_fileSize = file_size;
@@ -239,6 +234,17 @@ void clFileSystemWatcher::AddFile(clWatchedFile&& file)
 
 clFileSystemWatcher& clFileSystemWatcher::Get()
 {
-    static clFileSystemWatcher watcher;
+    // The global watcher (the one of the editors) also sends its events to EventNotifier
+    static clFileSystemWatcher watcher{true};
     return watcher;
+}
+
+void clFileSystemWatcher::PostEvent(wxEvtHandler* owner, const clFileSystemEvent& event)
+{
+    if (owner != nullptr) {
+        owner->AddPendingEvent(event);
+    }
+    if (m_notifyGlobally) {
+        EventNotifier::Get()->AddPendingEvent(event);
+    }
 }

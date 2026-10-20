@@ -2325,8 +2325,7 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
         r.remotePath.swap(remote_path);
     }
 
-    clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), l, r, true);
-    diffView->Show();
+    clDiffFrame::Open(l, r, true);
 }
 
 void GitPlugin::OnRebase(wxCommandEvent& e)

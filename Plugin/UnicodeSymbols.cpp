@@ -34,6 +34,9 @@ wxString GetUnicodeSymbol(IconType type)
     case IconType::kWarningSign:
         symbol = wxT("⚠");
         break;
+    case IconType::kDiff:
+        symbol = wxT("⇄");
+        break;
     }
     return symbol;
 }

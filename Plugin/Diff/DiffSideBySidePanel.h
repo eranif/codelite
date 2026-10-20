@@ -27,11 +27,10 @@
 
 #include "DiffConfig.h"
 #include "DiffUI.hpp"
-#include "clDTL.h"
 #include "clPluginsFindBar.h"
-#include "clToolBar.h"
 
 #include <vector>
+#include <wx/aui/auibar.h>
 #include <wx/filename.h>
 
 class WXDLLIMPEXP_SDK DiffSideBySidePanel : public DiffSideBySidePanelBase
@@ -144,6 +143,8 @@ protected:
     void OnCopyAllMenu(wxCommandEvent& event);
     void OnViewMenu(wxCommandEvent& event);
     void OnPreferences(wxCommandEvent& event);
+    /// Show `menu` below the tool `toolId` of the toolbar
+    void ShowToolMenu(int toolId, wxMenu& menu);
     wxString DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const;
     bool IsLeftReadOnly() const { return m_flags & kLeftReadOnly; }
     bool IsRightReadOnly() const { return m_flags & kRightReadOnly; }
@@ -211,7 +212,7 @@ protected:
     size_t m_flags = 0;
     DiffConfig m_config;
     bool m_storeFilepaths;
-    clToolBar* m_toolbar;
+    wxAuiToolBar* m_toolbar;
     clPluginsFindBar* m_findBar = nullptr;
     FileInfo m_left;
     FileInfo m_right;

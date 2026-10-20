@@ -300,9 +300,7 @@ void DiffFoldersFrame::DoOpenDiff(const wxDataViewItem& item)
 
     wxFileName fnLeft(leftFile);
     wxFileName fnRight(rightFile);
-    clDiffFrame* diffFiles = new clDiffFrame(this, fnLeft, fnRight, false);
-    // diffFiles->MakeModal(true);
-    diffFiles->Show();
+    clDiffFrame::Open(fnLeft, fnRight, false);
 }
 
 void DiffFoldersFrame::OnMenuDiff(wxCommandEvent& event) { DoOpenDiff(m_dvListCtrl->GetSelection()); }

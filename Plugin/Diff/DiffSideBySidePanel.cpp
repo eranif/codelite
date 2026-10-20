@@ -27,10 +27,11 @@
 
 #include "ColoursAndFontsManager.h"
 #include "DiffConfig.h"
+#include "aui/clAuiToolBarArt.h"
 #include "bookmark_manager.h"
 #include "clDTL.h"
 #include "clPluginsFindBar.h"
-#include "clToolBar.h"
+#include "cl_aui_tool_stickness.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -104,29 +105,31 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
         m_findBar->SetEditor(m_stcRight);
     });
 
-    clBitmapList* images = new clBitmapList;
-
-    m_toolbar = new clToolBar(this);
-    m_toolbar->SetMiniToolBar(true);
-    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), images->Add("debugger_restart"));
-    m_toolbar->AddTool(wxID_SAVE, _("Save"), images->Add("file_save"));
+    auto images = clGetManager()->GetStdIcons();
+    m_toolbar = new wxAuiToolBar(this);
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_REFRESH, _("Refresh"), images->LoadBitmap("debugger_restart"));
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_SAVE, _("Save"), images->LoadBitmap("file_save"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(wxID_FIND, _("Find"), images->Add("find"));
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_FIND, _("Find"), images->LoadBitmap("find"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_NEXT"), _("Next Diff"), images->Add("next"));
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_PREV"), _("Previous Diff"), images->Add("up"));
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("ID_DIFF_TOOL_NEXT"), _("Next Diff"), images->LoadBitmap("next"));
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("ID_DIFF_TOOL_PREV"), _("Previous Diff"), images->LoadBitmap("up"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_COPY_RIGHT"), _("Copy Right"), images->Add("forward"));
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_COPY_LEFT"), _("Copy Left"), images->Add("back"));
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_COPY_ALL"), _("Copy All"), images->Add("copy"), "", wxITEM_DROPDOWN);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("ID_DIFF_TOOL_COPY_RIGHT"), _("Copy Right"), images->LoadBitmap("forward"));
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("ID_DIFF_TOOL_COPY_LEFT"), _("Copy Left"), images->LoadBitmap("back"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("ID_DIFF_TOOL_COPY_ALL"), _("Copy All"), images->LoadBitmap("copy"), "", wxITEM_DROPDOWN);
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_VIEW"), _("View Type"), images->Add("monitor"), "", wxITEM_DROPDOWN);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("ID_DIFF_TOOL_VIEW"), _("View Type"), images->LoadBitmap("monitor"), "", wxITEM_DROPDOWN);
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SETTINGS"), _("Preferences"), images->Add("cog"), "", wxITEM_DROPDOWN);
-    m_toolbar->AssignBitmaps(images);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("ID_DIFF_TOOL_SETTINGS"), _("Preferences"), images->LoadBitmap("cog"), "", wxITEM_DROPDOWN);
+    clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
 
-    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND | wxALL, 5);
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
     GetSizer()->Add(m_findBar, 0, wxEXPAND);
 
     m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnRefreshDiff, this, wxID_REFRESH);
@@ -149,9 +152,15 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnCopyRightToLeft, this, XRCID("ID_DIFF_TOOL_COPY_LEFT"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnCopyRightToLeftUI, this, XRCID("ID_DIFF_TOOL_COPY_LEFT"));
 
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &DiffSideBySidePanel::OnCopyAllMenu, this, XRCID("ID_DIFF_TOOL_COPY_ALL"));
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &DiffSideBySidePanel::OnViewMenu, this, XRCID("ID_DIFF_TOOL_VIEW"));
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &DiffSideBySidePanel::OnPreferences, this, XRCID("ID_DIFF_TOOL_SETTINGS"));
+    // The menu is shown when clicking the button or its arrow
+    m_toolbar->Bind(
+        wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &DiffSideBySidePanel::OnCopyAllMenu, this, XRCID("ID_DIFF_TOOL_COPY_ALL"));
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnCopyAllMenu, this, XRCID("ID_DIFF_TOOL_COPY_ALL"));
+    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &DiffSideBySidePanel::OnViewMenu, this, XRCID("ID_DIFF_TOOL_VIEW"));
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnViewMenu, this, XRCID("ID_DIFF_TOOL_VIEW"));
+    m_toolbar->Bind(
+        wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &DiffSideBySidePanel::OnPreferences, this, XRCID("ID_DIFF_TOOL_SETTINGS"));
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnPreferences, this, XRCID("ID_DIFF_TOOL_SETTINGS"));
 
     // Vertical is the default; DoLayout() unsplits; but nothing implements Horizontal. So:
     if (m_config.IsSplitHorizontal()) {
@@ -819,6 +828,12 @@ void DiffSideBySidePanel::DoCopyFileContent(wxStyledTextCtrl* from, wxStyledText
 
 void DiffSideBySidePanel::OnPageClosing(wxNotifyEvent& event)
 {
+    // This event is sent for every non-editor page. Handle only our own page
+    if (static_cast<wxWindow*>(event.GetClientData()) != GetParent()) {
+        event.Skip();
+        return;
+    }
+
     if (m_stcLeft->IsModified() || m_stcRight->IsModified()) {
         wxStandardID res = ::PromptForYesNoDialogWithCheckbox(
             _("Closing the diff viewer, will lose all your changes.\nContinue?"), "PromptDiffViewClose");
@@ -1185,7 +1200,7 @@ void DiffSideBySidePanel::OnCopyAllMenu(wxCommandEvent& event)
     menu.Bind(
         wxEVT_MENU, &DiffSideBySidePanel::OnCopyFileFromRight, this, XRCID("ID_DIFF_TOOL_COPY_ALL_RIGHT_TO_LEFT"));
 
-    m_toolbar->ShowMenuForButton(XRCID("ID_DIFF_TOOL_COPY_ALL"), &menu);
+    ShowToolMenu(XRCID("ID_DIFF_TOOL_COPY_ALL"), menu);
 }
 
 void DiffSideBySidePanel::OnViewMenu(wxCommandEvent& event)
@@ -1204,7 +1219,7 @@ void DiffSideBySidePanel::OnViewMenu(wxCommandEvent& event)
     menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnHorizontal, this, XRCID("ID_DIFF_TOOL_VIEW_HORIZONTAL"));
     menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnVertical, this, XRCID("ID_DIFF_TOOL_VERTICAL_VIEW"));
 
-    m_toolbar->ShowMenuForButton(XRCID("ID_DIFF_TOOL_VIEW"), &menu);
+    ShowToolMenu(XRCID("ID_DIFF_TOOL_VIEW"), menu);
 }
 
 void DiffSideBySidePanel::OnPreferences(wxCommandEvent& event)
@@ -1224,7 +1239,17 @@ void DiffSideBySidePanel::OnPreferences(wxCommandEvent& event)
     menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnShowLinenosClicked, this, XRCID("ID_DIFF_TOOL_SHOW_LINENUMBERS"));
     menu.Bind(
         wxEVT_MENU, &DiffSideBySidePanel::OnShowOverviewBarClicked, this, XRCID("ID_DIFF_TOOL_SHOW_OVERVIEW_BAR"));
-    m_toolbar->ShowMenuForButton(XRCID("ID_DIFF_TOOL_SETTINGS"), &menu);
+    ShowToolMenu(XRCID("ID_DIFF_TOOL_SETTINGS"), menu);
+}
+
+void DiffSideBySidePanel::ShowToolMenu(int toolId, wxMenu& menu)
+{
+    clAuiToolStickness stickness{m_toolbar, toolId};
+    // line up the menu with the button
+    wxRect rect = m_toolbar->GetToolRect(toolId);
+    wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
+    pt = ScreenToClient(pt);
+    PopupMenu(&menu, pt);
 }
 
 void DiffSideBySidePanel::OnFind(wxCommandEvent& event)

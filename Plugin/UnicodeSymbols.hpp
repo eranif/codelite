@@ -14,6 +14,7 @@ enum class IconType {
     kNetwork,
     kSearch,
     kWarningSign,
+    kDiff,
 };
 
 WXDLLIMPEXP_SDK wxString GetUnicodeSymbol(IconType type);

@@ -1281,8 +1281,7 @@ void SubversionView::FinishDiff(wxString output, wxFileName fileBeingDiffed)
 
     DiffSideBySidePanel::FileInfo l(leftFile, title_left, true);
     DiffSideBySidePanel::FileInfo r(rightFile, title_right, false);
-    clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), l, r, true);
-    diffView->Show();
+    clDiffFrame::Open(l, r, true);
 }
 
 void SubversionView::OnSciStcChange(wxStyledTextEvent& event)

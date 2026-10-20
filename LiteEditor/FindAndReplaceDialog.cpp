@@ -451,17 +451,28 @@ bool FindAndReplaceDialog::Show(const wxString& findWhat, bool showReplace)
     return DoShow(true, findWhat, showReplace);
 }
 
-bool FindAndReplaceDialog::DoShow(bool s, const wxString& findWhat, bool showReplace)
+bool FindAndReplaceDialog::DoShow(bool showWindow, const wxString& findWhat, bool showReplace)
 {
     wxWindowUpdateLocker locker{this};
+
     int dummy = wxNOT_FOUND;
     if (!clConfig::Get().Read("FindBar/Height", dummy)) {
         // first time, place it at the top
         Move(wxNOT_FOUND, GetParent()->GetPosition().y);
     }
 
-    bool res = wxFrame::Show(s);
-    if (s && m_sci) {
+    bool res = wxFrame::Show(showWindow);
+    if (showWindow && m_sci) {
+        // Check if the window is off-screen and center it if so
+        wxRect screen_rect = GetScreenRect();
+        int display_width, display_height;
+        wxDisplaySize(&display_width, &display_height);
+
+        if (screen_rect.x < 0 || screen_rect.y < 0 || screen_rect.GetRight() > display_width ||
+            screen_rect.GetBottom() > display_height) {
+            CenterOnParent();
+        }
+
         // Delete the indicators
         m_sci->SetIndicatorCurrent(1);
         m_sci->IndicatorClearRange(0, m_sci->GetLength());
@@ -476,7 +487,7 @@ bool FindAndReplaceDialog::DoShow(bool s, const wxString& findWhat, bool showRep
     if (!m_sci) {
         // nothing to do
 
-    } else if (!s) {
+    } else if (!showWindow) {
         // hiding
         DoHighlightMatches(false);
         m_sci->SetFocus();

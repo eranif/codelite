@@ -44,26 +44,13 @@ add_subdirectory(LuaBridge)
 add_subdirectory(wxTerminalEmulator)
 
 # ######################################################################################################################
-# md4c: a Markdown parser (C, MIT license), fetched when CMake configures the project.
+# md4c: a Markdown parser (C, MIT license).
 # We do not add the md4c CMake project: it also builds md4c-html and the md2html tool, and it installs files. We build
 # only the parser (md4c.c) and the table of HTML entities (entity.c, to decode the entities that md4c reports) as a
 # static library.
-#
-# To build without network access, download md4c `release-0.5.3` yourself and pass its folder to CMake:
-#   -DFETCHCONTENT_SOURCE_DIR_MD4C=/path/to/md4c
 # ######################################################################################################################
-include(FetchContent)
-FetchContent_Declare(
-  md4c
-  GIT_REPOSITORY https://github.com/mity/md4c.git
-  GIT_TAG release-0.5.3
-  GIT_SHALLOW TRUE
-  # This folder does not exist: FetchContent only downloads md4c, it does not call add_subdirectory() for it
-  SOURCE_SUBDIR cl-no-cmake-project)
-FetchContent_MakeAvailable(md4c)
-
-add_library(md4c STATIC "${md4c_SOURCE_DIR}/src/md4c.c" "${md4c_SOURCE_DIR}/src/entity.c")
-target_include_directories(md4c SYSTEM PUBLIC "${md4c_SOURCE_DIR}/src")
+add_library(md4c STATIC "md4c/src/md4c.c" "md4c/src/entity.c")
+target_include_directories(md4c SYSTEM PUBLIC "md4c/src")
 # It is linked into the `libcodelite` shared library (see clMarkdownParser)
 set_target_properties(md4c PROPERTIES POSITION_INDEPENDENT_CODE ON C_STANDARD 99)
 if(NOT MSVC)

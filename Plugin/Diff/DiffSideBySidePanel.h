@@ -96,9 +96,9 @@ public:
     void Diff();
 
     /**
-     * @brief mark the current diff origin from source control
+     * @brief mark the current diff origin from source control. The files are fixed, so hide the file pickers
      */
-    void SetOriginSourceControl() { m_flags |= kOriginSourceControl; }
+    void SetOriginSourceControl();
 
     /**
      * @brief start a new empty diff

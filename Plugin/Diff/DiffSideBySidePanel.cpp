@@ -921,9 +921,23 @@ void DiffSideBySidePanel::DiffNew(const wxFileName& left, const wxFileName& righ
 }
 
 void DiffSideBySidePanel::OnRefreshDiffUI(wxUpdateUIEvent& event) { wxUnusedVar(event); }
-void DiffSideBySidePanel::OnLeftPickerUI(wxUpdateUIEvent& event) { event.Enable(!IsOriginSourceControl()); }
+void DiffSideBySidePanel::OnLeftPickerUI(wxUpdateUIEvent& event) { wxUnusedVar(event); }
 
-void DiffSideBySidePanel::OnRightPickerUI(wxUpdateUIEvent& event) { event.Enable(!IsOriginSourceControl()); }
+void DiffSideBySidePanel::OnRightPickerUI(wxUpdateUIEvent& event) { wxUnusedVar(event); }
+
+void DiffSideBySidePanel::SetOriginSourceControl()
+{
+    m_flags |= kOriginSourceControl;
+
+    // Each picker (text control + button) lives in its own sizer, below the title label.
+    // Hide the whole sizer, so it does not leave an empty gap
+    auto hide_picker = [](wxStaticText* title, wxTextCtrl* path) {
+        title->GetContainingSizer()->Hide(path->GetContainingSizer(), true);
+    };
+    hide_picker(m_staticTextLeft, m_textCtrlLeftFile);
+    hide_picker(m_staticTextRight, m_textCtrlRightFile);
+    Layout();
+}
 
 wxString DiffSideBySidePanel::DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const
 {

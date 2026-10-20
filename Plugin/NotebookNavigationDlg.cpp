@@ -280,12 +280,14 @@ void NotebookNavigationDlg::Initialise(Book* book)
                 text << d->label;
             }
 
-            // If the tab has a bitmap - use it, otherwise try to match one by file name.
+            // A tab that is not a file (e.g. the diff view) shows its own bitmap.
+            // For a file, try to match one by file name.
             // If no match is found, fall back to the "placeholder" icon.
             wxBitmap bmpForFile = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
             wxString fullname = d->filename.GetFullName();
-            if (!fullname.empty() && FileExtManager::GetType(fullname) != FileExtManager::TypeOther) {
-                // No match
+            if (!d->isFile && d->bmp.IsOk()) {
+                bmpForFile = d->bmp;
+            } else if (!fullname.empty() && FileExtManager::GetType(fullname) != FileExtManager::TypeOther) {
                 bmpForFile = clGetManager()->GetStdIcons()->GetBitmapForFile(d->filename.GetFullName(), false);
             }
 

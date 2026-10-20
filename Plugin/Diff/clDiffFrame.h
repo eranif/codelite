@@ -26,7 +26,8 @@ protected:
 public:
     ~clDiffFrame() override = default;
 
-    /// Open a diff of 2 files that have a title and are optionally read-only
+    /// Open a diff of 2 files that have a title and are optionally read-only.
+    /// If a diff tab with the same title is already open, it is selected and returned (the arguments are ignored)
     static clDiffFrame* Open(const DiffSideBySidePanel::FileInfo& left,
                              const DiffSideBySidePanel::FileInfo& right,
                              bool originSourceControl);
@@ -34,7 +35,7 @@ public:
     /// Open an empty diff view, the user selects the files
     static clDiffFrame* OpenNew();
 
-    /// Open a diff of 2 files
+    /// Open a diff of 2 files. Like above, an open diff tab with the same title is selected instead
     static clDiffFrame* Open(const wxFileName& left, const wxFileName& right, bool isTempFile);
 };
 

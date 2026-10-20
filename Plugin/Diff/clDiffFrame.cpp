@@ -8,13 +8,27 @@
 
 namespace
 {
-/// The tab shows the name of the file being compared, prefer the right side (e.g. the working copy)
-wxString GetTabTitle(const wxFileName& left, const wxFileName& right)
+/// The file that identifies a diff: prefer the right side (e.g. the working copy)
+wxFileName GetDiffFile(const wxFileName& left, const wxFileName& right) { return right.IsOk() ? right : left; }
+
+/// The tab title: "Diff View <symbol> - <file name>"
+wxString GetTabTitle(const wxFileName& file)
 {
-    const wxFileName& fn = right.IsOk() ? right : left;
-    wxString title;
-    title << GetUnicodeSymbol(IconType::kDiff) << " " << (fn.IsOk() ? fn.GetFullName() : _("Diff"));
+    wxString title = _("Diff View");
+    if (file.IsOk()) {
+        title << " " << GetUnicodeSymbol(IconType::kDiff) << " - " << file.GetFullName();
+    }
     return title;
+}
+
+/// If a diff tab with this title is open, select it and return it
+clDiffFrame* SelectDiffTab(const wxString& title)
+{
+    auto diff = dynamic_cast<clDiffFrame*>(clGetManager()->FindPage(title));
+    if (diff != nullptr) {
+        clGetManager()->SelectPage(diff);
+    }
+    return diff;
 }
 } // namespace
 
@@ -24,6 +38,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent,
                          bool originSourceControl)
     : wxPanel(parent)
 {
+    Hide();
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
     m_diffView = new DiffSideBySidePanel(this);
@@ -78,21 +93,29 @@ clDiffFrame* clDiffFrame::Open(const DiffSideBySidePanel::FileInfo& left,
                                const DiffSideBySidePanel::FileInfo& right,
                                bool originSourceControl)
 {
+    const wxString title = GetTabTitle(GetDiffFile(left.filename, right.filename));
+    if (auto existing = SelectDiffTab(title)) {
+        return existing;
+    }
     auto panel = new clDiffFrame(clGetManager()->GetMainNotebook(), left, right, originSourceControl);
-    panel->ShowInTab(GetTabTitle(left.filename, right.filename));
+    panel->ShowInTab(title);
     return panel;
 }
 
 clDiffFrame* clDiffFrame::OpenNew()
 {
     auto panel = new clDiffFrame(clGetManager()->GetMainNotebook());
-    panel->ShowInTab(GetTabTitle(wxFileName(), wxFileName()));
+    panel->ShowInTab(GetTabTitle(wxFileName()));
     return panel;
 }
 
 clDiffFrame* clDiffFrame::Open(const wxFileName& left, const wxFileName& right, bool isTempFile)
 {
+    const wxString title = GetTabTitle(GetDiffFile(left, right));
+    if (auto existing = SelectDiffTab(title)) {
+        return existing;
+    }
     auto panel = new clDiffFrame(clGetManager()->GetMainNotebook(), left, right, isTempFile);
-    panel->ShowInTab(GetTabTitle(left, right));
+    panel->ShowInTab(title);
     return panel;
 }

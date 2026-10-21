@@ -4,7 +4,6 @@
 #include "UnicodeSymbols.hpp"
 #include "drawingutils.h"
 
-#include <wx/dcbuffer.h>
 #include <wx/dcclient.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
@@ -38,10 +37,20 @@ FindResultsStatusLine::FindResultsStatusLine(wxWindow* parent)
         Refresh();
     });
 
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    const auto font = lexer->GetFontForStyle(0, this);
+    const auto font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+
+#ifdef __WXMSW__
+    m_statusFont = wxFont(
+        font.GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Segoe UI Emoji");
+#elif defined(__WXMSW__)
+    m_statusFont = wxFont(
+        font.GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Noto Color Emoji");
+#else
+    m_statusFont = font;
+#endif
+
     int height{0};
-    GetTextExtent(_("Tp"), nullptr, &height, nullptr, nullptr, &font);
+    GetTextExtent(_("Tp"), nullptr, &height, nullptr, nullptr, &m_statusFont);
     SetSizeHints(wxNOT_FOUND, height + FromDIP(2));
 }
 
@@ -96,28 +105,36 @@ void FindResultsStatusLine::ShowHistory(const SearchData& data, size_t matches)
 
 void FindResultsStatusLine::ApplyTheme(const wxFont& font)
 {
+    wxUnusedVar(font);
     // The face of the results font, but with the size of the default GUI font (a fractional point size)
-    m_statusFont = font;
     Layout();
     Refresh();
 }
 
 void FindResultsStatusLine::OnPaint(wxPaintEvent& event)
 {
-    wxAutoBufferedPaintDC dc{this};
-    const int kLeftMargin = FromDIP(5);
+    wxUnusedVar(event);
     const wxRect rect = GetClientRect();
 
     const wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     const bool isDark = DrawingUtils::IsDark(bgColour);
+    const wxColour bottomColour = isDark ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW);
+    const wxColour topColour = isDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : *wxWHITE;
+    const wxColour textColour = bgColour.ChangeLightness(isDark ? 170 : 30);
+
+    // A graphics context draws colour emojis (Direct2D on Windows). It falls back to the plain DC
+    wxPaintDC paintDC{this};
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(paintDC, gcdc);
+
     dc.SetBrush(bgColour);
     dc.SetPen(bgColour);
     dc.DrawRectangle(rect);
 
-    dc.SetPen(isDark ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW));
+    dc.SetPen(bottomColour);
     dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 
-    dc.SetPen(isDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : *wxWHITE);
+    dc.SetPen(topColour);
     dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
     if (m_text.empty())
         return;
@@ -125,6 +142,6 @@ void FindResultsStatusLine::OnPaint(wxPaintEvent& event)
     dc.SetFont(m_statusFont);
     wxRect textRect = dc.GetTextExtent(m_text);
     textRect = textRect.CentreIn(rect);
-    dc.SetTextForeground(bgColour.ChangeLightness(isDark ? 170 : 30));
+    dc.SetTextForeground(textColour);
     dc.DrawText(m_text, textRect.GetTopLeft());
 }

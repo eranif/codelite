@@ -49,9 +49,13 @@ FindResultsStatusLine::FindResultsStatusLine(wxWindow* parent)
     m_statusFont = font;
 #endif
 
+    m_statusFont.SetFractionalPointSize(m_statusFont.GetFractionalPointSize() * 1.25);
+
     int height{0};
-    GetTextExtent(_("Tp"), nullptr, &height, nullptr, nullptr, &m_statusFont);
-    SetSizeHints(wxNOT_FOUND, height + FromDIP(2));
+    wxString sampleText =
+        wxString::Format(wxT("Tp %s %s"), GetUnicodeSymbol(IconType::kError), GetUnicodeSymbol(IconType::kSuccess));
+    GetTextExtent(sampleText, nullptr, &height, nullptr, nullptr, &m_statusFont);
+    SetSizeHints(wxNOT_FOUND, height + FromDIP(8));
 }
 
 void FindResultsStatusLine::SetStatus(const wxString& text, const wxString& tooltip)

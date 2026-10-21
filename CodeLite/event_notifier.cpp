@@ -82,6 +82,9 @@ wxFrame* EventNotifier::TopFrame() { return static_cast<wxFrame*>(wxTheApp->GetT
 
 void EventNotifier::PostFileSavedEvent(const wxString& filename)
 {
+    if (IsGoingDown())
+        return;
+
     clCommandEvent event{wxEVT_FILE_SAVED};
     event.SetString(filename);
     event.SetFileName(filename);

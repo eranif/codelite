@@ -1606,13 +1606,13 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
         wxString terminalApp = clStandardPaths::Get().GetBinaryFullPath("glypht");
         wd = (wd.empty() || !wxDirExists(wd)) ? ::wxGetCwd() : wd;
 
-        // Build the command
-        wxString full_command =
-            wxString::Format(R"("%s" --working-directory="%s" --command="%s" --title="%s" --appearance="dark")",
-                             terminalApp,
-                             wd,
-                             execLine,
-                             execLine);
+        // Build the command: force CMD.EXE + wrap the command with double quotes.
+        wxString full_command = wxString::Format(
+            R"("%s" --working-directory="%s" --command=\"%s\" --title="%s" --appearance="dark" --shell="CMD.EXE")",
+            terminalApp,
+            wd,
+            execLine,
+            execLine);
         ::wxExecute(full_command);
 #else
         auto terminal =

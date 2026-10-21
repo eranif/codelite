@@ -151,6 +151,8 @@ public:
     void RemoveEventTypeFilter(wxEventType type, EventFilterCallbackToken token);
 
     int FilterEvent(wxEvent& event);
+    bool IsGoingDown() const { return m_goingDown; }
+    void SetGoingDown() { m_goingDown = true; }
 
 private:
     EventNotifier();
@@ -163,6 +165,7 @@ private:
     /// Protects m_workspaceInfo: written on the main thread, may be read from any thread
     std::mutex m_workspaceInfoMutex;
     std::optional<WorkspaceInfo> m_workspaceInfo;
+    bool m_goingDown{false};
 };
 
 /**

@@ -2074,6 +2074,10 @@ bool Manager::ApplyEdits(const LSP::WorkspaceEditChangeList& changes, bool promp
 
 void Manager::OnFileSaved(clCommandEvent& event)
 {
+    if (m_shutdown_in_progress) {
+        return;
+    }
+
     // always skipped
     event.Skip();
 

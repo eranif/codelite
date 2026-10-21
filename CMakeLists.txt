@@ -1208,6 +1208,18 @@ if(MINGW)
     install(FILES "${DLL}" DESTINATION "${CL_INSTALL_BIN}")
   endforeach()
 
+  # ConPTY (conpty.dll and OpenConsole.exe) must be next to codelite.exe
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64")
+    set(CONPTY_ARCH "arm64")
+  else()
+    set(CONPTY_ARCH "x64")
+  endif()
+  install(
+    FILES
+      "${CL_SRC_ROOT}/submodules/wxTerminalEmulator/assets/conpty/${CONPTY_ARCH}/conpty.dll"
+      "${CL_SRC_ROOT}/submodules/wxTerminalEmulator/assets/conpty/${CONPTY_ARCH}/OpenConsole.exe"
+    DESTINATION "${CL_INSTALL_BIN}")
+
 endif()
 
 if(MINGW AND NOT WXC_APP)

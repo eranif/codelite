@@ -2037,11 +2037,11 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     SaveGeneralSettings();
     event.Skip();
 
-    wxString msg;
+    EventNotifier::Get()->SetGoingDown();
     ManagerST::Get()->SetShutdownInProgress();
 
     // Notify the plugins that we are going down
-    clCommandEvent eventGoingDown(wxEVT_GOING_DOWN);
+    clCommandEvent eventGoingDown{wxEVT_GOING_DOWN};
     EventNotifier::Get()->ProcessEvent(eventGoingDown);
 
     // Stop the search thread

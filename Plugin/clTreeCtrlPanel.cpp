@@ -7,6 +7,7 @@
 #include "clWorkspaceView.h"
 #include "cl_config.h"
 #include "codelite_events.h"
+#include "drawingutils.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -62,7 +63,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     , m_newfileTemplate("Untitled.txt")
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
 {
-    int style = wxAUI_TB_DEFAULT_STYLE;
+    int style = DrawingUtils::IsThemeDark() ? wxAUI_TB_DEFAULT_STYLE : wxAUI_TB_PLAIN_BACKGROUND;
     m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
     ::AdjustDataViewAlternateColour(GetTreeCtrl());

@@ -16,7 +16,7 @@ wxString GetTabTitle(const wxFileName& file)
 {
     wxString title = _("Diff View");
     if (file.IsOk()) {
-        title << " " << file.GetFullName();
+        title << " " << GetUnicodeSymbol(IconType::kCircle) << " " << file.GetFullName();
     }
     return title;
 }

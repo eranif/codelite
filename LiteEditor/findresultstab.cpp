@@ -78,6 +78,12 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
                       nullptr,
                       this);
     auto images = clGetManager()->GetStdIcons();
+    if (DrawingUtils::IsThemeDark()) {
+        m_auiTb->SetWindowStyle(m_auiTb->GetWindowStyle() & ~wxAUI_TB_PLAIN_BACKGROUND);
+    } else {
+        m_auiTb->SetWindowStyle(wxAUI_TB_PLAIN_BACKGROUND);
+    }
+
     clAuiToolBarArt::AddTool(
         m_auiTb, XRCID("stop_search"), _("Stop current search"), images->LoadBitmap("stop"), _("Stop current search"));
     clAuiToolBarArt::AddTool(m_auiTb,

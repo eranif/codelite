@@ -106,7 +106,9 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     });
 
     auto images = clGetManager()->GetStdIcons();
-    m_toolbar = new wxAuiToolBar(this);
+    int style = DrawingUtils::IsThemeDark() ? wxAUI_TB_DEFAULT_STYLE : wxAUI_TB_PLAIN_BACKGROUND;
+    m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+
     clAuiToolBarArt::AddTool(m_toolbar, wxID_REFRESH, _("Refresh"), images->LoadBitmap("debugger_restart"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_SAVE, _("Save"), images->LoadBitmap("file_save"));
     m_toolbar->AddSeparator();

@@ -33,8 +33,6 @@ jobs:
         brew upgrade || true
         brew install git || true
         brew install cmake || true
-        brew install libssh || true
-        brew install hunspell || true
         brew install bison || true
         brew install flex || true
         brew install mariadb || true

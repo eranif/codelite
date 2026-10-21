@@ -29,6 +29,8 @@ public:
 private:
     /// Set the text. The tooltip defaults to the text
     void SetStatus(const wxString& text, const wxString& tooltip = wxEmptyString);
+    void OnPaint(wxPaintEvent& event);
 
-    wxStaticText* m_label = nullptr;
+    wxString m_text;
+    wxFont m_statusFont;
 };

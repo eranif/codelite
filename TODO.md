@@ -19,7 +19,7 @@ others:
 High:
 -----
 
-- Diff View: Open it inside a tab and not as a separate wxFrame.
+- Implement all function: change to use the native `wxDataViewListCtrl`
 - wxCrafter: we should be able to provide relative path for the generated files
 - GDB: use the new terminal to launch and avoid opening custom terminals for this purpose.
 

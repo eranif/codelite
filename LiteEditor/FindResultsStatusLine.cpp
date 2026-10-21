@@ -1,5 +1,6 @@
 #include "FindResultsStatusLine.hpp"
 
+#include "ColoursAndFontsManager.h"
 #include "UnicodeSymbols.hpp"
 #include "drawingutils.h"
 
@@ -19,42 +20,43 @@ wxString WarningIcon() { return GetUnicodeSymbol(IconType::kWarningSign); }
 wxString FormatSearchOptions(const SearchData& data)
 {
     auto mark = [](bool enabled) { return GetUnicodeSymbol(enabled ? IconType::kSuccess : IconType::kError); };
-    return wxString::Format(_("Regex: %s   Match-Case: %s   Whole-Word: %s"),
-                            mark(data.IsRegularExpression()),
+    return wxString::Format(wxT(" ❘ Match-Case: %s ❘ Whole-Word: %s ❘ Regex: %s"),
                             mark(data.IsMatchCase()),
-                            mark(data.IsMatchWholeWord()));
+                            mark(data.IsMatchWholeWord()),
+                            mark(data.IsRegularExpression()));
 }
 } // namespace
 
-#ifdef __WXMSW__
-constexpr long kBorderStyle = wxFULL_REPAINT_ON_RESIZE | wxBORDER_SIMPLE;
-#else
-constexpr long kBorderStyle = wxFULL_REPAINT_ON_RESIZE | wxBORDER_NONE;
-#endif
-
 FindResultsStatusLine::FindResultsStatusLine(wxWindow* parent)
-    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, kBorderStyle)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE | wxBORDER_NONE)
 {
-    m_label = new wxStaticText(
-        this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxST_ELLIPSIZE_END | wxBORDER_NONE);
-    m_label->SetMinSize(wxSize(1, wxNOT_FOUND));
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    Bind(wxEVT_PAINT, &FindResultsStatusLine::OnPaint, this);
+    Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent&) {});
+    Bind(wxEVT_SIZE, [this](wxSizeEvent& e) {
+        e.Skip();
+        Refresh();
+    });
 
-    auto* sizer = new wxBoxSizer(wxHORIZONTAL);
-    sizer->Add(m_label, wxSizerFlags(1).Expand().Border(wxALL, 5));
-    SetSizer(sizer);
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    const auto font = lexer->GetFontForStyle(0, this);
+    int height{0};
+    GetTextExtent(_("Tp"), nullptr, &height, nullptr, nullptr, &font);
+    SetSizeHints(wxNOT_FOUND, height + FromDIP(2));
 }
 
 void FindResultsStatusLine::SetStatus(const wxString& text, const wxString& tooltip)
 {
-    m_label->SetLabel(text);
-    m_label->SetToolTip(tooltip.empty() ? text : tooltip);
+    m_text = text;
+    SetToolTip(tooltip.empty() ? text : tooltip);
+    Refresh();
 }
 
 void FindResultsStatusLine::Clear() { SetStatus(wxEmptyString); }
 
 void FindResultsStatusLine::ShowSearching(const SearchData& data)
 {
-    SetStatus(wxString::Format(_("%s Searching for '%s'..."), SearchIcon(), data.GetFindString()) + "   " +
+    SetStatus(wxString::Format(_("%s Searching for '%s'..."), SearchIcon(), data.GetFindString()) +
               FormatSearchOptions(data));
 }
 
@@ -68,7 +70,7 @@ void FindResultsStatusLine::ShowSummary(const SearchSummary& summary, const Sear
     }
     message << "   " << wxString::Format(_("Matches: %d"), summary.GetNumMatchesFound());
     message << "   " << wxString::Format(_("Time: %.2f seconds"), summary.GetElapsedTime() / 1000.0);
-    message << "   " << FormatSearchOptions(data);
+    message << FormatSearchOptions(data);
 
     // The files that could not be opened are listed in the tooltip
     wxString tooltip;
@@ -95,9 +97,34 @@ void FindResultsStatusLine::ShowHistory(const SearchData& data, size_t matches)
 void FindResultsStatusLine::ApplyTheme(const wxFont& font)
 {
     // The face of the results font, but with the size of the default GUI font (a fractional point size)
-    wxFont statusFont = font;
-    statusFont.SetFractionalPointSize(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize());
-    m_label->SetFont(statusFont);
+    m_statusFont = font;
     Layout();
     Refresh();
+}
+
+void FindResultsStatusLine::OnPaint(wxPaintEvent& event)
+{
+    wxAutoBufferedPaintDC dc{this};
+    const int kLeftMargin = FromDIP(5);
+    const wxRect rect = GetClientRect();
+
+    const wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    const bool isDark = DrawingUtils::IsDark(bgColour);
+    dc.SetBrush(bgColour);
+    dc.SetPen(bgColour);
+    dc.DrawRectangle(rect);
+
+    dc.SetPen(isDark ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW));
+    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+
+    dc.SetPen(isDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : *wxWHITE);
+    dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
+    if (m_text.empty())
+        return;
+
+    dc.SetFont(m_statusFont);
+    wxRect textRect = dc.GetTextExtent(m_text);
+    textRect = textRect.CentreIn(rect);
+    dc.SetTextForeground(bgColour.ChangeLightness(isDark ? 170 : 30));
+    dc.DrawText(m_text, textRect.GetTopLeft());
 }

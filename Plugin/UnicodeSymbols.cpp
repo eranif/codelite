@@ -4,6 +4,9 @@ wxString GetUnicodeSymbol(IconType type)
 {
     wxString symbol;
     switch (type) {
+    case IconType::kCircle:
+        symbol = wxT("●");
+        break;
     case IconType::kQuestion:
         symbol = wxT("‣");
         break;

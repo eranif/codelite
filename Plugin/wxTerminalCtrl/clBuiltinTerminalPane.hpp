@@ -34,6 +34,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TERMINATED, clC
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS, clCommandEvent);
 
 /**
  * @brief A panel that holds one terminal control.
@@ -167,6 +168,7 @@ protected:
     void OnPageChanged(wxBookCtrlEvent& event);
     void OnLinkClicked(wxTerminalEvent& event);
     void OnTerminalBell(wxTerminalEvent& event);
+    void OnProgramStatus(wxTerminalEvent& event);
     void OnNew(wxCommandEvent& event);
     void DetectTerminals(std::vector<std::pair<wxString, wxString>>& terminals);
     bool ReadTerminalOptionsFromDisk(std::vector<std::pair<wxString, wxString>>& terminals);

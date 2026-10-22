@@ -158,6 +158,7 @@ wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TERMINATED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS, clCommandEvent);
 
 TerminalHost::TerminalHost(wxWindow* parent)
     : wxPanel(parent, wxID_ANY)
@@ -329,6 +330,7 @@ void clBuiltinTerminalPane::BindTerminalEvents(TerminalHost* host, bool persistT
     });
     host->GetCtrl()->Bind(wxEVT_TERMINAL_TEXT_LINK, &clBuiltinTerminalPane::OnLinkClicked, this);
     host->GetCtrl()->Bind(wxEVT_TERMINAL_BELL, &clBuiltinTerminalPane::OnTerminalBell, this);
+    host->GetCtrl()->Bind(wxEVT_TERMINAL_PROGRAM_STATUS, &clBuiltinTerminalPane::OnProgramStatus, this);
 }
 
 TerminalHost* clBuiltinTerminalPane::DoCreateTerminal(wxWindow* parent,
@@ -1052,6 +1054,19 @@ void clBuiltinTerminalPane::UpdateFont()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if (lexer) {
         m_activeFont = lexer->GetFontForStyle(0, this);
+    }
+}
+
+void clBuiltinTerminalPane::OnProgramStatus(wxTerminalEvent& event)
+{
+    event.Skip();
+    if (FindTerminalPage(m_book, GetEventHost(event)) == wxNOT_FOUND) {
+        clCommandEvent evt{wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS};
+        evt.SetEventObject(event.GetEventObject());
+        evt.SetString(wxString::Format("%s: %s", event.GetProgramStatus().app, event.GetProgramStatus().message));
+        evt.SetInt(static_cast<int>(event.GetProgramState()));
+        EventNotifier::Get()->ProcessEvent(evt);
+        return;
     }
 }
 

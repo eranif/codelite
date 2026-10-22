@@ -35,14 +35,25 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
 
-/// The parent of a terminal control: a panel with a vertical sizer, so the terminal can show its progress bar above
-/// itself. The events of the terminal are fired with the terminal control (not the host) as the event object.
+/**
+ * @brief A panel that holds one terminal control.
+ *
+ * The panel has a vertical sizer. This lets the terminal show its progress bar above itself.
+ * The terminal fires its events with the terminal control (not this panel) as the event object.
+ */
 class WXDLLIMPEXP_SDK TerminalHost : public wxPanel
 {
 public:
+    /**
+     * @brief Create an empty host. The terminal control is added by clBuiltinTerminalPane.
+     * @param parent The parent window
+     */
     explicit TerminalHost(wxWindow* parent);
 
-    /// The terminal control, or nullptr if it was not set
+    /**
+     * @brief Get the terminal control of this host.
+     * @return The terminal control, or nullptr if it was not created yet
+     */
     wxTerminalViewCtrl* GetCtrl() { return m_terminal; }
 
 private:
@@ -56,18 +67,27 @@ private:
 class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 {
 public:
+    /**
+     * @brief Create the pane. It has a toolbar and a notebook; every tab of the notebook is a terminal.
+     * @param parent The parent window
+     * @param id The window ID
+     */
     clBuiltinTerminalPane(wxWindow* parent, wxWindowID id = wxID_ANY);
     ~clBuiltinTerminalPane() override;
 
     /**
-     * @brief Create a new terminal host that runs `shellCmd`, with `parent` as its parent window. The host is
-     * detached: it is not added to the notebook of this pane, the caller must add it to its own layout.
-     * @param parent The parent window of the host
-     * @param shellCmd The command that launches the shell
-     * @param workingDirectory The working directory (empty: the workspace directory, if it is a local one)
-     * @param sshAccount Optional SSH account: connect to it from the new shell
-     * @param persistTabTitle If true, the title of the shell does not change the title of the tab
-     * @return the new host, or nullptr on failure
+     * @brief Create a terminal that is not a tab of this pane.
+     *
+     * The caller owns the layout: it must place the returned host in its own window, for example in a sizer or a
+     * splitter. To get a new tab, use AddTerminal().
+     *
+     * @param parent The parent window of the new host
+     * @param shellCmd The command that starts the shell
+     * @param workingDirectory The directory to start in. If empty, the workspace directory is used (local workspaces
+     * only)
+     * @param sshAccount If set, the shell connects to this SSH account
+     * @param persistTabTitle If true, the title that the shell sets does not change the tab title
+     * @return The new host, or nullptr if it could not be created
      */
     TerminalHost* NewTerminalHost(wxWindow* parent,
                                   const wxString& shellCmd,
@@ -76,27 +96,64 @@ public:
                                   bool persistTabTitle = false);
 
     /**
-     * @brief Create a new terminal, add it as a tab of this pane, select it and show the Terminal pane
-     * @param tabTitle Optional title for the tab (defaults to the shell command). A title set by the caller is kept:
-     * the title of the shell does not change it.
-     * @return the new host, or nullptr on failure
+     * @brief Create a terminal as a new tab of this pane, select the tab and show the Terminal pane.
+     * @param shellCmd The command that starts the shell
+     * @param workingDirectory The directory to start in. If empty, the workspace directory is used (local workspaces
+     * only)
+     * @param sshAccount If set, the shell connects to this SSH account
+     * @param tabTitle The title of the tab. If empty, the shell command is used, and the shell can change the title.
+     * If not empty, the title stays as it is, so you can find the tab later with FindTerminalByTitle().
+     * @return The new host, or nullptr if it could not be created
      */
     TerminalHost* AddTerminal(const wxString& shellCmd,
                               const wxString& workingDirectory,
                               const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
                               const wxString& tabTitle = wxEmptyString);
 
-    /// Find a tab of this pane by its title. If `makeVisible` is true and the tab is found, select it and show the
-    /// Terminal pane. Returns nullptr if there is no such tab.
+    /**
+     * @brief Find the tab with the given title.
+     * @param tabTitle The title to look for
+     * @param makeVisible If true and the tab exists, select it and show the Terminal pane
+     * @return The host of the first tab with this title, or nullptr if there is none
+     */
     TerminalHost* FindTerminalByTitle(const wxString& tabTitle, bool makeVisible = false);
-    /// Close the first tab whose title is `tabTitle` (does nothing if there is none)
+
+    /**
+     * @brief Close the first tab with the given title. Does nothing if there is no such tab.
+     * @param tabTitle The title of the tab to close
+     */
     void CloseTerminalByTitle(const wxString& tabTitle);
-    /// The terminal of the selected tab, or nullptr if there are no tabs
+
+    /**
+     * @brief Get the terminal of the selected tab.
+     * @return The host of the selected tab, or nullptr if there are no tabs
+     */
     TerminalHost* GetActiveTerminal();
 
+    /**
+     * @brief Get the command that starts the default shell of the platform.
+     * @return `cmd.exe` on Windows, `/bin/bash --login -i` on other platforms
+     */
     wxString GetDefaultShell() const { return kTerminalCommand; }
 
+    /**
+     * @brief Let the user choose a shell. If only one shell is available, return it without asking.
+     *
+     * The chosen shell is saved as the default for the next time.
+     *
+     * @return The command of the shell, or std::nullopt if there is no shell or the user cancelled
+     */
     std::optional<wxString> PromptForTerminal();
+
+    /**
+     * @brief Open text that the user clicked in a terminal.
+     *
+     * The text can be: a URL (opens in the browser), a folder (opens in the file explorer), an executable (is
+     * launched), or `file:line:column` (fires wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, so the editor opens the file).
+     *
+     * @param linkText The text that was clicked
+     * @return True if the text was handled
+     */
     bool OpenLink(const wxString& linkText);
 
 protected:

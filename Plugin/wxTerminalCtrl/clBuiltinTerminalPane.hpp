@@ -35,6 +35,24 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
 
+/// The parent of a terminal control: a panel with a vertical sizer, so the terminal can show its progress bar above
+/// itself. The events of the terminal are fired with the terminal control (not the host) as the event object.
+class WXDLLIMPEXP_SDK TerminalHost : public wxPanel
+{
+public:
+    explicit TerminalHost(wxWindow* parent);
+
+    /// The terminal control, or nullptr if it was not set
+    wxTerminalViewCtrl* GetCtrl() { return m_terminal; }
+
+private:
+    friend class clBuiltinTerminalPane;
+    /// Set the terminal control (which must be a child of this panel). Can be called once.
+    void SetCtrl(wxTerminalViewCtrl* ctrl);
+
+    wxTerminalViewCtrl* m_terminal{nullptr};
+};
+
 class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 {
 public:
@@ -42,90 +60,50 @@ public:
     ~clBuiltinTerminalPane() override;
 
     /**
-     * @brief Open a new terminal tab with the specified working directory
-     * @param workingDirectory The working directory for the terminal
-     * @param sshAccount Optional SSH account for remote connections
-     * @param tabTitle Optional custom title for the tab (defaults to the shell name)
-     * @param makeVisible If true, shows the Terminal pane and selects the new tab
-     * @return pointer to the created terminal control, or nullptr on failure
+     * @brief Create a new terminal host that runs `shellCmd`, with `parent` as its parent window. The host is
+     * detached: it is not added to the notebook of this pane, the caller must add it to its own layout.
+     * @param parent The parent window of the host
+     * @param shellCmd The command that launches the shell
+     * @param workingDirectory The working directory (empty: the workspace directory, if it is a local one)
+     * @param sshAccount Optional SSH account: connect to it from the new shell
+     * @param persistTabTitle If true, the title of the shell does not change the title of the tab
+     * @return the new host, or nullptr on failure
      */
-    wxTerminalViewCtrl* OpenNewTerminalTab(const wxString& workingDirectory,
-                                           const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
-                                           const wxString& tabTitle = wxEmptyString,
-                                           bool makeVisible = true,
-                                           std::optional<wxString> terminal_cmd = std::nullopt,
-                                           wxWindow* parent = nullptr);
+    TerminalHost* NewTerminalHost(wxWindow* parent,
+                                  const wxString& shellCmd,
+                                  const wxString& workingDirectory,
+                                  const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
+                                  bool persistTabTitle = false);
 
     /**
-     * @brief Open new terminal, this is similar to the user clicking the "+" button
-     * on the toolbar.
+     * @brief Create a new terminal, add it as a tab of this pane, select it and show the Terminal pane
+     * @param tabTitle Optional title for the tab (defaults to the shell command). A title set by the caller is kept:
+     * the title of the shell does not change it.
+     * @return the new host, or nullptr on failure
      */
-    void NewTerminal();
+    TerminalHost* AddTerminal(const wxString& shellCmd,
+                              const wxString& workingDirectory,
+                              const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
+                              const wxString& tabTitle = wxEmptyString);
 
-    /**
-     * @brief Open a new terminal tab using the platform default shell.
-     * @param workingDirectory The working directory for the terminal.
-     * @param sshAccount Optional SSH account for remote connections.
-     * @param tabTitle Optional custom title for the tab (defaults to the shell name).
-     * @return pointer to the created terminal control, or nullptr on failure.
-     */
-    wxTerminalViewCtrl* OpenNewDefaultTerminalTab(const wxString& workingDirectory,
-                                                  const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
-                                                  const wxString& tabTitle = wxEmptyString)
-    {
-        return OpenNewTerminalTab(workingDirectory, sshAccount, tabTitle, true, kTerminalCommand);
-    }
-
-    /**
-     * @brief Find an existing terminal tab by its title
-     * @param tabTitle The title of the tab to find
-     * @param makeVisible If true and tab is found, shows the Terminal pane and selects the tab
-     * @return pointer to the terminal control if found, or nullptr if not found
-     */
-    wxTerminalViewCtrl* FindTerminalByTitle(const wxString& tabTitle, bool makeVisible = false);
-
-    /**
-     * @brief Closes the first terminal tab whose title matches the given text.
-     *
-     * Searches the associated notebook control for a page with a matching title and
-     * deletes that page if found. Only the first matching tab is removed; if no
-     * matching title exists, the method does nothing.
-     *
-     * @param tabTitle const wxString& The title of the terminal tab to close.
-     *
-     * @return void This function does not return a value.
-     */
+    /// Find a tab of this pane by its title. If `makeVisible` is true and the tab is found, select it and show the
+    /// Terminal pane. Returns nullptr if there is no such tab.
+    TerminalHost* FindTerminalByTitle(const wxString& tabTitle, bool makeVisible = false);
+    /// Close the first tab whose title is `tabTitle` (does nothing if there is none)
     void CloseTerminalByTitle(const wxString& tabTitle);
-    wxTerminalViewCtrl* GetActiveTerminal();
+    /// The terminal of the selected tab, or nullptr if there are no tabs
+    TerminalHost* GetActiveTerminal();
 
-    /**
-     * Creates and initializes a new terminal control instance within a notebook pane.
-     *
-     * This method handles the instantiation of the wxTerminalViewCtrl, configures its
-     * visual settings (buffer size, theme, and delimiters), adds it as a page to the
-     * provided book control, and sets up keyboard accelerators and event bindings.
-     *
-     * @param book The notebook control (wxBookCtrlBase) where the terminal page will be added.
-     * @param shellCommand The command string used to launch the terminal shell.
-     * @param tabTitle The initial text to display on the notebook tab.
-     * @param makeActive Whether the newly created terminal tab should be selected/active.
-     * @param persistTabTitle If true, prevents the tab title from being automatically updated by the shell.
-     * @param bindEvents Whether to bind terminal events (title changes, termination, and links) to handlers.
-     * @param workingDirectory An optional string specifying the directory where the shell should start.
-     *
-     * @return A pointer to the newly created wxTerminalViewCtrl instance.
-     */
-    wxTerminalViewCtrl* CreateTerminal(wxWindow* parent,
-                                       const wxString& shellCommand,
-                                       const wxString& tabTitle,
-                                       bool makeActive,
-                                       std::optional<wxString> workingDirectory);
+    wxString GetDefaultShell() const { return kTerminalCommand; }
 
     std::optional<wxString> PromptForTerminal();
     bool OpenLink(const wxString& linkText);
 
 protected:
-    void BindTerminalEvents(wxTerminalViewCtrl* terminal, bool persistTabTitle);
+    void PromptForNewTerminal();
+    TerminalHost*
+    DoCreateTerminal(wxWindow* parent, const wxString& shellCommand, std::optional<wxString> workingDirectory);
+    void BindTerminalEvents(TerminalHost* host, bool persistTabTitle);
     void DoOpenLink(const wxString& linkText);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnInitDone(wxCommandEvent& e);

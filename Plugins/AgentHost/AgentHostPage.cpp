@@ -1,6 +1,7 @@
 #include "AgentHostPage.hpp"
 
 #include "AgentHostSettgingsDlg.hpp"
+#include "AgentTerminal.hpp"
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
@@ -52,10 +53,10 @@ wxString WithShortcut(const wxString& text, const char* command)
 }
 } // namespace
 
-#define CHECK_CAN_HANDLE_EVENT(event)           \
-    if (event.GetEventObject() != m_terminal) { \
-        event.Skip();                           \
-        return;                                 \
+#define CHECK_CAN_HANDLE_EVENT(event)              \
+    if (event.GetEventObject() != GetTerminal()) { \
+        event.Skip();                              \
+        return;                                    \
     }
 
 AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
@@ -131,12 +132,12 @@ AgentHostPage::~AgentHostPage()
 void AgentHostPage::OnThemeChanged(clCommandEvent& event)
 {
     event.Skip();
-    CHECK_PTR_RET(m_terminal);
+    CHECK_PTR_RET(GetTerminal());
 
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     CHECK_COND_RET(lexer);
     auto font = lexer->GetFontForStyle(0, this);
-    for (auto* terminal : {m_terminal, m_reviewTerminal}) {
+    for (auto* terminal : {GetTerminal(), GetReviewTerminal()}) {
         if (terminal == nullptr) {
             continue;
         }
@@ -149,7 +150,7 @@ void AgentHostPage::OnThemeChanged(clCommandEvent& event)
 void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
-    CHECK_PTR_RET(m_terminal);
+    CHECK_PTR_RET(GetTerminal());
     wxString new_title = event.GetString();
     new_title.Trim().Trim(false);
     if (new_title.empty()) {
@@ -165,14 +166,14 @@ void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
 
 void AgentHostPage::OnTerminalTerminated(clCommandEvent& event)
 {
-    if (m_reviewTerminal != nullptr && event.GetEventObject() == m_reviewTerminal) {
+    if (GetReviewTerminal() != nullptr && event.GetEventObject() == GetReviewTerminal()) {
         // The reviewer quit: close its pane, as the page closes when the main agent exits.
         event.Skip();
         CallAfter(&AgentHostPage::CloseReviewBuddy);
         return;
     }
     CHECK_CAN_HANDLE_EVENT(event);
-    CHECK_PTR_RET(m_terminal);
+    CHECK_PTR_RET(GetTerminal());
 
     CallAfter([this]() {
         auto book = clGetManager()->GetMainNotebook();
@@ -234,13 +235,13 @@ void AgentHostPage::OnFindInFilesShowing(clFindInFilesEvent& event)
 void AgentHostPage::OnTerminalBell(clCommandEvent& event)
 {
     CHECK_CAN_HANDLE_EVENT(event);
-    CHECK_PTR_RET(m_terminal);
+    CHECK_PTR_RET(GetTerminal());
     clDEBUG() << "Got a bell!" << endl;
 }
 
 void AgentHostPage::OnTerminalLink(clCommandEvent& event)
 {
-    if (event.GetEventObject() != m_terminal && event.GetEventObject() != m_reviewTerminal) {
+    if (event.GetEventObject() != GetTerminal() && event.GetEventObject() != GetReviewTerminal()) {
         event.Skip();
         return;
     }
@@ -380,22 +381,22 @@ std::optional<SystemPromptCli> AgentHostPage::BuildSystemPrompt(const AgentInfo&
 void AgentHostPage::OnFocus(wxFocusEvent& event)
 {
     event.Skip();
-    CHECK_PTR_RET(m_terminal);
-    m_terminal->SetFocus();
+    CHECK_PTR_RET(GetTerminal());
+    GetTerminal()->SetFocus();
 }
 
 void AgentHostPage::OnBookPageChanged(wxBookCtrlEvent& event)
 {
     event.Skip();
-    CHECK_PTR_RET(m_terminal);
+    CHECK_PTR_RET(GetTerminal());
     if (m_book->GetCurrentPage() != this) {
         return;
     }
 
     // The focus is moved to the tab label after the page is changed, so set it once we are done handling the event
     CallAfter([this]() {
-        if (m_terminal) {
-            m_terminal->SetFocus();
+        if (GetTerminal()) {
+            GetTerminal()->SetFocus();
         }
     });
 }
@@ -411,8 +412,8 @@ void AgentHostPage::RestartAgentHost()
 {
     wxWindowUpdateLocker locker{this};
     CloseReviewBuddy();
-    if (m_terminal) {
-        wxDELETE(m_terminal);
+    if (m_agentTerminal) {
+        wxDELETE(m_agentTerminal);
     }
 
     // Remember the label given to the tab, the blink code needs it.
@@ -446,15 +447,30 @@ void AgentHostPage::RestartAgentHost()
         envMap = systemPromptCli->env;
         env = std::make_unique<EnvSetter>(&envMap);
     }
-    m_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-        wxEmptyString, m_agentInfo.sshAccount, wxEmptyString, true, kShellCommand, m_splitter);
-    m_splitter->Initialize(m_terminal);
-    m_terminal->RegisterTextClickedFilter([](const std::string&) -> bool { return true; });
+
+    m_agentTerminal = new AgentTerminal(m_splitter, m_agentInfo.sshAccount, kShellCommand);
+    if (GetTerminal() == nullptr) {
+        wxDELETE(m_agentTerminal);
+        return;
+    }
+
+    m_splitter->Initialize(m_agentTerminal);
+    GetTerminal()->RegisterTextClickedFilter([](const std::string&) -> bool { return true; });
 
     GetSizer()->Layout();
     // Hook a custom context menu
-    m_terminal->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
-    m_terminal->SendCommand(command_to_run);
+    GetTerminal()->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
+    GetTerminal()->SendCommand(command_to_run);
+}
+
+wxTerminalViewCtrl* AgentHostPage::GetTerminal() const
+{
+    return m_agentTerminal != nullptr ? m_agentTerminal->GetTerminal() : nullptr;
+}
+
+wxTerminalViewCtrl* AgentHostPage::GetReviewTerminal() const
+{
+    return m_reviewAgentTerminal != nullptr ? m_reviewAgentTerminal->GetTerminal() : nullptr;
 }
 
 wxString AgentHostPage::GetSelectedLine(wxTerminalViewCtrl* terminal) const
@@ -478,8 +494,8 @@ void AgentHostPage::SearchInWorkspace(const wxString& text)
     workspace->GetWorkspaceFiles(files);
     SearchThreadST::Get()->GrepWord(owner, files, text);
 
-    if (m_terminal)
-        m_terminal->CallAfter(&wxWindow::SetFocus);
+    if (GetTerminal())
+        GetTerminal()->CallAfter(&wxWindow::SetFocus);
 }
 
 void AgentHostPage::OnShowTerminal(wxCommandEvent& event) { event.Skip(); }
@@ -511,7 +527,7 @@ wxTerminalViewCtrl* AgentHostPage::GetFocusedTerminal() const
     if (focus == nullptr) {
         return nullptr;
     }
-    if (focus == m_terminal || focus == m_reviewTerminal) {
+    if (focus == GetTerminal() || focus == GetReviewTerminal()) {
         return static_cast<wxTerminalViewCtrl*>(focus);
     }
     return nullptr;
@@ -519,7 +535,7 @@ wxTerminalViewCtrl* AgentHostPage::GetFocusedTerminal() const
 
 wxTerminalViewCtrl* AgentHostPage::GetSelectionTerminal() const
 {
-    for (auto* terminal : {GetFocusedTerminal(), m_terminal, m_reviewTerminal}) {
+    for (auto* terminal : {GetFocusedTerminal(), GetTerminal(), GetReviewTerminal()}) {
         if (terminal != nullptr && !GetFindWhat(terminal).empty()) {
             return terminal;
         }
@@ -649,7 +665,7 @@ void AgentHostPage::OnToolPaste(wxCommandEvent& event)
     // Paste into the terminal that has the focus (the agent's or the reviewer's), the agent's by default
     auto* terminal = GetFocusedTerminal();
     if (terminal == nullptr) {
-        terminal = m_terminal;
+        terminal = GetTerminal();
     }
     if (terminal != nullptr) {
         terminal->Paste();
@@ -661,7 +677,7 @@ void AgentHostPage::OnToolCopyUI(wxUpdateUIEvent& event) { event.Enable(GetCopyT
 
 wxTerminalViewCtrl* AgentHostPage::GetCopyTerminal() const
 {
-    for (auto* terminal : {GetFocusedTerminal(), m_terminal, m_reviewTerminal}) {
+    for (auto* terminal : {GetFocusedTerminal(), GetTerminal(), GetReviewTerminal()}) {
         if (terminal == nullptr) {
             continue;
         }
@@ -685,7 +701,7 @@ void AgentHostPage::OnToolOpenResource(wxCommandEvent& event)
     CallAfter(&AgentHostPage::RunFrameCommand, "find_resource");
 }
 
-void AgentHostPage::OnToolHasTerminalUI(wxUpdateUIEvent& event) { event.Enable(m_terminal != nullptr); }
+void AgentHostPage::OnToolHasTerminalUI(wxUpdateUIEvent& event) { event.Enable(GetTerminal() != nullptr); }
 
 void AgentHostPage::OnToolSelectionUI(wxUpdateUIEvent& event) { event.Enable(GetSelectionTerminal() != nullptr); }
 
@@ -761,7 +777,7 @@ bool AgentHostPage::HasGitRepo()
 
 void AgentHostPage::LaunchReviewBuddy(AgentType reviewer)
 {
-    if (m_review || m_reviewTerminal != nullptr || m_terminal == nullptr) {
+    if (m_review || GetReviewTerminal() != nullptr || GetTerminal() == nullptr) {
         return;
     }
     if (m_agentInfo.workingDirectory.empty()) {
@@ -782,7 +798,7 @@ void AgentHostPage::LaunchReviewBuddy(AgentType reviewer)
     DismissNotice(); // The message about an earlier review
     m_review = std::make_unique<ReviewBuddy>(
         ReviewBuddy::Target{m_agentInfo.workingDirectory, m_agentInfo.sshAccount, pageName},
-        m_terminal,
+        GetTerminal(),
         [this, reviewer](
             const wxString& prompt, const wxString& folder) { return StartReviewer(reviewer, prompt, folder); },
         // Whether the user is looking at this page right now.
@@ -797,8 +813,8 @@ void AgentHostPage::LaunchReviewBuddy(AgentType reviewer)
 
 wxTerminalViewCtrl* AgentHostPage::StartReviewer(AgentType reviewer, const wxString& prompt, const wxString& folder)
 {
-    if (m_reviewTerminal != nullptr || m_terminal == nullptr) {
-        return m_reviewTerminal;
+    if (GetReviewTerminal() != nullptr || GetTerminal() == nullptr) {
+        return GetReviewTerminal();
     }
 
     // The reviewer runs in its review folder: agent resume history is keyed by working directory.
@@ -837,18 +853,18 @@ wxTerminalViewCtrl* AgentHostPage::StartReviewer(AgentType reviewer, const wxStr
     command << " " << StringUtils::WrapWithDoubleQuotes(prompt);
     command.Prepend("cd " + StringUtils::WrapWithDoubleQuotes(reviewerDir) + " && ");
 
-    m_reviewTerminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-        wxEmptyString, m_agentInfo.sshAccount, wxEmptyString, true, kShellCommand, m_splitter);
-    if (m_reviewTerminal == nullptr) {
+    m_reviewAgentTerminal = new AgentTerminal(m_splitter, m_agentInfo.sshAccount, kShellCommand);
+    if (GetReviewTerminal() == nullptr) {
+        wxDELETE(m_reviewAgentTerminal);
         return nullptr;
     }
-    m_reviewTerminal->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
-    m_reviewTerminal->SendCommand(command);
+    GetReviewTerminal()->Bind(wxEVT_CONTEXT_MENU, &AgentHostPage::OnContextMenu, this);
+    GetReviewTerminal()->SendCommand(command);
 
-    m_splitter->SplitVertically(m_terminal, m_reviewTerminal);
+    m_splitter->SplitVertically(m_agentTerminal, m_reviewAgentTerminal);
     // The reviewer is the active agent now; it may ask for a permission.
-    FocusTerminal(m_reviewTerminal);
-    return m_reviewTerminal;
+    FocusTerminal(GetReviewTerminal());
+    return GetReviewTerminal();
 }
 
 void AgentHostPage::DismissNotice()
@@ -860,10 +876,10 @@ void AgentHostPage::DismissNotice()
 
 void AgentHostPage::DestroyReviewPane()
 {
-    if (m_reviewTerminal != nullptr) {
-        m_reviewTerminal->Destroy(); // also ends the reviewer's process
+    if (m_reviewAgentTerminal != nullptr) {
+        m_reviewAgentTerminal->Destroy(); // also ends the reviewer's process
     }
-    m_reviewTerminal = nullptr;
+    m_reviewAgentTerminal = nullptr;
 }
 
 void AgentHostPage::CloseReviewBuddy()
@@ -874,17 +890,17 @@ void AgentHostPage::CloseReviewBuddy()
         return;
     }
     DismissNotice();
-    if (m_reviewTerminal != nullptr) {
+    if (m_reviewAgentTerminal != nullptr) {
         wxWindowUpdateLocker locker{this};
         if (m_splitter->IsSplit()) {
-            m_splitter->Unsplit(m_reviewTerminal);
+            m_splitter->Unsplit(m_reviewAgentTerminal);
         }
         DestroyReviewPane();
     }
     // Destroy after the reviewer terminal: cleanup may remove its working directory.
     m_review.reset();
-    if (m_terminal != nullptr) {
-        m_terminal->SetFocus();
+    if (GetTerminal() != nullptr) {
+        GetTerminal()->SetFocus();
     }
 }
 

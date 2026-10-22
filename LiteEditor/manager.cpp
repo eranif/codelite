@@ -1615,11 +1615,11 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
             execLine);
         ::wxExecute(full_command);
 #else
-        auto terminal =
-            clGetManager()->GetTerminalManager()->OpenNewDefaultTerminalTab(wd, std::nullopt, terminal_title);
+        auto* manager = clGetManager()->GetTerminalManager();
+        auto terminal = manager->AddTerminal(manager->GetDefaultShell(), wd, std::nullopt, terminal_title);
         CHECK_PTR_RET(terminal);
-        terminal->SendCommand(execLine);
-        terminal->CallAfter(&wxWindow::SetFocus);
+        terminal->GetCtrl()->SendCommand(execLine);
+        terminal->GetCtrl()->CallAfter(&wxWindow::SetFocus);
 #endif
     }
 }

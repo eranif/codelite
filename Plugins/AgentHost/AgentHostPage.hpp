@@ -11,6 +11,7 @@
 #include <wx/infobar.h>
 #include <wx/splitter.h>
 
+class AgentTerminal;
 class ReviewBuddy;
 class wxTerminalViewCtrl;
 
@@ -53,7 +54,7 @@ public:
     ~AgentHostPage() override;
 
     /// The main agent's terminal
-    wxTerminalViewCtrl* GetTerminal() { return m_terminal; }
+    wxTerminalViewCtrl* GetTerminal() const;
     void StartAgentHost(const AgentInfo& info);
 
 protected:
@@ -75,6 +76,8 @@ protected:
     void OnGrepWorkspaceUI(wxUpdateUIEvent& event);
     /// First line of the terminal selection (empty if nothing is selected)
     wxString GetSelectedLine(wxTerminalViewCtrl* terminal) const;
+    /// The terminal of the reviewer, or nullptr
+    wxTerminalViewCtrl* GetReviewTerminal() const;
     /// The agent terminal (main or reviewer) that has the keyboard focus, or nullptr
     wxTerminalViewCtrl* GetFocusedTerminal() const;
     /// The agent terminal (main or reviewer) that has a selection (the focused one first), or nullptr. The selection
@@ -123,8 +126,9 @@ private:
     wxBookCtrlBase* m_book{nullptr};
     wxSplitterWindow* m_splitter{nullptr};
     wxInfoBar* m_infoBar{nullptr};
-    wxTerminalViewCtrl* m_terminal{nullptr};
-    wxTerminalViewCtrl* m_reviewTerminal{nullptr};
+    // The panes of the splitter: each holds a terminal
+    AgentTerminal* m_agentTerminal{nullptr};
+    AgentTerminal* m_reviewAgentTerminal{nullptr};
     std::unique_ptr<ReviewBuddy> m_review;
     // True while a toolbar button runs a main frame command: the toolbar click does not need the terminal to have the
     // focus, so the dialog is filled from the terminal that has a selection

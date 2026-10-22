@@ -593,7 +593,7 @@ void GitPlugin::UnPlug()
     m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
 }
 
-wxTerminalViewCtrl* GitPlugin::GetOrCreateGitTerminal()
+TerminalHost* GitPlugin::GetOrCreateGitTerminal()
 {
     auto terminal = clGetManager()->GetTerminalManager()->FindTerminalByTitle(kGitTerminalTitle, true);
     if (!terminal) {
@@ -610,8 +610,9 @@ wxTerminalViewCtrl* GitPlugin::GetOrCreateGitTerminal()
         }
 #endif
 
-        terminal = clGetManager()->GetTerminalManager()->OpenNewDefaultTerminalTab(
-            m_repositoryDirectory, account_info, kGitTerminalTitle);
+        auto* manager = clGetManager()->GetTerminalManager();
+        terminal =
+            manager->AddTerminal(manager->GetDefaultShell(), m_repositoryDirectory, account_info, kGitTerminalTitle);
     }
     return terminal;
 }
@@ -950,7 +951,8 @@ void GitPlugin::OnPush(wxCommandEvent& e)
     }
     auto terminal = GetOrCreateGitTerminal();
     CHECK_PTR_RET(terminal);
-    terminal->SendCommand(PrependGitExec("push"));
+    CHECK_PTR_RET(terminal->GetCtrl());
+    terminal->GetCtrl()->SendCommand(PrependGitExec("push"));
 }
 
 void GitPlugin::OnPull(wxCommandEvent& e)
@@ -983,7 +985,8 @@ void GitPlugin::OnPull(wxCommandEvent& e)
     wxString pull_command = StringUtils::Join(commands, " && ");
     auto terminal = GetOrCreateGitTerminal();
     CHECK_PTR_RET(terminal);
-    terminal->SendCommand(pull_command);
+    CHECK_PTR_RET(terminal->GetCtrl());
+    terminal->GetCtrl()->SendCommand(pull_command);
 }
 
 void GitPlugin::OnResetRepository(wxCommandEvent& e)

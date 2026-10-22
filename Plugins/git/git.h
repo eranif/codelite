@@ -386,7 +386,7 @@ public:
     void OnCommandEnded(clCommandEvent& event);
 
     bool GenerateCommitMessage(const wxString& prompt);
-    wxTerminalViewCtrl* GetOrCreateGitTerminal();
+    TerminalHost* GetOrCreateGitTerminal();
 
     wxString PrependGitExec(const wxString& args);
 

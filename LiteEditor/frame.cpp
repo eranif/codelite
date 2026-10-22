@@ -4430,9 +4430,13 @@ void clMainFrame::OnOpenShell(wxCommandEvent& e)
     auto CreateNewTerminal = []() {
         wxString working_dir;
         std::optional<SSHAccountInfo> account{std::nullopt};
-        auto active_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(working_dir, account);
+        auto* manager = clGetManager()->GetTerminalManager();
+        auto shellCmd = manager->PromptForTerminal();
+        if (!shellCmd)
+            return;
+        auto active_terminal = manager->AddTerminal(*shellCmd, working_dir, account);
         if (active_terminal) {
-            active_terminal->CallAfter(&wxTerminalViewCtrl::SetFocus);
+            active_terminal->GetCtrl()->CallAfter(&wxTerminalViewCtrl::SetFocus);
         }
     };
 
@@ -4752,9 +4756,13 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
     auto CreateNewTerminal = []() {
         wxString working_dir;
         std::optional<SSHAccountInfo> account{std::nullopt};
-        auto active_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(working_dir, account);
+        auto* manager = clGetManager()->GetTerminalManager();
+        auto shellCmd = manager->PromptForTerminal();
+        if (!shellCmd)
+            return;
+        auto active_terminal = manager->AddTerminal(*shellCmd, working_dir, account);
         if (active_terminal) {
-            active_terminal->CallAfter(&wxTerminalViewCtrl::SetFocus);
+            active_terminal->GetCtrl()->CallAfter(&wxTerminalViewCtrl::SetFocus);
         }
     };
 
@@ -4766,14 +4774,14 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
             return;
         }
 
-        if (active_terminal->HasFocus()) {
+        if (active_terminal->GetCtrl()->HasFocus()) {
             // Hide it.
             clGetManager()->ToggleOutputPane(_("Terminal"));
             return;
         }
 
         // Move the focus to the active terminal
-        active_terminal->CallAfter(&wxTerminalViewCtrl::SetFocus);
+        active_terminal->GetCtrl()->CallAfter(&wxTerminalViewCtrl::SetFocus);
     } else {
         // Show the terminal
         clGetManager()->ToggleOutputPane(_("Terminal"));

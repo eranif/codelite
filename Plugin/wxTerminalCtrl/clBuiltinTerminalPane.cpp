@@ -339,6 +339,7 @@ TerminalHost* clBuiltinTerminalPane::DoCreateTerminal(wxWindow* parent,
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
 
+    wxWindowUpdateLocker locker{this};
     TerminalHost* host = new TerminalHost(parent);
     wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(host, shellCommand, env, workingDirectory);
     host->SetCtrl(ctrl);

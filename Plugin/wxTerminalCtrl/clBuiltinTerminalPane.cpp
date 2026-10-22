@@ -329,6 +329,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::CreateTerminal(wxWindow* parent,
         book->AddPage(ctrl, tabTitle, makeActive);
     }
     ctrl->EnableSafeDrawing(!m_terminalSettings.m_optimizedDrawings);
+    ctrl->ShowProgressBar(true);
 
     // Register standard keyboard shortcuts for the terminal.
     std::vector<wxAcceleratorEntry> V;

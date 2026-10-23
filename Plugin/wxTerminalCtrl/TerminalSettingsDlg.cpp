@@ -17,7 +17,7 @@ TerminalSettings::TerminalSettings(bool optimizedDrawings, const wxString& lastU
 
 TerminalSettings TerminalSettings::Load()
 {
-    TerminalSettings settings{clConfig::Get().Read("terminal/optimized_drawings", true),
+    TerminalSettings settings{clConfig::Get().Read("terminal/optimized_drawings", false),
                               clConfig::Get().Read("terminal/last_used_shell", wxString{}),
                               clConfig::Get().Read("terminal/scroll_back_lines", 5000)};
     return settings;

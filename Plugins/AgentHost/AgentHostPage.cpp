@@ -17,6 +17,7 @@
 #include "globals.h"
 #include "open_resource_dialog.h"
 #include "search_thread.h"
+#include "terminal_view.h"
 #include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
 
 #if USE_SFTP

@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "procutils.h"
+#include "terminal_view.h"
 #include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
 
 #if USE_SFTP

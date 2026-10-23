@@ -1,7 +1,6 @@
 #pragma once
 
 #include "codelite_exports.h"
-#include "terminal_view.h"
 #include "wxTerminalCtrlUI.hpp"
 
 #include <vector>
@@ -9,7 +8,7 @@
 struct WXDLLIMPEXP_SDK TerminalSettings {
     TerminalSettings();
     TerminalSettings(bool optimizedDrawings, const wxString& lastUsedTerminalCommand, int scrollBackLines);
-    bool m_optimizedDrawings{!wxTerminalViewCtrl::IsOpenGLEnabled()};
+    bool m_optimizedDrawings{false};
     wxString m_defaultShell{wxEmptyString};
     int m_scrollBackLines{5000};
 

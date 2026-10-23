@@ -16,6 +16,7 @@ fi
 FORCE_CMAKE=0
 WITH_TESTS=0
 NO_BUILD=0
+WITH_OPENGL=0
 WX_VERSION=v3.3.3.1
 WXCRAFTER_BUILD_DIR_NAME=.build-release-wxcrafter
 WXCRAFTER_BUILD_DIR=${ROOT_DIR}/${WXCRAFTER_BUILD_DIR_NAME}
@@ -69,6 +70,16 @@ function check_prerequistes() {
       missing=1
     fi
   done
+
+  if [[ "${OS_NAME}" == "Linux" ]] && [ "${WITH_OPENGL}" -eq 1 ]; then
+    # The OpenGL terminal needs the GL and GLEW development headers
+    for header in GL/gl.h GL/glew.h; do
+      if [ ! -f "/usr/include/${header}" ] && [ ! -f "/usr/local/include/${header}" ]; then
+        ERROR "Missing OpenGL header: ${header} (install libgl-dev and libglew-dev)"
+        missing=1
+      fi
+    done
+  fi
 
   if [ "${missing}" -ne 0 ]; then
     ERROR "Please install the missing prerequisites and try again"
@@ -162,6 +173,11 @@ function build_wx_widgets_Linux() {
   # Do not use v3.3.3 or newer on Linux for now: wxGTK clipboard copy (Ctrl-C) crashes WSLg's Weston
   local wx_version=v3.3.2
   if [ -x "${wx_install_dir}/bin/wx-config" ]; then
+    if [ "${WITH_OPENGL}" -eq 1 ] && ! "${wx_install_dir}/bin/wx-config" --libs gl >/dev/null 2>&1; then
+      ERROR "The wxWidgets build at ${wx_install_dir} has no OpenGL (gl) support"
+      ERROR "Remove ${wx_install_dir} (or run: $(basename $0) distclean) and build again with --opengl"
+      exit 1
+    fi
     INFO "wxWidgets already built at ${wx_install_dir}; skipping"
     export PATH="${wx_install_dir}/bin":$PATH
     return 0
@@ -177,7 +193,12 @@ function build_wx_widgets_Linux() {
   git submodule update --init --depth 1
   mkdir ${BUILD_DIR_NAME}
   cd ${BUILD_DIR_NAME}
-  ../configure --disable-debug_flag --with-gtk=3 --enable-stl --prefix=${wx_install_dir}
+  local wx_gl_opt=""
+  if [ "${WITH_OPENGL}" -eq 1 ]; then
+    wx_gl_opt="--with-opengl"
+    INFO "Building wxWidgets with OpenGL support"
+  fi
+  ../configure --disable-debug_flag --with-gtk=3 --enable-stl ${wx_gl_opt} --prefix=${wx_install_dir}
   make -j$(nproc) install
   export PATH="${wx_install_dir}/bin":$PATH
   cd ${ROOT_DIR}
@@ -239,8 +260,13 @@ function build_CodeLite_Linux() {
     if [ "${BUILD_TARGET}" == "Debug" ]; then
       installPrefix="-DCMAKE_INSTALL_PREFIX=${HOME}/root"
     fi
+    local openGL="-DUSE_OPENGL=OFF"
+    if [ "${WITH_OPENGL}" -eq 1 ]; then
+      openGL="-DUSE_OPENGL=ON"
+      INFO "Building with the OpenGL terminal enabled"
+    fi
     cmake ${ROOT_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TARGET} -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 \
-      -DWITH_WX_CONFIG=${wx_config} ${buildTests} ${installPrefix}
+      -DWITH_WX_CONFIG=${wx_config} ${buildTests} ${installPrefix} ${openGL}
   else
     INFO "CodeLite already configured; skipping cmake"
   fi
@@ -424,6 +450,7 @@ function usage() {
   echo "  --cmake     Force the cmake configure stage even if it is up to date"
   echo "  --tests     Enable Tests"
   echo "  --no-build  Run cmake only, skip the build step (make)"
+  echo "  --opengl    Linux only: build the terminal with OpenGL (needs libgl-dev, libglew-dev)"
   echo ""
   echo "Environment:"
   echo "  CL_WX_VERSION   Windows only: the wxWidgets tag or branch to build (e.g. v3.2.11 or master)"
@@ -488,6 +515,14 @@ while [ $# -gt 0 ]; do
     ;;
   --no-build)
     NO_BUILD=1
+    ;;
+  --opengl)
+    if [[ "${OS_NAME}" != "Linux" ]]; then
+      ERROR "--opengl is only supported on Linux"
+      exit 1
+    fi
+    WITH_OPENGL=1
+    FORCE_CMAKE=1
     ;;
   -h | --help)
     usage

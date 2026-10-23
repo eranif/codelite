@@ -168,6 +168,23 @@ function build_wx_widgets_MSW() {
   cd ${ROOT_DIR}
 }
 
+# Applies our patches to the wxWidgets sources (the current directory is
+# .build-release/wxWidgets/.build-release). The patches are shared with the
+# wxTerminalEmulator submodule. A patch that does not apply, for example because
+# it is already in the wxWidgets version, is skipped.
+function apply_wx_patches_Linux() {
+  local patch
+  for patch in "${ROOT_DIR}"/submodules/wxTerminalEmulator/patches/wxwidgets-*.patch; do
+    [ -f "${patch}" ] || continue
+    if git -C .. apply --check "${patch}" >/dev/null 2>&1; then
+      INFO "Applying $(basename "${patch}") to wxWidgets"
+      git -C .. apply "${patch}"
+    else
+      WARN "Skipping $(basename "${patch}"): it does not apply to wxWidgets ${wx_version}"
+    fi
+  done
+}
+
 function build_wx_widgets_Linux() {
   local wx_install_dir=${BUILD_DIR}/wxWidgets-install
   # Do not use v3.3.3 or newer on Linux for now: wxGTK clipboard copy (Ctrl-C) crashes WSLg's Weston
@@ -193,6 +210,7 @@ function build_wx_widgets_Linux() {
   git submodule update --init --depth 1
   mkdir ${BUILD_DIR_NAME}
   cd ${BUILD_DIR_NAME}
+  apply_wx_patches_Linux
   local wx_gl_opt=""
   if [ "${WITH_OPENGL}" -eq 1 ]; then
     wx_gl_opt="--with-opengl"

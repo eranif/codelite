@@ -57,6 +57,9 @@ public:
      */
     wxTerminalViewCtrl* GetCtrl() { return m_terminal; }
 
+    /// Pass the focus to the terminal control (if it was created)
+    void SetFocus() override;
+
 private:
     friend class clBuiltinTerminalPane;
     /// Set the terminal control (which must be a child of this panel). Can be called once.

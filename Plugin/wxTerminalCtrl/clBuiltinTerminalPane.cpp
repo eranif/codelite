@@ -165,6 +165,24 @@ TerminalHost::TerminalHost(wxWindow* parent)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     Layout();
+
+    // wxPanel forwards the focus to its last focused child. Make sure it is always the terminal.
+    Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& event) {
+        if (m_terminal != nullptr) {
+            m_terminal->SetFocus();
+        } else {
+            event.Skip();
+        }
+    });
+}
+
+void TerminalHost::SetFocus()
+{
+    if (m_terminal != nullptr) {
+        m_terminal->SetFocus();
+    } else {
+        wxPanel::SetFocus();
+    }
 }
 
 void TerminalHost::SetCtrl(wxTerminalViewCtrl* ctrl)

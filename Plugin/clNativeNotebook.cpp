@@ -671,8 +671,27 @@ void clNativeNotebook::SetPageBitmap(size_t index, const wxBitmap& bmp)
     if (reuse_slot) {
         images[imgIdx] = wxBitmapBundle(bmp);
     } else {
-        images.push_back(wxBitmapBundle(bmp));
-        imgIdx = static_cast<int>(images.size()) - 1;
+        // A slot that no page uses (left behind when the bitmap of a tab was removed) is free: use it before adding a
+        // new one, so the vector does not grow every time a tab gets a temporary bitmap. Only this function adds
+        // images, so there are no slots that are reserved for other users.
+        int freeSlot = wxNOT_FOUND;
+        for (size_t slot = 0; slot < images.size() && freeSlot == wxNOT_FOUND; ++slot) {
+            bool used = false;
+            for (size_t i = 0; !used && i < GetPageCount(); ++i) {
+                used = GetPageImage(i) == static_cast<int>(slot);
+            }
+            if (!used) {
+                freeSlot = static_cast<int>(slot);
+            }
+        }
+
+        if (freeSlot != wxNOT_FOUND) {
+            images[freeSlot] = wxBitmapBundle(bmp);
+            imgIdx = freeSlot;
+        } else {
+            images.push_back(wxBitmapBundle(bmp));
+            imgIdx = static_cast<int>(images.size()) - 1;
+        }
     }
 
     // SetImages() does not refresh the existing tabs, SetPageImage() does

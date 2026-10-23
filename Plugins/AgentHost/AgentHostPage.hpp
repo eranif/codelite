@@ -4,6 +4,7 @@
 #include "cl_command_event.h"
 #include "macros.h"
 #include "ssh_account_info.h"
+#include "terminal_event.h"
 
 #include <chrono>
 #include <memory>
@@ -13,6 +14,7 @@
 
 class AgentTerminal;
 class ReviewBuddy;
+class TabAttentionIcon;
 class wxTerminalViewCtrl;
 
 enum class AgentType {
@@ -65,6 +67,10 @@ protected:
     void OnTerminalBell(clCommandEvent& event);
     void OnTerminalTerminated(clCommandEvent& event);
     void OnTerminalTitleChanged(clCommandEvent& event);
+    /// The main agent reported its status. Tell the user when the agent needs them (a tab icon, and the taskbar or Dock
+    /// icon) when they are not looking at this page. Nothing is done during a review: the main agent stops on purpose,
+    /// to hand the control to the reviewer.
+    void OnTerminalProgramStatus(clCommandEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnOpenResourceShowing(clOpenResourceEvent& event);
@@ -130,10 +136,14 @@ private:
     AgentTerminal* m_agentTerminal{nullptr};
     AgentTerminal* m_reviewAgentTerminal{nullptr};
     std::unique_ptr<ReviewBuddy> m_review;
+    // The icon on our tab while the agent waits for the user. Removed when the page gets the focus.
+    std::unique_ptr<TabAttentionIcon> m_attentionIcon;
     // True while a toolbar button runs a main frame command: the toolbar click does not need the terminal to have the
     // focus, so the dialog is filled from the terminal that has a selection
     bool m_fillFromSelection{false};
     AgentInfo m_agentInfo;
+    // The last state that the main agent reported: the user is told only when the state changes
+    wxTerminalProgramState m_lastAgentState{wxTerminalProgramState::Clear};
     // The result of the last "is this a git repository?" check of a remote working directory (cached, it is slow)
     bool m_hasGit{false};
     std::optional<std::chrono::steady_clock::time_point> m_lastGitCheck;

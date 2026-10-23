@@ -343,6 +343,7 @@ TerminalHost* clBuiltinTerminalPane::DoCreateTerminal(wxWindow* parent,
 
     wxWindowUpdateLocker locker{this};
     TerminalHost* host = new TerminalHost(parent);
+
     wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(host, shellCommand, env, workingDirectory);
     host->SetCtrl(ctrl);
 
@@ -1063,7 +1064,8 @@ void clBuiltinTerminalPane::OnProgramStatus(wxTerminalEvent& event)
     if (FindTerminalPage(m_book, GetEventHost(event)) == wxNOT_FOUND) {
         clCommandEvent evt{wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS};
         evt.SetEventObject(event.GetEventObject());
-        evt.SetString(wxString::Format("%s: %s", event.GetProgramStatus().app, event.GetProgramStatus().message));
+        // GetInt() is the wxTerminalProgramState. The event object is the terminal: for the other fields (kind,
+        // progress, message, ...), call GetProgramStatus() on it from the handler.
         evt.SetInt(static_cast<int>(event.GetProgramState()));
         EventNotifier::Get()->ProcessEvent(evt);
         return;

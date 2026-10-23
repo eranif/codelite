@@ -6,6 +6,7 @@
 #include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "ReviewBuddy.hpp"
+#include "TabAttentionIcon.hpp"
 #include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "aui/cl_aui_tool_stickness.h"
@@ -22,7 +23,10 @@
 #include "clSFTPManager.hpp"
 #endif
 
+#include <utility>
+#include <wx/app.h>
 #include <wx/sizer.h>
+#include <wx/toplevel.h>
 #include <wx/xrc/xmlres.h>
 
 namespace
@@ -99,6 +103,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_BELL, &AgentHostPage::OnTerminalBell, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS, &AgentHostPage::OnTerminalProgramStatus, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &AgentHostPage::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &AgentHostPage::OnFindInFilesShowing, this);
     EventNotifier::Get()->Bind(wxEVT_OPEN_RESOURCE_SHOWING, &AgentHostPage::OnOpenResourceShowing, this);
@@ -122,6 +127,7 @@ AgentHostPage::~AgentHostPage()
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TERMINATED, &AgentHostPage::OnTerminalTerminated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, &AgentHostPage::OnTerminalTitleChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_BELL, &AgentHostPage::OnTerminalBell, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS, &AgentHostPage::OnTerminalProgramStatus, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &AgentHostPage::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_OPEN_RESOURCE_SHOWING, &AgentHostPage::OnOpenResourceShowing, this);
     if (auto frame = EventNotifier::Get()->TopFrame()) {
@@ -161,6 +167,40 @@ void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
     int where = book->FindPage(this);
     if (where != wxNOT_FOUND) {
         book->SetPageText(where, new_title);
+    }
+}
+
+void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
+{
+    CHECK_CAN_HANDLE_EVENT(event); // The status of the reviewer is not used
+    CHECK_PTR_RET(GetTerminal());
+
+    const auto state = static_cast<wxTerminalProgramState>(event.GetInt());
+    const auto previous = std::exchange(m_lastAgentState, state);
+
+    // During a review the main agent stops on purpose, to hand the control to the reviewer: do not bother the user.
+    // Only a change is reported (a working agent reports its progress again and again).
+    if (m_review || state == previous) {
+        return;
+    }
+
+    // Only these states need the user. Idle, Working and Clear: nothing to do.
+    if (state != wxTerminalProgramState::Blocked && state != wxTerminalProgramState::Done &&
+        state != wxTerminalProgramState::Error) {
+        return;
+    }
+
+    // The tab is not the selected one: mark it until the user comes back to the page
+    if (m_book->GetCurrentPage() != this && (!m_attentionIcon || !m_attentionIcon->IsShown())) {
+        m_attentionIcon = std::make_unique<TabAttentionIcon>(
+            clGetManager()->GetMainNotebook(), this, clGetManager()->GetStdIcons()->LoadBitmap("hand-waving"));
+    }
+
+    // CodeLite is in the background: the Dock icon bounces on macOS, the taskbar button flashes on Windows.
+    if (!wxTheApp->IsActive()) {
+        if (auto* frame = dynamic_cast<wxTopLevelWindow*>(wxTheApp->GetTopWindow())) {
+            frame->RequestUserAttention(wxUSER_ATTENTION_INFO);
+        }
     }
 }
 

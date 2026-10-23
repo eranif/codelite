@@ -22,7 +22,7 @@
           "cd .build-debug\nmake -j$(nproc) install"
         ]
       ],
-      "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.xrc;*.rc;*.plist;*.iss;*.md;*.l",
+      "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.xrc;*.rc;*.plist;*.iss;*.md;*.l;*.sh",
       "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
       "excludePaths": "$(WorkspacePath)/build-debug-native-book;$(WorkspacePath)/build-release-gtk2;$(WorkspacePath)/bitmaps-dark;$(WorkspacePath)/bitmaps-light;$(WorkspacePath)/build-debug;$(WorkspacePath)/build-release;$(WorkspacePath)/codelite-icons-dark;$(WorkspacePath)/codelite-icons-fresh-farm;$(WorkspacePath)/CxxParser",
       "debugger": "GNU gdb debugger"

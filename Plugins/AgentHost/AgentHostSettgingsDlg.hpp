@@ -5,6 +5,8 @@
 inline const wxString kAgentHostClaudeCodeExecutable = "claude-code/executable";
 inline const wxString kAgentHostKiroCliExecutable = "kiro-cli/executable";
 inline const wxString kAgentHostOpenCodeExecutable = "opencode/executable";
+// The agent (an AgentType value) that the user launched last from the side bar button
+inline const wxString kAgentHostLastAgent = "agent-host/last-agent";
 // Extra command line arguments for the review buddy's reviewer agent (for example, a custom agent)
 inline const wxString kAgentHostClaudeCodeReviewArgs = "claude-code/review-args";
 inline const wxString kAgentHostKiroCliReviewArgs = "kiro-cli/review-args";

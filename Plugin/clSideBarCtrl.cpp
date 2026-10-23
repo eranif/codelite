@@ -76,7 +76,8 @@ wxString BuildActionButtonTooltip(const wxString& tooltip, const wxString& actio
     if (!shortcut.IsOk()) {
         return tooltip;
     }
-    return wxString::Format("%s (%s)", tooltip, shortcut.DisplayString());
+    // The shortcut goes on its own line: long tooltips are not read
+    return wxString::Format("%s\n%s", tooltip, shortcut.DisplayString());
 }
 } // namespace
 

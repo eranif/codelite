@@ -4,6 +4,7 @@ High:
 - Replace the "Find References" view with `wxDataViewTreeCtl` with custom renderer.
 - Implement all function: change to use the native `wxDataViewListCtrl`
 - Remove the TabGroups from CodeLite.
+- When a Claude Code terminal is "Idle" -> fire "Git Refresh Event".
 
 Medium:
 -----

@@ -224,11 +224,11 @@ JSONItem GenericFormatter::ToJSON() const
     return json;
 }
 
-void GenericFormatter::SetCommand(const std::vector<wxString>& command) { SetCommand(to_wx_array(command)); }
+void GenericFormatter::SetCommand(const std::vector<wxString>& command) { m_command = to_wx_array(command); }
 
 void GenericFormatter::SetCommandFromString(const wxString& command)
 {
-    SetCommand(StringUtils::BuildCommandArrayFromString(command));
+    m_command = StringUtils::BuildCommandArrayFromString(command);
 }
 
 wxString GenericFormatter::GetCommandWithComments() const { return get_command_with_desc(m_command, m_description); }

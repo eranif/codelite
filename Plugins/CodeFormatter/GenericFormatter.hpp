@@ -65,7 +65,6 @@ public:
     bool CanHandleRemoteFile() const { return !m_remote_command.empty(); }
     void SetRemoteCommand(const wxString& cmd, const wxString& remote_wd, const clEnvList_t& env);
 
-    void SetCommand(const wxArrayString& command) { this->m_command = command; }
     void SetCommand(const std::vector<wxString>& command);
     void SetCommandFromString(const wxString& command);
 

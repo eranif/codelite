@@ -11,7 +11,7 @@
 #include <wx/choicdlg.h>
 
 // The resource ID of the "Launch an AI Agent..." menu item: the tooltip of the side bar button shows its shortcut
-static const wxString kLaunchAgentAction = "launch_agent";
+static const char* kLaunchAgentAction = "launch_agent";
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new AgentHost(manager); }

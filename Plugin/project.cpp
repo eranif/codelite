@@ -183,14 +183,13 @@ bool Project::IsFileExist(const wxString& filePath, wxString& fileNameInProject)
     // So might the equivalent filepath contained in the project
     // This function copes with matching a real filePath with its symlinked project equivalent
     // It returns that project equivalent in fileNameInProject
-    std::find_if(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
-        if (filePath == FileUtils::RealPath(vt.second->GetFilename())) {
-            fileNameInProject = vt.second->GetFilename();
-            return true;
-        }
-        return false;
-    });
-
+    return std::find_if(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
+               if (filePath == FileUtils::RealPath(vt.second->GetFilename())) {
+                   fileNameInProject = vt.second->GetFilename();
+                   return true;
+               }
+               return false;
+           }) != m_filesTable.end();
 #endif
     return !fileNameInProject.empty();
 }

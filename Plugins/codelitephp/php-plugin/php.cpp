@@ -16,6 +16,7 @@
 #include "xdebugevent.h"
 
 #include <wx/app.h>
+#include <wx/ffile.h>
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point

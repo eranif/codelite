@@ -29,6 +29,8 @@
 #include "cl_editor_tip_window.h"
 #include "editor_config.h"
 
+#include <wx/xrc/xmlres.h>
+
 ContextPhp::ContextPhp(clEditor* editor)
     : ContextGeneric(editor, "php")
 {
@@ -36,12 +38,42 @@ ContextPhp::ContextPhp(clEditor* editor)
     m_completionTriggerStrings.insert("\\");
     m_completionTriggerStrings.insert("->");
     m_completionTriggerStrings.insert("::");
+    Bind(wxEVT_MENU, &ContextPhp::OnCommentSelection, this, XRCID("comment_selection"));
+    Bind(wxEVT_MENU, &ContextPhp::OnCommentLine, this, XRCID("comment_line"));
+    m_eventsBound = true;
     SetName("php");
 }
 
 ContextPhp::ContextPhp()
     : ContextGeneric(wxT("php"))
 {
+}
+
+ContextPhp::~ContextPhp()
+{
+    if (m_eventsBound) {
+        Unbind(wxEVT_MENU, &ContextPhp::OnCommentSelection, this, XRCID("comment_selection"));
+        Unbind(wxEVT_MENU, &ContextPhp::OnCommentLine, this, XRCID("comment_line"));
+    }
+}
+
+void ContextPhp::OnCommentSelection(wxCommandEvent& event)
+{
+    // Only the PHP sections use the PHP comment syntax
+    if (GetActiveKeywordSet() != 4) {
+        event.Skip();
+        return;
+    }
+    GetCtrl().CommentBlockSelection("/*", "*/");
+}
+
+void ContextPhp::OnCommentLine(wxCommandEvent& event)
+{
+    if (GetActiveKeywordSet() != 4) {
+        event.Skip();
+        return;
+    }
+    GetCtrl().ToggleLineComment("//", wxSTC_HPHP_COMMENTLINE);
 }
 
 void ContextPhp::AddMenuDynamicContent(wxMenu* menu) { wxUnusedVar(menu); }

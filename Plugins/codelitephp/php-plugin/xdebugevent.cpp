@@ -11,7 +11,6 @@ wxDEFINE_EVENT(wxEVT_XDEBUG_LOCALS_UPDATED, XDebugEvent);
 wxDEFINE_EVENT(wxEVT_XDEBUG_EVAL_EXPRESSION, XDebugEvent);
 wxDEFINE_EVENT(wxEVT_XDEBUG_UNKNOWN_RESPONSE, XDebugEvent);
 wxDEFINE_EVENT(wxEVT_XDEBUG_PROPERTY_GET, XDebugEvent);
-wxDEFINE_EVENT(wxEVT_XDEBUG_CONNECTED, XDebugEvent);
 
 XDebugEvent::XDebugEvent(wxEventType commandType, int winid)
     : PHPEvent(commandType, winid)

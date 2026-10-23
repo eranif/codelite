@@ -8,7 +8,7 @@
 
 _codelite_build_sh() {
     local cur="${COMP_WORDS[COMP_CWORD]}"
-    local opts="--cmake --tests --no-build -h --help"
+    local opts="--cmake --tests --no-build --opengl -h --help"
     local targets="debug clean distclean package wxcrafter package_wxcrafter"
 
     if [[ "${cur}" == -* ]]; then

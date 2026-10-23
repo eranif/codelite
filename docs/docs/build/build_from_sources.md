@@ -45,6 +45,7 @@ sudo apt install build-essential            \
                  libpq-dev                  \
                  libpcre2-dev bison flex    \
                  universal-ctags            \
+                 libgl-dev libglew-dev      \
                  fonts-noto
 sudo fc-cache -fv
 ```
@@ -61,13 +62,29 @@ git submodule update --init --recursive
 ./build.sh
 ```
 
+- To build with the OpenGL terminal, pass `--opengl`. It builds wxWidgets with OpenGL support and checks that the GL and GLEW headers exist:
+
+```bash
+./build.sh --opengl
+```
+
 !!! Note
     The first build is slow, because it also builds wxWidgets. The next builds reuse it.
+
+    If wxWidgets was already built without OpenGL, `--opengl` stops with an error. Run `./build.sh distclean` and
+    build again.
 
 - To run the new CodeLite:
 
 ```bash
 .build-release/bin/codelite
+```
+
+- To write more details to the log file (`~/.codelite/logs/codelite.log`), use `--loglevel` (`error`, `warning`,
+  `info`, `debug` or `trace`):
+
+```bash
+.build-release/bin/codelite --loglevel info
 ```
 
 - To uninstall CodeLite:

@@ -64,10 +64,28 @@ sudo apt-get install libgtk-3-dev \
                      libssh-dev \
                      libedit-dev \
                      libhunspell-dev \
+                     libgl-dev \
+                     libglew-dev \
                      xterm
 ```
 
-### Build sequence
+### Build with `build.sh` (recommended)
+
+Run `build.sh` from the root folder of the CodeLite repository. It builds wxWidgets
+and then CodeLite:
+
+```bash
+./build.sh
+```
+
+To build with OpenGL support, pass `--opengl`. It builds wxWidgets with OpenGL,
+checks that the GL and GLEW headers exist, and enables the OpenGL terminal:
+
+```bash
+./build.sh --opengl
+```
+
+### Build manually
 
 ```bash
 mkdir -p $HOME/devl
@@ -83,6 +101,16 @@ cd .build-release
 ../configure --disable-debug_flag --with-gtk=3 --enable-stl
 make -j$(nproc) && sudo make install
 ```
+
+To build wxWidgets with OpenGL support, add `--with-opengl` to the `configure` command:
+
+```bash
+../configure --disable-debug_flag --with-gtk=3 --enable-stl --with-opengl
+make -j$(nproc) && sudo make install
+```
+
+To check that your wxWidgets build has OpenGL support, run `wx-config --libs gl`.
+If it fails, wxWidgets was built without OpenGL. Rebuild it with `--with-opengl`.
 
 ---
 

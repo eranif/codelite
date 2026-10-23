@@ -43,6 +43,7 @@ sudo apt install build-essential            \
                  libpq-dev                  \
                  libpcre2-dev bison flex    \
                  universal-ctags            \
+                 libgl-dev libglew-dev      \
                  fonts-noto
 sudo fc-cache -fv
 ```
@@ -92,6 +93,7 @@ Usage: build.sh [options] [target]
 | `--cmake`    | Run the CMake configure step again, even if it is up to date         |
 | `--tests`    | Build the unit tests                                                 |
 | `--no-build` | Run CMake only. Skip the build step                                  |
+| `--opengl`   | Linux only. Build wxWidgets and the terminal with OpenGL support. Needs `libgl-dev` and `libglew-dev` |
 | `-h`, `--help` | Show the help message                                              |
 
 | Environment variable | Description                                                              |
@@ -105,9 +107,12 @@ Examples:
 ./build.sh debug           # debug build
 ./build.sh --tests         # release build with the unit tests
 ./build.sh --cmake         # force the CMake configure step
+./build.sh --opengl        # Linux: release build with the OpenGL terminal
 ./build.sh package         # create an installer
 CL_WX_VERSION=v3.2.11 ./build.sh   # Windows: build with wxWidgets 3.2.11
 ```
+
+If wxWidgets was already built without OpenGL, `--opengl` stops with an error. Run `./build.sh distclean` and build again.
 
 You can use only one target at a time. CMake runs again by itself when a `CMakeLists.txt` file is newer than the build.
 

@@ -41,6 +41,11 @@ add_subdirectory(LuaBridge)
 # ######################################################################################################################
 # wxTerminalEmulator
 # ######################################################################################################################
+# On Linux we do not ship the GlyphT application (we only need the terminal library). Installing it conflicts with the
+# standalone "glypht" package
+if(UNIX AND NOT APPLE)
+  set(BUILD_GLYPHT OFF CACHE BOOL "Build the GlyphT Terminal Application" FORCE)
+endif()
 add_subdirectory(wxTerminalEmulator)
 
 # ######################################################################################################################

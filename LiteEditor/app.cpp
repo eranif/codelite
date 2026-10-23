@@ -315,6 +315,12 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
      "Comma separated list of plugins to load",
      wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION,
+     "L",
+     "loglevel",
+     "Set the log level (error, warning, info, debug, trace). Overrides the configured level",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_PARAM,
      nullptr,
      nullptr,
@@ -408,8 +414,14 @@ static wxLogNull NO_LOG;
 namespace
 {
 // The bundled font that is used as the default monospaced font (file name and the font family name)
+#ifdef __WXGTK__
+// "Iosevka Term" is not known to Pango after wxFont::AddPrivateFont() on Linux, use the regular Iosevka
+const wxString kDefaultFontFile = "Iosevka-Regular.ttf";
+const wxString kDefaultFontFace = "Iosevka";
+#else
 const wxString kDefaultFontFile = "IosevkaTerm-Regular.ttf";
 const wxString kDefaultFontFace = "Iosevka Term";
+#endif
 
 /// Make the fonts shipped with CodeLite available to this process. Must run before any window is created.
 void LoadBundledFonts()
@@ -669,7 +681,13 @@ bool CodeLiteApp::OnInit()
 
     // Set the global log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging
     // CodeLite itself :/
-    FileLogger::OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
+    int log_level = clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error);
+    wxString log_level_str;
+    if (m_parser.Found(wxT("L"), &log_level_str)) {
+        // the command line takes precedence over the configured level
+        log_level = FileLogger::GetVerbosityAsNumber(log_level_str);
+    }
+    FileLogger::OpenLog("codelite.log", log_level);
     clDEBUG() << "Starting codelite..." << endl;
 
     // The log is ready: load the bundled fonts (must be done before the main frame is created)

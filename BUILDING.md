@@ -62,16 +62,6 @@ echo 'export PATH=/opt/homebrew/bin:$PATH' >> $HOME/.$(basename $SHELL)rc
 source $HOME/.$(basename $SHELL)rc
 ```
 
-### Network access
-
-When CMake configures the project, it downloads [md4c](https://github.com/mity/md4c) (a Markdown parser, tag
-`release-0.5.3`) with `FetchContent`, so it needs access to GitHub. To build without network access, download that tag
-yourself and tell CMake where it is:
-
-```bash
-cmake ... -DFETCHCONTENT_SOURCE_DIR_MD4C=/path/to/md4c
-```
-
 ## Using build.sh
 
 ```

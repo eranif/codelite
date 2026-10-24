@@ -25,11 +25,15 @@ AgentTerminal::AgentTerminal(wxWindow* parent,
     Layout();
 
     EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_THEME_CHANGED, &AgentTerminal::OnTerminalThemeChanged, this);
+    EventNotifier::Get()->Bind(
+        wxEVT_BUILTIN_TERMINAL_SETTINGS_CHANGED, &AgentTerminal::OnTerminalSettingsChanged, this);
 }
 
 AgentTerminal::~AgentTerminal()
 {
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_THEME_CHANGED, &AgentTerminal::OnTerminalThemeChanged, this);
+    EventNotifier::Get()->Unbind(
+        wxEVT_BUILTIN_TERMINAL_SETTINGS_CHANGED, &AgentTerminal::OnTerminalSettingsChanged, this);
 }
 
 wxTerminalViewCtrl* AgentTerminal::GetTerminal() const
@@ -44,4 +48,12 @@ void AgentTerminal::OnTerminalThemeChanged(clCommandEvent& event)
     auto newTheme = clGetManager()->GetTerminalManager()->GetActiveTheme();
     if (GetTerminal())
         GetTerminal()->SetTheme(newTheme);
+}
+
+void AgentTerminal::OnTerminalSettingsChanged(clCommandEvent& event)
+{
+    event.Skip();
+    if (GetTerminal()) {
+        GetTerminal()->ShowProgressBar(TerminalSettings::Load().m_showProgressBar);
+    }
 }

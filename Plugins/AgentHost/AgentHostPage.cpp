@@ -187,6 +187,11 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
         return;
     }
 
+    // The user turned the notifications off (Terminal settings)
+    if (!TerminalSettings::Load().m_notifyWhenDone) {
+        return;
+    }
+
     // Only these states need the user. Idle, Working and Clear: nothing to do.
     if (state != wxTerminalProgramState::Blocked && state != wxTerminalProgramState::Done &&
         state != wxTerminalProgramState::Error) {

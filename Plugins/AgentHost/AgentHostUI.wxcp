@@ -7,7 +7,7 @@
     "m_firstWindowId": 10000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 152,
+    "m_objCounter": 153,
     "m_outputFileName": "AgentHostUI",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -640,6 +640,7 @@
                               "gbPosition": "0,0",
                               "m_styles": [
                                 "wxFLP_DEFAULT_STYLE",
+                                "wxFLP_USE_TEXTCTRL",
                                 "wxFLP_SMALL"
                               ],
                               "m_sizerFlags": [
@@ -849,6 +850,7 @@
                               "gbPosition": "0,0",
                               "m_styles": [
                                 "wxFLP_DEFAULT_STYLE",
+                                "wxFLP_USE_TEXTCTRL",
                                 "wxFLP_SMALL"
                               ],
                               "m_sizerFlags": [
@@ -1058,6 +1060,7 @@
                               "gbPosition": "0,0",
                               "m_styles": [
                                 "wxFLP_DEFAULT_STYLE",
+                                "wxFLP_USE_TEXTCTRL",
                                 "wxFLP_SMALL"
                               ],
                               "m_sizerFlags": [
@@ -1594,11 +1597,6 @@
                                 },
                                 {
                                   "type": "bool",
-                                  "m_label": "Enable Spell Checking",
-                                  "m_value": false
-                                },
-                                {
-                                  "type": "bool",
                                   "m_label": "Auto Complete Directories:",
                                   "m_value": false
                                 },
@@ -1815,11 +1813,6 @@
                                 },
                                 {
                                   "type": "bool",
-                                  "m_label": "Enable Spell Checking",
-                                  "m_value": false
-                                },
-                                {
-                                  "type": "bool",
                                   "m_label": "Auto Complete Directories:",
                                   "m_value": false
                                 },
@@ -2033,11 +2026,6 @@
                                   "type": "string",
                                   "m_label": "Max Length:",
                                   "m_value": "0"
-                                },
-                                {
-                                  "type": "bool",
-                                  "m_label": "Enable Spell Checking",
-                                  "m_value": false
                                 },
                                 {
                                   "type": "bool",

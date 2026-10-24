@@ -28,6 +28,7 @@ public:
 
 private:
     void OnTerminalThemeChanged(clCommandEvent& event);
+    void OnTerminalSettingsChanged(clCommandEvent& event);
 
     TerminalHost* m_terminal{nullptr};
 };

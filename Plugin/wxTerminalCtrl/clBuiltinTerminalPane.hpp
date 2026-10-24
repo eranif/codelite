@@ -36,6 +36,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICK
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_THEME_CHANGED, clCommandEvent);
+// The terminal settings were changed (and saved) by the user. Call TerminalSettings::Load() to get the new values.
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_SETTINGS_CHANGED, clCommandEvent);
 
 /**
  * @brief A panel that holds one terminal control.
@@ -64,7 +66,7 @@ public:
 private:
     friend class clBuiltinTerminalPane;
     /// Set the terminal control (which must be a child of this panel). Can be called once.
-    void SetCtrl(wxTerminalViewCtrl* ctrl);
+    void SetCtrl(wxTerminalViewCtrl* ctrl, bool showProgressBar);
 
     wxTerminalViewCtrl* m_terminal{nullptr};
 };

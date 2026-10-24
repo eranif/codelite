@@ -161,6 +161,7 @@ wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_THEME_CHANGED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_SETTINGS_CHANGED, clCommandEvent);
 
 TerminalHost::TerminalHost(wxWindow* parent)
     : wxPanel(parent, wxID_ANY)
@@ -187,7 +188,7 @@ void TerminalHost::SetFocus()
     }
 }
 
-void TerminalHost::SetCtrl(wxTerminalViewCtrl* ctrl)
+void TerminalHost::SetCtrl(wxTerminalViewCtrl* ctrl, bool showProgressBar)
 {
     CHECK_PTR_RET(ctrl);
     wxASSERT_MSG(m_terminal == nullptr, "TerminalHost::SetCtrl() was called twice");
@@ -195,7 +196,7 @@ void TerminalHost::SetCtrl(wxTerminalViewCtrl* ctrl)
     m_terminal = ctrl;
     // The progress bar is added to the sizer of the parent of the terminal (it is skipped if the parent has no sizer or
     // is a book control). It must be shown before the terminal is added to the sizer, so the bar is above the terminal.
-    m_terminal->ShowProgressBar(true);
+    m_terminal->ShowProgressBar(showProgressBar);
     GetSizer()->Add(m_terminal, wxSizerFlags(1).Expand());
     Layout();
 }
@@ -360,7 +361,7 @@ TerminalHost* clBuiltinTerminalPane::DoCreateTerminal(wxWindow* parent,
     TerminalHost* host = new TerminalHost(parent);
 
     wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(host, shellCommand, env, workingDirectory);
-    host->SetCtrl(ctrl);
+    host->SetCtrl(ctrl, m_terminalSettings.m_showProgressBar);
 
     // Call this after we initialize our terminal, so it will pick the actual terminal size.
     ctrl->CallAfter(&wxTerminalViewCtrl::EnsureStarted);
@@ -1046,8 +1047,13 @@ void clBuiltinTerminalPane::ApplySettings()
         if (terminal) {
             terminal->GetCtrl()->EnableSafeDrawing(!m_terminalSettings.m_optimizedDrawings);
             terminal->GetCtrl()->SetBufferSize(m_terminalSettings.m_scrollBackLines);
+            terminal->GetCtrl()->ShowProgressBar(m_terminalSettings.m_showProgressBar);
         }
     }
+
+    // Terminals outside of this pane (the agents, for example) update themselves
+    clCommandEvent settingsChangedEvent{wxEVT_BUILTIN_TERMINAL_SETTINGS_CHANGED};
+    EventNotifier::Get()->AddPendingEvent(settingsChangedEvent);
 }
 
 void clBuiltinTerminalPane::UpdateTabArt()
@@ -1063,7 +1069,11 @@ void clBuiltinTerminalPane::UpdateTabArt()
     art->SetNormalFont(font);
     art->SetSelectedFont(font);
     m_book->SetArtProvider(art);
+    // Measure the tab bar again and lay out the tabs with the new art
+    m_book->SetTabCtrlHeight(-1);
+    m_book->Layout();
     m_book->Refresh();
+    m_book->Update();
 }
 
 void clBuiltinTerminalPane::ApplyThemeChanges()

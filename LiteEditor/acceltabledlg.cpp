@@ -245,7 +245,8 @@ AccelItemData* AccelTableDlg::DoGetItemData(const wxDataViewItem& item)
 
 wxDataViewItem AccelTableDlg::FindAccel(const MenuItemData& mid)
 {
-    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    size_t itemCount = m_dvListCtrl->GetItemCount();
+    for (size_t i = 0; i < itemCount; ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         if (!item.IsOk()) {
             continue;

@@ -454,10 +454,22 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab, bool* isModified)
         }
     }
 
-    FileExtManager::FileType ft = FileExtManager::GetType(title, FileExtManager::TypeText);
-    auto image = clGetManager()->GetStdIcons()->GetBitmapForFile(title, false);
-    if (!image.IsOk()) {
-        image = clGetManager()->GetStdIcons()->GetBitmapForFile("file.txt", false);
+    // Same as NotebookNavigationDlg: a tab that is not a file (e.g. the diff view) shows its own bitmap. For a file,
+    // try to match one by file name. If no match is found, fall back to the "placeholder" icon.
+    wxBitmap image = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
+    const wxString fullname = tab.filename.GetFullName();
+    wxBitmap tab_bitmap;
+    if (!tab.isFile && tab.window != nullptr) {
+        auto* book = clGetManager()->GetMainNotebook();
+        const int index = book != nullptr ? book->GetPageIndex(tab.window) : wxNOT_FOUND;
+        if (index != wxNOT_FOUND) {
+            tab_bitmap = book->GetPageBitmap(index);
+        }
+    }
+    if (tab_bitmap.IsOk()) {
+        image = tab_bitmap;
+    } else if (!fullname.empty() && FileExtManager::GetType(fullname) != FileExtManager::TypeOther) {
+        image = clGetManager()->GetStdIcons()->GetBitmapForFile(fullname, false);
     }
     if (editor && editor->GetModify()) {
         *isModified = true;

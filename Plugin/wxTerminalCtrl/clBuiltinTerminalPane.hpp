@@ -213,6 +213,8 @@ protected:
     void OnTOMLFilesLoaded(const std::vector<std::pair<std::string, std::string>>& files);
     void OnChoiceTheme(wxCommandEvent& event);
     void ApplyThemeChanges();
+    /// Give the notebook a tab art painted with the colours of the active terminal theme
+    void UpdateTabArt();
     void ApplySettings();
     void UpdateFont();
     void OnSettings(wxCommandEvent& event);

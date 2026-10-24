@@ -2,6 +2,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "CompilerLocator/CompilerLocatorMSVC.h"
+#include "GlyphTabArt.h"
 #include "Platform/Platform.hpp"
 #include "bitmap_loader.h"
 #include "clAuiFlatTabArt.hpp"
@@ -223,12 +224,7 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     // Load settings
     m_terminalSettings = TerminalSettings::Load();
 
-    wxFont font = clTabRenderer::GetTabFont(false);
-    auto art = new clAuiFlatTabArt();
-    art->SetMeasuringFont(font);
-    art->SetNormalFont(font);
-    art->SetSelectedFont(font);
-    m_book->SetArtProvider(art);
+    UpdateTabArt();
 
     m_toolbar = new wxAuiToolBar(this);
     GetSizer()->Add(m_toolbar, wxSizerFlags().Expand().Proportion(0));
@@ -1053,6 +1049,22 @@ void clBuiltinTerminalPane::ApplySettings()
     }
 }
 
+void clBuiltinTerminalPane::UpdateTabArt()
+{
+    wxFont font = clTabRenderer::GetTabFont(false);
+#if wxCHECK_VERSION(3, 3, 0)
+    // The tabs are painted with the colours of the active terminal theme
+    auto art = new GlyphTabArt(GetActiveTheme());
+#else
+    auto art = new clAuiFlatTabArt();
+#endif
+    art->SetMeasuringFont(font);
+    art->SetNormalFont(font);
+    art->SetSelectedFont(font);
+    m_book->SetArtProvider(art);
+    m_book->Refresh();
+}
+
 void clBuiltinTerminalPane::ApplyThemeChanges()
 {
     if (!m_activeTheme.has_value()) {
@@ -1067,6 +1079,7 @@ void clBuiltinTerminalPane::ApplyThemeChanges()
             terminal->GetCtrl()->SetTheme(m_activeTheme.value());
         }
     }
+    UpdateTabArt();
 
     // Notify others as well.
     clCommandEvent themeChangedEvent{wxEVT_BUILTIN_TERMINAL_THEME_CHANGED};

@@ -195,8 +195,13 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
 
     // The tab is not the selected one: mark it until the user comes back to the page
     if (m_book->GetCurrentPage() != this && (!m_attentionIcon || !m_attentionIcon->IsShown())) {
-        m_attentionIcon = std::make_unique<TabAttentionIcon>(
-            clGetManager()->GetMainNotebook(), this, clGetManager()->GetStdIcons()->LoadBitmap("hand-waving"));
+        // An orange dot that grows from small to large and starts again: the icon pulses
+        auto* icons = clGetManager()->GetStdIcons();
+        std::vector<wxBitmap> frames;
+        for (int i = 1; i <= 5; ++i) {
+            frames.push_back(icons->LoadBitmap(wxString::Format("attention-pulse-%d", i)));
+        }
+        m_attentionIcon = std::make_unique<TabAttentionIcon>(clGetManager()->GetMainNotebook(), this, frames);
     }
 
     // CodeLite is in the background: the Dock icon bounces on macOS, the taskbar button flashes on Windows.

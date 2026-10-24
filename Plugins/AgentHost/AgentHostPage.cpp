@@ -87,6 +87,7 @@ AgentHostPage::AgentHostPage(wxBookCtrlBase* parent)
     m_auibar->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnToolHasTerminalUI, this, XRCID(kToolReviewBuddy));
     m_auibar->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnToolSelectionUI, this, XRCID(kToolFindInFiles));
     m_auibar->Bind(wxEVT_UPDATE_UI, &AgentHostPage::OnToolSelectionUI, this, XRCID(kToolOpenResource));
+
     EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, &AgentHostPage::OnBitmapsUpdated, this);
     BuildToolbar();
 
@@ -131,6 +132,7 @@ AgentHostPage::~AgentHostPage()
     EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS, &AgentHostPage::OnTerminalProgramStatus, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &AgentHostPage::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_OPEN_RESOURCE_SHOWING, &AgentHostPage::OnOpenResourceShowing, this);
+
     if (auto frame = EventNotifier::Get()->TopFrame()) {
         frame->Unbind(wxEVT_MENU, &AgentHostPage::OnShowTerminal, this, XRCID("show_terminal_pane"));
     }

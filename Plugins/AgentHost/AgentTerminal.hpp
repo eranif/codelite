@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cl_command_event.h"
 #include "ssh_account_info.h"
 
 #include <optional>
@@ -21,8 +22,12 @@ public:
     /// Open a new terminal that runs `shellCommand`, on the host of `sshAccount` if there is one.
     /// `GetTerminal()` returns nullptr if the terminal could not be opened.
     AgentTerminal(wxWindow* parent, const std::optional<SSHAccountInfo>& sshAccount, const wxString& shellCommand);
+    ~AgentTerminal() override;
+
     wxTerminalViewCtrl* GetTerminal() const;
 
 private:
+    void OnTerminalThemeChanged(clCommandEvent& event);
+
     TerminalHost* m_terminal{nullptr};
 };

@@ -159,6 +159,7 @@ wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_BUILTIN_TERMINAL_THEME_CHANGED, clCommandEvent);
 
 TerminalHost::TerminalHost(wxWindow* parent)
     : wxPanel(parent, wxID_ANY)
@@ -1066,6 +1067,10 @@ void clBuiltinTerminalPane::ApplyThemeChanges()
             terminal->GetCtrl()->SetTheme(m_activeTheme.value());
         }
     }
+
+    // Notify others as well.
+    clCommandEvent themeChangedEvent{wxEVT_BUILTIN_TERMINAL_THEME_CHANGED};
+    EventNotifier::Get()->AddPendingEvent(themeChangedEvent);
 }
 
 void clBuiltinTerminalPane::UpdateFont()
@@ -1153,3 +1158,8 @@ bool clBuiltinTerminalPane::OpenLink(const wxString& linkText)
 }
 
 void clBuiltinTerminalPane::DoOpenLink(const wxString& linkText) { OpenLink(linkText); }
+
+wxTerminalTheme clBuiltinTerminalPane::GetActiveTheme() const
+{
+    return m_activeTheme.value_or(wxTerminalTheme::MakeDarkTheme());
+}

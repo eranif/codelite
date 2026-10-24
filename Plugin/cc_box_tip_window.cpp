@@ -94,7 +94,8 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
                     trimmed.Remove(0, 1);
                 }
             } else {
-                for (const wxString& marker : {"/**", "/*!", "/*", "///", "//!", "//"}) {
+                const std::vector<wxString> markers = {"/**", "/*!", "/*", "///", "//!", "//"};
+                for (const wxString& marker : markers) {
                     if (trimmed.StartsWith(marker)) {
                         trimmed.Remove(0, marker.length());
                         in_block_comment = marker.StartsWith("/*");

@@ -35,6 +35,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TITLE_CHANGED, 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_TEXT_LINK_CLICKED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_BELL, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_PROGRAM_STATUS, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILTIN_TERMINAL_THEME_CHANGED, clCommandEvent);
 
 /**
  * @brief A panel that holds one terminal control.
@@ -159,6 +160,8 @@ public:
      * @return True if the text was handled
      */
     bool OpenLink(const wxString& linkText);
+
+    wxTerminalTheme GetActiveTheme() const;
 
 protected:
     void PromptForNewTerminal();

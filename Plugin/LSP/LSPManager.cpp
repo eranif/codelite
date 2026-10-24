@@ -246,6 +246,10 @@ void Manager::ShowOutlineView(IEditor* editor)
     }
 
     auto cb = [this](std::optional<LSPEvent> event) {
+        if (m_quick_outline_dlg && m_quick_outline_dlg->IsShown()) {
+            // the user requested the outline more than once, and an earlier reply already showed the dialog
+            return;
+        }
         clGetManager()->SetStatusMessage(_("Showing outline view dialog"), 1);
         if (event.has_value()) {
             ShowQuickOutlineDialog(event.value());

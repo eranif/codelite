@@ -832,7 +832,13 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
 
 void LanguageServerProtocol::DocumentSymbols(IEditor& editor, size_t context_flags, LSP::ResponseCallback cb)
 {
-    CHECK_COND_RET(ShouldHandleFile(editor));
+    if (!ShouldHandleFile(editor)) {
+        // Make sure we call the cb if provided.
+        if (cb)
+            cb(std::nullopt);
+        return;
+    }
+
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->DocumentSymbols"})
     const wxString& filename = GetEditorFilePath(editor);
     LSP::MessageWithParams::Ptr_t req =

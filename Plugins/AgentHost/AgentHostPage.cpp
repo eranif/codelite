@@ -419,6 +419,17 @@ std::optional<SystemPromptCli> AgentHostPage::BuildSystemPrompt(const AgentInfo&
     return cli;
 }
 
+void AgentHostPage::SetFocus()
+{
+    // wxPanel::SetFocus() gives the focus to the last focused child, which is not always the terminal. This is called,
+    // for example, when the output pane is hidden and the focus returns to the current page of the main book.
+    if (GetTerminal() != nullptr) {
+        GetTerminal()->SetFocus();
+    } else {
+        AgentHostPageBase::SetFocus();
+    }
+}
+
 void AgentHostPage::OnFocus(wxFocusEvent& event)
 {
     event.Skip();

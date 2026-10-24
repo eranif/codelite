@@ -59,6 +59,9 @@ public:
     wxTerminalViewCtrl* GetTerminal() const;
     void StartAgentHost(const AgentInfo& info);
 
+    /// Pass the focus to the main agent's terminal (if it was created)
+    void SetFocus() override;
+
 protected:
     void OnFocus(wxFocusEvent& event) override;
     void OnBookPageChanged(wxBookCtrlEvent& event);

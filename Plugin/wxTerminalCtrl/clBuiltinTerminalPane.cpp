@@ -717,6 +717,7 @@ const std::vector<std::pair<int, clKeyboardShortcut>>& clBuiltinTerminalPane::Ge
             XRCID("full_screen"),
             XRCID("next_tab"),
             XRCID("prev_tab"),
+            XRCID("new_file"),
             XRCID("find_in_files"),
             XRCID("find_resource"),
             XRCID("find_symbol"),

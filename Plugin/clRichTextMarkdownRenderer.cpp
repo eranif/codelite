@@ -20,11 +20,11 @@ namespace
 // Sizes of the rich text control are in tenths of a millimetre
 constexpr int kBulletIndent = 100;   ///< Each level of a list moves the bullet by this
 constexpr int kBulletSubIndent = 60; ///< The text of an item starts this far after its bullet
-constexpr int kQuoteIndent = 80;
-constexpr int kCodePadding = 8; ///< In pixels
+constexpr int kQuoteIndent = 40;     ///< Each level of a quote moves the text by this (the bar is at the left edge)
+constexpr int kCodePadding = 8;      ///< In pixels
 constexpr int kParagraphSpacing = 40;
 constexpr int kTightSpacing = 5;
-constexpr int kHeadingSpacingBefore = 80;
+constexpr int kHeadingSpacingBefore = 60; ///< The whole gap above a heading
 constexpr int kHeadingSpacingAfter = 30;
 constexpr int kMaxImageWidth = 800; ///< In pixels
 constexpr int kCellPadding = 4;     ///< In pixels
@@ -249,6 +249,9 @@ void clRichTextMarkdownRenderer::ResetState()
     m_codeOwner = nullptr;
     m_lists.clear();
     m_quoteDepth = 0;
+    m_lastQuotePara = nullptr;
+    m_lastQuoteSpacingAfter = 0;
+    m_spacingAfterQuote = 0;
     m_headingLevel = 0;
     m_headingPara = nullptr;
     m_headingText.clear();
@@ -377,6 +380,9 @@ wxRichTextAttr clRichTextMarkdownRenderer::BuildCharAttr() const
         attr.SetTextColour(m_theme.inlineCode);
     } else if (m_headingLevel > 0) {
         attr.SetTextColour(m_theme.heading);
+    } else if (m_quoteDepth > 0) {
+        // The text of a quote is dimmed
+        attr.SetTextColour(m_theme.muted);
     } else {
         attr.SetTextColour(m_theme.text);
     }
@@ -435,16 +441,30 @@ wxRichTextAttr clRichTextMarkdownRenderer::BuildParagraphAttr(bool firstInListIt
     }
 
     if (m_quoteDepth > 0) {
-        // A bar at the left side
+        // A bar at the left side. (The paragraph does not use its padding: the gap between the bar and the text is the
+        // indent of the paragraph)
         auto& left = attr.GetTextBoxAttr().GetBorder().GetLeft();
         left.SetStyle(wxTEXT_BOX_ATTR_BORDER_SOLID);
         left.SetColour(m_theme.quote);
         left.SetWidth(3, wxTEXT_ATTR_UNITS_PIXELS);
-        attr.GetTextBoxAttr().GetPadding().GetLeft().SetValue(8, wxTEXT_ATTR_UNITS_PIXELS);
     }
 
     if (m_headingLevel > 0) {
-        spacing_before = kHeadingSpacingBefore;
+        // The gap above a heading is kHeadingSpacingBefore in all: the spacing after the paragraph above it is part of
+        // it, so it is not added twice. A heading at the start of the document has no gap
+        int above = 0;
+        if (m_container != nullptr && m_container->GetChildCount() > 0) {
+            above = kHeadingSpacingBefore;
+            if (auto* previous =
+                    wxDynamicCast(m_container->GetChild(m_container->GetChildCount() - 1), wxRichTextParagraph)) {
+                above -= previous->GetAttributes().GetParagraphSpacingAfter();
+            }
+            if (m_quoteDepth == 0) {
+                // The spacing of the last paragraph of a quote, see OnLeaveBlock()
+                above -= m_spacingAfterQuote;
+            }
+        }
+        spacing_before = std::max(0, above);
         spacing_after = kHeadingSpacingAfter;
     }
 
@@ -480,9 +500,23 @@ wxRichTextAttr clRichTextMarkdownRenderer::BuildParagraphAttr(bool firstInListIt
 wxRichTextParagraph* clRichTextMarkdownRenderer::AddParagraph(wxRichTextAttr& attr)
 {
     wxCHECK_MSG(m_container != nullptr, nullptr, "No container");
+    if (m_quoteDepth == 0 && m_spacingAfterQuote > 0) {
+        // The spacing that the last paragraph of the quote gave up, see OnLeaveBlock()
+        attr.SetParagraphSpacingBefore(attr.GetParagraphSpacingBefore() + m_spacingAfterQuote);
+        m_spacingAfterQuote = 0;
+    }
     m_container->AddParagraph(wxEmptyString, &attr);
     const size_t count = m_container->GetChildCount();
-    return count == 0 ? nullptr : wxDynamicCast(m_container->GetChild(count - 1), wxRichTextParagraph);
+    auto* para = count == 0 ? nullptr : wxDynamicCast(m_container->GetChild(count - 1), wxRichTextParagraph);
+    if (para != nullptr) {
+        // wxRichTextParagraphLayoutBox::AddParagraph() clears the box attributes (borders, ...) of the new paragraph
+        para->GetAttributes().GetTextBoxAttr() = attr.GetTextBoxAttr();
+        if (m_quoteDepth > 0) {
+            m_lastQuotePara = para;
+            m_lastQuoteSpacingAfter = attr.GetParagraphSpacingAfter();
+        }
+    }
+    return para;
 }
 
 wxRichTextParagraph* clRichTextMarkdownRenderer::EnsureParagraph()
@@ -799,6 +833,13 @@ void clRichTextMarkdownRenderer::OnLeaveBlock(Block block, const BlockInfo& info
     switch (block) {
     case Block::Quote:
         m_quoteDepth = std::max(0, m_quoteDepth - 1);
+        if (m_quoteDepth == 0 && m_lastQuotePara != nullptr) {
+            // The bar is drawn along the whole paragraph, with its spacing. Do not let it go below the last line of the
+            // quote: the next paragraph gets the spacing
+            m_lastQuotePara->GetAttributes().SetParagraphSpacingAfter(0);
+            m_spacingAfterQuote = m_lastQuoteSpacingAfter;
+            m_lastQuotePara = nullptr;
+        }
         break;
     case Block::UnorderedList:
     case Block::OrderedList:
@@ -966,7 +1007,8 @@ void clRichTextMarkdownRenderer::OnText(TextType type, const wxString& text)
         AppendText(wxString(wxRichTextLineBreakChar), BuildCharAttr());
         break;
     case TextType::SoftBreak:
-        AppendText(" ", BuildCharAttr());
+        // In a quote, the lines are kept as they are written (a quote is usually a few separate lines, like a comment)
+        AppendText(m_quoteDepth > 0 ? wxString(wxRichTextLineBreakChar) : wxString(" "), BuildCharAttr());
         break;
     case TextType::Code:
     case TextType::LatexMath:

@@ -188,6 +188,10 @@ private:
     // The state of the parser
     std::vector<ListState> m_lists;
     int m_quoteDepth = 0;
+    /// The last paragraph of the quote that is written. Its spacing after is moved to the paragraph after the quote
+    wxRichTextParagraph* m_lastQuotePara = nullptr;
+    int m_lastQuoteSpacingAfter = 0;
+    int m_spacingAfterQuote = 0; ///< Added to the spacing before the next paragraph that is not in a quote
     unsigned m_headingLevel = 0;
     bool m_inCodeBlock = false;
     bool m_inHtmlBlock = false;

@@ -2,7 +2,6 @@ High:
 -----
 
 - Use Submodule for md4c instead of CMakeFectchContent.
-- clRichTextMarkdownRenderer: redner blockquote.
 - Replace the "Find References" view with `wxDataViewTreeCtl` with custom renderer.
 - Implement all function: change to use the native `wxDataViewListCtrl`
 - Remove the TabGroups from CodeLite.

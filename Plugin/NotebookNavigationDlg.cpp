@@ -201,7 +201,8 @@ void NotebookNavigationDlg::SelectNext()
     wxDataViewItem item = m_dvListCtrl->GetSelection();
     if (item.IsOk()) {
         int row = m_dvListCtrl->ItemToRow(item);
-        if (row < (int)(m_dvListCtrl->GetItemCount() - 1)) {
+        int itemCount = m_dvListCtrl->GetItemCount();
+        if (row < (itemCount - 1)) {
             ++row;
             item = m_dvListCtrl->RowToItem(row);
             m_dvListCtrl->Select(item);

@@ -23,6 +23,57 @@ WXCRAFTER_BUILD_DIR=${ROOT_DIR}/${WXCRAFTER_BUILD_DIR_NAME}
 
 . ${ROOT_DIR}/scripts/functions.rc
 
+# Terminal integration. Everything is sent to stderr, and only when it is a terminal.
+case "${OS_NAME}" in
+*MINGW*) PLATFORM=Windows ;;
+Darwin) PLATFORM=macOS ;;
+*) PLATFORM="${OS_NAME}" ;;
+esac
+
+# OSC 9;4 progress bar: 3 = indeterminate (pulsing), 0 = remove
+function progress_bar() {
+  [ -t 2 ] || return 0
+  printf '\033]9;4;%s;\a' "$1" >&2
+}
+
+# OSC 7501 program status: working, done, error or clear
+function program_status() {
+  [ -t 2 ] || return 0
+  printf '\033]7501;state=%s\a' "$1" >&2
+}
+
+# OSC 0 terminal title. An empty title resets it.
+function set_title() {
+  [ -t 2 ] || return 0
+  if [ -n "$1" ]; then
+    printf '\033]0;%s %s...\a' "$1" "${PLATFORM}" >&2
+  else
+    printf '\033]0;\a' >&2
+  fi
+}
+
+function on_exit() {
+  local rc=$?
+  trap - EXIT
+  progress_bar 0
+  if [ ${rc} -eq 0 ]; then
+    program_status done
+  else
+    program_status error
+  fi
+  program_status clear
+  set_title ""
+  exit ${rc}
+}
+
+trap on_exit EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+progress_bar 3
+program_status working
+set_title "Building CodeLite"
+
 INFO "Building CodeLite"
 
 function check_cmake_modified() {
@@ -146,6 +197,7 @@ function build_wx_widgets_MSW() {
   fi
 
   INFO "Building wxWidgets"
+  set_title "Building wxWidgets"
   INFO "Checking out wxWidgets version: ${wx_version}"
   mkdir -p ${BUILD_DIR}
   cd $_
@@ -201,6 +253,7 @@ function build_wx_widgets_Linux() {
   fi
 
   INFO "Building wxWidgets"
+  set_title "Building wxWidgets"
   INFO "Checking out wxWidgets version: ${wx_version}"
   rm -fr ${BUILD_DIR}/wxWidgets
   mkdir -p ${BUILD_DIR}
@@ -231,6 +284,7 @@ function build_wx_widgets_macOS() {
   fi
 
   INFO "Building wxWidgets"
+  set_title "Building wxWidgets"
   INFO "Checking out wxWidgets version: ${WX_VERSION}"
   rm -fr ${BUILD_DIR}/wxWidgets
   mkdir -p ${BUILD_DIR}
@@ -254,6 +308,7 @@ function build_wx_widgets_macOS() {
 
 function build_CodeLite_Linux() {
   INFO "Building CodeLite"
+  set_title "Building CodeLite"
   local wx_install_dir=${BUILD_DIR}/wxWidgets-install
   local wx_config=${wx_install_dir}/bin/wx-config
   if [ ! -x "${wx_config}" ]; then
@@ -311,6 +366,7 @@ function build_CodeLite_Linux() {
 
 function build_CodeLite_macOS() {
   INFO "Building CodeLite"
+  set_title "Building CodeLite"
   local wx_install_dir=${BUILD_DIR}/wxWidgets-install
   local wx_config=${wx_install_dir}/bin/wx-config
   if [ ! -x "${wx_config}" ]; then
@@ -358,6 +414,7 @@ function build_CodeLite_macOS() {
 
 function build_CodeLite_MSW() {
   INFO "Building CodeLite"
+  set_title "Building CodeLite"
   local CodeLite_build_dir=${ROOT_DIR}/${BUILD_DIR_NAME}
   mkdir -p ${CodeLite_build_dir}
   cd ${CodeLite_build_dir}
@@ -394,6 +451,7 @@ function build_CodeLite_MSW() {
 
 function build_wxCrafter_MSW() {
   INFO "Building wxCrafter"
+  set_title "Building wxCrafter"
 
   # wxCrafter must be built against the exact same wxWidgets build used for CodeLite,
   # so make sure it exists first (this reuses ${BUILD_DIR}/wxWidgets-install; it does
@@ -516,6 +574,7 @@ function package() {
     ${ROOT_DIR}/scripts/weekly/macos-sign-app.sh --notarize --password $CODELITE_PASSWORD codelite.app
   elif [[ "${OS_NAME}" == "Linux" ]]; then
     INFO "Creating Linux package"
+  set_title "Packaging CodeLite"
     cd ${BUILD_DIR}
     make -j$(nproc) package
   fi

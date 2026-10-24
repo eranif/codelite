@@ -46,7 +46,7 @@ function program_status() {
 function set_title() {
   [ -t 2 ] || return 0
   if [ -n "$1" ]; then
-    printf '\033]0;%s %s...\a' "$1" "${PLATFORM}" >&2
+    printf '\033]0;%s (%s)\a' "$1" "${PLATFORM}" >&2
   else
     printf '\033]0;\a' >&2
   fi

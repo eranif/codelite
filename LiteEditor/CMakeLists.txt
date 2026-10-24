@@ -496,17 +496,7 @@ if(NOT APPLE)
             DESTINATION ${CL_INSTALL_BIN}
             PERMISSIONS ${EXE_PERM})
         # Create application launcher, copy application icon to standard location
-        # With the OpenGL terminal, GTK overlay scroll bars hide the scroll bar of the GL view, so start CodeLite with
-        # classic scroll bars
-        set(CL_DESKTOP_FILE ${CL_SRC_ROOT}/Runtime/codelite.desktop)
-        if(USE_OPENGL)
-            file(READ ${CL_DESKTOP_FILE} CL_DESKTOP_CONTENT)
-            string(REPLACE "Exec=codelite %f" "Exec=env GTK_OVERLAY_SCROLLING=0 codelite %f" CL_DESKTOP_CONTENT
-                           "${CL_DESKTOP_CONTENT}")
-            set(CL_DESKTOP_FILE ${CMAKE_CURRENT_BINARY_DIR}/codelite.desktop)
-            file(WRITE ${CL_DESKTOP_FILE} "${CL_DESKTOP_CONTENT}")
-        endif()
-        install(FILES ${CL_DESKTOP_FILE} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
+        install(FILES ${CL_SRC_ROOT}/Runtime/codelite.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite-url-handler.desktop
                 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
         # Install icons

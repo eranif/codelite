@@ -88,6 +88,11 @@ private: // Methods
     void AdjustPathForMSYSIfNeeded();
     void PrintUsage(const wxCmdLineParser& parser);
 
+public:
+#if defined(__WXGTK__)
+    bool Initialize(int& argc, wxChar** argv) override;
+#endif
+
 protected:
     bool OnInit() override;
     int OnExit() override;

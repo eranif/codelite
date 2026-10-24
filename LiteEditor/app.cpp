@@ -72,6 +72,7 @@
 #include <wx/sysopt.h>
 #include <wx/tooltip.h>
 #include <wx/txtstrm.h>
+#include <wx/utils.h>
 #include <wx/wfstream.h>
 
 // #define __PERFORMANCE
@@ -465,6 +466,34 @@ void LoadBundledFonts()
 #endif // wxUSE_PRIVATE_FONTS
 }
 } // namespace
+
+#if defined(__WXGTK__)
+#if defined(USE_OPENGL) && USE_OPENGL
+// From <gdk/gdk.h>. The GTK headers are not on our include path, and this function is in libgdk, which we link anyway.
+extern "C" void gdk_set_allowed_backends(const char* backends);
+#endif
+
+bool CodeLiteApp::Initialize(int& argc, wxChar** argv)
+{
+#if defined(USE_OPENGL) && USE_OPENGL
+    // With the OpenGL terminal, use X11 (XWayland on a Wayland desktop) and not Wayland. On Wayland, wxWidgets draws a
+    // wxGLCanvas in its own subsurface: it is destroyed and made again each time the canvas is hidden and shown, which
+    // flickers when the user switches the tab, and the subsurface follows a resize of the window late. X11 has neither
+    // problem. Wayland is still the fallback when there is no X server. GDK_BACKEND wins when it is set.
+    // This must run before GTK starts, which is in wxApp::Initialize().
+    if (!wxGetEnv("GDK_BACKEND", nullptr)) {
+        gdk_set_allowed_backends("x11,wayland");
+        // On X11 the window manager draws the title bar, and mutter makes it light or dark from the system setting, not
+        // from the application. Let GTK draw the title bar (client side decorations, as on Wayland), so it follows the
+        // GTK theme and the appearance of the application.
+        if (!wxGetEnv("GTK_CSD", nullptr)) {
+            wxSetEnv("GTK_CSD", "1");
+        }
+    }
+#endif
+    return wxApp::Initialize(argc, argv);
+}
+#endif // __WXGTK__
 
 bool CodeLiteApp::OnInit()
 {

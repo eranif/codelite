@@ -152,7 +152,8 @@ void MarkdownEditor::SetMode(Mode mode)
 
 void MarkdownEditor::FocusContent()
 {
-    if (m_mode == Mode::View) {
+    // Follow the page that is shown, not the mode: SetFocus() can be called while the book is changing its page
+    if (m_book->GetCurrentPage() == m_view) {
         m_text->SetFocus();
     } else {
         m_editor->SetFocus();

@@ -86,6 +86,17 @@ clMarkdownTextCtrl::clMarkdownTextCtrl(
         event.Skip();
         SetHoveredUrl(wxEmptyString);
     });
+
+    // The control lays out its content when it is painted. If the content was replaced while the control was hidden
+    // (Render() of a page that is not shown), the layout is stale, and the control puts the caret in a wrong place when
+    // it gets the focus. Update the layout first (it does nothing when the layout is up to date). This handler runs
+    // before the one of the control, which positions the caret
+    Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& event) {
+        event.Skip();
+        if (!IsFrozen()) {
+            LayoutContent();
+        }
+    });
 }
 
 bool clMarkdownTextCtrl::ProcessMouseMovement(wxRichTextParagraphLayoutBox* container,

@@ -304,10 +304,26 @@ void OpenWindowsPanel::OnTabSelected(wxDataViewEvent& event)
     if (data->IsFile()) {
         m_mgr->OpenFile(data->tab.filename.GetFullPath(), wxEmptyString, wxNOT_FOUND, OF_None);
     } else {
-        wxWindow* page = m_mgr->FindPage(data->tab.text);
-        if (page) {
-            m_mgr->SelectPage(page);
+        // Prefer the window: the text is a snapshot of the tab label, which can change (an agent changes its title)
+        // and may not be unique
+        auto* book = clGetManager()->GetMainNotebook();
+        wxWindow* page = data->tab.window;
+        if (page == nullptr || book->FindPage(page) == wxNOT_FOUND) {
+            page = m_mgr->FindPage(data->tab.text);
         }
+        if (page == nullptr) {
+            return;
+        }
+
+        // This selects the page (and the matching row in the list)
+        m_mgr->SelectPage(page);
+        // The list takes the focus back once the click is handled: give it to the page when we are done
+        CallAfter([page]() {
+            // The page may be gone by now
+            if (clGetManager()->GetMainNotebook()->FindPage(page) != wxNOT_FOUND) {
+                page->SetFocus();
+            }
+        });
     }
 }
 

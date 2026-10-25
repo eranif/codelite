@@ -195,6 +195,22 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
         EventNotifier::Get()->AddPendingEvent(modifiedEvent);
     }
 
+    // A spinner on the tab while the agent works, also when the tab is selected. Any other state removes it, which
+    // restores the icon of the tab. It only shows the state, so it does not depend on the notification settings.
+    if (state == wxTerminalProgramState::Working) {
+        // An icon that asks for the user is out of date now
+        m_attentionIcon.reset();
+        auto* icons = clGetManager()->GetStdIcons();
+        std::vector<wxBitmap> frames;
+        for (int i = 0; i < 8; ++i) {
+            frames.push_back(icons->LoadBitmap(wxString::Format("agent-spinner-%d", i)));
+        }
+        m_workingIcon =
+            std::make_unique<TabAttentionIcon>(clGetManager()->GetMainNotebook(), this, frames, false);
+    } else {
+        m_workingIcon.reset();
+    }
+
     // During a review the main agent stops on purpose, to hand the control to the reviewer: do not bother the user.
     if (m_review) {
         return;

@@ -141,6 +141,8 @@ private:
     std::unique_ptr<ReviewBuddy> m_review;
     // The icon on our tab while the agent waits for the user. Removed when the page gets the focus.
     std::unique_ptr<TabAttentionIcon> m_attentionIcon;
+    // The spinner on our tab while the agent works. It stays when the page gets the focus.
+    std::unique_ptr<TabAttentionIcon> m_workingIcon;
     // True while a toolbar button runs a main frame command: the toolbar click does not need the terminal to have the
     // focus, so the dialog is filled from the terminal that has a selection
     bool m_fillFromSelection{false};

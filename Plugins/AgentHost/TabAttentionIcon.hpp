@@ -10,7 +10,7 @@
 /// Puts an icon on the tab of `page` to tell the user that the page needs them. The icon can be animated: it is made
 /// of frames that are shown one after the other.
 /// The icon is removed, and the icon that was on the tab before is restored, when a window inside the page gets the
-/// keyboard focus, or when this object is destroyed.
+/// keyboard focus (unless `dismissOnFocus` is false), or when this object is destroyed.
 class TabAttentionIcon : public wxEvtHandler
 {
 public:
@@ -19,7 +19,12 @@ public:
 
     /// @param frames The bitmaps to show, in order. They are shown in a loop. With one bitmap there is no animation.
     ///               Nothing is shown if the list has no valid bitmap.
-    TabAttentionIcon(MainNotebook* book, wxWindow* page, const std::vector<wxBitmap>& frames);
+    /// @param dismissOnFocus Remove the icon when the page gets the focus. Use false for an icon that shows a state
+    ///                       (a spinner) and not a request to the user.
+    TabAttentionIcon(MainNotebook* book,
+                     wxWindow* page,
+                     const std::vector<wxBitmap>& frames,
+                     bool dismissOnFocus = true);
     ~TabAttentionIcon() override;
 
     /// Is the icon on the tab?
@@ -41,4 +46,5 @@ private:
     wxTimer m_timer;
     wxBitmap m_saved;
     bool m_shown{false};
+    bool m_dismissOnFocus{true};
 };

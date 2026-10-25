@@ -1,9 +1,13 @@
 #include "TabAttentionIcon.hpp"
 
-TabAttentionIcon::TabAttentionIcon(MainNotebook* book, wxWindow* page, const std::vector<wxBitmap>& frames)
+TabAttentionIcon::TabAttentionIcon(MainNotebook* book,
+                                   wxWindow* page,
+                                   const std::vector<wxBitmap>& frames,
+                                   bool dismissOnFocus)
     : m_book(book)
     , m_page(page)
     , m_timer(this)
+    , m_dismissOnFocus(dismissOnFocus)
 {
     for (const wxBitmap& frame : frames) {
         if (frame.IsOk()) {
@@ -23,7 +27,9 @@ TabAttentionIcon::TabAttentionIcon(MainNotebook* book, wxWindow* page, const std
     ShowFrame(0);
 
     // The focus event of a child window travels up to its parents
-    m_page->Bind(wxEVT_CHILD_FOCUS, &TabAttentionIcon::OnChildFocus, this);
+    if (m_dismissOnFocus) {
+        m_page->Bind(wxEVT_CHILD_FOCUS, &TabAttentionIcon::OnChildFocus, this);
+    }
 
     if (m_frames.size() > 1) {
         Bind(wxEVT_TIMER, &TabAttentionIcon::OnTimer, this, m_timer.GetId());
@@ -40,7 +46,9 @@ void TabAttentionIcon::Dismiss()
     }
     m_shown = false;
     m_timer.Stop();
-    m_page->Unbind(wxEVT_CHILD_FOCUS, &TabAttentionIcon::OnChildFocus, this);
+    if (m_dismissOnFocus) {
+        m_page->Unbind(wxEVT_CHILD_FOCUS, &TabAttentionIcon::OnChildFocus, this);
+    }
 
     // The page may be gone from the book already (the tab was closed)
     const int where = m_book->FindPage(m_page);

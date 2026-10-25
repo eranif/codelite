@@ -11,8 +11,10 @@
 #include "aui/clAuiToolBarArt.h"
 #include "aui/cl_aui_tool_stickness.h"
 #include "bitmap_loader.h"
+#include "clFileSystemEvent.h"
 #include "clStrings.h"
 #include "cl_config.h"
+#include "codelite_events.h"
 #include "environmentconfig.h"
 #include "globals.h"
 #include "open_resource_dialog.h"
@@ -181,9 +183,20 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
     const auto state = static_cast<wxTerminalProgramState>(event.GetInt());
     const auto previous = std::exchange(m_lastAgentState, state);
 
-    // During a review the main agent stops on purpose, to hand the control to the reviewer: do not bother the user.
     // Only a change is reported (a working agent reports its progress again and again).
-    if (m_review || state == previous) {
+    if (state == previous) {
+        return;
+    }
+
+    // The agent is done and may have changed files: let the others (the git view, for example) refresh.
+    // This does not depend on the notification settings.
+    if (state == wxTerminalProgramState::Done) {
+        clFileSystemEvent modifiedEvent{wxEVT_FILE_MODIFIED_EXTERNALLY};
+        EventNotifier::Get()->AddPendingEvent(modifiedEvent);
+    }
+
+    // During a review the main agent stops on purpose, to hand the control to the reviewer: do not bother the user.
+    if (m_review) {
         return;
     }
 
@@ -206,7 +219,9 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
         // Replacing the icon first restores the original tab icon
         m_attentionIcon.reset();
         m_attentionIcon = std::make_unique<TabAttentionIcon>(
-            clGetManager()->GetMainNotebook(), this, std::vector<wxBitmap>{clGetManager()->GetStdIcons()->LoadBitmap(iconName)});
+            clGetManager()->GetMainNotebook(),
+            this,
+            std::vector<wxBitmap>{clGetManager()->GetStdIcons()->LoadBitmap(iconName)});
     }
 
     // The agent is waiting for the user and CodeLite is in the background: the Dock icon bounces on macOS, the

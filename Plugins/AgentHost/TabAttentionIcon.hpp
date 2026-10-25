@@ -7,8 +7,8 @@
 #include <wx/event.h>
 #include <wx/timer.h>
 
-/// Puts an animated icon on the tab of `page` to tell the user that the page needs them. The icon is made of frames
-/// that are shown one after the other (for example a dot that grows, so it pulses).
+/// Puts an icon on the tab of `page` to tell the user that the page needs them. The icon can be animated: it is made
+/// of frames that are shown one after the other.
 /// The icon is removed, and the icon that was on the tab before is restored, when a window inside the page gets the
 /// keyboard focus, or when this object is destroyed.
 class TabAttentionIcon : public wxEvtHandler

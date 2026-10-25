@@ -198,19 +198,20 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
         return;
     }
 
-    // The tab is not the selected one: mark it until the user comes back to the page
-    if (m_book->GetCurrentPage() != this && (!m_attentionIcon || !m_attentionIcon->IsShown())) {
-        // An orange dot that grows from small to large and starts again: the icon pulses
-        auto* icons = clGetManager()->GetStdIcons();
-        std::vector<wxBitmap> frames;
-        for (int i = 1; i <= 5; ++i) {
-            frames.push_back(icons->LoadBitmap(wxString::Format("attention-pulse-%d", i)));
-        }
-        m_attentionIcon = std::make_unique<TabAttentionIcon>(clGetManager()->GetMainNotebook(), this, frames);
+    // The tab is not the selected one: mark it until the user comes back to the page.
+    // A waving hand: the agent is waiting for the user. A checkmark: the agent is done. (No icon for an error.)
+    if (m_book->GetCurrentPage() != this && state != wxTerminalProgramState::Error) {
+        const char* iconName =
+            state == wxTerminalProgramState::Blocked ? "agent-attention-blocked" : "agent-attention-done";
+        // Replacing the icon first restores the original tab icon
+        m_attentionIcon.reset();
+        m_attentionIcon = std::make_unique<TabAttentionIcon>(
+            clGetManager()->GetMainNotebook(), this, std::vector<wxBitmap>{clGetManager()->GetStdIcons()->LoadBitmap(iconName)});
     }
 
-    // CodeLite is in the background: the Dock icon bounces on macOS, the taskbar button flashes on Windows.
-    if (!wxTheApp->IsActive()) {
+    // The agent is waiting for the user and CodeLite is in the background: the Dock icon bounces on macOS, the
+    // taskbar button flashes on Windows. A finished task can wait.
+    if (state == wxTerminalProgramState::Blocked && !wxTheApp->IsActive()) {
         if (auto* frame = dynamic_cast<wxTopLevelWindow*>(wxTheApp->GetTopWindow())) {
             frame->RequestUserAttention(wxUSER_ATTENTION_INFO);
         }

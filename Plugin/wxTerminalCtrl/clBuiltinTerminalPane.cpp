@@ -1034,9 +1034,14 @@ void clBuiltinTerminalPane::OnSettings(wxCommandEvent& event)
 {
     auto shells = GetTerminalsOptions();
     TerminalSettingsDlg dlg{EventNotifier::Get()->TopFrame(), shells};
+    // Preview the outline colour while the dialog is open
+    dlg.SetOutlineColourPreview([this](const wxString& colour) { UpdateTabArt(colour); });
     if (dlg.ShowModal() == wxID_OK) {
         m_terminalSettings = dlg.GetSettings();
         ApplySettings();
+    } else {
+        // Cancelled: undo the preview
+        UpdateTabArt();
     }
 }
 
@@ -1050,18 +1055,23 @@ void clBuiltinTerminalPane::ApplySettings()
             terminal->GetCtrl()->ShowProgressBar(m_terminalSettings.m_showProgressBar);
         }
     }
+    UpdateTabArt();
 
     // Terminals outside of this pane (the agents, for example) update themselves
     clCommandEvent settingsChangedEvent{wxEVT_BUILTIN_TERMINAL_SETTINGS_CHANGED};
     EventNotifier::Get()->AddPendingEvent(settingsChangedEvent);
 }
 
-void clBuiltinTerminalPane::UpdateTabArt()
+void clBuiltinTerminalPane::UpdateTabArt() { UpdateTabArt(m_terminalSettings.m_tabOutlineColour); }
+
+void clBuiltinTerminalPane::UpdateTabArt(const wxString& outlineColour)
 {
     wxFont font = clTabRenderer::GetTabFont(false);
 #if wxCHECK_VERSION(3, 3, 0)
     // The tabs are painted with the colours of the active terminal theme
-    auto art = new GlyphTabArt(GetActiveTheme());
+    const auto theme = GetActiveTheme();
+    auto art = new GlyphTabArt(theme);
+    art->SetOutlineColour(GetTabOutlineColourOf(theme, outlineColour));
 #else
     auto art = new clAuiFlatTabArt();
 #endif

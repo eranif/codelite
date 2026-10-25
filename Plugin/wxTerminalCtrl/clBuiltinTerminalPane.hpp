@@ -217,6 +217,8 @@ protected:
     void ApplyThemeChanges();
     /// Give the notebook a tab art painted with the colours of the active terminal theme
     void UpdateTabArt();
+    /// Same as above, with the outline colour key of the current tab (see TerminalSettings::m_tabOutlineColour)
+    void UpdateTabArt(const wxString& outlineColour);
     void ApplySettings();
     void UpdateFont();
     void OnSettings(wxCommandEvent& event);

@@ -31,8 +31,8 @@
 #include "clSystemSettings.h"
 #include "cl_editor.h"
 #include "codelite_events.h"
-#include "drawingutils.h"
 #include "ctags_manager.h"
+#include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -87,6 +87,7 @@ struct FindUsageItemData : public wxClientData {
     size_t highlightLength = 0;
     bool loaded = false; // a file: the lines of its matches are loaded
 };
+} // namespace
 
 /// The tree store, but the value of an item is its FindUsageItemData (drawn by FindUsageRenderer)
 class FindUsageStore : public wxDataViewTreeStore
@@ -105,10 +106,11 @@ public:
     }
 };
 
+namespace
+{
 /// Replace the tabs of `line` with spaces. The range [`start`, `start` + `length`) of `line` is moved to the same
 /// characters of the result: [`highlightStart`, `highlightStart` + `highlightLength`)
-wxString PrepareLine(
-    const wxString& line, size_t start, size_t length, size_t& highlightStart, size_t& highlightLength)
+wxString PrepareLine(const wxString& line, size_t start, size_t length, size_t& highlightStart, size_t& highlightLength)
 {
     const size_t end = start + length;
     size_t newStart = wxString::npos;
@@ -192,16 +194,30 @@ public:
             return false;
         }
 
-        // The colours of the text do not change on a selected row, so the row is marked with a soft dotted rectangle.
-        // It covers the entire line: from the left edge of the view (the cell starts after the indentation of the
-        // tree) to its right edge
+        // The colours of the text do not change on a selected row, so the row is marked with a soft dotted rectangle
         if ((state & wxDATAVIEW_CELL_SELECTED) != 0) {
-            const int viewWidth = GetView() != nullptr ? GetView()->GetClientSize().x : 0;
-            wxRect outline(0, rect.y, std::max(viewWidth, rect.GetRight() + 1), rect.height);
+            wxRect outline = rect; // around the text, in case we cannot find the row
+#ifdef wxHAS_GENERIC_DATAVIEWCTRL
+            // The control clips the cell (the row without the indentation and the expander), and gives us the box of
+            // the text, not of the row. The clipping box has the height of the row: remove the clipping for a moment,
+            // to draw around the entire line, from the left edge of the view to its right edge
+            wxRect clip;
+            const bool hasClip = dc->GetClippingBox(clip) && !clip.IsEmpty();
+            if (hasClip) {
+                const int viewWidth = GetView() != nullptr ? GetView()->GetClientSize().x : 0;
+                outline = wxRect(0, clip.y, std::max(viewWidth, clip.GetRight() + 1), clip.height);
+                dc->DestroyClippingRegion();
+            }
+#endif
             outline.Deflate(1);
             dc->SetPen(wxPen(m_colours.selection, 1, wxPENSTYLE_DOT));
             dc->SetBrush(*wxTRANSPARENT_BRUSH);
             dc->DrawRectangle(outline);
+#ifdef wxHAS_GENERIC_DATAVIEWCTRL
+            if (hasClip) {
+                dc->SetClippingRegion(clip);
+            }
+#endif
         }
 
         rect.Deflate(kPadding, 0);
@@ -249,9 +265,9 @@ private:
 namespace
 {
 /// The data of `item`, or nullptr
-FindUsageItemData* GetNodeData(const wxDataViewTreeCtrl* ctrl, const wxDataViewItem& item)
+FindUsageItemData* GetNodeData(const FindUsageStore* store, const wxDataViewItem& item)
 {
-    return item.IsOk() ? dynamic_cast<FindUsageItemData*>(ctrl->GetItemData(item)) : nullptr;
+    return item.IsOk() ? dynamic_cast<FindUsageItemData*>(store->GetItemData(item)) : nullptr;
 }
 } // namespace
 
@@ -267,13 +283,15 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
     GetSizer()->Add(m_toolbar, 0, wxEXPAND);
     BuildToolbar();
 
-    m_ctrl = new wxDataViewTreeCtrl(
+    // Not a wxDataViewTreeCtrl: it resizes its only column to the width of the view on every resize, so a long line
+    // could not be scrolled into view. We use the store of the tree control with a plain wxDataViewCtrl
+    m_ctrl = new wxDataViewCtrl(
         this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER | wxDV_ROW_LINES | wxBORDER_NONE);
 
-    // The tree has one column. Draw it with our renderer, with a store that gives the renderer our item data
-    wxObjectDataPtr<FindUsageStore> store(new FindUsageStore());
-    m_ctrl->AssociateModel(store.get());
-    m_ctrl->ClearColumns();
+    // One column, drawn with our renderer. Our store gives the renderer the item data
+    m_store = new FindUsageStore();
+    m_ctrl->AssociateModel(m_store);
+    m_store->DecRef(); // m_ctrl owns it now
     m_renderer = new FindUsageRenderer();
     auto* column = new wxDataViewColumn(wxString(), m_renderer, 0, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, 0);
     m_ctrl->AppendColumn(column);
@@ -339,7 +357,8 @@ FindUsageTab::~FindUsageTab()
 void FindUsageTab::Clear()
 {
     // The items point to the locations: delete them first
-    m_ctrl->DeleteAllItems();
+    m_store->DeleteAllItems();
+    m_store->Cleared();
     m_locations.clear();
 }
 
@@ -352,7 +371,7 @@ void FindUsageTab::OnClearAll(wxCommandEvent& e)
 void FindUsageTab::OnClearAllUI(wxUpdateUIEvent& e)
 {
     // The files are the children of the (invisible) root
-    e.Enable(m_ctrl->GetChildCount(wxDataViewItem()) != 0);
+    e.Enable(m_store->GetChildCount(wxDataViewItem()) != 0);
 }
 
 void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
@@ -441,11 +460,15 @@ void FindUsageTab::OnWorkspaceClosed(clWorkspaceEvent& event)
 void FindUsageTab::DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches)
 {
     // The matches are added now, their text is loaded when the file is expanded (see DoExpandItem())
-    wxDataViewItem child =
-        m_ctrl->AppendContainer(wxDataViewItem(), filename, wxWithImages::NO_IMAGE, wxWithImages::NO_IMAGE, new FindUsageItemData(filename));
+    wxDataViewItem child = m_store->AppendContainer(
+        wxDataViewItem(), filename, wxBitmapBundle(), wxBitmapBundle(), new FindUsageItemData(filename));
+    m_store->ItemAdded(wxDataViewItem(), child);
+
+    wxDataViewItemArray items;
     for (const LSP::Location* location : matches) {
-        m_ctrl->AppendItem(child, wxEmptyString, wxWithImages::NO_IMAGE, new FindUsageItemData(location));
+        items.Add(m_store->AppendItem(child, wxEmptyString, wxBitmapBundle(), new FindUsageItemData(location)));
     }
+    m_store->ItemsAdded(child, items);
 }
 
 void FindUsageTab::OnReferences(LSPEvent& event)
@@ -468,7 +491,7 @@ void FindUsageTab::OnItemActivated(wxDataViewEvent& event)
     event.Skip();
     CHECK_ITEM_RET(event.GetItem());
 
-    FindUsageItemData* item_data = GetNodeData(m_ctrl, event.GetItem());
+    FindUsageItemData* item_data = GetNodeData(m_store, event.GetItem());
     CHECK_PTR_RET(item_data);
     if (item_data->IsHeader()) {
         // header entry
@@ -524,8 +547,8 @@ bool FindUsageTab::DoExpandItem(const wxDataViewItem& item)
     CHECK_ITEM_RET_FALSE(item);
 
     // Only a file that was not loaded yet
-    FindUsageItemData* header = GetNodeData(m_ctrl, item);
-    if (header == nullptr || !header->IsHeader() || header->loaded || m_ctrl->GetChildCount(item) == 0) {
+    FindUsageItemData* header = GetNodeData(m_store, item);
+    if (header == nullptr || !header->IsHeader() || header->loaded || m_store->GetChildCount(item) == 0) {
         return true;
     }
 
@@ -551,12 +574,15 @@ bool FindUsageTab::DoExpandItem(const wxDataViewItem& item)
     }
 
     // go over the entries and set the actual line
-    const int child_count = m_ctrl->GetChildCount(item);
+    wxDataViewItemArray changed;
+    const int child_count = m_store->GetChildCount(item);
     for (int i = 0; i < child_count; ++i) {
-        FindUsageItemData* item_data = GetNodeData(m_ctrl, m_ctrl->GetNthChild(item, i));
+        const wxDataViewItem child = m_store->GetNthChild(item, i);
+        FindUsageItemData* item_data = GetNodeData(m_store, child);
         if (item_data == nullptr || item_data->IsHeader()) {
             continue;
         }
+        changed.Add(child);
 
         // in case this was a remote file, update the filepath
         const_cast<LSP::Location*>(item_data->location)->SetPath(filepath);
@@ -580,6 +606,7 @@ bool FindUsageTab::DoExpandItem(const wxDataViewItem& item)
         }
     }
     header->loaded = true;
-    m_ctrl->Refresh();
+    // Tell the model: a view that caches the size of the rows measures them again
+    m_store->ItemsChanged(changed);
     return true;
 }

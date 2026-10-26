@@ -36,12 +36,14 @@
 #include <wx/panel.h>
 
 class FindUsageRenderer;
+class FindUsageStore;
 
 class FindUsageTab : public wxPanel
 {
     std::vector<LSP::Location> m_locations;
     wxAuiToolBar* m_toolbar = nullptr;
-    wxDataViewTreeCtrl* m_ctrl = nullptr;
+    wxDataViewCtrl* m_ctrl = nullptr;
+    FindUsageStore* m_store = nullptr;       // the model of m_ctrl, owned by it
     FindUsageRenderer* m_renderer = nullptr; // owned by the column of m_ctrl
 
 private:

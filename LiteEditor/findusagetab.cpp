@@ -26,9 +26,12 @@
 #include "findusagetab.h"
 
 #include "ColoursAndFontsManager.h"
+#include "aui/clAuiToolBarArt.h"
 #include "clStrings.h"
 #include "clSystemSettings.h"
 #include "cl_editor.h"
+#include "codelite_events.h"
+#include "drawingutils.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -36,42 +39,260 @@
 #include "fileutils.h"
 #include "findresultstab.h"
 #include "frame.h"
+#include "globals.h"
+#include "lexer_configuration.h"
 #include "macros.h"
 #include "plugin.h"
+#include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
 
+#include <algorithm>
 #include <map>
+#include <wx/dc.h>
 #include <wx/ffile.h>
 #include <wx/file.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
+#include <wx/stc/stc.h>
 #include <wx/textbuf.h>
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
-struct FindUsageItemData : public wxTreeItemData {
-    const LSP::Location* location = nullptr;
-    FindUsageItemData(const LSP::Location* loc)
+namespace
+{
+constexpr int kPadding = 4;
+constexpr size_t kTabSize = 4;
+// The toolbar buttons (the name is turned into an ID with XRCID)
+constexpr const char* kToolClear = "find_usage_clear";
+
+/// The data of an item of the tree: a file (the parent) or a match (a child of a file)
+struct FindUsageItemData : public wxClientData {
+    /// A file entry
+    explicit FindUsageItemData(const wxString& path)
+        : text(path)
+    {
+    }
+
+    /// A match. The text of the line is loaded when its file is expanded
+    explicit FindUsageItemData(const LSP::Location* loc)
         : location(loc)
     {
     }
+
+    bool IsHeader() const { return location == nullptr; }
+
+    const LSP::Location* location = nullptr; // nullptr for a file entry
+    wxString text;                           // a file: its path. A match: the line (empty until it is loaded)
+    size_t highlightStart = 0;               // a match: the range of `text` to highlight
+    size_t highlightLength = 0;
+    bool loaded = false; // a file: the lines of its matches are loaded
 };
+
+/// The tree store, but the value of an item is its FindUsageItemData (drawn by FindUsageRenderer)
+class FindUsageStore : public wxDataViewTreeStore
+{
+public:
+    wxString GetColumnType(unsigned int col) const override
+    {
+        wxUnusedVar(col);
+        return "void*";
+    }
+
+    void GetValue(wxVariant& variant, const wxDataViewItem& item, unsigned int col) const override
+    {
+        wxUnusedVar(col);
+        variant = static_cast<void*>(static_cast<FindUsageItemData*>(GetItemData(item)));
+    }
+};
+
+/// Replace the tabs of `line` with spaces. The range [`start`, `start` + `length`) of `line` is moved to the same
+/// characters of the result: [`highlightStart`, `highlightStart` + `highlightLength`)
+wxString PrepareLine(
+    const wxString& line, size_t start, size_t length, size_t& highlightStart, size_t& highlightLength)
+{
+    const size_t end = start + length;
+    size_t newStart = wxString::npos;
+    size_t newEnd = wxString::npos;
+    wxString text;
+    for (size_t i = 0; i < line.length(); ++i) {
+        if (i == start) {
+            newStart = text.length();
+        }
+        if (i == end) {
+            newEnd = text.length();
+        }
+        if (line[i] == '\t') {
+            text.Append(' ', kTabSize);
+        } else {
+            text.Append(line[i]);
+        }
+    }
+    if (newStart == wxString::npos) {
+        newStart = text.length();
+    }
+    if (newEnd == wxString::npos) {
+        newEnd = text.length();
+    }
+    highlightStart = newStart;
+    highlightLength = newEnd - newStart;
+    return text;
+}
+} // namespace
+
+/// Draws a file (its path) or a match (the line, with the matched range highlighted)
+class FindUsageRenderer : public wxDataViewCustomRenderer
+{
+public:
+    struct Colours {
+        wxColour header;          // the path of a file
+        wxColour match;           // a matched line
+        wxColour matchBackground; // the rounded rectangle around the matched range of the line
+        wxColour matchText;       // the text of the matched range, it contrasts with matchBackground
+        wxColour selection;       // the dotted rectangle around the selected row
+    };
+
+    FindUsageRenderer()
+        : wxDataViewCustomRenderer("void*", wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
+    {
+        m_colours.header = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        m_colours.match = m_colours.header;
+        m_colours.matchBackground = wxColour("GOLD");
+        m_colours.matchText = *wxBLACK;
+        m_colours.selection = m_colours.header;
+    }
+
+    void SetColours(const Colours& colours) { m_colours = colours; }
+
+    bool SetValue(const wxVariant& value) override
+    {
+        m_data = static_cast<const FindUsageItemData*>(value.GetVoidPtr());
+        return true;
+    }
+
+    bool GetValue(wxVariant& value) const override
+    {
+        value = static_cast<void*>(const_cast<FindUsageItemData*>(m_data));
+        return true;
+    }
+
+    wxSize GetSize() const override
+    {
+        wxWindow* view = GetView();
+        if (view == nullptr) {
+            return wxSize(wxDVC_DEFAULT_RENDERER_SIZE, wxDVC_DEFAULT_RENDERER_SIZE);
+        }
+        // An empty line has the height of a text line
+        const wxSize size = view->GetTextExtent(m_data != nullptr && !m_data->text.empty() ? m_data->text : "Tp");
+        return wxSize(size.x + 2 * kPadding, size.y + kPadding);
+    }
+
+    bool Render(wxRect rect, wxDC* dc, int state) override
+    {
+        if (m_data == nullptr) {
+            return false;
+        }
+
+        // The colours of the text do not change on a selected row, so the row is marked with a soft dotted rectangle.
+        // It covers the entire line: from the left edge of the view (the cell starts after the indentation of the
+        // tree) to its right edge
+        if ((state & wxDATAVIEW_CELL_SELECTED) != 0) {
+            const int viewWidth = GetView() != nullptr ? GetView()->GetClientSize().x : 0;
+            wxRect outline(0, rect.y, std::max(viewWidth, rect.GetRight() + 1), rect.height);
+            outline.Deflate(1);
+            dc->SetPen(wxPen(m_colours.selection, 1, wxPENSTYLE_DOT));
+            dc->SetBrush(*wxTRANSPARENT_BRUSH);
+            dc->DrawRectangle(outline);
+        }
+
+        rect.Deflate(kPadding, 0);
+        int x = rect.x;
+
+        // Draw `text` at `x`, vertically centered. Advance `x`
+        auto draw = [&](const wxString& text, const wxColour& colour) {
+            if (text.empty()) {
+                return;
+            }
+            const wxSize size = dc->GetTextExtent(text);
+            dc->SetTextForeground(colour);
+            dc->DrawText(text, x, rect.y + (rect.height - size.y) / 2);
+            x += size.x;
+        };
+
+        if (m_data->IsHeader()) {
+            draw(m_data->text, m_colours.header);
+            return true;
+        }
+
+        const wxString before = m_data->text.Left(m_data->highlightStart);
+        const wxString match = m_data->text.Mid(m_data->highlightStart, m_data->highlightLength);
+        const wxString after = m_data->text.Mid(m_data->highlightStart + m_data->highlightLength);
+        draw(before, m_colours.match);
+
+        if (!match.empty()) {
+            // A rounded rectangle around the match, and a text colour that contrasts with it
+            const wxSize size = dc->GetTextExtent(match);
+            wxRect matchRect(x - 1, rect.y + 1, size.x + 2, rect.height - 2);
+            dc->SetPen(*wxTRANSPARENT_PEN);
+            dc->SetBrush(wxBrush(m_colours.matchBackground));
+            dc->DrawRoundedRectangle(matchRect, 3.0);
+            draw(match, m_colours.matchText);
+        }
+        draw(after, m_colours.match);
+        return true;
+    }
+
+private:
+    const FindUsageItemData* m_data = nullptr;
+    Colours m_colours;
+};
+
+namespace
+{
+/// The data of `item`, or nullptr
+FindUsageItemData* GetNodeData(const wxDataViewTreeCtrl* ctrl, const wxDataViewItem& item)
+{
+    return item.IsOk() ? dynamic_cast<FindUsageItemData*>(ctrl->GetItemData(item)) : nullptr;
+}
+} // namespace
 
 FindUsageTab::FindUsageTab(wxWindow* parent)
     : wxPanel(parent, wxID_ANY)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_ctrl = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HIDE_ROOT | wxTR_ROW_LINES);
-    m_ctrl->SetRendererType(eRendererType::RENDERER_DIRECT2D);
-    m_ctrl->SetTreeStyle(wxTR_HIDE_ROOT | wxTR_ROW_LINES);
-    m_ctrl->AddRoot("Hidden Root");
 
-    m_ctrl->Bind(wxEVT_TREE_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
-    m_ctrl->Bind(wxEVT_TREE_ITEM_EXPANDING, &FindUsageTab::OnItemExpanding, this);
-    m_ctrl->Bind(wxEVT_TREE_SEL_CHANGED, &FindUsageTab::OnItemActivated, this);
+    // The toolbar. The tools are created by BuildToolbar() (again when the bitmaps change), the events are bound once
+    m_toolbar = new wxAuiToolBar(this);
+    m_toolbar->Bind(wxEVT_MENU, &FindUsageTab::OnClearAll, this, XRCID(kToolClear));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &FindUsageTab::OnClearAllUI, this, XRCID(kToolClear));
+    GetSizer()->Add(m_toolbar, 0, wxEXPAND);
+    BuildToolbar();
 
-    // show context menu for the control
-    m_ctrl->Bind(wxEVT_CONTEXT_MENU, [this](wxContextMenuEvent& event) {
+    m_ctrl = new wxDataViewTreeCtrl(
+        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER | wxDV_ROW_LINES | wxBORDER_NONE);
+
+    // The tree has one column. Draw it with our renderer, with a store that gives the renderer our item data
+    wxObjectDataPtr<FindUsageStore> store(new FindUsageStore());
+    m_ctrl->AssociateModel(store.get());
+    m_ctrl->ClearColumns();
+    m_renderer = new FindUsageRenderer();
+    auto* column = new wxDataViewColumn(wxString(), m_renderer, 0, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, 0);
+    m_ctrl->AppendColumn(column);
+    m_ctrl->SetExpanderColumn(column);
+
+    // A hand cursor over the results. The control draws in its own child window, so set it on the children as well
+    const wxCursor handCursor(wxCURSOR_HAND);
+    m_ctrl->SetCursor(handCursor);
+    for (wxWindow* child : m_ctrl->GetChildren()) {
+        child->SetCursor(handCursor);
+    }
+
+    m_ctrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
+    m_ctrl->Bind(wxEVT_DATAVIEW_ITEM_EXPANDING, &FindUsageTab::OnItemExpanding, this);
+    m_ctrl->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FindUsageTab::OnItemActivated, this);
+
+    // show context menu for the control. The data view does not send wxEVT_CONTEXT_MENU, it sends its own event (also
+    // when the user clicks outside of the items)
+    m_ctrl->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, [this](wxDataViewEvent& event) {
         wxMenu menu;
         menu.Append(wxID_CLEAR);
         menu.Bind(
@@ -86,10 +307,15 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
 
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Layout();
-    UpdateStyle();
+
+    // The colours come from the terminal theme, but the tab is created inside the constructor of the output pane: the
+    // terminal pane (and the frame's pointer to the output pane) do not exist yet. Update the style when they do
+    CallAfter(&FindUsageTab::UpdateStyle);
 
     // bind events
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &FindUsageTab::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILTIN_TERMINAL_THEME_CHANGED, &FindUsageTab::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, &FindUsageTab::OnBitmapsUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &FindUsageTab::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_REFERENCES, &FindUsageTab::OnReferences, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_REFERENCES_INPROGRESS, &FindUsageTab::OnReferencesInProgress, this);
@@ -98,21 +324,23 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
 FindUsageTab::~FindUsageTab()
 {
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &FindUsageTab::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILTIN_TERMINAL_THEME_CHANGED, &FindUsageTab::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_BITMAPS_UPDATED, &FindUsageTab::OnBitmapsUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &FindUsageTab::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_REFERENCES, &FindUsageTab::OnReferences, this);
 
     EventNotifier::Get()->Unbind(wxEVT_LSP_REFERENCES_INPROGRESS, &FindUsageTab::OnReferencesInProgress, this);
 
-    m_ctrl->Unbind(wxEVT_TREE_SEL_CHANGED, &FindUsageTab::OnItemActivated, this);
-    m_ctrl->Unbind(wxEVT_TREE_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
-    m_ctrl->Unbind(wxEVT_TREE_ITEM_EXPANDING, &FindUsageTab::OnItemExpanding, this);
+    m_ctrl->Unbind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FindUsageTab::OnItemActivated, this);
+    m_ctrl->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
+    m_ctrl->Unbind(wxEVT_DATAVIEW_ITEM_EXPANDING, &FindUsageTab::OnItemExpanding, this);
 }
 
 void FindUsageTab::Clear()
 {
-    m_locations.clear();
+    // The items point to the locations: delete them first
     m_ctrl->DeleteAllItems();
-    m_ctrl->AddRoot("Hidden Root");
+    m_locations.clear();
 }
 
 void FindUsageTab::OnClearAll(wxCommandEvent& e)
@@ -123,8 +351,8 @@ void FindUsageTab::OnClearAll(wxCommandEvent& e)
 
 void FindUsageTab::OnClearAllUI(wxUpdateUIEvent& e)
 {
-    wxTreeItemId root = m_ctrl->GetRootItem();
-    e.Enable(root.IsOk() && m_ctrl->GetChildrenCount(root, false) != 0);
+    // The files are the children of the (invisible) root
+    e.Enable(m_ctrl->GetChildCount(wxDataViewItem()) != 0);
 }
 
 void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
@@ -149,8 +377,6 @@ void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
         const std::vector<const LSP::Location*>& locations_vec = vt.second;
         DoAddFileEntries(filename, locations_vec);
     }
-    // expand the root, to show the file name
-    m_ctrl->Expand(m_ctrl->GetRootItem());
 }
 
 void FindUsageTab::OnThemeChanged(clCommandEvent& e)
@@ -159,24 +385,50 @@ void FindUsageTab::OnThemeChanged(clCommandEvent& e)
     UpdateStyle();
 }
 
+void FindUsageTab::OnBitmapsUpdated(clCommandEvent& e)
+{
+    e.Skip();
+    BuildToolbar();
+}
+
+void FindUsageTab::BuildToolbar()
+{
+    auto* icons = clGetManager()->GetStdIcons();
+    m_toolbar->Clear();
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID(kToolClear), _("Clear"), icons->LoadBitmap("clear"), _("Clear the results"));
+    clAuiToolBarArt::Finalise(m_toolbar);
+    m_toolbar->Realize();
+    // The new tools can have another size (a new theme has other icons): tell the sizer, or the toolbar keeps its old
+    // size until the window is resized
+    m_toolbar->InvalidateBestSize();
+    Layout();
+    m_toolbar->Refresh();
+}
+
 void FindUsageTab::UpdateStyle()
 {
-    // construct colours based on the current lexer
+    // The font of the editor
+    if (auto lexer = ColoursAndFontsManager::Get().GetLexer("c++")) {
+        m_ctrl->SetFont(lexer->GetFontForStyle(0, this));
+    }
 
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("c++");
-    m_ctrl->SetDefaultFont(lexer->GetFontForStyle(0, this));
+    // The colours are taken from the palette of the active terminal theme. Some of them have alpha: the view is solid
+    auto solid = [](const wxColour& colour) { return wxColour(colour.Red(), colour.Green(), colour.Blue()); };
+    auto* terminals = clGetManager()->GetTerminalManager();
+    const wxTerminalTheme theme = terminals != nullptr ? terminals->GetActiveTheme() : wxTerminalTheme::MakeDarkTheme();
 
-    clColours lexer_colours;
-    lexer_colours.FromLexer(lexer);
-    m_ctrl->SetColours(lexer_colours);
+    m_ctrl->SetBackgroundColour(solid(theme.bg));
+    m_ctrl->SetForegroundColour(solid(theme.fg));
+    ::AdjustDataViewAlternateColour(m_ctrl);
 
-    m_headerColour = lexer->GetProperty(wxSTC_C_GLOBALCLASS).GetFgColour();
-    m_matchColour = lexer->IsDark() ? clColours::White(true) : clColours::Black(false);
-
-    wxColour match_colour_fg = lexer->GetProperty(wxSTC_C_WORD2).GetFgColour();
-    auto& colours = m_ctrl->GetColours();
-    colours.SetMatchedItemBgText(wxNullColour);
-    colours.SetMatchedItemText(match_colour_fg);
+    FindUsageRenderer::Colours colours;
+    colours.header = solid(theme.blue);
+    colours.match = solid(theme.fg);
+    colours.matchBackground = solid(theme.highlightBg);
+    colours.matchText = DrawingUtils::IsDark(colours.matchBackground) ? *wxWHITE : *wxBLACK;
+    colours.selection = solid(theme.brightBlack);
+    m_renderer->SetColours(colours);
     m_ctrl->Refresh();
 }
 
@@ -188,17 +440,11 @@ void FindUsageTab::OnWorkspaceClosed(clWorkspaceEvent& event)
 
 void FindUsageTab::DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches)
 {
-    wxTreeItemId child = m_ctrl->AppendItem(m_ctrl->GetRootItem(), filename);
-    if (m_headerColour.IsOk()) {
-        m_ctrl->SetItemTextColour(child, m_headerColour);
-    }
-
-    // append dummy child
+    // The matches are added now, their text is loaded when the file is expanded (see DoExpandItem())
+    wxDataViewItem child =
+        m_ctrl->AppendContainer(wxDataViewItem(), filename, wxWithImages::NO_IMAGE, wxWithImages::NO_IMAGE, new FindUsageItemData(filename));
     for (const LSP::Location* location : matches) {
-        auto item = m_ctrl->AppendItem(child, "dummy_child", wxNOT_FOUND, wxNOT_FOUND, new FindUsageItemData(location));
-        if (m_matchColour.IsOk()) {
-            m_ctrl->SetItemTextColour(item, m_matchColour);
-        }
+        m_ctrl->AppendItem(child, wxEmptyString, wxWithImages::NO_IMAGE, new FindUsageItemData(location));
     }
 }
 
@@ -217,13 +463,14 @@ void FindUsageTab::OnReferencesInProgress(LSPEvent& event)
     Clear();
 }
 
-void FindUsageTab::OnItemActivated(wxTreeEvent& event)
+void FindUsageTab::OnItemActivated(wxDataViewEvent& event)
 {
     event.Skip();
     CHECK_ITEM_RET(event.GetItem());
 
-    FindUsageItemData* item_data = static_cast<FindUsageItemData*>(m_ctrl->GetItemData(event.GetItem()));
-    if (!item_data) {
+    FindUsageItemData* item_data = GetNodeData(m_ctrl, event.GetItem());
+    CHECK_PTR_RET(item_data);
+    if (item_data->IsHeader()) {
         // header entry
         DoExpandItem(event.GetItem());
         if (!m_ctrl->IsExpanded(event.GetItem())) {
@@ -261,7 +508,7 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     clGetManager()->OpenFileAndAsyncExecute(open_file_event.GetFileName(), std::move(callback));
 }
 
-void FindUsageTab::OnItemExpanding(wxTreeEvent& event)
+void FindUsageTab::OnItemExpanding(wxDataViewEvent& event)
 {
     event.Skip();
 
@@ -271,24 +518,19 @@ void FindUsageTab::OnItemExpanding(wxTreeEvent& event)
     }
 }
 
-bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
+bool FindUsageTab::DoExpandItem(const wxDataViewItem& item)
 {
     wxBusyCursor bc;
     CHECK_ITEM_RET_FALSE(item);
 
-    wxTreeItemIdValue cookie;
-    wxTreeItemId first_child = m_ctrl->GetFirstChild(item, cookie);
-    if (!first_child) {
-        return true;
-    }
-
-    // if the child text is not "dummy_child" -> return
-    if (m_ctrl->GetItemText(first_child) != "dummy_child") {
+    // Only a file that was not loaded yet
+    FindUsageItemData* header = GetNodeData(m_ctrl, item);
+    if (header == nullptr || !header->IsHeader() || header->loaded || m_ctrl->GetChildCount(item) == 0) {
         return true;
     }
 
     wxString content;
-    wxString filepath = m_ctrl->GetItemText(item);
+    wxString filepath = header->text;
     if (!wxFileName::Exists(filepath)) {
         // not a local file, request for file download
         clCommandEvent event_download{wxEVT_DOWNLOAD_FILE};
@@ -309,29 +551,35 @@ bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
     }
 
     // go over the entries and set the actual line
-    wxTreeItemIdValue cookie2;
-    wxTreeItemId child = m_ctrl->GetFirstChild(item, cookie2);
-    while (child.IsOk()) {
+    const int child_count = m_ctrl->GetChildCount(item);
+    for (int i = 0; i < child_count; ++i) {
+        FindUsageItemData* item_data = GetNodeData(m_ctrl, m_ctrl->GetNthChild(item, i));
+        if (item_data == nullptr || item_data->IsHeader()) {
+            continue;
+        }
 
-        FindUsageItemData* item_data = static_cast<FindUsageItemData*>(m_ctrl->GetItemData(child));
         // in case this was a remote file, update the filepath
         const_cast<LSP::Location*>(item_data->location)->SetPath(filepath);
 
         size_t line_number = item_data->location->GetRange().GetStart().GetLine();
         if (line_number < text_buffer.GetLineCount()) {
-            // update the text
-            m_ctrl->SetItemText(child, text_buffer.GetLine(line_number));
-
-            // update the highlight information
             const auto& start = item_data->location->GetRange().GetStart();
             const auto& end = item_data->location->GetRange().GetEnd();
 
-            if (start.GetLine() == end.GetLine()) {
-                m_ctrl->SetItemHighlightInfo(child, start.GetCharacter(), end.GetCharacter() - start.GetCharacter());
-                m_ctrl->HighlightText(child, true);
+            // update the text and the highlight information (a match that spans several lines is not highlighted)
+            const bool single_line = start.GetLine() == end.GetLine() && end.GetCharacter() >= start.GetCharacter();
+            const size_t length = single_line ? end.GetCharacter() - start.GetCharacter() : 0;
+            item_data->text = PrepareLine(text_buffer.GetLine(line_number),
+                                          start.GetCharacter(),
+                                          length,
+                                          item_data->highlightStart,
+                                          item_data->highlightLength);
+            if (!single_line) {
+                item_data->highlightLength = 0;
             }
         }
-        child = m_ctrl->GetNextChild(item, cookie2);
     }
+    header->loaded = true;
+    m_ctrl->Refresh();
     return true;
 }

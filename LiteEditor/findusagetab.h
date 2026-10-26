@@ -28,24 +28,29 @@
 
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
-#include "clThemedTreeCtrl.h"
 #include "clWorkspaceEvent.hpp"
 
-#include <wx/colour.h>
+#include <vector>
+#include <wx/aui/auibar.h>
+#include <wx/dataview.h>
 #include <wx/panel.h>
+
+class FindUsageRenderer;
 
 class FindUsageTab : public wxPanel
 {
     std::vector<LSP::Location> m_locations;
-    clThemedTreeCtrl* m_ctrl = nullptr;
-    wxColour m_headerColour;
-    wxColour m_matchColour;
+    wxAuiToolBar* m_toolbar = nullptr;
+    wxDataViewTreeCtrl* m_ctrl = nullptr;
+    FindUsageRenderer* m_renderer = nullptr; // owned by the column of m_ctrl
 
 private:
     void DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches);
     void InitialiseView(const std::vector<LSP::Location>& locations);
     void UpdateStyle();
-    bool DoExpandItem(const wxTreeItemId& item);
+    /// (Re)create the buttons. Called again when the bitmaps change, to load the icons of the new theme
+    void BuildToolbar();
+    bool DoExpandItem(const wxDataViewItem& item);
 
 public:
     FindUsageTab(wxWindow* parent);
@@ -56,11 +61,12 @@ protected:
     void OnClearAllUI(wxUpdateUIEvent& e);
     void OnClearAll(wxCommandEvent& e);
     void OnThemeChanged(clCommandEvent& e);
+    void OnBitmapsUpdated(clCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnReferences(LSPEvent& event);
     void OnReferencesInProgress(LSPEvent& event);
-    void OnItemActivated(wxTreeEvent& event);
-    void OnItemExpanding(wxTreeEvent& event);
+    void OnItemActivated(wxDataViewEvent& event);
+    void OnItemExpanding(wxDataViewEvent& event);
 };
 
 #endif // FINDUSAGETAB_H

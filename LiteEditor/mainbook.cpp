@@ -1823,6 +1823,8 @@ void MainBook::DoOpenImageViewer(const wxFileName& filename)
     size_t pos = m_book->GetPageCount();
     m_book->AddPage(imageViewer, filename.GetFullName(), true);
     m_book->SetPageToolTip(pos, filename.GetFullPath());
+    if (GetWelcomePage(false) && GetWelcomePage(false)->IsShown())
+        ShowWelcomePage(false);
 }
 
 void MainBook::OnTabLabelContextMenu(wxBookCtrlEvent& e)
@@ -1949,6 +1951,7 @@ void MainBook::DoShowWindow(wxWindow* win, bool show)
 
 void MainBook::ShowWelcomePage(bool show)
 {
+    CHECK_PTR_RET(m_welcomePage);
     if (show) {
 #if wxHAS_MINIMAP
         GetSizer()->Show(m_mainView, false);

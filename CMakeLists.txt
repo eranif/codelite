@@ -581,9 +581,6 @@ endif(UNIX AND NOT APPLE)
 if(COPY_WX_LIBS MATCHES 1)
   set(CL_COPY_WX_LIBS 1)
 endif()
-if(NOT RETAIN_CACHED_VALUES)
-  unset(COPY_WX_LIBS CACHE)
-endif()
 
 # file encoding detect
 if(UNIX

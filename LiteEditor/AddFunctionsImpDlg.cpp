@@ -25,20 +25,30 @@
 
 #include "AddFunctionsImpDlg.h"
 
-#include "ColoursAndFontsManager.h"
 #include "ctags_manager.h"
 #include "globals.h"
 #include "windowattrmanager.h"
 
+namespace
+{
+constexpr unsigned kColCheck = 0; // the checkbox column of the list
+} // namespace
+
 AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector_t& tags, const wxString& targetFile)
     : AddFunctionsImplBaseDlg(parent)
 {
-    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    m_dvListCtrl->SetDefaultFont(lexer->GetFontForStyle(0, m_dvListCtrl));
+    ::AdjustDataViewAlternateColour(m_dvListCtrl);
 
-    int functionIndex = clGetManager()->GetStdIcons()->GetMimeImageId(BitmapLoader::kFunctionPublic);
-    m_dvListCtrl->SetSortFunction(nullptr); // Disable sorting
+    // Columns: a checkbox, and the function with an icon (add them only if the base class did not create them).
+    // The rows are not sorted: row `i` is the function `i`
+    if (m_dvListCtrl->GetColumnCount() == 0) {
+        m_dvListCtrl->AppendToggleColumn(
+            wxEmptyString, wxDATAVIEW_CELL_ACTIVATABLE, FromDIP(40), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
+        m_dvListCtrl->AppendIconTextColumn(
+            _("Function"), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    }
+
+    const wxBitmap functionBmp = clGetManager()->GetStdIcons()->LoadBitmap("function_public");
 
     // Keep the tags
     m_tags = tags;
@@ -47,9 +57,10 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
     m_implArr.reserve(tags.size());
     for (size_t i = 0; i < m_tags.size(); ++i) {
         wxVector<wxVariant> cols;
-        cols.push_back(::MakeCheckboxVariant(m_tags.at(i)->GetDisplayName(), true, functionIndex));
+        cols.push_back(wxVariant(true)); // checked
+        cols.push_back(::MakeIconText(m_tags.at(i)->GetDisplayName(), functionBmp));
 
-        // keep the implementation as the client data
+        // keep the implementation: the index is the row
         TagEntryPtr tag = m_tags[i];
         wxString body = tag->GetFunctionDefinition();
         if (tag->GetTypename() == "std::string" || tag->GetTypename() == "string") {
@@ -61,7 +72,7 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
         }
 
         m_implArr.Add(body + "\n");
-        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)&m_implArr.Item(i));
+        m_dvListCtrl->AppendItem(cols);
     }
     m_filePicker->SetPath(targetFile);
     ::clSetDialogBestSizeAndPosition(*this);
@@ -72,16 +83,12 @@ wxString AddFunctionsImpDlg::GetFileName() const { return m_filePicker->GetPath(
 wxString AddFunctionsImpDlg::GetText() const
 {
     wxString text;
-    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
-        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-        if (m_dvListCtrl->IsItemChecked(item, 0)) {
+    for (unsigned i = 0; i < m_dvListCtrl->GetItemCount() && i < m_implArr.size(); ++i) {
+        if (m_dvListCtrl->GetToggleValue(i, kColCheck)) {
             if (text.IsEmpty())
                 text << "\n";
             // checked
-            wxString* impl = reinterpret_cast<wxString*>(m_dvListCtrl->GetItemData(item));
-            if (impl) {
-                text << (*impl);
-            }
+            text << m_implArr.Item(i);
         }
     }
 
@@ -98,8 +105,8 @@ void AddFunctionsImpDlg::OnUncheckAll(wxCommandEvent& event) { DoCheckAll(false)
 void AddFunctionsImpDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     event.Enable(false);
-    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
-        if (m_dvListCtrl->IsItemChecked(m_dvListCtrl->RowToItem(i), 0)) {
+    for (unsigned i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        if (m_dvListCtrl->GetToggleValue(i, kColCheck)) {
             event.Enable(true);
             return;
         }
@@ -108,7 +115,7 @@ void AddFunctionsImpDlg::OnOKUI(wxUpdateUIEvent& event)
 
 void AddFunctionsImpDlg::DoCheckAll(bool checked)
 {
-    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
-        m_dvListCtrl->SetItemChecked(m_dvListCtrl->RowToItem(i), checked, 0);
+    for (unsigned i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        m_dvListCtrl->SetToggleValue(checked, i, kColCheck);
     }
 }

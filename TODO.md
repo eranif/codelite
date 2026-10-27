@@ -1,11 +1,11 @@
 High:
 -----
 
-- [x] Replace the "Find References" view with `wxDataViewTreeCtl` with custom renderer.
+- [x] Replace the "Find References" view with `wxDataViewListCtrl` with custom renderer.
 - [ ] Implement all function: change to use the native `wxDataViewListCtrl`
 - [ ] Remove the TabGroups from CodeLite.
-- [ ] While the review-buddy agent is working, the spinner should spin in the agent's table
-- [ ] Find references: include line number if possible.
+- [ ] While the review-buddy agent is working, the spinner should spin in the agent's tab
+- [x] Find references: include line number if possible.
 
 Medium:
 -----

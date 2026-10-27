@@ -6,6 +6,8 @@ High:
 - [x] Remove the TabGroups from CodeLite.
 - [x] While the review-buddy agent is working, the spinner should spin in the agent's tab
 - [x] Find references: include line number if possible.
+- [ ] BUG: Markdown renderer, fails to render "task" (empty checkbox) if it is followed by code tags (inline like `code`)
+- [ ] BUG: Markdown renderer, renders "checked task" incorrectly (checkbox with "V" inside it) if it is followed by code tags (inline like `code`) - it consumes some of the codetag background
 
 Medium:
 -----

@@ -72,8 +72,10 @@ protected:
     void OnTerminalTitleChanged(clCommandEvent& event);
     /// The main agent reported its status. Tell the user when the agent needs them (a tab icon, and the taskbar or Dock
     /// icon) when they are not looking at this page. Nothing is done during a review: the main agent stops on purpose,
-    /// to hand the control to the reviewer.
+    /// to hand the control to the reviewer. The status of the reviewer is used for the spinner only.
     void OnTerminalProgramStatus(clCommandEvent& event);
+    /// Show the spinner on our tab while the main agent or the reviewer works, remove it otherwise
+    void UpdateWorkingIcon();
     void OnContextMenu(wxContextMenuEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnOpenResourceShowing(clOpenResourceEvent& event);
@@ -149,6 +151,8 @@ private:
     AgentInfo m_agentInfo;
     // The last state that the main agent reported: the user is told only when the state changes
     wxTerminalProgramState m_lastAgentState{wxTerminalProgramState::Clear};
+    // The same for the reviewer (Clear when there is no reviewer)
+    wxTerminalProgramState m_lastReviewState{wxTerminalProgramState::Clear};
     // The result of the last "is this a git repository?" check of a remote working directory (cached, it is slow)
     bool m_hasGit{false};
     std::optional<std::chrono::steady_clock::time_point> m_lastGitCheck;

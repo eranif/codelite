@@ -175,9 +175,43 @@ void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
     }
 }
 
+void AgentHostPage::UpdateWorkingIcon()
+{
+    // The spinner is on our tab while the main agent or the reviewer works. Removing it restores the icon of the tab.
+    const bool working =
+        m_lastAgentState == wxTerminalProgramState::Working || m_lastReviewState == wxTerminalProgramState::Working;
+    if (!working) {
+        m_workingIcon.reset();
+        return;
+    }
+
+    if (m_workingIcon) {
+        return; // already spinning
+    }
+
+    // An icon that asks for the user is out of date now
+    m_attentionIcon.reset();
+    auto* icons = clGetManager()->GetStdIcons();
+    std::vector<wxBitmap> frames;
+    for (int i = 0; i < 8; ++i) {
+        frames.push_back(icons->LoadBitmap(wxString::Format("agent-spinner-%d", i)));
+    }
+    m_workingIcon = std::make_unique<TabAttentionIcon>(clGetManager()->GetMainNotebook(), this, frames, false);
+}
+
 void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
 {
-    CHECK_CAN_HANDLE_EVENT(event); // The status of the reviewer is not used
+    // The reviewer: only its spinner is used (its other states are for the reviewer's pane)
+    if (GetReviewTerminal() != nullptr && event.GetEventObject() == GetReviewTerminal()) {
+        event.Skip();
+        const auto reviewState = static_cast<wxTerminalProgramState>(event.GetInt());
+        if (std::exchange(m_lastReviewState, reviewState) != reviewState) {
+            UpdateWorkingIcon();
+        }
+        return;
+    }
+
+    CHECK_CAN_HANDLE_EVENT(event);
     CHECK_PTR_RET(GetTerminal());
 
     const auto state = static_cast<wxTerminalProgramState>(event.GetInt());
@@ -195,21 +229,9 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
         EventNotifier::Get()->AddPendingEvent(modifiedEvent);
     }
 
-    // A spinner on the tab while the agent works, also when the tab is selected. Any other state removes it, which
-    // restores the icon of the tab. It only shows the state, so it does not depend on the notification settings.
-    if (state == wxTerminalProgramState::Working) {
-        // An icon that asks for the user is out of date now
-        m_attentionIcon.reset();
-        auto* icons = clGetManager()->GetStdIcons();
-        std::vector<wxBitmap> frames;
-        for (int i = 0; i < 8; ++i) {
-            frames.push_back(icons->LoadBitmap(wxString::Format("agent-spinner-%d", i)));
-        }
-        m_workingIcon =
-            std::make_unique<TabAttentionIcon>(clGetManager()->GetMainNotebook(), this, frames, false);
-    } else {
-        m_workingIcon.reset();
-    }
+    // A spinner on the tab while the agent works, also when the tab is selected. It only shows the state, so it does
+    // not depend on the notification settings.
+    UpdateWorkingIcon();
 
     // During a review the main agent stops on purpose, to hand the control to the reviewer: do not bother the user.
     if (m_review) {
@@ -229,7 +251,8 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
 
     // The tab is not the selected one: mark it until the user comes back to the page.
     // A waving hand: the agent is waiting for the user. A checkmark: the agent is done. (No icon for an error.)
-    if (m_book->GetCurrentPage() != this && state != wxTerminalProgramState::Error) {
+    // Defensive: never save the spinner as the original icon of the tab (it is on the tab while the reviewer works)
+    if (m_book->GetCurrentPage() != this && state != wxTerminalProgramState::Error && !m_workingIcon) {
         const char* iconName =
             state == wxTerminalProgramState::Blocked ? "agent-attention-blocked" : "agent-attention-done";
         // Replacing the icon first restores the original tab icon
@@ -976,6 +999,10 @@ void AgentHostPage::DestroyReviewPane()
         m_reviewAgentTerminal->Destroy(); // also ends the reviewer's process
     }
     m_reviewAgentTerminal = nullptr;
+
+    // The reviewer is gone: it does not work any more
+    m_lastReviewState = wxTerminalProgramState::Clear;
+    UpdateWorkingIcon();
 }
 
 void AgentHostPage::CloseReviewBuddy()

@@ -38,7 +38,6 @@ namespace
 {
 const wxChar defaultSessionName[] = wxT("Default");
 const wxChar sessionTag[] = wxT("Session");
-const wxChar tabgroupTag[] = wxT("Tabgroup");
 } // namespace
 
 /**
@@ -84,24 +83,6 @@ public:
 
     void Serialize(Archive& arch) override;
     void DeSerialize(Archive& arch) override;
-};
-
-/**
- * \class TabGroupEntry
- * \brief TabGroupEntry serialises a named group of tabs
- */
-class WXDLLIMPEXP_SDK TabGroupEntry : public SessionEntry
-{
-    wxString m_tabgroupName;
-
-public:
-    TabGroupEntry() = default;
-    ~TabGroupEntry() override = default;
-
-    void Serialize(Archive& arch) override;
-    void DeSerialize(Archive& arch) override;
-    void SetTabgroupName(const wxString& tabgroupName) { m_tabgroupName = tabgroupName; }
-    const wxString& GetTabgroupName() const { return m_tabgroupName; }
 };
 
 enum {

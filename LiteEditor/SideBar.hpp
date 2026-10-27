@@ -45,7 +45,6 @@ class FileViewTree;
 class OpenWindowsPanel;
 class FileExplorer;
 class WorkspaceTab;
-class TabgroupsPane;
 class wxGauge;
 
 class SecondarySideBar;
@@ -57,7 +56,6 @@ private:
     wxGauge* m_parsingProgress = nullptr;
     wxStaticText* m_staticText = nullptr;
     clSideBarCtrl* m_book = nullptr;
-    TabgroupsPane* m_TabgroupsPane = nullptr;
     OpenWindowsPanel* m_openWindowsPane = nullptr;
     FileExplorer* m_explorer = nullptr;
     WorkspaceTab* m_workspaceTab = nullptr;
@@ -112,7 +110,6 @@ public:
     clSideBarCtrl* GetNotebook() { return m_book; }
     WorkspaceTab* GetWorkspaceTab() { return m_workspaceTab; }
     FileExplorer* GetFileExplorer() { return m_explorer; }
-    TabgroupsPane* GetTabgroupsTab() { return m_TabgroupsPane; }
     SideBarToolBar* GetToolBar() { return GetNotebook()->GetToolBar(); }
 
     /**

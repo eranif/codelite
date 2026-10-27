@@ -19,7 +19,7 @@ clProfileHandler::clProfileHandler()
         "CScope",
         "BuildQ",
     };
-    m_cxxWorkspaceTabs = {"CMake", "wxCrafter", "Groups"};
+    m_cxxWorkspaceTabs = {"CMake", "wxCrafter"};
 }
 
 clProfileHandler::~clProfileHandler()

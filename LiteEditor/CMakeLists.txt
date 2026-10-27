@@ -264,12 +264,6 @@ wxcrafter_target(
     "syntaxhighlightbasedlg.hpp")
 
 wxcrafter_target(
-    LiteEditorTabGroupBaseDlgs
-    "${CMAKE_CURRENT_SOURCE_DIR}/tabgroupbasedlgs.wxcp"
-    "tabgroupbasedlgs.cpp"
-    "tabgroupbasedlgs.hpp")
-
-wxcrafter_target(
     LiteEditorTagsOptionsBaseDlg
     "${CMAKE_CURRENT_SOURCE_DIR}/tags_options_base_dlg.wxcp"
     "tags_options_base_dlg.cpp"
@@ -341,7 +335,6 @@ add_executable(codelite ${SRCS} ${RES_FILES}
     ${WXCRAFTER_LiteEditorReconcileProject_OUTPUTS}
     ${WXCRAFTER_LiteEditorSettersGetters_OUTPUTS}
     ${WXCRAFTER_LiteEditorSyntaxHighlightBaseDlg_OUTPUTS}
-    ${WXCRAFTER_LiteEditorTabGroupBaseDlgs_OUTPUTS}
     ${WXCRAFTER_LiteEditorTagsOptionsBaseDlg_OUTPUTS}
     ${WXCRAFTER_LiteEditorThreadListPanelBase_OUTPUTS}
     ${WXCRAFTER_LiteEditorWorkspaceSettingsBase_OUTPUTS}

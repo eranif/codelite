@@ -86,7 +86,6 @@
 #include "search_thread.h"
 #include "sessionmanager.h"
 #include "simpletable.h"
-#include "tabgroupmanager.h"
 #include "terminal_view.h"
 #include "threadlistpanel.h"
 #include "workspacetab.h"
@@ -351,7 +350,6 @@ Manager::~Manager()
 
     wxDELETE(m_shellProcess);
     wxDELETE(m_breakptsmgr);
-    TabGroupsManager::Free();
     clKeyboardManager::Release();
     wxCodeCompletionBoxManager::Free();
 }

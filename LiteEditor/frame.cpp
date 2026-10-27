@@ -114,9 +114,6 @@
 #include "sessionmanager.h"
 #include "singleinstancethreadjob.h"
 #include "syntaxhighlightdlg.h"
-#include "tabgroupdlg.h"
-#include "tabgroupmanager.h"
-#include "tabgroupspane.h"
 #include "terminal_view.h"
 #include "webupdatethread.h"
 #include "workspacetab.h"
@@ -236,12 +233,10 @@ EVT_MENU(XRCID("new_file"), clMainFrame::OnFileNew)
 EVT_MENU(XRCID("open_file"), clMainFrame::OnFileOpen)
 EVT_MENU(XRCID("open_folder"), clMainFrame::OnFileOpenFolder)
 EVT_MENU(XRCID("refresh_file"), clMainFrame::OnFileReload)
-EVT_MENU(XRCID("load_tab_group"), clMainFrame::OnFileLoadTabGroup)
 EVT_MENU(XRCID("save_file"), clMainFrame::OnSave)
 EVT_MENU(XRCID("duplicate_tab"), clMainFrame::OnDuplicateTab)
 EVT_MENU(XRCID("save_file_as"), clMainFrame::OnSaveAs)
 EVT_MENU(XRCID("save_all"), clMainFrame::OnFileSaveAll)
-EVT_MENU(XRCID("save_tab_group"), clMainFrame::OnFileSaveTabGroup)
 EVT_MENU(XRCID("close_file"), clMainFrame::OnFileClose)
 EVT_MENU(wxID_CLOSE_ALL, clMainFrame::OnFileCloseAll)
 EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, clMainFrame::OnRecentFile)
@@ -258,7 +253,6 @@ EVT_UPDATE_UI(XRCID("save_file"), clMainFrame::OnFileSaveUI)
 EVT_UPDATE_UI(XRCID("duplicate_tab"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("save_file_as"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("save_all"), clMainFrame::OnFileSaveAllUI)
-EVT_UPDATE_UI(XRCID("save_tab_group"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("close_file"), clMainFrame::OnFileCloseUI)
 EVT_UPDATE_UI(XRCID("recent_workspaces"), clMainFrame::OnRecentWorkspaceUI)
 
@@ -2108,53 +2102,6 @@ void clMainFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
-{
-    wxArrayString previousgroups;
-    EditorConfigST::Get()->GetRecentItems(previousgroups, "RecentTabgroups");
-
-    // Check the previous items still exist
-    for (int n = (int)previousgroups.GetCount() - 1; n >= 0; --n) {
-        if (!wxFileName::FileExists(previousgroups.Item(n))) {
-            previousgroups.RemoveAt(n);
-        }
-    }
-    EditorConfigST::Get()->SetRecentItems(previousgroups, "RecentTabgroups"); // In case any were deleted
-
-    wxString path = ManagerST::Get()->IsWorkspaceOpen() ? clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath()
-                                                        : wxGetHomeDir();
-    LoadTabGroupDlg dlg(this, path, previousgroups);
-
-    // Disable the 'Replace' checkbox if there aren't any editors to replace
-    const auto editors = GetMainBook()->GetAllEditors();
-    dlg.EnableReplaceCheck(editors.size());
-
-    if (dlg.ShowModal() != wxID_OK) {
-        return;
-    }
-
-    wxString filepath = dlg.GetListBox()->GetStringSelection();
-    wxString sessionFilepath = filepath.BeforeLast('.');
-
-    clWindowUpdateLocker locker(this);
-    TabGroupEntry session;
-    if (SessionManager::Get().GetSession(sessionFilepath, session, "tabgroup", tabgroupTag)) {
-        // We've 'loaded' the requested tabs. If required, delete any current ones
-        if (dlg.GetReplaceCheck()) {
-            GetMainBook()->CloseAll(true);
-        }
-        GetMainBook()->RestoreSession(session);
-
-        // Remove any previous instance of this group from the history, then prepend it and save
-        int index = previousgroups.Index(filepath);
-        if (index != wxNOT_FOUND) {
-            previousgroups.RemoveAt(index);
-        }
-        previousgroups.Insert(filepath, 0);
-        EditorConfigST::Get()->SetRecentItems(previousgroups, "RecentTabgroups");
-    }
-}
-
 void clMainFrame::OnFileReload(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -2327,77 +2274,6 @@ void clMainFrame::OnFileSaveAll(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     GetMainBook()->SaveAll(false, true);
-}
-
-void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
-{
-    wxArrayString previousgroups;
-    EditorConfigST::Get()->GetRecentItems(previousgroups, "RecentTabgroups");
-
-    SaveTabGroupDlg dlg(this, previousgroups);
-
-    wxArrayString filepaths;
-    const auto editors = GetMainBook()->GetAllEditors();
-    for (size_t i = 0; i < editors.size(); ++i) {
-        filepaths.Add(editors[i]->GetFileName().GetFullPath());
-    }
-    dlg.SetListTabs(filepaths);
-
-    while (true) {
-
-        if (dlg.ShowModal() != wxID_OK) {
-            return;
-        }
-
-        wxString sessionName = dlg.GetTabgroupName();
-        if (sessionName.IsEmpty()) {
-            if (clMessageBox(_("Please enter a name for the tab group"),
-                             wxT("CodeLite"),
-                             wxICON_ERROR | wxOK | wxCANCEL,
-                             this) != wxOK) {
-                return;
-            } else {
-                continue;
-            }
-        }
-
-        wxString path = dlg.GetSaveInWorkspace() ? TabGroupsManager::Get()->GetTabgroupDirectory()
-                                                 : clStandardPaths::Get().GetUserDataDir() + "/tabgroups";
-
-        if (path.Right(1) != wxFileName::GetPathSeparator()) {
-            path << wxFileName::GetPathSeparator();
-        }
-        wxString filepath(path + sessionName + ".tabgroup");
-        if (wxFileName::FileExists(filepath)) {
-            if (clMessageBox(_("There is already a file with this name. Do you want to overwrite it?"),
-                             _("Are you sure?"),
-                             wxICON_EXCLAMATION | wxOK | wxCANCEL,
-                             this) != wxOK) {
-                return;
-            }
-        }
-
-        wxArrayInt intArr;
-        if (dlg.GetChoices(intArr)) { // Don't bother to save if no tabs were selected
-            TabGroupEntry session;
-            session.SetTabgroupName(path + sessionName);
-            GetMainBook()->SaveSession(session, &intArr);
-            SessionManager::Get().Save(session.GetTabgroupName(), session, "tabgroup", tabgroupTag);
-            // Add the new tabgroup to the tabgroup manager and pane
-            GetWorkspacePane()->GetTabgroupsTab()->AddNewTabgroupToTree(!dlg.GetSaveInWorkspace(), filepath);
-
-            // Remove any previous instance of this group from the history, then prepend it and save
-            int index = previousgroups.Index(filepath);
-            if (index != wxNOT_FOUND) {
-                previousgroups.RemoveAt(index);
-            }
-            previousgroups.Insert(filepath, 0);
-            EditorConfigST::Get()->SetRecentItems(previousgroups, "RecentTabgroups");
-            GetStatusBar()->SetMessage(_("Tab group saved"));
-        }
-
-        return;
-    }
 }
 
 void clMainFrame::OnCompleteWordUpdateUI(wxUpdateUIEvent& event)
@@ -3670,8 +3546,6 @@ void clMainFrame::CompleteInitialization()
     eventShowTabBar.SetInt(clConfig::Get().Read(kConfigShowTabBar, true));
     OnShowTabBar(eventShowTabBar);
     ShowOrHideCaptions();
-
-    TabGroupsManager::Get(); // Ensure that the events are bounded
 
     ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
     m_initCompleted = true;

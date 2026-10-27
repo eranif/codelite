@@ -471,7 +471,6 @@ protected:
     void OnFileSaveUI(wxUpdateUIEvent& event);
     void OnSaveAs(wxCommandEvent& event);
     void OnFileReload(wxCommandEvent& event);
-    void OnFileLoadTabGroup(wxCommandEvent& event);
     void OnNativeTBUnRedoDropdown(wxCommandEvent& event);
     void OnTBUnRedo(wxCommandEvent& event);
     void OnTBUnRedoMenu(wxCommandEvent& event);
@@ -489,7 +488,6 @@ protected:
     void OnFileClose(wxCommandEvent& event);
     void OnFileCloseUI(wxUpdateUIEvent& event);
     void OnFileSaveAll(wxCommandEvent& event);
-    void OnFileSaveTabGroup(wxCommandEvent& event);
     void OnFileExistUpdateUI(wxUpdateUIEvent& event);
     void OnCopyFilePathRelativeToWorkspaceUI(wxUpdateUIEvent& event);
     void OnFileSaveAllUI(wxUpdateUIEvent& event);

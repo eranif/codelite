@@ -454,7 +454,7 @@ void MainBook::ShowNavBar(bool s)
     }
 }
 
-void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { CreateSession(session, excludeArr); }
+void MainBook::SaveSession(SessionEntry& session) { CreateSession(session); }
 
 void MainBook::DoRestoreSession(const SessionEntry& session)
 {
@@ -1679,7 +1679,7 @@ FilesModifiedDlg* MainBook::GetFilesModifiedDlg()
     return m_filesModifiedDlg;
 }
 
-void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
+void MainBook::CreateSession(SessionEntry& session)
 {
     std::vector<clEditor*> editors = GetAllEditors();
 
@@ -1697,11 +1697,6 @@ void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
     session.SetSelectedTab(0);
     std::vector<TabInfo> vTabInfoArr;
     for (size_t i = 0; i < editors.size(); i++) {
-
-        if (excludeArr && (excludeArr->GetCount() > i) && (!excludeArr->Item(i))) {
-            // If we're saving only selected editors, and this isn't one of them...
-            continue;
-        }
 
         if (editors[i] == GetActiveEditor()) {
             session.SetSelectedTab(vTabInfoArr.size());

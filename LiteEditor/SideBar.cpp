@@ -34,7 +34,6 @@
 #include "globals.h"
 #include "openwindowspanel.h"
 #include "pluginmanager.h"
-#include "tabgroupspane.h"
 #include "workspacetab.h"
 
 #include <wx/app.h>
@@ -60,7 +59,6 @@ namespace
 wxString WorkspaceLabel() { return _("Workspace"); }
 wxString ExplorerLabel() { return _("Explorer"); }
 wxString TabsLabel() { return _("Tabs"); }
-wxString GroupsLabel() { return _("Groups"); }
 } // namespace
 
 SideBar::SideBar(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style)
@@ -147,13 +145,6 @@ void SideBar::CreateGUIControls()
     mgr->AddWorkspaceTab(TabsLabel());
     // #endif
 
-    // Add the Tabgroups tab
-    m_TabgroupsPane = new TabgroupsPane(m_book, GroupsLabel());
-    m_book->AddPage(m_TabgroupsPane, GroupsLabel(), "groups-button");
-
-    m_tabs.emplace(GroupsLabel(), Tab(GroupsLabel(), m_TabgroupsPane));
-    mgr->AddWorkspaceTab(GroupsLabel());
-
     if (m_book->GetPageCount() > 0) {
         m_book->SetSelection((size_t)0);
     }
@@ -231,10 +222,6 @@ bool SideBar::IsTabVisible(int flag)
         win = m_openWindowsPane;
         break;
 #endif
-    case View_Show_Tabgroups_Tab:
-        title = GroupsLabel();
-        win = m_TabgroupsPane;
-        break;
     }
 
     if (!win || title.IsEmpty())

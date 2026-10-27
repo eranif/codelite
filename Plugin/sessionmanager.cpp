@@ -126,20 +126,6 @@ void SessionEntry::Serialize(Archive& arch)
 }
 
 //---------------------------------------------
-
-void TabGroupEntry::DeSerialize(Archive& arch)
-{
-    arch.Read(wxT("m_TabgroupName"), m_tabgroupName);
-    arch.Read(wxT("TabInfoArray"), m_vTabInfoArr);
-}
-
-void TabGroupEntry::Serialize(Archive& arch)
-{
-    arch.Write(wxT("m_TabgroupName"), m_tabgroupName);
-    arch.Write(wxT("TabInfoArray"), m_vTabInfoArr);
-}
-
-//---------------------------------------------
 SessionManager& SessionManager::Get()
 {
     static SessionManager theManager;
@@ -177,9 +163,7 @@ wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxStri
 
     } else {
         wxFileName sessionFileName(name);
-        if (suffix != "tabgroup") {
-            sessionFileName.AppendDir(".codelite");
-        }
+        sessionFileName.AppendDir(".codelite");
         sessionFileName.SetExt(suffix.IsEmpty() ? wxString("session") : suffix);
         return sessionFileName;
     }
@@ -229,7 +213,6 @@ bool SessionManager::Save(const wxString& name,
     wxXmlDocument doc;
     doc.SetRoot(child);
 
-    // If we're saving a tabgroup, suffix will be ".tabgroup", not the default ".session"
     wxString content;
     wxStringOutputStream sos(&content);
     if (!doc.Save(sos)) {

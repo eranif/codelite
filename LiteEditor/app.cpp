@@ -759,7 +759,6 @@ bool CodeLiteApp::OnInit()
         wxMkdir(homeDir + wxT("/images/"));
         wxMkdir(homeDir + wxT("/templates/"));
         wxMkdir(homeDir + wxT("/config/"));
-        wxMkdir(homeDir + wxT("/tabgroups/"));
 
         // copy the settings from the global location if needed
         wxString installPath(INSTALL_DIR, wxConvUTF8);
@@ -791,7 +790,6 @@ bool CodeLiteApp::OnInit()
         wxMkdir(homeDir + wxT("/images/"));
         wxMkdir(homeDir + wxT("/templates/"));
         wxMkdir(homeDir + wxT("/config/"));
-        wxMkdir(homeDir + wxT("/tabgroups/"));
     }
 
     wxString installPath(MacGetBasePath());

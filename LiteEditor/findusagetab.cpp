@@ -139,6 +139,12 @@ wxString PrepareLine(const wxString& line, size_t start, size_t length, size_t& 
     highlightLength = newEnd - newStart;
     return text;
 }
+
+/// The text before a match: its line number (the numbers of the locations start at 0), like in "Find In Files"
+wxString GetLinePrefix(const FindUsageItemData& data)
+{
+    return wxString::Format(" %5d: ", static_cast<int>(data.location->GetRange().GetStart().GetLine()) + 1);
+}
 } // namespace
 
 /// Draws a file (its path) or a match (the line, with the matched range highlighted)
@@ -148,6 +154,7 @@ public:
     struct Colours {
         wxColour header;          // the path of a file
         wxColour match;           // a matched line
+        wxColour lineNumber;      // the line number before a matched line
         wxColour matchBackground; // the rounded rectangle around the matched range of the line
         wxColour matchText;       // the text of the matched range, it contrasts with matchBackground
         wxColour selection;       // the dotted rectangle around the selected row
@@ -158,6 +165,7 @@ public:
     {
         m_colours.header = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
         m_colours.match = m_colours.header;
+        m_colours.lineNumber = clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
         m_colours.matchBackground = wxColour("GOLD");
         m_colours.matchText = *wxBLACK;
         m_colours.selection = m_colours.header;
@@ -184,7 +192,13 @@ public:
             return wxSize(wxDVC_DEFAULT_RENDERER_SIZE, wxDVC_DEFAULT_RENDERER_SIZE);
         }
         // An empty line has the height of a text line
-        const wxSize size = view->GetTextExtent(m_data != nullptr && !m_data->text.empty() ? m_data->text : "Tp");
+        wxString text = "Tp";
+        if (m_data != nullptr && m_data->IsHeader()) {
+            text = m_data->text;
+        } else if (m_data != nullptr) {
+            text = GetLinePrefix(*m_data) + m_data->text;
+        }
+        const wxSize size = view->GetTextExtent(text);
         return wxSize(size.x + 2 * kPadding, size.y + kPadding);
     }
 
@@ -236,6 +250,15 @@ public:
 
         if (m_data->IsHeader()) {
             draw(m_data->text, m_colours.header);
+            return true;
+        }
+
+        // The line number, as in the "Find In Files" results
+        draw(GetLinePrefix(*m_data), m_colours.lineNumber);
+
+        // Only the match of the selected row is highlighted, many highlights in a file are too much
+        if ((state & wxDATAVIEW_CELL_SELECTED) == 0) {
+            draw(m_data->text, m_colours.match);
             return true;
         }
 
@@ -444,6 +467,7 @@ void FindUsageTab::UpdateStyle()
     FindUsageRenderer::Colours colours;
     colours.header = solid(theme.blue);
     colours.match = solid(theme.fg);
+    colours.lineNumber = solid(theme.brightBlack);
     colours.matchBackground = solid(theme.highlightBg);
     colours.matchText = DrawingUtils::IsDark(colours.matchBackground) ? *wxWHITE : *wxBLACK;
     colours.selection = solid(theme.brightBlack);

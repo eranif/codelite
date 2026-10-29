@@ -56,7 +56,7 @@
 /// A row of the table: a match
 struct FindUsageEntry {
     const LSP::Location* location = nullptr;
-    wxString file;             // the file, relative to the workspace folder when it is inside it
+    wxString file;             // "file:line": the file relative to the workspace folder (when it is inside it)
     wxString text;             // the matched line, the tabs replaced by spaces (empty if it could not be read)
     size_t highlightStart = 0; // the range of `text` to highlight
     size_t highlightLength = 0;
@@ -99,12 +99,6 @@ wxString PrepareLine(const wxString& line, size_t start, size_t length, size_t& 
     highlightStart = newStart;
     highlightLength = newEnd - newStart;
     return text;
-}
-
-/// The text before a match: its line number (the numbers of the locations start at 0), like in "Find In Files"
-wxString GetLinePrefix(const FindUsageEntry& entry)
-{
-    return wxString::Format(" %5d: ", static_cast<int>(entry.location->GetRange().GetStart().GetLine()) + 1);
 }
 
 /// `path` relative to the folder of the workspace, if it is inside it. The paths are compared as strings, so this
@@ -160,13 +154,12 @@ void UseViewFont(const wxWindow* view, wxDC* dc)
 }
 } // namespace
 
-/// Draws a matched line: its line number, then the line, with the matched range highlighted
+/// Draws a matched line, with the matched range highlighted
 class FindUsageRenderer : public wxDataViewCustomRenderer
 {
 public:
     struct Colours {
         wxColour match;           // a matched line
-        wxColour lineNumber;      // the line number before a matched line
         wxColour matchBackground; // the rounded rectangle around the matched range of the line
         wxColour matchText;       // the text of the matched range, it contrasts with matchBackground
         wxColour selection;       // the dotted rectangle around the selected row
@@ -176,7 +169,6 @@ public:
         : wxDataViewCustomRenderer("void*", wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
     {
         m_colours.match = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-        m_colours.lineNumber = clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
         m_colours.matchBackground = wxColour("GOLD");
         m_colours.matchText = *wxBLACK;
         m_colours.selection = m_colours.match;
@@ -207,8 +199,8 @@ public:
         }
         // An empty line has the height of a text line
         wxString text = "Tp";
-        if (m_entry != nullptr) {
-            text = GetLinePrefix(*m_entry) + m_entry->text;
+        if (m_entry != nullptr && !m_entry->text.empty()) {
+            text = m_entry->text;
         }
         const wxSize size = view->GetTextExtent(text);
         return wxSize(size.x + 2 * kPadding, size.y);
@@ -264,9 +256,6 @@ public:
             dc->DrawText(text, x, rect.y + (rect.height - size.y) / 2);
             x += size.x;
         };
-
-        // The line number, as in the "Find In Files" results
-        draw(GetLinePrefix(*m_entry), m_colours.lineNumber);
 
         // Only the match of the selected row is highlighted, many highlights are too much
         if (!selected) {
@@ -497,7 +486,9 @@ void FindUsageTab::DoAddFileEntries(const wxString& filename, const std::vector<
     for (const LSP::Location* location : matches) {
         auto entry = std::make_unique<FindUsageEntry>();
         entry->location = location;
-        entry->file = display_file;
+        // The numbers of the lines of the locations start at 0
+        entry->file =
+            wxString::Format("%s:%d", display_file, static_cast<int>(location->GetRange().GetStart().GetLine()) + 1);
 
         // in case this was a remote file, open the local copy
         if (!local_file.empty()) {
@@ -594,7 +585,6 @@ void FindUsageTab::UpdateStyle()
 
     FindUsageRenderer::Colours colours;
     colours.match = solid(theme.fg);
-    colours.lineNumber = solid(theme.brightBlack);
     colours.matchBackground = solid(theme.highlightBg);
     colours.matchText = DrawingUtils::IsDark(colours.matchBackground) ? *wxWHITE : *wxBLACK;
     colours.selection = solid(theme.brightBlack);

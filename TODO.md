@@ -8,6 +8,7 @@ High:
 - [x] Find references: include line number if possible.
 - [ ] BUG: Markdown renderer, fails to render "task" (empty checkbox) if it is followed by code tags (inline like `code`)
 - [ ] BUG: Markdown renderer, renders "checked task" incorrectly (checkbox with "V" inside it) if it is followed by code tags (inline like `code`) - it consumes some of the codetag background
+- [ ] Change the way `Find References` gather entries. We should have 2 lists: left will hold the files, while the right will contain the matches.
 
 Medium:
 -----

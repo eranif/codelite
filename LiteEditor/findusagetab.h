@@ -53,7 +53,9 @@ class FindUsageTab : public wxPanel
     FindUsageFileRenderer* m_fileRenderer = nullptr; // owned by the column of m_ctrl
 
 private:
-    void DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches);
+    /// Add the matches of `filename`. Its name is shown with the colour number `colour_index`
+    void
+    DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches, size_t colour_index);
     void InitialiseView(const std::vector<LSP::Location>& locations);
     /// Show the entries that match the filter (all of them when it is empty)
     void ApplyFilter();

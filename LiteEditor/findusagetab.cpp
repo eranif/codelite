@@ -56,7 +56,10 @@
 /// A row of the table: a match
 struct FindUsageEntry {
     const LSP::Location* location = nullptr;
-    wxString file;             // "file:line": the file relative to the workspace folder (when it is inside it)
+    wxString path;             // the file, relative to the workspace folder when it is inside it
+    wxString line;             // ":line", shown after `path`
+    wxString file;             // `path` + `line`, for the filter
+    size_t colourIndex = 0;    // the colour of `path`: the files next to each other have different colours
     wxString text;             // the matched line, the tabs replaced by spaces (empty if it could not be read)
     size_t highlightStart = 0; // the range of `text` to highlight
     size_t highlightLength = 0;
@@ -287,55 +290,74 @@ private:
     Colours m_colours;
 };
 
-/// Draws the file of a match, with the colour of the matched lines. A text column would use the colour of the system,
-/// which is too bright on the colours of the terminal theme
+/// Draws the file of a match ("file:line"). Each file has its own colour, so the files are easy to tell apart. The line
+/// number has the colour of the matched lines
 class FindUsageFileRenderer : public wxDataViewCustomRenderer
 {
 public:
     FindUsageFileRenderer()
-        : wxDataViewCustomRenderer("string", wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
+        : wxDataViewCustomRenderer("void*", wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
     {
     }
 
-    void SetColour(const wxColour& colour) { m_colour = colour; }
+    /// `line`: the colour of ":line". `files`: the colours of the files, used in turn (see FindUsageEntry::colourIndex)
+    void SetColours(const wxColour& line, const std::vector<wxColour>& files)
+    {
+        m_lineColour = line;
+        m_fileColours = files;
+    }
 
     bool SetValue(const wxVariant& value) override
     {
-        m_text = value.GetString();
+        m_entry = static_cast<const FindUsageEntry*>(value.GetVoidPtr());
         return true;
     }
 
     bool GetValue(wxVariant& value) const override
     {
-        value = m_text;
+        value = static_cast<void*>(const_cast<FindUsageEntry*>(m_entry));
         return true;
     }
 
     wxSize GetSize() const override
     {
         wxWindow* view = GetView();
-        if (view == nullptr) {
+        if (view == nullptr || m_entry == nullptr) {
             return wxSize(wxDVC_DEFAULT_RENDERER_SIZE, wxDVC_DEFAULT_RENDERER_SIZE);
         }
-        const wxSize size = view->GetTextExtent(m_text.empty() ? wxString("Tp") : m_text);
+        const wxSize size = view->GetTextExtent(m_entry->path + m_entry->line);
         return wxSize(size.x + 2 * kPadding, size.y);
     }
 
     bool Render(wxRect rect, wxDC* dc, int state) override
     {
         wxUnusedVar(state);
+        if (m_entry == nullptr) {
+            return false;
+        }
         wxDCClipper clipper(*dc, rect);
         UseViewFont(GetView(), dc);
         rect.Deflate(kPadding, 0);
-        const wxSize size = dc->GetTextExtent(m_text);
-        dc->SetTextForeground(m_colour.IsOk() ? m_colour : clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-        dc->DrawText(m_text, rect.x, rect.y + (rect.height - size.y) / 2);
+
+        const wxColour defaultColour =
+            m_lineColour.IsOk() ? m_lineColour : clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        const wxColour fileColour =
+            m_fileColours.empty() ? defaultColour : m_fileColours[m_entry->colourIndex % m_fileColours.size()];
+
+        // The file in its own colour, then ":line"
+        const wxSize size = dc->GetTextExtent(m_entry->path);
+        const int y = rect.y + (rect.height - size.y) / 2;
+        dc->SetTextForeground(fileColour);
+        dc->DrawText(m_entry->path, rect.x, y);
+        dc->SetTextForeground(defaultColour);
+        dc->DrawText(m_entry->line, rect.x + size.x, y);
         return true;
     }
 
 private:
-    wxString m_text;
-    wxColour m_colour;
+    const FindUsageEntry* m_entry = nullptr;
+    wxColour m_lineColour;
+    std::vector<wxColour> m_fileColours;
 };
 
 FindUsageTab::FindUsageTab(wxWindow* parent)
@@ -352,7 +374,7 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
 
     // The filter: a row is shown when its file or its matched line contains the text
     m_filter = new wxSearchCtrl(this, wxID_ANY);
-    m_filter->SetHint(_("Filter Results..."));
+    m_filter->SetHint(_("Filter results. Prefix a string with a minus sign (-) to exclude matches."));
     m_filter->ShowCancelButton(true);
     m_filter->Bind(wxEVT_TEXT, &FindUsageTab::OnFilter, this);
     m_filter->Bind(wxEVT_SEARCHCTRL_CANCEL_BTN, [this](wxCommandEvent& event) {
@@ -367,7 +389,7 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
     m_fileRenderer = new FindUsageFileRenderer();
     m_ctrl->AppendColumn(
         new wxDataViewColumn(_("File"), m_fileRenderer, 0, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxCOL_RESIZABLE),
-        "string");
+        "void*");
     m_renderer = new FindUsageRenderer();
     m_ctrl->AppendColumn(
         new wxDataViewColumn(_("Matched Line"), m_renderer, 1, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxCOL_RESIZABLE),
@@ -462,8 +484,9 @@ void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
 
     // The lines are read now: the filter needs them
     wxBusyCursor bc;
+    size_t colour_index = 0;
     for (const auto& [filename, file_matches] : sorted_entries) {
-        DoAddFileEntries(filename, file_matches);
+        DoAddFileEntries(filename, file_matches, colour_index++);
     }
 
     // A new search: show all its results
@@ -471,7 +494,9 @@ void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
     ApplyFilter();
 }
 
-void FindUsageTab::DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches)
+void FindUsageTab::DoAddFileEntries(const wxString& filename,
+                                    const std::vector<const LSP::Location*>& matches,
+                                    size_t colour_index)
 {
     // The file is shown relative to the workspace. Use the path from the language server: a remote file is read from
     // a local copy
@@ -487,8 +512,10 @@ void FindUsageTab::DoAddFileEntries(const wxString& filename, const std::vector<
         auto entry = std::make_unique<FindUsageEntry>();
         entry->location = location;
         // The numbers of the lines of the locations start at 0
-        entry->file =
-            wxString::Format("%s:%d", display_file, static_cast<int>(location->GetRange().GetStart().GetLine()) + 1);
+        entry->path = display_file;
+        entry->line = wxString::Format(":%d", static_cast<int>(location->GetRange().GetStart().GetLine()) + 1);
+        entry->file = entry->path + entry->line;
+        entry->colourIndex = colour_index;
 
         // in case this was a remote file, open the local copy
         if (!local_file.empty()) {
@@ -522,15 +549,34 @@ void FindUsageTab::ApplyFilter()
     m_renderer->SetSelectedEntry(nullptr);
     m_ctrl->DeleteAllItems();
 
-    const wxString filter = m_filter->GetValue();
+    wxString filter = m_filter->GetValue().Lower();
+    bool hasFilter = !filter.empty();
+    bool isExcludePattern = !filter.empty() && filter[0] == '-';
+    if (isExcludePattern) {
+        filter = filter.Mid(1);
+        hasFilter = !filter.empty();
+    }
+
+    auto AddItem = [this](FindUsageEntry* entry) {
+        wxVector<wxVariant> values;
+        values.push_back(wxVariant(static_cast<void*>(entry)));
+        values.push_back(wxVariant(static_cast<void*>(entry)));
+        m_ctrl->AppendItem(values, reinterpret_cast<wxUIntPtr>(entry));
+    };
+
     for (const auto& entry : m_entries) {
-        if (!filter.empty() && !entry->file.Contains(filter) && !entry->text.Contains(filter)) {
+        auto textLower = entry->text.Lower();
+        auto fileLower = entry->file.Lower();
+
+        bool matches = fileLower.Contains(filter) || textLower.Contains(filter);
+        if (!hasFilter) {
+            AddItem(entry.get());
             continue;
         }
-        wxVector<wxVariant> values;
-        values.push_back(wxVariant(entry->file));
-        values.push_back(wxVariant(static_cast<void*>(entry.get())));
-        m_ctrl->AppendItem(values, reinterpret_cast<wxUIntPtr>(entry.get()));
+
+        if (matches != isExcludePattern) {
+            AddItem(entry.get());
+        }
     }
 }
 
@@ -589,7 +635,21 @@ void FindUsageTab::UpdateStyle()
     colours.matchText = DrawingUtils::IsDark(colours.matchBackground) ? *wxWHITE : *wxBLACK;
     colours.selection = solid(theme.brightBlack);
     m_renderer->SetColours(colours);
-    m_fileRenderer->SetColour(colours.match);
+    // The files use the colours of the palette of the theme, in turn
+    std::vector<wxColour> file_colours;
+    for (const wxColour& colour : {theme.blue,
+                                   theme.green,
+                                   theme.yellow,
+                                   theme.magenta,
+                                   theme.cyan,
+                                   theme.brightBlue,
+                                   theme.brightGreen,
+                                   theme.brightYellow,
+                                   theme.brightMagenta,
+                                   theme.brightCyan}) {
+        file_colours.push_back(solid(colour));
+    }
+    m_fileRenderer->SetColours(colours.match, file_colours);
     m_ctrl->Refresh();
 }
 

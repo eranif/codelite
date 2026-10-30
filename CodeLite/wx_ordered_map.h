@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WX_ORDERED_MAP_H
-#define WX_ORDERED_MAP_H
+#pragma once
 
 #include <list>
 #include <map>
@@ -41,6 +40,8 @@ class wxOrderedMap final
 public:
     using ConstIterator = typename List_t::const_iterator;
     using const_iterator = typename List_t::const_iterator;
+    using MapConstIterator = typename Map_t::const_iterator;
+    using map_const_iterator = typename Map_t::const_iterator;
     using Iterator = typename List_t::iterator;
     using iterator = typename List_t::iterator;
 
@@ -155,6 +156,9 @@ public:
 
     const_iterator begin() const { return m_list.begin(); }
     iterator begin() { return m_list.begin(); }
-};
 
-#endif // WX_ORDERED_MAP_H
+    // map const iterators
+    // We can use the map iterators to get the items in order.
+    MapConstIterator MapBegin() const { return m_map.begin(); }
+    MapConstIterator MapEnd() const { return m_map.end(); }
+};

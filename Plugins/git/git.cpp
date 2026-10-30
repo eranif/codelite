@@ -36,6 +36,7 @@
 #include "GitStatusCode.hpp"
 #include "GitUserEmailDialog.h"
 #include "GitView.h"
+#include "Keyboard/clKeyboardManager.h"
 #include "StringUtils.h"
 #include "ai/LLMManager.hpp"
 #include "bitmap_loader.h"
@@ -273,6 +274,29 @@ GitPlugin::GitPlugin(IManager* manager)
                             this);
     m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
 
+    // Register the plugin menu actions with the keyboard manager (no default accelerators)
+    clKeyboardManager::Get()->AddAccelerator(
+        _("Git"),
+        {
+            {"git_pull", _("Pull remote changes")},
+            {"git_commit", _("Commit changes")},
+            {"git_push", _("Push changes")},
+            {"git_reset_repository", _("Reset current repository")},
+            {"git_create_branch", _("Create local branch")},
+            {"git_switch_branch", _("Switch local branch")},
+            {"git_switch_to_remote_branch", _("Switch remote branch")},
+            {"git_browse_commit_list", _("List commits")},
+            {"git_commit_diff", _("Show current diffs")},
+            {"git_blame", _("Show git blame")},
+            {"git_apply_patch", _("Apply Patch")},
+            {"git_list_modified", _("List modified files")},
+            {"git_start_gitk", _("Start gitk")},
+            {"git_garbage_collection", _("Clean git database (garbage collection)")},
+            {"git_refresh", _("Refresh git file list")},
+            {"git_settings", _("GIT plugin settings")},
+            {"git_clone", _("Clone a git repository")},
+        });
+
     // Respond to our own events
     EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_PUSHED, &GitPlugin::OnGitActionDone, this);
     EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_COMMIT_LOCALLY, &GitPlugin::OnGitActionDone, this);
@@ -386,102 +410,41 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     pluginsMenu->Append(item);
 
     m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
-    m_eventHandler->Connect(
-        XRCID("git_settings"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnSettings), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_switch_branch"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnSwitchLocalBranch), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_switch_to_remote_branch"),
-                            wxEVT_MENU,
-                            wxCommandEventHandler(GitPlugin::OnSwitchRemoteBranch),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(
-        XRCID("git_create_branch"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCreateBranch), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_pull"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnPull), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_clone"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnClone), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_commit"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCommit), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_browse_commit_list"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCommitList), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_commit_diff"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnShowDiffs), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_blame"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnGitBlame), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_apply_patch"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnApplyPatch), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_push"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnPush), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_rebase"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnRebase), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_reset_repository"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnResetRepository), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_start_gitk"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnStartGitk), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_list_modified"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnListModified), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_refresh"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnRefresh), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_garbage_collection"),
-                            wxEVT_MENU,
-                            wxCommandEventHandler(GitPlugin::OnGarbageColletion),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(XRCID("git_switch_branch"),
-                            wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(XRCID("git_switch_to_remote_branch"),
-                            wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(XRCID("git_create_branch"),
-                            wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(
-        XRCID("git_pull"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_commit"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_browse_commit_list"),
-                            wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(XRCID("git_commit_diff"),
-                            wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(XRCID("git_apply_patch"),
-                            wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(
-        XRCID("git_push"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), nullptr, this);
-    m_eventHandler->Connect(
-        XRCID("git_rebase"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_reset_repository"),
-                            wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(
-        XRCID("git_start_gitk"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnStartGitkUI), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_list_modified"),
-                            wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(
-        XRCID("git_refresh"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), nullptr, this);
-    m_eventHandler->Connect(XRCID("git_garbage_collection"),
-                            wxEVT_UPDATE_UI,
-                            wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists),
-                            nullptr,
-                            this);
-    m_eventHandler->Connect(
-        XRCID("git_blame"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), nullptr, this);
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnSettings, this, XRCID("git_settings"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnSwitchLocalBranch, this, XRCID("git_switch_branch"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnSwitchRemoteBranch, this, XRCID("git_switch_to_remote_branch"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnCreateBranch, this, XRCID("git_create_branch"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnPull, this, XRCID("git_pull"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnClone, this, XRCID("git_clone"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnCommit, this, XRCID("git_commit"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnCommitList, this, XRCID("git_browse_commit_list"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnShowDiffs, this, XRCID("git_commit_diff"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnGitBlame, this, XRCID("git_blame"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnApplyPatch, this, XRCID("git_apply_patch"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnPush, this, XRCID("git_push"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnRebase, this, XRCID("git_rebase"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnResetRepository, this, XRCID("git_reset_repository"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnStartGitk, this, XRCID("git_start_gitk"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnListModified, this, XRCID("git_list_modified"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnRefresh, this, XRCID("git_refresh"));
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnGarbageColletion, this, XRCID("git_garbage_collection"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_switch_branch"));
+    m_eventHandler->Bind(
+        wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_switch_to_remote_branch"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_create_branch"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_pull"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_commit"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_browse_commit_list"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_commit_diff"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_apply_patch"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_push"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_rebase"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_reset_repository"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnStartGitkUI, this, XRCID("git_start_gitk"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_list_modified"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_refresh"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_garbage_collection"));
+    m_eventHandler->Bind(wxEVT_UPDATE_UI, &GitPlugin::OnEnableGitRepoExists, this, XRCID("git_blame"));
 }
 
 void GitPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
@@ -516,42 +479,22 @@ void GitPlugin::UnPlug()
 
     /*MENU*/
     m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
-    m_eventHandler->Disconnect(
-        XRCID("git_settings"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnSettings), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_switch_branch"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnSwitchLocalBranch), nullptr, this);
-    m_eventHandler->Disconnect(XRCID("git_switch_to_remote_branch"),
-                               wxEVT_MENU,
-                               wxCommandEventHandler(GitPlugin::OnSwitchRemoteBranch),
-                               nullptr,
-                               this);
-    m_eventHandler->Disconnect(
-        XRCID("git_create_branch"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCreateBranch), nullptr, this);
-    m_eventHandler->Disconnect(XRCID("git_pull"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnPull), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_commit"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCommit), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_browse_commit_list"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnCommitList), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_commit_diff"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnShowDiffs), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_blame"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnGitBlame), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_apply_patch"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnApplyPatch), nullptr, this);
-    m_eventHandler->Disconnect(XRCID("git_push"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnPush), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_reset_repository"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnResetRepository), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_start_gitk"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnStartGitk), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_list_modified"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnListModified), nullptr, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_refresh"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnRefresh), nullptr, this);
-    m_eventHandler->Disconnect(XRCID("git_garbage_collection"),
-                               wxEVT_MENU,
-                               wxCommandEventHandler(GitPlugin::OnGarbageColletion),
-                               nullptr,
-                               this);
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnSettings, this, XRCID("git_settings"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnSwitchLocalBranch, this, XRCID("git_switch_branch"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnSwitchRemoteBranch, this, XRCID("git_switch_to_remote_branch"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnCreateBranch, this, XRCID("git_create_branch"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnPull, this, XRCID("git_pull"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnCommit, this, XRCID("git_commit"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnCommitList, this, XRCID("git_browse_commit_list"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnShowDiffs, this, XRCID("git_commit_diff"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnGitBlame, this, XRCID("git_blame"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnApplyPatch, this, XRCID("git_apply_patch"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnPush, this, XRCID("git_push"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnResetRepository, this, XRCID("git_reset_repository"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnStartGitk, this, XRCID("git_start_gitk"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnListModified, this, XRCID("git_list_modified"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnRefresh, this, XRCID("git_refresh"));
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnGarbageColletion, this, XRCID("git_garbage_collection"));
     m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
 
     /*SYSTEM*/

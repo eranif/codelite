@@ -1,6 +1,7 @@
 #ifndef CLBUILTINTERMINALPANE_HPP
 #define CLBUILTINTERMINALPANE_HPP
 
+#include "GlyphBook.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "clAuiBook.hpp"
 #include "clWorkspaceEvent.hpp"
@@ -227,7 +228,7 @@ private:
     /// Create a theme from the content of an Alacritty theme (TOML) file. `name` is used for logging only
     static std::optional<wxTerminalTheme> FromTOML(const wxString& name, const wxString& content);
     wxAuiToolBar* m_toolbar = nullptr;
-    wxAuiNotebook* m_book = nullptr;
+    GlyphBook* m_book = nullptr;
     wxChoice* m_choice_themes = nullptr;
     std::vector<std::pair<EventFilterCallbackToken, wxEventType>> m_tokens;
     std::map<wxString, wxTerminalTheme> m_themes; // accessed from the main thread only

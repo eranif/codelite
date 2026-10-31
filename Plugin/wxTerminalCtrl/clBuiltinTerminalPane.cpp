@@ -205,12 +205,12 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_book = new wxAuiNotebook(
-        this,
-        wxID_ANY,
-        wxDefaultPosition,
-        wxDefaultSize,
-        wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_FIXED_WIDTH | wxAUI_NB_TAB_SPLIT | wxAUI_NB_CLOSE_ON_ALL_TABS);
+    m_book =
+        new GlyphBook(this,
+                      wxID_ANY,
+                      wxDefaultPosition,
+                      wxDefaultSize,
+                      wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_FIXED_WIDTH | wxAUI_NB_TAB_SPLIT | wxAUI_NB_CLOSE_ON_ALL_TABS);
 
     m_book->Bind(wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP, [this](wxAuiNotebookEvent& event) {
         // Close the hovered tab
@@ -288,7 +288,7 @@ namespace
 TerminalHost* GetPageTerminal(wxWindow* page) { return dynamic_cast<TerminalHost*>(page); }
 
 /// The index of the notebook page of `host`, or wxNOT_FOUND
-int FindTerminalPage(wxAuiNotebook* book, wxWindow* host) { return host ? book->FindPage(host) : wxNOT_FOUND; }
+int FindTerminalPage(wxBookCtrlBase* book, wxWindow* host) { return host ? book->FindPage(host) : wxNOT_FOUND; }
 
 /// The host of the terminal control that fired `event`, or nullptr. The terminal fires its events with itself as the
 /// event object.
@@ -1068,20 +1068,8 @@ void clBuiltinTerminalPane::UpdateTabArt() { UpdateTabArt(m_terminalSettings.m_t
 void clBuiltinTerminalPane::UpdateTabArt(const wxString& outlineColour)
 {
     wxFont font = clTabRenderer::GetTabFont(false);
-#if wxCHECK_VERSION(3, 3, 0)
-    // The tabs are painted with the colours of the active terminal theme
     const auto theme = GetActiveTheme();
-    auto art = new GlyphTabArt(theme);
-    art->SetOutlineColour(GetTabOutlineColourOf(theme, outlineColour));
-#else
-    auto art = new clAuiFlatTabArt();
-#endif
-    art->SetMeasuringFont(font);
-    art->SetNormalFont(font);
-    art->SetSelectedFont(font);
-    m_book->SetArtProvider(art);
-    // Measure the tab bar again and lay out the tabs with the new art
-    m_book->SetTabCtrlHeight(-1);
+    m_book->SetTheme(theme, GetTabOutlineColourOf(theme, outlineColour), GlyphTabArt::Style::Browser);
     m_book->Layout();
     m_book->Refresh();
     m_book->Update();

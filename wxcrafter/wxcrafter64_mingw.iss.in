@@ -16,6 +16,7 @@ LicenseFile=@CL_SRC_ROOT@/LICENSE
 OutputDir=@BUILD_DIRECTORY@/installer
 OutputBaseFilename=wxcrafter-@CODELITE_ARCH@-@CODELITE_VERSION@
 ChangesEnvironment=yes
+ChangesAssociations=yes
 FlatComponentsList=yes
 SetupIconFile=@CL_SRC_ROOT@/InnoSetup/box_software.ico
 Compression=lzma/ultra
@@ -35,6 +36,7 @@ Name: "eng"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "associatewxcp"; Description: "Associate .wxcp files with wxCrafter"; GroupDescription: "File associations:"
 
 [Files]
 ; the INSTALL_DIR is created by `make install`
@@ -50,6 +52,15 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\wxCrafter"; Workin
 
 [Registry]
 Root: HKLM; Subkey: "Software\wxcrafter\settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"; Flags: noerror
+
+; Associate .wxcp files with wxCrafter
+; ProgID (what "open" means for this file type)
+Root: HKA; Subkey: "Software\Classes\wxCrafter.Project"; ValueType: string; ValueData: "wxCrafter Project"; Flags: uninsdeletekey; Tasks: associatewxcp
+Root: HKA; Subkey: "Software\Classes\wxCrafter.Project\DefaultIcon"; ValueType: string; ValueData: "{app}\bin\wxcrafter.exe,0"; Tasks: associatewxcp
+Root: HKA; Subkey: "Software\Classes\wxCrafter.Project\shell\open\command"; ValueType: string; ValueData: """{app}\bin\wxcrafter.exe"" ""%1"""; Tasks: associatewxcp
+; Extension -> ProgID
+Root: HKA; Subkey: "Software\Classes\.wxcp"; ValueType: string; ValueData: "wxCrafter.Project"; Flags: uninsdeletevalue; Tasks: associatewxcp
+Root: HKA; Subkey: "Software\Classes\.wxcp\OpenWithProgids"; ValueType: string; ValueName: "wxCrafter.Project"; ValueData: ""; Flags: uninsdeletevalue; Tasks: associatewxcp
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"

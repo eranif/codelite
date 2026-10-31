@@ -1,7 +1,6 @@
 #ifndef CLBUILTINTERMINALPANE_HPP
 #define CLBUILTINTERMINALPANE_HPP
 
-#include "GlyphBook.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "clAuiBook.hpp"
 #include "clWorkspaceEvent.hpp"
@@ -28,6 +27,12 @@ class wxTerminalViewCtrl;
 inline constexpr const char kTerminalCommand[] = "cmd.exe";
 #else
 inline constexpr const char kTerminalCommand[] = "/bin/bash --login -i";
+#endif
+
+#if wxCHECK_VERSION(3, 3, 0)
+#include "GlyphBook.h"
+#else
+using GlyphBook = wxAuiNotebook;
 #endif
 
 // Translate wxTerminalViewCtrl events into exported events (these events can be used from outside the DLL)

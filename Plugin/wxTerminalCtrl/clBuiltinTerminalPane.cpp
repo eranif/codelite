@@ -1068,8 +1068,12 @@ void clBuiltinTerminalPane::UpdateTabArt() { UpdateTabArt(m_terminalSettings.m_t
 void clBuiltinTerminalPane::UpdateTabArt(const wxString& outlineColour)
 {
     wxFont font = clTabRenderer::GetTabFont(false);
+
+#if wxCHECK_VERSION(3, 3, 0)
     const auto theme = GetActiveTheme();
     m_book->SetTheme(theme, GetTabOutlineColourOf(theme, outlineColour), GlyphTabArt::Style::Browser);
+#endif
+
     m_book->Layout();
     m_book->Refresh();
     m_book->Update();

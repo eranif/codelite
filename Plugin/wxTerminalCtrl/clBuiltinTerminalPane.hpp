@@ -171,6 +171,9 @@ public:
 
     wxTerminalTheme GetActiveTheme() const;
 
+    /// Pass the focus to the terminal of the selected tab (if there is one)
+    void SetFocus() override;
+
 protected:
     void PromptForNewTerminal();
     TerminalHost*

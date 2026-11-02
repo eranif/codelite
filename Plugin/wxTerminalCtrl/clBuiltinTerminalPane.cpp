@@ -308,6 +308,19 @@ TerminalHost* clBuiltinTerminalPane::GetActiveTerminal()
     return GetPageTerminal(m_book->GetPage(m_book->GetSelection()));
 }
 
+void clBuiltinTerminalPane::SetFocus()
+{
+    // wxPanel::SetFocus() would focus the last focused child (or the first focusable one, e.g. the toolbar), and the
+    // book swallows the child-focus events so the panel never learns which child was focused. Pass the focus to the
+    // terminal of the selected tab instead.
+    auto* host = m_book != nullptr ? GetActiveTerminal() : nullptr;
+    if (host != nullptr && host->GetCtrl() != nullptr) {
+        host->GetCtrl()->SetFocus();
+    } else {
+        wxPanel::SetFocus();
+    }
+}
+
 void clBuiltinTerminalPane::BindTerminalEvents(TerminalHost* host, bool persistTabTitle)
 {
     // Bind events

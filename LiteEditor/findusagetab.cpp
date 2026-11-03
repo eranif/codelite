@@ -26,10 +26,12 @@
 #include "findusagetab.h"
 
 #include "ColoursAndFontsManager.h"
+#include "LineSyntaxStyler.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "clStrings.h"
 #include "clSystemSettings.h"
 #include "clWorkspaceManager.h"
+#include "cl_config.h"
 #include "cl_editor.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
@@ -47,30 +49,46 @@
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
 #include <wx/settings.h>
+#include <wx/splitter.h>
 #include <wx/srchctrl.h>
 #include <wx/stc/stc.h>
 #include <wx/textfile.h>
+#include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
-/// A row of the table: a match
+#ifdef __WXOSX__
+#include <objc/message.h>
+#include <objc/runtime.h>
+#endif
+
+/// A match: a row of the matches view
 struct FindUsageEntry {
     const LSP::Location* location = nullptr;
-    wxString path;             // the file, relative to the workspace folder when it is inside it
-    wxString line;             // ":line", shown after `path`
-    wxString file;             // `path` + `line`, for the filter
-    size_t colourIndex = 0;    // the colour of `path`: the files next to each other have different colours
+    int lineNumber = 0;        // the line of the match, starting at 1
     wxString text;             // the matched line, the tabs replaced by spaces (empty if it could not be read)
     size_t highlightStart = 0; // the range of `text` to highlight
     size_t highlightLength = 0;
+    std::vector<LineSyntaxStyler::Part> parts; // the syntax highlight of `text`
+    bool visible = true;                       // does it pass the filter?
+};
+
+/// A file: a row of the files view, and its matches
+struct FindUsageFile {
+    wxString path; // relative to the workspace folder when it is inside it
+    std::vector<FindUsageEntry*> entries;
 };
 
 namespace
 {
-constexpr int kPadding = 4;
+constexpr int kPadding = 1;
 constexpr size_t kTabSize = 4;
 // The toolbar buttons (the name is turned into an ID with XRCID)
 constexpr const char* kToolClear = "find_usage_clear";
+constexpr const char* kToolHideBuildFolders = "find_usage_hide_build_folders";
+// The position of the sash between the files and the matches
+const wxString kConfigSashPosition = "FindUsageTab/SashPosition";
+constexpr int kDefaultSashPosition = 300;
 
 /// Replace the tabs of `line` with spaces. The range [`start`, `start` + `length`) of `line` is moved to the same
 /// characters of the result: [`highlightStart`, `highlightStart` + `highlightLength`)
@@ -131,6 +149,21 @@ wxString MakeRelativeToWorkspace(const wxString& path)
     return path;
 }
 
+/// Is `path` (relative to the workspace when it is inside it) in a build folder, a folder whose name starts with
+/// ".build" (for example ".build-release" or ".build-debug")?
+bool IsInBuildFolder(const wxString& path)
+{
+    wxString dirs = path;
+    dirs.Replace("\\", "/");
+    wxArrayString parts = ::wxStringTokenize(dirs.BeforeLast('/'), "/", wxTOKEN_STRTOK);
+    for (const wxString& part : parts) {
+        if (part.StartsWith(".build")) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /// The path of a local copy of `path`: `path` itself, or the file downloaded from the remote machine. Empty on error
 wxString GetLocalFile(const wxString& path)
 {
@@ -155,6 +188,28 @@ void UseViewFont(const wxWindow* view, wxDC* dc)
         dc->SetFont(view->GetFont());
     }
 }
+/// On macOS 11 and later, a table view with only one column gets the "inset" style by default: it has a padding around
+/// its rows, so its first row is lower than the first row of a table with two columns. Use the "full width" style, as
+/// the other tables. wxWidgets has no API for this, so the method is called with the Objective-C runtime
+void UseFullWidthStyle(wxDataViewCtrl* ctrl)
+{
+#ifdef __WXOSX__
+    // The handle is the scroll view, the table is its document view
+    id scroll_view = reinterpret_cast<id>(ctrl->GetHandle());
+    if (scroll_view == nil) {
+        return;
+    }
+    id table_view = reinterpret_cast<id (*)(id, SEL)>(objc_msgSend)(scroll_view, sel_registerName("documentView"));
+    SEL set_style = sel_registerName("setStyle:");
+    if (table_view == nil || !class_respondsToSelector(object_getClass(table_view), set_style)) {
+        return;
+    }
+    constexpr long kNSTableViewStyleFullWidth = 1;
+    reinterpret_cast<void (*)(id, SEL, long)>(objc_msgSend)(table_view, set_style, kNSTableViewStyleFullWidth);
+#else
+    wxUnusedVar(ctrl);
+#endif
+}
 } // namespace
 
 /// Draws a matched line, with the matched range highlighted
@@ -162,7 +217,13 @@ class FindUsageRenderer : public wxDataViewCustomRenderer
 {
 public:
     struct Colours {
-        wxColour match;           // a matched line
+        wxColour match;   // a matched line (its plain text)
+        wxColour keyword; // the syntax highlight of the line
+        wxColour function;
+        wxColour className;
+        wxColour string;
+        wxColour number;
+        wxColour comment;
         wxColour matchBackground; // the rounded rectangle around the matched range of the line
         wxColour matchText;       // the text of the matched range, it contrasts with matchBackground
         wxColour selection;       // the dotted rectangle around the selected row
@@ -172,6 +233,8 @@ public:
         : wxDataViewCustomRenderer("void*", wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
     {
         m_colours.match = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        m_colours.keyword = m_colours.function = m_colours.className = m_colours.string = m_colours.number =
+            m_colours.comment = m_colours.match;
         m_colours.matchBackground = wxColour("GOLD");
         m_colours.matchText = *wxBLACK;
         m_colours.selection = m_colours.match;
@@ -200,13 +263,9 @@ public:
         if (view == nullptr) {
             return wxSize(wxDVC_DEFAULT_RENDERER_SIZE, wxDVC_DEFAULT_RENDERER_SIZE);
         }
-        // An empty line has the height of a text line
-        wxString text = "Tp";
-        if (m_entry != nullptr && !m_entry->text.empty()) {
-            text = m_entry->text;
-        }
-        const wxSize size = view->GetTextExtent(text);
-        return wxSize(size.x + 2 * kPadding, size.y);
+        // The height of a text line, as FindUsageTextRenderer: the rows of the two views have the same height
+        const int width = m_entry != nullptr ? view->GetTextExtent(m_entry->text).x : 0;
+        return wxSize(width + 2 * kPadding, view->GetTextExtent("Tp").y);
     }
 
     bool Render(wxRect rect, wxDC* dc, int state) override
@@ -249,115 +308,124 @@ public:
         rect.Deflate(kPadding, 0);
         int x = rect.x;
 
-        // Draw `text` at `x`, vertically centered. Advance `x`
-        auto draw = [&](const wxString& text, const wxColour& colour) {
-            if (text.empty()) {
-                return;
-            }
-            const wxSize size = dc->GetTextExtent(text);
-            dc->SetTextForeground(colour);
-            dc->DrawText(text, x, rect.y + (rect.height - size.y) / 2);
-            x += size.x;
-        };
+        const int y_text = rect.y + (rect.height - dc->GetTextExtent("Tp").y) / 2;
+        const wxString& text = m_entry->text;
 
         // Only the match of the selected row is highlighted, many highlights are too much
-        if (!selected) {
-            draw(m_entry->text, m_colours.match);
-            return true;
-        }
-
-        const wxString before = m_entry->text.Left(m_entry->highlightStart);
-        const wxString match = m_entry->text.Mid(m_entry->highlightStart, m_entry->highlightLength);
-        const wxString after = m_entry->text.Mid(m_entry->highlightStart + m_entry->highlightLength);
-        draw(before, m_colours.match);
-
-        if (!match.empty()) {
-            // A rounded rectangle around the match, and a text colour that contrasts with it
-            const wxSize size = dc->GetTextExtent(match);
-            wxRect matchRect(x - 1, rect.y + 1, size.x + 2, rect.height - 2);
+        size_t highlight_start = 0;
+        size_t highlight_end = 0;
+        if (selected && m_entry->highlightLength > 0) {
+            highlight_start = m_entry->highlightStart;
+            highlight_end = m_entry->highlightStart + m_entry->highlightLength;
+            // A rounded rectangle around the match, the text is drawn over it
+            const int start_x = x + dc->GetTextExtent(text.Left(highlight_start)).x;
+            const int width = dc->GetTextExtent(text.Mid(highlight_start, m_entry->highlightLength)).x;
             dc->SetPen(*wxTRANSPARENT_PEN);
             dc->SetBrush(wxBrush(m_colours.matchBackground));
-            dc->DrawRoundedRectangle(matchRect, 3.0);
-            draw(match, m_colours.matchText);
+            dc->DrawRoundedRectangle(wxRect(start_x - 1, rect.y + 1, width + 2, rect.height - 2), 3.0);
         }
-        draw(after, m_colours.match);
+
+        // Draw the parts of the line in their colours. A part is cut where the highlighted match starts and ends: the
+        // text of the match has a colour that contrasts with its rectangle
+        for (const LineSyntaxStyler::Part& part : m_entry->parts) {
+            size_t pos = part.start;
+            const size_t end = part.start + part.length;
+            while (pos < end) {
+                const bool in_match = pos >= highlight_start && pos < highlight_end;
+                size_t next = end;
+                if (!in_match && pos < highlight_start && highlight_start < end) {
+                    next = highlight_start;
+                } else if (in_match && highlight_end < end) {
+                    next = highlight_end;
+                }
+                const wxString segment = text.Mid(pos, next - pos);
+                dc->SetTextForeground(in_match ? m_colours.matchText : GetStyleColour(part.style));
+                dc->DrawText(segment, x, y_text);
+                x += dc->GetTextExtent(segment).x;
+                pos = next;
+            }
+        }
         return true;
     }
 
 private:
+    const wxColour& GetStyleColour(LineSyntaxStyler::Style style) const
+    {
+        switch (style) {
+        case LineSyntaxStyler::Style::Keyword:
+            return m_colours.keyword;
+        case LineSyntaxStyler::Style::Function:
+            return m_colours.function;
+        case LineSyntaxStyler::Style::Class:
+            return m_colours.className;
+        case LineSyntaxStyler::Style::String:
+            return m_colours.string;
+        case LineSyntaxStyler::Style::Number:
+            return m_colours.number;
+        case LineSyntaxStyler::Style::Comment:
+            return m_colours.comment;
+        case LineSyntaxStyler::Style::Default:
+            break;
+        }
+        return m_colours.match;
+    }
+
     const FindUsageEntry* m_entry = nullptr;
     const FindUsageEntry* m_selected = nullptr;
     Colours m_colours;
 };
 
-/// Draws the file of a match ("file:line"). Each file has its own colour, so the files are easy to tell apart. The line
-/// number has the colour of the matched lines
-class FindUsageFileRenderer : public wxDataViewCustomRenderer
+/// Draws a text (a file, a line number) with the font and the colour of the matched lines, so both views look the same
+class FindUsageTextRenderer : public wxDataViewCustomRenderer
 {
 public:
-    FindUsageFileRenderer()
-        : wxDataViewCustomRenderer("void*", wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
+    explicit FindUsageTextRenderer(bool alignRight = false)
+        : wxDataViewCustomRenderer("string", wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
+        , m_alignRight(alignRight)
     {
     }
 
-    /// `line`: the colour of ":line". `files`: the colours of the files, used in turn (see FindUsageEntry::colourIndex)
-    void SetColours(const wxColour& line, const std::vector<wxColour>& files)
-    {
-        m_lineColour = line;
-        m_fileColours = files;
-    }
+    void SetColour(const wxColour& colour) { m_colour = colour; }
 
     bool SetValue(const wxVariant& value) override
     {
-        m_entry = static_cast<const FindUsageEntry*>(value.GetVoidPtr());
+        m_text = value.GetString();
         return true;
     }
 
     bool GetValue(wxVariant& value) const override
     {
-        value = static_cast<void*>(const_cast<FindUsageEntry*>(m_entry));
+        value = m_text;
         return true;
     }
 
     wxSize GetSize() const override
     {
         wxWindow* view = GetView();
-        if (view == nullptr || m_entry == nullptr) {
+        if (view == nullptr) {
             return wxSize(wxDVC_DEFAULT_RENDERER_SIZE, wxDVC_DEFAULT_RENDERER_SIZE);
         }
-        const wxSize size = view->GetTextExtent(m_entry->path + m_entry->line);
-        return wxSize(size.x + 2 * kPadding, size.y);
+        // The height of a text line, as FindUsageRenderer
+        return wxSize(view->GetTextExtent(m_text).x + 2 * kPadding, view->GetTextExtent("Tp").y);
     }
 
     bool Render(wxRect rect, wxDC* dc, int state) override
     {
         wxUnusedVar(state);
-        if (m_entry == nullptr) {
-            return false;
-        }
         wxDCClipper clipper(*dc, rect);
         UseViewFont(GetView(), dc);
         rect.Deflate(kPadding, 0);
-
-        const wxColour defaultColour =
-            m_lineColour.IsOk() ? m_lineColour : clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-        const wxColour fileColour =
-            m_fileColours.empty() ? defaultColour : m_fileColours[m_entry->colourIndex % m_fileColours.size()];
-
-        // The file in its own colour, then ":line"
-        const wxSize size = dc->GetTextExtent(m_entry->path);
-        const int y = rect.y + (rect.height - size.y) / 2;
-        dc->SetTextForeground(fileColour);
-        dc->DrawText(m_entry->path, rect.x, y);
-        dc->SetTextForeground(defaultColour);
-        dc->DrawText(m_entry->line, rect.x + size.x, y);
+        const wxSize size = dc->GetTextExtent(m_text);
+        const int x = m_alignRight ? rect.GetRight() - size.x : rect.x;
+        dc->SetTextForeground(m_colour.IsOk() ? m_colour : clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+        dc->DrawText(m_text, x, rect.y + (rect.height - size.y) / 2);
         return true;
     }
 
 private:
-    const FindUsageEntry* m_entry = nullptr;
-    wxColour m_lineColour;
-    std::vector<wxColour> m_fileColours;
+    wxString m_text;
+    wxColour m_colour;
+    bool m_alignRight = false;
 };
 
 FindUsageTab::FindUsageTab(wxWindow* parent)
@@ -369,10 +437,21 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
     m_toolbar = new wxAuiToolBar(this);
     m_toolbar->Bind(wxEVT_MENU, &FindUsageTab::OnClearAll, this, XRCID(kToolClear));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &FindUsageTab::OnClearAllUI, this, XRCID(kToolClear));
+    m_toolbar->Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& event) {
+            m_hideBuildFolders = event.IsChecked();
+            ApplyFilter();
+        },
+        XRCID(kToolHideBuildFolders));
+    m_toolbar->Bind(
+        wxEVT_UPDATE_UI,
+        [this](wxUpdateUIEvent& event) { event.Check(m_hideBuildFolders); },
+        XRCID(kToolHideBuildFolders));
     GetSizer()->Add(m_toolbar, 0, wxEXPAND);
     BuildToolbar();
 
-    // The filter: a row is shown when its file or its matched line contains the text
+    // The filter: a match is shown when its file or its matched line contains the text
     m_filter = new wxSearchCtrl(this, wxID_ANY);
     m_filter->SetHint(_("Filter results. Prefix a string with a minus sign (-) to exclude matches."));
     m_filter->ShowCancelButton(true);
@@ -382,33 +461,57 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
         m_filter->ChangeValue(wxEmptyString);
         ApplyFilter();
     });
-    GetSizer()->Add(m_filter, 0, wxEXPAND | wxALL, FromDIP(2));
+    GetSizer()->Add(m_filter, 0, wxEXPAND | wxALL, FromDIP(5));
 
-    // A table: the file, and the matched line (drawn with our renderer, the value of the cell is the entry)
-    m_ctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_ROW_LINES | wxBORDER_NONE);
-    m_fileRenderer = new FindUsageFileRenderer();
-    m_ctrl->AppendColumn(
+    // The files on the left, the matches of the selected file on the right. The sash position is remembered
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+    m_splitter->SetMinimumPaneSize(FromDIP(50));
+
+    m_dvFiles =
+        new wxDataViewListCtrl(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_ROW_LINES | wxBORDER_NONE);
+    // Both views use our renderers, with the same font and row height, so their rows are aligned
+    m_fileRenderer = new FindUsageTextRenderer();
+    m_dvFiles->AppendColumn(
         new wxDataViewColumn(_("File"), m_fileRenderer, 0, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxCOL_RESIZABLE),
-        "void*");
-    m_renderer = new FindUsageRenderer();
-    m_ctrl->AppendColumn(
-        new wxDataViewColumn(_("Matched Line"), m_renderer, 1, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxCOL_RESIZABLE),
-        "void*");
+        "string");
 
-    // A hand cursor over the results. The control draws in its own child window, so set it on the children as well
+    m_dvMatches =
+        new wxDataViewListCtrl(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_ROW_LINES | wxBORDER_NONE);
+    m_lineRenderer = new FindUsageTextRenderer(true);
+    m_dvMatches->AppendColumn(
+        new wxDataViewColumn(_("Line"), m_lineRenderer, 0, wxCOL_WIDTH_AUTOSIZE, wxALIGN_RIGHT, wxCOL_RESIZABLE),
+        "string");
+    // The matched line is drawn with our renderer: the value of the cell is the entry
+    m_renderer = new FindUsageRenderer();
+    m_dvMatches->AppendColumn(
+        new wxDataViewColumn(_("Match"), m_renderer, 1, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxCOL_RESIZABLE), "void*");
+
+    UseFullWidthStyle(m_dvFiles);
+    UseFullWidthStyle(m_dvMatches);
+
+    m_splitter->SplitVertically(
+        m_dvFiles, m_dvMatches, clConfig::Get().Read(kConfigSashPosition, FromDIP(kDefaultSashPosition)));
+    m_splitter->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED, [](wxSplitterEvent& event) {
+        event.Skip();
+        clConfig::Get().Write(kConfigSashPosition, event.GetSashPosition());
+    });
+
+    // A hand cursor over the results. The controls draw in their own child window, so set it on the children as well
     const wxCursor handCursor(wxCURSOR_HAND);
-    m_ctrl->SetCursor(handCursor);
-    for (wxWindow* child : m_ctrl->GetChildren()) {
-        child->SetCursor(handCursor);
+    for (wxDataViewListCtrl* ctrl : {m_dvFiles, m_dvMatches}) {
+        ctrl->SetCursor(handCursor);
+        for (wxWindow* child : ctrl->GetChildren()) {
+            child->SetCursor(handCursor);
+        }
     }
 
-    m_ctrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
-    m_ctrl->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FindUsageTab::OnItemActivated, this);
+    m_dvFiles->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FindUsageTab::OnFileSelected, this);
+    m_dvMatches->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
+    m_dvMatches->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FindUsageTab::OnItemActivated, this);
 
-    // show context menu for the control. The data view does not send wxEVT_CONTEXT_MENU, it sends its own event (also
+    // show context menu for the controls. The data view does not send wxEVT_CONTEXT_MENU, it sends its own event (also
     // when the user clicks outside of the items)
-    m_ctrl->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, [this](wxDataViewEvent& event) {
-        wxUnusedVar(event);
+    auto showContextMenu = [this](wxDataViewEvent& event) {
         wxMenu menu;
         menu.Append(wxID_CLEAR);
         menu.Bind(
@@ -418,10 +521,14 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
                 Clear();
             },
             wxID_CLEAR);
-        m_ctrl->PopupMenu(&menu);
-    });
+        if (auto* ctrl = dynamic_cast<wxWindow*>(event.GetEventObject())) {
+            ctrl->PopupMenu(&menu);
+        }
+    };
+    m_dvFiles->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, showContextMenu);
+    m_dvMatches->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, showContextMenu);
 
-    GetSizer()->Add(m_ctrl, 1, wxEXPAND);
+    GetSizer()->Add(m_splitter, 1, wxEXPAND);
     GetSizer()->Layout();
 
     // The colours come from the terminal theme, but the tab is created inside the constructor of the output pane: the
@@ -446,18 +553,22 @@ FindUsageTab::~FindUsageTab()
     EventNotifier::Get()->Unbind(wxEVT_LSP_REFERENCES, &FindUsageTab::OnReferences, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_REFERENCES_INPROGRESS, &FindUsageTab::OnReferencesInProgress, this);
 
-    m_ctrl->Unbind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FindUsageTab::OnItemActivated, this);
-    m_ctrl->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
+    m_dvFiles->Unbind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FindUsageTab::OnFileSelected, this);
+    m_dvMatches->Unbind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FindUsageTab::OnItemActivated, this);
+    m_dvMatches->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
 
-    // The rows point to the entries: delete them first
-    m_ctrl->DeleteAllItems();
+    // The rows point to the files and the entries: delete them first
+    m_dvFiles->DeleteAllItems();
+    m_dvMatches->DeleteAllItems();
 }
 
 void FindUsageTab::Clear()
 {
-    // The rows point to the entries, and the entries to the locations: delete them in this order
+    // The rows point to the files and the entries, and the entries to the locations: delete them in this order
     m_renderer->SetSelectedEntry(nullptr);
-    m_ctrl->DeleteAllItems();
+    m_dvMatches->DeleteAllItems();
+    m_dvFiles->DeleteAllItems();
+    m_files.clear();
     m_entries.clear();
     m_locations.clear();
 }
@@ -484,9 +595,8 @@ void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
 
     // The lines are read now: the filter needs them
     wxBusyCursor bc;
-    size_t colour_index = 0;
     for (const auto& [filename, file_matches] : sorted_entries) {
-        DoAddFileEntries(filename, file_matches, colour_index++);
+        DoAddFileEntries(filename, file_matches);
     }
 
     // A new search: show all its results
@@ -494,13 +604,19 @@ void FindUsageTab::InitialiseView(const std::vector<LSP::Location>& locations)
     ApplyFilter();
 }
 
-void FindUsageTab::DoAddFileEntries(const wxString& filename,
-                                    const std::vector<const LSP::Location*>& matches,
-                                    size_t colour_index)
+void FindUsageTab::DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches)
 {
     // The file is shown relative to the workspace. Use the path from the language server: a remote file is read from
     // a local copy
-    const wxString display_file = MakeRelativeToWorkspace(filename);
+    auto file = std::make_unique<FindUsageFile>();
+    file->path = MakeRelativeToWorkspace(filename);
+
+    // The syntax highlight uses the keywords and the comments of the language of the file
+    LineSyntaxStyler styler;
+    if (auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(filename)) {
+        styler = LineSyntaxStyler{lexer->GetKeyWords(0)};
+        styler.SetLanguage(lexer->GetName());
+    }
 
     wxTextFile text_buffer;
     const wxString local_file = GetLocalFile(filename);
@@ -512,10 +628,7 @@ void FindUsageTab::DoAddFileEntries(const wxString& filename,
         auto entry = std::make_unique<FindUsageEntry>();
         entry->location = location;
         // The numbers of the lines of the locations start at 0
-        entry->path = display_file;
-        entry->line = wxString::Format(":%d", static_cast<int>(location->GetRange().GetStart().GetLine()) + 1);
-        entry->file = entry->path + entry->line;
-        entry->colourIndex = colour_index;
+        entry->lineNumber = static_cast<int>(location->GetRange().GetStart().GetLine()) + 1;
 
         // in case this was a remote file, open the local copy
         if (!local_file.empty()) {
@@ -538,17 +651,15 @@ void FindUsageTab::DoAddFileEntries(const wxString& filename,
                 entry->highlightLength = 0;
             }
         }
+        entry->parts = styler.Split(entry->text);
+        file->entries.push_back(entry.get());
         m_entries.push_back(std::move(entry));
     }
+    m_files.push_back(std::move(file));
 }
 
 void FindUsageTab::ApplyFilter()
 {
-    wxWindowUpdateLocker locker{m_ctrl};
-    // The rows are created again, without a selection
-    m_renderer->SetSelectedEntry(nullptr);
-    m_ctrl->DeleteAllItems();
-
     wxString filter = m_filter->GetValue().Lower();
     bool hasFilter = !filter.empty();
     bool isExcludePattern = !filter.empty() && filter[0] == '-';
@@ -557,27 +668,69 @@ void FindUsageTab::ApplyFilter()
         hasFilter = !filter.empty();
     }
 
-    auto AddItem = [this](FindUsageEntry* entry) {
-        wxVector<wxVariant> values;
-        values.push_back(wxVariant(static_cast<void*>(entry)));
-        values.push_back(wxVariant(static_cast<void*>(entry)));
-        m_ctrl->AppendItem(values, reinterpret_cast<wxUIntPtr>(entry));
-    };
+    // Keep the selected file, if it is still shown
+    const FindUsageFile* selected = GetSelectedFile();
 
-    for (const auto& entry : m_entries) {
-        auto textLower = entry->text.Lower();
-        auto fileLower = entry->file.Lower();
-
-        bool matches = fileLower.Contains(filter) || textLower.Contains(filter);
-        if (!hasFilter) {
-            AddItem(entry.get());
+    wxWindowUpdateLocker locker{m_dvFiles};
+    m_dvFiles->DeleteAllItems();
+    wxDataViewItem selected_item;
+    for (const auto& file : m_files) {
+        const wxString fileLower = file->path.Lower();
+        const bool hidden_folder = m_hideBuildFolders && IsInBuildFolder(file->path);
+        bool any_visible = false;
+        for (FindUsageEntry* entry : file->entries) {
+            const bool matches = fileLower.Contains(filter) || entry->text.Lower().Contains(filter);
+            entry->visible = !hidden_folder && (!hasFilter || matches != isExcludePattern);
+            any_visible = any_visible || entry->visible;
+        }
+        if (!any_visible) {
             continue;
         }
 
-        if (matches != isExcludePattern) {
-            AddItem(entry.get());
+        wxVector<wxVariant> values;
+        values.push_back(wxVariant(file->path));
+        m_dvFiles->AppendItem(values, reinterpret_cast<wxUIntPtr>(file.get()));
+        if (file.get() == selected || !selected_item.IsOk()) {
+            selected_item = m_dvFiles->RowToItem(m_dvFiles->GetItemCount() - 1);
         }
     }
+
+    if (selected_item.IsOk()) {
+        m_dvFiles->Select(selected_item);
+        m_dvFiles->EnsureVisible(selected_item);
+    }
+    ShowFileMatches(GetSelectedFile());
+}
+
+const FindUsageFile* FindUsageTab::GetSelectedFile() const
+{
+    const wxDataViewItem item = m_dvFiles->GetSelection();
+    return item.IsOk() ? reinterpret_cast<const FindUsageFile*>(m_dvFiles->GetItemData(item)) : nullptr;
+}
+
+void FindUsageTab::ShowFileMatches(const FindUsageFile* file)
+{
+    wxWindowUpdateLocker locker{m_dvMatches};
+    // The rows are created again, without a selection
+    m_renderer->SetSelectedEntry(nullptr);
+    m_dvMatches->DeleteAllItems();
+    CHECK_PTR_RET(file);
+
+    for (FindUsageEntry* entry : file->entries) {
+        if (!entry->visible) {
+            continue;
+        }
+        wxVector<wxVariant> values;
+        values.push_back(wxVariant(wxString() << entry->lineNumber));
+        values.push_back(wxVariant(static_cast<void*>(entry)));
+        m_dvMatches->AppendItem(values, reinterpret_cast<wxUIntPtr>(entry));
+    }
+}
+
+void FindUsageTab::OnFileSelected(wxDataViewEvent& event)
+{
+    event.Skip();
+    ShowFileMatches(GetSelectedFile());
 }
 
 void FindUsageTab::OnFilter(wxCommandEvent& event)
@@ -604,6 +757,14 @@ void FindUsageTab::BuildToolbar()
     m_toolbar->Clear();
     clAuiToolBarArt::AddTool(
         m_toolbar, XRCID(kToolClear), _("Clear"), icons->LoadBitmap("clear"), _("Clear the results"));
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             XRCID(kToolHideBuildFolders),
+                             _("Hide Results From Build Folders"),
+                             icons->LoadBitmap("filter"),
+                             _("Hide the results from the build folders (the folders whose name starts with .build)"),
+                             wxITEM_CHECK);
+    // The tools are created again when the bitmaps change: keep the state of the toggle button
+    m_toolbar->ToggleTool(XRCID(kToolHideBuildFolders), m_hideBuildFolders);
     clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
     // The new tools can have another size (a new theme has other icons): tell the sizer, or the toolbar keeps its old
@@ -618,39 +779,43 @@ void FindUsageTab::UpdateStyle()
     // The font of the editor, with the size of the font of the system, a bit bigger
     if (auto lexer = ColoursAndFontsManager::Get().GetLexer("c++")) {
         wxFont font = lexer->GetFontForStyle(0, this);
-        font.SetFractionalPointSize(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize() * 1.25);
-        m_ctrl->SetFont(font);
+        font.SetFractionalPointSize(font.GetFractionalPointSize() * 0.8);
+        m_dvFiles->SetFont(font);
+        m_dvMatches->SetFont(font);
     }
+
+    // The same row height in both views, so their rows are aligned
+    const int rowHeight = m_dvFiles->GetTextExtent("Tp").y + FromDIP(kPadding);
+    m_dvFiles->SetRowHeight(rowHeight);
+    m_dvMatches->SetRowHeight(rowHeight);
 
     // The colours are taken from the palette of the active terminal theme. Some of them have alpha: the view is solid
     auto solid = [](const wxColour& colour) { return wxColour(colour.Red(), colour.Green(), colour.Blue()); };
     auto* terminals = clGetManager()->GetTerminalManager();
     const wxTerminalTheme theme = terminals != nullptr ? terminals->GetActiveTheme() : wxTerminalTheme::MakeDarkTheme();
 
-    ::AdjustDataViewAlternateColour(m_ctrl);
+    ::AdjustDataViewAlternateColour(m_dvFiles);
+    ::AdjustDataViewAlternateColour(m_dvMatches);
 
     FindUsageRenderer::Colours colours;
     colours.match = solid(theme.fg);
+    // The syntax colours: the bright colours of the palette on a dark background, the normal ones on a light background
+    const bool dark = DrawingUtils::IsDark(m_dvMatches->GetBackgroundColour());
+    colours.keyword = solid(dark ? theme.brightBlue : theme.blue);
+    colours.function = solid(dark ? theme.brightYellow : theme.yellow);
+    colours.className = solid(dark ? theme.brightMagenta : theme.magenta);
+    colours.string = solid(dark ? theme.brightGreen : theme.green);
+    colours.number = solid(dark ? theme.brightCyan : theme.cyan);
+    colours.comment = solid(theme.brightBlack);
     colours.matchBackground = solid(theme.highlightBg);
     colours.matchText = DrawingUtils::IsDark(colours.matchBackground) ? *wxWHITE : *wxBLACK;
     colours.selection = solid(theme.brightBlack);
     m_renderer->SetColours(colours);
-    // The files use the colours of the palette of the theme, in turn
-    std::vector<wxColour> file_colours;
-    for (const wxColour& colour : {theme.blue,
-                                   theme.green,
-                                   theme.yellow,
-                                   theme.magenta,
-                                   theme.cyan,
-                                   theme.brightBlue,
-                                   theme.brightGreen,
-                                   theme.brightYellow,
-                                   theme.brightMagenta,
-                                   theme.brightCyan}) {
-        file_colours.push_back(solid(colour));
-    }
-    m_fileRenderer->SetColours(colours.match, file_colours);
-    m_ctrl->Refresh();
+    m_fileRenderer->SetColour(colours.match);
+    // The line numbers are dimmed
+    m_lineRenderer->SetColour(solid(theme.brightBlack));
+    m_dvFiles->Refresh();
+    m_dvMatches->Refresh();
 }
 
 void FindUsageTab::OnWorkspaceClosed(clWorkspaceEvent& event)
@@ -679,12 +844,12 @@ void FindUsageTab::OnItemActivated(wxDataViewEvent& event)
     event.Skip();
     CHECK_ITEM_RET(event.GetItem());
 
-    const auto* entry = reinterpret_cast<const FindUsageEntry*>(m_ctrl->GetItemData(event.GetItem()));
+    const auto* entry = reinterpret_cast<const FindUsageEntry*>(m_dvMatches->GetItemData(event.GetItem()));
     CHECK_PTR_RET(entry);
 
     // Keep the match of this row highlighted, also after the editor takes the focus
     m_renderer->SetSelectedEntry(entry);
-    m_ctrl->Refresh();
+    m_dvMatches->Refresh();
 
     // Open the file
     wxFileName fn(entry->location->GetPath());
@@ -698,7 +863,9 @@ void FindUsageTab::OnItemActivated(wxDataViewEvent& event)
 
     if (fn.FileExists()) {
         // default behaviour
-        clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(callback));
+        CallAfter([fn, callback = std::move(callback)]() {
+            clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(callback));
+        });
         return;
     }
 
@@ -711,5 +878,8 @@ void FindUsageTab::OnItemActivated(wxDataViewEvent& event)
         event.Veto();
         return;
     }
-    clGetManager()->OpenFileAndAsyncExecute(open_file_event.GetFileName(), std::move(callback));
+
+    CallAfter([fn = open_file_event.GetFileName(), callback = std::move(callback)]() {
+        clGetManager()->OpenFileAndAsyncExecute(fn, std::move(callback));
+    });
 }

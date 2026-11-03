@@ -37,28 +37,37 @@
 #include <wx/panel.h>
 
 class FindUsageRenderer;
-class FindUsageFileRenderer;
+class FindUsageTextRenderer;
 struct FindUsageEntry;
+struct FindUsageFile;
 class wxSearchCtrl;
+class wxSplitterWindow;
 
-/// The results of "Find References": a table with the file and the matched line of each match, and a filter above it
+/// The results of "Find References": the files on the left, the matches of the selected file on the right, and a filter
+/// above them
 class FindUsageTab : public wxPanel
 {
     std::vector<LSP::Location> m_locations;
-    std::vector<std::unique_ptr<FindUsageEntry>> m_entries; // all the matches, in the order of the table
+    std::vector<std::unique_ptr<FindUsageEntry>> m_entries; // all the matches
+    std::vector<std::unique_ptr<FindUsageFile>> m_files; // the files, in the order of the view. They point to m_entries
     wxAuiToolBar* m_toolbar = nullptr;
+    bool m_hideBuildFolders = true; // hide the results from the build folders (.build-release, ...)
     wxSearchCtrl* m_filter = nullptr;
-    wxDataViewListCtrl* m_ctrl = nullptr;
-    FindUsageRenderer* m_renderer = nullptr;         // owned by the column of m_ctrl
-    FindUsageFileRenderer* m_fileRenderer = nullptr; // owned by the column of m_ctrl
+    wxSplitterWindow* m_splitter = nullptr;
+    wxDataViewListCtrl* m_dvFiles = nullptr;         // the files that have a match that passes the filter
+    wxDataViewListCtrl* m_dvMatches = nullptr;       // the matches of the selected file: line | match
+    FindUsageRenderer* m_renderer = nullptr;         // owned by the "Match" column of m_dvMatches
+    FindUsageTextRenderer* m_fileRenderer = nullptr; // owned by the "File" column of m_dvFiles
+    FindUsageTextRenderer* m_lineRenderer = nullptr; // owned by the "Line" column of m_dvMatches
 
 private:
-    /// Add the matches of `filename`. Its name is shown with the colour number `colour_index`
-    void
-    DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches, size_t colour_index);
+    void DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches);
     void InitialiseView(const std::vector<LSP::Location>& locations);
-    /// Show the entries that match the filter (all of them when it is empty)
+    /// Show the files that have a match that passes the filter, and the matches of the selected file
     void ApplyFilter();
+    /// Show the matches of `file` that pass the filter
+    void ShowFileMatches(const FindUsageFile* file);
+    const FindUsageFile* GetSelectedFile() const;
     void UpdateStyle();
     /// (Re)create the buttons. Called again when the bitmaps change, to load the icons of the new theme
     void BuildToolbar();
@@ -72,6 +81,7 @@ protected:
     void OnClearAllUI(wxUpdateUIEvent& e);
     void OnClearAll(wxCommandEvent& e);
     void OnFilter(wxCommandEvent& event);
+    void OnFileSelected(wxDataViewEvent& event);
     void OnThemeChanged(clCommandEvent& e);
     void OnBitmapsUpdated(clCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& event);

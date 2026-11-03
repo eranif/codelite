@@ -431,6 +431,7 @@ private:
 FindUsageTab::FindUsageTab(wxWindow* parent)
     : wxPanel(parent, wxID_ANY)
 {
+    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
     // The toolbar. The tools are created by BuildToolbar() (again when the bitmaps change), the events are bound once

@@ -97,7 +97,7 @@ msgstr "========== Construction du projet : [ "
 
 #: CodeLite/macros.h:92
 msgid " ]=========="
-msgstr ""
+msgstr " ]=========="
 
 #: CodeLite/macros.h:93
 msgid "==========Cleaning project:[ "
@@ -267,7 +267,7 @@ msgstr "Le clavier interactif n'est pas activé pour ce serveur"
 #: CodeLite/ssh/cl_ssh.cpp:374 Plugin/builder/builder_gnumake.cpp:167
 #: build/Plugin/clprogressdlgbase.hpp:49
 msgid "CodeLite"
-msgstr ""
+msgstr "CodeLite"
 
 #: CodeLite/ssh/cl_ssh.cpp:374
 msgid "Enter passphrase:"
@@ -822,32 +822,32 @@ msgstr "Fin du document atteinte"
 #: LiteEditor/FindResultsStatusLine.cpp:72
 #, c-format
 msgid "%s Searching for '%s'..."
-msgstr ""
+msgstr "%s Recherche de '%s' en cours..."
 
 #: LiteEditor/FindResultsStatusLine.cpp:82
 #, c-format
 msgid "Files scanned: %d"
-msgstr ""
+msgstr "Fichiers analysés : %d"
 
 #: LiteEditor/FindResultsStatusLine.cpp:84
 #: LiteEditor/FindResultsStatusLine.cpp:107
 #, c-format
 msgid "Matches: %d"
-msgstr ""
+msgstr "Correspondances : %d"
 
 #: LiteEditor/FindResultsStatusLine.cpp:85
 #, c-format
 msgid "Time: %.2f seconds"
-msgstr ""
+msgstr "Durée : %.2f secondes"
 
 #: LiteEditor/FindResultsStatusLine.cpp:93
 #, c-format
 msgid "Failed to open %d files"
-msgstr ""
+msgstr "Échec de l'ouverture de %d fichiers"
 
 #: LiteEditor/FindResultsStatusLine.cpp:102
 msgid "Search cancelled by user"
-msgstr ""
+msgstr "Recherche annulée par l'utilisateur"
 
 #: LiteEditor/ImportFilesDialogNew.cpp:299 LiteEditor/debugcoredump.cpp:191
 #: LiteEditor/ps_custom_build_page.cpp:92 LiteEditor/quickdebugdlg.cpp:249
@@ -939,7 +939,7 @@ msgstr "Nouveau"
 
 #: LiteEditor/WelcomePage.cpp:127
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: LiteEditor/WelcomePage.cpp:128
 msgid "Visit our GitHub project page"
@@ -969,7 +969,7 @@ msgstr "PHP"
 
 #: LiteEditor/WelcomePage.cpp:222 build/Plugins/HelpPlugin/HelpPluginUI.cpp:242
 msgid "C/C++"
-msgstr ""
+msgstr "C/C++"
 
 #: LiteEditor/acceltabledlg.cpp:154
 #, c-format
@@ -1055,7 +1055,7 @@ msgstr "Vous ne semblez pas avoir saisi de variable pour le point de surveillanc
 #: LiteEditor/breakpointpropertiesdlg.cpp:137
 #: LiteEditor/breakpointpropertiesdlg.cpp:148
 msgid ":/"
-msgstr ""
+msgstr ":/"
 
 #: LiteEditor/breakpointpropertiesdlg.cpp:137
 msgid "The breakpoint's line-number is invalid. Please try again."
@@ -2663,7 +2663,7 @@ msgstr "Erreur suivante de construction"
 #: LiteEditor/frame.cpp:1083 Plugin/workspace.cpp:50
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:504
 msgid "C++"
-msgstr ""
+msgstr "C++"
 
 #: LiteEditor/frame.cpp:1084
 msgid "Swap Header/Implementation file"
@@ -3043,7 +3043,7 @@ msgstr "Trouver des références"
 
 #: LiteEditor/frame.cpp:1177
 msgid "Code Actions..."
-msgstr ""
+msgstr "Actions sur le code..."
 
 #: LiteEditor/frame.cpp:1178
 msgid "Search | Bookmarks"
@@ -3388,7 +3388,7 @@ msgstr "Vue de l'espace de travail"
 #: wxcrafter/wxCrafterCommonGui/UI/wxguicraft_main_view.cpp:2517
 #: wxcrafter/wxCrafterCommonGui/UI/wxguicraft_main_view.cpp:2599
 msgid "wxCrafter"
-msgstr ""
+msgstr "wxCrafter"
 
 #: LiteEditor/frame.cpp:1656
 msgid "New file"
@@ -4817,7 +4817,7 @@ msgstr "Afficher la barre d'aperçu"
 
 #: Plugin/Diff/clDiffFrame.cpp:17
 msgid "Diff View"
-msgstr ""
+msgstr "Vue des différences"
 
 #: Plugin/EnvironmentVariablesDlg.cpp:113
 #, c-format
@@ -4866,15 +4866,15 @@ msgstr "Choisir un dossier"
 
 #: Plugin/FileSystemWorkspace/clFileSystemWorkspace.cpp:280
 msgid "Failed to convert the PHP workspace:\n"
-msgstr ""
+msgstr "Échec de la conversion de l'espace de travail PHP :\n"
 
 #: Plugin/FileSystemWorkspace/clFileSystemWorkspace.cpp:285
 msgid "This PHP workspace was converted to a File System Workspace, with XDebug as its debugger.\n"
-msgstr ""
+msgstr "Cet espace de travail PHP a été converti en espace de travail du système de fichiers, avec XDebug comme débogueur.\n"
 
 #: Plugin/FileSystemWorkspace/clFileSystemWorkspace.cpp:286
 msgid "The old workspace file was renamed to: "
-msgstr ""
+msgstr "L'ancien fichier d'espace de travail a été renommé en : "
 
 #: Plugin/FileSystemWorkspace/clFileSystemWorkspace.cpp:476
 msgid "File system scan completed"
@@ -4952,97 +4952,97 @@ msgstr "Exclure ce dossier"
 
 #: Plugin/FileSystemWorkspace/clPHPWorkspaceConverter.cpp:70
 msgid "Could not read the workspace file"
-msgstr ""
+msgstr "Impossible de lire le fichier d'espace de travail"
 
 #: Plugin/FileSystemWorkspace/clPHPWorkspaceConverter.cpp:87
 #, c-format
 msgid "Could not read the project file %s"
-msgstr ""
+msgstr "Impossible de lire le fichier de projet %s"
 
 #: Plugin/FileSystemWorkspace/clPHPWorkspaceConverter.cpp:95
 #, c-format
 msgid "Project %s is outside of the workspace folder and was left out: %s"
-msgstr ""
+msgstr "Le projet %s se trouve en dehors du dossier de l'espace de travail et a été exclu : %s"
 
 #: Plugin/FileSystemWorkspace/clPHPWorkspaceConverter.cpp:116
 msgid "Could not create the workspace configuration"
-msgstr ""
+msgstr "Impossible de créer la configuration de l'espace de travail"
 
 #: Plugin/FileSystemWorkspace/clPHPWorkspaceConverter.cpp:147
 #, c-format
 msgid "Could not rename the workspace file to %s"
-msgstr ""
+msgstr "Impossible de renommer le fichier d'espace de travail en %s"
 
 #: Plugin/FileSystemWorkspace/clPHPWorkspaceConverter.cpp:153
 msgid "Could not write the new workspace file"
-msgstr ""
+msgstr "Impossible d'écrire le nouveau fichier d'espace de travail"
 
 #: Plugin/FileSystemWorkspace/clPHPWorkspaceConverter.cpp:165
 #, c-format
 msgid "The Xdebug settings were not changed, because %s already exists"
-msgstr ""
+msgstr "Les paramètres Xdebug n'ont pas été modifiés, car %s existe déjà"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:35
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:87
 msgid "DEL"
-msgstr ""
+msgstr "DEL"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:36
 msgid "DELETE"
-msgstr ""
+msgstr "DELETE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:37
 msgid "BACK"
-msgstr ""
+msgstr "BACK"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:38
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:86
 msgid "INS"
-msgstr ""
+msgstr "INS"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:39
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:74
 msgid "ENTER"
-msgstr ""
+msgstr "ENTER"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:40
 msgid "RETURN"
-msgstr ""
+msgstr "ENTRÉE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:41
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:81
 msgid "PGUP"
-msgstr ""
+msgstr "PAGE PRÉCÉDENTE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:42
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:83
 msgid "PGDN"
-msgstr ""
+msgstr "PAGE SUIVANTE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:43
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:76
 msgid "LEFT"
-msgstr ""
+msgstr "GAUCHE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:44
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:78
 msgid "RIGHT"
-msgstr ""
+msgstr "DROITE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:45
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:77
 msgid "UP"
-msgstr ""
+msgstr "HAUT"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:46
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:79
 msgid "DOWN"
-msgstr ""
+msgstr "BAS"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:47
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:75
 msgid "HOME"
-msgstr ""
+msgstr "DÉBUT"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:48
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:84
@@ -5052,32 +5052,32 @@ msgstr "FIN"
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:49
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:72
 msgid "SPACE"
-msgstr ""
+msgstr "ESPACE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:50
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:73
 msgid "TAB"
-msgstr ""
+msgstr "TABULATION"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:51
 msgid "ESC"
-msgstr ""
+msgstr "ÉCHAP"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:52
 msgid "ESCAPE"
-msgstr ""
+msgstr "ÉCHAPPEMENT"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:53
 msgid "CANCEL"
-msgstr ""
+msgstr "ANNULER"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:54
 msgid "CLEAR"
-msgstr ""
+msgstr "EFFACER"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:55
 msgid "MENU"
-msgstr ""
+msgstr "MENU"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:56
 msgid "PAUSE"
@@ -5085,67 +5085,67 @@ msgstr "PAUSE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:57
 msgid "CAPITAL"
-msgstr ""
+msgstr "VERR MAJ"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:58
 msgid "SELECT"
-msgstr ""
+msgstr "SÉLECTIONNER"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:59
 msgid "PRINT"
-msgstr ""
+msgstr "IMPRIMER"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:60
 msgid "EXECUTE"
-msgstr ""
+msgstr "EXÉCUTER"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:61
 msgid "SNAPSHOT"
-msgstr ""
+msgstr "CAPTURE D'ÉCRAN"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:62
 msgid "HELP"
-msgstr ""
+msgstr "AIDE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:63
 msgid "ADD"
-msgstr ""
+msgstr "AJOUTER"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:64
 msgid "SEPARATOR"
-msgstr ""
+msgstr "SÉPARATEUR"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:65
 msgid "SUBTRACT"
-msgstr ""
+msgstr "SOUSTRAIRE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:66
 msgid "DECIMAL"
-msgstr ""
+msgstr "DÉCIMAL"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:67
 msgid "DIVIDE"
-msgstr ""
+msgstr "DIVISER"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:68
 msgid "NUM_LOCK"
-msgstr ""
+msgstr "VERR NUM"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:69
 msgid "SCROLL_LOCK"
-msgstr ""
+msgstr "ARRÊT DÉFIL"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:70
 msgid "PAGEUP"
-msgstr ""
+msgstr "PAGE PRÉCÉDENTE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:71
 msgid "PAGEDOWN"
-msgstr ""
+msgstr "PAGE SUIVANTE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:80
 msgid "PRIOR"
-msgstr ""
+msgstr "PRÉCÉDENTE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:82
 msgid "NEXT"
@@ -5154,57 +5154,57 @@ msgstr "SUIVANTE"
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:85
 #: sdk/databaselayer/src/dblayer/PostgresDatabaseLayer.cpp:277
 msgid "BEGIN"
-msgstr ""
+msgstr "DÉBUT"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:88
 msgid "="
-msgstr ""
+msgstr "="
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:89
 #: build/Plugins/Gizmos/newclassbasedlg.cpp:111
 msgid "*"
-msgstr ""
+msgstr "*"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:90
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:7230
 msgid "+"
-msgstr ""
+msgstr "+"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:91
 msgid "KP_SEPARATOR"
-msgstr ""
+msgstr "KP_SEPARATOR"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:92 build/Plugins/git/gitui.cpp:332
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:93
 msgid "."
-msgstr ""
+msgstr "."
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:94
 msgid "/"
-msgstr ""
+msgstr "/"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:95
 msgid "WINDOWS_LEFT"
-msgstr ""
+msgstr "WINDOWS_GAUCHE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:96
 msgid "WINDOWS_RIGHT"
-msgstr ""
+msgstr "WINDOWS_DROITE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:97
 msgid "WINDOWS_MENU"
-msgstr ""
+msgstr "MENU WINDOWS"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:98
 msgid "COMMAND"
-msgstr ""
+msgstr "COMMANDE"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:153
 msgid "F"
-msgstr ""
+msgstr "F"
 
 #: Plugin/Keyboard/newkeyshortcutdlg.cpp:157
 msgid "SPECIAL"
@@ -5232,15 +5232,15 @@ msgstr "Redémarrage des serveurs de langages ..."
 
 #: Plugin/LSP/LSPManager.cpp:1602
 msgid "No code actions available"
-msgstr ""
+msgstr "Aucune action sur le code disponible"
 
 #: Plugin/LSP/LSPManager.cpp:1620
 msgid "Choose a code action to apply:"
-msgstr ""
+msgstr "Choisissez une action sur le code à appliquer :"
 
 #: Plugin/LSP/LSPManager.cpp:1631
 msgid "A code action is available"
-msgstr ""
+msgstr "Une action sur le code est disponible"
 
 #: Plugin/LSP/LSPManager.cpp:1635 build/LiteEditor/buildorderbasepage.cpp:167
 #: build/LiteEditor/options_base_dlg2.cpp:122
@@ -5250,67 +5250,67 @@ msgstr "Appliquer"
 #: Plugin/LSP/LSPManager.cpp:1733
 #, c-format
 msgid "Could not open file: %s"
-msgstr ""
+msgstr "Impossible d'ouvrir le fichier : %s"
 
 #: Plugin/LSP/LSPManager.cpp:1759
 #, c-format
 msgid "File already exists: %s"
-msgstr ""
+msgstr "Le fichier existe déjà : %s"
 
 #: Plugin/LSP/LSPManager.cpp:1768
 #, c-format
 msgid "Could not write file: %s"
-msgstr ""
+msgstr "Impossible d'écrire le fichier : %s"
 
 #: Plugin/LSP/LSPManager.cpp:1777
 #, c-format
 msgid "Could not create file: %s"
-msgstr ""
+msgstr "Impossible de créer le fichier : %s"
 
 #: Plugin/LSP/LSPManager.cpp:1797
 #, c-format
 msgid "Can not rename %s: it does not exist"
-msgstr ""
+msgstr "Impossible de renommer %s : il n'existe pas"
 
 #: Plugin/LSP/LSPManager.cpp:1807
 #, c-format
 msgid "Can not rename %s: %s already exists"
-msgstr ""
+msgstr "Impossible de renommer %s : %s existe déjà"
 
 #: Plugin/LSP/LSPManager.cpp:1811
 #, c-format
 msgid "Can not rename %s: folder %s already exists"
-msgstr ""
+msgstr "Impossible de renommer %s : le dossier %s existe déjà"
 
 #: Plugin/LSP/LSPManager.cpp:1833
 #, c-format
 msgid "Can not rename %s: could not save %s"
-msgstr ""
+msgstr "Impossible de renommer %s : échec de l'enregistrement de %s"
 
 #: Plugin/LSP/LSPManager.cpp:1859
 #, c-format
 msgid "Could not rename %s to %s"
-msgstr ""
+msgstr "Impossible de renommer %s en %s"
 
 #: Plugin/LSP/LSPManager.cpp:1981
 msgid "This change creates or renames files. This is not supported in a remote workspace"
-msgstr ""
+msgstr "Cette modification crée ou renomme des fichiers. Cette opération n'est pas prise en charge dans un espace de travail distant"
 
 #: Plugin/LSP/LSPManager.cpp:1987
 #, c-format
 msgid "This will update %zu file. Continue?"
 msgid_plural "This will update %zu files. Continue?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Cette opération mettra à jour %zu fichier. Continuer ?"
+msgstr[1] "Cette opération mettra à jour %zu fichiers. Continuer ?"
 
 #: Plugin/LSP/LSPManager.cpp:2035
 #, c-format
 msgid "Deleting files is not supported: %s"
-msgstr ""
+msgstr "La suppression de fichiers n'est pas prise en charge : %s"
 
 #: Plugin/LSP/LSPManager.cpp:2042
 msgid "The remaining changes were not applied"
-msgstr ""
+msgstr "Les modifications restantes n'ont pas été appliquées"
 
 #: Plugin/LSP/LSPOutlineViewDlg.cpp:39 Plugins/Outline/outline_tab.cpp:81
 msgid "Language Server is still not ready... "
@@ -5322,11 +5322,11 @@ msgstr "(appuyer sur la touche ESCAPE pour quitter)"
 
 #: Plugin/LSP/LanguageServerLogView.cpp:85
 msgid "Server"
-msgstr ""
+msgstr "Serveur"
 
 #: Plugin/LSP/LanguageServerLogView.cpp:87 build/Plugin/LSP/lsp_UI.cpp:535
 msgid "Progress"
-msgstr ""
+msgstr "Progression"
 
 #: Plugin/LSP/LanguageServerLogView.cpp:89 Plugin/clTerminalViewCtrl.cpp:99
 #: build/Plugins/UnitTestCPP/unittestreport.cpp:158
@@ -5371,27 +5371,27 @@ msgstr ""
 
 #: Plugin/MarkdownEditor.cpp:112
 msgid "Show the document"
-msgstr ""
+msgstr "Afficher le document"
 
 #: Plugin/MarkdownEditor.cpp:118
 msgid "Edit the text of the file"
-msgstr ""
+msgstr "Modifier le texte du fichier"
 
 #: Plugin/MarkdownEditor.cpp:123
 msgid "Contents"
-msgstr ""
+msgstr "Sommaire"
 
 #: Plugin/MarkdownEditor.cpp:125
 msgid "Show or hide the table of contents"
-msgstr ""
+msgstr "Afficher ou masquer la table des matières"
 
 #: Plugin/MarkdownEditor.cpp:182
 msgid "Rendering Markdown..."
-msgstr ""
+msgstr "Rendu Markdown en cours..."
 
 #: Plugin/MarkdownViewCtrl.cpp:14
 msgid "Table of Contents"
-msgstr ""
+msgstr "Table des matières"
 
 #: Plugin/NewProjectDialog.cpp:222
 msgid "Project name must not contain spaces"
@@ -6187,15 +6187,15 @@ msgstr "Impossible de définir un nouveau répertoire racine : "
 
 #: Plugin/clRemoteHost.cpp:206
 msgid "Invalid SSH session"
-msgstr ""
+msgstr "Session SSH non valide"
 
 #: Plugin/clSFTPManager.cpp:669
 msgid "Failed to connect to the remote machine"
-msgstr ""
+msgstr "Échec de la connexion à la machine distante"
 
 #: Plugin/clSFTPManager.cpp:681
 msgid "Failed to create remote folder"
-msgstr ""
+msgstr "Échec de la création du dossier distant"
 
 #: Plugin/clSFTPManager.cpp:920
 msgid " saved"
@@ -6425,7 +6425,7 @@ msgstr "ConstruireQ"
 #: Plugin/editor_config.cpp:385 Plugin/editor_config.cpp:422
 #: Plugins/cppchecker/cppchecker.cpp:83 Plugins/cppchecker/cppchecker.cpp:97
 msgid "CppCheck"
-msgstr ""
+msgstr "CppCheck"
 
 #: Plugin/editor_config.cpp:387 Plugin/editor_config.cpp:424
 #: Plugins/Subversion2/subversion2.cpp:254
@@ -6435,19 +6435,19 @@ msgstr "'Subversion'"
 #: Plugin/editor_config.cpp:389 Plugins/cscope/cscope.cpp:47
 #: Plugins/cscope/cscope.cpp:85 Plugins/cscope/cscope.cpp:774
 msgid "CScope"
-msgstr ""
+msgstr "CScope"
 
 #: Plugin/editor_config.cpp:391 Plugin/editor_config.cpp:428
 #: Plugins/git/git.cpp:91 Plugins/git/git.cpp:284 Plugins/git/git.cpp:2419
 #: Plugins/git/git.cpp:2481
 msgid "Git"
-msgstr ""
+msgstr "Git"
 
 #: Plugin/editor_config.cpp:393 Plugin/editor_config.cpp:430
 #: Plugins/MemCheck/memcheck.cpp:127 Plugins/MemCheck/memcheck.cpp:128
 #: Plugins/MemCheck/memcheck.cpp:169 Plugins/MemCheck/memcheck.cpp:200
 msgid "MemCheck"
-msgstr ""
+msgstr "MemCheck"
 
 #: Plugin/editor_config.cpp:426
 msgid "Cscope"
@@ -6836,19 +6836,19 @@ msgstr ""
 
 #: Plugins/AgentHost/AgentHost.cpp:24
 msgid "Integrate Claude Code & Kiro CLI into CodeLite."
-msgstr ""
+msgstr "Intégrer Claude Code et Kiro CLI à CodeLite."
 
 #: Plugins/AgentHost/AgentHost.cpp:36
 msgid "Launch an AI Agent for the Current Workspace"
-msgstr ""
+msgstr "Lancer un agent IA pour l'espace de travail actuel"
 
 #: Plugins/AgentHost/AgentHost.cpp:56
 msgid "Launch an AI Agent...\tCtrl-Shift-C"
-msgstr ""
+msgstr "Lancer un agent IA...\tCtrl-Shift-C"
 
 #: Plugins/AgentHost/AgentHost.cpp:57 Plugins/AgentHost/AgentHost.cpp:126
 msgid "Select the agent to launch for the current workspace"
-msgstr ""
+msgstr "Sélectionner l'agent à lancer pour l'espace de travail actuel"
 
 #: Plugins/AgentHost/AgentHost.cpp:62 Plugins/AgentHost/AgentHost.cpp:83
 msgid "Launch Claude Code"
@@ -6856,19 +6856,19 @@ msgstr "Lancer Claude Code"
 
 #: Plugins/AgentHost/AgentHost.cpp:64 Plugins/AgentHost/AgentHost.cpp:84
 msgid "Launch Kiro Cli"
-msgstr ""
+msgstr "Lancer Kiro CLI"
 
 #: Plugins/AgentHost/AgentHost.cpp:67 Plugins/AgentHost/AgentHost.cpp:85
 msgid "Launch OpenCode"
-msgstr ""
+msgstr "Lancer OpenCode"
 
 #: Plugins/AgentHost/AgentHost.cpp:73 Plugins/AgentHost/AgentHost.cpp:80
 msgid "Agent Host"
-msgstr ""
+msgstr "Hôte d'agents"
 
 #: Plugins/AgentHost/AgentHost.cpp:82
 msgid "Launch an AI Agent..."
-msgstr ""
+msgstr "Lancer un agent IA..."
 
 #: Plugins/AgentHost/AgentHost.cpp:86
 #: Plugins/CodeFormatter/codeformatter.cpp:151
@@ -6880,41 +6880,41 @@ msgstr "Options..."
 #: Plugins/AgentHost/AgentHost.cpp:103 Plugins/AgentHost/AgentHost.cpp:250
 #: Plugins/AgentHost/AgentHostPage.cpp:163
 msgid "Claude Code"
-msgstr ""
+msgstr "Claude Code"
 
 #: Plugins/AgentHost/AgentHost.cpp:104
 msgid "Kiro CLI"
-msgstr ""
+msgstr "Kiro CLI"
 
 #: Plugins/AgentHost/AgentHost.cpp:105 Plugins/AgentHost/AgentHost.cpp:256
 msgid "OpenCode"
-msgstr ""
+msgstr "OpenCode"
 
 #: Plugins/AgentHost/AgentHost.cpp:116
 msgid "running"
-msgstr ""
+msgstr "en cours d'exécution"
 
 #: Plugins/AgentHost/AgentHost.cpp:118
 msgid "not found"
-msgstr ""
+msgstr "introuvable"
 
 #: Plugins/AgentHost/AgentHost.cpp:127
 msgid "Launch an AI Agent"
-msgstr ""
+msgstr "Lancer un agent IA"
 
 #: Plugins/AgentHost/AgentHost.cpp:193
 #, c-format
 msgid "Could not locate '%s' executable"
-msgstr ""
+msgstr "Impossible de trouver l'exécutable '%s'"
 
 #: Plugins/AgentHost/AgentHost.cpp:223
 #, c-format
 msgid "Launching %s requires a workspace"
-msgstr ""
+msgstr "Le lancement de %s nécessite un espace de travail"
 
 #: Plugins/AgentHost/AgentHost.cpp:253
 msgid "Kiro"
-msgstr ""
+msgstr "Kiro"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:597
 #: Plugins/Docker/DockerOutputPane.cpp:220
@@ -6923,28 +6923,28 @@ msgstr "Redémarrage"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:597
 msgid "Restart the agent"
-msgstr ""
+msgstr "Redémarrer l'agent"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:601
 #: build/Plugins/AgentHost/AgentHostUI.cpp:134
 msgid "Review Buddy"
-msgstr ""
+msgstr "Review Buddy"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:603
 msgid "Run Review Buddy"
-msgstr ""
+msgstr "Lancer Review Buddy"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:610
 msgid "Copy the selected text"
-msgstr ""
+msgstr "Copier le texte sélectionné"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:615
 msgid "Paste the clipboard text"
-msgstr ""
+msgstr "Coller le texte du presse-papiers"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:621
 msgid "Find In Files: search for the selected text"
-msgstr ""
+msgstr "Rechercher dans les fichiers : rechercher le texte sélectionné"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:625
 #: build/Plugin/openresourcedialogbase.hpp:68
@@ -6953,127 +6953,127 @@ msgstr "Ouvrir une Ressource"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:627
 msgid "Open Resource: find a file or a symbol with the selected text"
-msgstr ""
+msgstr "Ouvrir une ressource : trouver un fichier ou un symbole contenant le texte sélectionné"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:659
 msgid "Review Buddy is not available"
-msgstr ""
+msgstr "Review Buddy n'est pas disponible"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:664
 msgid "Review with Claude Code"
-msgstr ""
+msgstr "Examiner avec Claude Code"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:665
 msgid "Review with Kiro CLI"
-msgstr ""
+msgstr "Examiner avec Kiro CLI"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:769
 msgid "Review Buddy: "
-msgstr ""
+msgstr "Review Buddy : "
 
 #: Plugins/AgentHost/AgentHostPage.cpp:773
 msgid "Send the Request Again"
-msgstr ""
+msgstr "Renvoyer la demande"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:775
 msgid "Stop the Review"
-msgstr ""
+msgstr "Arrêter la revue"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:780
 msgid "Open the Latest Review"
-msgstr ""
+msgstr "Ouvrir la dernière revue"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:782
 msgid "Close Review Buddy"
-msgstr ""
+msgstr "Fermer Review Buddy"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:789
 msgid "no working directory"
-msgstr ""
+msgstr "aucun répertoire de travail"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:793
 msgid "not a git repository"
-msgstr ""
+msgstr "ce n'est pas un dépôt Git"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:824
 msgid "Cannot find the working directory of the agent"
-msgstr ""
+msgstr "Impossible de trouver le répertoire de travail de l'agent"
 
 #: Plugins/AgentHost/AgentHostPage.cpp:963
 msgid "The review is not ready yet"
-msgstr ""
+msgstr "La revue n'est pas encore prête"
 
 #: Plugins/AgentHost/ReviewBuddy.cpp:166
 msgid "Starting"
-msgstr ""
+msgstr "Démarrage"
 
 #: Plugins/AgentHost/ReviewBuddy.cpp:243
 msgid "Could not write "
-msgstr ""
+msgstr "Impossible d'écrire "
 
 #: Plugins/AgentHost/ReviewBuddy.cpp:253
 msgid "Could not start the reviewer"
-msgstr ""
+msgstr "Impossible de démarrer l'agent de revue"
 
 #: Plugins/AgentHost/ReviewBuddy.cpp:273 Plugins/AgentHost/ReviewBuddy.cpp:311
 msgid "Review needs your attention"
-msgstr ""
+msgstr "La revue nécessite votre attention"
 
 #: Plugins/AgentHost/ReviewBuddy.cpp:311
 msgid "Review finished"
-msgstr ""
+msgstr "Revue terminée"
 
 #: Plugins/AgentHost/ReviewBuddy.cpp:355
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: Plugins/AgentHost/ReviewBuddy.cpp:355
 msgid "Ok && Close Review Buddy"
-msgstr ""
+msgstr "OK && Fermer Review Buddy"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:50
 msgid "Not started"
-msgstr ""
+msgstr "Non démarré"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:52
 #, c-format
 msgid "Round %d of %d: waiting for the review%s"
-msgstr ""
+msgstr "Tour %d sur %d : en attente de la revue%s"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:55 Plugins/AgentHost/ReviewLoop.cpp:60
 msgid " (for a long time)"
-msgstr ""
+msgstr " (depuis longtemps)"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:57
 #, c-format
 msgid "Round %d of %d: waiting for the fixes%s"
-msgstr ""
+msgstr "Tour %d sur %d : en attente des corrections%s"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:66
 msgid "Stopped"
-msgstr ""
+msgstr "Arrêté"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:127
 msgid "The review marker exists but review-comments.md is missing or empty"
-msgstr ""
+msgstr "Le marqueur de revue existe, mais review-comments.md est absent ou vide"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:131
 #, c-format
 msgid "Review is clean after %d round(s)"
-msgstr ""
+msgstr "La revue ne relève aucun problème après %d tour(s)"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:147
 #, c-format
 msgid "Round limit (%d) reached. The last fixes were not reviewed"
-msgstr ""
+msgstr "Limite de tours (%d) atteinte. Les dernières corrections n'ont pas été examinées"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:166
 msgid "No review for a long time. Is the reviewer waiting for you?"
-msgstr ""
+msgstr "Aucune revue depuis longtemps. L'agent de revue attend-il une réponse de votre part ?"
 
 #: Plugins/AgentHost/ReviewLoop.cpp:168
 msgid "No fixes for a long time. Is the main agent waiting for you?"
-msgstr ""
+msgstr "Aucune correction depuis longtemps. L'agent principal attend-il une réponse de votre part ?"
 
 #: Plugins/AutoSave/autosave.cpp:18 Plugins/AutoSave/autosave.cpp:29
 msgid "Automatically save modified source files"
@@ -7110,7 +7110,7 @@ msgstr "Le chemin d'accès à l'application 'CMake' n'est pas valide !"
 #: Plugins/CMakePlugin/CMakePlugin.cpp:92
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:248
 msgid "CMake"
-msgstr ""
+msgstr "CMake"
 
 #: Plugins/CMakePlugin/CMakePlugin.cpp:120
 msgid "CMake integration for CodeLite"
@@ -7317,11 +7317,11 @@ msgstr "Options de formatage du code source..."
 
 #: Plugins/CodeFormatter/codeformatter.cpp:277
 msgid "The language server can not format a selection"
-msgstr ""
+msgstr "Le serveur de langage ne peut pas formater une sélection"
 
 #: Plugins/CodeFormatter/codeformatter.cpp:295
 msgid "Formatting..."
-msgstr ""
+msgstr "Formatage en cours..."
 
 #: Plugins/CodeFormatter/codeformatter.cpp:419
 msgid "Code Formatter: scanning for files..."
@@ -7360,11 +7360,11 @@ msgstr "Terminé"
 
 #: Plugins/CodeFormatter/codeformatter.cpp:642
 msgid " format error: "
-msgstr ""
+msgstr " erreur de formatage : "
 
 #: Plugins/CodeFormatter/codeformatter.cpp:652
 msgid "The file was changed while it was formatted, the changes were not applied"
-msgstr ""
+msgstr "Le fichier a été modifié pendant le formatage ; les changements n'ont pas été appliqués"
 
 #: Plugins/CodeFormatter/codeformatterdlg.cpp:83
 msgid "Lose all your modifications and restore default settings?"
@@ -7425,11 +7425,11 @@ msgstr "'jq' - un formateur 'json'"
 
 #: Plugins/CodeFormatter/fmtLSP.cpp:7
 msgid "Format with the language server of the file"
-msgstr ""
+msgstr "Formater avec le serveur de langage du fichier"
 
 #: Plugins/CodeFormatter/fmtLSP.cpp:8
 msgid "Language server formatter"
-msgstr ""
+msgstr "Formateur du serveur de langage"
 
 #: Plugins/CodeFormatter/fmtRustfmt.cpp:9
 msgid "Format Rust code"
@@ -7771,7 +7771,7 @@ msgstr "La base de données a été exportée vers '%s'."
 
 #: Plugins/DatabaseExplorer/DbViewerPanel.cpp:591
 msgid "wxDbExplorer"
-msgstr ""
+msgstr "wxDbExplorer"
 
 #: Plugins/DatabaseExplorer/DbViewerPanel.cpp:639
 msgid "Successful!"
@@ -7954,11 +7954,11 @@ msgstr "Explorateur de bases de données multiplate-forme\n"
 
 #: Plugins/DatabaseExplorer/databaseexplorer.cpp:181
 msgid "DatabaseExplorer"
-msgstr ""
+msgstr "Explorateur de bases de données"
 
 #: Plugins/DatabaseExplorer/databaseexplorer.cpp:185
 msgid "https://fai.utb.cz/"
-msgstr ""
+msgstr "https://fai.utb.cz/"
 
 #: Plugins/DebugAdapterClient/DAPBreakpointsView.cpp:19
 msgid "New source breakpoint"
@@ -8336,7 +8336,7 @@ msgstr "Prise en charge des fichiers '.editorconfig' dans CodeLite"
 
 #: Plugins/EditorConfigPlugin/editorconfigplugin.cpp:49
 msgid "EditorConfig"
-msgstr ""
+msgstr "EditorConfig"
 
 #: Plugins/ExternalTools/ExternalToolsProcessManager.cpp:122
 msgid ""
@@ -8535,7 +8535,7 @@ msgstr "Redémarrer les serveurs de langages"
 
 #: Plugins/LanguageServer/languageserver.cpp:222
 msgid "Code actions..."
-msgstr ""
+msgstr "Actions de code..."
 
 #: Plugins/LanguageServer/languageserver.cpp:227
 msgid "Find references"
@@ -8667,7 +8667,7 @@ msgstr "Faire de la sortie d'un projet actif un paquet"
 
 #: Plugins/MacBundler/macbundler.cpp:564
 msgid "MacBundler"
-msgstr ""
+msgstr "MacBundler"
 
 #: Plugins/MacBundler/macbundler.cpp:587
 msgid "Make this project output a bundle"
@@ -8842,7 +8842,7 @@ msgstr "Nouveau projet basé sur 'qmake'..."
 
 #: Plugins/QmakePlugin/qmakeplugin.cpp:116
 msgid "QMake"
-msgstr ""
+msgstr "QMake"
 
 #: Plugins/QmakePlugin/qmakeplugin.cpp:140
 msgid "Run qmake..."
@@ -9036,28 +9036,28 @@ msgstr "Impossible de localiser le 'cargo' dans votre chemin système"
 
 #: Plugins/SFTP/SFTPStatusPage.cpp:93
 msgid "Preparing..."
-msgstr ""
+msgstr "Préparation en cours..."
 
 #: Plugins/SFTP/SFTPStatusPage.cpp:105
 #, c-format
 msgid "Uploading (%d/%d): %s"
-msgstr ""
+msgstr "Téléversement (%d/%d) : %s"
 
 #: Plugins/SFTP/SFTPStatusPage.cpp:119
 msgid "Cancelling..."
-msgstr ""
+msgstr "Annulation en cours..."
 
 #: Plugins/SFTP/SFTPSyncFolderDlg.cpp:28
 msgid "Sync with Remote"
-msgstr ""
+msgstr "Synchroniser avec le serveur distant"
 
 #: Plugins/SFTP/SFTPSyncFolderDlg.cpp:37
 msgid "Local Path"
-msgstr ""
+msgstr "Chemin local"
 
 #: Plugins/SFTP/SFTPSyncFolderDlg.cpp:38
 msgid "Remote Path"
-msgstr ""
+msgstr "Chemin distant"
 
 #: Plugins/SFTP/SFTPSyncFolderDlg.cpp:39 build/Plugin/sftp_ui.cpp:416
 #: build/Plugins/Docker/UI.cpp:496
@@ -9068,55 +9068,55 @@ msgstr "Taille"
 #: Plugins/SFTP/SFTPSyncFolderDlg.cpp:158
 #, c-format
 msgid "Syncing %s"
-msgstr ""
+msgstr "Synchronisation de %s"
 
 #: Plugins/SFTP/SFTPSyncFolderDlg.cpp:160
 #, c-format
 msgid "Syncing %s -> %s"
-msgstr ""
+msgstr "Synchronisation de %s -> %s"
 
 #: Plugins/SFTP/SFTPSyncFolderDlg.cpp:251
 msgid "Select the remote folder"
-msgstr ""
+msgstr "Sélectionner le dossier distant"
 
 #: Plugins/SFTP/SFTPSyncJob.cpp:47
 #, c-format
 msgid "Syncing %d file(s) using account %s"
-msgstr ""
+msgstr "Synchronisation de %d fichier(s) avec le compte %s"
 
 #: Plugins/SFTP/SFTPSyncJob.cpp:77
 msgid "Cancelling... the next files will not be uploaded"
-msgstr ""
+msgstr "Annulation en cours... les fichiers suivants ne seront pas téléversés"
 
 #: Plugins/SFTP/SFTPSyncJob.cpp:91
 #, c-format
 msgid "Failed to create remote folder %s. %s"
-msgstr ""
+msgstr "Échec de la création du dossier distant %s. %s"
 
 #: Plugins/SFTP/SFTPSyncJob.cpp:104
 #, c-format
 msgid "Failed to upload: %s. The remote folder was not created"
-msgstr ""
+msgstr "Échec du téléversement : %s. Le dossier distant n'a pas été créé"
 
 #: Plugins/SFTP/SFTPSyncJob.cpp:123
 #, c-format
 msgid "Uploaded: %s"
-msgstr ""
+msgstr "Téléversé : %s"
 
 #: Plugins/SFTP/SFTPSyncJob.cpp:132
 #, c-format
 msgid "Failed to upload: %s. %s"
-msgstr ""
+msgstr "Échec du téléversement : %s. %s"
 
 #: Plugins/SFTP/SFTPSyncJob.cpp:146
 #, c-format
 msgid "Sync finished: %d uploaded, %d failed"
-msgstr ""
+msgstr "Synchronisation terminée : %d téléversé(s), %d échec(s)"
 
 #: Plugins/SFTP/SFTPSyncJob.cpp:148
 #, c-format
 msgid ", %d skipped"
-msgstr ""
+msgstr ", %d ignoré(s)"
 
 #: Plugins/SFTP/SFTPTreeView.cpp:67 Plugins/SFTP/SFTPTreeView.cpp:69
 msgid "Open account manager..."
@@ -9145,7 +9145,7 @@ msgstr "Extension 'SFTP' pour l'IDE CodeLite"
 #: Plugins/SFTP/sftp.cpp:551 Plugins/SFTP/sftp.cpp:570
 #: Plugins/SFTP/sftp.cpp:593
 msgid "SFTP"
-msgstr ""
+msgstr "SFTP"
 
 #: Plugins/SFTP/sftp.cpp:148 Plugins/SFTP/sftp.cpp:151
 #: Plugins/SFTP/sftp.cpp:157 Plugins/SFTP/sftp.cpp:161
@@ -9210,37 +9210,39 @@ msgstr "Échec de la suppression du fichier distant : "
 
 #: Plugins/SFTP/sftp.cpp:747
 msgid "Sync Folder with Remote"
-msgstr ""
+msgstr "Synchroniser le dossier avec le serveur distant"
 
 #: Plugins/SFTP/sftp.cpp:788
 msgid "Sync File with Remote"
-msgstr ""
+msgstr "Synchroniser le fichier avec le serveur distant"
 
 #: Plugins/SFTP/sftp.cpp:788
 msgid "Sync Files with Remote"
-msgstr ""
+msgstr "Synchroniser les fichiers avec le serveur distant"
 
 #: Plugins/SFTP/sftp.cpp:807
 msgid "A sync is already running"
-msgstr ""
+msgstr "Une synchronisation est déjà en cours"
 
 #: Plugins/SFTP/sftp.cpp:819
 msgid ""
 "There are no files to upload in this folder.\n"
 "Nested folders are not included."
 msgstr ""
+"Il n'y a aucun fichier à téléverser dans ce dossier.\n"
+"Les sous-dossiers ne sont pas inclus."
 
 #: Plugins/SFTP/sftp.cpp:820 Plugins/SFTP/sftp.cpp:845
 msgid "Nothing to Sync"
-msgstr ""
+msgstr "Rien à synchroniser"
 
 #: Plugins/SFTP/sftp.cpp:835
 msgid "The files must be on the same drive"
-msgstr ""
+msgstr "Les fichiers doivent se trouver sur le même lecteur"
 
 #: Plugins/SFTP/sftp.cpp:845
 msgid "There are no files to upload"
-msgstr ""
+msgstr "Il n'y a aucun fichier à téléverser"
 
 #: Plugins/SFTP/sftp_worker_thread.cpp:90
 msgid "Uploading file: "
@@ -9278,7 +9280,7 @@ msgstr "Achèvements intelligents"
 #: Plugins/SnipWiz/editsnippetsdlg.cpp:68
 #: Plugins/SnipWiz/editsnippetsdlg.cpp:173 Plugins/SnipWiz/snipwiz.cpp:163
 msgid "SnipWiz"
-msgstr ""
+msgstr "SnipWiz"
 
 #: Plugins/SnipWiz/editsnippetsdlg.cpp:77
 #: Plugins/SnipWiz/editsnippetsdlg.cpp:99
@@ -9311,11 +9313,11 @@ msgstr "Saisir le nom de l'identifiant"
 
 #: Plugins/SnipWiz/snipwiz.cpp:222 Plugins/SnipWiz/snipwiz.cpp:225
 msgid "switch(...)"
-msgstr ""
+msgstr "switch(...)"
 
 #: Plugins/SnipWiz/snipwiz.cpp:225
 msgid "Cases:"
-msgstr ""
+msgstr "Cas :"
 
 #: Plugins/SnipWiz/snipwiz.cpp:225
 msgid "Enter number of cases"
@@ -9327,7 +9329,7 @@ msgstr "Coller le tampon"
 
 #: Plugins/SnipWiz/snipwiz.cpp:370
 msgid "switch{...}"
-msgstr ""
+msgstr "switch{...}"
 
 #: Plugins/SnipWiz/snipwiz.cpp:497 build/Plugins/SnipWiz/SnippetSettings.cpp:97
 msgid "Snippets"
@@ -9484,7 +9486,7 @@ msgstr "Options de Subversion"
 
 #: Plugins/Subversion2/subversion2.cpp:272
 msgid "Subversion2"
-msgstr ""
+msgstr "Subversion2"
 
 #: Plugins/Subversion2/subversion2.cpp:280
 msgid "Sync Project Files..."
@@ -9550,7 +9552,7 @@ msgstr ""
 
 #: Plugins/Subversion2/subversion2.cpp:632
 msgid "Svn Diff"
-msgstr ""
+msgstr "Comparaison SVN"
 
 #: Plugins/Subversion2/subversion2.cpp:633
 msgid "Insert base revision to diff against:"
@@ -9562,7 +9564,7 @@ msgstr "Saisissez la nouvelle 'URL' :"
 
 #: Plugins/Subversion2/subversion2.cpp:1030
 msgid "Svn Switch..."
-msgstr ""
+msgstr "Changer de branche SVN..."
 
 #: Plugins/Subversion2/subversion2.cpp:1127
 #: Plugins/Subversion2/subversion2.cpp:1135
@@ -9575,7 +9577,7 @@ msgstr "Échec de l'écriture du message de validation dans un fichier temporair
 
 #: Plugins/Subversion2/subversion2.cpp:1303
 msgid " - application/octet-stream"
-msgstr ""
+msgstr " - application/octet-stream"
 
 #: Plugins/Subversion2/subversion2.cpp:1372
 #: Plugins/Subversion2/subversion2.cpp:1471
@@ -9658,7 +9660,7 @@ msgstr "Fichiers non versionnés"
 
 #: Plugins/Subversion2/subversion_strings.h:36
 msgid "Svn"
-msgstr ""
+msgstr "SVN"
 
 #: Plugins/Subversion2/subversion_strings.h:38
 msgid ""
@@ -9933,7 +9935,7 @@ msgstr "Une extension de test d'unité basée sur le système 'UnitTest++'"
 #: Plugins/UnitTestCPP/unittestpp.cpp:145
 #: Plugins/UnitTestCPP/unittestpp.cpp:571
 msgid "UnitTest++"
-msgstr ""
+msgstr "UnitTest++"
 
 #: Plugins/UnitTestCPP/unittestpp.cpp:104
 msgid "Create new test..."
@@ -10102,11 +10104,11 @@ msgstr "Un autre processus est déjà en cours"
 
 #: Plugins/codelitephp/PHPParser/phpexecutor.cpp:151
 msgid "No file to run was selected"
-msgstr ""
+msgstr "Aucun fichier à exécuter n'a été sélectionné"
 
 #: Plugins/codelitephp/PHPParser/phpexecutor.cpp:158
 msgid "Could not find any PHP binary to execute. Please set one in: PHP -> PHP Settings..."
-msgstr ""
+msgstr "Impossible de trouver un exécutable PHP. Veuillez en définir un dans : PHP -> Paramètres PHP..."
 
 #: Plugins/codelitephp/php-plugin/PHPDebugPane.cpp:30
 msgid "Console"
@@ -10123,11 +10125,11 @@ msgstr "Supprimer tous les points d'arrêt"
 
 #: Plugins/codelitephp/php-plugin/XDebugManager.cpp:150
 msgid "No file mapping is defined. This may result in breakpoints not applied\n"
-msgstr ""
+msgstr "Aucune correspondance de fichiers n'est définie. Les points d'arrêt risquent de ne pas être appliqués\n"
 
 #: Plugins/codelitephp/php-plugin/XDebugManager.cpp:151
 msgid "To fix this, set file mapping in PHP -> XDebug Settings... -> Debug"
-msgstr ""
+msgstr "Pour résoudre ce problème, définissez la correspondance des fichiers dans PHP -> Paramètres XDebug... -> Débogage"
 
 #: Plugins/codelitephp/php-plugin/XDebugManager.cpp:155
 msgid "Remember my answer and don't show this message again"
@@ -10159,7 +10161,7 @@ msgstr "OK"
 
 #: Plugins/codelitephp/php-plugin/XDebugManager.cpp:752
 msgid "Run XDebug Setup Wizard"
-msgstr ""
+msgstr "Lancer l'assistant de configuration de XDebug"
 
 #: Plugins/codelitephp/php-plugin/XDebugManager.cpp:766
 msgid "Error evaluating expression "
@@ -10171,7 +10173,7 @@ msgstr "Échec de la conversion du fichier distant : "
 
 #: Plugins/codelitephp/php-plugin/XDebugRunCmdHandler.cpp:49
 msgid "Define folder mapping in PHP -> XDebug Settings... -> Debug"
-msgstr ""
+msgstr "Définissez la correspondance des dossiers dans PHP -> Paramètres XDebug... -> Débogage"
 
 #: Plugins/codelitephp/php-plugin/XDebugSettingsDlg.cpp:104
 msgid "Select folder"
@@ -10193,7 +10195,7 @@ msgstr "Copier la valeur"
 #: Plugins/codelitephp/php-plugin/php.cpp:29
 #: Plugins/codelitephp/php-plugin/php.cpp:42
 msgid "XDebug support for PHP"
-msgstr ""
+msgstr "Prise en charge de XDebug pour PHP"
 
 #: Plugins/codelitephp/php-plugin/php.cpp:142
 msgid "PHP Settings..."
@@ -10201,19 +10203,19 @@ msgstr "Paramètres 'PHP'..."
 
 #: Plugins/codelitephp/php-plugin/php.cpp:143
 msgid "XDebug Settings..."
-msgstr ""
+msgstr "Paramètres XDebug..."
 
 #: Plugins/codelitephp/php-plugin/php.cpp:143
 msgid "XDebug settings of the open workspace"
-msgstr ""
+msgstr "Paramètres XDebug de l'espace de travail ouvert"
 
 #: Plugins/codelitephp/php-plugin/php.cpp:145
 msgid "Wait for XDebug to Connect"
-msgstr ""
+msgstr "Attendre la connexion de XDebug"
 
 #: Plugins/codelitephp/php-plugin/php.cpp:146
 msgid "Start a debug session when XDebug connects, for example from a web browser"
-msgstr ""
+msgstr "Démarrer une session de débogage lorsque XDebug se connecte, par exemple depuis un navigateur Web"
 
 #: Plugins/codelitephp/php-plugin/php.cpp:148
 msgid "Run XDebug Setup Wizard..."
@@ -10221,7 +10223,7 @@ msgstr "Lancer l'assistant d'installation de 'XDebug'..."
 
 #: Plugins/codelitephp/php-plugin/php.cpp:152
 msgid "P&HP"
-msgstr ""
+msgstr "P&HP"
 
 #: Plugins/cppchecker/cppchecker.cpp:55
 msgid "CppChecker integration for CodeLite IDE"
@@ -11243,7 +11245,7 @@ msgstr "Montrer les espaces"
 
 #: Runtime/rc/menu.xrc:322
 msgid "Open Terminal..."
-msgstr ""
+msgstr "Ouvrir un terminal..."
 
 #: Runtime/rc/menu.xrc:326
 msgid "&Output Pane"
@@ -12067,7 +12069,7 @@ msgstr "Rechercher / Remplacer"
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:412
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:431
 msgid "#"
-msgstr ""
+msgstr "#"
 
 #: build/LiteEditor/ThreadListPanelBase.cpp:96
 msgid "Active?"
@@ -12089,7 +12091,7 @@ msgstr "Processus :"
 #: build/LiteEditor/attachdbgprocbasedlg.cpp:127
 #: build/Plugins/ExternalTools/external_tools.cpp:190
 msgid "PID"
-msgstr ""
+msgstr "PID"
 
 #: build/LiteEditor/attachdbgprocbasedlg.cpp:133
 msgid "&Attach"
@@ -12334,11 +12336,11 @@ msgstr "Projets"
 
 #: build/LiteEditor/buildorderbasepage.cpp:122
 msgid "-->"
-msgstr ""
+msgstr "-->"
 
 #: build/LiteEditor/buildorderbasepage.cpp:126
 msgid "<--"
-msgstr ""
+msgstr "<--"
 
 #: build/LiteEditor/buildorderbasepage.cpp:146
 #: build/LiteEditor/buildorderbasepage.hpp:80
@@ -12490,7 +12492,7 @@ msgstr "Le compilateur de ressources. (uniquement 'Windows')"
 
 #: build/LiteEditor/compiler_pages.cpp:424
 msgid "Make"
-msgstr ""
+msgstr "Make"
 
 #: build/LiteEditor/compiler_pages.cpp:425
 msgid "The Make tool. on Windows / MinGW this is usually mingw32-make.exe while on other OSs its simply 'make'"
@@ -12498,7 +12500,7 @@ msgstr "L'outil 'Make' sous 'Windows / MinGW', il s'agit généralement de 'ming
 
 #: build/LiteEditor/compiler_pages.cpp:428
 msgid "mkdir"
-msgstr ""
+msgstr "mkdir"
 
 #: build/LiteEditor/compiler_pages.cpp:429
 msgid ""
@@ -12510,7 +12512,7 @@ msgstr ""
 
 #: build/LiteEditor/compiler_pages.cpp:432
 msgid "Gdb"
-msgstr ""
+msgstr "Gdb"
 
 #: build/LiteEditor/compiler_pages.cpp:433
 msgid ""
@@ -13156,7 +13158,7 @@ msgstr ""
 
 #: build/LiteEditor/findinfiles_dlg.cpp:152
 msgid "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"
-msgstr ""
+msgstr "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"
 
 #: build/LiteEditor/findinfiles_dlg.cpp:154
 msgid "Search these file types"
@@ -13298,7 +13300,7 @@ msgstr "Préréglages :"
 
 #: build/LiteEditor/findinfiles_dlg.cpp:254
 msgid "TODO"
-msgstr ""
+msgstr "TODO"
 
 #: build/LiteEditor/findinfiles_dlg.cpp:256
 msgid ""
@@ -13310,7 +13312,7 @@ msgstr ""
 
 #: build/LiteEditor/findinfiles_dlg.cpp:260
 msgid "ATTN"
-msgstr ""
+msgstr "ATTN"
 
 #: build/LiteEditor/findinfiles_dlg.cpp:262
 msgid ""
@@ -13322,7 +13324,7 @@ msgstr ""
 
 #: build/LiteEditor/findinfiles_dlg.cpp:266
 msgid "BUG"
-msgstr ""
+msgstr "BUG"
 
 #: build/LiteEditor/findinfiles_dlg.cpp:268
 msgid ""
@@ -13379,7 +13381,7 @@ msgstr ""
 #: build/Plugins/Subversion2/subversion2_ui.cpp:280
 #: build/Plugins/git/gitui.cpp:1381
 msgid "?"
-msgstr ""
+msgstr "?"
 
 #: build/LiteEditor/importfilesdialog_new.cpp:124
 msgid "Folder"
@@ -14033,7 +14035,7 @@ msgstr "Commandes de démarrage :"
 
 #: build/LiteEditor/quickdebugbase.cpp:253
 msgid "SSH"
-msgstr ""
+msgstr "SSH"
 
 #: build/LiteEditor/quickdebugbase.cpp:258
 #: build/Plugin/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.cpp:778
@@ -14581,19 +14583,19 @@ msgstr ""
 
 #: build/LiteEditor/workspacesettingsbase.cpp:322
 msgid "C++11"
-msgstr ""
+msgstr "C++11"
 
 #: build/LiteEditor/workspacesettingsbase.cpp:323
 msgid "C++14"
-msgstr ""
+msgstr "C++14"
 
 #: build/LiteEditor/workspacesettingsbase.cpp:324
 msgid "C++17"
-msgstr ""
+msgstr "C++17"
 
 #: build/LiteEditor/workspacesettingsbase.cpp:325
 msgid "C++20"
-msgstr ""
+msgstr "C++20"
 
 #: build/LiteEditor/workspacesettingsbase.cpp:331
 msgid "Sync to Workspace File"
@@ -14708,36 +14710,36 @@ msgstr "Taille de la mémoire à visualiser"
 #: build/Plugin/Debugger/memoryviewbase.cpp:139
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3044
 msgid "32"
-msgstr ""
+msgstr "32"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:118
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3045
 msgid "64"
-msgstr ""
+msgstr "64"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:119
 msgid "128"
-msgstr ""
+msgstr "128"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:120
 msgid "256"
-msgstr ""
+msgstr "256"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:121
 msgid "512"
-msgstr ""
+msgstr "512"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:122
 msgid "1024"
-msgstr ""
+msgstr "1024"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:123
 msgid "2048"
-msgstr ""
+msgstr "2048"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:124
 msgid "4096"
-msgstr ""
+msgstr "4096"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:131
 msgid "Number of columns:"
@@ -14745,16 +14747,16 @@ msgstr "Nombre de colonnes :"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:136
 msgid "4"
-msgstr ""
+msgstr "4"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:137
 msgid "8"
-msgstr ""
+msgstr "8"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:138
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3042
 msgid "16"
-msgstr ""
+msgstr "16"
 
 #: build/Plugin/Debugger/memoryviewbase.cpp:141
 msgid "Number of columns to use per row"
@@ -14909,7 +14911,7 @@ msgstr "Commandes après connection"
 
 #: build/Plugin/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.cpp:660
 msgid "compile_flags.txt"
-msgstr ""
+msgstr "compile_flags.txt"
 
 #: build/Plugin/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.cpp:665
 msgid "Place your build flags one-per-line here"
@@ -14965,11 +14967,11 @@ msgstr "Exécuter les commandes de construction sur la machine distante"
 
 #: build/Plugin/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.cpp:817
 msgid "Sync File On Save"
-msgstr ""
+msgstr "Synchroniser le fichier lors de l'enregistrement"
 
 #: build/Plugin/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.cpp:819
 msgid "When checked, any file saved locally is synchronized with the remote target machine."
-msgstr ""
+msgstr "Lorsque cette option est cochée, tout fichier enregistré localement est synchronisé avec la machine cible distante."
 
 #: build/Plugin/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.cpp:893
 msgid "Workspace path:"
@@ -15030,7 +15032,7 @@ msgstr "L'exécutable du serveur de langages"
 
 #: build/Plugin/LSP/lsp_UI.cpp:277
 msgid "initializationOptions"
-msgstr ""
+msgstr "initializationOptions"
 
 #: build/Plugin/LSP/lsp_UI.cpp:321
 msgid "Set the language server working directory"
@@ -15073,7 +15075,7 @@ msgstr ""
 
 #: build/Plugin/LSP/lsp_UI.cpp:368
 msgid "stdio"
-msgstr ""
+msgstr "stdio"
 
 #: build/Plugin/LSP/lsp_UI.cpp:370
 msgid ""
@@ -15220,23 +15222,23 @@ msgstr "Fournisseur API"
 
 #: build/Plugin/ai/ai_UI.cpp:318
 msgid "Anthropic"
-msgstr ""
+msgstr "Anthropic"
 
 #: build/Plugin/ai/ai_UI.cpp:319
 msgid "OpenAI"
-msgstr ""
+msgstr "OpenAI"
 
 #: build/Plugin/ai/ai_UI.cpp:320
 msgid "MoonshotAI"
-msgstr ""
+msgstr "MoonshotAI"
 
 #: build/Plugin/ai/ai_UI.cpp:321
 msgid "Ollama (Cloud)"
-msgstr ""
+msgstr "Ollama (cloud)"
 
 #: build/Plugin/ai/ai_UI.cpp:322
 msgid "Ollama (Local)"
-msgstr ""
+msgstr "Ollama (local)"
 
 #: build/Plugin/ai/ai_UI.cpp:328 build/Plugin/ai/ai_UI.cpp:666
 msgid "Base URL:"
@@ -15316,7 +15318,7 @@ msgstr "Conserver"
 
 #: build/Plugin/ai/ai_UI.hpp:106
 msgid "ChatAI"
-msgstr ""
+msgstr "ChatAI"
 
 #: build/Plugin/ai/ai_UI.hpp:154
 msgid "New LLM Endpoint"
@@ -15351,7 +15353,7 @@ msgstr "Auteur :"
 
 #: build/Plugin/clAboutDialogBase.cpp:130
 msgid "2007 - 2026, by Eran Ifrah"
-msgstr ""
+msgstr "2007 - 2026, par Eran Ifrah"
 
 #: build/Plugin/clAboutDialogBase.cpp:134
 #: build/Plugins/CMakePlugin/CMakePluginUi.cpp:224
@@ -15538,7 +15540,7 @@ msgstr ""
 
 #: build/Plugin/openresourcedialogbase.cpp:105
 msgid "Impl"
-msgstr ""
+msgstr "Implémentation"
 
 #: build/Plugin/openresourcedialogbase.cpp:106
 msgid "Full Name"
@@ -15675,11 +15677,11 @@ msgstr "Outil : "
 
 #: build/Plugin/sftp_ui.cpp:532
 msgid "grep"
-msgstr ""
+msgstr "grep"
 
 #: build/Plugin/sftp_ui.cpp:533
 msgid "sed"
-msgstr ""
+msgstr "sed"
 
 #: build/Plugin/sftp_ui.cpp:538
 msgid "Find:"
@@ -15768,33 +15770,33 @@ msgstr "Visualisateur de texte"
 
 #: build/Plugins/AgentHost/AgentHostUI.cpp:109
 msgid "Local Claude Executable:"
-msgstr ""
+msgstr "Exécutable local de Claude :"
 
 #: build/Plugins/AgentHost/AgentHostUI.cpp:117
 msgid "Local Kiro CLI Executable:"
-msgstr ""
+msgstr "Exécutable local de Kiro CLI :"
 
 #: build/Plugins/AgentHost/AgentHostUI.cpp:125
 msgid "Local OpenCode Executable:"
-msgstr ""
+msgstr "Exécutable local d'OpenCode :"
 
 #: build/Plugins/AgentHost/AgentHostUI.cpp:146
 msgid "Claude Code Review Args:"
-msgstr ""
+msgstr "Arguments de revue de Claude Code :"
 
 #: build/Plugins/AgentHost/AgentHostUI.cpp:152
 #: build/Plugins/AgentHost/AgentHostUI.cpp:163
 #: build/Plugins/AgentHost/AgentHostUI.cpp:174
 msgid "--agent my-review-agent"
-msgstr ""
+msgstr "--agent my-review-agent"
 
 #: build/Plugins/AgentHost/AgentHostUI.cpp:157
 msgid "Kiro CLI Review Args:"
-msgstr ""
+msgstr "Arguments de revue de Kiro CLI :"
 
 #: build/Plugins/AgentHost/AgentHostUI.cpp:168
 msgid "OpenCode Review Args:"
-msgstr ""
+msgstr "Arguments de revue d'OpenCode :"
 
 #: build/Plugins/AutoSave/AutoSaveUI.cpp:102
 msgid "Enable Auto Save"
@@ -16099,15 +16101,15 @@ msgstr "Modèle :"
 
 #: build/Plugins/DatabaseExplorer/GUI.cpp:638
 msgid "DatabaseLayer (wxWidgets)"
-msgstr ""
+msgstr "DatabaseLayer (wxWidgets)"
 
 #: build/Plugins/DatabaseExplorer/GUI.cpp:639
 msgid "Debea (STL)"
-msgstr ""
+msgstr "Debea (STL)"
 
 #: build/Plugins/DatabaseExplorer/GUI.cpp:640
 msgid "wxDebea (wxWidgets)"
-msgstr ""
+msgstr "wxDebea (wxWidgets)"
 
 #: build/Plugins/DatabaseExplorer/GUI.cpp:641
 msgid "Generic classes (STL)"
@@ -16578,7 +16580,7 @@ msgstr "Ensemble de documentation"
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:242
 msgid "c++,net,boost,qt 4,qt 5,cvcpp,cocos2dx,c,manpages"
-msgstr ""
+msgstr "c++,net,boost,qt 4,qt 5,cvcpp,cocos2dx,c,manpages"
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:243
 msgid "Set a list of docsets to use when requesting help while inside a C/C++ files (comma separated list)"
@@ -16586,7 +16588,7 @@ msgstr "Définir une liste de documents à utiliser lors d'une demande d'aide à
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:245
 msgid "php,wordpress,drupal,zend,laravel,yii,joomla,ee,codeigniter,cakephp,phpunit,symfony,typo3,twig,smarty,phpp,html,statamic,mysql,sqlite,mongodb,psql,redis,zend framework 1,zend framework 2"
-msgstr ""
+msgstr "php,wordpress,drupal,zend,laravel,yii,joomla,ee,codeigniter,cakephp,phpunit,symfony,typo3,twig,smarty,phpp,html,statamic,mysql,sqlite,mongodb,psql,redis,zend framework 1,zend framework 2"
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:246
 msgid "Set a list of docsets to use when requesting help while inside a PHP files (comma separated list)"
@@ -16594,7 +16596,7 @@ msgstr "Définir une liste de documents à utiliser lors d'une demande d'aide da
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:248
 msgid "cmake"
-msgstr ""
+msgstr "cmake"
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:249
 msgid "Set a list of docsets to use when requesting help while inside a CMake files (comma separated list)"
@@ -16602,13 +16604,13 @@ msgstr "Définir une liste de doccuments à utiliser lors d'une demande d'aide �
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:251
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:251
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:254
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:257
 msgid "html,svg,css,bootstrap,less,foundation,awesome,statamic,javascript,jquery,jqueryui,jquerym,angularjs,backbone,marionette,meteor,moo,prototype,ember,lodash,underscore,sencha,extjs,knockout,zepto,cordova,phonegap,yu"
-msgstr ""
+msgstr "html,svg,css,bootstrap,less,foundation,awesome,statamic,javascript,jquery,jqueryui,jquerym,angularjs,backbone,marionette,meteor,moo,prototype,ember,lodash,underscore,sencha,extjs,knockout,zepto,cordova,phonegap,yu"
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:252
 msgid "Set a list of docsets to use when requesting help while inside an HTML files (comma separated list)"
@@ -16616,7 +16618,7 @@ msgstr "Définir une liste de documents à utiliser pour demander de l'aide à l
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:254
 msgid "CSS"
-msgstr ""
+msgstr "CSS"
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:255
 msgid "Set a list of docsets to use when requesting help while inside an CSS files (comma separated list)"
@@ -16632,11 +16634,11 @@ msgstr "Définir une liste de documents à utiliser pour demander de l'aide à l
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:260
 msgid "Java"
-msgstr ""
+msgstr "Java"
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:260
 msgid "java,javafx,grails,groovy,playjava,spring,cvj,processing"
-msgstr ""
+msgstr "java,javafx,grails,groovy,playjava,spring,cvj,processing"
 
 #: build/Plugins/HelpPlugin/HelpPluginUI.cpp:261
 msgid "Set a list of docsets to use when requesting help while inside a Java files (comma separated list)"
@@ -16696,15 +16698,15 @@ msgstr "de"
 
 #: build/Plugins/MemCheck/memcheckui.cpp:1822
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: build/Plugins/MemCheck/memcheckui.cpp:1837
 msgid ".supp"
-msgstr ""
+msgstr ".supp"
 
 #: build/Plugins/MemCheck/memcheckui.cpp:1857
 msgid ".supp:"
-msgstr ""
+msgstr ".supp :"
 
 #: build/Plugins/MemCheck/memcheckui.cpp:1863
 msgid "Choose suppression file to use."
@@ -16720,7 +16722,7 @@ msgstr "Inverser"
 
 #: build/Plugins/MemCheck/memcheckui.cpp:1905
 msgid "RegExp"
-msgstr ""
+msgstr "Expression régulière"
 
 #: build/Plugins/MemCheck/memcheckui.cpp:1912
 msgid "Total: 0  Filtered: 0  Selected: 0"
@@ -16744,7 +16746,7 @@ msgstr "A ce jour (1er trimestre 2014), seul 'valgrind' est supporté - état de
 
 #: build/Plugins/MemCheck/memcheckui.cpp:2098
 msgid "Valgrind"
-msgstr ""
+msgstr "Valgrind"
 
 #: build/Plugins/MemCheck/memcheckui.cpp:2104
 msgid "Errors on page:"
@@ -16768,7 +16770,7 @@ msgstr "Supprimer les erreurs uniquement si la règle de suppression a été ajo
 
 #: build/Plugins/MemCheck/memcheckui.cpp:2140
 msgid "Valgrind (memcheck)"
-msgstr ""
+msgstr "Valgrind (memcheck)"
 
 #: build/Plugins/MemCheck/memcheckui.cpp:2143
 msgid "Command Line"
@@ -16878,11 +16880,11 @@ msgstr "l'exécutable 'qmake' :"
 
 #: build/Plugins/QmakePlugin/qmakesettingsbasedlg.cpp:194
 msgid "QMAKESPEC:"
-msgstr ""
+msgstr "QMAKESPEC :"
 
 #: build/Plugins/QmakePlugin/qmakesettingsbasedlg.cpp:206
 msgid "QTDIR:"
-msgstr ""
+msgstr "QTDIR :"
 
 #: build/Plugins/QmakePlugin/qmakesettingsbasedlg.cpp:211
 msgid "Set QTDIR to the directory where you've installed Qt"
@@ -16980,19 +16982,19 @@ msgstr "Ignorer la casse"
 
 #: build/Plugins/SFTP/UI.cpp:736
 msgid "Remote Account:"
-msgstr ""
+msgstr "Compte distant :"
 
 #: build/Plugins/SFTP/UI.cpp:747
 msgid "Local Folder:"
-msgstr ""
+msgstr "Dossier local :"
 
 #: build/Plugins/SFTP/UI.cpp:760
 msgid "Remote Folder:"
-msgstr ""
+msgstr "Dossier distant :"
 
 #: build/Plugins/SFTP/UI.cpp:801
 msgid "Unselect All"
-msgstr ""
+msgstr "Tout désélectionner"
 
 #: build/Plugins/SFTP/UI.hpp:140
 msgid "Manage Bookmarks"
@@ -17116,7 +17118,7 @@ msgstr "Consulter les dossiers"
 
 #: build/Plugins/SnipWiz/templateclassbasedlg.cpp:261
 msgid "%CLASS%"
-msgstr ""
+msgstr "%CLASS%"
 
 #: build/Plugins/SnipWiz/templateclassbasedlg.cpp:315
 msgid "Implementation File"
@@ -17226,25 +17228,25 @@ msgstr "Nom du préprocesseur :"
 #: build/Plugins/Subversion2/subversion2_ui.cpp:849
 #: build/Plugins/Subversion2/wxcrafter.cpp:305
 msgid "Root URL:"
-msgstr "'URL' racine :"
+msgstr "URL racine : "
 
 #: build/Plugins/Subversion2/subversion2_ui.cpp:863
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1118
 #: wxcrafter/wxCrafterCommon/src/wxgui_defs.h:180
 msgid "URL:"
-msgstr ""
+msgstr "URL : "
 
 #: build/Plugins/Subversion2/subversion2_ui.cpp:877
 msgid "Revision:"
-msgstr "Révision :"
+msgstr "Révision : "
 
 #: build/Plugins/Subversion2/subversion2_ui.cpp:905
 msgid "Date:"
-msgstr "Date :"
+msgstr "Date : "
 
 #: build/Plugins/Subversion2/subversion2_ui.cpp:973
 msgid "URL of repository:"
-msgstr "'URL' du dépôt :"
+msgstr "URL du dépôt : "
 
 #: build/Plugins/Subversion2/subversion2_ui.cpp:987
 msgid "Checkout directory:"
@@ -17636,7 +17638,7 @@ msgstr "Ajouter un chemin d'accès d'inclusion pour 'PHP'"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:202
 msgid "XDebug"
-msgstr ""
+msgstr "XDebug"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:214
 msgid "Listen host:"
@@ -17653,6 +17655,8 @@ msgid ""
 "This value must be the same as the value set in the 'xdebug.client_port'\n"
 "directive"
 msgstr ""
+"Le port sur lequel CodeLite accepte les sessions de débogage de XDebug\n"
+"Cette valeur doit être la même que celle définie dans la directive 'xdebug.client_port'"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:240
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:917
@@ -17750,7 +17754,7 @@ msgstr "Numéro de port :"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:856
 msgid "Set the port on which CodeLite will be listening for new connections from XDebug. The default port is 9003"
-msgstr ""
+msgstr "Définir le port sur lequel CodeLite écoutera les nouvelles connexions de XDebug. Le port par défaut est 9003"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:871
 msgid "CodeLite IP address"
@@ -17795,11 +17799,11 @@ msgstr "Copiez le texte ci-dessous et collez-le dans votre fichier 'php.ini' :"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1020
 msgid "Select how to run the code:"
-msgstr ""
+msgstr "Sélectionnez comment exécuter le code : "
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1033
 msgid "Run as a command line script"
-msgstr ""
+msgstr "Exécuter en tant que script en ligne de commande"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1046
 msgid "PHP executable:"
@@ -17807,7 +17811,7 @@ msgstr "Exécutable 'PHP' :"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1051
 msgid "Select the PHP interpreter that runs the code"
-msgstr ""
+msgstr "Sélectionnez l'interpréteur 'PHP' qui exécute le code"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1056
 msgid "Select PHP INI file:"
@@ -17824,7 +17828,7 @@ msgstr "Fichier d'index :"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1071
 msgid "Select the file to run"
-msgstr ""
+msgstr "Sélectionnez le fichier à exécuter"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1083
 msgid "Program arguments"
@@ -17841,7 +17845,7 @@ msgstr ""
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1110
 msgid "Run as a web site"
-msgstr ""
+msgstr "Exécuter en tant que site web"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1130
 msgid "Include path"
@@ -17852,6 +17856,7 @@ msgid ""
 "When running a script with the PHP CLI, pass these\n"
 "include paths"
 msgstr ""
+"Lors de l'exécution d'un script avec le CLI 'PHP', passez ces chemins d'inclusion"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1169
 msgid "File mapping"
@@ -17859,11 +17864,11 @@ msgstr "Correspondance des fichiers"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1180
 msgid "Source folder44"
-msgstr ""
+msgstr "Dossier source44"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.cpp:1181
 msgid "Target folder45"
-msgstr ""
+msgstr "Dossier cible45"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.hpp:103
 msgid "PHP General Settings"
@@ -17883,7 +17888,7 @@ msgstr "Réglages 'SXDEBUG'"
 
 #: build/Plugins/codelitephp/php-plugin/php_ui.hpp:359
 msgid "XDebug Settings"
-msgstr ""
+msgstr "Paramètres 'XDebug'"
 
 #: build/Plugins/cppchecker/cppchecksettingsdlgbase.cpp:91
 msgid "Configure cppcheck command here:"
@@ -17975,23 +17980,23 @@ msgstr "intégré"
 
 #: build/Plugins/git/gitui.cpp:142
 msgid "vimdiff"
-msgstr ""
+msgstr "vimdiff"
 
 #: build/Plugins/git/gitui.cpp:143
 msgid "vimdiff1"
-msgstr ""
+msgstr "vimdiff1"
 
 #: build/Plugins/git/gitui.cpp:144
 msgid "vimdiff2"
-msgstr ""
+msgstr "vimdiff2"
 
 #: build/Plugins/git/gitui.cpp:145
 msgid "vimdiff3"
-msgstr ""
+msgstr "vimdiff3"
 
 #: build/Plugins/git/gitui.cpp:146
 msgid "winmerge"
-msgstr ""
+msgstr "winmerge"
 
 #: build/Plugins/git/gitui.cpp:165
 msgid "Global user name:"
@@ -18099,23 +18104,23 @@ msgstr "Récupérer les 100 prochaines livraisons"
 
 #: build/Plugins/git/gitui.cpp:550
 msgid "--since="
-msgstr ""
+msgstr "--since="
 
 #: build/Plugins/git/gitui.cpp:551
 msgid "--before="
-msgstr ""
+msgstr "--before="
 
 #: build/Plugins/git/gitui.cpp:552
 msgid "--author="
-msgstr ""
+msgstr "--author="
 
 #: build/Plugins/git/gitui.cpp:553
 msgid "--committer="
-msgstr ""
+msgstr "--committer="
 
 #: build/Plugins/git/gitui.cpp:554
 msgid "-S"
-msgstr ""
+msgstr "-S"
 
 #: build/Plugins/git/gitui.cpp:556
 msgid ""
@@ -18237,7 +18242,7 @@ msgstr ""
 
 #: build/Plugins/git/gitui.cpp:1010 build/Plugins/git/gitui.cpp:1036
 msgid "~"
-msgstr ""
+msgstr "~"
 
 #: build/Plugins/git/gitui.cpp:1015 build/Plugins/git/gitui.cpp:1041
 msgid ""
@@ -18546,7 +18551,7 @@ msgstr "En-tête"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:631
 msgid "XRC"
-msgstr ""
+msgstr "XRC"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:726
 #: wxcrafter/wxCrafterCommonGui/UI/PropertiesView/sizer_flags_list_view.cpp:99
@@ -18558,7 +18563,7 @@ msgstr "Drapeaux du calibreur"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:740
 msgid "wxAuiPaneInfo"
-msgstr ""
+msgstr "wxAuiPaneInfo"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:979
 msgid "<Default>"
@@ -18566,127 +18571,127 @@ msgstr "<Par défaut>"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:980
 msgid "wxSYS_COLOUR_SCROLLBAR"
-msgstr ""
+msgstr "wxSYS_COLOUR_SCROLLBAR"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:981
 msgid "wxSYS_COLOUR_DESKTOP"
-msgstr ""
+msgstr "wxSYS_COLOUR_DESKTOP"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:982
 msgid "wxSYS_COLOUR_ACTIVECAPTION"
-msgstr ""
+msgstr "wxSYS_COLOUR_ACTIVECAPTION"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:983
 msgid "wxSYS_COLOUR_INACTIVECAPTION"
-msgstr ""
+msgstr "wxSYS_COLOUR_INACTIVECAPTION"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:984
 msgid "wxSYS_COLOUR_MENU"
-msgstr ""
+msgstr "wxSYS_COLOUR_MENU"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:985
 msgid "wxSYS_COLOUR_WINDOW"
-msgstr ""
+msgstr "wxSYS_COLOUR_WINDOW"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:986
 msgid "wxSYS_COLOUR_WINDOWFRAME"
-msgstr ""
+msgstr "wxSYS_COLOUR_WINDOWFRAME"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:987
 msgid "wxSYS_COLOUR_MENUTEXT"
-msgstr ""
+msgstr "wxSYS_COLOUR_MENUTEXT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:988
 msgid "wxSYS_COLOUR_WINDOWTEXT"
-msgstr ""
+msgstr "wxSYS_COLOUR_WINDOWTEXT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:989
 msgid "wxSYS_COLOUR_CAPTIONTEXT"
-msgstr ""
+msgstr "wxSYS_COLOUR_CAPTIONTEXT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:990
 msgid "wxSYS_COLOUR_ACTIVEBORDER"
-msgstr ""
+msgstr "wxSYS_COLOUR_ACTIVEBORDER"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:991
 msgid "wxSYS_COLOUR_INACTIVEBORDER"
-msgstr ""
+msgstr "wxSYS_COLOUR_INACTIVEBORDER"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:992
 msgid "wxSYS_COLOUR_APPWORKSPACE"
-msgstr ""
+msgstr "wxSYS_COLOUR_APPWORKSPACE"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:993
 msgid "wxSYS_COLOUR_HIGHLIGHT"
-msgstr ""
+msgstr "wxSYS_COLOUR_HIGHLIGHT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:994
 msgid "wxSYS_COLOUR_HIGHLIGHTTEXT"
-msgstr ""
+msgstr "wxSYS_COLOUR_HIGHLIGHTTEXT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:995
 msgid "wxSYS_COLOUR_BTNFACE"
-msgstr ""
+msgstr "wxSYS_COLOUR_BTNFACE"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:996
 msgid "wxSYS_COLOUR_BTNSHADOW"
-msgstr ""
+msgstr "wxSYS_COLOUR_BTNSHADOW"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:997
 msgid "wxSYS_COLOUR_GRAYTEXT"
-msgstr ""
+msgstr "wxSYS_COLOUR_GRAYTEXT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:998
 msgid "wxSYS_COLOUR_BTNTEXT"
-msgstr ""
+msgstr "wxSYS_COLOUR_BTNTEXT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:999
 msgid "wxSYS_COLOUR_INACTIVECAPTIONTEXT"
-msgstr ""
+msgstr "wxSYS_COLOUR_INACTIVECAPTIONTEXT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1000
 msgid "wxSYS_COLOUR_BTNHIGHLIGHT"
-msgstr ""
+msgstr "wxSYS_COLOUR_BTNHIGHLIGHT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1001
 msgid "wxSYS_COLOUR_3DDKSHADOW"
-msgstr ""
+msgstr "wxSYS_COLOUR_3DDKSHADOW"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1002
 msgid "wxSYS_COLOUR_3DLIGHT"
-msgstr ""
+msgstr "wxSYS_COLOUR_3DLIGHT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1003
 msgid "wxSYS_COLOUR_INFOTEXT"
-msgstr ""
+msgstr "wxSYS_COLOUR_INFOTEXT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1004
 msgid "wxSYS_COLOUR_INFOBK"
-msgstr ""
+msgstr "wxSYS_COLOUR_INFOBK"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1005
 msgid "wxSYS_COLOUR_LISTBOX"
-msgstr ""
+msgstr "wxSYS_COLOUR_LISTBOX"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1006
 msgid "wxSYS_COLOUR_HOTLIGHT"
-msgstr ""
+msgstr "wxSYS_COLOUR_HOTLIGHT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1007
 msgid "wxSYS_COLOUR_GRADIENTACTIVECAPTION"
-msgstr ""
+msgstr "wxSYS_COLOUR_GRADIENTACTIVECAPTION"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1008
 msgid "wxSYS_COLOUR_GRADIENTINACTIVECAPTION"
-msgstr ""
+msgstr "wxSYS_COLOUR_GRADIENTINACTIVECAPTION"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1009
 msgid "wxSYS_COLOUR_MENUHILIGHT"
-msgstr ""
+msgstr "wxSYS_COLOUR_MENUHILIGHT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1010
 msgid "wxSYS_COLOUR_MENUBAR"
-msgstr ""
+msgstr "wxSYS_COLOUR_MENUBAR"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1012
 msgid "Select a standard color from the list below"
@@ -18719,11 +18724,11 @@ msgstr "Lorsque, par exemple, un nouveau gestionnaire d'événements est ajouté
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1108
 msgid "Generate .h files instead of .hpp"
-msgstr ""
+msgstr "Générer des fichiers .h au lieu de .hpp"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1113
 msgid "Generate the bitmaps code inside the base class source file"
-msgstr ""
+msgstr "Générer le code des bitmaps dans le fichier source de la classe de base"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/gui.cpp:1118
 msgid "Duplicating and Pasting:"
@@ -18795,31 +18800,31 @@ msgstr "Utiliser une police prédéfinie"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:1879
 msgid "wxSYS_DEFAULT_GUI_FONT"
-msgstr ""
+msgstr "wxSYS_DEFAULT_GUI_FONT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:1880
 msgid "wxSYS_OEM_FIXED_FONT"
-msgstr ""
+msgstr "wxSYS_OEM_FIXED_FONT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:1881
 msgid "wxSYS_ANSI_FIXED_FONT"
-msgstr ""
+msgstr "wxSYS_ANSI_FIXED_FONT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:1882
 msgid "wxSYS_ANSI_VAR_FONT"
-msgstr ""
+msgstr "wxSYS_ANSI_VAR_FONT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:1883
 msgid "wxSYS_SYSTEM_FONT"
-msgstr ""
+msgstr "wxSYS_SYSTEM_FONT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:1884
 msgid "wxSYS_DEVICE_DEFAULT_FONT"
-msgstr ""
+msgstr "wxSYS_DEVICE_DEFAULT_FONT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:1885
 msgid "wxSYS_SYSTEM_FIXED_FONT"
-msgstr ""
+msgstr "wxSYS_SYSTEM_FIXED_FONT"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:1905
 msgid "Underlined"
@@ -18981,7 +18986,7 @@ msgstr "Sélectionnez les contrôles que vous souhaitez supprimer :"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:2670
 msgid "!"
-msgstr ""
+msgstr "!"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:2677
 msgid "Delete the selected control"
@@ -19029,7 +19034,7 @@ msgstr "Utilise 'wxArtProvider'"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3003
 msgid "wxArtID:"
-msgstr ""
+msgstr "wxArtID : "
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3004
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3010
@@ -19038,7 +19043,7 @@ msgstr "Ce type identifie un objet artistique spécifique qui peut être demand�
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3014
 msgid "wxArtClient:"
-msgstr ""
+msgstr "wxArtClient : "
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3015
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3030
@@ -19047,39 +19052,39 @@ msgstr "Ce type identifie le client des objets artistiques demandés à 'wxArtPr
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3020
 msgid "wxART_TOOLBAR"
-msgstr ""
+msgstr "wxART_TOOLBAR"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3021
 msgid "wxART_MENU"
-msgstr ""
+msgstr "wxART_MENU"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3022
 msgid "wxART_FRAME_ICON"
-msgstr ""
+msgstr "wxART_FRAME_ICON"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3023
 msgid "wxART_CMN_DIALOG"
-msgstr ""
+msgstr "wxART_CMN_DIALOG"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3024
 msgid "wxART_HELP_BROWSER"
-msgstr ""
+msgstr "wxART_HELP_BROWSER"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3025
 msgid "wxART_MESSAGE_BOX"
-msgstr ""
+msgstr "wxART_MESSAGE_BOX"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3026
 msgid "wxART_BUTTON"
-msgstr ""
+msgstr "wxART_BUTTON"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3027
 msgid "wxART_LIST"
-msgstr ""
+msgstr "wxART_LIST"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3028
 msgid "wxART_OTHER"
-msgstr ""
+msgstr "wxART_OTHER"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3035
 msgid "Size Hint:"
@@ -19092,11 +19097,11 @@ msgstr "Taille de l'image retournée ou 'wxDefaultSize' si la taille n'a pas d'i
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3041
 msgid "wxDefaultSize"
-msgstr ""
+msgstr "wxDefaultSize"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3043
 msgid "24"
-msgstr ""
+msgstr "24"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter.cpp:3143
 msgid "Control Events"
@@ -19216,21 +19221,21 @@ msgstr "wxPanel"
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6071
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:7175
 msgid "wxWizard"
-msgstr ""
+msgstr "wxWizard"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6086
 msgid "wxImagList"
-msgstr ""
+msgstr "wxImagList"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6091
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:7178
 msgid "wxPopupWindow"
-msgstr ""
+msgstr "wxPopupWindow"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6096
 #: wxcrafter/wxCrafterCommon/controls/bitmap_wrapper.cpp:18
 msgid "wxBitmap"
-msgstr ""
+msgstr "wxBitmap"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6103
 msgid "Sizers"
@@ -19238,27 +19243,27 @@ msgstr "Conteneurs"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6115
 msgid "wxBoxSizer"
-msgstr ""
+msgstr "wxBoxSizer"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6120
 msgid "wxFlexGridSizer"
-msgstr ""
+msgstr "wxFlexGridSizer"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6125
 msgid "wxStaticBoxSizer"
-msgstr ""
+msgstr "wxStaticBoxSizer"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6130
 msgid "wxGridSizer"
-msgstr ""
+msgstr "wxGridSizer"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6135
 msgid "wxGridBagSizer"
-msgstr ""
+msgstr "wxGridBagSizer"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6140
 msgid "wxStdDialogButtonSizer"
-msgstr ""
+msgstr "wxStdDialogButtonSizer"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6145
 msgid "A standard wxButton that can be placed in side a wxStdDialogButtonSizer class"
@@ -19270,15 +19275,15 @@ msgstr "Espaceur extensible"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6159
 msgid "wxAuiManager"
-msgstr "0"
+msgstr "wxAuiManager"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6183
 msgid "wxScrolledWindow"
-msgstr ""
+msgstr "wxScrolledWindow"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6188
 msgid "wxSplitterWindow"
-msgstr ""
+msgstr "wxSplitterWindow"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6193
 msgid "Splitter Window Page"
@@ -19290,19 +19295,19 @@ msgstr "Page du cahier"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6203
 msgid "wxWizardPage"
-msgstr ""
+msgstr "wxWizardPage"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6218
 msgid "wxNotebook"
-msgstr ""
+msgstr "wxNotebook"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6223
 msgid "wxListbook"
-msgstr ""
+msgstr "wxListbook"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6228
 msgid "wxChoicebook"
-msgstr ""
+msgstr "wxChoicebook"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6233
 msgid "wxTreebook"
@@ -19310,27 +19315,27 @@ msgstr "wxTreebook"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6238
 msgid "wxToolbook"
-msgstr ""
+msgstr "wxToolbook"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6243
 msgid "wxAuiNotebook"
-msgstr ""
+msgstr "wxAuiNotebook"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6248
 msgid "wxSimplebook"
-msgstr ""
+msgstr "wxSimplebook"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6263
 msgid "wxCollapsiblePane"
-msgstr ""
+msgstr "wxCollapsiblePane"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6268
 msgid "wxCollapsiblePane Pane"
-msgstr ""
+msgstr "wxCollapsiblePane Pane"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6283
 msgid "wxGLCanvas"
-msgstr ""
+msgstr "wxGLCanvas"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6290
 msgid "Controls"
@@ -19338,55 +19343,55 @@ msgstr "Contrôles"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6306
 msgid "wxButton"
-msgstr ""
+msgstr "wxButton"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6311
 msgid "wxBitmapButton"
-msgstr ""
+msgstr "wxBitmapButton"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6316
 msgid "wxHyperlinkCtrl"
-msgstr ""
+msgstr "wxHyperlinkCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6321
 msgid "wxToggleButton"
-msgstr ""
+msgstr "wxToggleButton"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6326
 msgid "wxSpinButton"
-msgstr ""
+msgstr "wxSpinButton"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6331
 msgid "wxSpinCtrl"
-msgstr ""
+msgstr "wxSpinCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6336
 msgid "wxBitmapToggleButton"
-msgstr ""
+msgstr "wxBitmapToggleButton"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6351
 msgid "wxCheckBox"
-msgstr ""
+msgstr "wxCheckBox"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6356
 msgid "wxRadioBox"
-msgstr ""
+msgstr "wxRadioBox"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6361
 msgid "wxRadioButton"
-msgstr ""
+msgstr "wxRadioButton"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6376
 msgid "wxStaticText"
-msgstr ""
+msgstr "wxStaticText"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6381
 msgid "wxStaticLine"
-msgstr ""
+msgstr "wxStaticLine"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6386
 msgid "wxTextCtrl"
-msgstr ""
+msgstr "wxTextCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6391
 msgid "wxRichTextCtrl"
@@ -19394,75 +19399,75 @@ msgstr "wxRichTextCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6396
 msgid "wxStaticBitmap"
-msgstr ""
+msgstr "wxStaticBitmap"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6401
 msgid "wxHtmlWindow"
-msgstr ""
+msgstr "wxHtmlWindow"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6406
 msgid "wxStyledTextCtrl"
-msgstr ""
+msgstr "wxStyledTextCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6421
 msgid "wxChoice"
-msgstr ""
+msgstr "wxChoice"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6426
 msgid "wxComboBox"
-msgstr ""
+msgstr "wxComboBox"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6431
 msgid "wxBitmapComboBox"
-msgstr ""
+msgstr "wxBitmapComboBox"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6446
 msgid "wxListBox"
-msgstr ""
+msgstr "wxListBox"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6451
 msgid "wxSimpleHtmlListBox"
-msgstr ""
+msgstr "wxSimpleHtmlListBox"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6456
 msgid "wxCheckListBox"
-msgstr ""
+msgstr "wxCheckListBox"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6461
 msgid "wxRearrangeList"
-msgstr ""
+msgstr "wxRearrangeList"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6466
 msgid "wxListCtrl"
-msgstr ""
+msgstr "wxListCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6471
 msgid "wxGrid"
-msgstr ""
+msgstr "wxGrid"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6476
 msgid "wxTreeCtrl"
-msgstr ""
+msgstr "wxTreeCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6491
 msgid "wxActivityIndicator"
-msgstr ""
+msgstr "wxActivityIndicator"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6496
 msgid "wxSlider"
-msgstr ""
+msgstr "wxSlider"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6501
 msgid "wxGauge"
-msgstr ""
+msgstr "wxGauge"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6506
 msgid "wxScrollBar"
-msgstr ""
+msgstr "wxScrollBar"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6521
 msgid "wxSearchCtrl"
-msgstr ""
+msgstr "wxSearchCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6526
 msgid "wxColourPickerCtrl"
@@ -19482,19 +19487,19 @@ msgstr "wxDirPickerCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6546
 msgid "wxDatePickerCtrl"
-msgstr ""
+msgstr "wxDatePickerCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6551
 msgid "wxTimePickerCtrl"
-msgstr ""
+msgstr "wxTimePickerCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6556
 msgid "wxCalendarCtrl"
-msgstr ""
+msgstr "wxCalendarCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6561
 msgid "wxGenericDirCtrl"
-msgstr ""
+msgstr "wxGenericDirCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6566
 msgid "Custom Control"
@@ -19506,11 +19511,11 @@ msgstr "Menu / Barre d'outils"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6589
 msgid "wxMenuBar"
-msgstr ""
+msgstr "wxMenuBar"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6594
 msgid "wxMenu"
-msgstr ""
+msgstr "wxMenu"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6599
 msgid "Sub Menu"
@@ -19518,11 +19523,11 @@ msgstr "Sous menu"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6604
 msgid "wxMenuItem"
-msgstr ""
+msgstr "wxMenuItem"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6619
 msgid "wxToolBar"
-msgstr ""
+msgstr "wxToolBar"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6624
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:7179
@@ -19530,7 +19535,7 @@ msgstr ""
 #: wxcrafter/wxCrafterCommon/top_level_windows/AuiToolBarTopLevel.cpp:20
 #: wxcrafter/wxCrafterCommonGui/UI/wxguicraft_main_view.cpp:522
 msgid "wxAuiToolBar"
-msgstr ""
+msgstr "wxAuiToolBar"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6629
 msgid "Toolbar Item"
@@ -19542,24 +19547,24 @@ msgstr "Séparateur pour barre d'outils"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6649
 msgid "wxStatusBar"
-msgstr ""
+msgstr "wxStatusBar"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6656
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6668
 msgid "wxRibbonBar"
-msgstr ""
+msgstr "wxRibbonBar"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6673
 msgid "wxRibbonPage"
-msgstr ""
+msgstr "wxRibbonPage"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6678
 msgid "wxRibbonPanel"
-msgstr ""
+msgstr "wxRibbonPanel"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6693
 msgid "wxRibbonButtonBar"
-msgstr ""
+msgstr "wxRibbonButtonBar"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6698
 msgid "wxRibbonButton (Normal)"
@@ -19579,7 +19584,7 @@ msgstr "basculer 'wxRibbonButton'"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6728
 msgid "wxRibbonToolBar"
-msgstr ""
+msgstr "wxRibbonToolBar"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6733
 msgid "wxRibbonTool (Normal)"
@@ -19603,19 +19608,19 @@ msgstr "séparateur 'wxRibbonTool '"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6768
 msgid "wxRibbonGallery"
-msgstr ""
+msgstr "wxRibbonGallery"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6773
 msgid "wxRibbonGalleryItem"
-msgstr ""
+msgstr "wxRibbonGalleryItem"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6790
 msgid "wxDataViewListCtrl"
-msgstr ""
+msgstr "wxDataViewListCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6795
 msgid "wxDataViewTreeCtrl"
-msgstr ""
+msgstr "wxDataViewTreeCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6800
 msgid "wxDataViewCtrl (with tree-list custom model)"
@@ -19627,36 +19632,36 @@ msgstr "Ajouter une colonne ..."
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6820
 msgid "wxPropertyGridManager"
-msgstr ""
+msgstr "wxPropertyGridManager"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6825
 msgid "wxTreeListCtrl"
-msgstr ""
+msgstr "wxTreeListCtrl"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6830
 msgid "wxPGProperty"
-msgstr ""
+msgstr "wxPGProperty"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6845
 msgid "wxBannerWindow"
-msgstr ""
+msgstr "wxBannerWindow"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6850
 msgid "wxCommandLinkButton"
-msgstr ""
+msgstr "wxCommandLinkButton"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6855
 #: wxcrafter/wxCrafterCommon/controls/timer_wrapper.cpp:17
 msgid "wxTimer"
-msgstr ""
+msgstr "wxTimer"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6860
 msgid "wxTaskBarIcon"
-msgstr ""
+msgstr "wxTaskBarIcon"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6871
 msgid "wxInfoBar"
-msgstr ""
+msgstr "wxInfoBar"
 
 #: build/wxcrafter/wxCrafterCommonGui/UI/wxcrafter_gui.cpp:6876
 msgid "wxInfoBar Button"
@@ -19782,7 +19787,7 @@ msgstr "chaîne"
 #: sdk/databaselayer/src/dblayer/OTLDatabaseLayer.cpp:73
 #: sdk/databaselayer/src/dblayer/OTLDatabaseLayer.cpp:81
 msgid ";"
-msgstr ""
+msgstr ";"
 
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:36
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:59
@@ -19801,7 +19806,7 @@ msgstr "hôte local"
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:87
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:97
 msgid "UTF-8"
-msgstr ""
+msgstr "UTF-8"
 
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:394
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:471
@@ -19815,23 +19820,23 @@ msgstr "L'identifiant de la base de données est NUL"
 
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:697
 msgid "SELECT COUNT(*) FROM RDB$RELATIONS WHERE RDB$SYSTEM_FLAG=0 AND RDB$VIEW_BLR IS NULL AND RDB$RELATION_NAME=?;"
-msgstr ""
+msgstr "SELECT COUNT(*) FROM RDB$RELATIONS WHERE RDB$SYSTEM_FLAG=0 AND RDB$VIEW_BLR IS NULL AND RDB$RELATION_NAME=?;"
 
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:763
 msgid "SELECT COUNT(*) FROM RDB$RELATIONS WHERE RDB$SYSTEM_FLAG=0 AND RDB$VIEW_BLR IS NOT NULL AND RDB$RELATION_NAME=?;"
-msgstr ""
+msgstr "SELECT COUNT(*) FROM RDB$RELATIONS WHERE RDB$SYSTEM_FLAG=0 AND RDB$VIEW_BLR IS NOT NULL AND RDB$RELATION_NAME=?;"
 
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:824
 msgid "SELECT RDB$RELATION_NAME FROM RDB$RELATIONS WHERE RDB$SYSTEM_FLAG=0 AND RDB$VIEW_BLR IS NULL"
-msgstr ""
+msgstr "SELECT RDB$RELATION_NAME FROM RDB$RELATIONS WHERE RDB$SYSTEM_FLAG=0 AND RDB$VIEW_BLR IS NULL"
 
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:863
 msgid "SELECT RDB$RELATION_NAME FROM RDB$RELATIONS WHERE RDB$SYSTEM_FLAG=0 AND RDB$VIEW_BLR IS NOT NULL"
-msgstr ""
+msgstr "SELECT RDB$RELATION_NAME FROM RDB$RELATIONS WHERE RDB$SYSTEM_FLAG=0 AND RDB$VIEW_BLR IS NOT NULL"
 
 #: sdk/databaselayer/src/dblayer/FirebirdDatabaseLayer.cpp:907
 msgid "SELECT RDB$FIELD_NAME FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=?;"
-msgstr ""
+msgstr "SELECT RDB$FIELD_NAME FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=?;"
 
 #: sdk/databaselayer/src/dblayer/FirebirdParameter.cpp:75
 msgid "Parameter type is not compatible with parameter of type double\n"
@@ -19855,7 +19860,7 @@ msgstr "Paramètre de l'instruction préparée non valide"
 
 #: sdk/databaselayer/src/dblayer/FirebirdPreparedStatement.cpp:422
 msgid "FirebirdPreparesStatement::InterpretErrorCodes()\n"
-msgstr ""
+msgstr "FirebirdPreparesStatement::InterpretErrorCodes()\n"
 
 #: sdk/databaselayer/src/dblayer/FirebirdPreparedStatementWrapper.cpp:43
 msgid "Error calling isc_dsql_free_statement"
@@ -19863,11 +19868,11 @@ msgstr "Erreur lors de l'appel à 'isc_dsql_free_statement'"
 
 #: sdk/databaselayer/src/dblayer/FirebirdPreparedStatementWrapper.cpp:309
 msgid "SELECT "
-msgstr ""
+msgstr "SELECT "
 
 #: sdk/databaselayer/src/dblayer/FirebirdPreparedStatementWrapper.cpp:314
 msgid "FirebirdPreparesStatementWrapper::InterpretErrorCodes()\n"
-msgstr ""
+msgstr "FirebirdPreparesStatementWrapper::InterpretErrorCodes()\n"
 
 #: sdk/databaselayer/src/dblayer/FirebirdResultSet.cpp:55
 msgid "Error retrieving Next record\n"
@@ -19907,7 +19912,7 @@ msgstr "Champ '"
 
 #: sdk/databaselayer/src/dblayer/FirebirdResultSet.cpp:559
 msgid "FirebirdResultSet::InterpretErrorCodes()\n"
-msgstr ""
+msgstr "FirebirdResultSet::InterpretErrorCodes()\n"
 
 #: sdk/databaselayer/src/dblayer/MysqlDatabaseLayer.cpp:408
 msgid "SHOW TABLE STATUS WHERE Comment != 'VIEW' AND Name=?;"
@@ -19915,15 +19920,15 @@ msgstr "AFFICHER L'ETAT du TABLEAU SI LE COMMENTAIRE != 'VIEW' ET LE NOM=? ;"
 
 #: sdk/databaselayer/src/dblayer/MysqlDatabaseLayer.cpp:489
 msgid "SHOW TABLE STATUS WHERE Comment = 'VIEW' AND Name=?;"
-msgstr ""
+msgstr "SHOW TABLE STATUS WHERE Comment = 'VIEW' AND Name=?;"
 
 #: sdk/databaselayer/src/dblayer/MysqlDatabaseLayer.cpp:551
 msgid "SHOW TABLE STATUS WHERE Comment != 'VIEW';"
-msgstr ""
+msgstr "SHOW TABLE STATUS WHERE Comment != 'VIEW';"
 
 #: sdk/databaselayer/src/dblayer/MysqlDatabaseLayer.cpp:612
 msgid "SHOW TABLE STATUS WHERE Comment = 'VIEW';"
-msgstr ""
+msgstr "SHOW TABLE STATUS WHERE Comment = 'VIEW';"
 
 #: sdk/databaselayer/src/dblayer/MysqlDatabaseLayer.cpp:653
 #, c-format
@@ -19971,57 +19976,57 @@ msgstr "Résultat sous forme de chaîne : '%s'\n"
 #: sdk/databaselayer/src/dblayer/OdbcDatabaseLayer.cpp:383
 #: sdk/databaselayer/src/dblayer/OdbcDatabaseLayer.cpp:445
 msgid "TABLE"
-msgstr ""
+msgstr "TABLE"
 
 #: sdk/databaselayer/src/dblayer/OdbcDatabaseLayer.cpp:415
 #: sdk/databaselayer/src/dblayer/OdbcDatabaseLayer.cpp:496
 msgid "VIEW"
-msgstr ""
+msgstr "VIEW"
 
 #: sdk/databaselayer/src/dblayer/OdbcDatabaseLayer.cpp:597
 msgid "OdbcDatabaseLayer::InterpretErrorCodes()\n"
-msgstr ""
+msgstr "OdbcDatabaseLayer::InterpretErrorCodes()\n"
 
 #: sdk/databaselayer/src/dblayer/OdbcPreparedStatement.cpp:388
 msgid "OdbcPreparedStatement::InterpretErrorCodes()\n"
-msgstr ""
+msgstr "OdbcPreparedStatement::InterpretErrorCodes()\n"
 
 #: sdk/databaselayer/src/dblayer/OracleDatabaseLayer.cpp:11
 msgid "1521"
-msgstr ""
+msgstr "1521"
 
 #: sdk/databaselayer/src/dblayer/PostgresDatabaseLayer.cpp:282
 msgid "COMMIT"
-msgstr ""
+msgstr "COMMIT"
 
 #: sdk/databaselayer/src/dblayer/PostgresDatabaseLayer.cpp:287
 msgid "ROLLBACK"
-msgstr ""
+msgstr "ROLLBACK"
 
 #: sdk/databaselayer/src/dblayer/PostgresDatabaseLayer.cpp:364
 msgid "SELECT COUNT(*) FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_name=?;"
-msgstr ""
+msgstr "SELECT COUNT(*) FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_name=?;"
 
 #: sdk/databaselayer/src/dblayer/PostgresDatabaseLayer.cpp:429
 msgid "SELECT COUNT(*) FROM information_schema.tables WHERE table_type='VIEW' AND table_name=?;"
-msgstr ""
+msgstr "SELECT COUNT(*) FROM information_schema.tables WHERE table_type='VIEW' AND table_name=?;"
 
 #: sdk/databaselayer/src/dblayer/PostgresDatabaseLayer.cpp:490
 msgid "SELECT table_name FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_schema='public';"
-msgstr ""
+msgstr "SELECT table_name FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_schema='public';"
 
 #: sdk/databaselayer/src/dblayer/PostgresDatabaseLayer.cpp:529
 msgid "SELECT table_name FROM information_schema.tables WHERE table_type='VIEW' AND table_schema='public';"
-msgstr ""
+msgstr "SELECT table_name FROM information_schema.tables WHERE table_type='VIEW' AND table_schema='public';"
 
 #: sdk/databaselayer/src/dblayer/PostgresDatabaseLayer.cpp:573
 msgid "SELECT column_name FROM information_schema.columns WHERE table_name=? ORDER BY ordinal_position;"
-msgstr ""
+msgstr "SELECT column_name FROM information_schema.columns WHERE table_name=? ORDER BY ordinal_position;"
 
 #: sdk/databaselayer/src/dblayer/PostgresPreparedStatement.cpp:277
 #, c-format
 msgid "$%d"
-msgstr ""
+msgstr "$%d"
 
 #: sdk/databaselayer/src/dblayer/PostgresResultSet.cpp:77
 #: sdk/databaselayer/src/dblayer/PostgresResultSet.cpp:98
@@ -20036,7 +20041,7 @@ msgstr "Résultat ni fermé ni nettoyé par le destructeur de la déclaration pr
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:42
 msgid ":memory:"
-msgstr ""
+msgstr ":memory:"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:46
 msgid "' does not exist."
@@ -20078,24 +20083,24 @@ msgstr "annuler la transaction ;"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:296
 msgid "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=?;"
-msgstr ""
+msgstr "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=?;"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:361
 msgid "SELECT COUNT(*) FROM sqlite_master WHERE type='view' AND name=?;"
-msgstr ""
+msgstr "SELECT COUNT(*) FROM sqlite_master WHERE type='view' AND name=?;"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:422
 msgid "SELECT name FROM sqlite_master WHERE type='table';"
-msgstr ""
+msgstr "SELECT name FROM sqlite_master WHERE type='table';"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:461
 msgid "SELECT name FROM sqlite_master WHERE type='view';"
-msgstr ""
+msgstr "SELECT name FROM sqlite_master WHERE type='view';"
 
 #: sdk/databaselayer/src/dblayer/SqliteDatabaseLayer.cpp:505
 #, c-format
 msgid "SELECT * FROM '%s' LIMIT 0;"
-msgstr ""
+msgstr "SELECT * FROM '%s' LIMIT 0;"
 
 #: sdk/databaselayer/src/dblayer/SqlitePreparedStatement.cpp:265
 #: sdk/databaselayer/src/dblayer/SqliteResultSet.cpp:66
@@ -20108,87 +20113,87 @@ msgstr "Erreur inconnue faisant progresser l'ensemble des résultats"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:21
 msgid "INT"
-msgstr ""
+msgstr "INT"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:21
 msgid "INTEGER"
-msgstr ""
+msgstr "INTEGER"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:21
 msgid "LONG"
-msgstr ""
+msgstr "LONG"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:23
 msgid "STRING"
-msgstr ""
+msgstr "STRING"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:23
 msgid "VARCHAR"
-msgstr ""
+msgstr "VARCHAR"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:25
 msgid "DOUBLE"
-msgstr ""
+msgstr "DOUBLE"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:25
 msgid "FLOAT"
-msgstr ""
+msgstr "FLOAT"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:27
 msgid "BOOL"
-msgstr ""
+msgstr "BOOL"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:29
 msgid "BLOB"
-msgstr ""
+msgstr "BLOB"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:31
 msgid "DATE"
-msgstr ""
+msgstr "DATE"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:31
 msgid "DATETIME"
-msgstr ""
+msgstr "DATETIME"
 
 #: sdk/databaselayer/src/dblayer/SqliteResultSetMetaData.cpp:31
 msgid "TIMESTAMP"
-msgstr ""
+msgstr "TIMESTAMP"
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:129
 msgid "USE "
-msgstr ""
+msgstr "USE "
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:582
 msgid "exec sp_tables ?, NULL, NULL, '''TABLE'''"
-msgstr ""
+msgstr "exec sp_tables ?, NULL, NULL, '''TABLE'''"
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:593
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:658
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:715
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:755
 msgid "TABLE_NAME"
-msgstr ""
+msgstr "TABLE_NAME"
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:647
 msgid "exec sp_tables ?, NULL, NULL, '''VIEW'''"
-msgstr ""
+msgstr "exec sp_tables ?, NULL, NULL, '''VIEW'''"
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:709
 msgid "sp_tables NULL, NULL, NULL, '''TABLE'''"
-msgstr ""
+msgstr "sp_tables NULL, NULL, NULL, '''TABLE'''"
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:749
 msgid "sp_tables NULL, NULL, NULL, '''VIEW'''"
-msgstr ""
+msgstr "sp_tables NULL, NULL, NULL, '''VIEW'''"
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:846
 #, c-format
 msgid "sp_columns %s;"
-msgstr ""
+msgstr "sp_columns %s;"
 
 #: sdk/databaselayer/src/dblayer/TdsDatabaseLayer.cpp:852
 msgid "COLUMN_NAME"
-msgstr ""
+msgstr "COLUMN_NAME"
 
 #: sdk/wxsqlite3/src/wxsqlite3.cpp:96
 msgid "No Database opened"
@@ -20280,19 +20285,19 @@ msgstr "Réinitialiser l'étiquette..."
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:320
 msgid "Set Footer..."
-msgstr ""
+msgstr "Définir le pied de page..."
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:320
 msgid "Set Header..."
-msgstr ""
+msgstr "Définir l'en-tête..."
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:321
 msgid "Remove Footer"
-msgstr ""
+msgstr "Supprimer le pied de page"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:321
 msgid "Remove Header"
-msgstr ""
+msgstr "Supprimer l'en-tête"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:356
 msgid "New Tab Name:"
@@ -20300,27 +20305,27 @@ msgstr "Nom du nouvel onglet :"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:392
 msgid "Footer text:"
-msgstr ""
+msgstr "Texte du pied de page :"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:392
 msgid "Header text:"
-msgstr ""
+msgstr "Texte de l'en-tête :"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:393
 msgid "Set Footer"
-msgstr ""
+msgstr "Définir le pied de page"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:393
 msgid "Set Header"
-msgstr ""
+msgstr "Définir l'en-tête"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:427
 msgid "New Terminal\tCtrl-T"
-msgstr ""
+msgstr "Nouveau terminal\tCtrl-T"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:428
 msgid "Close Terminal"
-msgstr ""
+msgstr "Fermer le terminal"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:443
 msgid "Next Tab\tCtrl-RIGHT"
@@ -20332,11 +20337,11 @@ msgstr "Onglet précédent\tCtrl-GAUCHE"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:448
 msgid "Switch Tab\tRawCtrl-TAB"
-msgstr ""
+msgstr "Changer d'onglet\tRawCtrl-TAB"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:450
 msgid "Switch Tab Backwards\tRawCtrl-Shift-TAB"
-msgstr ""
+msgstr "Changer d'onglet en arrière\tRawCtrl-Shift-TAB"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:463
 msgid "Copy All Text"
@@ -20344,15 +20349,15 @@ msgstr "Copier tout le texte"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:727
 msgid "Configured shell"
-msgstr ""
+msgstr "Shell configuré"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:745
 msgid "Available shells"
-msgstr ""
+msgstr "Shells disponibles"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:746
 msgid "Choose a shell to launch"
-msgstr ""
+msgstr "Choisissez un shell à lancer"
 
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:912
 msgid "Find Text"
@@ -20361,23 +20366,23 @@ msgstr "Rechercher du texte"
 #: submodules/wxTerminalEmulator/src/glypht/MainFrame.cpp:1050
 #, c-format
 msgid "App Selection: %s"
-msgstr ""
+msgstr "Sélection de l'application : %s"
 
 #: submodules/wxTerminalEmulator/src/glypht/TabSwitcherDlg.cpp:8
 msgid "Switch Tab"
-msgstr ""
+msgstr "Changer d'onglet"
 
 #: submodules/wxTerminalEmulator/src/glypht/TabSwitcherDlg.cpp:14
 msgid "Directory"
-msgstr ""
+msgstr "Répertoire"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:128
 msgid "Shell Command:"
-msgstr ""
+msgstr "Commande du shell :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:145
 msgid "Shell Arguments:"
-msgstr ""
+msgstr "Arguments du shell :"
 
 #: submodules/wxTerminalEmulator/src/glypht/wxTerminalUI.cpp:162
 msgid "New Tab Title:"
@@ -23245,7 +23250,7 @@ msgstr "Traite un événement 'wxEVT_COMMAND_WEBVIEW_TITLE_CHANGED', généré l
 
 #: wxcrafter/wxCrafterCommon/controls/web_view_wrapper.cpp:41
 msgid "about:blank"
-msgstr ""
+msgstr "about:blank"
 
 #: wxcrafter/wxCrafterCommon/controls/web_view_wrapper.cpp:42
 msgid ""
@@ -23386,7 +23391,7 @@ msgstr "Traitement d'un événement' wxEVT_MOUSEWHEEL'"
 
 #: wxcrafter/wxCrafterCommon/src/events_database.cpp:153
 msgid "A mouse capture lost event is sent to a window that had obtained mouse capture, which was subsequently lost due to an \"external\" event (for example, when a dialog box is shown or if another application captures the mouse)"
-msgstr ""
+msgstr "Un événement de perte de capture de la souris est envoyé à une fenêtre qui avait obtenu la capture de la souris, qui a ensuite été perdue en raison d'un événement « externe » (par exemple, lorsqu'une boîte de dialogue est affichée ou si une autre application capture la souris)"
 
 #: wxcrafter/wxCrafterCommon/src/events_database.cpp:159
 msgid "Process a wxEVT_SET_FOCUS event"
@@ -24352,20 +24357,20 @@ msgstr "Bord"
 #: wxcrafter/wxCrafterCommonGui/UI/PropertiesView/sizer_flags_list_view.cpp:65
 #: wxcrafter/wxCrafterCommonGui/UI/PropertiesView/sizer_flags_list_view.cpp:95
 msgid "wxGBPosition"
-msgstr ""
+msgstr "wxGBPosition"
 
 #: wxcrafter/wxCrafterCommonGui/UI/PropertiesView/sizer_flags_list_view.cpp:68
 #: wxcrafter/wxCrafterCommonGui/UI/PropertiesView/sizer_flags_list_view.cpp:96
 msgid "wxGBSpan"
-msgstr ""
+msgstr "wxGBSpan"
 
 #: wxcrafter/wxCrafterCommonGui/UI/PropertiesView/sizer_flags_list_view.cpp:94
 msgid "GridBagSizer"
-msgstr ""
+msgstr "GridBagSizer"
 
 #: wxcrafter/wxCrafterCommonGui/UI/PropertiesView/styles_sheet_list_view.cpp:79
 msgid "wxWindow"
-msgstr ""
+msgstr "wxWindow"
 
 #: wxcrafter/wxCrafterCommonGui/UI/events_table_list_view.cpp:41
 msgid "Event Handlers"
@@ -24758,7 +24763,7 @@ msgstr "Passer à la taille du calibreur voisin"
 
 #: wxcrafter/wxCrafterCommonGui/UI/wxguicraft_main_view.cpp:1653
 msgid "my_gui.wxcp"
-msgstr ""
+msgstr "my_gui.wxcp"
 
 #: wxcrafter/wxCrafterCommonGui/UI/wxguicraft_main_view.cpp:1690
 msgid "Error occurred while opening file '"
@@ -24871,6 +24876,9 @@ msgid ""
 "This can be done by selecting the root item of the tree and edit the properties.\n"
 "Current value: '"
 msgstr ""
+"Veuillez définir le répertoire de sortie des fichiers générés par les classes de base\n"
+"Cela peut être fait en sélectionnant l'élément racine de l'arborescence et en modifiant les propriétés.\n"
+"Valeur actuelle : '"
 
 #: wxcrafter/wxCrafterCommonGui/UI/wxguicraft_main_view.cpp:3832
 msgid "Select wxCrafter files:"

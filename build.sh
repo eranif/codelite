@@ -207,6 +207,7 @@ function build_wx_widgets_MSW() {
   git submodule update --init --depth 1
   mkdir .build-release
   cd .build-release
+  apply_wx_patches
   cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
     -DwxBUILD_DEBUG_LEVEL=0 \
     -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=OFF -DwxUSE_STL=ON \
@@ -224,15 +225,21 @@ function build_wx_widgets_MSW() {
 # .build-release/wxWidgets/.build-release). The patches are shared with the
 # wxTerminalEmulator submodule. A patch that does not apply, for example because
 # it is already in the wxWidgets version, is skipped.
-function apply_wx_patches_Linux() {
+function apply_wx_patches() {
   local patch
+  local reason
+  local wx_version
+  wx_version=$(git -C .. describe --tags --always 2>/dev/null)
   for patch in "${ROOT_DIR}"/submodules/wxTerminalEmulator/patches/wxwidgets-*.patch; do
     [ -f "${patch}" ] || continue
-    if git -C .. apply --check "${patch}" >/dev/null 2>&1; then
+    # --ignore-whitespace: the wxWidgets sources can have CRLF line endings on
+    # Windows, the patches have LF.
+    if reason=$(git -C .. apply --check --ignore-whitespace "${patch}" 2>&1); then
       INFO "Applying $(basename "${patch}") to wxWidgets"
-      git -C .. apply "${patch}"
+      git -C .. apply --ignore-whitespace "${patch}"
     else
       WARN "Skipping $(basename "${patch}"): it does not apply to wxWidgets ${wx_version}"
+      WARN "${reason}"
     fi
   done
 }
@@ -263,7 +270,7 @@ function build_wx_widgets_Linux() {
   git submodule update --init --depth 1
   mkdir ${BUILD_DIR_NAME}
   cd ${BUILD_DIR_NAME}
-  apply_wx_patches_Linux
+  apply_wx_patches
   local wx_gl_opt=""
   if [ "${WITH_OPENGL}" -eq 1 ]; then
     wx_gl_opt="--with-opengl"
@@ -294,6 +301,7 @@ function build_wx_widgets_macOS() {
   git submodule update --init --depth 1
   mkdir ${BUILD_DIR_NAME}
   cd ${BUILD_DIR_NAME}
+  apply_wx_patches
   cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DwxBUILD_DEBUG_LEVEL=0 \
     -DwxBUILD_MONOLITHIC=1 \

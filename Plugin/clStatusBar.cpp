@@ -30,7 +30,6 @@
 
 namespace
 {
-size_t STATUSBAR_PANES_BUTTON_IDX = 0;
 size_t STATUSBAR_SCM_IDX = 0;
 size_t STATUSBAR_LINE_COL_IDX = 0;
 size_t STATUSBAR_ANIMATION_COL_IDX = 0;
@@ -90,7 +89,6 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     // [spacer][buttons][main text area]..
     wxCustomStatusBarField::Ptr_t button_field(new wxCustomStatusBarControlField(this, CreatePaneButtonsToolbar()));
-    STATUSBAR_PANES_BUTTON_IDX = InsertField(0, button_field);
 
 #ifdef __WXMAC__
     // add a spacer first

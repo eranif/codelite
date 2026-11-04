@@ -209,7 +209,6 @@ bool IsCaptionsVisible(clDockingManager& mgr)
 }
 
 bool codelite_initialised = false;
-bool codelite_active = false;
 } // namespace
 
 //----------------------------------------------------------------
@@ -3656,7 +3655,6 @@ void clMainFrame::RestoreFrameSizeAndPosition()
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
 {
     e.Skip();
-    codelite_active = e.GetActive();
 
     // check for external theme detection
     wxColour currentBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);

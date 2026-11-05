@@ -8,12 +8,13 @@ namespace
 {
 /// A theme colour that the outline of the current tab can have.
 struct TabOutlineColour {
-    const char* key;   ///< The value in config.ini.
+    const char* key;      ///< The value in config.ini. It is never translated.
     const wxString label; ///< The name in the settings dialog.
+    /// The theme colour. nullptr for the default entry: its colour is calculated from the background.
     wxColour wxTerminalTheme::* member;
 };
 
-constexpr const char* kDefaultTabOutlineKey = "fg";
+constexpr const char* kDefaultTabOutlineKey = "default";
 
 const std::vector<TabOutlineColour>& GetTabOutlineColours()
 {
@@ -37,30 +38,38 @@ const std::vector<TabOutlineColour>& GetTabOutlineColours()
         {"highlight", _("Search Match"), &wxTerminalTheme::highlightBg},
         {"cursor", _("Cursor"), &wxTerminalTheme::cursorColour},
         {"link", _("Link"), &wxTerminalTheme::linkColour},
+        // Keep this one last: GetDefaultTabOutlineIndex() relies on it
+        {kDefaultTabOutlineKey, _("Default"), nullptr},
     };
     return colours;
 }
 
-/// The index of `key` in the table, or of the default key when `key` is unknown.
-size_t FindTabOutlineColour(const wxString& key)
+/// The index of the default entry (the last one) in the table.
+int GetDefaultTabOutlineIndex() { return static_cast<int>(GetTabOutlineColours().size()) - 1; }
+
+/// The index of `key` in the table, or wxNOT_FOUND when `key` is unknown.
+int FindTabOutlineColour(const wxString& key)
 {
     const auto& colours = GetTabOutlineColours();
-    size_t fallback = 0;
     for (size_t i = 0; i < colours.size(); ++i) {
         if (key == colours[i].key) {
-            return i;
-        }
-        if (wxStrcmp(colours[i].key, kDefaultTabOutlineKey) == 0) {
-            fallback = i;
+            return static_cast<int>(i);
         }
     }
-    return fallback;
+    return wxNOT_FOUND;
 }
 } // namespace
 
 wxColour GetTabOutlineColourOf(const wxTerminalTheme& theme, const wxString& key)
 {
-    const wxColour colour = theme.*(GetTabOutlineColours()[FindTabOutlineColour(key)].member);
+    // An unknown key is the same as the default
+    int index = FindTabOutlineColour(key);
+    if (index == wxNOT_FOUND) {
+        index = GetDefaultTabOutlineIndex();
+    }
+
+    const auto member = GetTabOutlineColours()[index].member;
+    const wxColour colour = member != nullptr ? theme.*member : theme.bg.ChangeLightness(theme.IsDark() ? 120 : 80);
     // Some theme colours have alpha; the outline is solid.
     return wxColour(colour.Red(), colour.Green(), colour.Blue());
 }
@@ -133,7 +142,11 @@ TerminalSettingsDlg::TerminalSettingsDlg(wxWindow* parent, const std::vector<std
         m_choiceOutlineColour->Append(entry.label);
     }
     // An unknown key selects the default colour, the same as GetTabOutlineColourOf()
-    m_choiceOutlineColour->SetSelection(static_cast<int>(FindTabOutlineColour(m_settings.m_tabOutlineColour)));
+    int sel = FindTabOutlineColour(m_settings.m_tabOutlineColour);
+    if (sel == wxNOT_FOUND) {
+        sel = GetDefaultTabOutlineIndex();
+    }
+    m_choiceOutlineColour->SetSelection(sel);
     GetSizer()->Fit(this);
     CenterOnParent();
 }

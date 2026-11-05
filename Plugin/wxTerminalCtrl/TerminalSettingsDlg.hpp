@@ -24,7 +24,7 @@ struct WXDLLIMPEXP_SDK TerminalSettings {
     /// Tell the user when a program (an agent, for example) is done, or needs attention
     bool m_notifyWhenDone{true};
     /// The theme colour of the outline of the current tab (the key, see GetTabOutlineColourOf())
-    wxString m_tabOutlineColour{"fg"};
+    wxString m_tabOutlineColour{"default"};
 
     static TerminalSettings Load();
     void Save();

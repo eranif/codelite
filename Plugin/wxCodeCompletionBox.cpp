@@ -3,6 +3,7 @@
 #include "ColoursAndFontsManager.h"
 #include "Cxx/CxxTemplateFunction.h"
 #include "StringUtils.h"
+#include "WindowUtils.hpp"
 #include "bitmap_loader.h"
 #include "cc_box_tip_window.h"
 #include "cl_command_event.h"
@@ -38,7 +39,6 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_tipWindow(nullptr)
     , m_flags(flags)
 {
-    MSWSetWindowDarkTheme(this);
     m_tooltipTimer = new wxTimer(this);
     Bind(wxEVT_TIMER, &wxCodeCompletionBox::OnTooltipWindowTimer, this, m_tooltipTimer->GetId());
 
@@ -144,6 +144,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_bmpUp = wxXmlResource::Get()->LoadBitmap("cc-box-up");
     m_bmpUpEnabled = m_bmpUp.ConvertToDisabled();
     m_list->SetSortFunction(nullptr);
+    StylePopupWindow(this, 10.0);
 }
 
 wxCodeCompletionBox::~wxCodeCompletionBox()

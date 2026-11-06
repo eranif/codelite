@@ -100,7 +100,7 @@ void NotebookNavigationDlg::ShowPopup()
     wxSize parentSize = parent->GetClientSize();
     Position(parentPos + wxPoint((parentSize.x - size.x) / 2, (parentSize.y - size.y) / 2), wxSize(0, 0));
     Popup(m_dvListCtrl);
-    StylePopupWindow(this, 15.0);
+    StylePopupWindow(this, 10.0);
 
     // The popup does not get the key-up of the Ctrl key: poll for it
     m_ctrlKeyTimer.Start(30);

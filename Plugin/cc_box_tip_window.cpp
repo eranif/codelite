@@ -25,6 +25,7 @@
 
 #include "cc_box_tip_window.h"
 
+#include "WindowUtils.hpp"
 #include "clMarkdownRenderer.hpp"
 #include "globals.h"
 #include "ieditor.h"
@@ -239,6 +240,7 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip
 
     Bind(wxEVT_PAINT, &CCBoxTipWindow::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &CCBoxTipWindow::OnEraseBG, this);
+    StylePopupWindow(this, 10.0);
 }
 
 void CCBoxTipWindow::DoInitialize(size_t numOfTips)

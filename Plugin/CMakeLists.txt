@@ -212,9 +212,12 @@ if(MINGW)
   list(FILTER SRCS EXCLUDE REGEX ".*/macos/.*")
   list(FILTER SRCS EXCLUDE REGEX ".*/gtk/.*")
 elseif(APPLE)
-  file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp")
+  file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp" "*.mm")
   list(FILTER SRCS EXCLUDE REGEX ".*/msw/.*")
   list(FILTER SRCS EXCLUDE REGEX ".*/gtk/.*")
+  # Objective-C++ sources: no precompiled header, same C++ standard as the rest
+  set_source_files_properties(WindowUtilsMac.mm PROPERTIES SKIP_PRECOMPILE_HEADERS ON
+                              COMPILE_OPTIONS "-std=c++20")
 else()
   file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp")
   list(FILTER SRCS EXCLUDE REGEX ".*/msw/.*")
@@ -356,6 +359,11 @@ target_link_libraries(
   PRIVATE dtl)
 target_include_directories(plugin
                            PUBLIC ${CL_SRC_ROOT}/submodules/wxTerminalEmulator)
+
+if(APPLE)
+  # PopupStyle.mm uses AppKit directly (NSWindow, NSColor)
+  target_link_libraries(plugin PRIVATE "-framework Cocoa")
+endif()
 
 if(USE_PCH)
   codelite_add_pch(plugin)

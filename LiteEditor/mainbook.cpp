@@ -562,9 +562,10 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
     m_book->GetAllTabs(tabsInfo);
 
     // Convert into "clTab" array
-    for (const auto& tabInfo : tabsInfo) {
+    for (size_t index = 0; index < tabsInfo.size(); ++index) {
+        const auto& tabInfo = tabsInfo[index];
         clTab t;
-        t.bitmap = tabInfo->GetBitmap();
+        t.bitmap = m_book->GetPageBitmap(index);
         t.text = tabInfo->GetLabel();
         t.window = tabInfo->GetWindow();
 

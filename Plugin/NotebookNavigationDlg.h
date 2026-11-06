@@ -23,18 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef NOTEBOOKNAVIGATIONDLG_H
-#define NOTEBOOKNAVIGATIONDLG_H
+#pragma once
 
-#include "Notebook.h"
-#include "clAuiBook.hpp"
-#include "clGenericNotebook.hpp"
-#include "clTab.h"
-#include "cl_defs.h"
-#include "globals.h"
-#include "wxcrafter_plugin.hpp"
+#include "clTabHistory.h"
 
-#include <wx/weakref.h>
+#include <wx/bitmap.h>
+#include <wx/bookctrl.h>
+#include <wx/dataview.h>
+#include <wx/filename.h>
+#include <wx/popupwin.h>
+#include <wx/timer.h>
 
 struct TabData {
     wxString label;
@@ -50,35 +48,27 @@ struct TabData {
     }
 };
 
-/// A modeless dialog: create it with `new` and call Show(). When the user picks a tab, it selects that tab in the
-/// book and destroys itself. It also destroys itself when it is cancelled (Escape, or another window gets the focus)
-class WXDLLIMPEXP_SDK NotebookNavigationDlg : public NotebookNavigationDlgBase
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOKNAV_SELECTED, wxBookCtrlEvent);
+
+/// A popup window (it does not take the activation from the main frame). Create it with `new` and call ShowPopup().
+/// When the user picks a tab, it notifies the frame (wxEVT_BOOKNAV_SELECTED) and destroys itself. It also destroys
+/// itself when it is cancelled (Escape, or a click outside of it)
+class WXDLLIMPEXP_SDK NotebookNavigationDlg : public wxPopupTransientWindow
 {
-    // Weak references: the book may be destroyed while the dialog is shown
-#if !MAINBOOK_AUIBOOK
-    wxWeakRef<Notebook> m_notebook;
-#endif
-    wxWeakRef<clAuiBook> m_aui_notebook;
-    int m_selection = wxNOT_FOUND;
-    bool m_dismissed = false;
-
 public:
-#if !MAINBOOK_AUIBOOK // In this case Notebook == clAuiBook
-    NotebookNavigationDlg(wxWindow* parent, Notebook* book);
-#endif
-    NotebookNavigationDlg(wxWindow* parent, clAuiBook* book);
+    NotebookNavigationDlg(wxWindow* parent, clTabHistory::Ptr_t history);
     ~NotebookNavigationDlg() override;
-    /// Select the chosen tab in the book and destroy the dialog
-    void CloseDialog();
-    /// Destroy the dialog without changing the selection of the book
-    void CancelDialog();
 
-    int GetSelection() const { return m_selection; }
+    /// Centre the popup on its parent and show it
+    void ShowPopup();
 
 protected:
-    void OnItemActivated(wxDataViewEvent& event) override;
-    void OnKeyDown(wxKeyEvent& event) override;
-    void OnKeyUp(wxKeyEvent& event) override;
+    void OnDismiss() override;
+
+    void OnItemActivated(wxDataViewEvent& event);
+    void OnKeyDown(wxKeyEvent& event);
+    void OnKeyUp(wxKeyEvent& event);
+    void OnTimer(wxTimerEvent& event);
 
     void SelectNext();
     void SelectPrev();
@@ -86,13 +76,12 @@ protected:
     void OnHotKeyNext(wxKeyEvent& event);
     void OnHotKeyPrev(wxKeyEvent& event);
     void FinalizeCtor();
-    /// Hide and destroy the dialog. With `apply`, select the chosen tab first. Only the first call does something
-    void Dismiss(bool apply);
-    void OnActivate(wxActivateEvent& event);
-    void OnCharHook(wxKeyEvent& event);
-    void OnCloseWindow(wxCloseEvent& event);
+    /// Notify the frame about the chosen tab and dismiss the popup. Only the first call does something
+    void NotifyAndClose();
+    void Initialise();
 
-    template <typename Book>
-    void Initialise(Book* book);
+    wxDataViewListCtrl* m_dvListCtrl{nullptr};
+    wxTimer m_ctrlKeyTimer;
+    bool m_dismissed{false};
+    clTabHistory::Ptr_t m_history{nullptr};
 };
-#endif // NOTEBOOKNAVIGATIONDLG_H

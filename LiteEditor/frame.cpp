@@ -862,6 +862,7 @@ clMainFrame::~clMainFrame()
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
+    EventNotifier::Get()->Unbind(wxEVT_BOOKNAV_SELECTED, &clMainFrame::OnSwitchToPage, this);
 
     Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceTop, this, XRCID("toolbar_top"));
     Unbind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceLeft, this, XRCID("toolbar_left"));
@@ -995,6 +996,7 @@ void clMainFrame::Construct()
     m_infoBar->Bind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
     EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_BOOKNAV_SELECTED, &clMainFrame::OnSwitchToPage, this);
 
     Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarHide, this, XRCID("toolbar_hidden"));
     Bind(wxEVT_MENU, &clMainFrame::OnMainToolBarPlaceTop, this, XRCID("toolbar_top"));
@@ -3655,7 +3657,7 @@ void clMainFrame::RestoreFrameSizeAndPosition()
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
 {
     e.Skip();
-
+    
     // check for external theme detection
     wxColour currentBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     if (currentBgColour != startupBackgroundColour) {
@@ -5901,68 +5903,31 @@ void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
     wxDELETE(m_webUpdate);
 }
 
-namespace
+void clMainFrame::ShowNavDialog()
 {
-// The navigation dialog that is shown now, if any. It is modeless and destroys itself when it closes
-wxWeakRef<NotebookNavigationDlg> s_navigationDlg;
-
-bool IsNavDialogShown() { return s_navigationDlg && s_navigationDlg->IsShown(); }
-
-#if !MAINBOOK_AUIBOOK // If Notebook == clAuiBook, it is similar to the below method.
-void ShowNavDialog(Notebook* book)
-{
-    if (!EditorConfigST::Get()->GetOptions()->IsCtrlTabEnabled()) {
+    auto* book = clGetManager()->GetMainNotebook();
+    if (!EditorConfigST::Get()->GetOptions()->IsCtrlTabEnabled() || (book->GetPageCount() < 1)) {
         return;
     }
 
-    if (book->GetPageCount() == 0) {
-        return;
-    }
-
-    if (IsNavDialogShown()) {
-        return;
-    }
-    // The dialog selects the chosen tab and destroys itself
-    s_navigationDlg = new NotebookNavigationDlg(EventNotifier::Get()->TopFrame(), book);
-    s_navigationDlg->Show();
-    s_navigationDlg->Raise();
+    // A popup: it notifies us (wxEVT_BOOKNAV_SELECTED) about the chosen tab and destroys itself
+    auto* popup = new NotebookNavigationDlg{book->GetParent(), book->GetHistory()};
+    popup->ShowPopup();
 }
-#endif
-
-void ShowNavDialog(clAuiBook* book)
-{
-    if (!EditorConfigST::Get()->GetOptions()->IsCtrlTabEnabled()) {
-        return;
-    }
-
-    if (book->GetPageCount() == 0) {
-        return;
-    }
-
-    if (IsNavDialogShown()) {
-        return;
-    }
-    // The dialog selects the chosen tab and destroys itself
-    s_navigationDlg = new NotebookNavigationDlg(book->GetParent(), book);
-    s_navigationDlg->Show();
-    s_navigationDlg->Raise();
-}
-} // namespace
 
 void clMainFrame::OnMainBookNavigating(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
     if (::IsChildOf(wxWindow::FindFocus(), GetMainBook()->GetNotebook())) {
-        ShowNavDialog(GetMainBook()->GetNotebook());
-    } else {
-
-        // show the navigation dialog based on the current focus
-        Notebook* book = ::FindNotebookParentOf(wxWindow::FindFocus());
-        if (book) {
-            ShowNavDialog(book);
-        }
+        ShowNavDialog();
     }
+}
+
+void clMainFrame::OnSwitchToPage(wxBookCtrlEvent& event)
+{
+    event.Skip();
+    clGetManager()->GetMainNotebook()->SetSelection(event.GetSelection());
 }
 
 void clMainFrame::OnMainBookMovePage(wxCommandEvent& e)

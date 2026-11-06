@@ -1,5 +1,4 @@
-#ifndef CLTAB_H
-#define CLTAB_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -13,10 +12,9 @@ struct WXDLLIMPEXP_SDK clTab {
     using Vec_t = std::vector<clTab>;
     wxString text;
     wxWindow* window = nullptr;
-    int bitmap = wxNOT_FOUND;
+    wxBitmap bitmap;
     bool isFile = false;
     wxFileName filename;
     bool isModified = false;
     clTab() = default;
 };
-#endif // CLTAB_H

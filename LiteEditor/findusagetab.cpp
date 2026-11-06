@@ -726,6 +726,11 @@ void FindUsageTab::ShowFileMatches(const FindUsageFile* file)
         values.push_back(wxVariant(static_cast<void*>(entry)));
         m_dvMatches->AppendItem(values, reinterpret_cast<wxUIntPtr>(entry));
     }
+
+    if (m_dvMatches->GetItemCount()) {
+        // Alweays have a selection.
+        m_dvMatches->SelectRow(0);
+    }
 }
 
 void FindUsageTab::OnFileSelected(wxDataViewEvent& event)

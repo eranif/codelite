@@ -1476,16 +1476,26 @@ void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
                                      std::function<void(const wxFileName&)> onFileSaved,
                                      const wxString& bitmapsCode)
 {
-    if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !baseCpp.IsEmpty()) {
-        wxFileName projectFile(wxcProjectMetadata::Get().GetProjectFile());
-        wxCrafter::MakeAbsToProject(projectFile);
+    wxFileName projectFile(wxcProjectMetadata::Get().GetProjectFile());
+    wxCrafter::MakeAbsToProject(projectFile);
 
-        wxFileName headerFile = wxcProjectMetadata::Get().BaseHeaderFile();
-        wxCrafter::MakeAbsToProject(headerFile);
+    wxFileName headerFile = wxcProjectMetadata::Get().BaseHeaderFile();
+    wxCrafter::MakeAbsToProject(headerFile);
 
-        wxFileName sourceFile = wxcProjectMetadata::Get().BaseCppFile();
-        wxCrafter::MakeAbsToProject(sourceFile);
+    wxFileName sourceFile = wxcProjectMetadata::Get().BaseCppFile();
+    wxCrafter::MakeAbsToProject(sourceFile);
 
+    clDEBUG() << "wxCrafter: Generating C++ classes:" << endl;
+    for (const auto& file : {projectFile, headerFile, sourceFile}) {
+        clDEBUG() << "-" << file << endl;
+    }
+
+    if (!wxcProjectMetadata::Get().GetGenerateCPPCode()) {
+        clWARNING() << "wxCrafter: will not generate C++ code. GetGenerateCPPCode == False" << endl;
+        return;
+    }
+
+    if (!baseCpp.empty()) {
         // Build include guard
         wxString blockGuard = "_"; // must not start with a digit
         wxArrayString dirs = projectFile.GetDirs();
@@ -1575,18 +1585,23 @@ void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
                 onFileSaved(sourceFile);
             }
         }
+    } else {
+        clWARNING() << "wxCrafter: based classes is empty!" << endl;
     }
 
-    if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !additionalFiles.empty()) {
-        for (const auto& p : additionalFiles) {
-            wxFileName af = wxcProjectMetadata::Get().BaseHeaderFile();
-            af.SetFullName(p.first);
-            wxCrafter::MakeAbsToProject(af);
-            if (wxCrafter::IsTheSame(p.second, af) == false) {
-                wxCrafter::WriteFile(af, p.second, true);
-                if (onFileSaved) {
-                    onFileSaved(af);
-                }
+    if (additionalFiles.empty()) {
+        clDEBUG() << "wxCrafter: No more files to generate." << endl;
+        return;
+    }
+
+    for (const auto& p : additionalFiles) {
+        wxFileName af = wxcProjectMetadata::Get().BaseHeaderFile();
+        af.SetFullName(p.first);
+        wxCrafter::MakeAbsToProject(af);
+        if (wxCrafter::IsTheSame(p.second, af) == false) {
+            wxCrafter::WriteFile(af, p.second, true);
+            if (onFileSaved) {
+                onFileSaved(af);
             }
         }
     }

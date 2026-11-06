@@ -13,7 +13,10 @@ extern const wxEventType wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED;
 
 class wxcProjectMetadata
 {
-    enum GenerateCodeType { wxcGenerateCPPCode = 1, wxcGenerateXRC };
+    enum GenerateCodeType {
+        wxcGenerateCPPCode = 1 << 0,
+        wxcGenerateXRC = 1 << 1,
+    };
 
 protected:
     wxString m_projectFile;
@@ -27,7 +30,7 @@ protected:
     wxArrayString m_subclassFiles; // All the derived classes files (full paths), of all the top level windows
     wxString m_virtualFolder;
     wxString m_bitmapFunction;
-    int m_GenerateCodeTypes;
+    size_t m_GenerateCodeTypes{GenerateCodeType::wxcGenerateCPPCode};
     wxStringMap_t m_additionalFiles;
     wxString m_outputFileName;
     bool m_useHpp;

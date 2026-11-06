@@ -7,6 +7,7 @@
 #include "codelite_exports.h"
 
 #include <wx/aui/auibook.h>
+#include <wx/colour.h>
 
 #if defined(__clang__) || defined(__GNUC__)
 #pragma GCC diagnostic push
@@ -59,8 +60,11 @@ public:
     int GetPageBitmapIndex(size_t n) const;
     void SetTabDirection(wxDirection d);
 
-    /// Applies the CodeLite tab art to the specified AuiNotebook
-    static void ApplyTabArt(wxAuiNotebook* book);
+    /// Applies the CodeLite tab art to the specified AuiNotebook.
+    /// @param book The notebook to update
+    /// @param outlineColour The colour of the outline of the current tab. If not valid, the colour is calculated from
+    /// the background colour of the editor. Used with wxWidgets 3.3 and later only
+    static void ApplyTabArt(wxAuiNotebook* book, const wxColour& outlineColour = wxNullColour);
 
 protected:
     void OnPageClosed(wxAuiNotebookEvent& event);
@@ -74,12 +78,16 @@ protected:
     void OnEditorConfig(wxCommandEvent& event);
 
     void UpdatePreferences();
+    /// Call UpdatePreferences() once, after the pending events. The colours and the editor settings usually change
+    /// together, and updating the art is expensive
+    void ScheduleUpdatePreferences();
     void SetBookArt();
 
 private:
     clTabHistory::Ptr_t m_history;
     bool m_eventsEnabled{true};
     bool m_canHaveCloseButton{false};
+    bool m_updatePreferencesPending{false};
 };
 
 class WXDLLIMPEXP_SDK clAuiBookEventsDisabler

@@ -272,6 +272,13 @@ public:
      */
     wxFont GetFontForStyle(int styleId, const wxWindow* win) const;
 
+    /**
+     * @brief Convert the colours and the font of this lexer to a terminal theme. The background, the foreground and the
+     * font come from the default style, the selection colours from the selected text style, and the cursor colour from
+     * the caret style. A style that this lexer does not have, or a colour that is not valid, keeps the colour of the
+     * default dark or light theme.
+     * @return the theme
+     */
     wxTerminalTheme AsTerminalTheme() const;
 };
 

@@ -211,15 +211,14 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
         wxDefaultSize,
         wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_FIXED_WIDTH | wxAUI_NB_TAB_SPLIT | wxAUI_NB_CLOSE_ON_ALL_TABS);
 
-    // Close the hovered tab. Both GlyphBookEvent and wxAuiNotebookEvent are wxBookCtrlEvent
-    auto on_tab_middle_up = [this](wxBookCtrlEvent& event) {
+    // Close the hovered tab
+    m_book->Bind(wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP, [this](wxAuiNotebookEvent& event) {
         int sel = event.GetSelection();
         if (sel == wxNOT_FOUND) {
             return;
         }
         CallAfter([sel, this]() { m_book->DeletePage(sel); });
-    };
-    m_book->Bind(wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP, on_tab_middle_up);
+    });
 
     // Load settings
     m_terminalSettings = TerminalSettings::Load();
@@ -260,6 +259,8 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     m_book->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
+    // The tab art uses the colours and the font of the editor: update it when they change
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clBuiltinTerminalPane::OnEditorColoursUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clBuiltinTerminalPane::OnInitDone, this);
     EventNotifier::Get()->Bind(
         wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &clBuiltinTerminalPane::OnKeyboardShortcutsUpdated, this);
@@ -275,6 +276,7 @@ clBuiltinTerminalPane::~clBuiltinTerminalPane()
     m_book->Unbind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clBuiltinTerminalPane::OnEditorColoursUpdated, this);
     EventNotifier::Get()->Unbind(
         wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &clBuiltinTerminalPane::OnKeyboardShortcutsUpdated, this);
 }
@@ -1077,9 +1079,16 @@ void clBuiltinTerminalPane::ApplySettings()
 
 void clBuiltinTerminalPane::UpdateTabArt() { UpdateTabArt(m_terminalSettings.m_tabOutlineColour); }
 
+void clBuiltinTerminalPane::OnEditorColoursUpdated(clCommandEvent& event)
+{
+    event.Skip();
+    UpdateTabArt();
+}
+
 void clBuiltinTerminalPane::UpdateTabArt(const wxString& outlineColour)
 {
-    clAuiBook::ApplyTabArt(m_book);
+    // The outline colour is a colour of the terminal theme that the user selected in the settings
+    clAuiBook::ApplyTabArt(m_book, GetTabOutlineColourOf(GetActiveTheme(), outlineColour));
     m_book->Layout();
     m_book->Refresh();
     m_book->Update();

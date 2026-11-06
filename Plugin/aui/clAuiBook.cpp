@@ -90,15 +90,11 @@ clAuiBook::~clAuiBook()
 size_t clAuiBook::GetAllTabs(clTabInfo::Vec_t& tabs)
 {
     size_t count = GetPageCount();
-    if (count == 0) {
-        return 0;
-    }
-
     tabs.reserve(count);
 
     for (size_t i = 0; i < count; ++i) {
         clTabInfo::Ptr_t info(new clTabInfo(nullptr, 0, GetPage(i), GetPageText(i), wxNOT_FOUND));
-        tabs.push_back(info);
+        tabs.emplace_back(info);
     }
     return tabs.size();
 }
@@ -292,14 +288,16 @@ void clAuiBook::UpdatePreferences()
     Refresh();
 }
 
-void clAuiBook::ApplyTabArt(wxAuiNotebook* book)
+void clAuiBook::ApplyTabArt(wxAuiNotebook* book, const wxColour& outlineColour)
 {
     bool useFallbackArt{true};
 #if wxCHECK_VERSION(3, 3, 0)
     if (auto lexer = ColoursAndFontsManager::Get().GetLexer("text"); lexer != nullptr) {
         auto theme = lexer->AsTerminalTheme();
         auto* art = new GlyphTabArt(theme, GlyphTabArt::Style::Browser);
-        art->SetOutlineColour(lexer->IsDark() ? theme.bg.ChangeLightness(120) : theme.bg.ChangeLightness(80));
+        art->SetOutlineColour(outlineColour.IsOk()
+                                  ? outlineColour
+                                  : (lexer->IsDark() ? theme.bg.ChangeLightness(120) : theme.bg.ChangeLightness(80)));
         book->SetArtProvider(art);
         useFallbackArt = false;
     }
@@ -317,16 +315,28 @@ void clAuiBook::ApplyTabArt(wxAuiNotebook* book)
 
 void clAuiBook::SetBookArt() { ApplyTabArt(this); }
 
+void clAuiBook::ScheduleUpdatePreferences()
+{
+    if (m_updatePreferencesPending) {
+        return;
+    }
+    m_updatePreferencesPending = true;
+    CallAfter([this]() {
+        m_updatePreferencesPending = false;
+        UpdatePreferences();
+    });
+}
+
 void clAuiBook::OnEditorConfig(wxCommandEvent& event)
 {
     event.Skip();
-    UpdatePreferences();
+    ScheduleUpdatePreferences();
 }
 
 void clAuiBook::OnPreferences(clCommandEvent& event)
 {
     event.Skip();
-    UpdatePreferences();
+    ScheduleUpdatePreferences();
 }
 
 void clAuiBook::EnableEvents(bool b) { m_eventsEnabled = b; }

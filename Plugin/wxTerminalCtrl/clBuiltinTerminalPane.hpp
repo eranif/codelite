@@ -213,12 +213,15 @@ protected:
 #endif
 
     void OnThemeChanged(clCommandEvent& event);
+    /// The colours or the fonts of the editor changed: update the tab art
+    void OnEditorColoursUpdated(clCommandEvent& event);
     void ThemesUpdated();
     /// Called on the main thread with the (name, content) of the theme files read by the background thread
     void OnTOMLFilesLoaded(const std::vector<std::pair<std::string, std::string>>& files);
     void OnChoiceTheme(wxCommandEvent& event);
     void ApplyThemeChanges();
-    /// Give the notebook a tab art painted with the colours of the active terminal theme
+    /// Give the notebook the CodeLite tab art (see clAuiBook::ApplyTabArt()). The outline colour of the current tab is
+    /// a colour of the active terminal theme
     void UpdateTabArt();
     /// Same as above, with the outline colour key of the current tab (see TerminalSettings::m_tabOutlineColour)
     void UpdateTabArt(const wxString& outlineColour);

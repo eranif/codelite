@@ -196,18 +196,6 @@ bool IsDebuggerRunning()
     return (dbgr && dbgr->IsRunning()) || eventIsRunning.IsAnswer();
 }
 
-bool IsCaptionsVisible(clDockingManager& mgr)
-{
-    wxAuiPaneInfoArray& panes = mgr.GetAllPanes();
-    for (size_t i = 0; i < panes.GetCount(); ++i) {
-        const auto& pane = panes.Item(i);
-        if (pane.IsOk() && !pane.IsToolbar() && pane.HasCaption()) {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool codelite_initialised = false;
 } // namespace
 
@@ -336,7 +324,6 @@ EVT_MENU(XRCID("show_terminal_pane"), clMainFrame::OnShowBuiltInTerminal)
 EVT_MENU(XRCID("show_nav_toolbar"), clMainFrame::OnShowNavBar)
 EVT_MENU(XRCID("toogle_main_toolbars"), clMainFrame::OnToggleMainTBars)
 EVT_MENU(XRCID("toogle_plugin_toolbars"), clMainFrame::OnTogglePluginTBars)
-EVT_MENU(XRCID("toggle_panes"), clMainFrame::OnTogglePanes)
 EVT_MENU(XRCID("distraction_free_mode"), clMainFrame::OnToggleMinimalView)
 EVT_UPDATE_UI(XRCID("distraction_free_mode"), clMainFrame::OnToggleMinimalViewUI)
 EVT_MENU(XRCID("hide_status_bar"), clMainFrame::OnShowStatusBar)
@@ -1220,16 +1207,15 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"fold_topmost_in_selection", _("Toggle All Topmost Folds in Selection")},
                          {"fold_all_in_selection", _("Toggle Every Fold in Selection")},
                          {"display_eol", _("Display EOL")},
-                         {"next_tab", _("Next tab"), "Ctrl-Alt-RIGHT"},
-                         {"prev_tab", _("Previous tab"), "Ctrl-Alt-LEFT"},
+                         {"next_tab", _("Next tab"), "RawCtrl-Alt-RIGHT"},
+                         {"prev_tab", _("Previous tab"), "RawCtrl-Alt-LEFT"},
                          {"full_screen", _("Full Screen...")},
                          {"output_pane", _("Output Pane"), "Ctrl-`"},
                          {"show_terminal_pane", _("Toggle Terminal View"), "F6"},
                          {"workspace_pane", _("Workspace Pane"), "Ctrl-Alt-W"},
                          {"debugger_pane", _("Debugger Pane"), "Ctrl-Alt-D"},
-                         {"show_nav_toolbar", _("Navigation Bar"), "Ctrl-Alt-N"},
-                         {"toggle_panes", _("Toggle All Panes"), "Ctrl-M"},
-                         {"distraction_free_mode", _("Toggle Minimal View"), "Ctrl-F11"},
+                         {"show_nav_toolbar", _("Navigation Bar"), "RawCtrl-Alt-N"},
+                         {"distraction_free_mode", _("Toggle Minimal View"), "RawCtrl-M"},
 #ifdef __WXGTK__
                          {"show_menu_bar", _("Show Menu Bar"), "Alt-`"},
 #endif
@@ -2533,12 +2519,6 @@ void clMainFrame::OnViewOptions(wxCommandEvent& WXUNUSED(event))
     if (dlg.IsRestartRequired()) {
         DoSuggestRestart();
     }
-}
-
-void clMainFrame::OnTogglePanes(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    ManagerST::Get()->TogglePanes();
 }
 
 void clMainFrame::OnAddEnvironmentVariable(wxCommandEvent& event)
@@ -5728,46 +5708,16 @@ void clMainFrame::DoShowCaptions(bool show)
 
 void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
 {
-    // Hide the toolbars + captions
-    // Hide the _native_ toolbar
-    wxWindowUpdateLocker locker{m_mgr.GetManagedWindow()};
-    bool minimalView = clConfig::Get().Read("MinimalView", true);
-    if (minimalView) {
-        if (GetPluginsToolBar()->IsShown()) {
-            // Hide the toolbar
-            DoShowToolbars(false, false);
-        }
-        if (IsCaptionsVisible(m_mgr)) {
-            DoShowCaptions(false);
-        }
-        DoShowMenuBar(false);
-    } else {
-        if (!GetPluginsToolBar()->IsShown()) {
-            DoShowToolbars(true, false);
-        }
-        if (!IsCaptionsVisible(m_mgr)) {
-            DoShowCaptions(true);
-        }
-        DoShowMenuBar(true);
-    }
-    m_mgr.Update();
-
-    CallAfter([=]() {
-        // Update the various configurations
-        clConfig::Get().Write(kConfigShowToolBar, !minimalView);
-        clConfig::Get().Write("MinimalView", !minimalView); // for next time
-
-        // Update the captions settings
-        OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-        opts->SetShowDockingWindowCaption(!minimalView);
-        EditorConfigST::Get()->SetOptions(opts);
-    });
+    // Minimal view: hide the left and right sidebars and the output pane, and bring back only the panes that were
+    // visible when we hid them. The toolbar and the captions are not changed
+    wxUnusedVar(event);
+    ManagerST::Get()->GetPerspectiveManager().ToggleMainPanes();
 }
 
 void clMainFrame::OnToggleMinimalViewUI(wxUpdateUIEvent& event)
 {
-    bool inMinimalView = clConfig::Get().Read("MinimalView", false);
-    event.Check(!inMinimalView);
+    CHECK_SHUTDOWN();
+    event.Check(ManagerST::Get()->GetPerspectiveManager().AreMainPanesHidden());
 }
 
 void clMainFrame::OnDebugStepInstUI(wxUpdateUIEvent& e)

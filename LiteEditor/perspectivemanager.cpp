@@ -366,3 +366,59 @@ bool PerspectiveManager::IsPaneVisible(const wxString& name) const
     wxAuiPaneInfo& aui_pane_info = m_aui->GetPane(name);
     return aui_pane_info.IsOk() && aui_pane_info.IsShown();
 }
+
+namespace
+{
+/// The panes that ToggleMainPanes() controls
+std::vector<wxString> GetMainPanes() { return {PANE_LEFT_SIDEBAR, PANE_RIGHT_SIDEBAR, PANE_OUTPUT}; }
+} // namespace
+
+void PerspectiveManager::ToggleMainPanes()
+{
+    CHECK_PTR_RET(m_aui);
+
+    const std::vector<wxString> mainPanes = GetMainPanes();
+    auto set_visible = [this](const wxString& pane, bool show) {
+        if (pane == PANE_LEFT_SIDEBAR) {
+            ShowSideBar(true, wxEmptyString, show, false);
+        } else if (pane == PANE_RIGHT_SIDEBAR) {
+            ShowSideBar(false, wxEmptyString, show, false);
+        } else {
+            ShowOutputPane(wxEmptyString, show, false);
+        }
+    };
+
+    std::vector<wxString> visiblePanes;
+    for (const wxString& pane : mainPanes) {
+        if (IsPaneVisible(pane)) {
+            visiblePanes.push_back(pane);
+        }
+    }
+
+    wxWindowUpdateLocker locker{m_aui->GetManagedWindow()};
+    if (!visiblePanes.empty()) {
+        // Remember what is visible now, and hide all the panes
+        m_panesHiddenByToggle = visiblePanes;
+        for (const wxString& pane : visiblePanes) {
+            set_visible(pane, false);
+        }
+    } else {
+        // Restore the panes that we hid. If we did not hide anything, show all of them
+        const std::vector<wxString> panesToShow = m_panesHiddenByToggle.empty() ? mainPanes : m_panesHiddenByToggle;
+        m_panesHiddenByToggle.clear();
+        for (const wxString& pane : panesToShow) {
+            set_visible(pane, true);
+        }
+    }
+}
+
+bool PerspectiveManager::AreMainPanesHidden() const
+{
+    CHECK_PTR_RET_FALSE(m_aui);
+    for (const wxString& pane : GetMainPanes()) {
+        if (IsPaneVisible(pane)) {
+            return false;
+        }
+    }
+    return true;
+}

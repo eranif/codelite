@@ -1813,7 +1813,7 @@ void MainBook::OnEditorSettingsChanged(wxCommandEvent& e)
 void MainBook::OnTabDClicked(wxBookCtrlEvent& e)
 {
     e.Skip();
-    ManagerST::Get()->TogglePanes();
+    ManagerST::Get()->GetPerspectiveManager().ToggleMainPanes();
 }
 
 void MainBook::DoOpenImageViewer(const wxFileName& filename)

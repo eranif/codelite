@@ -727,7 +727,6 @@ const std::vector<std::pair<int, clKeyboardShortcut>>& clBuiltinTerminalPane::Ge
             XRCID("output_pane"),
             XRCID("workspace_pane"),
             XRCID("debugger_pane"),
-            XRCID("toggle_panes"),
             XRCID("distraction_free_mode"),
             XRCID("full_screen"),
             XRCID("next_tab"),

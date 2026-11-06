@@ -27,6 +27,7 @@
 #define PERSPECTIVEMANAGER_H
 
 #include <unordered_set>
+#include <vector>
 #include <wx/arrstr.h>
 #include <wx/aui/framemanager.h>
 #include <wx/event.h>
@@ -80,6 +81,20 @@ public:
      * @return void This function does not return a value.
      */
     void ShowSideBar(bool left_sidebar, const wxString& tab, bool show, bool take_focus);
+    /**
+     * @brief Toggle the main panes: the left sidebar, the right sidebar and the output pane.
+     *
+     * If at least one of them is visible, remember which ones are visible and hide all of them. Otherwise, show only
+     * the panes that the previous call hid. If the previous call did not hide anything (for example, CodeLite started
+     * without these panes), show all of them. The remembered panes are kept in memory only.
+     * It does not touch the toolbar or the pane captions.
+     */
+    void ToggleMainPanes();
+
+    /**
+     * @brief Check whether all the main panes (see ToggleMainPanes()) are hidden
+     */
+    bool AreMainPanesHidden() const;
     bool ShowPane(const wxString& pane, bool show);
     void SetActive(const wxString& active) { this->m_active = active; }
     const wxString& GetActive() const { return m_active; }
@@ -120,6 +135,7 @@ private:
     wxString m_active;
     wxString m_buildPerspective;
     wxAuiManager* m_aui = nullptr;
+    std::vector<wxString> m_panesHiddenByToggle; // the main panes that ToggleMainPanes() hid
 };
 
 #endif // PERSPECTIVEMANAGER_H

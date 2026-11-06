@@ -1497,30 +1497,6 @@ void Manager::ShowPane(const wxString& paneName, bool commit)
     }
 }
 
-void Manager::TogglePanes()
-{
-    static wxString savedLayout;
-    if (savedLayout.IsEmpty()) {
-
-        savedLayout = clMainFrame::Get()->GetDockingManager().SavePerspective();
-        wxAuiManager& aui = clMainFrame::Get()->GetDockingManager();
-        wxAuiPaneInfoArray& all_panes = aui.GetAllPanes();
-        for (size_t i = 0; i < all_panes.GetCount(); ++i) {
-            if (all_panes.Item(i).IsOk() && all_panes.Item(i).IsShown() &&
-                all_panes.Item(i).dock_direction != wxAUI_DOCK_CENTER) {
-                all_panes.Item(i).Hide();
-            }
-        }
-
-        // update changes
-        aui.Update();
-
-    } else {
-        clMainFrame::Get()->GetDockingManager().LoadPerspective(savedLayout);
-        savedLayout.Clear();
-    }
-}
-
 //--------------------------- Menu and Accelerator Mmgt -----------------------------
 
 void Manager::UpdateMenuAccelerators()

@@ -468,12 +468,6 @@ public:
      */
     void ShowPane(const wxString& paneName, bool commit = true);
 
-    /**
-     * Hide/Show all panes. This function saves the current perspective and
-     * then hides all panes, when called again, all panes are restored
-     */
-    void TogglePanes();
-
     //--------------------------- Menu and Accelerator Mmgt -----------------------------
 public:
     /**

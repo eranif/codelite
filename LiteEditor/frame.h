@@ -394,7 +394,6 @@ protected:
     void OnViewOptions(wxCommandEvent& event);
     void OnToggleMainTBars(wxCommandEvent& event);
     void OnTogglePluginTBars(wxCommandEvent& event);
-    void OnTogglePanes(wxCommandEvent& event);
     void OnToggleMinimalView(wxCommandEvent& event);
     void OnToggleMinimalViewUI(wxUpdateUIEvent& event);
     void OnShowStatusBar(wxCommandEvent& event);

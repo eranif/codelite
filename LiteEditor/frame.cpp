@@ -5911,7 +5911,7 @@ void clMainFrame::ShowNavDialog()
     }
 
     // A popup: it notifies us (wxEVT_BOOKNAV_SELECTED) about the chosen tab and destroys itself
-    auto* popup = new NotebookNavigationDlg{book->GetParent(), book->GetHistory()};
+    auto* popup = new NotebookNavigationDlg{this, book->GetHistory()};
     popup->ShowPopup();
 }
 

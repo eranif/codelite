@@ -35,6 +35,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clTabHistory::Ptr
 
 NotebookNavigationDlg::~NotebookNavigationDlg()
 {
+    clDEBUG() << "NotebookNavigationDlg DTor is called" << endl;
     m_ctrlKeyTimer.Stop();
     Unbind(wxEVT_TIMER, &NotebookNavigationDlg::OnTimer, this);
 #if defined(__WXMSW__) || defined(__WXMAC__)
@@ -83,7 +84,10 @@ void NotebookNavigationDlg::OnDismiss()
     // Called after the popup is hidden: by DismissAndNotify(), or by a click outside of it
     m_dismissed = true;
     m_ctrlKeyTimer.Stop();
-    CallAfter([this]() { Destroy(); });
+    CallAfter([this]() {
+        clDEBUG() << "Destroy is called" << endl;
+        Destroy();
+    });
 }
 
 void NotebookNavigationDlg::ShowPopup()
@@ -95,7 +99,7 @@ void NotebookNavigationDlg::ShowPopup()
     wxSize parentSize = parent->GetClientSize();
     Position(parentPos + wxPoint((parentSize.x - size.x) / 2, (parentSize.y - size.y) / 2), wxSize(0, 0));
     Popup(m_dvListCtrl);
-    StylePopupWindow(this, 10.0);
+    StylePopupWindow(this, 15.0);
 
     // The popup does not get the key-up of the Ctrl key: poll for it
     m_ctrlKeyTimer.Start(30);

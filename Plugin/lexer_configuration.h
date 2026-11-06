@@ -28,6 +28,7 @@
 #include "JSON.h"
 #include "attribute_style.h"
 #include "codelite_exports.h"
+#include "terminal_theme.h"
 
 #include <memory>
 #include <wx/filename.h>
@@ -270,6 +271,8 @@ public:
      * @return return wxNullFont if error occurred or could locate the style
      */
     wxFont GetFontForStyle(int styleId, const wxWindow* win) const;
+
+    wxTerminalTheme AsTerminalTheme() const;
 };
 
 #endif // LEXER_CONFIGURATION_H

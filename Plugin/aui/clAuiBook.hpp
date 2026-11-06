@@ -3,6 +3,7 @@
 #include "JSON.h"
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 
 #include <wx/aui/auibook.h>
@@ -21,25 +22,45 @@ public:
               const wxSize& size = wxDefaultSize,
               long style = 0);
     ~clAuiBook() override;
+
+    /// Fills the provided vector with info for all current tabs
     size_t GetAllTabs(clTabInfo::Vec_t& tabs);
+
+    /// Returns the tab history object
     clTabHistory::Ptr_t GetHistory() const { return m_history; }
+
+    /// Moves the currently active page to the specified index
     void MoveActivePage(int newIndex);
+
     int SetSelection(size_t newPage) override;
     int ChangeSelection(size_t n) override;
     wxBorder GetDefaultBorder() const override;
 
-    /// Enable events fired from the book
+    /// Enable or disable events fired from the book
     void EnableEvents(bool b);
+
     bool AreEventsEnabled() const { return m_eventsEnabled; }
-    /// Ensure that all windows exist in the history
+
+    /// Removes pages from history that are no longer present in the book
     void UpdateHistory();
+
+    /// Sets whether the tabs are allowed to have close buttons
     void SetCanHaveCloseButton(bool b) { m_canHaveCloseButton = b; }
+
     int GetPageIndex(const wxString& name) const;
     int GetPageIndex(wxWindow* win) const;
+
+    /// Deletes a page. If notify is true, triggers closing/closed events.
     bool DeletePage(size_t index, bool notify = true);
+
+    /// Removes a page. If notify is true, triggers closing/closed events.
     bool RemovePage(size_t index, bool notify = true);
+
     int GetPageBitmapIndex(size_t n) const;
     void SetTabDirection(wxDirection d);
+
+    /// Applies the CodeLite tab art to the specified AuiNotebook
+    static void ApplyTabArt(wxAuiNotebook* book);
 
 protected:
     void OnPageClosed(wxAuiNotebookEvent& event);
@@ -49,7 +70,8 @@ protected:
     void OnPageRightDown(wxAuiNotebookEvent& event);
     void OnTabAreaDoubleClick(wxAuiNotebookEvent& event);
     void OnPageDoubleClick(wxAuiNotebookEvent& event);
-    void OnPreferences(wxCommandEvent& event);
+    void OnPreferences(clCommandEvent& event);
+    void OnEditorConfig(wxCommandEvent& event);
 
     void UpdatePreferences();
     void SetBookArt();

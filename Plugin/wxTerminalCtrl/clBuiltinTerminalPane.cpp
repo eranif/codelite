@@ -2,10 +2,9 @@
 
 #include "ColoursAndFontsManager.h"
 #include "CompilerLocator/CompilerLocatorMSVC.h"
-#include "GlyphTabArt.h"
 #include "Platform/Platform.hpp"
 #include "bitmap_loader.h"
-#include "clAuiFlatTabArt.hpp"
+#include "clAuiBook.hpp"
 #include "clINIParser.hpp"
 #include "clStrings.h"
 #include "clWorkspaceManager.h"
@@ -205,12 +204,12 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_book =
-        new GlyphBook(this,
-                      wxID_ANY,
-                      wxDefaultPosition,
-                      wxDefaultSize,
-                      wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_FIXED_WIDTH | wxAUI_NB_TAB_SPLIT | wxAUI_NB_CLOSE_ON_ALL_TABS);
+    m_book = new wxAuiNotebook(
+        this,
+        wxID_ANY,
+        wxDefaultPosition,
+        wxDefaultSize,
+        wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_FIXED_WIDTH | wxAUI_NB_TAB_SPLIT | wxAUI_NB_CLOSE_ON_ALL_TABS);
 
     // Close the hovered tab. Both GlyphBookEvent and wxAuiNotebookEvent are wxBookCtrlEvent
     auto on_tab_middle_up = [this](wxBookCtrlEvent& event) {
@@ -220,11 +219,7 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
         }
         CallAfter([sel, this]() { m_book->DeletePage(sel); });
     };
-#if wxCHECK_VERSION(3, 3, 0)
-    m_book->Bind(wxEVT_GLYPHBOOK_TAB_MIDDLE_UP, on_tab_middle_up);
-#else
     m_book->Bind(wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP, on_tab_middle_up);
-#endif
 
     // Load settings
     m_terminalSettings = TerminalSettings::Load();
@@ -262,11 +257,7 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnSettings, this, wxID_PREFERENCES);
 
     GetSizer()->Fit(this);
-#if wxCHECK_VERSION(3, 3, 0)
-    m_book->Bind(wxEVT_BOOKCTRL_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
-#else
     m_book->Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
-#endif
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clBuiltinTerminalPane::OnInitDone, this);
@@ -281,11 +272,7 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
-#if wxCHECK_VERSION(3, 3, 0)
-    m_book->Unbind(wxEVT_BOOKCTRL_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
-#else
     m_book->Unbind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
-#endif
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(
@@ -1092,13 +1079,7 @@ void clBuiltinTerminalPane::UpdateTabArt() { UpdateTabArt(m_terminalSettings.m_t
 
 void clBuiltinTerminalPane::UpdateTabArt(const wxString& outlineColour)
 {
-    wxFont font = clTabRenderer::GetTabFont(false);
-
-#if wxCHECK_VERSION(3, 3, 0)
-    const auto theme = GetActiveTheme();
-    m_book->SetTheme(theme, GetTabOutlineColourOf(theme, outlineColour), GlyphTabArt::Style::Browser);
-#endif
-
+    clAuiBook::ApplyTabArt(m_book);
     m_book->Layout();
     m_book->Refresh();
     m_book->Update();

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#pragma once
 
 #include "Notebook.h"
 #include "codelite_exports.h"
@@ -444,5 +443,3 @@ WXDLLIMPEXP_SDK void AdjustDataViewAlternateColour(wxDataViewCtrl* ctrl);
 
 /// Adjust all columns to fit their content.
 WXDLLIMPEXP_SDK void AutoSizeColumns(wxDataViewCtrl* ctrl);
-
-#endif // GLOBALS_H

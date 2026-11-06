@@ -30,6 +30,7 @@
 #include "cl_config.h"
 #include "drawingutils.h"
 #include "editor_config.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "macros.h"
@@ -580,4 +581,18 @@ void LexerConf::SetProperty(const StyleProperty& prop)
     } else {
         m_properties.push_back(prop);
     }
+}
+
+wxTerminalTheme LexerConf::AsTerminalTheme() const
+{
+    const auto& defaultProp = GetProperty(0);
+    const auto& selectedTextProp = GetProperty(SEL_TEXT_ATTR_ID);
+    wxTerminalTheme theme = IsDark() ? wxTerminalTheme::MakeDarkTheme() : wxTerminalTheme::MakeLightTheme();
+    theme.bg = defaultProp.GetBgColour();
+    theme.fg = defaultProp.GetFgColour();
+    theme.font = GetFontForStyle(0, EventNotifier::Get()->TopFrame());
+    theme.selectionBg = selectedTextProp.GetBgColour();
+    theme.selectionFg = selectedTextProp.GetFgColour();
+    theme.cursorColour = GetProperty(CARET_ATTR_ID).GetFgColour();
+    return theme;
 }

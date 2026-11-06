@@ -1,10 +1,15 @@
 #include "clAuiBook.hpp"
 
+#include "ColoursAndFontsManager.h"
 #include "Notebook.h" // For the book events.
 #include "aui/clAuiFlatTabArt.hpp"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
+
+#if wxCHECK_VERSION(3, 3, 0)
+#include "GlyphTabArt.h"
+#endif
 
 #include <memory>
 #include <vector>
@@ -65,7 +70,8 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     Bind(wxEVT_AUINOTEBOOK_PAGE_CLOSED, &clAuiBook::OnPageClosed, this);
     Bind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &clAuiBook::OnPageRightDown, this);
     Bind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiBook::OnTabAreaDoubleClick, this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &clAuiBook::OnPreferences, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clAuiBook::OnPreferences, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiBook::OnEditorConfig, this);
     CallAfter(&clAuiBook::UpdatePreferences);
 }
 
@@ -77,17 +83,22 @@ clAuiBook::~clAuiBook()
     Unbind(wxEVT_AUINOTEBOOK_PAGE_CLOSED, &clAuiBook::OnPageClosed, this);
     Unbind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &clAuiBook::OnPageRightDown, this);
     Unbind(wxEVT_AUINOTEBOOK_BG_DCLICK, &clAuiBook::OnTabAreaDoubleClick, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &clAuiBook::OnPreferences, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clAuiBook::OnPreferences, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiBook::OnEditorConfig, this);
 }
 
 size_t clAuiBook::GetAllTabs(clTabInfo::Vec_t& tabs)
 {
     size_t count = GetPageCount();
+    if (count == 0) {
+        return 0;
+    }
+
     tabs.reserve(count);
 
     for (size_t i = 0; i < count; ++i) {
         clTabInfo::Ptr_t info(new clTabInfo(nullptr, 0, GetPage(i), GetPageText(i), wxNOT_FOUND));
-        tabs.emplace_back(info);
+        tabs.push_back(info);
     }
     return tabs.size();
 }
@@ -261,15 +272,13 @@ void clAuiBook::UpdatePreferences()
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     bool show_x_on_tab = options->IsTabHasXButton();
 
-    style &= ~wxAUI_NB_CLOSE_ON_ALL_TABS;
+    style &= ~(wxAUI_NB_CLOSE_ON_ALL_TABS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB);
     if (m_canHaveCloseButton) {
         if (show_x_on_tab) {
             style |= wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
         } else {
             style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
         }
-    } else {
-        style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
     }
 
     // update the tab height: the tab-height preference is read directly by
@@ -278,23 +287,43 @@ void clAuiBook::UpdatePreferences()
     // re-measures the tab strip itself so its background grows with the tabs.
 
     // update the art
-    SetBookArt();
     SetWindowStyle(style);
+    SetBookArt();
     Refresh();
 }
 
-void clAuiBook::SetBookArt()
+void clAuiBook::ApplyTabArt(wxAuiNotebook* book)
 {
-    wxFont font = clTabRenderer::GetTabFont(false);
+    bool useFallbackArt{true};
+#if wxCHECK_VERSION(3, 3, 0)
+    if (auto lexer = ColoursAndFontsManager::Get().GetLexer("text"); lexer != nullptr) {
+        auto theme = lexer->AsTerminalTheme();
+        auto* art = new GlyphTabArt(theme, GlyphTabArt::Style::Browser);
+        art->SetOutlineColour(lexer->IsDark() ? theme.bg.ChangeLightness(120) : theme.bg.ChangeLightness(80));
+        book->SetArtProvider(art);
+        useFallbackArt = false;
+    }
+#endif
 
-    auto art = new clAuiFlatTabArt();
-    art->SetMeasuringFont(font);
-    art->SetNormalFont(font);
-    art->SetSelectedFont(font);
-    SetArtProvider(art);
+    if (useFallbackArt) {
+        wxFont font = clTabRenderer::GetTabFont(false);
+        auto art = new clAuiFlatTabArt();
+        art->SetMeasuringFont(font);
+        art->SetNormalFont(font);
+        art->SetSelectedFont(font);
+        book->SetArtProvider(art);
+    }
 }
 
-void clAuiBook::OnPreferences(wxCommandEvent& event)
+void clAuiBook::SetBookArt() { ApplyTabArt(this); }
+
+void clAuiBook::OnEditorConfig(wxCommandEvent& event)
+{
+    event.Skip();
+    UpdatePreferences();
+}
+
+void clAuiBook::OnPreferences(clCommandEvent& event)
 {
     event.Skip();
     UpdatePreferences();

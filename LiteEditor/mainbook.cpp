@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "mainbook.h"
 
+#include "ColoursAndFontsManager.h"
 #include "FilesModifiedDlg.h"
 #include "FindAndReplaceDialog.h"
 #include "Keyboard/clKeyboardManager.h"
@@ -50,6 +51,12 @@
 #include "macros.h"
 #include "manager.h"
 #include "resources/clXmlResource.hpp"
+
+#if MAINBOOK_AUIBOOK
+#if wxCHECK_VERSION(3, 3, 0)
+#include "GlyphTabArt.h"
+#endif
+#endif
 
 #include <algorithm>
 #include <unordered_map>
@@ -222,10 +229,7 @@ void MainBook::CreateGuiControls()
     sz->Add(m_book, 1, wxEXPAND);
 #endif
 
-#if MAINBOOK_AUIBOOK
-    m_book->SetArtProvider(new clAuiFlatTabArt());
     m_book->SetCanHaveCloseButton(true);
-#endif
     sz->Layout();
 }
 

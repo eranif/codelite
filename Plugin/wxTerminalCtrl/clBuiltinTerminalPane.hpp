@@ -2,7 +2,6 @@
 #define CLBUILTINTERMINALPANE_HPP
 
 #include "Keyboard/clKeyboardManager.h"
-#include "clAuiBook.hpp"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "event_notifier.h"
@@ -17,6 +16,7 @@
 #include <utility>
 #include <vector>
 #include <wx/aui/auibar.h>
+#include <wx/aui/auibook.h>
 #include <wx/choice.h>
 #include <wx/panel.h>
 #include <wx/thread.h>
@@ -27,12 +27,6 @@ class wxTerminalViewCtrl;
 inline constexpr const char kTerminalCommand[] = "cmd.exe";
 #else
 inline constexpr const char kTerminalCommand[] = "/bin/bash --login -i";
-#endif
-
-#if wxCHECK_VERSION(3, 3, 0)
-#include "GlyphBook.h"
-#else
-using GlyphBook = wxAuiNotebook;
 #endif
 
 // Translate wxTerminalViewCtrl events into exported events (these events can be used from outside the DLL)
@@ -236,7 +230,7 @@ private:
     /// Create a theme from the content of an Alacritty theme (TOML) file. `name` is used for logging only
     static std::optional<wxTerminalTheme> FromTOML(const wxString& name, const wxString& content);
     wxAuiToolBar* m_toolbar = nullptr;
-    GlyphBook* m_book = nullptr;
+    wxAuiNotebook* m_book = nullptr;
     wxChoice* m_choice_themes = nullptr;
     std::vector<std::pair<EventFilterCallbackToken, wxEventType>> m_tokens;
     std::map<wxString, wxTerminalTheme> m_themes; // accessed from the main thread only

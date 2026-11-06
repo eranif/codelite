@@ -3,6 +3,7 @@
 #include "ColoursAndFontsManager.h"
 #include "CompilerLocator/CompilerLocatorMSVC.h"
 #include "Platform/Platform.hpp"
+#include "TabStatusIcon.hpp"
 #include "bitmap_loader.h"
 #include "clAuiBook.hpp"
 #include "clINIParser.hpp"
@@ -273,6 +274,8 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
+    // Restore the icons of the tabs while the book and its pages are still there
+    m_tabIcons.clear();
     m_book->Unbind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
@@ -1133,6 +1136,22 @@ void clBuiltinTerminalPane::OnProgramStatus(wxTerminalEvent& event)
         EventNotifier::Get()->ProcessEvent(evt);
         return;
     }
+    UpdateTabIcon(GetEventHost(event), event.GetProgramState());
+}
+
+void clBuiltinTerminalPane::UpdateTabIcon(TerminalHost* host, wxTerminalProgramState state)
+{
+    CHECK_PTR_RET(host);
+
+    // Forget the icons of the tabs that were closed
+    std::erase_if(m_tabIcons, [](const auto& item) { return item.second->IsPageGone(); });
+
+    auto& icon = m_tabIcons[host];
+    if (!icon) {
+        icon = std::make_unique<TabStatusIcon>(clTabIconBook::From(m_book), host);
+    }
+    icon->SetAttentionEnabled(m_terminalSettings.m_notifyWhenDone);
+    icon->SetState(state);
 }
 
 void clBuiltinTerminalPane::OnTerminalBell(wxTerminalEvent& event)

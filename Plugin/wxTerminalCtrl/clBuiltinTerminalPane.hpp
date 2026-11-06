@@ -11,6 +11,7 @@
 #include "wxTerminalCtrl/TerminalSettingsDlg.hpp"
 
 #include <map>
+#include <memory>
 #include <optional>
 #include <string>
 #include <utility>
@@ -22,6 +23,7 @@
 #include <wx/thread.h>
 
 class wxTerminalViewCtrl;
+class TabStatusIcon;
 
 #ifdef __WXMSW__
 inline constexpr const char kTerminalCommand[] = "cmd.exe";
@@ -180,6 +182,8 @@ protected:
     void OnLinkClicked(wxTerminalEvent& event);
     void OnTerminalBell(wxTerminalEvent& event);
     void OnProgramStatus(wxTerminalEvent& event);
+    /// Show the state of the program of the terminal in `host` on its tab
+    void UpdateTabIcon(TerminalHost* host, wxTerminalProgramState state);
     void OnNew(wxCommandEvent& event);
     void DetectTerminals(std::vector<std::pair<wxString, wxString>>& terminals);
     bool ReadTerminalOptionsFromDisk(std::vector<std::pair<wxString, wxString>>& terminals);
@@ -237,6 +241,9 @@ private:
     wxChoice* m_choice_themes = nullptr;
     std::vector<std::pair<EventFilterCallbackToken, wxEventType>> m_tokens;
     std::map<wxString, wxTerminalTheme> m_themes; // accessed from the main thread only
+    // The icon on the tab of a terminal (a spinner while a program works, ...), by the host of the terminal. The icons
+    // of closed tabs are removed when the next one is needed.
+    std::map<wxWindow*, std::unique_ptr<TabStatusIcon>> m_tabIcons;
     std::optional<wxTerminalTheme> m_activeTheme{std::nullopt};
     wxFont m_activeFont;
     TerminalSettings m_terminalSettings;

@@ -6,7 +6,7 @@
 #include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "ReviewBuddy.hpp"
-#include "TabAttentionIcon.hpp"
+#include "TabStatusIcon.hpp"
 #include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "aui/cl_aui_tool_stickness.h"
@@ -175,28 +175,23 @@ void AgentHostPage::OnTerminalTitleChanged(clCommandEvent& event)
     }
 }
 
-void AgentHostPage::UpdateWorkingIcon()
+void AgentHostPage::UpdateTabIcon(wxTerminalProgramState state, bool notify)
 {
-    // The spinner is on our tab while the main agent or the reviewer works. Removing it restores the icon of the tab.
-    const bool working =
-        m_lastAgentState == wxTerminalProgramState::Working || m_lastReviewState == wxTerminalProgramState::Working;
-    if (!working) {
-        m_workingIcon.reset();
-        return;
+    // The spinner is on our tab while the main agent or the reviewer works
+    if (m_lastReviewState == wxTerminalProgramState::Working) {
+        state = wxTerminalProgramState::Working;
     }
 
-    if (m_workingIcon) {
-        return; // already spinning
+    if (!m_tabIcon) {
+        // Nothing to show, and nothing to remove
+        if (state != wxTerminalProgramState::Working && state != wxTerminalProgramState::Blocked &&
+            state != wxTerminalProgramState::Done) {
+            return;
+        }
+        m_tabIcon = std::make_unique<TabStatusIcon>(clTabIconBook::From(clGetManager()->GetMainNotebook()), this);
     }
-
-    // An icon that asks for the user is out of date now
-    m_attentionIcon.reset();
-    auto* icons = clGetManager()->GetStdIcons();
-    std::vector<wxBitmap> frames;
-    for (int i = 0; i < 8; ++i) {
-        frames.push_back(icons->LoadBitmap(wxString::Format("agent-spinner-%d", i)));
-    }
-    m_workingIcon = std::make_unique<TabAttentionIcon>(clGetManager()->GetMainNotebook(), this, frames, false);
+    m_tabIcon->SetAttentionEnabled(notify);
+    m_tabIcon->SetState(state);
 }
 
 void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
@@ -206,7 +201,10 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
         event.Skip();
         const auto reviewState = static_cast<wxTerminalProgramState>(event.GetInt());
         if (std::exchange(m_lastReviewState, reviewState) != reviewState) {
-            UpdateWorkingIcon();
+            // Only the spinner depends on the reviewer: a change of the reviewer never asks for the user
+            UpdateTabIcon(m_lastAgentState == wxTerminalProgramState::Working ? wxTerminalProgramState::Working
+                                                                              : wxTerminalProgramState::Idle,
+                          false);
         }
         return;
     }
@@ -229,38 +227,16 @@ void AgentHostPage::OnTerminalProgramStatus(clCommandEvent& event)
         EventNotifier::Get()->AddPendingEvent(modifiedEvent);
     }
 
-    // A spinner on the tab while the agent works, also when the tab is selected. It only shows the state, so it does
-    // not depend on the notification settings.
-    UpdateWorkingIcon();
-
+    // The icon on the tab: a spinner while the agent works (also when the tab is selected: it only shows the state, so
+    // it does not depend on the notification settings). A pulse while the agent waits for the user, and a check mark
+    // when it is done, until the user comes back to the page (not when the tab is selected, and no icon for an error).
+    //
     // During a review the main agent stops on purpose, to hand the control to the reviewer: do not bother the user.
-    if (m_review) {
+    // And not if the user turned the notifications off (Terminal settings).
+    const bool notify = !m_review && TerminalSettings::Load().m_notifyWhenDone;
+    UpdateTabIcon(state, notify);
+    if (!notify) {
         return;
-    }
-
-    // The user turned the notifications off (Terminal settings)
-    if (!TerminalSettings::Load().m_notifyWhenDone) {
-        return;
-    }
-
-    // Only these states need the user. Idle, Working and Clear: nothing to do.
-    if (state != wxTerminalProgramState::Blocked && state != wxTerminalProgramState::Done &&
-        state != wxTerminalProgramState::Error) {
-        return;
-    }
-
-    // The tab is not the selected one: mark it until the user comes back to the page.
-    // A waving hand: the agent is waiting for the user. A checkmark: the agent is done. (No icon for an error.)
-    // Defensive: never save the spinner as the original icon of the tab (it is on the tab while the reviewer works)
-    if (m_book->GetCurrentPage() != this && state != wxTerminalProgramState::Error && !m_workingIcon) {
-        const char* iconName =
-            state == wxTerminalProgramState::Blocked ? "agent-attention-blocked" : "agent-attention-done";
-        // Replacing the icon first restores the original tab icon
-        m_attentionIcon.reset();
-        m_attentionIcon = std::make_unique<TabAttentionIcon>(
-            clGetManager()->GetMainNotebook(),
-            this,
-            std::vector<wxBitmap>{clGetManager()->GetStdIcons()->LoadBitmap(iconName)});
     }
 
     // The agent is waiting for the user and CodeLite is in the background: the Dock icon bounces on macOS, the
@@ -1002,7 +978,9 @@ void AgentHostPage::DestroyReviewPane()
 
     // The reviewer is gone: it does not work any more
     m_lastReviewState = wxTerminalProgramState::Clear;
-    UpdateWorkingIcon();
+    UpdateTabIcon(m_lastAgentState == wxTerminalProgramState::Working ? wxTerminalProgramState::Working
+                                                                      : wxTerminalProgramState::Idle,
+                  false);
 }
 
 void AgentHostPage::CloseReviewBuddy()

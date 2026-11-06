@@ -14,7 +14,7 @@
 
 class AgentTerminal;
 class ReviewBuddy;
-class TabAttentionIcon;
+class TabStatusIcon;
 class wxTerminalViewCtrl;
 
 enum class AgentType {
@@ -74,8 +74,9 @@ protected:
     /// icon) when they are not looking at this page. Nothing is done during a review: the main agent stops on purpose,
     /// to hand the control to the reviewer. The status of the reviewer is used for the spinner only.
     void OnTerminalProgramStatus(clCommandEvent& event);
-    /// Show the spinner on our tab while the main agent or the reviewer works, remove it otherwise
-    void UpdateWorkingIcon();
+    /// Show `state` on our tab (see TabStatusIcon), but a spinner while the reviewer works.
+    /// @param notify Show the icons that ask for the user (Blocked and Done)
+    void UpdateTabIcon(wxTerminalProgramState state, bool notify);
     void OnContextMenu(wxContextMenuEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnOpenResourceShowing(clOpenResourceEvent& event);
@@ -141,10 +142,9 @@ private:
     AgentTerminal* m_agentTerminal{nullptr};
     AgentTerminal* m_reviewAgentTerminal{nullptr};
     std::unique_ptr<ReviewBuddy> m_review;
-    // The icon on our tab while the agent waits for the user. Removed when the page gets the focus.
-    std::unique_ptr<TabAttentionIcon> m_attentionIcon;
-    // The spinner on our tab while the agent works. It stays when the page gets the focus.
-    std::unique_ptr<TabAttentionIcon> m_workingIcon;
+    // The icon on our tab: a spinner while the agent (or the reviewer) works, a pulse while the agent waits for the
+    // user, a check mark when it is done. Created when the first status arrives, as the page must be in the book.
+    std::unique_ptr<TabStatusIcon> m_tabIcon;
     // True while a toolbar button runs a main frame command: the toolbar click does not need the terminal to have the
     // focus, so the dialog is filled from the terminal that has a selection
     bool m_fillFromSelection{false};

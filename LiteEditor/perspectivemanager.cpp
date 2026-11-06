@@ -39,6 +39,7 @@
 #include <wx/aui/framemanager.h>
 #include <wx/dir.h>
 #include <wx/stdpaths.h>
+#include <wx/wupdlock.h>
 
 wxString DEBUG_LAYOUT = wxT("debug.layout");
 wxString NORMAL_LAYOUT = wxT("default.layout");
@@ -341,6 +342,7 @@ void PerspectiveManager::DoHidePane(wxAuiPaneInfo& pane_info)
 
 bool PerspectiveManager::ShowPane(wxAuiPaneInfo& pane, bool show)
 {
+    wxWindowUpdateLocker locker{m_aui->GetManagedWindow()};
     if (!show) {
         DoHidePane(pane);
     } else {

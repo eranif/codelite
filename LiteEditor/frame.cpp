@@ -3657,7 +3657,7 @@ void clMainFrame::RestoreFrameSizeAndPosition()
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
 {
     e.Skip();
-    
+
     // check for external theme detection
     wxColour currentBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     if (currentBgColour != startupBackgroundColour) {
@@ -5730,6 +5730,7 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
 {
     // Hide the toolbars + captions
     // Hide the _native_ toolbar
+    wxWindowUpdateLocker locker{m_mgr.GetManagedWindow()};
     bool minimalView = clConfig::Get().Read("MinimalView", true);
     if (minimalView) {
         if (GetPluginsToolBar()->IsShown()) {
@@ -5749,18 +5750,18 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
         }
         DoShowMenuBar(true);
     }
-
-    // Update the various configurations
-    clConfig::Get().Write(kConfigShowToolBar, !minimalView);
-    clConfig::Get().Write("MinimalView", !minimalView); // for next time
-
-    // Update the captions settings
-    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-    opts->SetShowDockingWindowCaption(!minimalView);
-    EditorConfigST::Get()->SetOptions(opts);
-
     m_mgr.Update();
-    PostSizeEvent();
+
+    CallAfter([=]() {
+        // Update the various configurations
+        clConfig::Get().Write(kConfigShowToolBar, !minimalView);
+        clConfig::Get().Write("MinimalView", !minimalView); // for next time
+
+        // Update the captions settings
+        OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+        opts->SetShowDockingWindowCaption(!minimalView);
+        EditorConfigST::Get()->SetOptions(opts);
+    });
 }
 
 void clMainFrame::OnToggleMinimalViewUI(wxUpdateUIEvent& event)

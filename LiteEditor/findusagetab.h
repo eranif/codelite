@@ -54,6 +54,8 @@ class FindUsageTab : public wxPanel
     bool m_hideBuildFolders = true; // hide the results from the build folders (.build-release, ...)
     wxSearchCtrl* m_filter = nullptr;
     wxSplitterWindow* m_splitter = nullptr;
+    int m_savedSashPosition = 0;                     // the position that the user chose, in pixels
+    bool m_userMovingSash = false;                   // true while the user drags the sash
     wxDataViewListCtrl* m_dvFiles = nullptr;         // the files that have a match that passes the filter
     wxDataViewListCtrl* m_dvMatches = nullptr;       // the matches of the selected file: line | match
     FindUsageRenderer* m_renderer = nullptr;         // owned by the "Match" column of m_dvMatches
@@ -88,6 +90,8 @@ protected:
     void OnReferences(LSPEvent& event);
     void OnReferencesInProgress(LSPEvent& event);
     void OnItemActivated(wxDataViewEvent& event);
+    void DoMatchSelected(const wxDataViewItem& item, wxDataViewEvent& event);
+    void DoMatchSelected(int row, wxDataViewEvent& event) { DoMatchSelected(m_dvMatches->RowToItem(row), event); }
 };
 
 #endif // FINDUSAGETAB_H

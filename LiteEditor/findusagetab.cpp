@@ -90,6 +90,13 @@ constexpr const char* kToolHideBuildFolders = "find_usage_hide_build_folders";
 const wxString kConfigSashPosition = "FindUsageTab/SashPosition";
 constexpr int kDefaultSashPosition = 300;
 
+void AutoSizeColumns(wxDataViewCtrl* ctrl)
+{
+    for (unsigned int i = 0; i < ctrl->GetColumnCount(); ++i) {
+        ctrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    }
+}
+
 /// Replace the tabs of `line` with spaces. The range [`start`, `start` + `length`) of `line` is moved to the same
 /// characters of the result: [`highlightStart`, `highlightStart` + `highlightLength`)
 wxString PrepareLine(const wxString& line, size_t start, size_t length, size_t& highlightStart, size_t& highlightLength)
@@ -456,12 +463,14 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
     m_filter = new wxSearchCtrl(this, wxID_ANY);
     m_filter->SetHint(_("Filter results. Prefix a string with a minus sign (-) to exclude matches."));
     m_filter->ShowCancelButton(true);
-    m_filter->Bind(wxEVT_TEXT, &FindUsageTab::OnFilter, this);
-    m_filter->Bind(wxEVT_SEARCHCTRL_CANCEL_BTN, [this](wxCommandEvent& event) {
+
+    m_filter->Bind(wxEVT_SEARCH, &FindUsageTab::OnFilter, this);
+    m_filter->Bind(wxEVT_SEARCH_CANCEL, [this](wxCommandEvent& event) {
         wxUnusedVar(event);
         m_filter->ChangeValue(wxEmptyString);
         ApplyFilter();
     });
+
     GetSizer()->Add(m_filter, 0, wxEXPAND | wxALL, FromDIP(5));
 
     // The files on the left, the matches of the selected file on the right. The sash position is remembered
@@ -490,11 +499,43 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
     UseFullWidthStyle(m_dvFiles);
     UseFullWidthStyle(m_dvMatches);
 
-    m_splitter->SplitVertically(
-        m_dvFiles, m_dvMatches, clConfig::Get().Read(kConfigSashPosition, FromDIP(kDefaultSashPosition)));
-    m_splitter->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED, [](wxSplitterEvent& event) {
+    m_savedSashPosition = clConfig::Get().Read(kConfigSashPosition, FromDIP(kDefaultSashPosition));
+    m_splitter->SplitVertically(m_dvFiles, m_dvMatches, m_savedSashPosition);
+
+    // wxSplitterWindow also sends wxEVT_SPLITTER_SASH_POS_CHANGED when it moves the sash by itself, to keep the panes
+    // at their minimum size when the window is small (this happens while the layout is built at startup). Do not save
+    // these positions. wxEVT_SPLITTER_SASH_POS_CHANGING is sent only while the user drags the sash, so save the
+    // position only when it comes after it
+    m_splitter->Bind(wxEVT_SPLITTER_SASH_POS_CHANGING, [this](wxSplitterEvent& event) {
         event.Skip();
-        clConfig::Get().Write(kConfigSashPosition, event.GetSashPosition());
+        m_userMovingSash = true;
+    });
+    m_splitter->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED, [this](wxSplitterEvent& event) {
+        event.Skip();
+        if (!m_userMovingSash) {
+            return;
+        }
+        m_userMovingSash = false;
+        m_savedSashPosition = event.GetSashPosition();
+        clConfig::Get().Write(kConfigSashPosition, m_savedSashPosition);
+    });
+
+    // The window is small until the tab is shown, so wxSplitterWindow moves the sash closer to the left, and it does
+    // not move it back when the window grows. Whenever the saved position fits, set it again
+    m_splitter->Bind(wxEVT_SIZE, [this](wxSizeEvent& event) {
+        event.Skip();
+        if (!m_splitter->IsSplit()) {
+            return;
+        }
+        const int minWidth = m_savedSashPosition + m_splitter->GetMinimumPaneSize() + m_splitter->GetSashSize();
+        if (m_splitter->GetClientSize().x >= minWidth && m_splitter->GetSashPosition() != m_savedSashPosition) {
+            m_splitter->SetSashPosition(m_savedSashPosition);
+        }
+    });
+
+    m_dvFiles->Bind(wxEVT_SIZE, [this](wxSizeEvent& e) {
+        e.Skip();
+        AutoSizeColumns(m_dvFiles);
     });
 
     // A hand cursor over the results. The controls draw in their own child window, so set it on the children as well
@@ -728,8 +769,10 @@ void FindUsageTab::ShowFileMatches(const FindUsageFile* file)
     }
 
     if (m_dvMatches->GetItemCount()) {
-        // Alweays have a selection.
+        // Always have a selection.
         m_dvMatches->SelectRow(0);
+        wxDataViewEvent dummy;
+        DoMatchSelected(0, dummy);
     }
 }
 
@@ -848,9 +891,14 @@ void FindUsageTab::OnReferencesInProgress(LSPEvent& event)
 void FindUsageTab::OnItemActivated(wxDataViewEvent& event)
 {
     event.Skip();
-    CHECK_ITEM_RET(event.GetItem());
+    DoMatchSelected(event.GetItem(), event);
+}
 
-    const auto* entry = reinterpret_cast<const FindUsageEntry*>(m_dvMatches->GetItemData(event.GetItem()));
+void FindUsageTab::DoMatchSelected(const wxDataViewItem& item, wxDataViewEvent& evt)
+{
+    CHECK_ITEM_RET(item);
+
+    const auto* entry = reinterpret_cast<const FindUsageEntry*>(m_dvMatches->GetItemData(item));
     CHECK_PTR_RET(entry);
 
     // Keep the match of this row highlighted, also after the editor takes the focus
@@ -881,7 +929,7 @@ void FindUsageTab::OnItemActivated(wxDataViewEvent& event)
     if (!EventNotifier::Get()->ProcessEvent(open_file_event)) {
         ::wxMessageBox(
             _("Failed to open file: ") + entry->location->GetPath(), "CodeLite", wxOK | wxOK_DEFAULT | wxICON_ERROR);
-        event.Veto();
+        evt.Veto();
         return;
     }
 

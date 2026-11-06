@@ -193,7 +193,7 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
     int yy = rect.GetTopLeft().y + Y_MARGIN;
 
     // prose uses the GUI font, code uses the fixed font
-    wxFont text_font = DrawingUtils::GetDefaultGuiFont();
+    wxFont text_font = ColoursAndFontsManager::Get().GetFixedFont(true);
     wxFont code_font = ColoursAndFontsManager::Get().GetFixedFont(true);
 
     // use the same line height for both fonts, so mixed lines line up

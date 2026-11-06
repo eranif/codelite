@@ -28,6 +28,7 @@
 #include "AsyncProcess/ZombieReaperPOSIX.h"
 #include "EnvironmentVariablesDlg.h"
 #include "Notebook.h"
+#include "NotebookNavigationDlg.h"
 #include "SecondarySideBar.hpp"
 #include "UIHangDetector.hpp"
 #include "ai/ChatAI.hpp"
@@ -96,75 +97,9 @@ struct StartPageData {
 
 class clMainFrame : public wxFrame
 {
-    enum class ePostBuildEndAction { kNone, kRunProject, kRebuildProject };
-
-    MainBook* m_mainBook;
-    static clMainFrame* m_theFrame;
-    clDockingManager m_mgr;
-    OutputPane* m_outputPane;
-    SideBar* m_sidebar = nullptr;
-    SecondarySideBar* m_secondary_sidebar = nullptr;
-    wxArrayString m_files;
-    wxTimer* m_timer;
-    std::map<int, wxString> m_viewAsMap;
-    TagsOptionsData m_tagsOptionsData;
-    DebuggerPane* m_debuggerPane;
-    ePostBuildEndAction m_postBuildEndAction{ePostBuildEndAction::kNone};
-    GeneralInfo m_frameGeneralInfo;
-    std::map<int, std::pair<wxString, std::function<void()>>> m_panes;
-    bool m_highlightWord{false};
-    DockablePaneMenuManager* m_DPmenuMgr;
-    wxPanel* m_mainPanel;
-    wxString m_codeliteDownloadPageURL;
-    wxString m_defaultLayout;
-    bool m_loadLastSession;
-    wxMenuBar* m_mainMenuBar;
-
-#ifndef __WXMSW__
-    ZombieReaperPOSIX m_zombieReaper;
-#endif
-
-#ifdef __WXGTK__
-    bool m_isWaylandSession{false};
-#endif
-
-    // Maintain a set of core toolbars (i.e. toolbars not owned by any plugin)
-    wxStringSet_t m_coreToolbars;
-    clStatusBar* m_statusBar;
-    clSingleInstanceThread* m_singleInstanceThread{nullptr};
-
-    // Printing
-    wxPrintDialogData m_printDlgData;
-    size_t m_debuggerFeatures = clDebugEvent::kAllFeatures;
-    WebUpdateJob* m_webUpdate{nullptr};
-    wxToolBar* m_mainToolbar{nullptr};
-    clToolBarGeneric* m_pluginsToolbar{nullptr};
-    DebuggerToolBar* m_debuggerToolbar = nullptr;
-    clInfoBar* m_infoBar = nullptr;
-#if !wxUSE_NATIVE_CAPTION
-    clCaptionBar* m_captionBar = nullptr;
-#endif
-    // the main tool default style
-    int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER /* toolbar is hidden by default */;
-    wxString m_mainFrameTitleTemplate;
-    wxWindowID m_lastFocusedWindowID{wxNOT_FOUND};
-    std::unique_ptr<UIHangDetector> m_uiHangDetector;
-
 public:
     static bool m_initCompleted;
 
-protected:
-    bool IsEditorEvent(wxEvent& event);
-    void DoSysColoursChanged();
-    void DoCreateBuildDropDownMenu(wxMenu* menu);
-    void DoShowToolbars(bool show, bool update = true);
-    void InitializeLogo();
-    void DoShowMenuBar(bool show);
-    void OnSysColoursChanged(clCommandEvent& event);
-    void RestoreFrameSizeAndPosition();
-    void UpdateMainToolbarOrientation(int newOrientation);
-
-public:
     void Raise() override;
 
     static clMainFrame* Get();
@@ -362,60 +297,6 @@ public:
     bool GetIsWaylandSession() const { return m_isWaylandSession; }
 #endif
 
-private:
-    // make our frame's constructor private
-    clMainFrame(wxWindow* pParent,
-                wxWindowID id,
-                const wxString& title,
-                const wxPoint& pos,
-                const wxSize& size,
-                long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU |
-                             wxRESIZE_BORDER | wxCLIP_CHILDREN);
-    void AddKeyboardAccelerators();
-    void StartTimer();
-
-private:
-    /**
-     * Construct all the GUI controls of the main frame. this function is called
-     * at construction time
-     */
-    void CreateGUIControls();
-
-    /**
-     * @brief construct the frame, we call this function in the first event loop after the application
-     * is ready
-     */
-    void Construct();
-
-    void PostConstruct();
-
-    /**
-     * Helper function that prompt user with a simple wxTextEntry dialog
-     * @param msg message to display to user
-     * @return user's string or wxEmptyString if 'Cancel' pressed.
-     */
-    void DispatchCommandEvent(wxCommandEvent& event);
-    void DispatchUpdateUIEvent(wxUpdateUIEvent& event);
-
-    void OnSplitSelection(wxCommandEvent& event);
-    void OnSplitSelectionUI(wxUpdateUIEvent& event);
-
-    /// Toolbar management
-    void DoCreateToolBar(int toolSize);
-    void ToggleToolBars(bool all);
-    void ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event);
-    void CreateRecentlyOpenedFilesMenu();
-    void CreateWelcomePage();
-    bool ReloadExternallyModifiedProjectFiles();
-    /**
-     * @brief show the startup wizard
-     * @return true if a restart is needed
-     */
-    bool StartSetupWizard(bool firstTime);
-
-    void DoShowCaptions(bool show);
-
-public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
     clToolBarGeneric* GetPluginsToolBar() const { return m_pluginsToolbar; }
@@ -453,6 +334,17 @@ public:
     }
 
 protected:
+    bool IsEditorEvent(wxEvent& event);
+    void DoSysColoursChanged();
+    void DoCreateBuildDropDownMenu(wxMenu* menu);
+    void DoShowToolbars(bool show, bool update = true);
+    void InitializeLogo();
+    void DoShowMenuBar(bool show);
+    void OnSysColoursChanged(clCommandEvent& event);
+    void RestoreFrameSizeAndPosition();
+    void UpdateMainToolbarOrientation(int newOrientation);
+    void ShowNavDialog();
+
     //----------------------------------------------------
     // event handlers
     //----------------------------------------------------
@@ -712,7 +604,114 @@ protected:
     void OnFindNext(wxCommandEvent& event);
     void OnFindPrevious(wxCommandEvent& event);
 
+    void OnSwitchToPage(wxBookCtrlEvent& event);
     DECLARE_EVENT_TABLE()
+
+private:
+    enum class ePostBuildEndAction { kNone, kRunProject, kRebuildProject };
+
+    // make our frame's constructor private
+    clMainFrame(wxWindow* pParent,
+                wxWindowID id,
+                const wxString& title,
+                const wxPoint& pos,
+                const wxSize& size,
+                long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU |
+                             wxRESIZE_BORDER | wxCLIP_CHILDREN);
+    void AddKeyboardAccelerators();
+    void StartTimer();
+
+    /**
+     * Construct all the GUI controls of the main frame. this function is called
+     * at construction time
+     */
+    void CreateGUIControls();
+
+    /**
+     * @brief construct the frame, we call this function in the first event loop after the application
+     * is ready
+     */
+    void Construct();
+
+    void PostConstruct();
+
+    /**
+     * Helper function that prompt user with a simple wxTextEntry dialog
+     * @param msg message to display to user
+     * @return user's string or wxEmptyString if 'Cancel' pressed.
+     */
+    void DispatchCommandEvent(wxCommandEvent& event);
+    void DispatchUpdateUIEvent(wxUpdateUIEvent& event);
+
+    void OnSplitSelection(wxCommandEvent& event);
+    void OnSplitSelectionUI(wxUpdateUIEvent& event);
+
+    /// Toolbar management
+    void DoCreateToolBar(int toolSize);
+    void ToggleToolBars(bool all);
+    void ViewPaneUI(const wxString& paneName, wxUpdateUIEvent& event);
+    void CreateRecentlyOpenedFilesMenu();
+    void CreateWelcomePage();
+    bool ReloadExternallyModifiedProjectFiles();
+    /**
+     * @brief show the startup wizard
+     * @return true if a restart is needed
+     */
+    bool StartSetupWizard(bool firstTime);
+
+    void DoShowCaptions(bool show);
+
+    MainBook* m_mainBook;
+    static clMainFrame* m_theFrame;
+    clDockingManager m_mgr;
+    OutputPane* m_outputPane;
+    SideBar* m_sidebar = nullptr;
+    SecondarySideBar* m_secondary_sidebar = nullptr;
+    wxArrayString m_files;
+    wxTimer* m_timer;
+    std::map<int, wxString> m_viewAsMap;
+    TagsOptionsData m_tagsOptionsData;
+    DebuggerPane* m_debuggerPane;
+    ePostBuildEndAction m_postBuildEndAction{ePostBuildEndAction::kNone};
+    GeneralInfo m_frameGeneralInfo;
+    std::map<int, std::pair<wxString, std::function<void()>>> m_panes;
+    bool m_highlightWord{false};
+    DockablePaneMenuManager* m_DPmenuMgr;
+    wxPanel* m_mainPanel;
+    wxString m_codeliteDownloadPageURL;
+    wxString m_defaultLayout;
+    bool m_loadLastSession;
+    wxMenuBar* m_mainMenuBar;
+
+#ifndef __WXMSW__
+    ZombieReaperPOSIX m_zombieReaper;
+#endif
+
+#ifdef __WXGTK__
+    bool m_isWaylandSession{false};
+#endif
+
+    // Maintain a set of core toolbars (i.e. toolbars not owned by any plugin)
+    wxStringSet_t m_coreToolbars;
+    clStatusBar* m_statusBar;
+    clSingleInstanceThread* m_singleInstanceThread{nullptr};
+
+    // Printing
+    wxPrintDialogData m_printDlgData;
+    size_t m_debuggerFeatures = clDebugEvent::kAllFeatures;
+    WebUpdateJob* m_webUpdate{nullptr};
+    wxToolBar* m_mainToolbar{nullptr};
+    clToolBarGeneric* m_pluginsToolbar{nullptr};
+    DebuggerToolBar* m_debuggerToolbar = nullptr;
+    clInfoBar* m_infoBar = nullptr;
+#if !wxUSE_NATIVE_CAPTION
+    clCaptionBar* m_captionBar = nullptr;
+#endif
+    // the main tool default style
+    int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER /* toolbar is hidden by default */;
+    wxString m_mainFrameTitleTemplate;
+    wxWindowID m_lastFocusedWindowID{wxNOT_FOUND};
+    std::unique_ptr<UIHangDetector> m_uiHangDetector;
 };
 
 #endif // LITEEDITOR_FRAME_H

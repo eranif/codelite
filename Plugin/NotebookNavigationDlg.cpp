@@ -18,11 +18,12 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clTabHistory::Ptr
     auto* sizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(sizer);
 
-    m_dvListCtrl = new wxDataViewListCtrl(this,
-                                          wxID_ANY,
-                                          wxDefaultPosition,
-                                          wxDefaultSize,
-                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxWANTS_CHARS);
+    m_dvListCtrl =
+        new wxDataViewListCtrl(this,
+                               wxID_ANY,
+                               wxDefaultPosition,
+                               wxDefaultSize,
+                               wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxWANTS_CHARS | wxBORDER_NONE);
     sizer->Add(m_dvListCtrl, wxSizerFlags(1).Expand().Border(wxALL, FromDIP(5)));
     m_dvListCtrl->AppendBitmapColumn(
         _("Icon"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, FromDIP(30), wxALIGN_CENTER);

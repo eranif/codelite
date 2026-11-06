@@ -90,13 +90,6 @@ constexpr const char* kToolHideBuildFolders = "find_usage_hide_build_folders";
 const wxString kConfigSashPosition = "FindUsageTab/SashPosition";
 constexpr int kDefaultSashPosition = 300;
 
-void AutoSizeColumns(wxDataViewCtrl* ctrl)
-{
-    for (unsigned int i = 0; i < ctrl->GetColumnCount(); ++i) {
-        ctrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-    }
-}
-
 /// Replace the tabs of `line` with spaces. The range [`start`, `start` + `length`) of `line` is moved to the same
 /// characters of the result: [`highlightStart`, `highlightStart` + `highlightLength`)
 wxString PrepareLine(const wxString& line, size_t start, size_t length, size_t& highlightStart, size_t& highlightLength)

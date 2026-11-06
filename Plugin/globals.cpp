@@ -1059,3 +1059,10 @@ void AdjustDataViewAlternateColour(wxDataViewCtrl* ctrl)
     wxUnusedVar(ctrl);
 #endif
 }
+
+void AutoSizeColumns(wxDataViewCtrl* ctrl)
+{
+    for (unsigned int i = 0; i < ctrl->GetColumnCount(); ++i) {
+        ctrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    }
+}

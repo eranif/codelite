@@ -442,4 +442,7 @@ WXDLLIMPEXP_SDK bool IsShutdownInProgress();
 /// Adjust the control alternate colour on some platforms.
 WXDLLIMPEXP_SDK void AdjustDataViewAlternateColour(wxDataViewCtrl* ctrl);
 
+/// Adjust all columns to fit their content.
+WXDLLIMPEXP_SDK void AutoSizeColumns(wxDataViewCtrl* ctrl);
+
 #endif // GLOBALS_H

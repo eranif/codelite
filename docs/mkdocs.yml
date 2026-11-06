@@ -80,6 +80,7 @@ nav:
       - CodeLite v15.x - 16.0.0: release_notes/v16_0_0.md
 theme:
   name: material
+  favicon: assets/images/favicon.png
   features:
     - navigation.tabs
     - navigation.sections

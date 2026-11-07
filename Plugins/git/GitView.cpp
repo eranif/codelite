@@ -39,6 +39,7 @@
 #include "aui/clAuiToolBarArt.h"
 #include "aui/cl_aui_tool_stickness.h"
 #include "bitmap_loader.h"
+#include "clAuiBook.hpp"
 #include "clDataViewListCtrl.h"
 #include "clSideBarCtrl.hpp"
 #include "clStrings.h"
@@ -169,6 +170,7 @@ GitView::GitView(wxWindow* parent, GitPlugin* git)
     : GitConsoleBase(parent)
     , m_git(git)
 {
+    clAuiBook::ApplyTabArt(m_notebookChanges);
     // set the font to fit the C++ lexer default font
     m_bitmapLoader = clGetManager()->GetStdIcons();
 

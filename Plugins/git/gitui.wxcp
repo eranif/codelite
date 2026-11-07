@@ -7,7 +7,7 @@
     "m_firstWindowId": 6000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 850,
+    "m_objCounter": 851,
     "m_outputFileName": "gitui",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -2157,11 +2157,9 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_UPDATE_UI event",
                                   "m_eventClass": "wxUpdateUIEvent",
                                   "m_eventName": "wxEVT_UPDATE_UI",
-                                  "m_functionNameAndSignature": "OnLocalRepoUI(wxUpdateUIEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnLocalRepoUI(wxUpdateUIEvent& event)"
                                 }
                               ],
                               "m_children": []
@@ -2285,11 +2283,9 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_UPDATE_UI event",
                                   "m_eventClass": "wxUpdateUIEvent",
                                   "m_eventName": "wxEVT_UPDATE_UI",
-                                  "m_functionNameAndSignature": "OnLocalRepoUI(wxUpdateUIEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnLocalRepoUI(wxUpdateUIEvent& event)"
                                 }
                               ],
                               "m_children": []
@@ -2394,11 +2390,9 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_UPDATE_UI event",
                                   "m_eventClass": "wxUpdateUIEvent",
                                   "m_eventName": "wxEVT_UPDATE_UI",
-                                  "m_functionNameAndSignature": "OnLocalRepoUI(wxUpdateUIEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnLocalRepoUI(wxUpdateUIEvent& event)"
                                 }
                               ],
                               "m_children": []
@@ -2522,11 +2516,9 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_UPDATE_UI event",
                                   "m_eventClass": "wxUpdateUIEvent",
                                   "m_eventName": "wxEVT_UPDATE_UI",
-                                  "m_functionNameAndSignature": "OnLocalRepoUI(wxUpdateUIEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnLocalRepoUI(wxUpdateUIEvent& event)"
                                 }
                               ],
                               "m_children": []
@@ -3348,11 +3340,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnOK(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOK(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -4206,11 +4196,9 @@
                                           ],
                                           "m_events": [
                                             {
-                                              "m_description": "Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event",
                                               "m_eventClass": "wxDataViewEvent",
                                               "m_eventName": "wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
-                                              "m_functionNameAndSignature": "OnChangeFile(wxDataViewEvent& event)",
-                                              "m_noBody": false
+                                              "m_functionNameAndSignature": "OnChangeFile(wxDataViewEvent& event)"
                                             }
                                           ],
                                           "m_children": [
@@ -5444,11 +5432,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                      "m_functionNameAndSignature": "OnAmendClicked(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnAmendClicked(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -5622,11 +5608,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnCommitOK(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnCommitOK(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -5904,18 +5888,14 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a close event. This event applies to wxFrame and wxDialog classes",
           "m_eventClass": "wxCloseEvent",
           "m_eventName": "wxEVT_CLOSE_WINDOW",
-          "m_functionNameAndSignature": "OnClose(wxCloseEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnClose(wxCloseEvent& event)"
         },
         {
-          "m_description": "A wxInitDialogEvent is sent as a dialog or panel is being initialised. Handlers for this event can transfer data to the window.\nThe default handler calls wxWindow::TransferDataToWindow",
           "m_eventClass": "wxInitDialogEvent",
           "m_eventName": "wxEVT_INIT_DIALOG",
-          "m_functionNameAndSignature": "OnInitDone(wxInitDialogEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnInitDone(wxInitDialogEvent& event)"
         }
       ],
       "m_children": [
@@ -6767,18 +6747,14 @@
                                                   ],
                                                   "m_events": [
                                                     {
-                                                      "m_description": "Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
                                                       "m_eventClass": "wxCommandEvent",
                                                       "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
-                                                      "m_functionNameAndSignature": "OnSearchCommitList(wxCommandEvent& event)",
-                                                      "m_noBody": false
+                                                      "m_functionNameAndSignature": "OnSearchCommitList(wxCommandEvent& event)"
                                                     },
                                                     {
-                                                      "m_description": "Respond to a wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN event\ngenerated when the search button is clicked. Note that this does not initiate a search.",
                                                       "m_eventClass": "wxCommandEvent",
                                                       "m_eventName": "wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN",
-                                                      "m_functionNameAndSignature": "OnSearchCommitList(wxCommandEvent& event)",
-                                                      "m_noBody": false
+                                                      "m_functionNameAndSignature": "OnSearchCommitList(wxCommandEvent& event)"
                                                     }
                                                   ],
                                                   "m_children": []
@@ -6903,18 +6879,14 @@
                                                   ],
                                                   "m_events": [
                                                     {
-                                                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                                                       "m_eventClass": "wxCommandEvent",
                                                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                                                      "m_functionNameAndSignature": "OnPrevious(wxCommandEvent& event)",
-                                                      "m_noBody": false
+                                                      "m_functionNameAndSignature": "OnPrevious(wxCommandEvent& event)"
                                                     },
                                                     {
-                                                      "m_description": "Process a wxEVT_UPDATE_UI event",
                                                       "m_eventClass": "wxUpdateUIEvent",
                                                       "m_eventName": "wxEVT_UPDATE_UI",
-                                                      "m_functionNameAndSignature": "OnPreviousUI(wxUpdateUIEvent& event)",
-                                                      "m_noBody": false
+                                                      "m_functionNameAndSignature": "OnPreviousUI(wxUpdateUIEvent& event)"
                                                     }
                                                   ],
                                                   "m_children": []
@@ -7040,18 +7012,14 @@
                                                   ],
                                                   "m_events": [
                                                     {
-                                                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                                                       "m_eventClass": "wxCommandEvent",
                                                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                                                      "m_functionNameAndSignature": "OnNext(wxCommandEvent& event)",
-                                                      "m_noBody": false
+                                                      "m_functionNameAndSignature": "OnNext(wxCommandEvent& event)"
                                                     },
                                                     {
-                                                      "m_description": "Process a wxEVT_UPDATE_UI event",
                                                       "m_eventClass": "wxUpdateUIEvent",
                                                       "m_eventName": "wxEVT_UPDATE_UI",
-                                                      "m_functionNameAndSignature": "OnNextUpdateUI(wxUpdateUIEvent& event)",
-                                                      "m_noBody": false
+                                                      "m_functionNameAndSignature": "OnNextUpdateUI(wxUpdateUIEvent& event)"
                                                     }
                                                   ],
                                                   "m_children": []
@@ -7361,18 +7329,14 @@
                                               ],
                                               "m_events": [
                                                 {
-                                                  "m_description": "Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event",
                                                   "m_eventClass": "wxDataViewEvent",
                                                   "m_eventName": "wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
-                                                  "m_functionNameAndSignature": "OnSelectionChanged(wxDataViewEvent& event)",
-                                                  "m_noBody": false
+                                                  "m_functionNameAndSignature": "OnSelectionChanged(wxDataViewEvent& event)"
                                                 },
                                                 {
-                                                  "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
                                                   "m_eventClass": "wxDataViewEvent",
                                                   "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
-                                                  "m_functionNameAndSignature": "OnContextMenu(wxDataViewEvent& event)",
-                                                  "m_noBody": false
+                                                  "m_functionNameAndSignature": "OnContextMenu(wxDataViewEvent& event)"
                                                 }
                                               ],
                                               "m_children": [
@@ -8134,11 +8098,9 @@
                                                           ],
                                                           "m_events": [
                                                             {
-                                                              "m_description": "Process a wxEVT_COMMAND_LISTBOX_SELECTED event, when an item on the list is selected or the selection changes.",
                                                               "m_eventClass": "wxCommandEvent",
                                                               "m_eventName": "wxEVT_COMMAND_LISTBOX_SELECTED",
-                                                              "m_functionNameAndSignature": "OnChangeFile(wxCommandEvent& event)",
-                                                              "m_noBody": false
+                                                              "m_functionNameAndSignature": "OnChangeFile(wxCommandEvent& event)"
                                                             }
                                                           ],
                                                           "m_children": []
@@ -9145,11 +9107,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnBtnClose(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnBtnClose(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -9806,11 +9766,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_LISTBOX_SELECTED event, when an item on the list is selected or the selection changes.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_LISTBOX_SELECTED",
-                              "m_functionNameAndSignature": "OnChangeFile(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnChangeFile(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -10309,11 +10267,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_RADIOBOX_SELECTED event, when a radiobutton is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_RADIOBOX_SELECTED",
-                      "m_functionNameAndSignature": "OnOptionsChanged(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOptionsChanged(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -10417,11 +10373,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                      "m_functionNameAndSignature": "OnOptionsChanged(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOptionsChanged(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -10571,11 +10525,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnChoseCommits(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnChoseCommits(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -11404,11 +11356,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_RADIOBUTTON_SELECTED",
-                              "m_functionNameAndSignature": "OnRadioBranch1Selected(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRadioBranch1Selected(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -11512,18 +11462,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnUpdateUIBranch1(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnUpdateUIBranch1(wxUpdateUIEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_CHOICE_SELECTED",
-                              "m_functionNameAndSignature": "OnBranch1Changed(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnBranch1Changed(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -11626,11 +11572,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_RADIOBUTTON_SELECTED",
-                              "m_functionNameAndSignature": "OnRadioTag1Selected(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRadioTag1Selected(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -11734,11 +11678,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnUpdateUITags1(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnUpdateUITags1(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -11841,11 +11783,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_RADIOBUTTON_SELECTED",
-                              "m_functionNameAndSignature": "OnRadioCommit1Selected(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRadioCommit1Selected(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -11949,11 +11889,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnUpdateUICommit1(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnUpdateUICommit1(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12056,11 +11994,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_RADIOBUTTON_SELECTED",
-                              "m_functionNameAndSignature": "OnRadioUser1Selected(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRadioUser1Selected(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12174,11 +12110,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnUpdateUICommitish1(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnUpdateUICommitish1(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12405,11 +12339,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_RADIOBUTTON_SELECTED",
-                              "m_functionNameAndSignature": "OnRadioBranch2Selected(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRadioBranch2Selected(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12513,11 +12445,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnUpdateUIBranch2(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnUpdateUIBranch2(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12620,11 +12550,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_RADIOBUTTON_SELECTED",
-                              "m_functionNameAndSignature": "OnRadioTag2Selected(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRadioTag2Selected(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12728,11 +12656,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnUpdateUITags2(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnUpdateUITags2(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12835,11 +12761,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_RADIOBUTTON_SELECTED",
-                              "m_functionNameAndSignature": "OnRadioCommit2Selected(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRadioCommit2Selected(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12943,11 +12867,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnUpdateUICommit2(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnUpdateUICommit2(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -13050,11 +12972,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_RADIOBUTTON_SELECTED",
-                              "m_functionNameAndSignature": "OnRadioUser2Selected(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRadioUser2Selected(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -13168,11 +13088,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnUpdateUICommitish2(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnUpdateUICommitish2(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -13517,11 +13435,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_UPDATE_UI event",
                           "m_eventClass": "wxUpdateUIEvent",
                           "m_eventName": "wxEVT_UPDATE_UI",
-                          "m_functionNameAndSignature": "OnTextFirstUI(wxUpdateUIEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnTextFirstUI(wxUpdateUIEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -13917,11 +13833,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_UPDATE_UI event",
                           "m_eventClass": "wxUpdateUIEvent",
                           "m_eventName": "wxEVT_UPDATE_UI",
-                          "m_functionNameAndSignature": "OnTextSecondUI(wxUpdateUIEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnTextSecondUI(wxUpdateUIEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -15212,11 +15126,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -15879,11 +15791,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnCloseDialog(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnCloseDialog(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -15937,11 +15847,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnSaveAsPatch(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnSaveAsPatch(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -17060,12 +16968,13 @@
               "m_events": [],
               "m_children": [
                 {
-                  "m_type": 4442,
+                  "m_type": 4456,
                   "proportion": 1,
-                  "border": 2,
+                  "border": 5,
                   "gbSpan": "1,1",
                   "gbPosition": "0,0",
                   "m_styles": [
+                    "wxAUI_NB_TOP",
                     "wxBK_DEFAULT"
                   ],
                   "m_sizerFlags": [
@@ -17080,7 +16989,7 @@
                     {
                       "type": "string",
                       "m_label": "Size:",
-                      "m_value": "-1,-1"
+                      "m_value": "250,250"
                     },
                     {
                       "type": "string",
@@ -17391,25 +17300,19 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
                                   "m_eventClass": "wxDataViewEvent",
                                   "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
-                                  "m_functionNameAndSignature": "OnContextMenu(wxDataViewEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnContextMenu(wxDataViewEvent& event)"
                                 },
                                 {
-                                  "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                                   "m_eventClass": "wxDataViewEvent",
                                   "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
-                                  "m_functionNameAndSignature": "OnFileActivated(wxDataViewEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnFileActivated(wxDataViewEvent& event)"
                                 },
                                 {
-                                  "m_description": "Process a wxEVT_UPDATE_UI event",
                                   "m_eventClass": "wxUpdateUIEvent",
                                   "m_eventName": "wxEVT_UPDATE_UI",
-                                  "m_functionNameAndSignature": "OnUpdateUI(wxUpdateUIEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnUpdateUI(wxUpdateUIEvent& event)"
                                 }
                               ],
                               "m_children": [
@@ -17797,18 +17700,14 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                                   "m_eventClass": "wxDataViewEvent",
                                   "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
-                                  "m_functionNameAndSignature": "OnUnversionedFileActivated(wxDataViewEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnUnversionedFileActivated(wxDataViewEvent& event)"
                                 },
                                 {
-                                  "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
                                   "m_eventClass": "wxDataViewEvent",
                                   "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
-                                  "m_functionNameAndSignature": "OnUnversionedFileContextMenu(wxDataViewEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnUnversionedFileContextMenu(wxDataViewEvent& event)"
                                 }
                               ],
                               "m_children": [
@@ -20365,11 +20264,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -21340,18 +21237,14 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnChoiceProvidersUpdateUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnChoiceProvidersUpdateUI(wxUpdateUIEvent& event)"
                     },
                     {
-                      "m_description": "Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_CHOICE_SELECTED",
-                      "m_functionNameAndSignature": "OnChoiceProviders(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnChoiceProviders(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -21833,11 +21726,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnButtonokUpdateUi(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButtonokUpdateUi(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []

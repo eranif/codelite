@@ -444,24 +444,16 @@ public:
         UseViewFont(GetView(), dc);
         rect.Deflate(kPadding, 0);
         if (m_withIcon && m_icon.IsOk()) {
-            // The icon is 16x16 DIP, for the DPI of the view. The text of the cell is the path of the file: ask for its
-            // SVG image at the exact size, so it is sharp (scaling a bitmap makes it blurry). If there is no SVG, scale
-            // the icon of the cell
+            // The icon is 16x16 DIP. The text of the cell is the path of the file: ask for the bitmap bundle of the
+            // file and draw the bitmap that matches the scale of the view, so it is sharp. If there is no bundle for
+            // the file, no icon is drawn
             const int side = GetIconSide();
-            wxBitmap bmp;
             const wxBitmapBundle& bundle = clGetManager()->GetStdIcons()->GetBundleForFile(m_text);
             if (bundle.IsOk()) {
-                bmp = bundle.GetBitmap(wxSize(side, side));
-            } else {
-                bmp.CopyFromIcon(m_icon);
-                if (bmp.IsOk() && (bmp.GetWidth() != side || bmp.GetHeight() != side)) {
-                    bmp = wxBitmap(bmp.ConvertToImage().Rescale(side, side, wxIMAGE_QUALITY_BICUBIC));
-                }
-            }
-            if (bmp.IsOk()) {
-                dc->DrawBitmap(bmp, rect.x, rect.y + (rect.height - side) / 2, true);
+                dc->DrawBitmap(bundle.GetBitmapFor(GetView()), rect.x, rect.y + (rect.height - side) / 2, true);
             }
         }
+
         rect.x += GetIconAreaWidth();
         rect.width -= GetIconAreaWidth();
         const wxSize size = dc->GetTextExtent(m_text);

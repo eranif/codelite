@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="1.5" y="1.5" width="13" height="13" rx="1" fill="#b3b3b3" fill-opacity="0.08" stroke="#b3b3b3"/>
-  <rect x="2.2" y="3" width="1.2" height="1.2" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="12.6" y="3" width="1.2" height="1.2" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="2.2" y="6" width="1.2" height="1.2" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="12.6" y="6" width="1.2" height="1.2" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="2.2" y="9" width="1.2" height="1.2" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="12.6" y="9" width="1.2" height="1.2" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="2.2" y="12" width="1.2" height="1.2" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="12.6" y="12" width="1.2" height="1.2" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <path d="M6 4.8L11 8L6 11.2Z" fill="#b3b3b3" stroke="#b3b3b3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" fill="#cfcfcf" fill-opacity="0.22499999999999998" stroke="#cfcfcf"/>
+  <rect x="1.2" y="2" width="1.6" height="1.6" rx="0.3" fill="#cfcfcf" fill-opacity="0.7"/>
+  <rect x="13.2" y="2" width="1.6" height="1.6" rx="0.3" fill="#cfcfcf" fill-opacity="0.7"/>
+  <rect x="1.2" y="5.5" width="1.6" height="1.6" rx="0.3" fill="#cfcfcf" fill-opacity="0.7"/>
+  <rect x="13.2" y="5.5" width="1.6" height="1.6" rx="0.3" fill="#cfcfcf" fill-opacity="0.7"/>
+  <rect x="1.2" y="9" width="1.6" height="1.6" rx="0.3" fill="#cfcfcf" fill-opacity="0.7"/>
+  <rect x="13.2" y="9" width="1.6" height="1.6" rx="0.3" fill="#cfcfcf" fill-opacity="0.7"/>
+  <rect x="1.2" y="12.5" width="1.6" height="1.6" rx="0.3" fill="#cfcfcf" fill-opacity="0.7"/>
+  <rect x="13.2" y="12.5" width="1.6" height="1.6" rx="0.3" fill="#cfcfcf" fill-opacity="0.7"/>
+  <path d="M6 4.5L11.5 8L6 11.5Z" fill="#4ea1ff" stroke="#4ea1ff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

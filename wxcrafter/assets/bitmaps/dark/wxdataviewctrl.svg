@@ -1,11 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="1.5" y="1.5" width="13" height="13" rx="1" fill="#b3b3b3" fill-opacity="0.08" stroke="#58a6ff"/>
-  <path d="M6.5 1.5L6.5 14.5" fill="none" stroke="#58a6ff" stroke-linecap="round" stroke-linejoin="round"/>
-  <rect x="2.5" y="4.0" width="1.5" height="1.5" rx="0" fill="#58a6ff" fill-opacity="0.6" stroke="#58a6ff"/>
-  <path d="M4.8 4.75L5.8 4.75" fill="none" stroke="#7a7a7a" stroke-linecap="round" stroke-linejoin="round"/>
-  <rect x="2.5" y="7.0" width="1.5" height="1.5" rx="0" fill="#58a6ff" fill-opacity="0.6" stroke="#58a6ff"/>
-  <path d="M4.8 7.75L5.8 7.75" fill="none" stroke="#7a7a7a" stroke-linecap="round" stroke-linejoin="round"/>
-  <rect x="2.5" y="10.0" width="1.5" height="1.5" rx="0" fill="#58a6ff" fill-opacity="0.6" stroke="#58a6ff"/>
-  <path d="M4.8 10.75L5.8 10.75" fill="none" stroke="#7a7a7a" stroke-linecap="round" stroke-linejoin="round"/>
-  <rect x="8" y="3.5" width="5" height="9" rx="0.5" fill="#b3b3b3" fill-opacity="0.15" stroke="#7a7a7a"/>
+  <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" fill="#cfcfcf" fill-opacity="0.15" stroke="#cfcfcf"/>
+  <rect x="1" y="1" width="14" height="3" rx="1" fill="#3fc1c9" fill-opacity="0.6"/>
+  <rect x="6" y="1" width="1" height="14" fill="#8c8c8c"/>
+  <rect x="10" y="1" width="1" height="14" fill="#8c8c8c"/>
+  <rect x="2" y="6" width="2.5" height="2" rx="0.3" fill="#4ea1ff"/>
+  <rect x="7" y="7" width="3" height="1" fill="#8c8c8c"/>
+  <rect x="11.4" y="5.9" width="2.2" height="2.2" rx="0.5" fill="none" stroke="#cfcfcf" stroke-width="0.8"/>
+  <rect x="2" y="9" width="2.5" height="2" rx="0.3" fill="#4ea1ff"/>
+  <rect x="7" y="10" width="3" height="1" fill="#8c8c8c"/>
+  <rect x="11.4" y="8.9" width="2.2" height="2.2" rx="0.5" fill="none" stroke="#cfcfcf" stroke-width="0.8"/>
+  <rect x="2" y="12" width="2.5" height="2" rx="0.3" fill="#4ea1ff"/>
+  <rect x="7" y="13" width="3" height="1" fill="#8c8c8c"/>
+  <rect x="11.4" y="11.9" width="2.2" height="2.2" rx="0.5" fill="none" stroke="#cfcfcf" stroke-width="0.8"/>
+  <path d="M11.6 6.9L12.4 7.7L13.6 6.2" fill="none" stroke="#5ec26a" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

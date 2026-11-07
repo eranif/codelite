@@ -1,10 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <circle cx="8" cy="8" r="6.5" fill="#b3b3b3" fill-opacity="0.45" stroke="#7a7a7a"/>
-  <rect x="4" y="5" width="1.6" height="1.6" rx="0" fill="#b3b3b3" fill-opacity="0.9"/>
-  <rect x="7" y="4" width="1.6" height="1.6" rx="0" fill="#b3b3b3" fill-opacity="0.9"/>
-  <rect x="10" y="6" width="1.6" height="1.6" rx="0" fill="#b3b3b3" fill-opacity="0.9"/>
-  <rect x="5" y="8" width="1.6" height="1.6" rx="0" fill="#b3b3b3" fill-opacity="0.9"/>
-  <rect x="9" y="9" width="1.6" height="1.6" rx="0" fill="#b3b3b3" fill-opacity="0.9"/>
-  <rect x="6" y="11" width="1.6" height="1.6" rx="0" fill="#b3b3b3" fill-opacity="0.9"/>
-  <rect x="11" y="11" width="1.6" height="1.6" rx="0" fill="#b3b3b3" fill-opacity="0.9"/>
+  <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" fill="#cfcfcf" fill-opacity="0.15" stroke="#cfcfcf"/>
+  <rect x="1" y="1" width="3" height="14" fill="#cfcfcf" fill-opacity="0.15"/>
+  <rect x="1.8" y="2.5" width="1.4" height="1.4" fill="#8c8c8c"/>
+  <rect x="5" y="2.5" width="3" height="1.6" rx="0.5" fill="#b98cf0" fill-opacity="0.95"/>
+  <rect x="9" y="2.5" width="5" height="1.6" rx="0.5" fill="#cfcfcf" fill-opacity="0.95"/>
+  <rect x="1.8" y="5.7" width="1.4" height="1.4" fill="#8c8c8c"/>
+  <rect x="6" y="5.7" width="4" height="1.6" rx="0.5" fill="#4ea1ff" fill-opacity="0.95"/>
+  <rect x="11" y="5.7" width="3" height="1.6" rx="0.5" fill="#cfcfcf" fill-opacity="0.95"/>
+  <rect x="1.8" y="8.9" width="1.4" height="1.4" fill="#8c8c8c"/>
+  <rect x="6" y="8.9" width="7" height="1.6" rx="0.5" fill="#5ec26a" fill-opacity="0.95"/>
+  <rect x="1.8" y="12.1" width="1.4" height="1.4" fill="#8c8c8c"/>
+  <rect x="5" y="12.1" width="2" height="1.6" rx="0.5" fill="#b98cf0" fill-opacity="0.95"/>
+  <rect x="8" y="12.1" width="4" height="1.6" rx="0.5" fill="#ff9440" fill-opacity="0.95"/>
 </svg>

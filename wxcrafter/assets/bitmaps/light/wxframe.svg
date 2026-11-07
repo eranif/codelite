@@ -1,7 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="1.5" y="1.5" width="13" height="13" rx="1" fill="#4d4d4d" fill-opacity="0.12" stroke="#4d4d4d"/>
-  <path d="M1.5 4.5L14.5 4.5" fill="none" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="3.5" cy="3" r="0.5" fill="#d6352b" stroke="#d6352b"/>
-  <circle cx="5.5" cy="3" r="0.5" fill="#d9a21b" stroke="#d9a21b"/>
-  <circle cx="7.5" cy="3" r="0.5" fill="#3d9a2b" stroke="#3d9a2b"/>
+  <rect x="0.5" y="0.5" width="15" height="15" rx="2" fill="#4a4a4a" fill-opacity="0.15" stroke="#4a4a4a"/>
+  <rect x="1" y="1" width="14" height="3" rx="1" fill="#1a73d9" fill-opacity="0.85"/>
+  <circle cx="3" cy="2.5" r="0.9" fill="#d93a32"/>
+  <circle cx="5.5" cy="2.5" r="0.9" fill="#e8ac00"/>
+  <circle cx="8" cy="2.5" r="0.9" fill="#2e9e44"/>
+  <rect x="1" y="5" width="14" height="1" fill="#8f8f8f"/>
+  <rect x="2" y="7" width="3" height="1" fill="#8f8f8f"/>
+  <rect x="6" y="7" width="3" height="1" fill="#8f8f8f"/>
 </svg>

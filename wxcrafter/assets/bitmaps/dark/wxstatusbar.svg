@@ -1,9 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="1.5" y="1.5" width="13" height="13" rx="1" fill="#b3b3b3" fill-opacity="0.08" stroke="#b3b3b3"/>
-  <rect x="11" y="6" width="1.4" height="1.4" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="9" y="9" width="1.4" height="1.4" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="11" y="9" width="1.4" height="1.4" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="7" y="12" width="1.4" height="1.4" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="9" y="12" width="1.4" height="1.4" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
-  <rect x="11" y="12" width="1.4" height="1.4" rx="0" fill="#b3b3b3" fill-opacity="0.7"/>
+  <rect x="0.5" y="0.5" width="15" height="15" rx="2" fill="#cfcfcf" fill-opacity="0.15" stroke="#cfcfcf"/>
+  <rect x="1" y="1" width="14" height="3" rx="1" fill="#4ea1ff" fill-opacity="0.85"/>
+  <rect x="1" y="11" width="14" height="4" rx="0.8" fill="#cfcfcf" fill-opacity="0.3"/>
+  <rect x="7" y="11" width="1" height="4" fill="#8c8c8c"/>
+  <rect x="11" y="11" width="1" height="4" fill="#8c8c8c"/>
+  <rect x="2" y="12.5" width="4" height="1" fill="#cfcfcf"/>
+  <rect x="14" y="12.5" width="0.8" height="0.8" fill="#cfcfcf"/>
+  <rect x="13" y="13.5" width="0.8" height="0.8" fill="#cfcfcf"/>
+  <rect x="14" y="13.5" width="0.8" height="0.8" fill="#cfcfcf"/>
 </svg>

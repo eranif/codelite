@@ -1,7 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="1.5" y="1.5" width="13" height="13" rx="0.5" fill="none" stroke="#4d4d4d"/>
-  <path d="M1.5 7L14.5 7" fill="none" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M8 1.5L8 14.5" fill="none" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M8 4.2L14.5 4.2" fill="none" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M4.5 7L4.5 14.5" fill="none" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="0.5" y="0.5" width="15" height="15" fill="none" stroke="#4a4a4a"/>
+  <rect x="1" y="1" width="14" height="4" fill="#1a73d9" fill-opacity="0.35"/>
+  <rect x="1" y="6" width="4" height="9" fill="#2e9e44" fill-opacity="0.44999999999999996"/>
+  <rect x="6" y="6" width="9" height="4" fill="#1a73d9" fill-opacity="0.21"/>
+  <rect x="6" y="11" width="4" height="4" fill="#1a73d9" fill-opacity="0.21"/>
+  <rect x="11" y="11" width="4" height="4" fill="#1a73d9" fill-opacity="0.21"/>
+  <path d="M1 5.5H15M5.5 6V15M6 10.5H15M10.5 11V15" fill="none" stroke="#4a4a4a"/>
 </svg>

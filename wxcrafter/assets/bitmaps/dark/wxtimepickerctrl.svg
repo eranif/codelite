@@ -1,4 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <circle cx="8" cy="8" r="6.5" fill="none" stroke="#b3b3b3"/>
-  <path d="M8 3.5V8.5L11.5 10.5" fill="none" stroke="#b3b3b3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="8" cy="8" r="7.2" fill="#cfcfcf" fill-opacity="0.15" stroke="#cfcfcf" stroke-width="1.4"/>
+  <path d="M12.6 8.0L14.0 8.0" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 10.6L13.2 11.0" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10.6 12.5L11.0 13.2" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M8.0 12.6L8.0 14.0" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M5.4 12.5L5.0 13.2" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M3.5 10.6L2.8 11.0" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M3.4 8.0L2.0 8.0" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M3.5 5.4L2.8 5.0" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M5.4 3.5L5.0 2.8" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M8.0 3.4L8.0 2.0" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10.6 3.5L11.0 2.8" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 5.4L13.2 5.0" fill="none" stroke="#8c8c8c" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M8 3.8V8L11 9.8" fill="none" stroke="#4ea1ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="8" cy="8" r="1" fill="#cfcfcf"/>
 </svg>

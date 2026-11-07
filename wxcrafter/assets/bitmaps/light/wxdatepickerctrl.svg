@@ -1,10 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="1.5" y="2.5" width="11" height="10" rx="1" fill="#4d4d4d" fill-opacity="0.08" stroke="#4d4d4d"/>
-  <rect x="1.5" y="2.5" width="11" height="2.5" rx="1" fill="#d6352b" fill-opacity="0.6" stroke="#d6352b"/>
-  <path d="M4 1L4 3.5" fill="none" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M10 1L10 3.5" fill="none" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M3.5 7.0L9.5 7.0" fill="none" stroke="#9a9a9a" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M3.5 9.5L9.5 9.5" fill="none" stroke="#9a9a9a" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="10.5" cy="10.5" r="2.5" fill="#1f6fc0" fill-opacity="0.2" stroke="#1f6fc0"/>
-  <path d="M12.3 12.3L14.5 14.5" fill="none" stroke="#1f6fc0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="0.5" y="2.5" width="15" height="11" rx="1.5" fill="#4a4a4a" fill-opacity="0.15" stroke="#4a4a4a"/>
+  <rect x="2" y="8" width="2" height="1" fill="#4a4a4a"/>
+  <rect x="5" y="8" width="2" height="1" fill="#4a4a4a"/>
+  <rect x="8" y="8" width="2" height="1" fill="#4a4a4a"/>
+  <rect x="9.5" y="3.5" width="5" height="9" rx="1" fill="#ffffff" fill-opacity="0.9" stroke="#4a4a4a"/>
+  <rect x="9.5" y="3.5" width="5" height="2.5" rx="0.7" fill="#d93a32"/>
+  <rect x="10.5" y="7.5" width="1.2" height="1.2" fill="#3a3a3a" fill-opacity="0.8"/>
+  <rect x="10.5" y="10" width="1.2" height="1.2" fill="#3a3a3a" fill-opacity="0.8"/>
+  <rect x="12.5" y="7.5" width="1.2" height="1.2" fill="#3a3a3a" fill-opacity="0.8"/>
+  <rect x="12.5" y="10" width="1.2" height="1.2" fill="#3a3a3a" fill-opacity="0.8"/>
 </svg>

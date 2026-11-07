@@ -1,5 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="1.5" y="1.5" width="13" height="13" rx="1" fill="#4d4d4d" fill-opacity="0.12" stroke="#4d4d4d"/>
-  <rect x="6.5" y="1.5" width="3" height="13" rx="0" fill="#1f6fc0" fill-opacity="0.3" stroke="#9a9a9a"/>
-  <path d="M8 6L8 10" fill="none" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" fill="#4a4a4a" fill-opacity="0.15" stroke="#4a4a4a"/>
+  <rect x="6" y="1" width="4" height="14" fill="#1a73d9" fill-opacity="0.5"/>
+  <path d="M7 8H9" fill="none" stroke="#4a4a4a" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M6.5 6.5L6.5 9.5L5 8Z" fill="#4a4a4a"/>
+  <path d="M9.5 6.5L9.5 9.5L11 8Z" fill="#4a4a4a"/>
+  <rect x="2" y="4" width="3" height="1" fill="#8f8f8f"/>
+  <rect x="2" y="7" width="3" height="1" fill="#8f8f8f"/>
+  <rect x="2" y="10" width="3" height="1" fill="#8f8f8f"/>
+  <rect x="11" y="4" width="3" height="1" fill="#8f8f8f"/>
+  <rect x="11" y="7" width="3" height="1" fill="#8f8f8f"/>
+  <rect x="11" y="10" width="3" height="1" fill="#8f8f8f"/>
 </svg>

@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="1.5" y="2.5" width="13" height="11" rx="1" fill="#4d4d4d" fill-opacity="0.12" stroke="#4d4d4d"/>
-  <path d="M1.5 5.5L14.5 5.5" fill="none" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="3.5" cy="4" r="0.5" fill="#1f6fc0" stroke="#1f6fc0"/>
-  <rect x="3" y="9.5" width="4" height="2.5" rx="0.5" fill="#1f6fc0" fill-opacity="0.35" stroke="#1f6fc0"/>
-  <rect x="9" y="9.5" width="4" height="2.5" rx="0.5" fill="#4d4d4d" fill-opacity="0.12" stroke="#9a9a9a"/>
+  <rect x="0.5" y="0.5" width="15" height="15" rx="2" fill="#4a4a4a" fill-opacity="0.15" stroke="#4a4a4a"/>
+  <rect x="1" y="1" width="14" height="3" rx="1" fill="#1a73d9" fill-opacity="0.85"/>
+  <rect x="3" y="7" width="10" height="1" fill="#8f8f8f"/>
+  <rect x="3" y="9" width="10" height="1" fill="#8f8f8f"/>
+  <rect x="3.5" y="11.5" width="4" height="2" rx="0.8" fill="#1a73d9" fill-opacity="0.7" stroke="#1a73d9"/>
+  <rect x="9.5" y="11.5" width="4" height="2" rx="0.8" fill="#4a4a4a" fill-opacity="0.15" stroke="#8f8f8f"/>
 </svg>

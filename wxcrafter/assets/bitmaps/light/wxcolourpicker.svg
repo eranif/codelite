@@ -1,9 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="1.5" y="1.5" width="3.5" height="3.5" rx="0.5" fill="#1f6fc0" fill-opacity="0.7" stroke="#1f6fc0"/>
-  <rect x="6" y="1.5" width="3.5" height="3.5" rx="0.5" fill="#8a5fb0" fill-opacity="0.7" stroke="#8a5fb0"/>
-  <rect x="10.5" y="1.5" width="3.5" height="3.5" rx="0.5" fill="#3d9a2b" fill-opacity="0.7" stroke="#3d9a2b"/>
-  <rect x="1.5" y="5.5" width="3.5" height="3.5" rx="0.5" fill="#d9a21b" fill-opacity="0.7" stroke="#d9a21b"/>
-  <rect x="1.5" y="9.5" width="3.5" height="3.5" rx="0.5" fill="#8a5fb0" fill-opacity="0.7" stroke="#8a5fb0"/>
-  <rect x="6" y="5.5" width="3.5" height="3.5" rx="0.5" fill="#d6352b" fill-opacity="0.7" stroke="#d6352b"/>
-  <path d="M9 8L9 14L10.8 12.4L12.2 15L13.4 14.4L12 11.8L14.5 11.5Z" fill="#4d4d4d" fill-opacity="0.5" stroke="#4d4d4d" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="0" y="0" width="4.5" height="4.5" rx="1" fill="#d93a32"/>
+  <rect x="5.5" y="0" width="4.5" height="4.5" rx="1" fill="#ec6d12"/>
+  <rect x="11" y="0" width="4.5" height="4.5" rx="1" fill="#e8ac00"/>
+  <rect x="0" y="5.5" width="4.5" height="4.5" rx="1" fill="#2e9e44"/>
+  <rect x="5.5" y="5.5" width="4.5" height="4.5" rx="1" fill="#128f99"/>
+  <rect x="11" y="5.5" width="4.5" height="4.5" rx="1" fill="#1a73d9"/>
+  <rect x="0" y="11" width="4.5" height="4.5" rx="1" fill="#8455c9"/>
+  <rect x="5.5" y="11" width="4.5" height="4.5" rx="1" fill="#4a4a4a"/>
+  <rect x="11" y="11" width="4.5" height="4.5" rx="1" fill="#8f8f8f"/>
+  <rect x="5.1" y="5.1" width="5.3" height="5.3" rx="1.5" fill="none" stroke="#4a4a4a" stroke-width="1.2"/>
 </svg>

@@ -26,6 +26,7 @@
 #define SHELLTAB_H
 
 #include "OutputDebugStringThread.h"
+#include "clToolBar.h"
 #include "clWorkspaceEvent.hpp"
 #include "outputtabwindow.h"
 

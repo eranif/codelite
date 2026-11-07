@@ -58,10 +58,9 @@ EVT_STC_HOTSPOT_CLICK(wxID_ANY, OutputTabWindow::OnHotspotClicked)
 EVT_STC_MARGINCLICK(wxID_ANY, OutputTabWindow::OnMarginClick)
 END_EVENT_TABLE()
 
-OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString& name, bool useAuiToolBar)
+OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString& name)
     : wxPanel(parent, id)
     , m_name(name)
-    , m_tb(nullptr)
     , m_sci(nullptr)
     , m_outputScrolls(true)
     , m_autoAppear(true)
@@ -69,7 +68,7 @@ OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString
     , m_errorsFirstLine(false)
 {
     m_styler = std::make_unique<clFindResultsStyler>();
-    CreateGUIControls(useAuiToolBar);
+    CreateGUIControls();
     wxTheApp->Connect(
         wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), nullptr, this);
     wxTheApp->Connect(
@@ -169,7 +168,7 @@ void OutputTabWindow::InitStyle(wxStyledTextCtrl* sci, int lexer, bool folding)
     sci->SetReadOnly(true);
 }
 
-void OutputTabWindow::CreateGUIControls(bool useAuiToolBar)
+void OutputTabWindow::CreateGUIControls()
 {
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
@@ -194,36 +193,8 @@ void OutputTabWindow::CreateGUIControls(bool useAuiToolBar)
     mainSizer->Add(m_vSizer, 1, wxEXPAND | wxALL, 0);
 
     // Create the toolbar
-    if (useAuiToolBar) {
-        CreateAuiToolBar();
-        m_vSizer->Add(m_auiTb, 0, wxEXPAND);
-    } else {
-        m_tb = new clToolBar(this);
-        auto images = m_tb->GetBitmapsCreateIfNeeded();
-        m_tb->AddTool(XRCID("hold_pane_open"),
-                      _("Keep open"),
-                      images->Add("ToolPin"),
-                      _("Don't close this pane when an editor gets focus"),
-                      wxITEM_CHECK);
-
-        m_tb->AddTool(XRCID("scroll_on_output"),
-                      _("Scroll on Output"),
-                      images->Add("link_editor"),
-                      _("Scroll on Output"),
-                      wxITEM_CHECK);
-        m_tb->ToggleTool(XRCID("scroll_on_output"), m_outputScrolls);
-
-        m_tb->AddTool(
-            XRCID("word_wrap_output"), _("Word Wrap"), images->Add("word_wrap"), _("Word Wrap"), wxITEM_CHECK);
-
-        m_tb->AddTool(XRCID("clear_all_output"), _("Clear All"), images->Add("clear"), _("Clear All"));
-        m_tb->AddTool(XRCID("collapse_all"), _("Fold All Results"), images->Add("fold"), _("Fold All Results"));
-        m_tb->AddTool(XRCID("repeat_output"), _("Repeat"), images->Add("debugger_restart"), _("Repeat"));
-
-        m_tb->Realize();
-
-        m_vSizer->Add(m_tb, 0, wxEXPAND);
-    }
+    CreateAuiToolBar();
+    m_vSizer->Add(m_auiTb, 0, wxEXPAND);
     m_vSizer->Add(m_sci, 1, wxEXPAND);
 
     // Hide the find bar by default

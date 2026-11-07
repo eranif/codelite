@@ -58,7 +58,7 @@ EVT_UPDATE_UI(XRCID("hold_pane_open"), FindResultsTab::OnHoldOpenUpdateUI)
 END_EVENT_TABLE()
 
 FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name)
-    : OutputTabWindow(parent, id, name, true)
+    : OutputTabWindow(parent, id, name)
     , m_searchInProgress(false)
 {
     // A line that describes the search (and, when it ends, its summary), below the toolbar

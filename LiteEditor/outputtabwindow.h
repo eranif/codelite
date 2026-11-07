@@ -26,7 +26,6 @@
 #define __outputtabwindow__
 
 #include "clFindResultsStyler.h"
-#include "clToolBar.h"
 
 #include <wx/aui/auibar.h>
 #include <wx/panel.h>
@@ -39,7 +38,6 @@ class OutputTabWindow : public wxPanel
 {
 protected:
     wxString m_name;
-    clToolBar* m_tb; // Null when the window uses a wxAuiToolBar (m_auiTb)
     wxAuiToolBar* m_auiTb = nullptr;
     wxStyledTextCtrl* m_sci;
     bool m_outputScrolls;
@@ -52,8 +50,8 @@ protected:
     static void DefineMarker(wxStyledTextCtrl* sci, int marker, int markerType, wxColor fore, wxColor back);
     static void InitStyle(wxStyledTextCtrl* sci, int lexer, bool folding);
 
-    void CreateGUIControls(bool useAuiToolBar);
-    /// Create the toolbar with the common tools as a wxAuiToolBar (it sends wxEVT_TOOL events to this window)
+    void CreateGUIControls();
+    /// Create the toolbar with the common tools (it sends wxEVT_TOOL events to this window)
     void CreateAuiToolBar();
     virtual bool IsFocused();
 
@@ -81,8 +79,7 @@ protected:
     DECLARE_EVENT_TABLE()
 
 public:
-    /// With `useAuiToolBar` the window has a wxAuiToolBar (m_auiTb) instead of a clToolBar (m_tb)
-    OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString& name, bool useAuiToolBar = false);
+    OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString& name);
     ~OutputTabWindow() override;
 
     virtual void Clear();

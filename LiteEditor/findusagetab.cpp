@@ -821,8 +821,6 @@ void FindUsageTab::UpdateStyle()
     // The font of the editor, with the size of the font of the system, a bit bigger
     if (auto lexer = ColoursAndFontsManager::Get().GetLexer("c++")) {
         wxFont font = lexer->GetFontForStyle(0, this);
-        font.SetFractionalPointSize(font.GetFractionalPointSize() * 0.8);
-        m_dvFiles->SetFont(font);
         m_dvMatches->SetFont(font);
     }
 

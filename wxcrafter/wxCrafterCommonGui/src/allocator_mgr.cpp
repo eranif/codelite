@@ -120,7 +120,11 @@ Allocator* Allocator::ms_instance = nullptr;
 
 namespace
 {
-wxImageList* CreateAllocatorImageList() { return new wxImageList(16, 16, true); }
+wxImageList* CreateAllocatorImageList()
+{
+    return new wxImageList(
+        wxCrafter::ResourceLoader::GetDefaultSize().x, wxCrafter::ResourceLoader::GetDefaultSize().y, true);
+}
 
 int AddImageToAllocator(wxImageList* list, const wxCrafter::ResourceLoader& loader, const wxString& bmpName)
 {

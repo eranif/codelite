@@ -4,7 +4,6 @@
 #include "clSystemSettings.h"
 #include "wxc_project_metadata.h"
 
-#include <wx/app.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 
@@ -16,15 +15,7 @@ std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_bitmaps;
 namespace
 {
 
-wxSize GetDefaultSize()
-{
-    static std::optional<wxSize> defaultSize{std::nullopt};
-    if (!defaultSize) {
-        auto* frame = wxTheApp->GetTopWindow();
-        defaultSize = frame ? frame->FromDIP(wxSize(16, 16)) : wxSize(16, 16);
-    }
-    return *defaultSize;
-}
+wxSize GetDefaultSize() { return wxCrafter::ResourceLoader::GetDefaultSize(); }
 
 void LoadImages(const wxString& skin,
                 std::map<wxString, std::string>& svgsDark,
@@ -77,6 +68,9 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
         LoadImages(skin, m_svgsDark, m_svgsLight);
     }
 }
+
+// 16x16 DIP in physical pixels (does not depend on any window, so it is safe to call early)
+wxSize wxCrafter::ResourceLoader::GetDefaultSize() { return wxWindow::FromDIP(wxSize(16, 16), nullptr); }
 
 wxBitmapBundle wxCrafter::ResourceLoader::Bundle(const wxString& name) const
 {

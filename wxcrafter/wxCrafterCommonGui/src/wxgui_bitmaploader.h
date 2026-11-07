@@ -7,6 +7,7 @@
 #include <wx/bmpbndl.h>
 #include <wx/filename.h>
 #include <wx/string.h>
+#include <wx/window.h>
 
 namespace wxCrafter
 {
@@ -25,6 +26,9 @@ protected:
 public:
     ResourceLoader(const wxString& skin = wxT("wxgui"));
     virtual ~ResourceLoader() = default;
+
+    /// The size of the images in pixels: 16x16 DIP
+    static wxSize GetDefaultSize();
 
     /// The image as a bitmap of 16x16 (a null bitmap if there is no such image)
     const wxBitmap& Bitmap(const wxString& name) const;

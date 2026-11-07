@@ -101,8 +101,8 @@ protected:
     void OnSizerFlagsChanged(wxPropertyGridEvent& event) override;
     void OnStylesChanged(wxPropertyGridEvent& event) override;
     virtual void OnNewFormUI(wxUpdateUIEvent& event);
-    void OnCppBookPageChanged(wxBookCtrlEvent& event) override;
-    void OnPageChanged(wxBookCtrlEvent& event) override;
+    void OnCppBookPageChanged(wxAuiNotebookEvent& event) override;
+    void OnPageChanged(wxAuiNotebookEvent& event) override;
 
     void DoDismissFindBar();
     bool IsTreeViewSelected() const;
@@ -146,13 +146,13 @@ protected:
                         const wxTreeItemId& targetItem,
                         wxcWidget* sourceItemData = nullptr,
                         bool insertBefore = true);
-    void DoAppendItem(const wxTreeItemId& sourceItem, const wxTreeItemId& targetItem, wxcWidget* sourceItemData = nullptr);
+    void
+    DoAppendItem(const wxTreeItemId& sourceItem, const wxTreeItemId& targetItem, wxcWidget* sourceItemData = nullptr);
     void DoChangeOrInsertIntoSizer(int id);
     wxArrayString GetCustomControlsUsed() const;
     wxTreeItemId DoFindItemByWxcWidget(wxcWidget* widget, const wxTreeItemId& item) const;
 
 public:
-
     /**
      * @brief generate the code for the current project
      * @param interactionMode disable or show all dialog messages

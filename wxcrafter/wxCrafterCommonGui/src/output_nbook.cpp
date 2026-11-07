@@ -1,7 +1,6 @@
 #include "output_nbook.h"
 
 #include "UI/wxguicraft_main_view.h"
-#include "event_notifier.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
@@ -13,13 +12,10 @@
 #include <wx/textctrl.h>
 #include <wx/xml/xml.h>
 
-OutputNBook::OutputNBook(
-    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
-    : wxNotebook(parent, id, pos, size, style, name)
+namespace OutputNBook
 {
-}
 
-void OutputNBook::CppPageSelected(wxStyledTextCtrl* cpptext, wxStyledTextCtrl* headertext) const
+void CppPageSelected([[maybe_unused]] wxAuiNotebook* book, wxStyledTextCtrl* cpptext, wxStyledTextCtrl* headertext)
 {
     wxArrayString headers;
     wxString cpp, header;
@@ -63,7 +59,7 @@ void OutputNBook::CppPageSelected(wxStyledTextCtrl* cpptext, wxStyledTextCtrl* h
     headertext->SetReadOnly(true);
 }
 
-void OutputNBook::XrcPageSelected(wxStyledTextCtrl* text) const
+void XrcPageSelected([[maybe_unused]] wxAuiNotebook* book, wxStyledTextCtrl* text)
 {
     wxString output;
     GUICraftMainPanel::m_MainPanel->GenerateXrcOutput(output, true);
@@ -80,3 +76,4 @@ void OutputNBook::XrcPageSelected(wxStyledTextCtrl* text) const
     text->SetText(out.GetString());
     text->SetReadOnly(true);
 }
+} // namespace OutputNBook

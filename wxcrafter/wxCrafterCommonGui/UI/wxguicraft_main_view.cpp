@@ -12,6 +12,7 @@
 #include "UI/PropertiesView/properties_sheet.h"
 #include "UI/ToolBoxPanel.h"
 #include "allocator_mgr.h"
+#include "clAuiBook.hpp"
 #include "cl_command_event.h"
 #include "controls/Containers/notebook_base_wrapper.h"
 #include "controls/Containers/notebook_page_wrapper.h"
@@ -28,6 +29,7 @@
 #include "frame_wrapper.h"
 #include "globals.h"
 #include "mainFrame.h"
+#include "output_nbook.h"
 #include "panel_wrapper_top_level.h"
 #include "popup_window_wrapper.h"
 #include "wizard_wrapper.h"
@@ -761,6 +763,9 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, MainFrame* mainFrame, clT
 #if defined(__WXMSW__) || defined(__WXOSX__)
     wxToolTip::SetDelay(100);
 #endif
+
+    clAuiBook::ApplyTabArt(m_mainBook);
+    clAuiBook::ApplyTabArt(m_notebookCpp);
 
     wxcSettings::Get().Load();
     wxCrafter::ResourceLoader bmps;
@@ -3377,7 +3382,7 @@ wxArrayString GUICraftMainPanel::GetCustomControlsUsed() const
     return customControls;
 }
 
-void GUICraftMainPanel::OnPageChanged(wxBookCtrlEvent& event)
+void GUICraftMainPanel::OnPageChanged(wxAuiNotebookEvent& event)
 {
     event.Skip();
     DoUpdateCppPreview();
@@ -3397,10 +3402,10 @@ void GUICraftMainPanel::DoUpdateCppPreview()
     int sel = m_mainBook->GetSelection();
     if (sel == 1) { // C++
         event.SetClientData(m_notebookCpp->GetSelection() == 0 ? m_textCtrlCppSource : m_textCtrlHeaderSource);
-        m_mainBook->CppPageSelected(m_textCtrlCppSource, m_textCtrlHeaderSource);
+        OutputNBook::CppPageSelected(m_mainBook, m_textCtrlCppSource, m_textCtrlHeaderSource);
 
     } else if (sel == 2) { // XRC
-        m_mainBook->XrcPageSelected(m_textCtrlXrc);
+        OutputNBook::XrcPageSelected(m_mainBook, m_textCtrlXrc);
         event.SetClientData(m_textCtrlXrc);
 
     } else {
@@ -3426,7 +3431,7 @@ void GUICraftMainPanel::OnFindBar(clFindEvent& e)
     }
 }
 
-void GUICraftMainPanel::OnCppBookPageChanged(wxBookCtrlEvent& event)
+void GUICraftMainPanel::OnCppBookPageChanged(wxAuiNotebookEvent& event)
 {
     event.Skip();
     // Force the user to re-open the 'find-bar'

@@ -288,29 +288,106 @@ void clAuiBook::UpdatePreferences()
     Refresh();
 }
 
-void clAuiBook::ApplyTabArt(wxAuiNotebook* book, const wxColour& outlineColour)
-{
-    bool useFallbackArt{true};
 #if wxCHECK_VERSION(3, 3, 0)
-    if (auto lexer = ColoursAndFontsManager::Get().GetLexer("text"); lexer != nullptr) {
+namespace
+{
+/// GlyphTabArt that follows the colours of the editor: when the theme or the settings of the editor change, it gives
+/// its notebook a new art (a GlyphTabArt does not follow the system colours). Only the art that is owned by the
+/// notebook listens to the events: the copies that wxAuiNotebook gives to its tab controls (Clone()) are plain
+/// GlyphTabArt objects.
+class clGlyphTabArt : public GlyphTabArt
+{
+public:
+    /// Create an art for `book`, or return nullptr if the colours of the editor are not available.
+    /// `outlineColour`: the outline of the current tab, or an invalid colour for the default one
+    /// `followTheme`: when true, the art replaces itself when the theme or the editor settings change. Use false if the
+    /// owner of the notebook updates the art by itself (otherwise the two updates may overwrite each other)
+    static clGlyphTabArt* Create(wxAuiNotebook* book, const wxColour& outlineColour, bool followTheme)
+    {
+        auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+        if (lexer == nullptr) {
+            return nullptr;
+        }
         auto theme = lexer->AsTerminalTheme();
-        auto* art = new GlyphTabArt(theme, GlyphTabArt::Style::Browser);
+        auto* art = new clGlyphTabArt(book, theme, outlineColour, followTheme);
         art->SetOutlineColour(outlineColour.IsOk()
                                   ? outlineColour
                                   : (lexer->IsDark() ? theme.bg.ChangeLightness(120) : theme.bg.ChangeLightness(80)));
+        return art;
+    }
+
+    /// The destructor runs inside SetArtProvider() of the notebook (it deletes the previous art), also when the art is
+    /// replaced twice in a row: the events are unbound there, so a deleted art never gets an event
+    ~clGlyphTabArt() override
+    {
+        EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clGlyphTabArt::OnSysColoursChanged, this);
+        EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &clGlyphTabArt::OnEditorSettingsChanged, this);
+    }
+
+private:
+    clGlyphTabArt(wxAuiNotebook* book, const wxTerminalTheme& theme, const wxColour& outlineColour, bool followTheme)
+        : GlyphTabArt(theme, Style::Browser)
+        , m_book{book}
+        , m_outlineColour{outlineColour}
+    {
+        if (followTheme) {
+            EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clGlyphTabArt::OnSysColoursChanged, this);
+            EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &clGlyphTabArt::OnEditorSettingsChanged, this);
+        }
+    }
+
+    void OnSysColoursChanged(clCommandEvent& event)
+    {
+        event.Skip();
+        ReplaceArt();
+    }
+
+    void OnEditorSettingsChanged(wxCommandEvent& event)
+    {
+        event.Skip();
+        ReplaceArt();
+    }
+
+    /// Give the notebook a new art. This art is deleted by SetArtProvider(), so it is done after the event handler
+    /// returns (the lambda does not use `this`). The editor settings and the system colours usually change together:
+    /// queue only one update
+    void ReplaceArt()
+    {
+        if (m_updatePending) {
+            return;
+        }
+        m_updatePending = true;
+        wxAuiNotebook* book = m_book;
+        const wxColour outlineColour = m_outlineColour;
+        book->CallAfter([book, outlineColour]() {
+            clAuiBook::ApplyTabArt(book, outlineColour, true);
+            book->Refresh();
+            book->SendSizeEvent();
+        });
+    }
+
+    wxAuiNotebook* m_book{nullptr};
+    wxColour m_outlineColour;
+    bool m_updatePending{false}; // The art is deleted when the update is done, so the flag is never cleared
+};
+} // namespace
+#endif // wxCHECK_VERSION(3, 3, 0)
+
+void clAuiBook::ApplyTabArt(wxAuiNotebook* book, const wxColour& outlineColour, bool followTheme)
+{
+#if wxCHECK_VERSION(3, 3, 0)
+    if (auto* art = clGlyphTabArt::Create(book, outlineColour, followTheme)) {
         book->SetArtProvider(art);
-        useFallbackArt = false;
+        return;
     }
 #endif
 
-    if (useFallbackArt) {
-        wxFont font = clTabRenderer::GetTabFont(false);
-        auto art = new clAuiFlatTabArt();
-        art->SetMeasuringFont(font);
-        art->SetNormalFont(font);
-        art->SetSelectedFont(font);
-        book->SetArtProvider(art);
-    }
+    wxFont font = clTabRenderer::GetTabFont(false);
+    auto art = new clAuiFlatTabArt();
+    art->SetMeasuringFont(font);
+    art->SetNormalFont(font);
+    art->SetSelectedFont(font);
+    book->SetArtProvider(art);
 }
 
 void clAuiBook::SetBookArt() { ApplyTabArt(this); }

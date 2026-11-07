@@ -64,7 +64,10 @@ public:
     /// @param book The notebook to update
     /// @param outlineColour The colour of the outline of the current tab. If not valid, the colour is calculated from
     /// the background colour of the editor. Used with wxWidgets 3.3 and later only
-    static void ApplyTabArt(wxAuiNotebook* book, const wxColour& outlineColour = wxNullColour);
+    /// @param followTheme When true (wxWidgets 3.3 and later), the art replaces itself when the theme or the settings of
+    /// the editor change. Pass false if the caller updates the art by itself (the outline colour is then the one of the
+    /// caller)
+    static void ApplyTabArt(wxAuiNotebook* book, const wxColour& outlineColour = wxNullColour, bool followTheme = true);
 
 protected:
     void OnPageClosed(wxAuiNotebookEvent& event);

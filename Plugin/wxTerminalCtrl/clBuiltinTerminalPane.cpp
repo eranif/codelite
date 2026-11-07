@@ -1089,7 +1089,9 @@ void clBuiltinTerminalPane::OnEditorColoursUpdated(clCommandEvent& event)
 void clBuiltinTerminalPane::UpdateTabArt(const wxString& outlineColour)
 {
     // The outline colour is a colour of the terminal theme that the user selected in the settings
-    clAuiBook::ApplyTabArt(m_book, GetTabOutlineColourOf(GetActiveTheme(), outlineColour));
+    // This pane updates the art by itself (see OnThemeChanged() and OnEditorColoursUpdated()): the art must not follow
+    // the theme, otherwise it would put back an old outline colour
+    clAuiBook::ApplyTabArt(m_book, GetTabOutlineColourOf(GetActiveTheme(), outlineColour), false);
     m_book->Layout();
     m_book->Refresh();
     m_book->Update();

@@ -81,6 +81,8 @@ private:
 LanguageServerLogView::LanguageServerLogView(wxWindow* parent)
     : LanguageServerLogViewBase(parent)
 {
+    // With wxWidgets 3.3 and later, the art follows the theme. Before that, the fallback art is not updated when the
+    // theme changes
     clAuiBook::ApplyTabArt(m_notebook);
     m_stcLog->SetReadOnly(true);
 

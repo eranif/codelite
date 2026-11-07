@@ -38,6 +38,7 @@ public:
     ~wxcTreeView() override;
 
     clTreeCtrl* GetTree() { return m_treeControls; }
+    wxSplitterWindow* GetSplitter() { return m_splitter347; }
     void OnItemSelected(wxTreeEvent& event) override;
     void LoadProject(const wxFileName& filname);
     void SaveProject();

@@ -25,9 +25,14 @@ void wxcSettings::Load()
     if (root.isOk()) {
         m_flags = root.toElement().namedObject("m_annoyDialogs").toInt(m_flags);
         m_flags &= ~USE_TABBED_MODE;
-        m_sashPosition = root.toElement().namedObject("m_sashPosition").toInt(150);
+        m_sashPosition = root.toElement().namedObject("m_designerSashPx").toInt(-1);
         m_secondarySashPos = root.toElement().namedObject("m_secondarySashPos").toInt(-1);
-        m_treeviewSashPos = root.toElement().namedObject("m_treeviewSashPos").toInt(-1);
+        m_treeviewSashPos = root.toElement().namedObject("m_treeviewSashPx").toInt(-1);
+        m_mainFrameSashPos = root.toElement().namedObject("m_mainFrameSashPx").toInt(-1);
+        m_frameRect.x = root.toElement().namedObject("m_frameX").toInt(-1);
+        m_frameRect.y = root.toElement().namedObject("m_frameY").toInt(-1);
+        m_frameRect.width = root.toElement().namedObject("m_frameWidth").toInt(-1);
+        m_frameRect.height = root.toElement().namedObject("m_frameHeight").toInt(-1);
         m_history = root.toElement().namedObject("recentFiles").toArrayString();
 
         JSONItem arr = root.toElement().namedObject("m_templateClasses");
@@ -48,9 +53,14 @@ void wxcSettings::Save()
     JSON root(JsonType::Object);
     m_flags &= ~USE_TABBED_MODE;
     root.toElement().addProperty("m_annoyDialogs", (int)m_flags);
-    root.toElement().addProperty("m_sashPosition", m_sashPosition);
+    root.toElement().addProperty("m_designerSashPx", m_sashPosition);
     root.toElement().addProperty("m_secondarySashPos", m_secondarySashPos);
-    root.toElement().addProperty("m_treeviewSashPos", m_treeviewSashPos);
+    root.toElement().addProperty("m_treeviewSashPx", m_treeviewSashPos);
+    root.toElement().addProperty("m_mainFrameSashPx", m_mainFrameSashPos);
+    root.toElement().addProperty("m_frameX", m_frameRect.x);
+    root.toElement().addProperty("m_frameY", m_frameRect.y);
+    root.toElement().addProperty("m_frameWidth", m_frameRect.width);
+    root.toElement().addProperty("m_frameHeight", m_frameRect.height);
     root.toElement().addProperty("recentFiles", m_history);
 
     JSONItem arr = JSONItem::createArray();

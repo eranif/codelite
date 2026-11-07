@@ -14,6 +14,7 @@
 #include "UI/wxguicraft_main_view.h"
 #include "allocator_mgr.h"
 #include "bitmap_loader.h"
+#include "clAuiToolBarArt.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "controls/Containers/wizard_page_wrapper.h"
@@ -50,11 +51,13 @@
 #include "workspace.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
+#include "wxc_settings.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
 #include "wxgui_globals.h"
 #include "wxgui_helpers.h"
 
+#include <wx/display.h>
 #include <wx/ffile.h>
 #include <wx/filedlg.h>
 #include <wx/frame.h>
@@ -209,19 +212,30 @@ MainFrame::MainFrame(wxWindow* parent, IManager* manager)
         // Use CodeLite's images.
         auto images = m_mgr->GetStdIcons();
         m_mainToolbar->SetToolBitmapSize(BMP_SIZE);
-        m_mainToolbar->AddTool(wxID_BACKWARD, _("Back to CodeLite"), images->GetBundle("back"));
-        m_mainToolbar->AddTool(wxID_NEW, _("New Project"), images->GetBundle("file_new"));
-        m_mainToolbar->AddTool(wxID_OPEN, _("Open Project"), images->GetBundle("file_open"));
+        clAuiToolBarArt::AddTool(
+            m_mainToolbar, wxID_BACKWARD, _("Back to CodeLite"), images->GetBundle("back").GetBitmapFor(m_mainToolbar));
+        clAuiToolBarArt::AddTool(
+            m_mainToolbar, wxID_NEW, _("New Project"), images->GetBundle("file_new").GetBitmapFor(m_mainToolbar));
+        clAuiToolBarArt::AddTool(
+            m_mainToolbar, wxID_OPEN, _("Open Project"), images->GetBundle("file_open").GetBitmapFor(m_mainToolbar));
         m_mainToolbar->SetToolDropDown(wxID_OPEN, true);
-        m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), images->GetBundle("file_close"));
-        m_mainToolbar->AddTool(wxID_SAVE, _("Save"), images->GetBundle("file_save"));
+        clAuiToolBarArt::AddTool(
+            m_mainToolbar, wxID_CLOSE, _("Close"), images->GetBundle("file_close").GetBitmapFor(m_mainToolbar));
+        clAuiToolBarArt::AddTool(
+            m_mainToolbar, wxID_SAVE, _("Save"), images->GetBundle("file_save").GetBitmapFor(m_mainToolbar));
         m_mainToolbar->AddSeparator();
-        m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), images->GetBundle("undo"));
-        m_mainToolbar->AddTool(wxID_REDO, _("Redo"), images->GetBundle("redo"));
+        clAuiToolBarArt::AddTool(
+            m_mainToolbar, wxID_UNDO, _("Undo"), images->GetBundle("undo").GetBitmapFor(m_mainToolbar));
+        clAuiToolBarArt::AddTool(
+            m_mainToolbar, wxID_REDO, _("Redo"), images->GetBundle("redo").GetBitmapFor(m_mainToolbar));
         m_mainToolbar->AddSeparator();
-        m_mainToolbar->AddTool(wxID_FIND, _("Find"), images->GetBundle("find"));
+        clAuiToolBarArt::AddTool(
+            m_mainToolbar, wxID_FIND, _("Find"), images->GetBundle("find").GetBitmapFor(m_mainToolbar));
         m_mainToolbar->AddSeparator();
-        m_mainToolbar->AddTool(XRCID("generate-code"), _("Generate Code"), images->GetBundle("execute"));
+        clAuiToolBarArt::AddTool(m_mainToolbar,
+                                 XRCID("generate-code"),
+                                 _("Generate Code"),
+                                 images->GetBundle("execute").GetBitmapFor(m_mainToolbar));
 
         m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnSwitchToCodelite, this, wxID_BACKWARD);
         m_mainToolbar->Bind(wxEVT_UPDATE_UI, &MainFrame::OnSwitchToCodeliteUI, this, wxID_BACKWARD);
@@ -350,6 +364,14 @@ MainFrame::MainFrame(wxWindow* parent, IManager* manager)
     }
 
     m_treeView = new wxcTreeView(m_splitterPageTreeView);
+    if (m_mgr) {
+        // Save the layout when CodeLite exits
+        EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &MainFrame::OnGoingDown, this);
+    } else {
+        // Restore the layout when the frame is shown (after the construction)
+        CallAfter(&MainFrame::RestoreLayout);
+    }
+
     m_splitterPageTreeView->GetSizer()->Add(m_treeView, 1, wxEXPAND);
     m_splitterPageTreeView->GetSizer()->Layout();
     m_wxcView = new GUICraftMainPanel(m_splitterPageDesigner, this, m_treeView->GetTree());
@@ -360,6 +382,8 @@ MainFrame::MainFrame(wxWindow* parent, IManager* manager)
 
 MainFrame::~MainFrame()
 {
+    SaveLayout();
+    EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &MainFrame::OnGoingDown, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(MainFrame::OnProjectModified), nullptr, this);
     EventNotifier::Get()->Disconnect(
@@ -747,10 +771,10 @@ void MainFrame::OnSettings(wxCommandEvent&)
 void MainFrame::DisplayDesigner()
 {
     if (!IsShown()) {
+        ApplyFrameRect();
         Show();
-        // Center on the parent.
-        if (GetParent()) {
-            CenterOnParent();
+        if (!m_layoutRestored) {
+            CallAfter(&MainFrame::RestoreLayout);
         }
     }
     if (IsIconized()) {
@@ -772,6 +796,84 @@ void MainFrame::MinimizeDesigner()
             mainFrame->CallAfter(&wxFrame::Raise);
         }
     }
+}
+
+void MainFrame::ApplyFrameRect()
+{
+    if (m_frameRectApplied) {
+        return;
+    }
+    m_frameRectApplied = true;
+
+    wxRect rect = wxcSettings::Get().GetFrameRect();
+    bool visible = false;
+    if (rect.width > 0 && rect.height > 0) {
+        // The saved position is good only if a part of the frame (enough to grab it) is on one of the displays
+        for (unsigned int i = 0; i < wxDisplay::GetCount(); ++i) {
+            const wxRect shown = wxDisplay(i).GetClientArea().Intersect(rect);
+            if (shown.width >= FromDIP(100) && shown.height >= FromDIP(50)) {
+                visible = true;
+                break;
+            }
+        }
+    }
+
+    if (visible) {
+        SetSize(rect);
+    } else if (GetParent()) {
+        const wxSize parentSize = GetParent()->GetSize();
+        SetSize(wxSize(parentSize.GetWidth() * 9 / 10, parentSize.GetHeight()));
+        CenterOnParent();
+    }
+}
+
+void MainFrame::RestoreLayout()
+{
+    if (m_layoutRestored) {
+        return;
+    }
+    m_layoutRestored = true;
+
+    auto restore = [](wxSplitterWindow* splitter, int pos) {
+        if (splitter && splitter->IsSplit() && pos > 0) {
+            splitter->SetSashPosition(pos);
+        }
+    };
+    // The outer splitter first
+    restore(m_splitterMain, wxcSettings::Get().GetMainFrameSashPos());
+    if (m_wxcView) {
+        restore(m_wxcView->GetMainSplitter(), wxcSettings::Get().GetSashPosition());
+    }
+    if (m_treeView) {
+        restore(m_treeView->GetSplitter(), wxcSettings::Get().GetTreeviewSashPos());
+    }
+}
+
+void MainFrame::SaveLayout()
+{
+    // Do not save anything before the layout was restored: the sashes have their default positions until then
+    if (!m_layoutRestored) {
+        return;
+    }
+    auto& settings = wxcSettings::Get();
+    settings.SetMainFrameSashPos(m_splitterMain->GetSashPosition());
+    if (m_wxcView) {
+        settings.SetSashPosition(m_wxcView->GetMainSplitter()->GetSashPosition());
+    }
+    if (m_treeView) {
+        settings.SetTreeviewSashPos(m_treeView->GetSplitter()->GetSashPosition());
+    }
+    // The rectangle of a minimized or a maximized frame is not the normal one
+    if (m_mgr && m_frameRectApplied && !IsIconized() && !IsMaximized()) {
+        settings.SetFrameRect(GetRect());
+    }
+    settings.Save();
+}
+
+void MainFrame::OnGoingDown(clCommandEvent& event)
+{
+    event.Skip();
+    SaveLayout();
 }
 
 void MainFrame::HideDesigner()

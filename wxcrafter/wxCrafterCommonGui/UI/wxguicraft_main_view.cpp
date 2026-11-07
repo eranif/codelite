@@ -931,11 +931,6 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, MainFrame* mainFrame, clT
         wxEVT_MULTIPLE_UNREDO, wxCommandEventHandler(GUICraftMainPanel::OnLoadCurrentState), nullptr, this);
     this->Connect(ID_FORM_TYPE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnNewFormUI), nullptr, this);
 
-    int sashPos = wxcSettings::Get().GetSashPosition();
-    if (sashPos != wxNOT_FOUND) {
-        m_mainSplitter->SetSashPosition(sashPos);
-    }
-
     // Use CodeLite's coloring settings
     LexerConf::Ptr_t cppLexer = EditorConfigST::Get()->GetLexer("C++");
     if (cppLexer) {
@@ -984,8 +979,6 @@ GUICraftMainPanel::~GUICraftMainPanel()
 
     wxDELETE(m_clipboardItem);
 
-    wxcSettings::Get().SetSashPosition(m_mainSplitter->GetSashPosition());
-    wxcSettings::Get().Save();
 
     EventNotifier::Get()->Disconnect(
         wxEVT_PROPERTIES_MODIFIED, wxCommandEventHandler(GUICraftMainPanel::OnPropertyChanged), nullptr, this);

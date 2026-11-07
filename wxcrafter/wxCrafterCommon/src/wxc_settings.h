@@ -4,6 +4,7 @@
 #include "JSON.h"
 
 #include <map>
+#include <wx/gdicmn.h>
 
 // ----------------------------------------------------------------------
 // CustomControlTemplate
@@ -70,9 +71,11 @@ public:
 protected:
     size_t m_flags;
     CustomControlTemplateMap_t m_templateClasses;
-    int m_sashPosition;
-    int m_secondarySashPos;
-    int m_treeviewSashPos;
+    int m_sashPosition = -1;
+    int m_secondarySashPos = -1;
+    int m_treeviewSashPos = -1;
+    int m_mainFrameSashPos = -1;
+    wxRect m_frameRect{-1, -1, -1, -1}; // The position and the size of the main frame (-1: not saved yet)
     wxArrayString m_history;
     bool m_initCompleted;
 
@@ -130,6 +133,10 @@ public:
     int GetSashPosition() const { return m_sashPosition; }
     int GetSecondarySashPos() const { return m_secondarySashPos; }
     int GetTreeviewSashPos() const { return m_treeviewSashPos; }
+    void SetMainFrameSashPos(int pos) { m_mainFrameSashPos = pos; }
+    int GetMainFrameSashPos() const { return m_mainFrameSashPos; }
+    void SetFrameRect(const wxRect& rect) { m_frameRect = rect; }
+    const wxRect& GetFrameRect() const { return m_frameRect; }
 
     void SetHistory(const wxArrayString& history) { this->m_history = history; }
     const wxArrayString& GetHistory() const { return m_history; }

@@ -170,6 +170,7 @@ public:
 
     State::Ptr_t CurrentState();
     GUICraftItemData* GetSelItemData();
+    wxSplitterWindow* GetMainSplitter() { return m_mainSplitter; }
     wxcWidget* GetActiveWizardPage() const;
     wxcWidget* GetActiveTopLevelWin() const;
     wxcWidget* DoGetItemData(const wxTreeItemId& item) const;

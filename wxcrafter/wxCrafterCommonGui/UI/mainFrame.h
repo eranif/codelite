@@ -10,6 +10,8 @@
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
 
+class clCommandEvent;
+
 class MainFrame : public MainFrameBase
 {
 protected:
@@ -18,6 +20,8 @@ protected:
     wxcTreeView* m_treeView = nullptr;
     wxFindReplaceDialog* m_findReplaceDialog = nullptr;
     wxFindReplaceData m_findData;
+    bool m_frameRectApplied = false; // The saved geometry was applied when the frame was shown for the first time
+    bool m_layoutRestored = false;   // The sash positions were restored (they are saved only after that)
 
 protected:
     void OnFileOpen(wxCommandEvent& event) override;
@@ -103,6 +107,16 @@ public:
     void DisplayDesigner();
     void MinimizeDesigner();
     void HideDesigner();
+
+    /// Set the position and the size of the frame (plugin mode): the saved ones, or - if there are none, or they are
+    /// outside of the screen - the size of the parent (its height and 90% of its width), centered on it
+    void ApplyFrameRect();
+    /// Set the saved positions of the sashes of the 3 splitters. Called when the frame is shown, so the windows have
+    /// their final size
+    void RestoreLayout();
+    /// Save the positions of the sashes, and - in plugin mode - the position and the size of the frame
+    void SaveLayout();
+    void OnGoingDown(clCommandEvent& event);
 
     void SetStatusMessage(const wxString& message);
 

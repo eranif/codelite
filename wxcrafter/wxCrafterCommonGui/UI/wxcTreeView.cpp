@@ -40,10 +40,6 @@ wxcTreeView::wxcTreeView(wxWindow* parent)
     m_eventsPane = new EventsEditorPane(m_splitterPageEvents, nullptr);
     m_splitterPageEvents->GetSizer()->Add(m_eventsPane, 1, wxEXPAND | wxALL, 2);
 
-    int treeviewSashPos = wxcSettings::Get().GetTreeviewSashPos();
-    if (treeviewSashPos != wxNOT_FOUND)
-        m_splitter347->SetSashPosition(treeviewSashPos);
-
     EventNotifier::Get()->Connect(
         wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved), nullptr, this);
     EventNotifier::Get()->Connect(
@@ -54,9 +50,6 @@ wxcTreeView::wxcTreeView(wxWindow* parent)
 
 wxcTreeView::~wxcTreeView()
 {
-    wxcSettings::Get().SetTreeviewSashPos(m_splitter347->GetSashPosition());
-    wxcSettings::Get().Save();
-
     EventNotifier::Get()->Disconnect(
         wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved), nullptr, this);
     EventNotifier::Get()->Disconnect(

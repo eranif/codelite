@@ -90,10 +90,10 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     // [spacer][buttons][main text area]..
     wxCustomStatusBarField::Ptr_t button_field(new wxCustomStatusBarControlField(this, CreatePaneButtonsToolbar()));
 
-#ifdef __WXMAC__
     // add a spacer first
     InsertField(0, wxCustomStatusBarField::Ptr_t(new wxCustomStatusBarSpacerField(this, 10)));
-#endif
+
+    InsertField(1, button_field);
 
     // set the width to include a possible label
     int lable_width = GetTextWidth("_git_source_control_with_long_name");

@@ -1,17 +1,25 @@
 #include "wxgui_bitmaploader.h"
 
 #include "Zip/clZipReader.h"
+#include "clSystemSettings.h"
 #include "wxc_project_metadata.h"
 
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 
 std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_bitmaps;
+std::map<wxString, std::string> wxCrafter::ResourceLoader::m_svgsDark;
+std::map<wxString, std::string> wxCrafter::ResourceLoader::m_svgsLight;
+std::map<wxString, wxBitmapBundle> wxCrafter::ResourceLoader::m_bundles;
+std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_svgBitmaps;
 
 namespace
 {
 
-void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps)
+void LoadImages(const wxString& skin,
+                std::map<wxString, wxBitmap>& bitmaps,
+                std::map<wxString, std::string>& svgsDark,
+                std::map<wxString, std::string>& svgsLight)
 {
     wxString zipFile;
 #ifdef __WXMSW__
@@ -45,6 +53,14 @@ void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps)
                 if (bmp.IsOk()) {
                     bitmaps[name] = bmp;
                 }
+            } else if (fn.GetExt() == "svg") {
+                // bitmaps/dark/<name>.svg or bitmaps/light/<name>.svg
+                const wxArrayString& dirs = fn.GetDirs();
+                if (dirs.Index("dark") != wxNOT_FOUND) {
+                    svgsDark[name] = std::string(reinterpret_cast<const char*>(d.buffer), d.len);
+                } else if (dirs.Index("light") != wxNOT_FOUND) {
+                    svgsLight[name] = std::string(reinterpret_cast<const char*>(d.buffer), d.len);
+                }
             }
             // release the memory
             free(d.buffer);
@@ -56,12 +72,12 @@ void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps)
 
 wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 {
-    if (m_bitmaps.empty()) {
-        LoadImages(skin, m_bitmaps);
+    if (m_bitmaps.empty() && m_svgsDark.empty() && m_svgsLight.empty()) {
+        LoadImages(skin, m_bitmaps, m_svgsDark, m_svgsLight);
     }
 }
 
-const wxBitmap& wxCrafter::ResourceLoader::Bitmap(const wxString& name) const
+const wxBitmap& wxCrafter::ResourceLoader::PngBitmap(const wxString& name) const
 {
     static wxBitmap s_nullBitmap;
     std::map<wxString, wxBitmap>::const_iterator iter = m_bitmaps.find(name);
@@ -71,10 +87,55 @@ const wxBitmap& wxCrafter::ResourceLoader::Bitmap(const wxString& name) const
     return iter->second;
 }
 
+wxBitmapBundle wxCrafter::ResourceLoader::SvgBundle(const wxString& name) const
+{
+    const bool isDark = clSystemSettings::IsDark();
+    const auto& svgs = isDark ? m_svgsDark : m_svgsLight;
+    auto svg = svgs.find(name);
+    if (svg == svgs.end()) {
+        return wxBitmapBundle();
+    }
+
+    // Render it once for each theme
+    const wxString key = (isDark ? wxT("dark:") : wxT("light:")) + name;
+    auto iter = m_bundles.find(key);
+    if (iter == m_bundles.end()) {
+        iter = m_bundles.emplace(key, wxBitmapBundle::FromSVG(svg->second.c_str(), wxSize(16, 16))).first;
+    }
+    return iter->second;
+}
+
+wxBitmapBundle wxCrafter::ResourceLoader::Bundle(const wxString& name) const
+{
+    wxBitmapBundle bundle = SvgBundle(name);
+    if (bundle.IsOk()) {
+        return bundle;
+    }
+    // No SVG (or SVG is not supported by this build of wxWidgets): use the PNG
+    const wxBitmap& png = PngBitmap(name);
+    return png.IsOk() ? wxBitmapBundle(png) : wxBitmapBundle();
+}
+
+const wxBitmap& wxCrafter::ResourceLoader::Bitmap(const wxString& name) const
+{
+    const wxBitmapBundle bundle = SvgBundle(name);
+    if (bundle.IsOk()) {
+        const wxString key = (clSystemSettings::IsDark() ? wxT("dark:") : wxT("light:")) + name;
+        auto iter = m_svgBitmaps.find(key);
+        if (iter == m_svgBitmaps.end()) {
+            iter = m_svgBitmaps.emplace(key, bundle.GetBitmap(wxSize(16, 16))).first;
+        }
+        if (iter->second.IsOk()) {
+            return iter->second;
+        }
+    }
+    return PngBitmap(name);
+}
+
 wxFileName wxCrafter::ResourceLoader::GetPlaceHolderImagePath() const
 {
     static const wxString PLACEHOLDER_IMG = wxT("placeholder");
-    const wxBitmap& bmp = Bitmap(PLACEHOLDER_IMG);
+    const wxBitmap& bmp = PngBitmap(PLACEHOLDER_IMG);
     if (bmp.IsOk()) {
         wxFileName path(wxFileName::GetTempDir(), wxT("placeholder.png"));
         if (bmp.SaveFile(path.GetFullPath(), wxBITMAP_TYPE_PNG)) {
@@ -88,7 +149,7 @@ wxFileName wxCrafter::ResourceLoader::GetPlaceHolderImagePath() const
 wxFileName wxCrafter::ResourceLoader::GetPlaceHolder16ImagePath() const
 {
     static const wxString PLACEHOLDER_IMG16 = wxT("placeholder16");
-    const wxBitmap& bmp = Bitmap(PLACEHOLDER_IMG16);
+    const wxBitmap& bmp = PngBitmap(PLACEHOLDER_IMG16);
     if (bmp.IsOk()) {
         wxFileName path(wxFileName::GetTempDir(), wxT("placeholder16.png"));
         if (bmp.SaveFile(path.GetFullPath(), wxBITMAP_TYPE_PNG)) {

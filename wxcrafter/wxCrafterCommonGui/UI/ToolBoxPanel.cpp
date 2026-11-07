@@ -260,17 +260,22 @@ ToolBoxPanel::ToolBoxPanel(wxWindow* parent, GUICraftMainPanel* mainView)
             pageSizer->Add(grid, 0, wxALIGN_LEFT, FromDIP(3));
             for (const ToolBoxTool& tool : group.tools) {
                 wxBitmapButton* button = new wxBitmapButton(
-                    page, tool.id, bitmaps.Bitmap(tool.icon), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW);
+                    page, tool.id, bitmaps.Bundle(tool.icon), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW);
                 button->SetToolTip(wxGetTranslation(tool.tooltip));
                 button->Bind(wxEVT_UPDATE_UI, &ToolBoxPanel::OnControlUI, this);
                 grid->Add(button, 0, wxALL, FromDIP(3));
             }
         }
 
+        const wxBitmapBundle tabIcon = pageInfo.icon != nullptr ? bitmaps.Bundle(pageInfo.icon) : wxBitmapBundle();
+#if wxCHECK_VERSION(3, 3, 0)
+        m_notebook->AddPage(page, wxGetTranslation(pageInfo.title), pageInfo.selected, tabIcon);
+#else
         m_notebook->AddPage(page,
                             wxGetTranslation(pageInfo.title),
                             pageInfo.selected,
-                            pageInfo.icon != nullptr ? bitmaps.Bitmap(pageInfo.icon) : wxNullBitmap);
+                            tabIcon.IsOk() ? tabIcon.GetBitmap(wxSize(16, 16)) : wxNullBitmap);
+#endif
     }
 
     GetSizer()->Fit(this);

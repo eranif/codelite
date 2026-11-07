@@ -1,6 +1,7 @@
 #include "LanguageServerLogView.h"
 
 #include "ColoursAndFontsManager.h"
+#include "clAuiBook.hpp"
 #include "clSystemSettings.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -80,6 +81,7 @@ private:
 LanguageServerLogView::LanguageServerLogView(wxWindow* parent)
     : LanguageServerLogViewBase(parent)
 {
+    clAuiBook::ApplyTabArt(m_notebook);
     m_stcLog->SetReadOnly(true);
 
     GetDvListCtrlProgress()->AppendTextColumn(_("Server"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(120));

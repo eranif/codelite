@@ -9,7 +9,7 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 224,
+    "m_objCounter": 225,
     "m_outputFileName": "lsp_UI",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -5222,20 +5222,17 @@
           "m_events": [],
           "m_children": [
             {
-              "m_type": 4442,
+              "m_type": 4456,
               "proportion": 1,
               "border": 5,
               "gbSpan": "1,1",
               "gbPosition": "0,0",
               "m_styles": [
+                "wxAUI_NB_TOP",
+                "wxAUI_NB_TAB_FIXED_WIDTH",
                 "wxBK_DEFAULT"
               ],
               "m_sizerFlags": [
-                "wxALL",
-                "wxLEFT",
-                "wxRIGHT",
-                "wxTOP",
-                "wxBOTTOM",
                 "wxEXPAND"
               ],
               "m_properties": [
@@ -5247,7 +5244,7 @@
                 {
                   "type": "string",
                   "m_label": "Size:",
-                  "m_value": "-1,-1"
+                  "m_value": "250,250"
                 },
                 {
                   "type": "string",
@@ -5481,11 +5478,6 @@
                             "wxDV_SINGLE"
                           ],
                           "m_sizerFlags": [
-                            "wxALL",
-                            "wxLEFT",
-                            "wxRIGHT",
-                            "wxTOP",
-                            "wxBOTTOM",
                             "wxEXPAND"
                           ],
                           "m_properties": [
@@ -5733,11 +5725,6 @@
                           "gbPosition": "0,0",
                           "m_styles": [],
                           "m_sizerFlags": [
-                            "wxALL",
-                            "wxLEFT",
-                            "wxRIGHT",
-                            "wxTOP",
-                            "wxBOTTOM",
                             "wxEXPAND"
                           ],
                           "m_properties": [

@@ -4,6 +4,7 @@
 #include "clSystemSettings.h"
 #include "wxc_project_metadata.h"
 
+#include <wx/app.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 
@@ -14,8 +15,16 @@ std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_bitmaps;
 
 namespace
 {
-/// The size of the image that the SVG files are made for
-const wxSize kDefaultSvgSize{16, 16};
+
+wxSize GetDefaultSize()
+{
+    static std::optional<wxSize> defaultSize{std::nullopt};
+    if (!defaultSize) {
+        auto* frame = wxTheApp->GetTopWindow();
+        defaultSize = frame ? frame->FromDIP(wxSize(16, 16)) : wxSize(16, 16);
+    }
+    return *defaultSize;
+}
 
 void LoadImages(const wxString& skin,
                 std::map<wxString, std::string>& svgsDark,
@@ -82,7 +91,7 @@ wxBitmapBundle wxCrafter::ResourceLoader::Bundle(const wxString& name) const
     const wxString key = (isDark ? wxT("dark:") : wxT("light:")) + name;
     auto iter = m_bundles.find(key);
     if (iter == m_bundles.end()) {
-        iter = m_bundles.emplace(key, wxBitmapBundle::FromSVG(svg->second.c_str(), kDefaultSvgSize)).first;
+        iter = m_bundles.emplace(key, wxBitmapBundle::FromSVG(svg->second.c_str(), GetDefaultSize())).first;
     }
     return iter->second;
 }
@@ -99,7 +108,7 @@ const wxBitmap& wxCrafter::ResourceLoader::Bitmap(const wxString& name) const
     const wxString key = (clSystemSettings::IsDark() ? wxT("dark:") : wxT("light:")) + name;
     auto iter = m_bitmaps.find(key);
     if (iter == m_bitmaps.end()) {
-        const wxBitmap bmp = Bitmap(name, kDefaultSvgSize);
+        const wxBitmap bmp = Bitmap(name, GetDefaultSize());
         if (!bmp.IsOk()) {
             return s_nullBitmap;
         }

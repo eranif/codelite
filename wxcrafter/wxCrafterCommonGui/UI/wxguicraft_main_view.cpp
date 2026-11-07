@@ -13,6 +13,7 @@
 #include "UI/ToolBoxPanel.h"
 #include "allocator_mgr.h"
 #include "clAuiBook.hpp"
+#include "clAuiToolBarArt.h"
 #include "cl_command_event.h"
 #include "controls/Containers/notebook_base_wrapper.h"
 #include "controls/Containers/notebook_page_wrapper.h"
@@ -774,64 +775,87 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, MainFrame* mainFrame, clT
 
     m_panelToolBox->GetSizer()->Add(new ToolBoxPanel(m_panelToolBox, this), 0, wxEXPAND);
 
-    m_toolbar->AddTool(ID_GENERATE_CODE, _("Generate Code"), bmps.Bitmap("generate-code"), _("Generate Code"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_GENERATE_CODE, _("Generate Code"), bmps.Bitmap("generate-code"), _("Generate Code"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(ID_SHOW_PREVIEW, _("Show Preview..."), bmps.Bitmap("preview"), _("Show Preview"));
-    m_toolbar->AddTool(ID_CANCEL_PREVIEW, _("Close Preview..."), bmps.Bitmap("cancel"), _("Close Preview"));
-    m_toolbar->AddSeparator();
-
-    m_toolbar->AddTool(ID_DELETE_NODE, _("Delete Item"), bmps.Bitmap("delete"), _("Delete Item"));
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(ID_TOOL_ALIGN_LEFT, _("Align Left"), bmps.Bitmap("align-left"), _("Align Left"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_HCENTER,
-                       _("Align Center"),
-                       bmps.Bitmap("align-center-horizontal"),
-                       _("Align Center Horizontally"),
-                       wxITEM_CHECK);
-    m_toolbar->AddTool(
-        ID_TOOL_ALIGN_RIGHT, _("Align Right"), bmps.Bitmap("align-right"), _("Align Right"), wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_SHOW_PREVIEW, _("Show Preview..."), bmps.Bitmap("preview"), _("Show Preview"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_CANCEL_PREVIEW, _("Close Preview..."), bmps.Bitmap("cancel"), _("Close Preview"));
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(ID_TOOL_ALIGN_TOP, _("Align Top"), bmps.Bitmap("align-top"), _("Align Top"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_VCENTER,
-                       _("Align Middle"),
-                       bmps.Bitmap("align-center-vertical"),
-                       _("Align Center Vertically"),
-                       wxITEM_CHECK);
-    m_toolbar->AddTool(
-        ID_TOOL_ALIGN_BOTTOM, _("Align Bottom"), bmps.Bitmap("align-bottom"), _("Align Bottom"), wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(m_toolbar, ID_DELETE_NODE, _("Delete Item"), bmps.Bitmap("delete"), _("Delete Item"));
+    m_toolbar->AddSeparator();
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_TOOL_ALIGN_LEFT, _("Align Left"), bmps.Bitmap("align-left"), _("Align Left"), wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             ID_TOOL_ALIGN_HCENTER,
+                             _("Align Center"),
+                             bmps.Bitmap("align-center-horizontal"),
+                             _("Align Center Horizontally"),
+                             wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_TOOL_ALIGN_RIGHT, _("Align Right"), bmps.Bitmap("align-right"), _("Align Right"), wxITEM_CHECK);
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(ID_TOOL_BORDER_ALL, _("All Borders"), bmps.Bitmap("wxall"), _("All Borders"), wxITEM_CHECK);
-    m_toolbar->AddTool(
-        ID_TOOL_BORDER_LEFT, _("Left Border"), bmps.Bitmap("border-left"), _("Left Border"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_BORDER_TOP, _("Top Border"), bmps.Bitmap("border-top"), _("Top Border"), wxITEM_CHECK);
-    m_toolbar->AddTool(
-        ID_TOOL_BORDER_RIGHT, _("Right Border"), bmps.Bitmap("border-right"), _("Right Border"), wxITEM_CHECK);
-    m_toolbar->AddTool(
-        ID_TOOL_BORDER_BOTTOM, _("Bottom Border"), bmps.Bitmap("border-bottom"), _("Bottom Border"), wxITEM_CHECK);
-
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(ID_TOOL_PROP1,
-                       _("Set Sizer Proportion to 1"),
-                       bmps.Bitmap("proportion-1"),
-                       _("Set Sizer Proportion to 1"),
-                       wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_WXEXPAND, _("Expand Item"), bmps.Bitmap("expand"), _("Expand Item"), wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_TOOL_ALIGN_TOP, _("Align Top"), bmps.Bitmap("align-top"), _("Align Top"), wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             ID_TOOL_ALIGN_VCENTER,
+                             _("Align Middle"),
+                             bmps.Bitmap("align-center-vertical"),
+                             _("Align Center Vertically"),
+                             wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             ID_TOOL_ALIGN_BOTTOM,
+                             _("Align Bottom"),
+                             bmps.Bitmap("align-bottom"),
+                             _("Align Bottom"),
+                             wxITEM_CHECK);
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(ID_MOVE_NODE_UP, _("Move Up"), bmps.Bitmap("move-up"), _("Move Up"));
-    m_toolbar->AddTool(ID_MOVE_NODE_DOWN, _("Move Down"), bmps.Bitmap("move-down"), _("Move Down"));
-    m_toolbar->AddTool(
-        ID_MOVE_NODE_INTO_SIZER, _("Move Left"), bmps.Bitmap("move-left"), _("Move Left into parent sizer"));
-    m_toolbar->AddTool(ID_MOVE_NODE_INTO_SIBLING,
-                       _("Move Right"),
-                       bmps.Bitmap("move-upper-right"),
-                       _("Move Right into a sibling sizer"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_TOOL_BORDER_ALL, _("All Borders"), bmps.Bitmap("wxall"), _("All Borders"), wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_TOOL_BORDER_LEFT, _("Left Border"), bmps.Bitmap("border-left"), _("Left Border"), wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_TOOL_BORDER_TOP, _("Top Border"), bmps.Bitmap("border-top"), _("Top Border"), wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             ID_TOOL_BORDER_RIGHT,
+                             _("Right Border"),
+                             bmps.Bitmap("border-right"),
+                             _("Right Border"),
+                             wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             ID_TOOL_BORDER_BOTTOM,
+                             _("Bottom Border"),
+                             bmps.Bitmap("border-bottom"),
+                             _("Bottom Border"),
+                             wxITEM_CHECK);
+
+    m_toolbar->AddSeparator();
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             ID_TOOL_PROP1,
+                             _("Set Sizer Proportion to 1"),
+                             bmps.Bitmap("proportion-1"),
+                             _("Set Sizer Proportion to 1"),
+                             wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_TOOL_WXEXPAND, _("Expand Item"), bmps.Bitmap("expand"), _("Expand Item"), wxITEM_CHECK);
+    m_toolbar->AddSeparator();
+
+    clAuiToolBarArt::AddTool(m_toolbar, ID_MOVE_NODE_UP, _("Move Up"), bmps.Bitmap("move-up"), _("Move Up"));
+    clAuiToolBarArt::AddTool(m_toolbar, ID_MOVE_NODE_DOWN, _("Move Down"), bmps.Bitmap("move-down"), _("Move Down"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, ID_MOVE_NODE_INTO_SIZER, _("Move Left"), bmps.Bitmap("move-left"), _("Move Left into parent sizer"));
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             ID_MOVE_NODE_INTO_SIBLING,
+                             _("Move Right"),
+                             bmps.Bitmap("move-upper-right"),
+                             _("Move Right into a sibling sizer"));
 
     wxAuiToolBarItem* item = m_toolbar->FindTool(ID_GENERATE_CODE);
     item->SetHasDropDown(true);
-
     m_toolbar->Realize();
 
     m_propertiesPage = new PropertiesSheet(m_panelProperties);

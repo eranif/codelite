@@ -7,7 +7,7 @@
     "m_firstWindowId": 1000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 322,
+    "m_objCounter": 323,
     "m_outputFileName": "gui",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -5917,18 +5917,18 @@
                               "m_events": [],
                               "m_children": [
                                 {
-                                  "m_type": 4442,
+                                  "m_type": 4456,
                                   "proportion": 1,
-                                  "border": 2,
-                                  "gbSpan": ",",
-                                  "gbPosition": ",",
-                                  "m_styles": [],
+                                  "border": 5,
+                                  "gbSpan": "1,1",
+                                  "gbPosition": "0,0",
+                                  "m_styles": [
+                                    "wxAUI_NB_TOP",
+                                    "wxAUI_NB_WINDOWLIST_BUTTON",
+                                    "wxAUI_NB_TAB_FIXED_WIDTH",
+                                    "wxBK_DEFAULT"
+                                  ],
                                   "m_sizerFlags": [
-                                    "wxALL",
-                                    "wxLEFT",
-                                    "wxRIGHT",
-                                    "wxTOP",
-                                    "wxBOTTOM",
                                     "wxEXPAND"
                                   ],
                                   "m_properties": [
@@ -5940,17 +5940,17 @@
                                     {
                                       "type": "string",
                                       "m_label": "Size:",
-                                      "m_value": ""
+                                      "m_value": "250,250"
                                     },
                                     {
                                       "type": "string",
                                       "m_label": "Minimum Size:",
-                                      "m_value": ""
+                                      "m_value": "-1,-1"
                                     },
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_notebook2"
+                                      "m_value": "m_auiBookProperties"
                                     },
                                     {
                                       "type": "multi-string",

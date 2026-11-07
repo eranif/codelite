@@ -1,8 +1,81 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <path d="M0 1.5L5 1.5L2.5 4Z" fill="#cfcfcf"/>
-  <rect x="6" y="2" width="9" height="2" rx="0.5" fill="#cfcfcf" fill-opacity="0.9"/>
-  <rect x="0.5" y="6.5" width="15" height="9" rx="1.5" fill="#4ea1ff" fill-opacity="0.21" stroke="#4ea1ff"/>
-  <rect x="3" y="9" width="10" height="1" fill="#cfcfcf"/>
-  <rect x="3" y="11.5" width="10" height="1" fill="#cfcfcf"/>
-  <rect x="3" y="14" width="10" height="1" fill="#cfcfcf"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="wxcollapsiblepane.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5" />
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="113.4375"
+     inkscape:cx="8.0044077"
+     inkscape:cy="8"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5" />
+  <path
+     d="M 1.7013774,3.0955922 H 5.6435262 L 3.6724518,5.0666666 Z"
+     fill="#cfcfcf"
+     id="path1"
+     style="stroke-width:0.78843" />
+  <rect
+     x="6.4760327"
+     y="2.9608815"
+     width="7.968595"
+     height="2"
+     rx="0.44269973"
+     fill="#cfcfcf"
+     fill-opacity="0.9"
+     id="rect1"
+     style="stroke-width:0.940957" />
+  <rect
+     x="0.62167835"
+     y="0.9285655"
+     width="14.756643"
+     height="14.142869"
+     rx="1.4756644"
+     fill="#4ea1ff"
+     fill-opacity="0.21"
+     stroke="#4ea1ff"
+     id="rect2"
+     style="fill:none;stroke-width:1.24336" />
+  <rect
+     x="3"
+     y="7"
+     width="10"
+     height="1"
+     fill="#cfcfcf"
+     id="rect3" />
+  <rect
+     x="3"
+     y="9.5"
+     width="10"
+     height="1"
+     fill="#cfcfcf"
+     id="rect4" />
+  <rect
+     x="3"
+     y="12"
+     width="10"
+     height="1"
+     fill="#cfcfcf"
+     id="rect5" />
 </svg>

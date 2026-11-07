@@ -1,12 +1,110 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" fill="#4a4a4a" fill-opacity="0.15" stroke="#4a4a4a"/>
-  <rect x="7" y="1" width="1" height="14" fill="#8f8f8f"/>
-  <path d="M2.5 5V13.5M2.5 7.5H4M2.5 11.5H4" fill="none" stroke="#8f8f8f"/>
-  <rect x="1" y="2" width="3" height="3" rx="0.5" fill="#1a73d9"/>
-  <rect x="4" y="6" width="3" height="3" rx="0.5" fill="#e8ac00"/>
-  <rect x="4" y="10" width="3" height="3" rx="0.5" fill="#e8ac00"/>
-  <rect x="9" y="4" width="5" height="1" fill="#8f8f8f"/>
-  <rect x="9" y="7" width="5" height="1" fill="#8f8f8f"/>
-  <rect x="9" y="10" width="5" height="1" fill="#8f8f8f"/>
-  <rect x="9" y="13" width="5" height="1" fill="#8f8f8f"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg9"
+   sodipodi:docname="wxtreebook.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs9" />
+  <sodipodi:namedview
+     id="namedview9"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="113.4375"
+     inkscape:cx="8.0044077"
+     inkscape:cy="8"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg9" />
+  <rect
+     x="0.5"
+     y="0.5"
+     width="15"
+     height="15"
+     rx="1.5"
+     fill="#4a4a4a"
+     fill-opacity="0.15"
+     stroke="#4a4a4a"
+     id="rect1" />
+  <rect
+     x="7"
+     y="1"
+     width="1"
+     height="14"
+     fill="#8f8f8f"
+     id="rect2" />
+  <path
+     d="M2.5 5V13.5M2.5 7.5H4M2.5 11.5H4"
+     fill="none"
+     stroke="#8f8f8f"
+     id="path2" />
+  <rect
+     x="1"
+     y="2"
+     width="3"
+     height="3"
+     rx="0.5"
+     fill="#1a73d9"
+     id="rect3" />
+  <rect
+     x="4"
+     y="6"
+     width="3"
+     height="3"
+     rx="0.5"
+     fill="#e8ac00"
+     id="rect4"
+     style="fill:#1a73d9" />
+  <rect
+     x="4"
+     y="10"
+     width="3"
+     height="3"
+     rx="0.5"
+     fill="#e8ac00"
+     id="rect5"
+     style="fill:#1a73d9" />
+  <rect
+     x="9"
+     y="4"
+     width="5"
+     height="1"
+     fill="#8f8f8f"
+     id="rect6" />
+  <rect
+     x="9"
+     y="7"
+     width="5"
+     height="1"
+     fill="#8f8f8f"
+     id="rect7" />
+  <rect
+     x="9"
+     y="10"
+     width="5"
+     height="1"
+     fill="#8f8f8f"
+     id="rect8" />
+  <rect
+     x="9"
+     y="13"
+     width="5"
+     height="1"
+     fill="#8f8f8f"
+     id="rect9" />
 </svg>

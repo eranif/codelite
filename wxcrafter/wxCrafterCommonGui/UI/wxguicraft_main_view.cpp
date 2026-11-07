@@ -766,6 +766,7 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, MainFrame* mainFrame, clT
 
     clAuiBook::ApplyTabArt(m_mainBook);
     clAuiBook::ApplyTabArt(m_notebookCpp);
+    clAuiBook::ApplyTabArt(m_auiBookProperties);
 
     wxcSettings::Get().Load();
     wxCrafter::ResourceLoader bmps;
@@ -1239,7 +1240,7 @@ void GUICraftMainPanel::DoUpdateSizerFlags(wxcWidget* data)
         DoShowPropertiesPage(m_panelSizerFlags, _("Sizer Flags"), false);
 
     } else {
-        int cursel = m_notebook2->GetSelection();
+        int cursel = m_auiBookProperties->GetSelection();
         if (data->IsAuiPane()) {
             DoShowPropertiesPage(m_panelAuiPaneInfo, "wxAuiPaneInfo", true);
             DoShowPropertiesPage(m_panelSizerFlags, _("Sizer Flags"), false);
@@ -1249,7 +1250,7 @@ void GUICraftMainPanel::DoUpdateSizerFlags(wxcWidget* data)
             DoShowPropertiesPage(m_panelSizerFlags, _("Sizer Flags"), true);
         }
 #ifndef __WXGTK__
-        m_notebook2->SetSelection(cursel);
+        m_auiBookProperties->SetSelection(cursel);
 #endif
     }
 }
@@ -3340,8 +3341,8 @@ size_t GUICraftMainPanel::DoFindPropertiesPage(wxWindow* win)
 {
     // locate the page index
     size_t pageIdx = wxString::npos;
-    for (size_t i = 0; i < m_notebook2->GetPageCount(); ++i) {
-        if (win == m_notebook2->GetPage(i)) {
+    for (size_t i = 0; i < m_auiBookProperties->GetPageCount(); ++i) {
+        if (win == m_auiBookProperties->GetPage(i)) {
             pageIdx = i;
             break;
         }
@@ -3353,10 +3354,10 @@ void GUICraftMainPanel::DoShowPropertiesPage(wxWindow* win, const wxString& text
 {
     size_t where = DoFindPropertiesPage(win);
     if (show && where == wxString::npos) {
-        m_notebook2->AddPage(win, text);
+        m_auiBookProperties->AddPage(win, text);
 
     } else if (!show && where != wxString::npos) {
-        m_notebook2->RemovePage(where);
+        m_auiBookProperties->RemovePage(where);
     }
 }
 

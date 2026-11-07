@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 140 140">
+  <defs>
+    <linearGradient id="redRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9363a"/><stop offset="1" stop-color="#5e0a0d"/></linearGradient>
+    <linearGradient id="redBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0605f"/><stop offset="0.55" stop-color="#c3191f"/><stop offset="1" stop-color="#8a0f14"/></linearGradient>
+    <linearGradient id="blueRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c7bc6"/><stop offset="1" stop-color="#05395f"/></linearGradient>
+    <linearGradient id="blueBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#63c4ff"/><stop offset="0.55" stop-color="#1b8ae0"/><stop offset="1" stop-color="#0a5aa8"/></linearGradient>
+    <linearGradient id="yellowRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6d21a"/><stop offset="1" stop-color="#8d8a00"/></linearGradient>
+    <linearGradient id="yellowBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffd7a"/><stop offset="0.55" stop-color="#f4f02a"/><stop offset="1" stop-color="#d9d500"/></linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0.75"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.05"/></linearGradient>
+  </defs>
+  <!-- red -->
+  <rect x="6" y="64" width="62" height="62" rx="15" fill="url(#redRim)"/>
+  <rect x="10" y="68" width="54" height="54" rx="12" fill="url(#redBody)"/>
+  <rect x="13" y="71" width="30" height="30" rx="9" fill="url(#shine)"/>
+  <!-- blue -->
+  <rect x="38" y="8" width="64" height="64" rx="15" fill="url(#blueRim)"/>
+  <rect x="42" y="12" width="56" height="56" rx="12" fill="url(#blueBody)"/>
+  <rect x="45" y="15" width="32" height="32" rx="9" fill="url(#shine)"/>
+  <!-- yellow -->
+  <rect x="72" y="46" width="64" height="64" rx="15" fill="url(#yellowRim)"/>
+  <rect x="76" y="50" width="56" height="56" rx="12" fill="url(#yellowBody)"/>
+  <rect x="79" y="53" width="32" height="32" rx="9" fill="url(#shine)"/>
+</svg>

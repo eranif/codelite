@@ -7,17 +7,17 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 
-std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_bitmaps;
 std::map<wxString, std::string> wxCrafter::ResourceLoader::m_svgsDark;
 std::map<wxString, std::string> wxCrafter::ResourceLoader::m_svgsLight;
 std::map<wxString, wxBitmapBundle> wxCrafter::ResourceLoader::m_bundles;
-std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_svgBitmaps;
+std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_bitmaps;
 
 namespace
 {
+/// The size of the image that the SVG files are made for
+const wxSize kDefaultSvgSize{16, 16};
 
 void LoadImages(const wxString& skin,
-                std::map<wxString, wxBitmap>& bitmaps,
                 std::map<wxString, std::string>& svgsDark,
                 std::map<wxString, std::string>& svgsLight)
 {
@@ -42,19 +42,11 @@ void LoadImages(const wxString& skin,
     // Loop over the files
     for (const auto& entry : entries) {
         wxFileName fn = wxFileName(entry.first);
-        wxString name = fn.GetName();
         clZipReader::Entry d = entry.second;
         if (d.len && d.buffer) {
-            // Avoid wxAsserts by checking it's likely to be a png before creating the image
-            if (fn.GetExt() == "png") {
-                wxMemoryInputStream is(d.buffer, d.len);
-                wxImage img(is, wxBITMAP_TYPE_PNG);
-                wxBitmap bmp(img);
-                if (bmp.IsOk()) {
-                    bitmaps[name] = bmp;
-                }
-            } else if (fn.GetExt() == "svg") {
+            if (fn.GetExt() == "svg") {
                 // bitmaps/dark/<name>.svg or bitmaps/light/<name>.svg
+                const wxString name = fn.GetName();
                 const wxArrayString& dirs = fn.GetDirs();
                 if (dirs.Index("dark") != wxNOT_FOUND) {
                     svgsDark[name] = std::string(reinterpret_cast<const char*>(d.buffer), d.len);
@@ -72,22 +64,12 @@ void LoadImages(const wxString& skin,
 
 wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 {
-    if (m_bitmaps.empty() && m_svgsDark.empty() && m_svgsLight.empty()) {
-        LoadImages(skin, m_bitmaps, m_svgsDark, m_svgsLight);
+    if (m_svgsDark.empty() && m_svgsLight.empty()) {
+        LoadImages(skin, m_svgsDark, m_svgsLight);
     }
 }
 
-const wxBitmap& wxCrafter::ResourceLoader::PngBitmap(const wxString& name) const
-{
-    static wxBitmap s_nullBitmap;
-    std::map<wxString, wxBitmap>::const_iterator iter = m_bitmaps.find(name);
-    if (iter == m_bitmaps.end()) {
-        return s_nullBitmap;
-    }
-    return iter->second;
-}
-
-wxBitmapBundle wxCrafter::ResourceLoader::SvgBundle(const wxString& name) const
+wxBitmapBundle wxCrafter::ResourceLoader::Bundle(const wxString& name) const
 {
     const bool isDark = clSystemSettings::IsDark();
     const auto& svgs = isDark ? m_svgsDark : m_svgsLight;
@@ -96,66 +78,56 @@ wxBitmapBundle wxCrafter::ResourceLoader::SvgBundle(const wxString& name) const
         return wxBitmapBundle();
     }
 
-    // Render it once for each theme
+    // Parse it once for each theme
     const wxString key = (isDark ? wxT("dark:") : wxT("light:")) + name;
     auto iter = m_bundles.find(key);
     if (iter == m_bundles.end()) {
-        iter = m_bundles.emplace(key, wxBitmapBundle::FromSVG(svg->second.c_str(), wxSize(16, 16))).first;
+        iter = m_bundles.emplace(key, wxBitmapBundle::FromSVG(svg->second.c_str(), kDefaultSvgSize)).first;
     }
     return iter->second;
 }
 
-wxBitmapBundle wxCrafter::ResourceLoader::Bundle(const wxString& name) const
+wxBitmap wxCrafter::ResourceLoader::Bitmap(const wxString& name, const wxSize& size) const
 {
-    wxBitmapBundle bundle = SvgBundle(name);
-    if (bundle.IsOk()) {
-        return bundle;
-    }
-    // No SVG (or SVG is not supported by this build of wxWidgets): use the PNG
-    const wxBitmap& png = PngBitmap(name);
-    return png.IsOk() ? wxBitmapBundle(png) : wxBitmapBundle();
+    const wxBitmapBundle bundle = Bundle(name);
+    return bundle.IsOk() ? bundle.GetBitmap(size) : wxBitmap();
 }
 
 const wxBitmap& wxCrafter::ResourceLoader::Bitmap(const wxString& name) const
 {
-    const wxBitmapBundle bundle = SvgBundle(name);
-    if (bundle.IsOk()) {
-        const wxString key = (clSystemSettings::IsDark() ? wxT("dark:") : wxT("light:")) + name;
-        auto iter = m_svgBitmaps.find(key);
-        if (iter == m_svgBitmaps.end()) {
-            iter = m_svgBitmaps.emplace(key, bundle.GetBitmap(wxSize(16, 16))).first;
+    static wxBitmap s_nullBitmap;
+    const wxString key = (clSystemSettings::IsDark() ? wxT("dark:") : wxT("light:")) + name;
+    auto iter = m_bitmaps.find(key);
+    if (iter == m_bitmaps.end()) {
+        const wxBitmap bmp = Bitmap(name, kDefaultSvgSize);
+        if (!bmp.IsOk()) {
+            return s_nullBitmap;
         }
-        if (iter->second.IsOk()) {
-            return iter->second;
+        iter = m_bitmaps.emplace(key, bmp).first;
+    }
+    return iter->second;
+}
+
+wxFileName wxCrafter::ResourceLoader::SaveAsTempPng(const wxString& name, const wxSize& size) const
+{
+    const wxBitmap bmp = Bitmap(name, size);
+    if (bmp.IsOk()) {
+        wxFileName path(wxFileName::GetTempDir(), name + wxT(".png"));
+        if (bmp.SaveFile(path.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+            path.MakeRelativeTo(wxcProjectMetadata::Get().GetProjectPath());
+            return path;
         }
     }
-    return PngBitmap(name);
+    return wxFileName();
 }
 
 wxFileName wxCrafter::ResourceLoader::GetPlaceHolderImagePath() const
 {
-    static const wxString PLACEHOLDER_IMG = wxT("placeholder");
-    const wxBitmap& bmp = PngBitmap(PLACEHOLDER_IMG);
-    if (bmp.IsOk()) {
-        wxFileName path(wxFileName::GetTempDir(), wxT("placeholder.png"));
-        if (bmp.SaveFile(path.GetFullPath(), wxBITMAP_TYPE_PNG)) {
-            path.MakeRelativeTo(wxcProjectMetadata::Get().GetProjectPath());
-            return path;
-        }
-    }
-    return wxFileName();
+    // This image is bigger than the others (it was a PNG file of 32x32)
+    return SaveAsTempPng(wxT("placeholder"), wxSize(32, 32));
 }
 
 wxFileName wxCrafter::ResourceLoader::GetPlaceHolder16ImagePath() const
 {
-    static const wxString PLACEHOLDER_IMG16 = wxT("placeholder16");
-    const wxBitmap& bmp = PngBitmap(PLACEHOLDER_IMG16);
-    if (bmp.IsOk()) {
-        wxFileName path(wxFileName::GetTempDir(), wxT("placeholder16.png"));
-        if (bmp.SaveFile(path.GetFullPath(), wxBITMAP_TYPE_PNG)) {
-            path.MakeRelativeTo(wxcProjectMetadata::Get().GetProjectPath());
-            return path;
-        }
-    }
-    return wxFileName();
+    return SaveAsTempPng(wxT("placeholder16"), wxSize(16, 16));
 }

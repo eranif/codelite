@@ -289,29 +289,9 @@ MainFrame::MainFrame(wxWindow* parent, IManager* manager)
     wxIconBundle icons;
     wxCrafter::ResourceLoader rl;
 
-    {
-        wxBitmap bmp = rl.Bitmap("wxc-logo-16");
-        wxIcon icn;
-        icn.CopyFromBitmap(bmp);
-        icons.AddIcon(icn);
-    }
-
-    {
-        wxBitmap bmp = rl.Bitmap("wxc-logo-32");
-        wxIcon icn;
-        icn.CopyFromBitmap(bmp);
-        icons.AddIcon(icn);
-    }
-
-    {
-        wxBitmap bmp = rl.Bitmap("wxc-logo-64");
-        wxIcon icn;
-        icn.CopyFromBitmap(bmp);
-        icons.AddIcon(icn);
-    }
-
-    {
-        wxBitmap bmp = rl.Bitmap("wxc-logo-128");
+    // The icon of the window. The smallest one has its own image, with less details
+    for (const int size : {16, 32, 64, 128}) {
+        const wxBitmap bmp = rl.Bitmap(size == 16 ? wxT("wxc-logo-16") : wxT("wxc-logo"), wxSize(size, size));
         wxIcon icn;
         icn.CopyFromBitmap(bmp);
         icons.AddIcon(icn);

@@ -106,6 +106,11 @@ void TabStatusIcon::ShowAttention(wxTerminalProgramState state)
 void TabStatusIcon::OnPageDestroyed(wxWindowDestroyEvent& event)
 {
     event.Skip();
+    // wxEVT_DESTROY is a command event: it is sent to the parents of a destroyed window as well. Ignore the events of
+    // the children of the page
+    if (event.GetEventObject() != m_page) {
+        return;
+    }
     // The page (and its tab) is being destroyed: do not touch it, or the book, any more
     m_spinner.reset();
     m_attention.reset();

@@ -98,6 +98,11 @@ void TabAttentionIcon::OnChildFocus(wxChildFocusEvent& event)
 void TabAttentionIcon::OnPageDestroyed(wxWindowDestroyEvent& event)
 {
     event.Skip();
+    // wxEVT_DESTROY is a command event: it is sent to the parents of a destroyed window as well. Ignore the events of
+    // the children of the page (the icon would stop and stay on the last frame)
+    if (event.GetEventObject() != m_page) {
+        return;
+    }
     // The page (and its tab) is being destroyed. Do not touch it, or the book, any more
     m_timer.Stop();
     m_shown = false;

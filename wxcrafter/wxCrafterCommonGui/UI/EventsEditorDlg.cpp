@@ -1,6 +1,7 @@
 #include "EventsEditorDlg.h"
 
 #include "UI/wxguicraft_main_view.h"
+#include "clAuiBook.hpp"
 #include "event_notifier.h"
 #include "wxc_widget.h"
 
@@ -10,6 +11,7 @@ EventsEditorPane::EventsEditorPane(wxWindow* parent, wxcWidget* control)
     : EventsEditorPaneBase(parent)
     , m_control(control)
 {
+    clAuiBook::ApplyTabArt(m_auiBookEvents);
     DoInitialize();
     EventNotifier::Get()->Connect(
         wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(EventsEditorPane::OnWidgetSelected), nullptr, this);

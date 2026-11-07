@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <rect x="1.5" y="1.5" width="13" height="13" rx="1" fill="#4d4d4d" fill-opacity="0.08" stroke="#1f6fc0"/>
+  <path d="M1.5 3.5L14.5 3.5" fill="none" stroke="#1f6fc0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M7 3.5L7 14.5" fill="none" stroke="#1f6fc0" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="2.5" y="5.2" width="1.6" height="1.6" rx="0" fill="#1f6fc0" fill-opacity="0.6" stroke="#1f6fc0"/>
+  <path d="M5 6L6 6" fill="none" stroke="#9a9a9a" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="2.5" y="8.2" width="1.6" height="1.6" rx="0" fill="#1f6fc0" fill-opacity="0.6" stroke="#1f6fc0"/>
+  <path d="M5 9L6 9" fill="none" stroke="#9a9a9a" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="2.5" y="11.2" width="1.6" height="1.6" rx="0" fill="#1f6fc0" fill-opacity="0.6" stroke="#1f6fc0"/>
+  <path d="M5 12L6 12" fill="none" stroke="#9a9a9a" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="8.5" y="5" width="4.5" height="8" rx="0.5" fill="#4d4d4d" fill-opacity="0.15" stroke="#9a9a9a"/>
+</svg>

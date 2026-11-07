@@ -41,6 +41,8 @@ class WXDLLIMPEXP_SDK clMimeBitmaps
     std::unordered_map<int, int> m_fileIndexMap;
     std::vector<wxBitmap> m_bitmaps;
     std::vector<wxBitmap> m_disabled_bitmaps;
+    /// Maps between image-id : the name of the bundle (SVG) that the bitmap was made from
+    std::unordered_map<int, wxString> m_bundleNames;
 
 public:
     clMimeBitmaps() = default;
@@ -55,7 +57,10 @@ public:
      */
     int GetIndex(const wxString& filename, bool disabled = false) const;
     const wxBitmap& GetBitmap(int type, bool disabled) const;
-    void AddBitmap(const wxBitmap& bitmap, int type);
+    /// `bundleName`: the name of the bundle that `bitmap` was made from (see BitmapLoader::GetBundle())
+    void AddBitmap(const wxBitmap& bitmap, int type, const wxString& bundleName = wxEmptyString);
+    /// The name of the bundle of the file type (empty if there is none)
+    wxString GetBundleName(int type) const;
     void Clear();
     bool IsEmpty() const { return m_bitmaps.empty(); }
     std::vector<wxBitmap>& GetBitmaps() { return m_bitmaps; }
@@ -155,6 +160,12 @@ public:
         return GetBitmapForFile(filename.GetFullName(), disabled);
     }
     const wxBitmap& GetBitmapForFile(const wxString& filename, bool disabled) const;
+
+    /**
+     * @brief return the image of a file as a bundle: it can give a sharp bitmap of any size. The bundle is not ok if
+     * there is no such image
+     */
+    const wxBitmapBundle& GetBundleForFile(const wxString& filename) const;
 
     /**
      * @brief return the image index in the image list prepared by GetStandardMimeBitmapListPtr()

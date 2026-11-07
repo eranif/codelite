@@ -81,6 +81,20 @@ struct FindUsageFile {
 
 namespace
 {
+/// Scale `size` (in DIP) for the DPI of `win`. FromDIP does not work on Linux, and clGetSize does nothing on the other
+/// platforms: use each one where it works
+int ScaledSize(int size, const wxWindow* win)
+{
+    if (win == nullptr) {
+        win = EventNotifier::Get()->TopFrame();
+    }
+#ifdef __WXGTK__
+    return clGetSize(size, win);
+#else
+    return win != nullptr ? win->FromDIP(size) : size;
+#endif
+}
+
 constexpr int kPadding = 1;
 constexpr size_t kTabSize = 4;
 // The toolbar buttons (the name is turned into an ID with XRCID)
@@ -376,12 +390,15 @@ private:
 };
 
 /// Draws a text (a file, a line number) with the font and the colour of the matched lines, so both views look the same
+/// Draws a text. With `withIcon`, the value of the cell is a wxDataViewIconText: the icon is drawn before the text
 class FindUsageTextRenderer : public wxDataViewCustomRenderer
 {
 public:
-    explicit FindUsageTextRenderer(bool alignRight = false)
-        : wxDataViewCustomRenderer("string", wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
+    explicit FindUsageTextRenderer(bool alignRight = false, bool withIcon = false)
+        : wxDataViewCustomRenderer(
+              withIcon ? "wxDataViewIconText" : "string", wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
         , m_alignRight(alignRight)
+        , m_withIcon(withIcon)
     {
     }
 
@@ -389,13 +406,24 @@ public:
 
     bool SetValue(const wxVariant& value) override
     {
-        m_text = value.GetString();
+        if (m_withIcon) {
+            wxDataViewIconText iconText;
+            iconText << value;
+            m_text = iconText.GetText();
+            m_icon = iconText.GetIcon();
+        } else {
+            m_text = value.GetString();
+        }
         return true;
     }
 
     bool GetValue(wxVariant& value) const override
     {
-        value = m_text;
+        if (m_withIcon) {
+            value << wxDataViewIconText(m_text, m_icon);
+        } else {
+            value = m_text;
+        }
         return true;
     }
 
@@ -406,7 +434,7 @@ public:
             return wxSize(wxDVC_DEFAULT_RENDERER_SIZE, wxDVC_DEFAULT_RENDERER_SIZE);
         }
         // The height of a text line, as FindUsageRenderer
-        return wxSize(view->GetTextExtent(m_text).x + 2 * kPadding, view->GetTextExtent("Tp").y);
+        return wxSize(view->GetTextExtent(m_text).x + 2 * kPadding + GetIconAreaWidth(), view->GetTextExtent("Tp").y);
     }
 
     bool Render(wxRect rect, wxDC* dc, int state) override
@@ -415,6 +443,27 @@ public:
         wxDCClipper clipper(*dc, rect);
         UseViewFont(GetView(), dc);
         rect.Deflate(kPadding, 0);
+        if (m_withIcon && m_icon.IsOk()) {
+            // The icon is 16x16 DIP, for the DPI of the view. The text of the cell is the path of the file: ask for its
+            // SVG image at the exact size, so it is sharp (scaling a bitmap makes it blurry). If there is no SVG, scale
+            // the icon of the cell
+            const int side = GetIconSide();
+            wxBitmap bmp;
+            const wxBitmapBundle& bundle = clGetManager()->GetStdIcons()->GetBundleForFile(m_text);
+            if (bundle.IsOk()) {
+                bmp = bundle.GetBitmap(wxSize(side, side));
+            } else {
+                bmp.CopyFromIcon(m_icon);
+                if (bmp.IsOk() && (bmp.GetWidth() != side || bmp.GetHeight() != side)) {
+                    bmp = wxBitmap(bmp.ConvertToImage().Rescale(side, side, wxIMAGE_QUALITY_BICUBIC));
+                }
+            }
+            if (bmp.IsOk()) {
+                dc->DrawBitmap(bmp, rect.x, rect.y + (rect.height - side) / 2, true);
+            }
+        }
+        rect.x += GetIconAreaWidth();
+        rect.width -= GetIconAreaWidth();
         const wxSize size = dc->GetTextExtent(m_text);
         const int x = m_alignRight ? rect.GetRight() - size.x : rect.x;
         dc->SetTextForeground(m_colour.IsOk() ? m_colour : clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
@@ -423,9 +472,17 @@ public:
     }
 
 private:
+    /// The width and the height of the icon, in pixels: 16 DIP
+    int GetIconSide() const { return ScaledSize(16, GetView()); }
+
+    /// The width that the icon takes: the icon and the space after it
+    int GetIconAreaWidth() const { return (m_withIcon && m_icon.IsOk()) ? GetIconSide() + kPadding : 0; }
+
     wxString m_text;
+    wxIcon m_icon;
     wxColour m_colour;
     bool m_alignRight = false;
+    bool m_withIcon = false;
 };
 
 FindUsageTab::FindUsageTab(wxWindow* parent)
@@ -470,16 +527,16 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
     m_splitter->SetMinimumPaneSize(FromDIP(50));
 
-    m_dvFiles =
-        new wxDataViewListCtrl(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxDV_NO_HEADER);
+    m_dvFiles = new wxDataViewListCtrl(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER);
     // Both views use our renderers, with the same font and row height, so their rows are aligned
-    m_fileRenderer = new FindUsageTextRenderer();
+    // The cell of a file is an icon and a text
+    m_fileRenderer = new FindUsageTextRenderer(false, true);
     m_dvFiles->AppendColumn(
         new wxDataViewColumn(_("File"), m_fileRenderer, 0, wxCOL_WIDTH_AUTOSIZE, wxALIGN_LEFT, wxCOL_RESIZABLE),
-        "string");
+        "wxDataViewIconText");
 
     m_dvMatches =
-        new wxDataViewListCtrl(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_ROW_LINES | wxBORDER_NONE);
+        new wxDataViewListCtrl(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_ROW_LINES | wxDV_NO_HEADER);
     m_lineRenderer = new FindUsageTextRenderer(true);
     m_dvMatches->AppendColumn(
         new wxDataViewColumn(_("Line"), m_lineRenderer, 0, wxCOL_WIDTH_AUTOSIZE, wxALIGN_RIGHT, wxCOL_RESIZABLE),
@@ -723,7 +780,11 @@ void FindUsageTab::ApplyFilter()
         }
 
         wxVector<wxVariant> values;
-        values.push_back(wxVariant(file->path));
+        wxIcon icon;
+        icon.CopyFromBitmap(clGetManager()->GetStdIcons()->GetBitmapForFile(file->path, false));
+        wxVariant fileValue;
+        fileValue << wxDataViewIconText(file->path, icon);
+        values.push_back(fileValue);
         m_dvFiles->AppendItem(values, reinterpret_cast<wxUIntPtr>(file.get()));
         if (file.get() == selected || !selected_item.IsOk()) {
             selected_item = m_dvFiles->RowToItem(m_dvFiles->GetItemCount() - 1);
@@ -825,7 +886,8 @@ void FindUsageTab::UpdateStyle()
     }
 
     // The same row height in both views, so their rows are aligned
-    const int rowHeight = m_dvFiles->GetTextExtent("Tp").y + FromDIP(kPadding);
+    // The row is high enough for the icon of the files (16 DIP)
+    const int rowHeight = std::max(m_dvFiles->GetTextExtent("Tp").y, ScaledSize(16, m_dvFiles)) + FromDIP(kPadding);
     m_dvFiles->SetRowHeight(rowHeight);
     m_dvMatches->SetRowHeight(rowHeight);
 

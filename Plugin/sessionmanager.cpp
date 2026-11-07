@@ -150,7 +150,14 @@ bool SessionManager::Load(const wxString& fileName)
         newFile.Close();
     }
 
-    m_doc.Load(m_fileName.GetFullPath());
+    if (!m_doc.Load(m_fileName.GetFullPath()) || !m_doc.IsOk() || !m_doc.GetRoot()) {
+        // The file is damaged (for example, it is full of zeros after a crash). Without a document, the last session
+        // can not be saved, and the next start would not restore it. Start with an empty one
+        clWARNING() << "Sessions file is damaged:" << m_fileName.GetFullPath() << ". Creating a new one" << endl;
+        m_doc = wxXmlDocument();
+        m_doc.SetRoot(new wxXmlNode(nullptr, wxXML_ELEMENT_NODE, wxT("Sessions")));
+        SaveDocument();
+    }
     return m_doc.IsOk();
 }
 
@@ -243,6 +250,11 @@ void SessionManager::SetLastSession(const wxString& name)
     m_doc.GetRoot()->AddChild(child);
     XmlUtils::SetNodeContent(child, name);
 
+    SaveDocument();
+}
+
+void SessionManager::SaveDocument()
+{
     wxString content;
     wxStringOutputStream sos(&content);
     if (!m_doc.Save(sos)) {

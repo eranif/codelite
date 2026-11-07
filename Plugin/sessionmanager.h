@@ -136,6 +136,9 @@ struct WXDLLIMPEXP_SDK FindInFilesSession {
  */
 class WXDLLIMPEXP_SDK SessionManager : public wxEvtHandler
 {
+    /// Write m_doc to the sessions file
+    void SaveDocument();
+
     wxXmlDocument m_doc;
     wxFileName m_fileName;
 

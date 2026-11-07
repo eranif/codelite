@@ -233,6 +233,7 @@ Allocator::Allocator()
     Register(new ImageListWrapper(), "wximglist");
     Register(new TimerWrapper(), "wxtimer");
     Register(new PopupWindowWrapper(), "wxpopupwindow");
+    Register(new PopupTransientWindowWrapper(), "wxpopuptransientwindow");
     Register(new PropertyGridManagerWrapper(), "wxpropertygridmanager");
     Register(new PropertyGridWrapper(), "wxpgproperty");
     Register(new PropertyGridWrapper(), "wxpgproperty", ID_WXPGPROPERTY_SUB);

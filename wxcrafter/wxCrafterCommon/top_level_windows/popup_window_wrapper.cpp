@@ -1,9 +1,17 @@
 #include "popup_window_wrapper.h"
 
+#include <wx/popupwin.h>
+
 PopupWindowWrapper::PopupWindowWrapper()
-    : TopLevelWinWrapper(ID_WXPOPUPWINDOW)
+    : PopupWindowWrapper(ID_WXPOPUPWINDOW, "wxPopupWindow", "MyPopupWindow")
 {
-    SetPropertyString(_("Common Settings"), "wxPopupWindow");
+}
+
+PopupWindowWrapper::PopupWindowWrapper(int id, const wxString& wxClassName, const wxString& namePattern)
+    : TopLevelWinWrapper(id)
+    , m_wxClassName(wxClassName)
+{
+    SetPropertyString(_("Common Settings"), wxClassName);
     REMOVE_STYLE(wxCAPTION);
     REMOVE_STYLE(wxSYSTEM_MENU);
     REMOVE_STYLE(wxMAXIMIZE_BOX);
@@ -12,11 +20,19 @@ PopupWindowWrapper::PopupWindowWrapper()
     REMOVE_STYLE(wxSTAY_ON_TOP);
     REMOVE_STYLE(wxCLOSE_BOX);
 
-    m_namePattern = wxT("MyPopupWindow");
+    PREPEND_STYLE(wxPU_CONTAINS_CONTROLS, true);
+    m_namePattern = namePattern;
     SetName(GenerateName());
 }
 
 wxcWidget* PopupWindowWrapper::Clone() const { return new PopupWindowWrapper(); }
+
+PopupTransientWindowWrapper::PopupTransientWindowWrapper()
+    : PopupWindowWrapper(ID_WXPOPUPTRANSIENTWINDOW, "wxPopupTransientWindow", "MyPopupTransientWindow")
+{
+}
+
+wxcWidget* PopupTransientWindowWrapper::Clone() const { return new PopupTransientWindowWrapper(); }
 
 wxString PopupWindowWrapper::CppCtorCode() const { return ""; }
 
@@ -26,7 +42,7 @@ void PopupWindowWrapper::GetIncludeFile(wxArrayString& headers) const
     headers.Add(wxT("#include <wx/artprov.h>"));
 }
 
-wxString PopupWindowWrapper::GetWxClassName() const { return "wxPopupWindow"; }
+wxString PopupWindowWrapper::GetWxClassName() const { return m_wxClassName; }
 
 void PopupWindowWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
@@ -73,4 +89,37 @@ wxString PopupWindowWrapper::DesignerXRC(bool forPreviewDialog) const
 
     WrapXRC(text);
     return text;
+}
+
+void PopupTransientWindowWrapper::DoGenerateExtraFunctions(wxString& decl, wxString& impl) const
+{
+    // Nothing to do for a window that was not created as a top level one
+    if (GetParent()) {
+        return;
+    }
+
+    const wxString cls = CreateBaseClassName();
+    const wxString parent = GetRealClassName();
+
+    decl << "    virtual void Popup(wxWindow* focus = nullptr) override;\n"
+         << "    virtual void OnDismiss() override;\n"
+         << "    virtual bool ProcessLeftDown(wxMouseEvent& event) override;\n"
+         << "    virtual bool Show(bool show = true) override;\n";
+
+    impl << "void " << cls << "::Popup(wxWindow* focus)\n"
+         << "{\n"
+         << "    " << parent << "::Popup(focus);\n"
+         << "}\n\n"
+         << "void " << cls << "::OnDismiss()\n"
+         << "{\n"
+         << "    " << parent << "::OnDismiss();\n"
+         << "}\n\n"
+         << "bool " << cls << "::ProcessLeftDown(wxMouseEvent& event)\n"
+         << "{\n"
+         << "    return " << parent << "::ProcessLeftDown(event);\n"
+         << "}\n\n"
+         << "bool " << cls << "::Show(bool show)\n"
+         << "{\n"
+         << "    return " << parent << "::Show(show);\n"
+         << "}\n";
 }

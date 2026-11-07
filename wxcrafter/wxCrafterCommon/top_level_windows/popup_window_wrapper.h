@@ -18,6 +18,27 @@ public:
     void GetIncludeFile(wxArrayString& headers) const override;
     wxString GetWxClassName() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
+
+protected:
+    /// For the sub classes: the same form with another ID and another wxWidgets class
+    PopupWindowWrapper(int id, const wxString& wxClassName, const wxString& namePattern);
+
+    wxString m_wxClassName;
+};
+
+/// wxPopupTransientWindow: a popup that is dismissed when the user clicks outside of it. The code is the same as of
+/// wxPopupWindow
+class PopupTransientWindowWrapper : public PopupWindowWrapper
+{
+public:
+    PopupTransientWindowWrapper();
+    ~PopupTransientWindowWrapper() override = default;
+
+    wxcWidget* Clone() const override;
+
+protected:
+    /// Generate the methods that wxPopupTransientWindow expects its sub classes to override (they call the base class)
+    void DoGenerateExtraFunctions(wxString& decl, wxString& impl) const override;
 };
 
 #endif // POPUPWINDOWWRAPPER_H

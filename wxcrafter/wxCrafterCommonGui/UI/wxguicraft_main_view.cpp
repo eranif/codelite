@@ -295,6 +295,7 @@ FLAGS_t DoGetValidMenus(const wxcWidget* item)
         [[fallthrough]];
     case ID_WXPANEL_TOPLEVEL:
     case ID_WXPOPUPWINDOW:
+    case ID_WXPOPUPTRANSIENTWINDOW:
         if (!item->HasMainSizer() && !item->IsAuiManaged()) {
             menuflags |= MT_SIZERS | MT_AUIMGR;
         }
@@ -526,6 +527,8 @@ wxMenu* CreateTopLevelMenu()
     MENU_SEPARATOR_PTR();
     MENU_ENTRY_PTR(ID_WXIMAGELIST, _("New wxImageList"), wxT("wximglist"));
     MENU_ENTRY_PTR(ID_WXPOPUPWINDOW, _("New wxPopupWindow"), wxT("wxpopupwindow"));
+    MENU_ENTRY_PTR(
+        ID_WXPOPUPTRANSIENTWINDOW, _("New wxPopupTransientWindow"), wxT("wxpopuptransientwindow"));
 
     // ADD_NEW_CONTROL
     return menu;
@@ -1387,7 +1390,7 @@ void GUICraftMainPanel::OnNewControl(wxCommandEvent& e)
     int imgId = Allocator::Instance()->GetImageId(e.GetId());
 
     bool isTopLevel = (e.GetId() == ID_WXDIALOG || e.GetId() == ID_WXFRAME || e.GetId() == ID_WXWIZARD ||
-                       e.GetId() == ID_WXPANEL_TOPLEVEL || e.GetId() == ID_WXPOPUPWINDOW ||
+                       e.GetId() == ID_WXPANEL_TOPLEVEL || e.GetId() == ID_WXPOPUPWINDOW || e.GetId() == ID_WXPOPUPTRANSIENTWINDOW ||
                        e.GetId() == ID_WXIMAGELIST || e.GetId() == ID_WXAUITOOLBARTOPLEVEL);
     if (isTopLevel) {
         // Use the Wizard instead of adding the form directly

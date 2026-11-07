@@ -33,6 +33,7 @@ protected:
     bool IsFrame() const;
     bool IsDialog() const;
     bool IsPopupWindow() const;
+    bool IsPopupTransientWindow() const;
     bool IsImageList() const;
     bool IsWizard() const;
 

@@ -1715,6 +1715,9 @@ void MainFrame::OpenNewFormWizard(int type)
         case ID_WXPOPUPWINDOW:
             label << "new popup window";
             break;
+        case ID_WXPOPUPTRANSIENTWINDOW:
+            label << "new popup transient window";
+            break;
         case ID_WXIMAGELIST:
             label << "new image list";
             break;

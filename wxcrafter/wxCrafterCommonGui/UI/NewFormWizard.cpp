@@ -29,6 +29,11 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
     : NewFormWizardBaseClass(parent)
     , m_mgr(mgr)
 {
+    // Make sure that the list of the forms has wxPopupTransientWindow
+    if (m_choiceFormType->FindString(wxT("wxPopupTransientWindow")) == wxNOT_FOUND) {
+        m_choiceFormType->Append(wxT("wxPopupTransientWindow"));
+    }
+
     wxString stringSelection;
     switch (type) {
     case ID_WXDIALOG:
@@ -48,6 +53,9 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
         break;
     case ID_WXPOPUPWINDOW:
         stringSelection = wxT("wxPopupWindow");
+        break;
+    case ID_WXPOPUPTRANSIENTWINDOW:
+        stringSelection = wxT("wxPopupTransientWindow");
         break;
     case ID_WXAUITOOLBARTOPLEVEL:
         stringSelection = "wxAuiToolBar";
@@ -143,6 +151,8 @@ int NewFormWizard::GetFormType() const
         return ID_WXAUITOOLBARTOPLEVEL;
     else if (IsPopupWindow())
         return ID_WXPOPUPWINDOW;
+    else if (IsPopupTransientWindow())
+        return ID_WXPOPUPTRANSIENTWINDOW;
     return wxNOT_FOUND;
 }
 
@@ -246,7 +256,7 @@ wxString NewFormWizard::GetWxcpFile() const
 
 void NewFormWizard::OnTitleUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!IsImageList() && !IsPanel() && !IsPopupWindow() && !IsAuiToolBar());
+    event.Enable(!IsImageList() && !IsPanel() && !IsPopupWindow() && !IsPopupTransientWindow() && !IsAuiToolBar());
 }
 
 void NewFormWizard::OnFilenameUI(wxUpdateUIEvent& event) { event.Enable(!IsImageList()); }
@@ -304,6 +314,11 @@ bool NewFormWizard::IsImageList() const { return m_choiceFormType->GetStringSele
 bool NewFormWizard::IsPanel() const { return m_choiceFormType->GetStringSelection() == "wxPanel"; }
 
 bool NewFormWizard::IsPopupWindow() const { return m_choiceFormType->GetStringSelection() == "wxPopupWindow"; }
+
+bool NewFormWizard::IsPopupTransientWindow() const
+{
+    return m_choiceFormType->GetStringSelection() == "wxPopupTransientWindow";
+}
 
 bool NewFormWizard::IsWizard() const { return m_choiceFormType->GetStringSelection() == "wxWizard"; }
 

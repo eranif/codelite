@@ -2018,6 +2018,7 @@ void wxcWidget::SetParent(wxcWidget* parent)
 
     case ID_WXPANEL_TOPLEVEL:
     case ID_WXDIALOG:
+    case ID_WXPOPUPTRANSIENTWINDOW:
     case ID_WXPOPUPWINDOW:
         return TYPE_FORM;
 
@@ -2782,6 +2783,7 @@ std::pair<const int, std::unique_ptr<wxcWidget> (*)()> Entry()
         Entry<ImageListWrapper>(),
         Entry<TimerWrapper>(),
         Entry<PopupWindowWrapper>(),
+        Entry<PopupTransientWindowWrapper>(),
         Entry<PropertyGridManagerWrapper>(),
         Entry<PropertyGridWrapper>(),
         {ID_WXPGPROPERTY_SUB, &Make<PropertyGridWrapper>},
@@ -3015,6 +3017,8 @@ std::pair<const int, std::unique_ptr<wxcWidget> (*)()> Entry()
         return ID_WXDATAVIEWCOL;
     if (classname == wxT("wxPopupWindow"))
         return ID_WXPOPUPWINDOW;
+    if (classname == wxT("wxPopupTransientWindow"))
+        return ID_WXPOPUPTRANSIENTWINDOW;
     if (classname == wxT("wxSimplebook"))
         return ID_WXSIMPLEBOOK;
     if (classname == wxT("wxScintilla"))

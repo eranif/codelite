@@ -50,6 +50,7 @@ const std::vector<ToolBoxPage>& GetToolBoxPages()
             {2, true, {
                 {ID_WXIMAGELIST, "wximglist", wxTRANSLATE("wxImagList")},
                 {ID_WXPOPUPWINDOW, "wxpopupwindow", wxTRANSLATE("wxPopupWindow")},
+                {ID_WXPOPUPTRANSIENTWINDOW, "wxpopuptransientwindow", wxTRANSLATE("wxPopupTransientWindow")},
                 {ID_WXBITMAP, "wxbitmap", wxTRANSLATE("wxBitmap")},
             }},
         }},

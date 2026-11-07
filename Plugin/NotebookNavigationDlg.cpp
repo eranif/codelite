@@ -23,7 +23,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clTabHistory::Ptr
                                wxID_ANY,
                                wxDefaultPosition,
                                wxDefaultSize,
-                               wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxWANTS_CHARS | wxBORDER_NONE);
+                               wxDV_NO_HEADER | wxDV_SINGLE | wxWANTS_CHARS | wxBORDER_NONE);
     sizer->Add(m_dvListCtrl, wxSizerFlags(1).Expand().Border(wxALL, FromDIP(5)));
     m_dvListCtrl->AppendBitmapColumn(
         _("Icon"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, FromDIP(30), wxALIGN_CENTER);

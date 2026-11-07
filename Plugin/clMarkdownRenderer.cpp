@@ -196,6 +196,9 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
     wxFont text_font = ColoursAndFontsManager::Get().GetFixedFont(true);
     wxFont code_font = ColoursAndFontsManager::Get().GetFixedFont(true);
 
+    text_font.SetFractionalPointSize(text_font.GetFractionalPointSize() * 0.8);
+    code_font.SetFractionalPointSize(code_font.GetFractionalPointSize() * 0.8);
+
     // use the same line height for both fonts, so mixed lines line up
     dc.SetFont(code_font);
     int base_line_height = dc.GetTextExtent("Tp").GetHeight();
@@ -203,17 +206,11 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
     base_line_height = wxMax(base_line_height, dc.GetTextExtent("Tp").GetHeight());
 
     // clear the area
-    wxColour pen_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-    wxColour bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour pen_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    wxColour bg_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     bool is_dark = DrawingUtils::IsDark(bg_colour); //.GetLuminance() < 128;
     if (do_draw) {
-        wxRect bgRect = rect;
-#ifdef __WXMAC__
-        bgRect.Inflate(1);
-#endif
-        dc.SetPen(pen_colour);
-        dc.SetBrush(bg_colour);
-        dc.DrawRectangle(bgRect);
+        dc.Clear();
     }
 
     wxColour code_bg_colour = bg_colour.ChangeLightness(is_dark ? 110 : 150);
@@ -227,14 +224,14 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
     mdparser::Parser parser;
 
     // fill a full-width row with the code block background
-    auto draw_codeblock_bg = [&](int y, int h, const wxColour& colour) {
+    auto draw_codeblock_bg = [&](int y, int h, [[maybe_unused]] const wxColour& colour) {
         if (!do_draw) {
             return;
         }
         wxRect code_rect = wxRect(rect.GetX(), y, rect.GetWidth(), h);
         code_rect.Deflate(1, 0);
-        dc.SetPen(colour);
-        dc.SetBrush(colour);
+        dc.SetPen(*wxTRANSPARENT_PEN);
+        dc.SetBrush(*wxTRANSPARENT_BRUSH);
         dc.DrawRectangle(code_rect);
     };
 
@@ -295,7 +292,7 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
 
     auto on_write = [&](const wxString& buffer, const mdparser::Style& style, bool is_eol) {
         DCFontLocker font_locker(dc);
-        if (style.is_horizontal_rule()) {
+        if (style.is_horizontal_rule() && false) {
             end_codeblock();
             yy += base_line_height / 2;
             if (do_draw) {
@@ -349,8 +346,8 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
             int text_y = yy + (row_height - segment_height) / 2;
             if (style.is_code()) {
                 wxRect code_rect = wxRect({xx, text_y}, text_size);
-                dc.SetPen(code_bg_colour);
-                dc.SetBrush(code_bg_colour);
+                dc.SetPen(*wxTRANSPARENT_PEN);
+                dc.SetBrush(*wxTRANSPARENT_BRUSH);
                 dc.DrawRoundedRectangle(code_rect, 1.0);
             }
             dc.SetTextForeground(text_colour);

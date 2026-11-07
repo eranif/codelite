@@ -234,13 +234,18 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip
     , m_tip(tip)
     , m_stripHtmlTags(strip_html_tags)
 {
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    m_mainPanel = new wxPanel(this);
+    m_mainPanel->SetBackgroundStyle(wxBG_STYLE_PAINT);
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    GetSizer()->Add(m_mainPanel, wxSizerFlags(1).Expand());
+
     CCBoxTipWindow_ShrinkTip(m_tip, m_stripHtmlTags);
     DoInitialize(1);
 
-    Bind(wxEVT_PAINT, &CCBoxTipWindow::OnPaint, this);
-    Bind(wxEVT_ERASE_BACKGROUND, &CCBoxTipWindow::OnEraseBG, this);
-    StylePopupWindow(this, 10.0);
+    // The panel owns the pixels: it covers the whole popup and OnPaint draws on it
+    m_mainPanel->Bind(wxEVT_PAINT, &CCBoxTipWindow::OnPaint, this);
+    m_mainPanel->Bind(wxEVT_ERASE_BACKGROUND, &CCBoxTipWindow::OnEraseBG, this);
+    StylePopupWindow(this, 5.0);
 }
 
 void CCBoxTipWindow::DoInitialize(size_t numOfTips)
@@ -369,7 +374,7 @@ void CCBoxTipWindow::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
 
 void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {
-    wxAutoBufferedPaintDC dc(this);
+    wxAutoBufferedPaintDC dc(m_mainPanel);
     PrepareDC(dc);
     DoDrawTip(dc);
 }
@@ -387,7 +392,7 @@ void CCBoxTipWindow::PositionAt(const wxPoint& pt, IEditor* focusEdior)
 void CCBoxTipWindow::DoDrawTip(wxDC& dc)
 {
     clMarkdownRenderer renderer;
-    wxSize size = renderer.Render(this, dc, m_tip, GetClientRect());
+    wxSize size = renderer.Render(m_mainPanel, dc, m_tip, GetClientRect());
     wxSize client_rect = GetClientRect().GetSize();
 
     ShrinkToScreen(size);

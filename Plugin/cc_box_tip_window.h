@@ -42,6 +42,7 @@ protected:
     size_t m_numOfTips = 1;
     bool m_stripHtmlTags = false;
     int m_editorStartPosition = wxNOT_FOUND;
+    wxPanel* m_mainPanel{nullptr};
 
 protected:
     void OnPaint(wxPaintEvent& e);

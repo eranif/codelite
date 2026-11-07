@@ -471,7 +471,7 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
     m_splitter->SetMinimumPaneSize(FromDIP(50));
 
     m_dvFiles =
-        new wxDataViewListCtrl(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_ROW_LINES | wxBORDER_NONE);
+        new wxDataViewListCtrl(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxDV_NO_HEADER);
     // Both views use our renderers, with the same font and row height, so their rows are aligned
     m_fileRenderer = new FindUsageTextRenderer();
     m_dvFiles->AppendColumn(

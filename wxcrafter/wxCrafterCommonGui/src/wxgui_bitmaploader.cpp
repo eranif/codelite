@@ -2,6 +2,7 @@
 
 #include "Zip/clZipReader.h"
 #include "clSystemSettings.h"
+#include "globals.h"
 #include "wxc_project_metadata.h"
 
 #include <wx/filename.h>
@@ -70,7 +71,15 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 }
 
 // 16x16 DIP in physical pixels (does not depend on any window, so it is safe to call early)
-wxSize wxCrafter::ResourceLoader::GetDefaultSize() { return wxWindow::FromDIP(wxSize(16, 16), nullptr); }
+wxSize wxCrafter::ResourceLoader::GetDefaultSize()
+{
+#ifdef __WXGTK__
+    // wxWidgets scales only by the integer GDK scale on GTK: use clGetSize(), which also follows GDK_DPI_SCALE
+    return clGetSize(wxSize(16, 16), nullptr);
+#else
+    return wxWindow::FromDIP(wxSize(16, 16), nullptr);
+#endif
+}
 
 wxBitmapBundle wxCrafter::ResourceLoader::Bundle(const wxString& name) const
 {

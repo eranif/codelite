@@ -42,7 +42,7 @@ void StylePopupWindow(wxWindow *popup, double radius) {
   content.wantsLayer = YES;
   content.layer.cornerRadius = radius;
   content.layer.masksToBounds = YES;
-  content.layer.borderWidth = 5.0;
+  content.layer.borderWidth = 1.0;
   content.layer.borderColor = [[NSColor separatorColor] CGColor];
 
   // Translucent: a blurred view behind all the controls, whose own

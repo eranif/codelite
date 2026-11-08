@@ -1,5 +1,4 @@
-#ifndef CLCONSOLEXFCE4TERMINAL_H
-#define CLCONSOLEXFCE4TERMINAL_H
+#pragma once
 
 #include "clConsoleGnomeTerminal.h"
 class WXDLLIMPEXP_CL clConsoleXfce4Terminal : public clConsoleGnomeTerminal
@@ -8,5 +7,3 @@ public:
     clConsoleXfce4Terminal();
     ~clConsoleXfce4Terminal() override = default;
 };
-
-#endif // CLCONSOLEXFCE4TERMINAL_H

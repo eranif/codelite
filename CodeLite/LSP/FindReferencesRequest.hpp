@@ -1,5 +1,4 @@
-#ifndef FINDREFERENCESREQUEST_HPP
-#define FINDREFERENCESREQUEST_HPP
+#pragma once
 
 #include "LSP/Request.h"
 
@@ -17,5 +16,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // FINDREFERENCESREQUEST_HPP

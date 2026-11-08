@@ -1,5 +1,4 @@
-#ifndef CODEACTIONREQUEST_HPP
-#define CODEACTIONREQUEST_HPP
+#pragma once
 
 #include "LSP/Request.h"
 
@@ -19,5 +18,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // CODEACTIONREQUEST_HPP

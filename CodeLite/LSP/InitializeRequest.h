@@ -1,5 +1,4 @@
-#ifndef INITIALIZEREQUEST_H
-#define INITIALIZEREQUEST_H
+#pragma once
 
 #include "LSP/Request.h"
 namespace LSP
@@ -34,4 +33,3 @@ public:
     const wxString& GetInitOptions() const { return m_initOptions; }
 };
 } // namespace LSP
-#endif // INITIALIZEREQUEST_H

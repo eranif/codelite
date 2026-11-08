@@ -1,5 +1,4 @@
-#ifndef FILEPATH_HPP
-#define FILEPATH_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -24,4 +23,3 @@ public:
     const wxString& GetPath() const { return m_path; }
 };
 } // namespace LSP
-#endif // FILEPATH_HPP

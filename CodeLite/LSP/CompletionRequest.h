@@ -1,5 +1,4 @@
-#ifndef COMPLETIONREQUEST_H
-#define COMPLETIONREQUEST_H
+#pragma once
 
 #include "LSP/Request.h"
 #include "LSP/basic_types.h"
@@ -23,4 +22,3 @@ private:
     bool m_userTrigger = false;
 };
 } // namespace LSP
-#endif // COMPLETIONREQUEST_H

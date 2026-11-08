@@ -1,5 +1,4 @@
-#ifndef HOVERREQUEST_HPP
-#define HOVERREQUEST_HPP
+#pragma once
 
 #include "LSP/Request.h"
 
@@ -13,4 +12,3 @@ public:
     std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 };
 } // namespace LSP
-#endif // HOVERREQUEST_HPP

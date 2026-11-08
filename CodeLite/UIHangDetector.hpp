@@ -1,5 +1,4 @@
-#ifndef UIHANGDETECTOR_HPP
-#define UIHANGDETECTOR_HPP
+#pragma once
 
 // clang-format off
 #include <wx/app.h>
@@ -44,5 +43,3 @@ private:
     long m_checkIntervalMs{10};
     std::atomic<uint64_t> m_lastHeartbeat{0};
 };
-
-#endif // UIHANGDETECTOR_HPP

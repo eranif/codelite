@@ -1,5 +1,4 @@
-#ifndef CLFILESCOLLECTOR_H
-#define CLFILESCOLLECTOR_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "macros.h"
@@ -91,5 +90,3 @@ public:
                            std::function<void(const wxArrayString&)>&& on_file_cb,
                            size_t search_flags = SF_DEFAULT);
 };
-
-#endif // CLFILESCOLLECTOR_H

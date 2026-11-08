@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef SERIALIZED_OBJECT_H
-#define SERIALIZED_OBJECT_H
+#pragma once
 
 #include "xml/archive.h"
 
@@ -76,5 +75,3 @@ public:
     void Serialize(Archive& arch) override;
     void DeSerialize(Archive& arch) override;
 };
-
-#endif // SERIALIZED_OBJECT_H

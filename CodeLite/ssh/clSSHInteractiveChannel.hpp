@@ -1,5 +1,4 @@
-#ifndef CLSSHINTERACTIVECHANNEL_HPP
-#define CLSSHINTERACTIVECHANNEL_HPP
+#pragma once
 
 #if USE_SFTP
 
@@ -110,4 +109,3 @@ public:
     void ResumeAsyncReads();
 };
 #endif // USE_SFTP
-#endif // CLSSHINTERACTIVECHANNEL_HPP

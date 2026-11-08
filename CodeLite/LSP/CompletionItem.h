@@ -1,5 +1,4 @@
-#ifndef COMPLETIONITEM_H
-#define COMPLETIONITEM_H
+#pragma once
 
 #include "LSP/basic_types.h"
 
@@ -85,5 +84,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // COMPLETIONITEM_H

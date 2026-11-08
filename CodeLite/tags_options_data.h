@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef TAGS_OPTIONS_DATA_H
-#define TAGS_OPTIONS_DATA_H
+#pragma once
 
 #include "cl_config.h"
 #include "codelite_exports.h"
@@ -178,5 +177,3 @@ public:
     }
     const wxArrayString& GetParserExcludePaths() const { return m_parserExcludePaths; }
 };
-
-#endif // TAGS_OPTIONS_DATA_H

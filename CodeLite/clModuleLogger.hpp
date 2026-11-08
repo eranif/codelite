@@ -1,5 +1,4 @@
-#ifndef CLMODULELOGGER_HPP
-#define CLMODULELOGGER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 #include "file_logger.h"
@@ -268,5 +267,3 @@ clModuleLogger& operator<<(clModuleLogger& logger, const T& obj)
         return instance;                                                            \
     }                                                                               \
     }
-
-#endif // CLMODULELOGGER_HPP

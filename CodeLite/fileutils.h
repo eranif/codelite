@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef FILEUTILS_H
-#define FILEUTILS_H
+#pragma once
 
 #include "clEnvironment.hpp"
 #include "codelite_exports.h"
@@ -408,5 +407,3 @@ public:
      */
     static std::optional<FileUtils::GrepMatch> ParseGrepLine(const wxString& line);
 };
-
-#endif // FILEUTILS_H

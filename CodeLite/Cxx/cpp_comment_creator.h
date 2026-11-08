@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CPP_COMMENT_CREATOR_H
-#define CPP_COMMENT_CREATOR_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "database/entry.h"
@@ -43,5 +42,3 @@ public:
 private:
     wxString FunctionComment();
 };
-
-#endif // CPP_COMMENT_CREATOR_H

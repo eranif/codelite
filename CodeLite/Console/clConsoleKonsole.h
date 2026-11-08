@@ -1,5 +1,4 @@
-#ifndef CLCONSOLEKONSOLE_H
-#define CLCONSOLEKONSOLE_H
+#pragma once
 
 #include "clConsoleGnomeTerminal.h"
 
@@ -10,4 +9,3 @@ public:
     ~clConsoleKonsole() override = default;
 };
 
-#endif // CLCONSOLEKONSOLE_H

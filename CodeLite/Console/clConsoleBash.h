@@ -1,5 +1,4 @@
-#ifndef CLCONSOLEBASH_H
-#define CLCONSOLEBASH_H
+#pragma once
 
 #include "clConsoleBase.h"
 #include "codelite_exports.h"
@@ -18,5 +17,3 @@ public:
     clConsoleBash() = default;
     ~clConsoleBash() override = default;
 };
-
-#endif // CLCONSOLEBASH_H

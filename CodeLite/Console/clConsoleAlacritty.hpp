@@ -1,5 +1,4 @@
-#ifndef CLCONSOLEALACRITTY_HPP
-#define CLCONSOLEALACRITTY_HPP
+#pragma once
 
 #include "clConsoleBase.h"
 #include "codelite_exports.h"
@@ -17,5 +16,3 @@ public:
     bool StartForDebugger() override;
     wxString PrepareCommand() override;
 };
-
-#endif // CLCONSOLEALACRITTY_HPP

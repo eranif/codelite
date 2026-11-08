@@ -1,5 +1,5 @@
-#ifndef UNIX_PROCESS_H
-#define UNIX_PROCESS_H
+#pragma once
+
 #if defined(__WXGTK__) || defined(__WXOSX__)
 #include <atomic>
 #include <exception>
@@ -97,4 +97,3 @@ protected:
     void StartReaderThread();
 };
 #endif // defined(__WXGTK__)||defined(__WXOSX__)
-#endif // UNIX_PROCESS_H

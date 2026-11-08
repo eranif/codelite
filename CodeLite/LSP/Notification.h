@@ -1,5 +1,4 @@
-#ifndef NOTIFICATION_H
-#define NOTIFICATION_H
+#pragma once
 
 #include "LSP/MessageWithParams.h"
 
@@ -13,5 +12,3 @@ public:
     ~Notification() override = 0; // Make sure that this class cant be used directly
 };
 } // namespace LSP
-
-#endif // NOTIFICATION_H

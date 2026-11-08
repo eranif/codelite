@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLEXCEPTION_H
-#define CLEXCEPTION_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -51,5 +50,3 @@ public:
     const wxString& What() const { return m_message; }
     int ErrorCode() const { return m_errorCode; }
 };
-
-#endif // CLEXCEPTION_H

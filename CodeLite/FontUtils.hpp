@@ -1,5 +1,4 @@
-#ifndef FONTUTILS_HPP
-#define FONTUTILS_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -18,5 +17,3 @@ WXDLLIMPEXP_CL wxFont GetDefaultMonospacedFont();
 /// (e.g. with wxFont::AddPrivateFont). Pass an empty string to go back to the platform font
 WXDLLIMPEXP_CL void SetBundledMonospacedFace(const wxString& face_name);
 } // namespace FontUtils
-
-#endif // FONTUTILS_HPP

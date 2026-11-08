@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef SINGLETON_H
-#define SINGLETON_H
+#pragma once
 
 /**
  * A template class that implements the Singleton pattern.
@@ -76,5 +75,3 @@ void Singleton<T>::Free()
     delete ms_instance;
     ms_instance = nullptr;
 }
-
-#endif // SINGLETON_H

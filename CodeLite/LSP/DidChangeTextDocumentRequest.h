@@ -1,5 +1,4 @@
-#ifndef DIDCHANGE_TEXTDOCUMENTREQUEST_H
-#define DIDCHANGE_TEXTDOCUMENTREQUEST_H
+#pragma once
 
 #include "LSP/Notification.h"
 
@@ -14,5 +13,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // DIDCHANGE_TEXTDOCUMENTREQUEST_H

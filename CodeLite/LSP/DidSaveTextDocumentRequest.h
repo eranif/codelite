@@ -1,5 +1,4 @@
-#ifndef DIDSAVE_TEXTDOCUMENTREQUEST_H
-#define DIDSAVE_TEXTDOCUMENTREQUEST_H
+#pragma once
 
 #include "LSP/Notification.h"
 
@@ -13,5 +12,3 @@ public:
     ~DidSaveTextDocumentRequest() override = default;
 };
 } // namespace LSP
-
-#endif // DIDCHANGE_TEXTDOCUMENTREQUEST_H

@@ -1,5 +1,4 @@
-#ifndef MSWPRIVATE_H
-#define MSWPRIVATE_H
+#pragma once
 
 #define YY_NEVER_INTERACTIVE 1
 #define CURRENT_GCC_VERSION ((__GNUC__ * 1000) + (__GNUC_MINOR__ * 100))
@@ -18,5 +17,3 @@ std::string to_string(T x)
 }
 } // namespace std
 #endif
-
-#endif // MSWPRIVATE_H

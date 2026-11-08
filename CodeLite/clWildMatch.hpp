@@ -1,5 +1,4 @@
-#ifndef CLWILDMATCH_HPP
-#define CLWILDMATCH_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -46,5 +45,3 @@ public:
     ~clPathExcluder() = default;
     bool is_exclude_path(const wxString& path) const;
 };
-
-#endif // CLWILDMATCH_HPP

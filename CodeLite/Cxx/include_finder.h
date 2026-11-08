@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef INCLUDE_FINDER_H
-#define INCLUDE_FINDER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -41,5 +40,3 @@ public:
 };
 
 extern WXDLLIMPEXP_CL int IncludeFinder(const char* filePath, std::vector<IncludeStatement>& includes);
-
-#endif

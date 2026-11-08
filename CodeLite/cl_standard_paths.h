@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSTANDARDPATHS_H
-#define CLSTANDARDPATHS_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -140,5 +139,3 @@ public:
 
     void IgnoreAppSubDir(const wxString& subdirPattern);
 };
-
-#endif // CLSTANDARDPATHS_H

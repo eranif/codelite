@@ -1,5 +1,4 @@
-#ifndef JSONRPC_BASICTYPES_H
-#define JSONRPC_BASICTYPES_H
+#pragma once
 
 #include "CTags.hpp"
 #include "JSON.h"
@@ -852,4 +851,3 @@ public:
 };
 
 } // namespace LSP
-#endif // JSONRPC_BASICTYPES_H

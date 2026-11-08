@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLFILEFINDER_H
-#define CLFILEFINDER_H
+#pragma once
 
 #include "assistant/common/json.hpp"
 #include "codelite_exports.h"
@@ -186,5 +185,3 @@ private:
                                 bool is_whole_match,
                                 std::vector<clFileFinderMatch>& results) const;
 };
-
-#endif // CLFILEFINDER_H

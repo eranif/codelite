@@ -1,5 +1,4 @@
-#ifndef DOCUMENTFORMATTINGREQUEST_HPP
-#define DOCUMENTFORMATTINGREQUEST_HPP
+#pragma once
 
 #include "LSP/Request.h"
 
@@ -25,5 +24,3 @@ private:
 };
 
 } // namespace LSP
-
-#endif // DOCUMENTFORMATTINGREQUEST_HPP

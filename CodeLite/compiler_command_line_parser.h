@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMMANDLINEPARSER_H
-#define COMMANDLINEPARSER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -81,5 +80,3 @@ public:
     const wxArrayString& GetIncludesWithPrefix() const { return m_includesWithPrefix; }
     const wxArrayString& GetMacrosWithPrefix() const { return m_macrosWithPrefix; }
 };
-
-#endif // COMMANDLINEPARSER_H

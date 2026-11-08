@@ -1,5 +1,4 @@
-#ifndef RENAMEREQUEST_HPP
-#define RENAMEREQUEST_HPP
+#pragma once
 
 #include "LSP/Request.h"
 namespace LSP
@@ -16,5 +15,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // RENAMEREQUEST_HPP

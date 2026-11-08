@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSFTPEVENT_H
-#define CLSFTPEVENT_H
+#pragma once
 
 #include "cl_command_event.h" // Base class: clCommandEvent
 
@@ -81,4 +80,3 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_NEW_FOLDER_COMPLETED, clSFTP
 // Failed to create a remote folder.
 // GetAccount() -> the account, GetRemoteFile() -> the folder path, GetString() -> the error message
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_NEW_FOLDER_ERROR, clSFTPEvent);
-#endif // CLSFTPEVENT_H

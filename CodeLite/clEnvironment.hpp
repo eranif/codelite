@@ -1,5 +1,4 @@
-#ifndef CLENVIRONMENT_HPP
-#define CLENVIRONMENT_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -33,5 +32,3 @@ WXDLLIMPEXP_CL clEnvList_t BuildEnvFromString(const wxString& env_str);
  */
 WXDLLIMPEXP_CL clEnvList_t ResolveEnvList(const clEnvList_t& env_list);
 WXDLLIMPEXP_CL clEnvList_t ResolveEnvList(const wxString& envstr);
-
-#endif // CLENVIRONMENT_HPP

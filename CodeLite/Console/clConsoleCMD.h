@@ -1,5 +1,4 @@
-#ifndef CLCONSOLECMD_H
-#define CLCONSOLECMD_H
+#pragma once
 
 #include "clConsoleBase.h" // Base class: clConsoleBase
 
@@ -15,4 +14,3 @@ public:
     wxString PrepareCommand() override;
 };
 
-#endif // CLCONSOLECMD_H

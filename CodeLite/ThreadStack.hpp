@@ -1,5 +1,4 @@
-#ifndef THREADSTACK_HPP
-#define THREADSTACK_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -13,5 +12,3 @@
  * unsupported Windows architecture, an empty string is returned.
  */
 WXDLLIMPEXP_CL wxString DumpCurrentThreadStack();
-
-#endif // THREADSTACK_HPP

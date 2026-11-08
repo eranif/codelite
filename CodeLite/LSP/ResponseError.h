@@ -1,5 +1,4 @@
-#ifndef RESPONSEERROR_H
-#define RESPONSEERROR_H
+#pragma once
 
 #include "LSP/Message.h"
 #include "codelite_exports.h"
@@ -42,5 +41,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // RESPONSEERROR_H

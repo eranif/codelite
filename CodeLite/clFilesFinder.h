@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLFILESFINDER_H
-#define CLFILESFINDER_H
+#pragma once
 
 #include "clFileFinder.h"
 #include "codelite_exports.h"
@@ -201,5 +200,3 @@ private:
 private:
     clFileFinder m_fileFinder; ///< Single-file finder used for searching individual files
 };
-
-#endif // CLFILESFINDER_H

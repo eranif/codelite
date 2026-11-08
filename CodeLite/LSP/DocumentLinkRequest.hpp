@@ -1,5 +1,4 @@
-#ifndef DOCUMENTLINKREQUEST_HPP
-#define DOCUMENTLINKREQUEST_HPP
+#pragma once
 
 #include "LSP/Request.h"
 
@@ -29,5 +28,3 @@ private:
 };
 
 } // namespace LSP
-
-#endif // DOCUMENTLINKREQUEST_HPP

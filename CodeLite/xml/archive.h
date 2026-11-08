@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef ARCHIVE_H
-#define ARCHIVE_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "macros.h"
@@ -118,5 +117,3 @@ private:
     bool WriteSimple(long value, const wxString& typeName, const wxString& name);
     bool ReadSimple(long& value, const wxString& typeName, const wxString& name);
 };
-
-#endif // ARCHIVE_H

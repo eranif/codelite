@@ -1,5 +1,4 @@
-#ifndef COMPLETIONHELPER_HPP
-#define COMPLETIONHELPER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 #include "database/entry.h"
@@ -47,5 +46,3 @@ public:
      */
     bool is_line_include_statement(const wxString& line) const;
 };
-
-#endif // COMPLETIONHELPER_HPP

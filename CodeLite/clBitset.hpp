@@ -1,5 +1,4 @@
-#ifndef CLBITSET_HPP
-#define CLBITSET_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -20,5 +19,3 @@ public:
     wxString to_string() const;
     void from_string(const wxString& str);
 };
-
-#endif // CLBITSET_HPP

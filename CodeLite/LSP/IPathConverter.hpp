@@ -1,5 +1,4 @@
-#ifndef IPATHCONVERTER_HPP
-#define IPATHCONVERTER_HPP
+#pragma once
 
 #include "LSP/FilePath.hpp"
 #include "codelite_exports.h"
@@ -26,5 +25,3 @@ public:
      */
     virtual LSP::FilePath ConvertTo(const wxString& path) const = 0;
 };
-
-#endif // IPATHCONVERTER_HPP

@@ -1,5 +1,4 @@
-#ifndef GOTO_DECLARATION_REQUEST_H
-#define GOTO_DECLARATION_REQUEST_H
+#pragma once
 
 #include "LSP/Request.h"
 
@@ -27,4 +26,3 @@ public:
     bool IsValidAt(const wxString& filename, size_t line, size_t col) const override;
 };
 } // namespace LSP
-#endif // GOTO_DECLARATION_REQUEST_H

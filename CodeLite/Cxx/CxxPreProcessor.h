@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CXXPREPROCESSOR_H
-#define CXXPREPROCESSOR_H
+#pragma once
 
 #include "CxxLexerAPI.h"
 #include "codelite_exports.h"
@@ -73,5 +72,3 @@ public:
      */
     wxArrayString GetDefinitions() const;
 };
-
-#endif // CXXPREPROCESSOR_H

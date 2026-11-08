@@ -1,5 +1,4 @@
-#ifndef JSONRPC_RESULTS_H
-#define JSONRPC_RESULTS_H
+#pragma once
 
 #include "JSON.h"
 #include "codelite_exports.h"
@@ -85,5 +84,3 @@ public:
     bool GetValue() const { return m_value; }
 };
 } // namespace LSP
-
-#endif // JSONRPC_RESULTS_H

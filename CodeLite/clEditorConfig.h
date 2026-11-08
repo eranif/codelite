@@ -1,5 +1,4 @@
-#ifndef CLEDITOR_CONFIG_H
-#define CLEDITOR_CONFIG_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -143,5 +142,3 @@ public:
      */
     bool GetSectionForFile(const wxFileName& filename, clEditorConfigSection& section);
 };
-
-#endif // CLEDITOR_CONFIG_H

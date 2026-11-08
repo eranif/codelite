@@ -1,5 +1,4 @@
-#ifndef CLCONSOLEMATETERMINAL_H
-#define CLCONSOLEMATETERMINAL_H
+#pragma once
 
 #include "clConsoleGnomeTerminal.h"
 
@@ -10,4 +9,3 @@ public:
     ~clConsoleMateTerminal() override = default;
 };
 
-#endif // CLCONSOLEMATETERMINAL_H

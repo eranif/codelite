@@ -1,5 +1,4 @@
-#ifndef CXXTOKENIZER_H
-#define CXXTOKENIZER_H
+#pragma once
 
 #include "CxxLexerAPI.h"
 #include "codelite_exports.h"
@@ -68,5 +67,3 @@ public:
  */
 void read_until_find(
     CxxTokenizer& tokenizer, CxxLexerToken& token, int type_1, int type_2, int* what_was_found, wxString* consumed);
-
-#endif // CXXTOKENIZER_H

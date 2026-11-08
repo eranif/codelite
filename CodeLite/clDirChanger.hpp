@@ -1,5 +1,4 @@
-#ifndef CLDIRCHANGER_HPP
-#define CLDIRCHANGER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -21,5 +20,3 @@ public:
     }
     virtual ~clDirChanger() { ::wxSetWorkingDirectory(m_oldDirectory); }
 };
-
-#endif // CLDIRCHANGER_HPP

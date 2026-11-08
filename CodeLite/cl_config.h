@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLCONFIG_H
-#define CLCONFIG_H
+#pragma once
 
 #include "JSON.h"
 #include "codelite_exports.h"
@@ -213,5 +212,3 @@ public:
     void SetAnnoyingDlgAnswer(const wxString& name, int value);
     void ClearAnnoyingDlgAnswers();
 };
-
-#endif // CLCONFIG_H

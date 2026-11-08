@@ -1,5 +1,4 @@
-#ifndef PLAFORM_COMMON_HPP
-#define PLAFORM_COMMON_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -85,4 +84,3 @@ public:
      */
     virtual std::optional<wxString> GetPath(bool useSystemPath = true);
 };
-#endif // PLAFORM_COMMON_HPP

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSOCKETCLIENT_H
-#define CLSOCKETCLIENT_H
+#pragma once
 
 #include "clSocketBase.h"
 
@@ -59,5 +58,3 @@ public:
      */
     bool ConnectNonBlocking(const wxString& connectionString, bool& wouldBlock);
 };
-
-#endif // CLSOCKETCLIENT_H

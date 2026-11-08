@@ -1,5 +1,4 @@
-#ifndef CLCONSOLEKITTY_HPP
-#define CLCONSOLEKITTY_HPP
+#pragma once
 
 #include "clConsoleBase.h"
 #include "codelite_exports.h"
@@ -17,5 +16,3 @@ public:
     bool StartForDebugger() override;
     wxString PrepareCommand() override;
 };
-
-#endif // CLCONSOLEKITTY_HPP

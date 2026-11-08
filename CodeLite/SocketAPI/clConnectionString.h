@@ -1,5 +1,4 @@
-#ifndef CLCONNECTIONSTRING_H
-#define CLCONNECTIONSTRING_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -38,5 +37,3 @@ public:
     long GetPort() const { return m_port; }
     const eProtocol& GetProtocol() const { return m_protocol; }
 };
-
-#endif // CLCONNECTIONSTRING_H

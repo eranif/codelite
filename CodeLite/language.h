@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CODELITE_LANGUAGE_H
-#define CODELITE_LANGUAGE_H
+#pragma once
 
 #include "Cxx/CxxVariable.h"
 #include "Cxx/cpp_scanner.h"
@@ -164,5 +163,3 @@ public:
     static void Free();
     static Language* Get();
 };
-
-#endif // CODELITE_LANGUAGE_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CXXPREPROCESSORSCANNER_H
-#define CXXPREPROCESSORSCANNER_H
+#pragma once
 
 #include "CxxLexerAPI.h"
 #include "codelite_exports.h"
@@ -90,5 +89,3 @@ public:
      */
     void Parse(CxxPreProcessor* pp);
 };
-
-#endif // CXXPREPROCESSORSCANNER_H

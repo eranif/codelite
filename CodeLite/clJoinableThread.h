@@ -1,5 +1,4 @@
-#ifndef CSJOINABLETHREAD_H
-#define CSJOINABLETHREAD_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -20,5 +19,3 @@ public:
      */
     void Start(int priority = WXTHREAD_DEFAULT_PRIORITY);
 };
-
-#endif // CSJOINABLETHREAD_H

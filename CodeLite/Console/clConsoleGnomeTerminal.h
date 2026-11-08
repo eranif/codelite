@@ -1,5 +1,4 @@
-#ifndef CLCONSOLEGNOMETERMINAL_H
-#define CLCONSOLEGNOMETERMINAL_H
+#pragma once
 
 #include "clConsoleBash.h"
 
@@ -28,5 +27,3 @@ public:
     bool StartForDebugger() override;
     wxString PrepareCommand() override;
 };
-
-#endif // CLCONSOLEGNOMETERMINAL_H

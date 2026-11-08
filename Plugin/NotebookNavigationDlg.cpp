@@ -18,18 +18,13 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clTabHistory::Ptr
     auto* sizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(sizer);
 
-    m_dvListCtrl =
-        new wxDataViewListCtrl(this,
-                               wxID_ANY,
-                               wxDefaultPosition,
-                               wxDefaultSize,
-                               wxDV_NO_HEADER | wxDV_SINGLE | wxWANTS_CHARS | wxBORDER_NONE);
+    m_dvListCtrl = new wxDataViewListCtrl(
+        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER | wxDV_SINGLE | wxWANTS_CHARS | wxBORDER_NONE);
     sizer->Add(m_dvListCtrl, wxSizerFlags(1).Expand().Border(wxALL, FromDIP(5)));
     m_dvListCtrl->AppendBitmapColumn(
         _("Icon"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, FromDIP(30), wxALIGN_CENTER);
     m_dvListCtrl->AppendTextColumn(_("Text"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
 
-    ::AdjustDataViewAlternateColour(m_dvListCtrl);
     Initialise();
     FinalizeCtor();
 }
@@ -93,14 +88,18 @@ void NotebookNavigationDlg::OnDismiss()
 
 void NotebookNavigationDlg::ShowPopup()
 {
-    wxWindow* parent = GetParent();
-    const wxSize size = FromDIP(wxSize(500, 300));
-    SetSize(size);
-    wxPoint parentPos = parent->ClientToScreen(wxPoint(0, 0));
-    wxSize parentSize = parent->GetClientSize();
-    Position(parentPos + wxPoint((parentSize.x - size.x) / 2, (parentSize.y - size.y) / 2), wxSize(0, 0));
+    const wxWindow* parent = GetParent();
+
+    // At the top of the application's client area, centred horizontally,
+    // 1/2 of its width and 1/4 of its height (screen coordinates).
+    const wxRect parentRect(parent->ClientToScreen(wxPoint(0, 0)), parent->GetClientSize());
+    wxRect ourRect(0, 0, parentRect.GetWidth() / 2, parentRect.GetHeight() / 4);
+    ourRect = ourRect.CenterIn(parentRect, wxHORIZONTAL);
+    ourRect.SetY(parentRect.GetY());
+    SetSize(ourRect);
+
     Popup(m_dvListCtrl);
-    StylePopupWindow(this, 10.0);
+    StylePopupWindow(this);
 
     // The popup does not get the key-up of the Ctrl key: poll for it
     m_ctrlKeyTimer.Start(30);

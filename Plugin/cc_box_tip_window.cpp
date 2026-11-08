@@ -245,7 +245,7 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip
     // The panel owns the pixels: it covers the whole popup and OnPaint draws on it
     m_mainPanel->Bind(wxEVT_PAINT, &CCBoxTipWindow::OnPaint, this);
     m_mainPanel->Bind(wxEVT_ERASE_BACKGROUND, &CCBoxTipWindow::OnEraseBG, this);
-    StylePopupWindow(this, 5.0);
+    StylePopupWindow(this);
 }
 
 void CCBoxTipWindow::DoInitialize(size_t numOfTips)

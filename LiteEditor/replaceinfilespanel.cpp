@@ -103,11 +103,9 @@ void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
     m_replaceWith->SetValue(data->GetReplaceWith());
     FindResultsTab::OnSearchStart(e);
 
-    // Make sure that the Output view & the "Replace" tab
-    // are visible
-    clCommandEvent event(wxEVT_SHOW_OUTPUT_TAB);
-    event.SetSelected(true).SetString(REPLACE_IN_FILES);
-    EventNotifier::Get()->AddPendingEvent(event);
+    // Ensure that the "Replace" view is shown. Do it after FindResultsTab::OnSearchStart(), which shows the "Search"
+    // view
+    clGetManager()->ShowOutputPane(REPLACE_IN_FILES);
 }
 
 void ReplaceInFilesPanel::OnSearchMatch(wxCommandEvent& e)

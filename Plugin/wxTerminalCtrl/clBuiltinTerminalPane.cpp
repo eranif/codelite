@@ -25,6 +25,7 @@
 #include <fstream>
 #include <wx/app.h>
 #include <wx/choicdlg.h>
+#include <wx/clipbrd.h>
 #include <wx/dir.h>
 #include <wx/frame.h>
 #include <wx/menu.h>
@@ -364,6 +365,7 @@ void clBuiltinTerminalPane::BindTerminalEvents(TerminalHost* host, bool persistT
     host->GetCtrl()->Bind(wxEVT_TERMINAL_TEXT_LINK, &clBuiltinTerminalPane::OnLinkClicked, this);
     host->GetCtrl()->Bind(wxEVT_TERMINAL_BELL, &clBuiltinTerminalPane::OnTerminalBell, this);
     host->GetCtrl()->Bind(wxEVT_TERMINAL_PROGRAM_STATUS, &clBuiltinTerminalPane::OnProgramStatus, this);
+    host->GetCtrl()->Bind(wxEVT_TERMINAL_APP_SELECTION_CHANGED, &clBuiltinTerminalPane::OnAppSelectionChanged, this);
 }
 
 TerminalHost* clBuiltinTerminalPane::DoCreateTerminal(wxWindow* parent,
@@ -1123,6 +1125,25 @@ void clBuiltinTerminalPane::UpdateFont()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if (lexer) {
         m_activeFont = lexer->GetFontForStyle(0, this);
+    }
+}
+
+void clBuiltinTerminalPane::OnAppSelectionChanged(wxTerminalEvent& event)
+{
+    event.Skip();
+    // A terminal in the background must not change the clipboard: a program there could put a command on it without
+    // the user seeing it
+    if (wxWindow::FindFocus() != event.GetEventObject()) {
+        return;
+    }
+
+    const wxString& text = event.GetString();
+    if (!text.empty() && wxTheClipboard->Open()) {
+        wxTheClipboard->SetData(new wxTextDataObject(text));
+        wxTheClipboard->Flush();
+        wxTheClipboard->Close();
+        clGetManager()->SetStatusMessage(
+            wxString::Format(_("%d copied to the clipboard via ANSI OSC-52"), static_cast<int>(text.size())));
     }
 }
 

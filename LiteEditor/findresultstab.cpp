@@ -162,6 +162,10 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 {
     m_searchInProgress = true;
+
+    // Ensure that the "Search" view is shown
+    clGetManager()->ShowOutputPane(FIND_IN_FILES_WIN);
+
     Clear();
     SetStyles(m_sci);
     SearchData* data = (SearchData*)e.GetClientData();
@@ -172,13 +176,6 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
         m_statusLine->ShowSearching(m_searchData);
     }
     wxDELETE(data);
-
-    // Make sure that the Output view & the "Replace" tab
-    // are visible
-
-    clCommandEvent event(wxEVT_SHOW_OUTPUT_TAB);
-    event.SetSelected(true).SetString(FIND_IN_FILES_WIN);
-    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void FindResultsTab::OnSearchMatch(wxCommandEvent& e)

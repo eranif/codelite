@@ -182,6 +182,7 @@ protected:
     void OnLinkClicked(wxTerminalEvent& event);
     void OnTerminalBell(wxTerminalEvent& event);
     void OnProgramStatus(wxTerminalEvent& event);
+    void OnAppSelectionChanged(wxTerminalEvent& event);
     /// Show the state of the program of the terminal in `host` on its tab
     void UpdateTabIcon(TerminalHost* host, wxTerminalProgramState state);
     void OnNew(wxCommandEvent& event);

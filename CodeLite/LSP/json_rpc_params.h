@@ -1,5 +1,4 @@
-#ifndef JSONRPC_PARAMS_H
-#define JSONRPC_PARAMS_H
+#pragma once
 
 #include "JSON.h"
 #include "basic_types.h"
@@ -399,4 +398,3 @@ public:
 };
 
 } // namespace LSP
-#endif // JSONRPC_PARAMS_H

@@ -1,5 +1,4 @@
-#ifndef CLANAGRAM_H
-#define CLANAGRAM_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -44,5 +43,3 @@ public:
      */
     bool IsEmpty() const;
 };
-
-#endif // CLANAGRAM_H

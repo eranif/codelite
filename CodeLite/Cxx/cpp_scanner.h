@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CODELITE_CPPSCANNER_H
-#define CODELITE_CPPSCANNER_H
+#pragma once
 
 #include "FlexLexer.h"
 #include "codelite_exports.h"
@@ -60,4 +59,3 @@ private:
 };
 
 using CppScannerPtr = std::unique_ptr<CppScanner>;
-#endif // CODELITE_CPPSCANNER_H

@@ -1,5 +1,4 @@
-#ifndef CHILDPROCESS_H
-#define CHILDPROCESS_H
+#pragma once
 
 #if defined(__WXMSW__)
 #define USE_IPROCESS 1
@@ -31,5 +30,3 @@ public:
     void Write(const std::string& message);
     bool IsOk() const;
 };
-
-#endif // CHILDPROCESS_H

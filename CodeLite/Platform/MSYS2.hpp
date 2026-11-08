@@ -1,5 +1,4 @@
-#ifndef MSYS2_HPP
-#define MSYS2_HPP
+#pragma once
 
 #include "PlatformCommon.hpp"
 #include "codelite_exports.h"
@@ -50,5 +49,3 @@ public:
      */
     std::optional<wxString> GetPath(bool useSystemPath = true) override;
 };
-
-#endif // MSYS2_HPP

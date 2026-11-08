@@ -1,5 +1,4 @@
-#ifndef INITIALIZEDNOTIFICATION_HPP
-#define INITIALIZEDNOTIFICATION_HPP
+#pragma once
 
 #include "LSP/Notification.h"
 
@@ -14,5 +13,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // INITIALIZEDNOTIFICATION_HPP

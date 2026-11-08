@@ -1,5 +1,4 @@
-#ifndef RESPONSEMESSAGE_H
-#define RESPONSEMESSAGE_H
+#pragma once
 
 #include "LSP/Message.h"
 #include "LSP/basic_types.h"
@@ -49,5 +48,3 @@ public:
     wxString GetDiagnosticsUri() const;
 };
 } // namespace LSP
-
-#endif // RESPONSEMESSAGE_H

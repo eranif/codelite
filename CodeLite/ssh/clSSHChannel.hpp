@@ -1,5 +1,4 @@
-#ifndef CLSSHCHANNEL_H
-#define CLSSHCHANNEL_H
+#pragma once
 
 #if USE_SFTP
 
@@ -156,4 +155,3 @@ public:
     void Detach() override;
 };
 #endif
-#endif // CLSSHCHANNEL_H

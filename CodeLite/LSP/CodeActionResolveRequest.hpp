@@ -1,5 +1,4 @@
-#ifndef CODEACTIONRESOLVEREQUEST_HPP
-#define CODEACTIONRESOLVEREQUEST_HPP
+#pragma once
 
 #include "LSP/Request.h"
 
@@ -24,5 +23,3 @@ private:
 };
 
 } // namespace LSP
-
-#endif // CODEACTIONRESOLVEREQUEST_HPP

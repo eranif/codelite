@@ -1,5 +1,4 @@
-#ifndef SEMANTICTOKENSREQUEST_HPP
-#define SEMANTICTOKENSREQUEST_HPP
+#pragma once
 
 #include "LSP/Request.h"
 #include "codelite_exports.h"
@@ -19,5 +18,3 @@ public:
     std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 };
 } // namespace LSP
-
-#endif // SEMANTICTOKENSREQUEST_HPP

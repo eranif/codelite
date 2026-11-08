@@ -1,5 +1,4 @@
-#ifndef CLSSHAGENT_HPP
-#define CLSSHAGENT_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -24,5 +23,3 @@ public:
     clSSHAgent(const wxArrayString& files = {});
     virtual ~clSSHAgent();
 };
-
-#endif // CLSSHAGENT_HPP

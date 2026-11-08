@@ -1,5 +1,4 @@
-#ifndef CLCONSOLERXVTERMINAL_H
-#define CLCONSOLERXVTERMINAL_H
+#pragma once
 
 #include "clConsoleGnomeTerminal.h"
 #include "codelite_exports.h"
@@ -10,5 +9,3 @@ public:
     clConsoleRXVTTerminal();
     ~clConsoleRXVTTerminal() override = default;
 };
-
-#endif // CLCONSOLELXTERMINAL_H

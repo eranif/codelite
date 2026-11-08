@@ -1,5 +1,4 @@
-#ifndef CLDEBUGGERBREAKPOINT_HPP
-#define CLDEBUGGERBREAKPOINT_HPP
+#pragma once
 
 #include "JSON.h"
 #include "codelite_exports.h"
@@ -107,4 +106,3 @@ protected:
     void DeSerialize(Archive& arch) override;
 };
 using clDebuggerBreakpointVec_t = std::vector<clDebuggerBreakpoint>;
-#endif // CLDEBUGGERBREAKPOINT_HPP

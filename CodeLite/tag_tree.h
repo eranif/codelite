@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CODELITE_TAG_TREE_H
-#define CODELITE_TAG_TREE_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "database/entry.h"
@@ -69,5 +68,3 @@ public:
 };
 
 using TagTreePtr = std::shared_ptr<TagTree>;
-
-#endif // CODELITE_TAG_TREE_H

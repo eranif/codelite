@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSOCKETCLIENTASYNC_H
-#define CLSOCKETCLIENTASYNC_H
+#pragma once
 
 #include "SocketAPI/clSocketBase.h"
 #include "cl_command_event.h"
@@ -130,5 +129,3 @@ public:
     void Send(const wxString& buffer);
     void Send(const std::string& buffer);
 };
-
-#endif // CLSOCKETCLIENTASYNC_H

@@ -1,5 +1,4 @@
-#ifndef LSPEVENT_H
-#define LSPEVENT_H
+#pragma once
 
 #include "LSP/CompletionItem.h"
 #include "LSP/basic_types.h"
@@ -169,5 +168,3 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_ON_TYPE_FORMATTED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_FORMATTED, LSPEvent); // EventNotifier
 // The reply to `textDocument/documentLink`: GetDocumentLinks(), GetModificationCount() and GetOpenAt()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_LINKS, LSPEvent);
-
-#endif // LSPEVENT_H

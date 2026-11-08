@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PRECOMPILED_HEADER_H
-#define PRECOMPILED_HEADER_H
+#pragma once
 
 // A proxy to the right PCH file
 // we need to so we will get a different flags compiled per file
@@ -35,6 +34,5 @@
 #include "../PCH/precompiled_header_release.h"
 #else
 #include "../PCH/precompiled_header_dbg.h"
-#endif
 #endif
 #endif

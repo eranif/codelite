@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef _ProcessReaderThread_H_
-#define _ProcessReaderThread_H_
+#pragma once
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -106,5 +105,3 @@ public:
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_PROCESS_OUTPUT, clProcessEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_PROCESS_STDERR, clProcessEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_PROCESS_TERMINATED, clProcessEvent);
-
-#endif // _ProcessReaderThread_H_

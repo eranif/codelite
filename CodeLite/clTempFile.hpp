@@ -1,5 +1,4 @@
-#ifndef CLTEMPFILE_HPP
-#define CLTEMPFILE_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -38,5 +37,3 @@ public:
      */
     void Persist();
 };
-
-#endif // CLTEMPFILE_HPP

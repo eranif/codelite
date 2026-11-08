@@ -1,5 +1,4 @@
-#ifndef CLSTRINGVIEW_HPP
-#define CLSTRINGVIEW_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -48,5 +47,3 @@ public:
      */
     void Reset(const wxString& buffer);
 };
-
-#endif // CLSTRINGVIEW_HPP

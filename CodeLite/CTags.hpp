@@ -1,5 +1,4 @@
-#ifndef CTAGSGENERATOR_HPP
-#define CTAGSGENERATOR_HPP
+#pragma once
 
 #include "clResult.hpp"
 #include "codelite_exports.h"
@@ -238,5 +237,3 @@ private:
                                                    const wxString& kind_from_ctags,
                                                    const wxString& file_ext);
 };
-
-#endif // CTAGSGENERATOR_HPP

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSOCKETSERVER_H
-#define CLSOCKETSERVER_H
+#pragma once
 
 #include "clSocketBase.h"
 #include "codelite_exports.h"
@@ -62,5 +61,3 @@ public:
      */
     clSocketBase* WaitForNewConnectionRaw(long timeout = -1);
 };
-
-#endif // CLSOCKETSERVER_H

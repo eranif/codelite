@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef SEARCH_THREAD_H
-#define SEARCH_THREAD_H
+#pragma once
 
 #include "JSON.h"
 #include "clFilesCollector.h"
@@ -433,5 +432,3 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SEARCH_THREAD_MATCHFOUND, wxComma
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SEARCH_THREAD_SEARCHEND, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SEARCH_THREAD_SEARCHCANCELED, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SEARCH_THREAD_SEARCHSTARTED, wxCommandEvent);
-
-#endif // SEARCH_THREAD_H

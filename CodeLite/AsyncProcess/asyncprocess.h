@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef I_PROCESS_H
-#define I_PROCESS_H
+#pragma once
 
 #include "clEnvironment.hpp"
 #include "clResult.hpp"
@@ -253,5 +252,3 @@ WXDLLIMPEXP_CL void CreateAsyncProcessCB(const wxString& cmd,
                                          size_t flags = IProcessCreateDefault,
                                          const wxString& workingDir = wxEmptyString,
                                          const clEnvList_t* env = nullptr);
-
-#endif // I_PROCESS_H

@@ -1,5 +1,4 @@
-#ifndef DOCUMDENET_SYMBOLS_REQUEST_HPP
-#define DOCUMDENET_SYMBOLS_REQUEST_HPP
+#pragma once
 
 #include "LSP/Request.h"
 #include "LSP/basic_types.h"
@@ -34,4 +33,3 @@ private:
     std::vector<LSP::SymbolInformation> FromSymbolInformationArray(JSONItem&& result);
 };
 } // namespace LSP
-#endif // DOCUMDENET_SYMBOLS_REQUEST_HPP

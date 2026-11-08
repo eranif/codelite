@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XORSTRING_H
-#define XORSTRING_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -47,5 +46,3 @@ public:
     wxString Decrypt(const wxChar byte = 's') const;
     wxString Encrypt(const wxChar byte = 's') const;
 };
-
-#endif // XORSTRING_H

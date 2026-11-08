@@ -1,5 +1,4 @@
-#ifndef SFTPCLIENTDATA_HPP
-#define SFTPCLIENTDATA_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -35,5 +34,3 @@ public:
     void SetAccountName(const wxString& accountName) { this->accountName = accountName; }
     const wxString& GetAccountName() const { return accountName; }
 };
-
-#endif // SFTPCLIENTDATA_HPP

@@ -1,5 +1,4 @@
-#ifndef DIDOPENTEXTDOCUMENTREQUEST_H
-#define DIDOPENTEXTDOCUMENTREQUEST_H
+#pragma once
 
 #include "LSP/Notification.h"
 
@@ -14,5 +13,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // DIDOPENTEXTDOCUMENTREQUEST_H

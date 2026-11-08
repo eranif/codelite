@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CXXTEMPLATEFUNCTION_H
-#define CXXTEMPLATEFUNCTION_H
+#pragma once
 
 #include "CxxLexerAPI.h"
 #include "codelite_exports.h"
@@ -53,5 +52,3 @@ public:
      */
     bool CanTemplateArgsDeduced();
 };
-
-#endif // CXXTEMPLATEFUNCTION_H

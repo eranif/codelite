@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLCOMMANDPROCESSOR_H
-#define CLCOMMANDPROCESSOR_H
+#pragma once
 
 #include "asyncprocess.h"
 #include "cl_command_event.h"
@@ -106,5 +105,3 @@ public:
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
 };
-
-#endif // CLCOMMANDPROCESSOR_H

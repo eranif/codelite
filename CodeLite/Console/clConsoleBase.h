@@ -1,5 +1,4 @@
-#ifndef CLCONSOLEBASE_H
-#define CLCONSOLEBASE_H
+#pragma once
 
 #include "clEnvironment.hpp"
 #include "cl_command_event.h"
@@ -136,5 +135,3 @@ public:
         this->m_callback = callback;
     }
 };
-
-#endif // CLCONSOLEBASE_H

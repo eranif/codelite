@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef WORKER_THREAD_H
-#define WORKER_THREAD_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -115,5 +114,3 @@ public:
      */
     virtual void ProcessRequest(ThreadRequest* request) = 0;
 };
-
-#endif // WORKER_THREAD_H

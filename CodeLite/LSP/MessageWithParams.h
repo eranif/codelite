@@ -1,5 +1,4 @@
-#ifndef REQUESTMESSAGE_H
-#define REQUESTMESSAGE_H
+#pragma once
 
 #include "LSP/Message.h" // Base class: LSP::Message
 #include "LSP/ResponseMessage.h"
@@ -44,5 +43,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // REQUESTMESSAGE_H

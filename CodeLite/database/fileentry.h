@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __fileentry__
-#define __fileentry__
+#pragma once
 
 #include <memory>
 #include <wx/string.h>
@@ -48,5 +47,3 @@ public:
     long GetId() const { return m_id; }
 };
 using FileEntryPtr = std::unique_ptr<FileEntry>;
-
-#endif // __fileentry__

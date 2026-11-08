@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_CTAGS_MANAGER_H
-#define CODELITE_CTAGS_MANAGER_H
+#pragma once
 
 #include "clResult.hpp"
 #include "codelite_exports.h"
@@ -340,5 +339,3 @@ public:
     static TagsManager* Get();
     static void Free();
 };
-
-#endif // CODELITE_CTAGS_MANAGER_H

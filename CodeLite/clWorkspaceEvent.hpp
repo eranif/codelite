@@ -1,5 +1,4 @@
-#ifndef CLWORKSPACEEVENT_HPP
-#define CLWORKSPACEEVENT_HPP
+#pragma once
 
 #include "cl_command_event.h"
 
@@ -38,4 +37,3 @@ private:
 };
 using clWorkspaceEventFunction = void (wxEvtHandler::*)(clWorkspaceEvent&);
 #define clWorkspaceEventHandler(func) wxEVENT_HANDLER_CAST(clWorkspaceEventFunction, func)
-#endif // CLWORKSPACEEVENT_HPP

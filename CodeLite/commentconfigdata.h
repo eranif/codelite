@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __commentconfigdata__
-#define __commentconfigdata__
+#pragma once
 
 #include "codelite_exports.h"
 #include "serialized_object.h"
@@ -61,4 +60,3 @@ public:
     bool IsAutoInsert() const { return m_autoInsert; }
     wxString GetCommentBlockPrefix() const { return IsUseQtStyle() ? wxString("/*!") : wxString("/**"); }
 };
-#endif // __commentconfigdata__

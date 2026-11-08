@@ -1,5 +1,4 @@
-#ifndef CLCONSOLELXTERMINAL_H
-#define CLCONSOLELXTERMINAL_H
+#pragma once
 
 #include "clConsoleGnomeTerminal.h"
 #include "codelite_exports.h"
@@ -10,5 +9,3 @@ public:
     clConsoleLXTerminal();
     ~clConsoleLXTerminal() override = default;
 };
-
-#endif // CLCONSOLELXTERMINAL_H

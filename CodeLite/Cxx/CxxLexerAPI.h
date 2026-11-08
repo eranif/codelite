@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CppLexerAPI_H__
-#define CppLexerAPI_H__
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -271,4 +270,3 @@ WXDLLIMPEXP_CL wxString LexerCurrentToken(Scanner_t scanner);
  * @brief return the associated data with this scanner
  */
 WXDLLIMPEXP_CL CppLexerUserData* LexerGetUserData(Scanner_t scanner);
-#endif

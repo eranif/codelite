@@ -1,5 +1,4 @@
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#pragma once
 
 #include "JSON.h"
 #include "codelite_exports.h"
@@ -41,5 +40,3 @@ public:
 };
 
 } // namespace LSP
-
-#endif // MESSAGE_H

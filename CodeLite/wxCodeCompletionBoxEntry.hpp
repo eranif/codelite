@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WXCODECOMPLETIONBOXENTRY_H
-#define WXCODECOMPLETIONBOXENTRY_H
+#pragma once
 
 #include "LSP/basic_types.h"
 #include "codelite_exports.h"
@@ -197,5 +196,3 @@ public:
     void SetAlternateBitmap(const wxBitmap& alternateBitmap) { this->m_alternateBitmap = alternateBitmap; }
     const wxBitmap& GetAlternateBitmap() const { return m_alternateBitmap; }
 };
-
-#endif // WXCODECOMPLETIONBOXENTRY_H

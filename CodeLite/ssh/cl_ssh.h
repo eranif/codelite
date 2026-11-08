@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSSH_H
-#define CLSSH_H
+#pragma once
 
 // useful macro to initialise LOG handle to the "ssh.log" file
 #include "clModuleLogger.hpp"
@@ -175,4 +174,3 @@ public:
 };
 using clSSHDeleterFunc = std::function<void(clSSH::Ptr_t)>;
 #endif // USE_SFTP
-#endif // CLSSH_H

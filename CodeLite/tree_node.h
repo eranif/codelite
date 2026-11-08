@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_TREE_NODE_H
-#define CODELITE_TREE_NODE_H
+#pragma once
 
 #include <iostream>
 #include <map>
@@ -325,5 +324,3 @@ void TreeWalker<TKey, TData>::operator++(int)
 {
     m_pos++;
 }
-
-#endif // CODELITE_TREE_NODE_H

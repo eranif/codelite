@@ -1,5 +1,4 @@
-#ifndef CXXVARIABLE_H
-#define CXXVARIABLE_H
+#pragma once
 
 #include "CxxLexerAPI.h"
 #include "codelite_exports.h"
@@ -120,5 +119,3 @@ public:
     void SetPointerOrReference(const wxString& pointerOrReference) { this->m_pointerOrReference = pointerOrReference; }
     const wxString& GetPointerOrReference() const { return m_pointerOrReference; }
 };
-
-#endif // CXXVARIABLE_H

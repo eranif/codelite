@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CODELITE_CALLTIP_H
-#define CODELITE_CALLTIP_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "database/entry.h"
@@ -138,4 +137,3 @@ public:
 };
 
 using clCallTipPtr = std::shared_ptr<clCallTip>;
-#endif // CODELITE_CALLTIP_H

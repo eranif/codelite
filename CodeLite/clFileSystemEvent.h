@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLFILESYSTEMEVENT_H
-#define CLFILESYSTEMEVENT_H
+#pragma once
 
 #include "cl_command_event.h" // Base class: clCommandEvent
 
@@ -73,5 +72,3 @@ public:
 
 using clFileSystemEventFunction = void (wxEvtHandler::*)(clFileSystemEvent&);
 #define clFileSystemEventHandler(func) wxEVENT_HANDLER_CAST(clFileSystemEventFunction, func)
-
-#endif // CLFILESYSTEMEVENT_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef EVENTNOTIFIER_H
-#define EVENTNOTIFIER_H
+#pragma once
 
 #include "codelite_events.h"
 #include "codelite_exports.h"
@@ -198,4 +197,3 @@ void clPostToMain(Callback&& cb, Args&&... args)
 {
     EventNotifier::Get()->PostToMain(std::forward<Callback>(cb), std::forward<Args>(args)...);
 }
-#endif // EVENTNOTIFIER_H

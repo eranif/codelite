@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ZJSONNODE_H
-#define ZJSONNODE_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "macros.h"
@@ -249,5 +248,3 @@ public:
 private:
     std::shared_ptr<nlohmann::ordered_json> m_json;
 };
-
-#endif // ZJSONNODE_H

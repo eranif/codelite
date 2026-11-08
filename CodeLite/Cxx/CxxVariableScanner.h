@@ -1,5 +1,4 @@
-#ifndef CXXVARIABLESCANNER_H
-#define CXXVARIABLESCANNER_H
+#pragma once
 
 #include "CxxLexerAPI.h"
 #include "CxxVariable.h"
@@ -92,5 +91,3 @@ private:
     wxString m_optimized_buffer;
     bool m_buffer_optimized = false;
 };
-
-#endif // CXXVARIABLESCANNER_H

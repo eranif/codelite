@@ -1,5 +1,4 @@
-#ifndef CLGOTOENTRY_H
-#define CLGOTOENTRY_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -53,4 +52,3 @@ public:
     bool IsCheckable() const { return m_flags & kItemCheck; }
     void SetCheckable(bool b) { b ? m_flags |= kItemCheck : m_flags &= ~kItemCheck; }
 };
-#endif // CLGOTOENTRY_H

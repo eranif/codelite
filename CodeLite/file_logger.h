@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef FILELOGGER_H
-#define FILELOGGER_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "macros.h"
@@ -335,5 +334,3 @@ inline wxString GetLocation(const char* filename, int line)
 
 // A replacement for wxLogMessage
 #define clLogMessage(msg) clDEBUG() << msg
-
-#endif // FILELOGGER_H

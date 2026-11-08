@@ -1,5 +1,4 @@
-#ifndef BREAKPOINTINFOARRAY_HPP
-#define BREAKPOINTINFOARRAY_HPP
+#pragma once
 
 #include "clDebuggerBreakpoint.hpp"
 #include "codelite_exports.h"
@@ -18,5 +17,3 @@ public:
     void DeSerialize(Archive& arch) override;
     void Serialize(Archive& arch) override;
 };
-
-#endif // BREAKPOINTINFOARRAY_HPP

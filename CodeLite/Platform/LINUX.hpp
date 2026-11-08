@@ -1,5 +1,4 @@
-#ifndef LINUX_HPP
-#define LINUX_HPP
+#pragma once
 
 #include "PlatformCommon.hpp"
 #include "codelite_exports.h"
@@ -53,5 +52,3 @@ public:
      */
     std::optional<wxString> GetPath(bool useSystemPath = true) override;
 };
-
-#endif // LINUX_HPP

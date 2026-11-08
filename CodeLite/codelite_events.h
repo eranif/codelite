@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_EVENTS_H
-#define CODELITE_EVENTS_H
+#pragma once
 
 #include "clFileSystemEvent.h"
 #include "clWorkspaceEvent.hpp"
@@ -930,5 +929,3 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_MARGIN_CLICKED, clEditorEv
 
 // The output view tab changed. The new active tab can be retrieved from event.GetString()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_OUTPUT_VIEW_TAB_CHANGED, clCommandEvent);
-
-#endif // CODELITE_EVENTS_H

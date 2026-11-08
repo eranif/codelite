@@ -1,5 +1,4 @@
-#ifndef WORKSPACEEXECUTECOMMAND_HPP
-#define WORKSPACEEXECUTECOMMAND_HPP
+#pragma once
 
 #include "LSP/Request.h"
 
@@ -19,5 +18,3 @@ private:
     wxString m_filepath;
 };
 } // namespace LSP
-
-#endif // WORKSPACEEXECUTECOMMAND_HPP

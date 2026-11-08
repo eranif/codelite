@@ -1,5 +1,4 @@
-#ifndef DIDCLOSETEXTDOCUMENTREQUEST_H
-#define DIDCLOSETEXTDOCUMENTREQUEST_H
+#pragma once
 
 #include "LSP/Notification.h"
 
@@ -13,4 +12,3 @@ public:
     ~DidCloseTextDocumentRequest() override = default;
 };
 } // namespace LSP
-#endif // DIDCLOSETEXTDOCUMENTREQUEST_H

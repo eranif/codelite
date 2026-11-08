@@ -26,8 +26,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_TOKENIZER_H
-#define CODELITE_TOKENIZER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -126,5 +125,3 @@ public:
      */
     StringTokenizer& operator=(const StringTokenizer&) = default;
 };
-
-#endif // CODELITE_TOKENIZER_H

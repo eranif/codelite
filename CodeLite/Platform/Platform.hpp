@@ -1,5 +1,4 @@
-#ifndef PLATFORM__HPP
-#define PLATFORM__HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -10,4 +9,3 @@
 #include "LINUX.hpp"
 #define ThePlatform LINUX::Get()
 #endif
-#endif // PLATFORM__HPP

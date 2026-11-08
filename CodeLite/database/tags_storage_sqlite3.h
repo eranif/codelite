@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CODELITE_TAGS_DATABASE_H
-#define CODELITE_TAGS_DATABASE_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "entry.h"
@@ -403,5 +402,3 @@ public:
      */
     TagEntryPtr GetTagsByNameLimitOne(const wxString& name) override;
 };
-
-#endif // CODELITE_TAGS_DATABASE_H

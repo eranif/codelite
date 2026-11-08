@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ScannerTokens_H__
-#define ScannerTokens_H__
+#pragma once
 
 enum { T_FIRST = 296, T_IDENTIFIER, T_STRING, T_RAW_STRING };
 
@@ -188,4 +187,3 @@ enum {
 
 // Special tokens
 enum { T_C_COMMENT = 700, T_CXX_COMMENT, T_NEWLINE, T_WHITESPACE };
-#endif

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef MACROS_H
-#define MACROS_H
+#pragma once
 
 #include "cl_standard_paths.h"
 
@@ -187,5 +186,3 @@ using wxStringBoolMap_t = std::unordered_map<wxString, bool>;
 using wxStringTable_t = std::unordered_map<wxString, wxString>;
 using wxStringSet_t = std::unordered_set<wxString>;
 using wxStringMap_t = wxStringTable_t; // aliases
-
-#endif // MACROS_H

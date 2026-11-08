@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __FILEEXTMANAGER__
-#define __FILEEXTMANAGER__
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -196,5 +195,3 @@ public:
 
     static wxString GetLanguageFromType(FileExtManager::FileType file_type);
 };
-
-#endif // __fileextmanager__

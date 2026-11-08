@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ISTORAGE_H
-#define ISTORAGE_H
+#pragma once
 
 #include "entry.h"
 #include "fileentry.h"
@@ -259,5 +258,3 @@ public:
 enum { TagOk = 0, TagExist, TagError };
 
 using ITagsStoragePtr = std::shared_ptr<ITagsStorage>;
-
-#endif // ISTORAGE_H

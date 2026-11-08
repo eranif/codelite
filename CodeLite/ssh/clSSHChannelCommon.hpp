@@ -1,5 +1,4 @@
-#ifndef CLSSHCHANNELCOMMON_HPP
-#define CLSSHCHANNELCOMMON_HPP
+#pragma once
 
 #if USE_SFTP
 
@@ -56,5 +55,3 @@ WXDLLIMPEXP_CL clStatus write_remote_file_content(clSSH::Ptr_t ssh,
 
 } // namespace ssh
 #endif
-
-#endif // CLSSHCHANNEL_H

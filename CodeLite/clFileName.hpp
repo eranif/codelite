@@ -1,5 +1,4 @@
-#ifndef CLFILENAME_HPP
-#define CLFILENAME_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -37,5 +36,3 @@ public:
 
     bool IsRemote() const { return m_isRemote; }
 };
-
-#endif // CLFILENAME_HPP

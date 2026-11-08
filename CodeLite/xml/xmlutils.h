@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef XMLUTILS_H
-#define XMLUTILS_H
+#pragma once
 
 #include "clXmlDocument.hpp"
 #include "codelite_exports.h"
@@ -177,5 +176,3 @@ public:
      */
     static bool LoadXmlFile(clXmlDocument* doc, const wxString& filepath);
 };
-
-#endif // XMLUTILS_H

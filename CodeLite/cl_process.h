@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CODELITE_TAGSPROCESS_H
-#define CODELITE_TAGSPROCESS_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -103,5 +102,3 @@ public:
     // Getters
     bool GetRedirect() const { return m_redirect; }
 };
-
-#endif // CODELITE_TAGSPROCESS_H

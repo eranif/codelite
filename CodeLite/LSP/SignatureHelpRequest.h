@@ -1,5 +1,4 @@
-#ifndef SIGNATUREHELPREQUEST_H
-#define SIGNATUREHELPREQUEST_H
+#pragma once
 
 #include "LSP/Request.h"
 
@@ -20,4 +19,3 @@ public:
     bool IsValidAt(const wxString& filename, size_t line, size_t col) const override;
 };
 } // namespace LSP
-#endif // SIGNATUREHELPREQUEST_H

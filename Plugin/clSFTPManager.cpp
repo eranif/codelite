@@ -22,6 +22,7 @@
 #include <functional>
 #include <future>
 #include <mutex>
+#include <optional>
 #include <thread>
 #include <vector>
 #include <wx/debug.h>
@@ -320,17 +321,34 @@ bool clSFTPManager::DoSyncDownload(const wxString& remotePath, const wxString& l
     // if the local file already exists, compare checksums before downloading it
     if (wxFileName::FileExists(localPath)) {
         clDEBUG() << "Local file with the same path already exists, comparing checksums..." << endl;
-        try {
-            // read the file size
-            size_t remote_file_checksum, local_file_checksum;
-            if (conn->GetChecksum(remotePath, &remote_file_checksum) &&
-                FileUtils::GetChecksum(localPath, &local_file_checksum) &&
-                local_file_checksum == remote_file_checksum) {
-                clDEBUG() << "Using cached local file (checksum are the same)" << endl;
-                return true;
+        // A libssh session is not thread safe: run the remote command in the worker thread, like all the other
+        // operations on this connection. Using the session from 2 threads breaks the SSH stream and the connection
+        // is lost
+        std::promise<std::optional<size_t>> checksum_promise;
+        auto future = checksum_promise.get_future();
+        auto checksum_func = [&checksum_promise, remotePath, conn]() {
+            // Always set the promise, even on an exception: the main thread waits for it
+            std::optional<size_t> result;
+            try {
+                size_t checksum = 0;
+                if (conn->GetChecksum(remotePath, &checksum)) {
+                    result = checksum;
+                }
+            } catch (const std::exception& e) {
+                clERROR() << "Failed to read the checksum of:" << remotePath << "." << e.what() << endl;
+            } catch (...) {
+                clERROR() << "Failed to read the checksum of:" << remotePath << ". Unknown error" << endl;
             }
-        } catch (const clException& e) {
-            wxUnusedVar(e);
+            checksum_promise.set_value(result);
+        };
+        m_q.push_back(std::move(checksum_func));
+        auto remote_file_checksum = future.get();
+
+        size_t local_file_checksum = 0;
+        if (remote_file_checksum.has_value() && FileUtils::GetChecksum(localPath, &local_file_checksum) &&
+            local_file_checksum == remote_file_checksum.value()) {
+            clDEBUG() << "Using cached local file (checksum are the same)" << endl;
+            return true;
         }
     }
 
@@ -908,7 +926,14 @@ void clSFTPManager::StartWorkerThread()
                 if (work_func == nullptr) {
                     continue;
                 }
-                work_func();
+                // An exception that leaves this thread ends the application (std::terminate)
+                try {
+                    work_func();
+                } catch (const std::exception& e) {
+                    clERROR() << "SFTP worker thread: unhandled exception:" << e.what() << endl;
+                } catch (...) {
+                    clERROR() << "SFTP worker thread: unhandled exception" << endl;
+                }
             }
         },
         std::ref(m_q),

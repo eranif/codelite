@@ -666,8 +666,12 @@ wxString clSFTP::ExecuteCommand(const wxString& command)
 
 bool clSFTP::GetChecksum(const wxString& remoteFile, size_t* checksum)
 {
+    // Wrap the path with single quotes, so the remote shell does not expand anything in it (spaces, $, `, ;). A single
+    // quote inside the path becomes '\''. "--" stops the option parsing, for a path that starts with "-"
+    wxString quoted = remoteFile;
+    quoted.Replace("'", "'\\''");
     wxString command;
-    command << "cksum " << remoteFile;
+    command << "cksum -- '" << quoted << "'";
     try {
         wxString output = ExecuteCommand(command);
         auto parts = ::wxStringTokenize(output, " \t", wxTOKEN_STRTOK);

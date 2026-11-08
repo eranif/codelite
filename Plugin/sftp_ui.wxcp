@@ -356,11 +356,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                       "m_eventClass": "wxDataViewEvent",
                       "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
-                      "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)"
                     }
                   ],
                   "m_children": [
@@ -727,11 +725,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                          "m_functionNameAndSignature": "OnAddAccount(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnAddAccount(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -856,18 +852,14 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                          "m_functionNameAndSignature": "OnDeleteAccount(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnDeleteAccount(wxCommandEvent& event)"
                         },
                         {
-                          "m_description": "Process a wxEVT_UPDATE_UI event",
                           "m_eventClass": "wxUpdateUIEvent",
                           "m_eventName": "wxEVT_UPDATE_UI",
-                          "m_functionNameAndSignature": "OnDeleteAccountUI(wxUpdateUIEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnDeleteAccountUI(wxUpdateUIEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -992,18 +984,14 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_UPDATE_UI event",
                           "m_eventClass": "wxUpdateUIEvent",
                           "m_eventName": "wxEVT_UPDATE_UI",
-                          "m_functionNameAndSignature": "OnEditAccountUI(wxUpdateUIEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnEditAccountUI(wxUpdateUIEvent& event)"
                         },
                         {
-                          "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                          "m_functionNameAndSignature": "OnEditAccount(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnEditAccount(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -1179,11 +1167,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnOK(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOK(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2772,11 +2758,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-                      "m_functionNameAndSignature": "OnHomeFolderUpdated(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnHomeFolderUpdated(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -4246,18 +4230,14 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnTestConnection(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnTestConnection(wxCommandEvent& event)"
                     },
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnTestConnectionUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnTestConnectionUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -4381,11 +4361,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -4989,25 +4967,19 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                           "m_eventClass": "wxDataViewEvent",
                           "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
-                          "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)"
                         },
                         {
-                          "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
                           "m_eventClass": "wxKeyEvent",
                           "m_eventName": "wxEVT_KEY_DOWN",
-                          "m_functionNameAndSignature": "OnKeyDown(wxKeyEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnKeyDown(wxKeyEvent& event)"
                         },
                         {
-                          "m_description": "Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event",
                           "m_eventClass": "wxDataViewEvent",
                           "m_eventName": "wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
-                          "m_functionNameAndSignature": "OnItemSelected(wxDataViewEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnItemSelected(wxDataViewEvent& event)"
                         }
                       ],
                       "m_children": [
@@ -5503,11 +5475,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
-                              "m_functionNameAndSignature": "OnTextEnter(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnTextEnter(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -5632,18 +5602,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnRefresh(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRefresh(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnRefreshUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRefreshUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -6048,11 +6014,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnOKUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -6704,11 +6668,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_CHOICE_SELECTED",
-                          "m_functionNameAndSignature": "OnTool(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnTool(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -6890,12 +6852,12 @@
                         {
                           "type": "string",
                           "m_label": "Class Name:",
-                          "m_value": "clThemedComboBox"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
                           "m_label": "Include File:",
-                          "m_value": "clThemedComboBox.hpp"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
@@ -6925,11 +6887,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
-                          "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -7111,12 +7071,12 @@
                         {
                           "type": "string",
                           "m_label": "Class Name:",
-                          "m_value": "clThemedComboBox"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
                           "m_label": "Include File:",
-                          "m_value": "clThemedComboBox.hpp"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
@@ -7146,11 +7106,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
-                          "m_functionNameAndSignature": "OnReplace(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnReplace(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -7332,12 +7290,12 @@
                         {
                           "type": "string",
                           "m_label": "Class Name:",
-                          "m_value": "clThemedComboBox"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
                           "m_label": "Include File:",
-                          "m_value": "clThemedComboBox.hpp"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
@@ -7367,11 +7325,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
-                          "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -7553,12 +7509,12 @@
                         {
                           "type": "string",
                           "m_label": "Class Name:",
-                          "m_value": "clThemedTextCtrl"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
                           "m_label": "Include File:",
-                          "m_value": "clThemedTextCtrl.hpp"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
@@ -7598,11 +7554,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
-                          "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -7784,12 +7738,12 @@
                         {
                           "type": "string",
                           "m_label": "Class Name:",
-                          "m_value": "clThemedComboBox"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
                           "m_label": "Include File:",
-                          "m_value": "clThemedComboBox.hpp"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
@@ -7819,11 +7773,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
-                          "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -8003,12 +7955,12 @@
                         {
                           "type": "string",
                           "m_label": "Class Name:",
-                          "m_value": "clThemedChoice"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
                           "m_label": "Include File:",
-                          "m_value": "clThemedChoice.h"
+                          "m_value": ""
                         },
                         {
                           "type": "string",
@@ -8200,18 +8152,14 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnFind(wxCommandEvent& event)"
                     },
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnFindUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnFindUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -8336,18 +8284,14 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnReplace(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnReplace(wxCommandEvent& event)"
                     },
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnReplaceUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnReplaceUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []

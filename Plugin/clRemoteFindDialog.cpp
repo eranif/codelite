@@ -16,7 +16,7 @@
 namespace
 {
 
-void UpdateComboBox(clComboBox* cb, const wxArrayString& arr, const wxString& str)
+void UpdateComboBox(wxComboBox* cb, const wxArrayString& arr, const wxString& str)
 {
     cb->Clear();
     if (arr.empty()) {

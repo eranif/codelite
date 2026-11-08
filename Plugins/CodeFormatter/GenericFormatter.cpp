@@ -321,9 +321,9 @@ void GenericFormatter::OnRemoteCommandError(clCommandEvent& event)
 
 std::unique_ptr<clEnvList_t> GenericFormatter::CreateLocalEnv()
 {
-    std::unique_ptr<clEnvList_t> env{new clEnvList_t};
+    auto env = std::make_unique<clEnvList_t>();
     if (clFileSystemWorkspace::Get().IsOpen()) {
-        env.reset(new clEnvList_t(clFileSystemWorkspace::Get().GetEnvironment()));
+        env = std::make_unique<clEnvList_t>(clFileSystemWorkspace::Get().GetEnvironment());
     }
     return env;
 }

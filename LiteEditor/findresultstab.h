@@ -73,6 +73,7 @@ protected:
     void Clear() override;
     void SaveSearchData();
     void LoadSearch(const History& h);
+    void InitSearch(wxCommandEvent& event);
     virtual void OnFindInFiles(wxCommandEvent& e);
     virtual void OnRecentSearches(wxAuiToolBarEvent& e);
     virtual void OnSearchStart(wxCommandEvent& e);

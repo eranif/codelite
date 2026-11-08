@@ -291,7 +291,7 @@ bool CodeFormatter::DoFormatEditorWithLSP(IEditor* editor, bool selection_only)
     }
 
     // the reply arrives later, see OnLSPFormatCompleted()
-    m_lspPendingFiles[editor->GetRemotePathOrLocal()] = std::hash<wxString>{}(editor->GetEditorText());
+    m_lspPendingFiles[editor->GetRemotePathOrLocal()] = editor->GetModificationCount();
     m_mgr->SetStatusMessage(_("Formatting..."), 0);
     return true;
 }
@@ -583,10 +583,20 @@ void CodeFormatter::OnFormatCompleted(clSourceFormatEvent& event)
     const wxString& filepath = event.GetFileName();
     auto editor = m_mgr->FindEditor(filepath);
 
+    const wxString formattedString = event.GetFormattedString();
+    if (formattedString.empty()) {
+        // something went wrong or the file is "ignored"
+        wxString message;
+        message << wxT("\u26A0") << _(" formatter replied with an empty string");
+        m_mgr->SetStatusMessage(message, 3);
+        return;
+    }
+
     if (editor) {
         wxWindowUpdateLocker window_locker{editor->GetCtrl()->GetParent()};
         editor->GetCtrl()->BeginUndoAction();
         clEditorStateLocker locker{editor->GetCtrl()};
+
         editor->GetCtrl()->SetText(event.GetFormattedString());
         editor->NotifyTextUpdated();
         editor->GetCtrl()->EndUndoAction();
@@ -634,7 +644,7 @@ void CodeFormatter::OnLSPFormatCompleted(LSPEvent& event)
         // not our request
         return;
     }
-    size_t sent_text_hash = where->second;
+    size_t before_modification_count = where->second;
     m_lspPendingFiles.erase(where);
 
     if (!event.GetMessage().empty()) {
@@ -648,8 +658,11 @@ void CodeFormatter::OnLSPFormatCompleted(LSPEvent& event)
     CHECK_PTR_RET(editor);
 
     // the edits are for the text that was sent to the server
-    if (std::hash<wxString>{}(editor->GetEditorText()) != sent_text_hash) {
-        m_mgr->SetStatusMessage(_("The file was changed while it was formatted, the changes were not applied"), 3);
+    if (editor->GetModificationCount() != before_modification_count) {
+        m_mgr->SetStatusMessage(
+            wxString::Format(
+                _("The file '%s' was changed while it was formatted, the changes were not applied"), filepath),
+            3);
         return;
     }
 

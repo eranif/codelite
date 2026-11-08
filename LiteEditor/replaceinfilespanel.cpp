@@ -98,14 +98,15 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
 {
     e.Skip();
-    // set the "Replace With" field with the user value
-    SearchData* data = (SearchData*)e.GetClientData();
-    m_replaceWith->SetValue(data->GetReplaceWith());
-    FindResultsTab::OnSearchStart(e);
-
-    // Ensure that the "Replace" view is shown. Do it after FindResultsTab::OnSearchStart(), which shows the "Search"
-    // view
+    // Ensure that the "Replace" view is shown
     clGetManager()->ShowOutputPane(REPLACE_IN_FILES);
+
+    // set the "Replace With" field with the user value
+    SearchData* data = static_cast<SearchData*>(e.GetClientData());
+    if (data) {
+        m_replaceWith->SetValue(data->GetReplaceWith());
+    }
+    FindResultsTab::InitSearch(e);
 }
 
 void ReplaceInFilesPanel::OnSearchMatch(wxCommandEvent& e)

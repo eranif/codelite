@@ -159,23 +159,26 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
     clGetManager()->OpenFindInFileForPaths({});
 }
 
-void FindResultsTab::OnSearchStart(wxCommandEvent& e)
+void FindResultsTab::InitSearch(wxCommandEvent& event)
 {
     m_searchInProgress = true;
-
-    // Ensure that the "Search" view is shown
-    clGetManager()->ShowOutputPane(FIND_IN_FILES_WIN);
-
     Clear();
     SetStyles(m_sci);
-    SearchData* data = (SearchData*)e.GetClientData();
+    SearchData* data = static_cast<SearchData*>(event.GetClientData());
     if (data) {
         m_searchData = *data;
         m_searchTitle = data->GetFindString();
-
         m_statusLine->ShowSearching(m_searchData);
+        event.SetClientData(nullptr);
     }
     wxDELETE(data);
+}
+
+void FindResultsTab::OnSearchStart(wxCommandEvent& e)
+{
+    // Ensure that the "Search" view is shown
+    clGetManager()->ShowOutputPane(FIND_IN_FILES_WIN);
+    InitSearch(e);
 }
 
 void FindResultsTab::OnSearchMatch(wxCommandEvent& e)

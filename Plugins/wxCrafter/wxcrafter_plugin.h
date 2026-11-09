@@ -1,5 +1,4 @@
-#ifndef __wxcrafter_plugin__
-#define __wxcrafter_plugin__
+#pragma once
 
 #include "UI/NewFormWizard.h"
 #include "UI/import_dlg.h"
@@ -65,5 +64,3 @@ public:
 
     IManager* GetManager() { return m_mgr; }
 };
-
-#endif //__wxcrafter_plugin__

@@ -32,8 +32,7 @@
  * Sets some hardcoded constants
  */
 
-#ifndef _MEMCHECKDEFS_H_
-#define _MEMCHECKDEFS_H_
+#pragma once
 
 #define PLUGIN_PREFIX(...) "[MemCheck] %s", wxString::Format(__VA_ARGS__)
 #define BUSY_MESSAGE _("Please wait, working...")
@@ -41,5 +40,3 @@
 #define FILTER_NONWORKSPACE_PLACEHOLDER "<nonworkspace_errors>"
 #define WAIT_UPDATE_PER_ITEMS 1000
 #define ITEMS_FOR_WAIT_DIALOG 5000
-
-#endif

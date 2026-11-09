@@ -1,5 +1,4 @@
-#ifndef DAPDEBUGGERPANE_H
-#define DAPDEBUGGERPANE_H
+#pragma once
 
 #include "Notebook.h"
 #include "clModuleLogger.hpp"
@@ -31,4 +30,3 @@ private:
     DAPBreakpointsView* m_breakpointsView = nullptr;
     DAPWatchesView* m_watchesView = nullptr;
 };
-#endif // DAPDEBUGGERPANE_H

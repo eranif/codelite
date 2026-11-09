@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __cscopedbbuilderthread__
-#define __cscopedbbuilderthread__
+#pragma once
 
 #include "cscopeentrydata.h"
 #include "singleton.h"
@@ -96,4 +95,3 @@ public:
 };
 
 using CScopeThreadST = Singleton<CscopeDbBuilderThread>;
-#endif // __cscopedbbuilderthread__

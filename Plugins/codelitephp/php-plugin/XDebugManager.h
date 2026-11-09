@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XDEBUGMANAGER_H
-#define XDEBUGMANAGER_H
+#pragma once
 
 #include "XDebugCommandHandler.h"
 #include "XDebugSettings.h"
@@ -257,5 +256,3 @@ public:
      */
     void OnCommThreadTerminated();
 };
-
-#endif // XDEBUGMANAGER_H

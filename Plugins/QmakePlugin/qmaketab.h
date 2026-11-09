@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __qmaketab__
-#define __qmaketab__
+#pragma once
 
 /**
 @file
@@ -48,5 +47,3 @@ public:
     void Load(IManager* manager, const wxString& projectName, const wxString& confgName);
     void Save(IManager* manager, const wxString& projectName, const wxString& confgName);
 };
-
-#endif // __qmaketab__

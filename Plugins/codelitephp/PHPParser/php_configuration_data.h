@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHPCONFIGURATIONDATA_H
-#define PHPCONFIGURATIONDATA_H
+#pragma once
 
 #include "cl_config.h"
 #include "phpoptions.h"
@@ -109,5 +108,3 @@ public:
     }
     const wxString& GetXdebugHost() const { return m_xdebugHost; }
 };
-
-#endif // PHPCONFIGURATIONDATA_H

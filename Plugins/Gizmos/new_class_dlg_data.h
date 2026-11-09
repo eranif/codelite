@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef NEWCLASSDLGDATA_H
-#define NEWCLASSDLGDATA_H
+#pragma once
 
 #include "serialized_object.h" // Base class: SerializedObject
 
@@ -66,5 +65,3 @@ public:
     }
     bool HasFlag(NewClassDlgData::eOptions flag) const { return m_flags & flag; }
 };
-
-#endif // NEWCLASSDLGDATA_H

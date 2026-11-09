@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SQLITEDBADAPTER_H
-#define SQLITEDBADAPTER_H
+#pragma once
 
 #include "IDbAdapter.h"
 #include "database.h"
@@ -81,4 +80,3 @@ public:
 protected:
     wxString m_sFileName;
 };
-#endif // SQLITEDBADAPTER_H

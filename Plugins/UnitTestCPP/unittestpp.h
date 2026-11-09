@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __UnitTestPP__
-#define __UnitTestPP__
+#pragma once
 
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
@@ -90,5 +89,3 @@ protected:
 private:
     wxMenu* CreateEditorPopMenu();
 };
-
-#endif // UnitTestPP

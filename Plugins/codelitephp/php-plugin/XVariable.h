@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __XVARIABLE_H__
-#define __XVARIABLE_H__
+#pragma once
 
 #include <list>
 #include <wx/clntdata.h>
@@ -81,5 +80,3 @@ struct XVariable : public wxClientData {
      */
     bool GetCreateFakeNode() const { return GetNumChildren() && !HasChildren(); }
 };
-
-#endif //

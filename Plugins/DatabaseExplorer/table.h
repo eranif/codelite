@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef TABLE_H
-#define TABLE_H
+#pragma once
 
 #include "IDbAdapter.h"
 #include "column.h"
@@ -81,5 +80,3 @@ public:
     /*! \brief Set view parameter. More info in IsView() */
     void SetView(bool view) { m_isView = view; }
 };
-
-#endif // TABLE_H

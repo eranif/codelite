@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XDEBUGCONTEXTGETCMDHANDLER_H
-#define XDEBUGCONTEXTGETCMDHANDLER_H
+#pragma once
 
 #include "XDebugCommandHandler.h" // Base class: XDebugCommandHandler
 
@@ -37,5 +36,3 @@ public:
 public:
     virtual void Process(const wxXmlNode* response);
 };
-
-#endif // XDEBUGCONTEXTGETCMDHANDLER_H

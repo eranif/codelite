@@ -1,5 +1,4 @@
-#ifndef FMTXMLLINT_HPP
-#define FMTXMLLINT_HPP
+#pragma once
 
 #include "GenericFormatter.hpp"
 
@@ -9,5 +8,3 @@ public:
     fmtXmlLint();
     ~fmtXmlLint() override = default;
 };
-
-#endif // FMTXMLLINT_HPP

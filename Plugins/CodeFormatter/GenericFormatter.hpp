@@ -1,5 +1,4 @@
-#ifndef GENERICFORMATTER_HPP
-#define GENERICFORMATTER_HPP
+#pragma once
 
 #include "SourceFormatterBase.hpp"
 #include "clCodeLiteRemoteProcess.hpp"
@@ -78,5 +77,3 @@ public:
 
     wxString GetCommandWithComments() const;
 };
-
-#endif // GENERICFORMATTER_HPP

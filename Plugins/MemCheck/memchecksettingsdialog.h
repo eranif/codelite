@@ -30,8 +30,7 @@
  * @copyright GNU General Public License v2
  */
 
-#ifndef _MEMCHECKSETTINGSDIALOG_H_
-#define _MEMCHECKSETTINGSDIALOG_H_
+#pragma once
 
 #include "memcheckui.hpp"
 
@@ -60,4 +59,3 @@ protected:
     void ValgrindResetOptions(wxCommandEvent& event) override;
     void OnOK(wxCommandEvent& event) override;
 };
-#endif // _MEMCHECKSETTINGSDIALOG_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __continuousbuildconf__
-#define __continuousbuildconf__
+#pragma once
 
 #include "serialized_object.h"
 
@@ -45,4 +44,3 @@ public:
     bool GetEnabled() const { return m_enabled; }
     size_t GetParallelProcesses() const { return m_parallelProcesses; }
 };
-#endif // __continuousbuildconf__

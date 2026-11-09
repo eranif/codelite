@@ -1,5 +1,4 @@
-#ifndef GITDIFFOUTPUTPARSER_H
-#define GITDIFFOUTPUTPARSER_H
+#pragma once
 
 #include "macros.h"
 
@@ -24,5 +23,3 @@ public:
      */
     void GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, wxArrayString* commitMessage = nullptr) const;
 };
-
-#endif // GITDIFFOUTPUTPARSER_H

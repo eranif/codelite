@@ -1,5 +1,4 @@
-#ifndef CLDAPSETTINGSSTORE_HPP
-#define CLDAPSETTINGSSTORE_HPP
+#pragma once
 
 #include "JSON.h"
 #include "dap/dap.hpp"
@@ -113,5 +112,3 @@ public:
     bool empty() const { return IsEmpty(); }
     size_t size() const { return m_entries.size(); }
 };
-
-#endif // CLDAPSETTINGSSTORE_HPP

@@ -1,5 +1,4 @@
-#ifndef RUSTWORKSPACE_HPP
-#define RUSTWORKSPACE_HPP
+#pragma once
 
 #include "clWorkspaceManager.h"
 
@@ -26,5 +25,3 @@ public:
     wxString GetDebuggerName() const override;
     clEnvList_t GetEnvironment() const override;
 };
-
-#endif // RUSTWORKSPACE_HPP

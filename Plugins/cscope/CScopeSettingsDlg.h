@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CSCOPESETTINGSDLG_H
-#define CSCOPESETTINGSDLG_H
+#pragma once
 #include "CscopeTabBase.hpp"
 
 class CScopeSettingsDlg : public CScopeSettingsDlgBase
@@ -35,4 +34,3 @@ public:
 
     wxString GetPath() const { return m_filePickerCScopeExe->GetPath(); }
 };
-#endif // CSCOPESETTINGSDLG_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __confformbuilder__
-#define __confformbuilder__
+#pragma once
 
 #include "serialized_object.h"
 
@@ -47,4 +46,3 @@ public:
     const wxString& GetCommand() const { return m_command; }
     const wxString& GetFbPath() const { return m_fbPath; }
 };
-#endif // __confformbuilder__

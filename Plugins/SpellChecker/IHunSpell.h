@@ -33,8 +33,7 @@
 // Copyright:   2014 Frank Lichtner
 // License:
 /////////////////////////////////////////////////////////////////////////////
-#ifndef _IHUNSPELL_
-#define _IHUNSPELL_
+#pragma once
 // ------------------------------------------------------------
 #include <hunspell/hunspell.h>
 #include <unordered_set>
@@ -193,4 +192,3 @@ protected:
 
     int m_scanners; // flags for scanner types
 };
-#endif // _HUNSPELLINTERFACE_

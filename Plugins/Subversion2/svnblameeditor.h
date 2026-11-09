@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNBLAMEEDITOR_H
-#define SVNBLAMEEDITOR_H
+#pragma once
 
 #include <vector>
 #include <wx/stc/stc.h>
@@ -55,5 +54,3 @@ public:
     void OnContextMenu(wxContextMenuEvent& event);
     void OnHighlightRevision(wxCommandEvent& event);
 };
-
-#endif // SVNBLAMEEDITOR_H

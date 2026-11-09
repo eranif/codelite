@@ -1,5 +1,4 @@
-#ifndef SMARTCOMPLETIONSSETTINGSDLG_H
-#define SMARTCOMPLETIONSSETTINGSDLG_H
+#pragma once
 #include "SmartCompletionsConfig.h"
 #include "SmartCompletionsUI.hpp"
 
@@ -15,4 +14,3 @@ protected:
     virtual void OnClearStats(wxCommandEvent& event);
     virtual void OnOK(wxCommandEvent& event);
 };
-#endif // SMARTCOMPLETIONSSETTINGSDLG_H

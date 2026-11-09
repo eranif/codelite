@@ -1,5 +1,4 @@
-#ifndef NEWFILECOMPARISON_H
-#define NEWFILECOMPARISON_H
+#pragma once
 #include "CodeLiteDiff_UI.hpp"
 
 #include <wx/filename.h>
@@ -15,4 +14,3 @@ protected:
     virtual void OnBrowse(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
-#endif // NEWFILECOMPARISON_H

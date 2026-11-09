@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __svn_select_local_repo_dlg__
-#define __svn_select_local_repo_dlg__
+#pragma once
 
 #include "subversion2_ui.hpp"
 
@@ -47,5 +46,3 @@ public:
     ~SvnSelectLocalRepoDlg() override = default;
     wxString GetPath() const;
 };
-
-#endif // __svn_select_local_repo_dlg__

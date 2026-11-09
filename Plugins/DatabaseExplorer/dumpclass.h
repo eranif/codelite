@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DUMPCLASS_H
-#define DUMPCLASS_H
+#pragma once
 
 #include "IDbAdapter.h"
 #include "table.h"
@@ -49,5 +48,3 @@ protected:
     xsSerializable* m_pItems;
     IDbAdapter* m_pDbAdapter;
 };
-
-#endif // DUMPCLASS_H

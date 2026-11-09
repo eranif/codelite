@@ -1,5 +1,4 @@
-#ifndef DOCKERSETTINGSDLG_H
-#define DOCKERSETTINGSDLG_H
+#pragma once
 
 #include "UI.hpp"
 
@@ -12,4 +11,3 @@ public:
 protected:
     virtual void OnOK(wxCommandEvent& event);
 };
-#endif // DOCKERSETTINGSDLG_H

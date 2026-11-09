@@ -1,5 +1,4 @@
-#ifndef REMOTYSWITCHTOWORKSPACEDLG_H
-#define REMOTYSWITCHTOWORKSPACEDLG_H
+#pragma once
 #include "RemotyConfig.hpp"
 #include "RemotyUI.hpp"
 
@@ -26,4 +25,3 @@ protected:
     void SyncPathToAccount();
     void InitialiseDialog();
 };
-#endif // REMOTYSWITCHTOWORKSPACEDLG_H

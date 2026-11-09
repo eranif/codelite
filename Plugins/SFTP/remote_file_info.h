@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef REMOTEFILEINFO_H
-#define REMOTEFILEINFO_H
+#pragma once
 
 #include "ssh/ssh_account_info.h"
 
@@ -57,5 +56,3 @@ public:
     void SetLineNumber(int lineNumber) { this->m_lineNumber = lineNumber; }
     int GetLineNumber() const { return m_lineNumber; }
 };
-
-#endif // REMOTEFILEINFO_H

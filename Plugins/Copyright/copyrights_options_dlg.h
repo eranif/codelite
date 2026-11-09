@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __copyrights_options_dlg__
-#define __copyrights_options_dlg__
+#pragma once
 
 /**
 @file
@@ -48,5 +47,3 @@ public:
     /** Constructor */
     CopyrightsOptionsDlg(wxWindow* parent, IConfigTool* config);
 };
-
-#endif // __copyrights_options_dlg__

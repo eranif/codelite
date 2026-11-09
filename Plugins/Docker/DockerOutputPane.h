@@ -1,5 +1,4 @@
-#ifndef DOCKEROUTPUTPANE_H
-#define DOCKEROUTPUTPANE_H
+#pragma once
 
 #include "UI.hpp"
 #include "clDockerContainer.h"
@@ -40,4 +39,3 @@ public:
     void SetContainers(const clDockerContainer::Vect_t& containers);
     void SetImages(const clDockerImage::Vect_t& images);
 };
-#endif // DOCKEROUTPUTPANE_H

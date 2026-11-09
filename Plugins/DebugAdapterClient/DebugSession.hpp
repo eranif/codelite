@@ -1,5 +1,4 @@
-#ifndef DEBUG_SESSION_HPP
-#define DEBUG_SESSION_HPP
+#pragma once
 
 #include "clDapSettingsStore.hpp"
 #include "clEnvironment.hpp"
@@ -43,5 +42,3 @@ struct DebugSession {
         return dap_env;
     }
 };
-
-#endif // DEBUG_SESSION_HPP

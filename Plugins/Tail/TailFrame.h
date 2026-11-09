@@ -1,5 +1,4 @@
-#ifndef TAILFRAME_H
-#define TAILFRAME_H
+#pragma once
 #include "TailUI.hpp"
 
 class Tail;
@@ -14,4 +13,3 @@ public:
 protected:
     virtual void OnClose(wxCloseEvent& event);
 };
-#endif // TAILFRAME_H

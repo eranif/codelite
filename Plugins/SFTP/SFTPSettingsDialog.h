@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPSETTINGSDIALOG_H
-#define SFTPSETTINGSDIALOG_H
+#pragma once
 #include "UI.hpp"
 
 class SFTPSettingsDialog : public SFTPSettingsDialogBase
@@ -36,4 +35,3 @@ public:
 protected:
     virtual void OnOK(wxCommandEvent& event);
 };
-#endif // SFTPSETTINGSDIALOG_H

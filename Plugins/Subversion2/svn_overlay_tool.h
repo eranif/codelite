@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVN_OVERLAY_TOOL_H
-#define SVN_OVERLAY_TOOL_H
+#pragma once
 
 #include "precompiled_header.h"
 
@@ -57,5 +56,3 @@ public:
     wxBitmap UnversionedIcon(const wxBitmap& bmp);
     wxBitmap DeletedIcon(const wxBitmap& bmp);
 };
-
-#endif // SVN_OVERLAY_TOOL_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __REMOTYPLUGIN_HPP__
-#define __REMOTYPLUGIN_HPP__
+#pragma once
 
 #include "clFileSystemEvent.h"
 #include "clTabTogglerHelper.h"
@@ -57,5 +56,3 @@ public:
     void UnPlug() override;
     IManager* GetManager() { return m_mgr; }
 };
-
-#endif // __RemotyPlugin_HPP__

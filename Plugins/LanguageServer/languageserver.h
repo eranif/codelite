@@ -1,5 +1,4 @@
-#ifndef __LanguageServerPlugin__
-#define __LanguageServerPlugin__
+#pragma once
 
 #include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "LSP/LSPManager.hpp"
@@ -61,5 +60,3 @@ protected:
     clTabTogglerHelper::Ptr_t m_tabToggler;
     LanguageServerLogView* m_logView{nullptr};
 };
-
-#endif // LanguageServerPlugin

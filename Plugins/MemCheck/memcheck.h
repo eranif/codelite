@@ -30,8 +30,7 @@
  * @copyright GNU General Public License v2
  */
 
-#ifndef _MEMCHECK_H_
-#define _MEMCHECK_H_
+#pragma once
 
 #include "TerminalEmulator/TerminalEmulator.h"
 #include "clTabTogglerHelper.h"
@@ -151,5 +150,3 @@ protected:
     void OnSettings(wxCommandEvent& event);
     void OnMemCheckUI(wxUpdateUIEvent& event);
 };
-
-#endif // memcheck

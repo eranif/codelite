@@ -1,5 +1,4 @@
-#ifndef VIMSETTINGS_H
-#define VIMSETTINGS_H
+#pragma once
 
 #include "cl_config.h" // Base class: clConfigItem
 
@@ -24,5 +23,3 @@ public:
     }
     bool IsEnabled() const { return m_enabled; }
 };
-
-#endif // VIMSETTINGS_H

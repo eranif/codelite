@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PLUGINWIZARD_H
-#define PLUGINWIZARD_H
+#pragma once
 
 #include "gizmos_base.hpp"
 #include "newplugindata.h"
@@ -42,4 +41,3 @@ protected:
     void OnFinish(wxWizardEvent& event) override;
     void OnPageChanging(wxWizardEvent& event) override;
 };
-#endif // PLUGINWIZARD_H

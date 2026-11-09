@@ -1,5 +1,4 @@
-#ifndef DAPOUTPUTPANE_HPP
-#define DAPOUTPUTPANE_HPP
+#pragma once
 
 #include "DAPConsoleOutput.hpp"
 #include "DAPModuleView.h"
@@ -21,5 +20,3 @@ public:
     void AddEvent(dap::ModuleEvent* event);
     void AddEvent(dap::OutputEvent* event);
 };
-
-#endif // DAPOUTPUTPANE_HPP

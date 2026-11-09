@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __unittestcppoutputparser__
-#define __unittestcppoutputparser__
+#pragma once
 
 #include <vector>
 #include <wx/arrstr.h>
@@ -61,4 +60,3 @@ public:
 
     void Parse(TestSummary* summary);
 };
-#endif // __unittestcppoutputparser__

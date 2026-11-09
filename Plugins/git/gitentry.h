@@ -30,8 +30,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __gitentry__
-#define __gitentry__
+#pragma once
 
 #include "cl_config.h"
 
@@ -256,4 +255,3 @@ public:
     void SetDifftool(const wxString& difftool) { this->m_difftool = difftool; }
     const wxString& GetDifftool() const { return m_difftool; }
 };
-#endif

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __MacBundler__
-#define __MacBundler__
+#pragma once
 
 #include "plugin.h"
 #include "workspace.h"
@@ -50,5 +49,3 @@ public:
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
 };
-
-#endif // MacBundler

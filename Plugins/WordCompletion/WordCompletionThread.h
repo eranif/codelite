@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WORDCOMPLETIONTHREAD_H
-#define WORDCOMPLETIONTHREAD_H
+#pragma once
 
 #include "WordCompletionRequestReply.h"
 #include "macros.h"
@@ -49,5 +48,3 @@ public:
      */
     static void ParseBuffer(const wxString& buffer, wxStringSet_t& suggest);
 };
-
-#endif // WORDCOMPLETIONTHREAD_H

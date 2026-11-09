@@ -1,5 +1,4 @@
-#ifndef BREAKPOINTSMAP_HPP
-#define BREAKPOINTSMAP_HPP
+#pragma once
 
 #include "dap/dap.hpp"
 
@@ -47,5 +46,3 @@ public:
      */
     void delete_by_paths(const std::vector<dap::Breakpoint>& bps);
 };
-
-#endif // BREAKPOINTSMAP_HPP

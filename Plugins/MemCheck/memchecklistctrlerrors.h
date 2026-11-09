@@ -30,8 +30,7 @@
  * @copyright GNU General Public License v2
  */
 
-#ifndef _MEMCHECKLISTCTRLERRORS_H_
-#define _MEMCHECKLISTCTRLERRORS_H_
+#pragma once
 
 #include "imemcheckprocessor.h"
 
@@ -65,5 +64,3 @@ public:
 protected:
     std::vector<MemCheckErrorPtr>* m_data = nullptr;
 };
-
-#endif

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __php_settings_dlg__
-#define __php_settings_dlg__
+#pragma once
 
 #include "php_ui.hpp"
 
@@ -39,5 +38,3 @@ public:
     virtual ~PHPSettingsDlg() = default;
     void OnOK(wxCommandEvent& event);
 };
-
-#endif // __php_settings_dlg__

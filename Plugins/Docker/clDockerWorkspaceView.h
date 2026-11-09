@@ -1,5 +1,4 @@
-#ifndef CLDOCKERWORKSPACEVIEW_H
-#define CLDOCKERWORKSPACEVIEW_H
+#pragma once
 
 #include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
@@ -25,5 +24,3 @@ protected:
     void OnFindInFilesShowing(clFindInFilesEvent& event) override; // override parent's method
     bool LoadPersistentFolders() const override { return false; }
 };
-
-#endif // CLDOCKERWORKSPACEVIEW_H

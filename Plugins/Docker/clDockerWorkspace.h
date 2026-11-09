@@ -1,5 +1,4 @@
-#ifndef CLDOCKERWORKSPACE_H
-#define CLDOCKERWORKSPACE_H
+#pragma once
 
 #include "clDockerDriver.h"
 #include "clDockerWorkspaceSettings.h"
@@ -95,5 +94,3 @@ public:
     void RunDockerfile(const wxFileName& dockerfile);
     void RunDockerCompose(const wxFileName& dockerfile);
 };
-
-#endif // CLDOCKERWORKSPACE_H

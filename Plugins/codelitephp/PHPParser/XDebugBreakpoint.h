@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XDEBUGBREAKPOINT_H
-#define XDEBUGBREAKPOINT_H
+#pragma once
 
 #include "JSON.h"
 
@@ -78,5 +77,3 @@ public:
     JSONItem ToJSON() const;
     void FromJSON(const JSONItem& json);
 };
-
-#endif // XDEBUGBREAKPOINT_H

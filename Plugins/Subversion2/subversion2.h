@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __Subversion2__
-#define __Subversion2__
+#pragma once
 
 #include "SvnShowFileChangesHandler.h"
 #include "clFileSystemEvent.h"
@@ -183,5 +182,3 @@ protected:
 
     wxArrayString DoGetFileExplorerFiles();
 };
-
-#endif // Subversion2

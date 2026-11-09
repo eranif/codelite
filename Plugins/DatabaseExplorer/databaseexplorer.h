@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __DatabaseExplorer__
-#define __DatabaseExplorer__
+#pragma once
 
 #include "DbViewerPanel.h"
 #include "cl_command_event.h"
@@ -55,5 +54,3 @@ protected:
     void OnExecuteSQL(wxCommandEvent& event);
     static DbViewerPanel* m_dbViewerPanel;
 };
-
-#endif // DatabaseExplorer

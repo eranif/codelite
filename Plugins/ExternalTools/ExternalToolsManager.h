@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef EXTERNALTOOLSMANAGER_H
-#define EXTERNALTOOLSMANAGER_H
+#pragma once
 #include "external_tools.hpp"
 
 class ExternalToolsManager : public ExternalToolsManagerBase
@@ -44,4 +43,3 @@ protected:
     void OnKillAllUI(wxUpdateUIEvent& event) override;
     void OnKillUI(wxUpdateUIEvent& event) override;
 };
-#endif // EXTERNALTOOLSMANAGER_H

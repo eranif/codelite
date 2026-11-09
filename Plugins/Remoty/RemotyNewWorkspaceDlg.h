@@ -1,5 +1,4 @@
-#ifndef REMOTYNEWWORKSPACEDLG_H
-#define REMOTYNEWWORKSPACEDLG_H
+#pragma once
 #include "RemotyUI.hpp"
 
 class RemotyNewWorkspaceDlg : public RemotyNewWorkspaceDlgBase
@@ -16,4 +15,3 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
     virtual void OnBrowse(wxCommandEvent& event);
 };
-#endif // REMOTYNEWWORKSPACEDLG_H

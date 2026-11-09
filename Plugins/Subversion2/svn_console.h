@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNSHELL_H
-#define SVNSHELL_H
+#pragma once
 
 #include "cl_command_event.h"
 #include "svncommandhandler.h"
@@ -105,4 +104,3 @@ public:
     bool IsEmpty();
     void EnsureVisible();
 };
-#endif // SVNSHELL_H

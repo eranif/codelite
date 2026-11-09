@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPUPLOADDIALOG_H
-#define SFTPUPLOADDIALOG_H
+#pragma once
 #include "UI.hpp"
 
 class SFTPUploadDialog : public SFTPUploadDialogBase
@@ -36,4 +35,3 @@ public:
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
-#endif // SFTPUPLOADDIALOG_H

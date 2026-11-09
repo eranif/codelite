@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNCOMMAND_H
-#define SVNCOMMAND_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
@@ -65,5 +64,3 @@ public:
     void ClearAll();
     bool IsBusy() { return m_process != nullptr; }
 };
-
-#endif // SVNCOMMAND_H

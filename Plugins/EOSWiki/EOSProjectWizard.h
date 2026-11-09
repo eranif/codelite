@@ -1,5 +1,4 @@
-#ifndef EOSPROJECTWIZARD_H
-#define EOSPROJECTWIZARD_H
+#pragma once
 #include "EOSProjectData.h"
 #include "eosUI.hpp"
 
@@ -21,4 +20,3 @@ protected:
     virtual void OnPathChanged(wxFileDirPickerEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
-#endif // EOSPROJECTWIZARD_H

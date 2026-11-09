@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHP_UTILS_H
-#define PHP_UTILS_H
+#pragma once
 
 #include "macros.h"
 
@@ -56,5 +55,3 @@ wxString Base64Encode(const wxString& str);
  * @brief map a file path reported by Xdebug to a local file, using fileMapping (local folder -> remote folder)
  */
 wxString MapRemoteFileToLocalFile(const wxString& remoteFile, const wxStringMap_t& fileMapping);
-
-#endif // PHP_UTILS

@@ -1,5 +1,4 @@
-#ifndef FMTCLANGFORMAT_HPP
-#define FMTCLANGFORMAT_HPP
+#pragma once
 
 #include "GenericFormatter.hpp"
 
@@ -9,5 +8,3 @@ public:
     fmtClangFormat();
     ~fmtClangFormat() override = default;
 };
-
-#endif // FMTCLANGFORMAT_HPP

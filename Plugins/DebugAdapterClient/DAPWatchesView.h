@@ -1,5 +1,4 @@
-#ifndef DAPWATCHESVIEW_H
-#define DAPWATCHESVIEW_H
+#pragma once
 
 #include "DAPVariableListCtrl.hpp"
 #include "UI.hpp"
@@ -30,4 +29,3 @@ public:
     void Update(int current_frame_id);
     void UpdateChildren(int varId, dap::VariablesResponse* response);
 };
-#endif // DAPWATCHESVIEW_H

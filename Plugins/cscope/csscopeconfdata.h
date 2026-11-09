@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __csscopeconfdata__
-#define __csscopeconfdata__
+#pragma once
 
 #include "serialized_object.h"
 
@@ -57,4 +56,3 @@ public:
     void SetBuildRevertedIndexOption(const bool revertedIndex) { this->m_buildRevertedIndex = revertedIndex; }
     bool GetBuildRevertedIndexOption() const { return m_buildRevertedIndex; }
 };
-#endif // __csscopeconfdata__

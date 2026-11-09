@@ -33,8 +33,7 @@
 // Copyright:   2014 Frank Lichtner
 // License:
 /////////////////////////////////////////////////////////////////////////////
-#ifndef __SpellCheckerSettings__
-#define __SpellCheckerSettings__
+#pragma once
 // ------------------------------------------------------------
 #include "wxcrafter.hpp"
 // ------------------------------------------------------------
@@ -96,5 +95,3 @@ public:
     SpellCheckerSettings(wxWindow* parent);
     ~SpellCheckerSettings() override = default;
 };
-
-#endif // __SpellCheckerSettings__

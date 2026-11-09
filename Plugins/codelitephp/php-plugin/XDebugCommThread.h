@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XDEBUG_COMM_THREAD_H
-#define XDEBUG_COMM_THREAD_H
+#pragma once
 
 #include "SocketAPI/clSocketBase.h"
 #include "SocketAPI/clSocketServer.h"
@@ -74,5 +73,3 @@ public:
         Run();
     }
 };
-
-#endif // XDEBUG_COMM_THREAD_H

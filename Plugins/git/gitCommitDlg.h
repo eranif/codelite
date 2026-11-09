@@ -30,8 +30,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __gitCommitDlg__
-#define __gitCommitDlg__
+#pragma once
 
 #include "CustomControls/IndicatorPanel.hpp"
 #include "ai/EndpointModelSelector.hpp"
@@ -90,5 +89,3 @@ private:
     IndicatorPanel* m_indicatorPanel{nullptr};
     std::unique_ptr<EndpointModelSelector> m_endpointSelector{nullptr};
 };
-
-#endif

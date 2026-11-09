@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHPEXECUTOR_H
-#define PHPEXECUTOR_H
+#pragma once
 
 #include "TerminalEmulator/TerminalEmulator.h"
 #include "php_project_settings_data.h"
@@ -64,5 +63,3 @@ public:
 
     TerminalEmulator* GetTerminalEmulator() { return &m_terminal; }
 };
-
-#endif // PHPEXECUTOR_H

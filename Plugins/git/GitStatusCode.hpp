@@ -1,5 +1,4 @@
-#ifndef GITSTATUSCODE_HPP
-#define GITSTATUSCODE_HPP
+#pragma once
 
 #include <wx/string.h>
 
@@ -27,5 +26,3 @@ public:
     GitStatusCode::Code GetCode() const { return m_code; }
     const wxString& GetSubText() const { return m_subText; }
 };
-
-#endif // GITSTATUSCODE_HPP

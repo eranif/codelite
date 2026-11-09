@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHPPROJECTSETTINGSDATA_H
-#define PHPPROJECTSETTINGSDATA_H
+#pragma once
 
 #include "JSON.h"
 #include "XDebugBreakpoint.h"
@@ -114,5 +113,3 @@ public:
     int GetRunAs() const { return m_runAs; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 };
-
-#endif // PHPPROJECTSETTINGSDATA_H

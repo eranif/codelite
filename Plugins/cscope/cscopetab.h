@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __cscopetab__
-#define __cscopetab__
+#pragma once
 
 /**
 @file
@@ -93,5 +92,3 @@ public:
     void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat; }
     const wxString& GetFindWhat() const { return m_findWhat; }
 };
-
-#endif // __cscopetab__

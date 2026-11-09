@@ -1,5 +1,4 @@
-#ifndef __CodeliteVim__
-#define __CodeliteVim__
+#pragma once
 
 #include "VimSettings.h"
 #include "plugin.h"
@@ -35,5 +34,3 @@ public:
 protected:
     void onVimSetting(wxCommandEvent& event);
 };
-
-#endif // CodeliteVim

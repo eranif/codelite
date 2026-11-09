@@ -1,5 +1,4 @@
-#ifndef XDEBUGSETTINGSDLG_H
-#define XDEBUGSETTINGSDLG_H
+#pragma once
 
 #include "XDebugSettings.h"
 #include "php_ui.hpp"
@@ -33,5 +32,3 @@ public:
     XDebugSettingsDlg(wxWindow* parent, XDebugSettings& settings);
     ~XDebugSettingsDlg() override = default;
 };
-
-#endif // XDEBUGSETTINGSDLG_H

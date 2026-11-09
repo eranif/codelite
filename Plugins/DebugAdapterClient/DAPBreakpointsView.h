@@ -1,5 +1,4 @@
-#ifndef DAPBREAKPOINTSVIEW_H
-#define DAPBREAKPOINTSVIEW_H
+#pragma once
 
 #include "SessionBreakpoints.hpp"
 #include "UI.hpp"
@@ -42,5 +41,3 @@ public:
 
     void Clear();
 };
-
-#endif // DAPBREAKPOINTSVIEW_H

@@ -1,5 +1,4 @@
-#ifndef FMTLSP_HPP
-#define FMTLSP_HPP
+#pragma once
 
 #include "GenericFormatter.hpp"
 
@@ -11,5 +10,3 @@ public:
     fmtLSP();
     ~fmtLSP() override = default;
 };
-
-#endif // FMTLSP_HPP

@@ -1,5 +1,4 @@
-#ifndef TAIL_DATA_H
-#define TAIL_DATA_H
+#pragma once
 
 #include <wx/filename.h>
 #include <wx/string.h>
@@ -17,5 +16,3 @@ public:
     {
     }
 };
-
-#endif

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SUBVERSIONLOCALPROPERTIES_H
-#define SUBVERSIONLOCALPROPERTIES_H
+#pragma once
 
 #include <map>
 #include <wx/string.h>
@@ -55,5 +54,3 @@ public:
     wxString ReadProperty(const wxString& propName);
     void WriteProperty(const wxString& name, const wxString& val);
 };
-
-#endif // SUBVERSIONLOCALPROPERTIES_H

@@ -1,5 +1,4 @@
-#ifndef DAPOUTPUTVIEW_H
-#define DAPOUTPUTVIEW_H
+#pragma once
 
 #include "UI.hpp"
 #include "clModuleLogger.hpp"
@@ -24,4 +23,3 @@ public:
     void AppendLine(const wxString& line);
     void ScrollToEnd();
 };
-#endif // DAPOUTPUTVIEW_H

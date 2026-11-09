@@ -30,8 +30,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __gitCommitListDlg__
-#define __gitCommitListDlg__
+#pragma once
 
 #include "DataViewTypeHelper.h"
 #include "cl_command_event.h"
@@ -88,5 +87,3 @@ private:
     std::map<int, wxString> m_history;
     std::unique_ptr<DataViewTypeHelper> m_typeHelper;
 };
-
-#endif //__gitCommitListDlg__

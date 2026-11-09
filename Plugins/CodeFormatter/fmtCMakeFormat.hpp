@@ -1,5 +1,4 @@
-#ifndef FMTCMAKEFORMAT_HPP
-#define FMTCMAKEFORMAT_HPP
+#pragma once
 
 #include "GenericFormatter.hpp"
 
@@ -9,5 +8,3 @@ public:
     fmtCMakeFormat();
     ~fmtCMakeFormat() override = default;
 };
-
-#endif // FMTCMAKEFORMAT_HPP

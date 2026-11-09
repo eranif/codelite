@@ -1,5 +1,4 @@
-#ifndef SOURCEFORMATTERBASE_HPP
-#define SOURCEFORMATTERBASE_HPP
+#pragma once
 
 #include "JSON.h"
 #include "cl_command_event.h"
@@ -104,5 +103,3 @@ public:
     void SetShortDescription(const wxString& shortDescription) { this->m_shortDescription = shortDescription; }
     const wxString& GetShortDescription() const { return m_shortDescription; }
 };
-
-#endif // SOURCEFORMATTERBASE_HPP

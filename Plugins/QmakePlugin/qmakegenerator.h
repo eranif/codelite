@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __qmakegenerator__
-#define __qmakegenerator__
+#pragma once
 
 #include "build_config.h"
 #include "project.h"
@@ -63,4 +62,3 @@ public:
      */
     wxString GetProFileName();
 };
-#endif // __qmakegenerator__

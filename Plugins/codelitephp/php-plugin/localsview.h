@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef LOCALSVIEW_H
-#define LOCALSVIEW_H
+#pragma once
 
 #include "macros.h"
 #include "php_ui.hpp"
@@ -58,4 +57,3 @@ protected:
     void OnPropertyGet(XDebugEvent& e);
     void AppendVariablesToTree(const wxTreeItemId& parent, const XVariable::List_t& children);
 };
-#endif // LOCALSVIEW_H

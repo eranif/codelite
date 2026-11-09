@@ -1,5 +1,4 @@
-#ifndef GITBLAMEPAGE_H
-#define GITBLAMEPAGE_H
+#pragma once
 
 #include "clThemedSTC.hpp"
 #include "cl_command_event.h"
@@ -46,4 +45,3 @@ public:
 
     void ParseBlameOutput(const wxString& blame);
 };
-#endif // GITBLAMEPAGE_H

@@ -34,8 +34,7 @@
 // Licence:		GNU General Public Licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __snipwiz__
-#define __snipwiz__
+#pragma once
 
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -106,5 +105,3 @@ protected:
     swStringDb m_StringDb;    // string database with snippets and templates
     wxString m_clipboard;     // internal clipboard
 };
-
-#endif // snipwiz

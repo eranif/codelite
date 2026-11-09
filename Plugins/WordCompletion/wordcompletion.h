@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __WordCompletion__
-#define __WordCompletion__
+#pragma once
 
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -67,5 +66,3 @@ public:
     void CreatePluginMenu(wxMenu* pluginsMenu) override;
     void UnPlug() override;
 };
-
-#endif // WordCompletion

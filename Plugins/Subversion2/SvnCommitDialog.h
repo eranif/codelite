@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNCOMMITDIALOG_H
-#define SVNCOMMITDIALOG_H
+#pragma once
 
 #include "clEditorEditEventsHandler.h"
 #include "cl_command_event.h"
@@ -76,5 +75,3 @@ protected:
     void OnProcessOutput(clProcessEvent& e);
     void OnProcessTerminatd(clProcessEvent& e);
 };
-
-#endif // SVNCOMMITDIALOG_H

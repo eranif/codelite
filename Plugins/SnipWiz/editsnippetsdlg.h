@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editsnippetsdlg__
-#define __editsnippetsdlg__
+#pragma once
 
 /**
 @file
@@ -72,5 +71,3 @@ public:
     bool GetModified() const { return m_modified; }
     SnipWiz* GetPPlugin() { return m_pPlugin; }
 };
-
-#endif // __editsnippetsdlg__

@@ -33,8 +33,7 @@
 // Copyright:   2014 Frank Lichtner
 // License:
 /////////////////////////////////////////////////////////////////////////////
-#ifndef __CorrectSpellingDlg__
-#define __CorrectSpellingDlg__
+#pragma once
 // ------------------------------------------------------------
 #include "wxcrafter.hpp"
 // ------------------------------------------------------------
@@ -71,5 +70,3 @@ public:
     void SetMisspelled(wxString value) { this->m_misspelled = value; }
     void SetSuggestions(wxArrayString suggests);
 };
-
-#endif // __CorrectSpellingDlg__

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DBITEM_H
-#define DBITEM_H
+#pragma once
 #include "database.h"
 #include "table.h"
 
@@ -46,5 +45,3 @@ public:
     Table* GetTable() { return this->m_pTable; }
     xsSerializable* GetData() { return this->m_pData; }
 };
-
-#endif // DBITEM_H

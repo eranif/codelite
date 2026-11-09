@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __svn_patch_dlg__
-#define __svn_patch_dlg__
+#pragma once
 
 /**
 @file
@@ -49,5 +48,3 @@ public:
 
     wxRadioBox* GetRadioBoxPolicy() const { return m_radioBoxEOLPolicy; }
 };
-
-#endif // __svn_patch_dlg__

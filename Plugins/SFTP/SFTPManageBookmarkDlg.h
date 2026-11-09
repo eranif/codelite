@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPMANAGEBOOKMARKDLG_H
-#define SFTPMANAGEBOOKMARKDLG_H
+#pragma once
 #include "UI.hpp"
 
 class SFTPManageBookmarkDlg : public SFTPManageBookmarkDlgBase
@@ -38,4 +37,3 @@ protected:
     virtual void OnDelete(wxCommandEvent& event);
     virtual void OnDeleteUI(wxUpdateUIEvent& event);
 };
-#endif // SFTPMANAGEBOOKMARKDLG_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef AUTOSAVESETTINGS_H
-#define AUTOSAVESETTINGS_H
+#pragma once
 
 #include "cl_config.h"
 
@@ -69,5 +68,3 @@ public:
     }
     size_t GetCheckInterval() const { return m_checkInterval; }
 };
-
-#endif // AUTOSAVESETTINGS_H

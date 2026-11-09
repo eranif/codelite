@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __externaltoolsdata__
-#define __externaltoolsdata__
+#pragma once
 
 #include "serialized_object.h"
 
@@ -105,5 +104,3 @@ public:
     void DeSerialize(Archive& arch) override;
     void Serialize(Archive& arch) override;
 };
-
-#endif // __externaltoolsdata__

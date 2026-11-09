@@ -1,5 +1,4 @@
-#ifndef DAPCONSOLEOUTPUT_HPP
-#define DAPCONSOLEOUTPUT_HPP
+#pragma once
 
 #include "DAPTerminalCtrlView.h"
 
@@ -11,5 +10,3 @@ public:
 
     void AddOutputEvent(dap::OutputEvent* event);
 };
-
-#endif // DAPCONSOLEOUTPUT_HPP

@@ -1,5 +1,4 @@
-#ifndef SVNSHOWRECENTCHANGESDLG_H
-#define SVNSHOWRECENTCHANGESDLG_H
+#pragma once
 #include "SvnShowFileChangesHandler.h"
 #include "subversion2_ui.hpp"
 
@@ -17,4 +16,3 @@ public:
 protected:
     void OnRevisionSelected(wxCommandEvent& event) override;
 };
-#endif // SVNSHOWRECENTCHANGESDLG_H

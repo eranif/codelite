@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNSTRINGS_H
-#define SVNSTRINGS_H
+#pragma once
 
 const wxString svnNO_FILES_TO_DISPLAY = _("No Files to Display");
 const wxString svnMODIFIED_FILES = _("Modified Files");
@@ -36,4 +35,3 @@ const wxString svnUNVERSIONED_FILES = _("Unversioned Files");
 const wxString svnCONSOLE_TEXT = _("Svn");
 const wxString svnANOTHER_PROCESS_RUNNING =
     _("\nMESSAGE: Another process is already running.\nMESSAGE: Ignoring last command.\n");
-#endif // SVNSTRINGS_H

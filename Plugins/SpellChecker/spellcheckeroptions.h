@@ -33,8 +33,7 @@
 // Copyright:   2008 Frank Lichtner
 // Licence:
 /////////////////////////////////////////////////////////////////////////////
-#ifndef __spellcheckeroptions__
-#define __spellcheckeroptions__
+#pragma once
 //------------------------------------------------------------
 #include "serialized_object.h"
 // ------------------------------------------------------------
@@ -87,4 +86,3 @@ protected:
     bool m_ignoreSymbolsInTagsDatabase;
 };
 //------------------------------------------------------------
-#endif // __spellcheckeroptions__

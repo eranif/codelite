@@ -1,5 +1,4 @@
-#ifndef WORD_TOKENIZER_API_H
-#define WORD_TOKENIZER_API_H
+#pragma once
 
 #include <wx/string.h>
 // Needed as per GH-1364
@@ -29,5 +28,3 @@ enum eWordTokens {
 void WordLexerDestroy(WordScanner_t* scanner);
 WordScanner_t WordLexerNew(const wxString& buffer);
 bool WordLexerNext(WordScanner_t scanner, WordLexerToken& token);
-
-#endif

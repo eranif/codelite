@@ -1,5 +1,4 @@
-#ifndef DAPVARIABLELISTCTRL_HPP
-#define DAPVARIABLELISTCTRL_HPP
+#pragma once
 
 #include "clThemedTreeCtrl.h"
 #include "dap/Client.hpp"
@@ -49,5 +48,3 @@ public:
      */
     void UpdateChildren(int varId, dap::VariablesResponse* response);
 };
-
-#endif // DAPVARIABLELISTCTRL_HPP

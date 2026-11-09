@@ -30,8 +30,7 @@
 //  the Free Software Foundation; either version 2 of the License, or
 //  (at your option) any later version.
 
-#ifndef __ZoomNavigator__
-#define __ZoomNavigator__
+#pragma once
 
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -83,5 +82,3 @@ public:
     void OnEnablePlugin(wxCommandEvent& e);
     void OnInitDone(wxCommandEvent& e);
 };
-
-#endif // ZoomNavigator

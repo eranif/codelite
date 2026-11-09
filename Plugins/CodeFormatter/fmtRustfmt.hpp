@@ -1,5 +1,4 @@
-#ifndef FMTRUSTFMT_HPP
-#define FMTRUSTFMT_HPP
+#pragma once
 
 #include "GenericFormatter.hpp"
 
@@ -9,5 +8,3 @@ public:
     fmtRustfmt();
     ~fmtRustfmt() override = default;
 };
-
-#endif // FMTRUSTFMT_HPP

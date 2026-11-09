@@ -23,13 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHP_STRINGS_H
-#define PHP_STRINGS_H
+#pragma once
 
 #include <wx/app.h>
 #include <wx/frame.h>
 #include <wx/string.h>
 
 #define FRAME static_cast<wxFrame*>(static_cast<wxApp*>(wxApp::GetInstance())->GetTopWindow())
-
-#endif // PHP_STRINGS_H

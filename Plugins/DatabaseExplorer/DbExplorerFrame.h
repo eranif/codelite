@@ -1,5 +1,4 @@
-#ifndef DBEXPLORERFRAME_H
-#define DBEXPLORERFRAME_H
+#pragma once
 #include "GUI.hpp"
 
 class DbViewerPanel;
@@ -14,4 +13,3 @@ public:
     DbExplorerFrame(wxWindow* parent, wxWindow* page, const wxString& label, DbViewerPanel* viewer);
     ~DbExplorerFrame() override;
 };
-#endif // DBEXPLORERFRAME_H

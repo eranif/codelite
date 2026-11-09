@@ -1,5 +1,4 @@
-#ifndef DAPSETTINGSPAGE_HPP
-#define DAPSETTINGSPAGE_HPP
+#pragma once
 
 #include "clDapSettingsStore.hpp"
 #include "clPropertiesPage.hpp"
@@ -13,5 +12,3 @@ public:
     DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const DapEntry& entry);
     ~DapSettingsPage() override = default;
 };
-
-#endif // DAPSETTINGSPAGE_HPP

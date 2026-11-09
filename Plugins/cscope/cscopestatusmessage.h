@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __cscopestatusmessage__
-#define __cscopestatusmessage__
+#pragma once
 
 #include <wx/string.h>
 class CScopeStatusMessage
@@ -47,4 +46,3 @@ public:
     const wxString& GetFindWhat() const;
     int GetPercentage() const;
 };
-#endif // __cscopestatusmessage__

@@ -1,5 +1,4 @@
-#ifndef DAPLOGGINGHELPER_HPP
-#define DAPLOGGINGHELPER_HPP
+#pragma once
 
 #include "clModuleLogger.hpp"
 #include "dap/dap.hpp"
@@ -52,5 +51,3 @@ clModuleLogger& operator<<(clModuleLogger& logger, const std::vector<dap::Functi
     }
     return logger;
 }
-
-#endif // DAPLOGGINGHELPER_HPP

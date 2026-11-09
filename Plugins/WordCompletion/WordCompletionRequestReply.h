@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WordCompletionRequestReply_H__
-#define WordCompletionRequestReply_H__
+#pragma once
 
 #include "macros.h"
 #include "worker_thread.h"
@@ -45,5 +44,3 @@ struct WordCompletionThreadReply {
     wxString filter;
     bool insertSingleMatch;
 };
-
-#endif

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __continuousbuildpane__
-#define __continuousbuildpane__
+#pragma once
 
 /**
 @file
@@ -65,5 +64,3 @@ public:
     void AddFailedFile(const wxString& file);
     void ClearAll();
 };
-
-#endif // __continuousbuildpane__

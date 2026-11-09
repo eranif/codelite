@@ -1,5 +1,4 @@
-#ifndef XDEBUGSETTINGS_H
-#define XDEBUGSETTINGS_H
+#pragma once
 
 #include "XDebugBreakpoint.h"
 #include "macros.h"
@@ -58,5 +57,3 @@ public:
      */
     const wxStringMap_t& GetFileMapping() const { return m_fileMapping; }
 };
-
-#endif // XDEBUGSETTINGS_H

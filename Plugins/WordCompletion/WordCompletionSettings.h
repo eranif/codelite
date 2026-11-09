@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WORDCOMPLETIONSETTINGS_H
-#define WORDCOMPLETIONSETTINGS_H
+#pragma once
 
 #include "cl_config.h" // Base class: clConfigItem
 
@@ -57,5 +56,3 @@ public:
     WordCompletionSettings& Load();
     WordCompletionSettings& Save();
 };
-
-#endif // WORDCOMPLETIONSETTINGS_H

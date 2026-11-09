@@ -30,8 +30,7 @@
 //  the Free Software Foundation; either version 2 of the License, or
 //  (at your option) any later version.
 
-#ifndef ZOOM_NAV_TEXT
-#define ZOOM_NAV_TEXT
+#pragma once
 
 #include "ieditor.h"
 
@@ -77,5 +76,3 @@ public:
     void UpdateMarkers(const std::vector<int>& lines, MarkerType type);
     void Startup();
 };
-
-#endif // ZOOM_NAV_TEXT

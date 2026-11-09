@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __CodeLiteDiff__
-#define __CodeLiteDiff__
+#pragma once
 
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -54,5 +53,3 @@ public:
     void CreatePluginMenu(wxMenu* pluginsMenu) override;
     void UnPlug() override;
 };
-
-#endif // CodeLiteDiff

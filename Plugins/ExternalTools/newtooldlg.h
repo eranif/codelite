@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __newtooldlg__
-#define __newtooldlg__
+#pragma once
 
 #include "NewToolBase.hpp"
 #include "externaltooldlg.h"
@@ -61,5 +60,3 @@ public:
     bool GetSaveAllFiles() const { return m_checkBoxSaveAllFilesBefore->IsChecked(); }
     bool IsCallOnFileSave() const { return m_checkBoxCallOnFileSave->IsChecked(); }
 };
-
-#endif // __newtooldlg__

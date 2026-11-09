@@ -1,5 +1,4 @@
-#ifndef FMTBLACK_HPP
-#define FMTBLACK_HPP
+#pragma once
 
 #include "GenericFormatter.hpp"
 
@@ -9,5 +8,3 @@ public:
     fmtBlack();
     ~fmtBlack() override = default;
 };
-
-#endif // FMTBLACK_HPP

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef FILEMAPPINGDLG_H
-#define FILEMAPPINGDLG_H
+#pragma once
 #include "php_ui.hpp"
 
 class FileMappingDlg : public FileMappingDlgBase
@@ -44,4 +43,3 @@ public:
 protected:
     virtual void OnOkUI(wxUpdateUIEvent& event);
 };
-#endif // FILEMAPPINGDLG_H

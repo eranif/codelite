@@ -1,5 +1,4 @@
-#ifndef DOCKERFILESETTINGSDLG_H
-#define DOCKERFILESETTINGSDLG_H
+#pragma once
 
 #include "UI.hpp"
 #include "clDockerBuildableFile.h"
@@ -16,4 +15,3 @@ public:
 protected:
     virtual void OnOK(wxCommandEvent& event);
 };
-#endif // DOCKERFILESETTINGSDLG_H

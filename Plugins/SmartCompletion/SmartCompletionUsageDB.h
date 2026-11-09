@@ -1,5 +1,4 @@
-#ifndef SMARTCOMPLETIONUSAGEDB_H
-#define SMARTCOMPLETIONUSAGEDB_H
+#pragma once
 
 #include <unordered_map>
 #include <wx/string.h>
@@ -50,5 +49,3 @@ public:
      */
     void Clear();
 };
-
-#endif // SMARTCOMPLETIONUSAGEDB_H

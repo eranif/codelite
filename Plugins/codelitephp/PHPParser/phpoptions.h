@@ -1,5 +1,4 @@
-#ifndef PHPOPTIONS_H
-#define PHPOPTIONS_H
+#pragma once
 
 #include "cl_config.h" // Base class: clConfigItem
 
@@ -33,5 +32,3 @@ public:
     const wxArrayString& GetIncludePaths() const { return m_includePaths; }
     const wxString& GetPhpExe() const { return m_phpExe; }
 };
-
-#endif // PHPOPTIONS_H

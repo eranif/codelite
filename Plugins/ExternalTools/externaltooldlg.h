@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __externaltooldlg__
-#define __externaltooldlg__
+#pragma once
 
 #include "external_tools.hpp"
 #include "externaltoolsdata.h"
@@ -122,5 +121,3 @@ public:
     std::vector<ToolInfo> GetTools();
     void SetTools(const std::vector<ToolInfo>& tools);
 };
-
-#endif // __externaltooldlg__

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNSETTINGSDATA_H
-#define SVNSETTINGSDATA_H
+#pragma once
 
 #include "Notebook.h"
 #include "serialized_object.h" // Base class
@@ -138,5 +137,3 @@ public:
     void SetWorkspaceRepoPath(const wxStringMap_t& workspaceRepoPath) { this->m_workspaceRepoPath = workspaceRepoPath; }
     wxStringMap_t& GetWorkspaceRepoPath() { return m_workspaceRepoPath; }
 };
-
-#endif // SVNSETTINGSDATA_H

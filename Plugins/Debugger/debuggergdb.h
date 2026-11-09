@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DBGINTERFACE_H
-#define DBGINTERFACE_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
@@ -169,4 +168,3 @@ public:
     void OnDataRead(clProcessEvent& e);
     void OnKillGDB(wxCommandEvent& e);
 };
-#endif // DBGINTERFACE_H

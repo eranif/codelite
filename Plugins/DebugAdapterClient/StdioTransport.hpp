@@ -1,5 +1,4 @@
-#ifndef STDIOTRANSPORT_HPP
-#define STDIOTRANSPORT_HPP
+#pragma once
 
 #include "dap/Client.hpp"
 
@@ -33,5 +32,3 @@ public:
 };
 
 } // namespace dap
-
-#endif // STDIOTRANSPORT_HPP

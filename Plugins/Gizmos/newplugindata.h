@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef NEW_PLUGIN_DATA_H
-#define NEW_PLUGIN_DATA_H
+#pragma once
 
 #include <wx/string.h>
 
@@ -49,4 +48,3 @@ public:
     const wxString& GetPluginName() const { return m_pluginName; }
     const wxString& GetProjectPath() const { return m_projectPath; }
 };
-#endif // NEW_PLUGIN_DATA_H

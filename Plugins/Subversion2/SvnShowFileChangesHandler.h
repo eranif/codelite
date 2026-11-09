@@ -1,5 +1,4 @@
-#ifndef SVNSHOWFILECHANGESHANDLER_H
-#define SVNSHOWFILECHANGESHANDLER_H
+#pragma once
 
 #include "svncommandhandler.h" // Base class: SvnCommandHandler
 
@@ -44,5 +43,3 @@ public:
 public:
     void Process(const wxString& output) override;
 };
-
-#endif // SVNSHOWFILECHANGESHANDLER_H

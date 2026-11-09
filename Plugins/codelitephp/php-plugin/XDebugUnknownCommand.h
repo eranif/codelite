@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XDEBUGUNKNOWNCOMMAND_H
-#define XDEBUGUNKNOWNCOMMAND_H
+#pragma once
 
 #include "XDebugCommandHandler.h" // Base class: XDebugCommandHandler
 
@@ -37,5 +36,3 @@ public:
 public:
     void Process(const wxXmlNode* response) override;
 };
-
-#endif // XDEBUGUNKNOWNCOMMAND_H

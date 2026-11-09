@@ -1,5 +1,4 @@
-#ifndef _GDB_PARSER_H_
-#define _GDB_PARSER_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -43,5 +42,3 @@ extern void gdb_result_push_buffer(const std::string& new_input);
 extern void gdb_result_pop_buffer();
 extern int gdb_result_lex();
 extern void gdb_result_lex_clean();
-
-#endif // _GDB_PARSER_H_

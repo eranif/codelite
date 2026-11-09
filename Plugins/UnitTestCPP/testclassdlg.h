@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __testclassdlg__
-#define __testclassdlg__
+#pragma once
 
 #include "database/entry.h"
 #include "testclassbasedlg.hpp"
@@ -69,5 +68,3 @@ public:
 
     wxString GetProjectName() { return m_choiceProjects->GetStringSelection(); }
 };
-
-#endif // __testclassdlg__

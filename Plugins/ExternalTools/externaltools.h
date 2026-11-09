@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ExternalTools__
-#define __ExternalTools__
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
@@ -59,5 +58,3 @@ public:
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
 };
-
-#endif // ExternalTools

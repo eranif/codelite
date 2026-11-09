@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __svn_sync_dialog__
-#define __svn_sync_dialog__
+#pragma once
 
 #include "subversion2_ui.hpp"
 #include "wxcrafter.hpp"
@@ -59,5 +58,3 @@ private:
     wxString m_excludeExtensions;
     bool m_excludeBin;
 };
-
-#endif // __svn_sync_dialog__

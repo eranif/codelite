@@ -33,8 +33,7 @@
  * Notes:
  **************************************************************/
 
-#ifndef __CallGraph__
-#define __CallGraph__
+#pragma once
 
 #include "plugin.h"
 //
@@ -130,5 +129,3 @@ protected:
      */
     ConfCallGraph confData; // object confData type ConfCallGraph with stored configuration data
 };
-
-#endif // CallGraph

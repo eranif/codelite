@@ -1,5 +1,4 @@
-#ifndef DAPMAINVIEW_H
-#define DAPMAINVIEW_H
+#pragma once
 
 #include "DAPOutputPane.hpp"
 #include "UI.hpp"
@@ -108,4 +107,3 @@ private:
     DAPOutputPane* m_outputPane = nullptr;
     std::vector<size_t> m_getFramesRequests;
 };
-#endif // DAPMAINVIEW_H

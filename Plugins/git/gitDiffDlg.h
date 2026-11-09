@@ -30,8 +30,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __gitDiffDlg__
-#define __gitDiffDlg__
+#pragma once
 
 #include "cl_command_event.h"
 #include "gitui.hpp"
@@ -71,5 +70,3 @@ protected:
 
     void OnChoseCommits(wxCommandEvent& event) override;
 };
-
-#endif //__gitDiffDlg__

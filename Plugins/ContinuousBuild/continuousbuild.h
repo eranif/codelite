@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ContinuousBuild__
-#define __ContinuousBuild__
+#pragma once
 
 #include "buildprocess.h"
 #include "clTabTogglerHelper.h"
@@ -68,5 +67,3 @@ public:
     void OnBuildProcessEnded(clProcessEvent& e);
     void OnBuildProcessOutput(clProcessEvent& e);
 };
-
-#endif // ContinuousBuild

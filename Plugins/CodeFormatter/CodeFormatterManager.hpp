@@ -1,5 +1,4 @@
-#ifndef CODEFORMATTERMANAGER_HPP
-#define CODEFORMATTERMANAGER_HPP
+#pragma once
 
 #include "GenericFormatter.hpp"
 
@@ -43,5 +42,3 @@ public:
     /// Remove all remote commands set in the formatters
     void ClearRemoteCommands();
 };
-
-#endif // CODEFORMATTERMANAGER_HPP

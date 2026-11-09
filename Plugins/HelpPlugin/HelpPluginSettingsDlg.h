@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef HELPPLUGINSETTINGSDLG_H
-#define HELPPLUGINSETTINGSDLG_H
+#pragma once
 
 #include "HelpPluginUI.hpp"
 
@@ -41,4 +40,3 @@ protected:
     void OnDocsetChanged(wxPropertyGridEvent& event) override;
     void OnOKUI(wxUpdateUIEvent& event) override;
 };
-#endif // HELPPLUGINSETTINGSDLG_H

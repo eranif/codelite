@@ -1,5 +1,4 @@
-#ifndef REMOTEWORKSPACE_HPP
-#define REMOTEWORKSPACE_HPP
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "FileSystemWorkspace/clFileSystemWorkspaceConfig.hpp"
@@ -222,5 +221,3 @@ protected:
     void RestoreSession();
     void SetFocusToActiveEditor();
 };
-
-#endif // RemoteWorkspace_HPP

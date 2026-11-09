@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __qmakesettingsdlg__
-#define __qmakesettingsdlg__
+#pragma once
 
 #include "qmakesettingsbasedlg.hpp"
 
@@ -52,5 +51,3 @@ public:
     QMakeSettingsDlg(wxWindow* parent, IManager* manager, QmakeConf* conf);
     virtual ~QMakeSettingsDlg();
 };
-
-#endif // __qmakesettingsdlg__

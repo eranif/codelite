@@ -1,5 +1,4 @@
-#ifndef __VIM_COMMANDS__
-#define __VIM_COMMANDS__
+#pragma once
 
 #include "ieditor.h"
 #include "imanager.h"
@@ -350,5 +349,3 @@ private:
     IManager* m_mgr{nullptr};
     friend VimBaseCommand;
 };
-
-#endif //__VIM_COMMANDS__

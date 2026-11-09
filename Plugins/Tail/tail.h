@@ -1,5 +1,4 @@
-#ifndef __Tail__
-#define __Tail__
+#pragma once
 
 #include "TailData.h"
 #include "clEditorEditEventsHandler.h"
@@ -51,5 +50,3 @@ public:
 
     TailPanel* GetView() const { return m_view; }
 };
-
-#endif // Tail

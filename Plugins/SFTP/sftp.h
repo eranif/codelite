@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __SFTP__
-#define __SFTP__
+#pragma once
 
 #include "clFileSystemEvent.h"
 #include "clSFTPEvent.h"
@@ -139,5 +138,3 @@ public:
     void OnFileWriteOK(const wxString& message);
     void OnFileWriteError(const wxString& errorMessage);
 };
-
-#endif // SFTP

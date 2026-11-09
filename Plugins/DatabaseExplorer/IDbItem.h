@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef IDBITEM_H
-#define IDBITEM_H
+#pragma once
 
 #include <wx/treebase.h> // Base class: wxTreeItemData
 
@@ -42,5 +41,3 @@ public:
     virtual wxString GetParentName() = 0;
     virtual void SetParentName(wxString& databaseName) = 0;
 };
-
-#endif // IDBITEM_H

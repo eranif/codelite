@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNLOGDIALOG_H
-#define SVNLOGDIALOG_H
+#pragma once
 #include "subversion2_ui.hpp"
 
 class SvnLogDialog : public SvnLogDialogBase
@@ -40,4 +39,3 @@ public:
     wxTextCtrl* GetFrom() { return m_from; }
     wxTextCtrl* GetTo() { return m_to; }
 };
-#endif // SVNLOGDIALOG_H

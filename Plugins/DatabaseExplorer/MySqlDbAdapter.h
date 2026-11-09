@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef MYSQLDBADAPTER_H
-#define MYSQLDBADAPTER_H
+#pragma once
 
 #ifdef DBL_USE_MYSQL
 #include <wx/dblayer/include/MysqlDatabaseLayer.h>
@@ -84,5 +83,3 @@ protected:
 
     DatabaseLayerPtr m_pDbLayer;
 };
-
-#endif // MYSQLDBADAPTER_H

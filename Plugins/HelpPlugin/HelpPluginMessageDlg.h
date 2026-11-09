@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef HELPPLUGINMESSAGEDLG_H
-#define HELPPLUGINMESSAGEDLG_H
+#pragma once
 
 #include "HelpPluginUI.hpp"
 
@@ -34,4 +33,3 @@ public:
     explicit HelpPluginMessageDlg(wxWindow* parent);
     ~HelpPluginMessageDlg() override = default;
 };
-#endif // HELPPLUGINMESSAGEDLG_H

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __newclassdlg__
-#define __newclassdlg__
+#pragma once
 
 #include "new_class_dlg_data.h"
 #include "newclassbasedlg.hpp"
@@ -103,5 +102,3 @@ public:
     bool IsInline() const { return m_checkBoxInline->GetValue(); }
     bool HppHeader() const { return m_checkBoxHpp->GetValue(); }
 };
-
-#endif // __newclassdlg__

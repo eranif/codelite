@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNBLAMEFRAME_H
-#define SVNBLAMEFRAME_H
+#pragma once
 
 #include "subversion2_ui.hpp"
 
@@ -38,4 +37,3 @@ public:
     SvnBlameFrame(wxWindow* parent, const wxFileName& filename, const wxString& content);
     ~SvnBlameFrame() override = default;
 };
-#endif // SVNBLAMEFRAME_H

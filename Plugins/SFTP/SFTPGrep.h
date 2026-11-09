@@ -1,5 +1,4 @@
-#ifndef SFTPGREP_H
-#define SFTPGREP_H
+#pragma once
 #include "UI.hpp"
 
 class GrepData
@@ -35,4 +34,3 @@ public:
 protected:
     virtual void OnOkUI(wxUpdateUIEvent& event);
 };
-#endif // SFTPGREP_H

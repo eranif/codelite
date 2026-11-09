@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef GDBMIPARSETHREADINFO_H
-#define GDBMIPARSETHREADINFO_H
+#pragma once
 
 #include "debugger.h"
 
@@ -79,5 +78,3 @@ public:
 
     const GdbMIThreadInfoVec_t& GetThreads() const { return m_threads; }
 };
-
-#endif // GDBMIPARSETHREADINFO_H

@@ -34,9 +34,10 @@
 // Licence:		GNU General Public Licence
 /////////////////////////////////////////////////////////////////////////////
 
+#pragma once
+
 #include "wxSerialize.h"
 
-#pragma once
 //------------------------------------------------------------
 // base class for one entry
 class swBase : public wxObject

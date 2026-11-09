@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef HELPPLUGINSETTINGS_H
-#define HELPPLUGINSETTINGS_H
+#pragma once
 
 #include "cl_config.h"
 #include "fileextmanager.h"
@@ -66,5 +65,3 @@ public:
 
     wxString GetDocset(FileExtManager::FileType type) const;
 };
-
-#endif // HELPPLUGINSETTINGS_H

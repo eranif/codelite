@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __newwxprojectinfo__
-#define __newwxprojectinfo__
+#pragma once
 
 #include <wx/string.h>
 
@@ -70,4 +69,3 @@ public:
     const wxString& GetPrefix() const { return m_prefix; }
     const wxString& GetVersion() const { return m_version; }
 };
-#endif // __newwxprojectinfo__

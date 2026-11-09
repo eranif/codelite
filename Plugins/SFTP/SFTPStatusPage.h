@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPSTATUSPAGE_H
-#define SFTPSTATUSPAGE_H
+#pragma once
 
 #include "SFTPGrepStyler.h"
 #include "UI.hpp"
@@ -84,4 +83,3 @@ protected:
     void OnHotspotClicked(wxStyledTextEvent& event);
     int GetTabIndex(const wxString& name) const;
 };
-#endif // SFTPSTATUSPAGE_H

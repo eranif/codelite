@@ -1,5 +1,4 @@
-#ifndef GITUSEREMAILDIALOG_H
-#define GITUSEREMAILDIALOG_H
+#pragma once
 #include "gitui.hpp"
 
 class GitUserEmailDialog : public GitUserEmailDialogBase
@@ -14,4 +13,3 @@ public:
 protected:
     void OnOKUI(wxUpdateUIEvent& event) override;
 };
-#endif // GITUSEREMAILDIALOG_H

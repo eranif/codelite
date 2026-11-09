@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DATABASE_H
-#define DATABASE_H
+#pragma once
 
 #include "wx/wxxmlserializer/XmlSerializer.h"
 
@@ -57,5 +56,3 @@ public:
     /*! \brief Return database name*/
     wxString GetName() { return this->m_name; }
 };
-
-#endif // DATABASE_H

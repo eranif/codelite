@@ -1,5 +1,4 @@
-#ifndef CLDOCKERSETTINGS_H
-#define CLDOCKERSETTINGS_H
+#pragma once
 
 #include "cl_config.h"
 
@@ -47,4 +46,3 @@ public:
     bool IsRemoveAllImages() const { return HasFlag(kRemoveAllImages); }
     void SetRemoveAllImages(bool b) { EnableFlag(kRemoveAllImages, b); }
 };
-#endif // CLDOCKERSETTINGS_H

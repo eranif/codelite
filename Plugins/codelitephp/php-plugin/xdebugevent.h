@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XDEBUGEVENT_H
-#define XDEBUGEVENT_H
+#pragma once
 
 #include "XVariable.h"
 #include "php_event.h"
@@ -67,5 +66,3 @@ wxDECLARE_EVENT(wxEVT_XDEBUG_LOCALS_UPDATED, XDebugEvent);
 wxDECLARE_EVENT(wxEVT_XDEBUG_EVAL_EXPRESSION, XDebugEvent);
 wxDECLARE_EVENT(wxEVT_XDEBUG_UNKNOWN_RESPONSE, XDebugEvent);
 wxDECLARE_EVENT(wxEVT_XDEBUG_PROPERTY_GET, XDebugEvent);
-
-#endif // XDEBUGEVENT_H

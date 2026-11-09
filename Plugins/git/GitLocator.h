@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef GITLOCATOR_H
-#define GITLOCATOR_H
+#pragma once
 
 #include <wx/filename.h>
 
@@ -42,5 +41,3 @@ public:
      */
     bool MSWGetGitShellCommand(wxString& bashCommand) const;
 };
-
-#endif // GITLOCATOR_H

@@ -1,5 +1,4 @@
-#ifndef DAPTOOLTIP_HPP
-#define DAPTOOLTIP_HPP
+#pragma once
 
 #include "dap/Client.hpp"
 
@@ -22,5 +21,3 @@ public:
     ~DAPTooltip() override = default;
     void UpdateChildren(int varId, dap::VariablesResponse* response);
 };
-
-#endif // DAPTOOLTIP_HPP

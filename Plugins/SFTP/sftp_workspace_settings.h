@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPWORKSPACESETTINGS_H
-#define SFTPWORKSPACESETTINGS_H
+#pragma once
 
 #include "cl_config.h" // Base class: clConfigItem
 
@@ -56,5 +55,3 @@ public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
 };
-
-#endif // SFTPWORKSPACESETTINGS_H

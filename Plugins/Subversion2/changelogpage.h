@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CHANGELOGPAGE_H
-#define CHANGELOGPAGE_H
+#pragma once
 
 #include "subversion2_ui.hpp" // Base class: ChangeLogPageBase
 
@@ -53,5 +52,3 @@ public:
     void SetUrl(const wxString& url) { this->m_url = url; }
     const wxString& GetUrl() const { return m_url; }
 };
-
-#endif // CHANGELOGPAGE_H

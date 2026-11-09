@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLASSGENERATEDIALOG_H
-#define CLASSGENERATEDIALOG_H
+#pragma once
 
 #include "../Interfaces/imanager.h"
 #include "../Plugin/VirtualDirectorySelectorDlg.h"
@@ -101,5 +100,3 @@ protected:
     wxString classColName;
     wxString classUtilName;
 };
-
-#endif // CLASSGENERATEDIALOG_H

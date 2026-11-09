@@ -1,5 +1,4 @@
-#ifndef CLDOCKERWORKSPACESETTINGS_H
-#define CLDOCKERWORKSPACESETTINGS_H
+#pragma once
 
 #include "clDockerBuildableFile.h"
 #include "cl_config.h"
@@ -34,5 +33,3 @@ public:
     void SetFileInfo(const wxFileName& file, clDockerBuildableFile::Ptr_t info);
     void Clear();
 };
-
-#endif // CLDOCKERWORKSPACESETTINGS_H

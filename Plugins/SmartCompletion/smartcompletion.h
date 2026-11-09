@@ -1,5 +1,4 @@
-#ifndef __SmartCompletion__
-#define __SmartCompletion__
+#pragma once
 
 #include "SmartCompletionsConfig.h"
 #include "cl_command_event.h"
@@ -41,5 +40,3 @@ public:
      */
     void UnPlug() override;
 };
-
-#endif // SmartCompletion

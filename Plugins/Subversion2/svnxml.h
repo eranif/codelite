@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef SVNXMLPARSER_H
-#define SVNXMLPARSER_H
+#pragma once
 
 #include "svninfo.h"
 
@@ -47,5 +46,3 @@ public:
 
     static void GetSvnInfo(const wxString& input, SvnInfo& svnInfo);
 };
-
-#endif // SVNXMLPARSER_H

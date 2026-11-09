@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __RUSTPLUGIN_HPP__
-#define __RUSTPLUGIN_HPP__
+#pragma once
 
 #include "clFileSystemEvent.h"
 #include "clTabTogglerHelper.h"
@@ -67,5 +66,3 @@ public:
     void UnPlug() override;
     IManager* GetManager() { return m_mgr; }
 };
-
-#endif // __RUSTPLUGIN_HPP__

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHPDEBUGPANE_H
-#define PHPDEBUGPANE_H
+#pragma once
 
 #include "TerminalEmulator/TerminalEmulatorUI.h"
 #include "XDebugManager.h"
@@ -62,4 +61,3 @@ protected:
     virtual void OnDeleteBreakpointUI(wxUpdateUIEvent& event);
     virtual void OnCallStackItemActivated(wxDataViewEvent& event);
 };
-#endif // PHPDEBUGPANE_H

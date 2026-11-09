@@ -1,5 +1,4 @@
-#ifndef SMARTCOMPLETIONSCONFIG_H
-#define SMARTCOMPLETIONSCONFIG_H
+#pragma once
 
 #include "SmartCompletionUsageDB.h"
 #include "cl_config.h"
@@ -35,5 +34,3 @@ public:
     std::unordered_map<wxString, int>& GetGTAWeightTable() { return m_GTAweight; }
     SmartCompletionUsageDB& GetUsageDb() { return m_db; }
 };
-
-#endif // SMARTCOMPLETIONSCONFIG_H

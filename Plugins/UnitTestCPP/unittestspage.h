@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __unittestspage__
-#define __unittestspage__
+#pragma once
 
 #include "clWorkspaceEvent.hpp"
 #include "unittestcppoutputparser.h"
@@ -52,5 +51,3 @@ public:
 protected:
     virtual void OnClearReport(wxCommandEvent& event);
 };
-
-#endif // __unittestspage__

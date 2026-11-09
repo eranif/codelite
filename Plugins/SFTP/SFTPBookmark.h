@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPBOOKMARK_H
-#define SFTPBOOKMARK_H
+#pragma once
 
 #include "JSON.h"
 #include "ssh/ssh_account_info.h"
@@ -55,5 +54,3 @@ public:
     JSONItem ToJSON() const;
     void FromJSON(const JSONItem& json);
 };
-
-#endif // SFTPBOOKMARK_H

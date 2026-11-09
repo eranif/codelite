@@ -1,5 +1,4 @@
-#ifndef EDITORCONFIGSETTINGS_H
-#define EDITORCONFIGSETTINGS_H
+#pragma once
 
 #include <wx/string.h>
 
@@ -32,5 +31,3 @@ public:
     EditorConfigSettings& Load();
     EditorConfigSettings& Save();
 };
-
-#endif // EDITORCONFIGSETTINGS_H

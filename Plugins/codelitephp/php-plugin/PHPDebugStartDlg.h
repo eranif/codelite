@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHPDEBUGSTARTDLG_H
-#define PHPDEBUGSTARTDLG_H
+#pragma once
 #include "imanager.h"
 #include "php_project_settings_data.h"
 #include "php_ui.hpp"
@@ -48,4 +47,3 @@ protected:
     virtual void OnDebugMethodChanged(wxCommandEvent& event);
     virtual void OnScriptToDebugUI(wxUpdateUIEvent& event);
 };
-#endif // PHPDEBUGSTARTDLG_H

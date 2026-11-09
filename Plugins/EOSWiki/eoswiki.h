@@ -1,5 +1,4 @@
-#ifndef __EOSWiki__
-#define __EOSWiki__
+#pragma once
 
 #include "EOSProjectData.h"
 #include "macros.h"
@@ -37,5 +36,3 @@ public:
      */
     void UnPlug() override;
 };
-
-#endif // EOSWiki

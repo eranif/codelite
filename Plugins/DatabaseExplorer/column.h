@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COLUMN_H
-#define COLUMN_H
+#pragma once
 
 #include "IDbType.h"
 #include "wx/wxxmlserializer/XmlSerializer.h"
@@ -87,5 +86,3 @@ public:
     /*! \brief Function for column editing. */
     void Edit(wxString& name, wxString& parentName, IDbType* type);
 };
-
-#endif // COLUMN_H

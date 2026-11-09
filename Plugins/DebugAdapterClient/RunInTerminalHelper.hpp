@@ -1,5 +1,4 @@
-#ifndef RUNINTERMINALHELPER_HPP
-#define RUNINTERMINALHELPER_HPP
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
@@ -28,5 +27,3 @@ public:
     void Terminate();
     int GetProcessId() const { return m_processId; }
 };
-
-#endif // RUNINTERMINALHELPER_HPP

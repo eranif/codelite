@@ -1,5 +1,4 @@
-#ifndef REMOTYWORKSPACEVIEW_H
-#define REMOTYWORKSPACEVIEW_H
+#pragma once
 
 #include "RemotyUI.hpp"
 #include "clRemoteDirCtrl.hpp"
@@ -56,4 +55,3 @@ private:
     wxChoice* m_configs{nullptr};
     wxArrayString m_filesToRestore;
 };
-#endif // REMOTYWORKSPACEVIEW_H

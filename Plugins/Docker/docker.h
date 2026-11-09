@@ -1,5 +1,4 @@
-#ifndef __Docker__
-#define __Docker__
+#pragma once
 
 #include "clDockerDriver.h"
 #include "clTabTogglerHelper.h"
@@ -33,5 +32,3 @@ public:
     DockerOutputPane* GetTerminal() { return m_outputView; }
     clDockerDriver::Ptr_t GetDriver() { return m_driver; }
 };
-
-#endif // Docker

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SUBVERSIONPASSWORDDB_H
-#define SUBVERSIONPASSWORDDB_H
+#pragma once
 
 #include <wx/fileconf.h>
 
@@ -58,5 +57,3 @@ public:
      */
     void DeleteLogin(const wxString& url);
 };
-
-#endif // SUBVERSIONPASSWORDDB_H

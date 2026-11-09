@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef AUTOSAVEDLG_H
-#define AUTOSAVEDLG_H
+#pragma once
 #include "AutoSaveUI.hpp"
 
 class AutoSaveDlg : public AutoSaveDlgBase
@@ -37,4 +36,3 @@ protected:
     virtual void OnOK(wxCommandEvent& event);
     virtual void OnEnabledUI(wxUpdateUIEvent& event);
 };
-#endif // AUTOSAVEDLG_H

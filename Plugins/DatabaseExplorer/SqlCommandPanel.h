@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SQLCOMMANDPANEL_H
-#define SQLCOMMANDPANEL_H
+#pragma once
 
 #include "GUI.hpp" // Base class: _SqlCommandPanel
 #include "IDbAdapter.h"
@@ -107,5 +106,3 @@ public:
     DECLARE_EVENT_TABLE()
     void OnExecuteSQL(wxCommandEvent& e);
 };
-
-#endif // SQLCOMMANDPANEL_H

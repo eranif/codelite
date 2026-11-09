@@ -1,5 +1,4 @@
-#ifndef OUTLINETAB_H
-#define OUTLINETAB_H
+#pragma once
 
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
@@ -27,4 +26,3 @@ public:
 protected:
     void OnItemSelected(wxDataViewEvent& event) override;
 };
-#endif // OUTLINETAB_H

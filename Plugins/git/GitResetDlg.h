@@ -1,5 +1,4 @@
-#ifndef GITRESETDLG_H
-#define GITRESETDLG_H
+#pragma once
 #include "gitui.hpp"
 
 class GitResetDlg : public GitResetDlgBase
@@ -20,4 +19,3 @@ protected:
     bool m_toggleReverts;
     bool m_toggleRemoves;
 };
-#endif // GITRESETDLG_H

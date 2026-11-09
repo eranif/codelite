@@ -1,5 +1,4 @@
-#ifndef CLDOCKERBUILDER_H
-#define CLDOCKERBUILDER_H
+#pragma once
 
 #include "clDockerWorkspaceSettings.h"
 #include "cl_command_event.h"
@@ -71,5 +70,3 @@ public:
     void StopContainer(const wxString& containerName);
     void StartContainer(const wxString& containerName);
 };
-
-#endif // CLDOCKERBUILDER_H

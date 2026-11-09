@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WORKSPACESVNSETTINGS_H
-#define WORKSPACESVNSETTINGS_H
+#pragma once
 
 #include "cl_config.h" // Base class: clConfigItem
 
@@ -49,5 +48,3 @@ public:
     const wxString& GetRepoPath() const { return m_repoPath; }
     wxFileName GetLocalConfigFile() const;
 };
-
-#endif // WORKSPACESVNSETTINGS_H

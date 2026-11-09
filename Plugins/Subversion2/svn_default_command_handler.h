@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVN_DEFAULT_COMMAND_HANDLER_H
-#define SVN_DEFAULT_COMMAND_HANDLER_H
+#pragma once
 
 #include "svncommandhandler.h" // Base class
 
@@ -39,5 +38,3 @@ public:
 public:
     void Process(const wxString& output) override;
 };
-
-#endif // SVN_DEFAULT_COMMAND_HANDLER_H

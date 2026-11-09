@@ -1,5 +1,4 @@
-#ifndef __VIM_MANAGER_H__
-#define __VIM_MANAGER_H__
+#pragma once
 
 #include "VimSettings.h"
 #include "clWorkspaceEvent.hpp"
@@ -72,5 +71,3 @@ private:
     void updateView();
     void RepeatCommand();
 };
-
-#endif // __VIM_MANAGER_H__

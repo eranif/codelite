@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHPXDEBUGSETUPWIZARD_H
-#define PHPXDEBUGSETUPWIZARD_H
+#pragma once
 #include "php_ui.hpp"
 
 class PHPXDebugSetupWizard : public PHPXDebugSetupWizardBase
@@ -38,4 +37,3 @@ protected:
     virtual void OnPageChanging(wxWizardEvent& event);
     void SelectAllIniText();
 };
-#endif // PHPXDEBUGSETUPWIZARD_H

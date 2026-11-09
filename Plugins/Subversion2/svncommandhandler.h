@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNCOMMANDHANDLER_H
-#define SVNCOMMANDHANDLER_H
+#pragma once
 
 #include "file_logger.h"
 
@@ -173,5 +172,3 @@ public:
 
     virtual void Process(const wxString& output) = 0;
 };
-
-#endif // SVNCOMMANDHANDLER_H

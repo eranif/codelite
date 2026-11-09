@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __qmakeplugindata__
-#define __qmakeplugindata__
+#pragma once
 
 #include <map>
 #include <wx/string.h>
@@ -60,4 +59,3 @@ public:
     bool GetDataForBuildConf(const wxString& configName, BuildConfPluginData& bcpd);
     void SetDataForBuildConf(const wxString& configName, const BuildConfPluginData& cd);
 };
-#endif // __qmakeplugindata__

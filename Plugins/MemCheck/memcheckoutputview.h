@@ -30,8 +30,7 @@
  * @copyright GNU General Public License v2
  */
 
-#ifndef _MEMCHECKOUTPUTVIEW_H_
-#define _MEMCHECKOUTPUTVIEW_H_
+#pragma once
 
 #include "memcheck.h"
 #include "memcheckerror.h"
@@ -183,5 +182,3 @@ public:
      */
     void Clear();
 };
-
-#endif // _MEMCHECKOUTPUTVIEW_H_

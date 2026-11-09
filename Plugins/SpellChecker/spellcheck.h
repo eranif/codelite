@@ -33,8 +33,7 @@
 // Copyright:   2014 Frank Lichtner
 // License:
 /////////////////////////////////////////////////////////////////////////////
-#ifndef __SpellCheck__
-#define __SpellCheck__
+#pragma once
 //------------------------------------------------------------
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -95,4 +94,3 @@ protected:
     bool m_forceCheck = false;        // Force re-check if user added or ignored a word to the list
 };
 //------------------------------------------------------------
-#endif // SpellCheck

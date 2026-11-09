@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNTREEDATA_H
-#define SVNTREEDATA_H
+#pragma once
 
 #include <wx/treectrl.h>
 
@@ -61,5 +60,3 @@ public:
     void SetFilepath(const wxString& filepath) { this->m_filepath = filepath; }
     const wxString& GetFilepath() const { return m_filepath; }
 };
-
-#endif // SVNTREEDATA_H

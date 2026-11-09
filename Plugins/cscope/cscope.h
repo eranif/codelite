@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __Cscope__
-#define __Cscope__
+#pragma once
 
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
@@ -80,5 +79,3 @@ protected:
     void OnWorkspaceOpenUI(wxUpdateUIEvent& e);
     void OnEditorContentMenu(clContextMenuEvent& event);
 };
-
-#endif // Cscope

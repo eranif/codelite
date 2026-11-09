@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __cscopeentrydata__
-#define __cscopeentrydata__
+#pragma once
 
 #include <wx/string.h>
 
@@ -54,4 +53,3 @@ public:
     const wxString& GetPattern() const { return m_pattern; }
     const wxString& GetScope() const { return m_scope; }
 };
-#endif // __cscopeentrydata__

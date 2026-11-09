@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef POSTGRESQLDBADAPTER_H
-#define POSTGRESQLDBADAPTER_H
+#pragma once
 
 #ifdef DBL_USE_POSTGRES
 #include <wx/dblayer/include/PostgresDatabaseLayer.h>
@@ -91,5 +90,3 @@ protected:
 
     DatabaseLayerPtr m_pDbLayer;
 };
-
-#endif // POSTGRESQLDBADAPTER_H

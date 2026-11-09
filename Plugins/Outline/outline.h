@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __SymbolView__
-#define __SymbolView__
+#pragma once
 
 #include "outline_tab.h"
 #include "plugin.h"
@@ -48,4 +47,3 @@ public:
     void CreatePluginMenu(wxMenu* pluginsMenu) override;
     void UnPlug() override;
 };
-#endif // Outline

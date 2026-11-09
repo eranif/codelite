@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPWRITERTHREAD_H
-#define SFTPWRITERTHREAD_H
+#pragma once
 
 #include "remote_file_info.h"
 #include "ssh/cl_sftp.h"
@@ -136,5 +135,3 @@ public:
     virtual void ProcessRequest(ThreadRequest* request);
     void SetSftpPlugin(SFTP* sftp);
 };
-
-#endif // SFTPWRITERTHREAD_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __QMakePlugin__
-#define __QMakePlugin__
+#pragma once
 
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -73,5 +72,3 @@ public:
     void OnQmakeOutput(clProcessEvent& event);
     void OnQmakeTerminated(clProcessEvent& event);
 };
-
-#endif // QMakePlugin

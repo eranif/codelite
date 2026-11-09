@@ -1,5 +1,4 @@
-#ifndef CLDOCKERFILE_H
-#define CLDOCKERFILE_H
+#pragma once
 
 #include "JSON.h"
 #include "clDockerBuildableFile.h"
@@ -14,5 +13,3 @@ public:
     void FromJSON(const JSONItem& json, const wxString& workspaceDir);
     JSONItem ToJSON(const wxString& workspaceDir) const;
 };
-
-#endif // CLDOCKERFILE_H

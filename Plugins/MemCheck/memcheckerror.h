@@ -33,8 +33,7 @@
  * LocationList represents stack trace.
  */
 
-#ifndef _MEMCHECKERROR_H_
-#define _MEMCHECKERROR_H_
+#pragma once
 
 #include <iterator>
 #include <list>
@@ -297,5 +296,3 @@ public:
      */
     static LocationListIterator Factory(LocationList& l, const wxString& workspacePath, unsigned int flags);
 };
-
-#endif //_MEMCHECKERROR_H_

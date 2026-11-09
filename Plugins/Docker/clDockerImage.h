@@ -1,5 +1,4 @@
-#ifndef CLDOCKERIMAGE_H
-#define CLDOCKERIMAGE_H
+#pragma once
 
 #include <vector>
 #include <wx/clntdata.h>
@@ -30,5 +29,3 @@ public:
     bool Parse(const wxString& line);
     using Vect_t = std::vector<clDockerImage>;
 };
-
-#endif // CLDOCKERIMAGE_H

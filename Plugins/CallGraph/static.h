@@ -33,8 +33,7 @@
  * Notes:
  **************************************************************/
 
-#ifndef __CALLGRAPH_STATIC_H__
-#define __CALLGRAPH_STATIC_H__
+#pragma once
 
 #include <wx/string.h>
 
@@ -45,5 +44,3 @@ extern const wxString CALLGRAPH_DIR;
 
 extern const wxString GPROF_FILENAME_EXE;
 extern const wxString DOT_FILENAME_EXE;
-
-#endif // __CALLGRAPH_STATIC_H__

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef VIEW_H
-#define VIEW_H
+#pragma once
 
 #include "IDbAdapter.h"
 #include "wx/wxxmlserializer/XmlSerializer.h"
@@ -69,5 +68,3 @@ protected:
     void initSerializable();
     IDbAdapter* m_pDbAdapter;
 };
-
-#endif // VIEW_H

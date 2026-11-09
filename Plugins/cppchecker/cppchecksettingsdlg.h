@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CPPCHECH_SETTINGS_DLG_H_INCLUDED
-#define CPPCHECH_SETTINGS_DLG_H_INCLUDED
+#pragma once
 
 #include "cppchecksettingsdlgbase.hpp"
 
@@ -55,4 +54,3 @@ public:
     CppCheckSettingsDialog(wxWindow* parent);
     ~CppCheckSettingsDialog() override;
 };
-#endif // CPPCHECH_SETTINGS_DLG_H_INCLUDED

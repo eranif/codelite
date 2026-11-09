@@ -1,5 +1,4 @@
-#ifndef CMAKEBUILDER_H
-#define CMAKEBUILDER_H
+#pragma once
 
 #include "builder/builder.h" // Base class: Builder
 
@@ -91,5 +90,3 @@ public:
     wxString
     GetPORebuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments) override;
 };
-
-#endif // CMAKEBUILDER_H

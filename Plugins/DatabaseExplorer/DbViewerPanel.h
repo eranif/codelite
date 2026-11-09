@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DBEXPLORERPANEL_H
-#define DBEXPLORERPANEL_H
+#pragma once
 
 #include "../Interfaces/imanager.h"
 #include "GUI.hpp" // Base class: _DbExplorerPanel
@@ -124,5 +123,3 @@ protected:
     bool DoSelectPage(const wxString& page);
     void AddEditorPage(wxWindow* page, const wxString& name);
 };
-
-#endif // DBEXPLORERPANEL_H

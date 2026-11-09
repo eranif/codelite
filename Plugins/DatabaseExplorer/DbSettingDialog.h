@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DBSETTINGDIALOG_H
-#define DBSETTINGDIALOG_H
+#pragma once
 
 #include "DbViewerPanel.h"
 #include "GUI.hpp" // Base class: _DBSettingsDialog
@@ -84,5 +83,3 @@ protected:
 
     void LoadHistory();
 };
-
-#endif // DBSETTINGDIALOG_H

@@ -1,5 +1,4 @@
-#ifndef EOSPROJECTDATA_H
-#define EOSPROJECTDATA_H
+#pragma once
 
 #include <wx/string.h>
 
@@ -20,5 +19,3 @@ public:
     const wxString& GetPath() const { return m_path; }
     const wxString& GetToolchainPath() const { return m_toolchainPath; }
 };
-
-#endif // EOSPROJECTDATA_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __svn_preferences_dialog__
-#define __svn_preferences_dialog__
+#pragma once
 
 /**
 @file
@@ -56,5 +55,3 @@ public:
     SvnPreferencesDialog(wxWindow* parent, Subversion2* plugin);
     ~SvnPreferencesDialog() override = default;
 };
-
-#endif // __svn_preferences_dialog__

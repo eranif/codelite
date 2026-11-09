@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SVNINFODIALOG_H
-#define SVNINFODIALOG_H
+#pragma once
 #include "subversion2_ui.hpp"
 
 class SvnInfoDialog : public SvnInfoDialogBase
@@ -38,4 +37,3 @@ public:
     wxTextCtrl* GetTextCtrlRootURL() { return m_textCtrlRootURL; }
     wxTextCtrl* GetTextCtrlURL() { return m_textCtrlURL; }
 };
-#endif // SVNINFODIALOG_H

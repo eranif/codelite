@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __wxFormBuilder__
-#define __wxFormBuilder__
+#pragma once
 
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -64,5 +63,3 @@ public:
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
 };
-
-#endif // wxFormBuilder

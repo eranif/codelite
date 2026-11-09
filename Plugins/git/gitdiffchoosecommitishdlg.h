@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef GITDIFFCHOOSECOMMITISHDLG_H
-#define GITDIFFCHOOSECOMMITISHDLG_H
+#pragma once
 #include "gitui.hpp"
 
 class GitPlugin;
@@ -71,4 +70,3 @@ protected:
     void OnTextFirstUI(wxUpdateUIEvent& event) override;
     void OnTextSecondUI(wxUpdateUIEvent& event) override;
 };
-#endif // GITDIFFCHOOSECOMMITISHDLG_H

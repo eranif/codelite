@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef EXTERNALTOOLSPROCESSMANAGER_H
-#define EXTERNALTOOLSPROCESSMANAGER_H
+#pragma once
 
 #include "cl_command_event.h"
 #include "externaltoolsdata.h"
@@ -84,5 +83,3 @@ private:
     ToolsTaskManager();
     ~ToolsTaskManager() override;
 };
-
-#endif // EXTERNALTOOLSPROCESSMANAGER_H

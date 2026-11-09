@@ -1,5 +1,4 @@
-#ifndef CLDOCKERBUILDABLEFILE_H
-#define CLDOCKERBUILDABLEFILE_H
+#pragma once
 
 #include "JSON.h"
 
@@ -54,4 +53,3 @@ public:
      */
     static clDockerBuildableFile::Ptr_t New(eDockerFileType type);
 };
-#endif // CLDOCKERBUILDABLEFILE_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WORDCOMPLETIONSETTINGSDLG_H
-#define WORDCOMPLETIONSETTINGSDLG_H
+#pragma once
 #include "UI.hpp"
 
 class WordCompletionSettingsDlg : public WordCompletionSettingsBaseDlg
@@ -40,4 +39,3 @@ protected:
     void OnOkUI(wxUpdateUIEvent& event) override;
     void OnValueChanged(wxPropertyGridEvent& event) override;
 };
-#endif // WORDCOMPLETIONSETTINGSDLG_H

@@ -1,5 +1,4 @@
-#ifndef NEWDOCKERWORKSPACEDLG_H
-#define NEWDOCKERWORKSPACEDLG_H
+#pragma once
 #include "UI.hpp"
 
 #include <wx/filename.h>
@@ -14,4 +13,3 @@ public:
 protected:
     virtual void OnOkUI(wxUpdateUIEvent& event);
 };
-#endif // NEWDOCKERWORKSPACEDLG_H

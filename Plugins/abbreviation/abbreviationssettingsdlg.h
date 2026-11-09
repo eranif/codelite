@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __abbreviationssettingsdlg__
-#define __abbreviationssettingsdlg__
+#pragma once
 
 /**
 @file
@@ -69,5 +68,3 @@ public:
     AbbreviationsSettingsDlg(wxWindow* parent, IManager* mgr);
     ~AbbreviationsSettingsDlg() override = default;
 };
-
-#endif // __abbreviationssettingsdlg__

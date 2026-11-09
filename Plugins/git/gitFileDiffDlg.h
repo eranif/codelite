@@ -30,8 +30,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __GitFileDiffDlg__
-#define __GitFileDiffDlg__
+#pragma once
 
 #include "gitui.hpp"
 
@@ -45,5 +44,3 @@ protected:
     void OnCloseDialog(wxCommandEvent& event) override;
     void OnSaveAsPatch(wxCommandEvent& event) override;
 };
-
-#endif //__GitFileDiffDlg__

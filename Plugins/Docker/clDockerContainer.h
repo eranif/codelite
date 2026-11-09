@@ -1,5 +1,4 @@
-#ifndef CLDOCKERCONTAINER_H
-#define CLDOCKERCONTAINER_H
+#pragma once
 
 #include <vector>
 #include <wx/clntdata.h>
@@ -47,5 +46,3 @@ public:
     using Vect_t = std::vector<clDockerContainer>;
     using Map_t = std::unordered_map<wxString, clDockerContainer>;
 };
-
-#endif // CLDOCKERCONTAINER_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __CppChecker__
-#define __CppChecker__
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "clToolBar.h"
@@ -75,5 +74,3 @@ public:
      */
     bool AnalysisInProgress() const { return m_cppcheckProcess != nullptr; }
 };
-
-#endif // CppChecker

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XDEBUGBREAKPOINTCMDHANDLER_H
-#define XDEBUGBREAKPOINTCMDHANDLER_H
+#pragma once
 
 #include "XDebugBreakpoint.h"
 #include "XDebugCommandHandler.h"
@@ -41,5 +40,3 @@ public:
 
     void Process(const wxXmlNode* response) override;
 };
-
-#endif // XDEBUGBREAKPOINTCMDHANDLER_H

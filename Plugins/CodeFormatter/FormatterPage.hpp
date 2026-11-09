@@ -1,5 +1,4 @@
-#ifndef FORMATTERPAGE_HPP
-#define FORMATTERPAGE_HPP
+#pragma once
 
 #include "GenericFormatter.hpp"
 #include "clPropertiesPage.hpp"
@@ -16,5 +15,3 @@ public:
     void Clear() override;
     void Load(std::shared_ptr<GenericFormatter> formatter);
 };
-
-#endif // FORMATTERPAGE_HPP

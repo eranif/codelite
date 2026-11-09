@@ -1,5 +1,4 @@
-#ifndef FMTJQ_HPP
-#define FMTJQ_HPP
+#pragma once
 
 #include "GenericFormatter.hpp"
 
@@ -9,5 +8,3 @@ public:
     fmtJQ();
     ~fmtJQ() override = default;
 };
-
-#endif // FMTJQ_HPP

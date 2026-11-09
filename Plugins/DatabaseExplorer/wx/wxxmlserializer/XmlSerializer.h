@@ -8,8 +8,7 @@
  * Notes:
  **************************************************************/
 
-#ifndef _XSXMLSERIALIZE_H
-#define _XSXMLSERIALIZE_H
+#pragma once
 
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
@@ -1483,5 +1482,3 @@ public:
     /*! \brief Flag used for enabling/disabling of property serialization */
     bool m_fSerialize;
 };
-
-#endif //_XSXMLSERIALIZE_H

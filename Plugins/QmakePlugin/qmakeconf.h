@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __qmakeconf__
-#define __qmakeconf__
+#pragma once
 
 #include <wx/fileconf.h>
 #include <wx/string.h>
@@ -36,4 +35,3 @@ public:
     ~QmakeConf() override;
     wxArrayString GetAllConfigurations() const;
 };
-#endif // __qmakeconf__

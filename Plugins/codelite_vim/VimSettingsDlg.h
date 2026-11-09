@@ -1,5 +1,4 @@
-#ifndef VIMSETTINGSDLG_H
-#define VIMSETTINGSDLG_H
+#pragma once
 #include "VIM.hpp"
 
 class VimSettingsDlg : public VimSettingsDlgBase
@@ -8,4 +7,3 @@ public:
     VimSettingsDlg(wxWindow* parent);
     virtual ~VimSettingsDlg() = default;
 };
-#endif // VIMSETTINGSDLG_H

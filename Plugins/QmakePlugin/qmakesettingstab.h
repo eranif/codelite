@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __qmakesettingstab__
-#define __qmakesettingstab__
+#pragma once
 
 /**
 @file
@@ -51,5 +50,3 @@ public:
     void SetTabName(const wxString& name) { this->m_name = name; }
     const wxString& GetTabName() const { return m_name; }
 };
-
-#endif // __qmakesettingstab__

@@ -1,5 +1,4 @@
-#ifndef __EditorConfigPlugin__
-#define __EditorConfigPlugin__
+#pragma once
 
 #include "EditorConfigCache.h"
 #include "EditorConfigSettings.h"
@@ -39,5 +38,3 @@ public:
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
 };
-
-#endif // EditorConfigPlugin

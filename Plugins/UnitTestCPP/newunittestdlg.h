@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __newunittestdlg__
-#define __newunittestdlg__
+#pragma once
 
 /**
 @file
@@ -53,5 +52,3 @@ public:
     wxString GetProjectName() { return m_choiceProjects->GetStringSelection(); }
     wxString GetFilename() { return m_textCtrlOutputFile->GetValue(); }
 };
-
-#endif // __newunittestdlg__

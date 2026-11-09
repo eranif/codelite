@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef IDBTYPE_H
-#define IDBTYPE_H
+#pragma once
 
 #include "wx/wxxmlserializer/XmlSerializer.h"
 
@@ -103,5 +102,3 @@ public:
     virtual void SetPropertyFlags(long flags) = 0;
     virtual UNIVERSAL_TYPE GetUniversalType() = 0;
 };
-
-#endif

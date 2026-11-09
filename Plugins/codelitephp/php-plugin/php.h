@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __PHP__
-#define __PHP__
+#pragma once
 
 #include "XDebugManager.h"
 #include "cl_command_event.h"
@@ -93,5 +92,3 @@ public:
     void OnDebugStarted(XDebugEvent& e);
     void OnDebugEnded(XDebugEvent& e);
 };
-
-#endif // PHP

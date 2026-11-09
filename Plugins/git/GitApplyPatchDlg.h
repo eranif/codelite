@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef GITAPPLYPATCHDLG_H
-#define GITAPPLYPATCHDLG_H
+#pragma once
 #include "gitui.hpp"
 
 class GitApplyPatchDlg : public GitApplyPatchDlgBase
@@ -39,4 +38,3 @@ public:
 protected:
     virtual void OnApplyGitPatchUI(wxUpdateUIEvent& event);
 };
-#endif // GITAPPLYPATCHDLG_H

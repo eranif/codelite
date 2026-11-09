@@ -1,5 +1,4 @@
-#ifndef DAPDEBUGGERSETTINGSDLG_H
-#define DAPDEBUGGERSETTINGSDLG_H
+#pragma once
 #include "UI.hpp"
 #include "clDapSettingsStore.hpp"
 
@@ -22,4 +21,3 @@ public:
     DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsStore& store);
     ~DapDebuggerSettingsDlg() override = default;
 };
-#endif // DAPDEBUGGERSETTINGSDLG_H

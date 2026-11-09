@@ -13,8 +13,7 @@
  * 				will be local (usefull for STATIC library).
  *********************************************************************/
 
-#ifndef _WXDEFS_H
-#define _WXDEFS_H
+#pragma once
 
 #ifdef USING_SOURCE_MYLIB
 #define WXDLLIMPEXP_MYLIB
@@ -32,5 +31,3 @@
 #define WXDLLIMPEXP_MYLIB
 #define WXDLLIMPEXP_DATA_MYLIB(type) type
 #endif
-
-#endif //_WXDEFS_H

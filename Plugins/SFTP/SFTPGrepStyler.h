@@ -1,5 +1,4 @@
-#ifndef SFTPGREPSTYLER_H
-#define SFTPGREPSTYLER_H
+#pragma once
 
 #include "clFindResultsStyler.h"
 
@@ -13,5 +12,3 @@ public:
     void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasScope);
     void Reset();
 };
-
-#endif // SFTPGREPSTYLER_H

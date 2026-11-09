@@ -30,8 +30,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __gitSettingsDlg__
-#define __gitSettingsDlg__
+#pragma once
 
 #include "git.h"
 #include "gitui.hpp"
@@ -54,5 +53,3 @@ protected:
     void OnLocalRepoUI(wxUpdateUIEvent& event) override;
     void OnOK(wxCommandEvent& event) override;
 };
-
-#endif //__gitSettingsDlg__

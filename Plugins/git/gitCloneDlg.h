@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef GITCLONEDLG_H
-#define GITCLONEDLG_H
+#pragma once
 
 #include "gitui.hpp"
 
@@ -41,4 +40,3 @@ public:
     wxString GetCloneURL() const;
     wxString GetTargetDirectory() const { return m_dirPickerTargetDir->GetPath(); }
 };
-#endif // GITCLONEDLG_H

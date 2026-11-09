@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DBEXPLORERSETTINGS_H
-#define DBEXPLORERSETTINGS_H
+#pragma once
 
 #include "cl_config.h"
 #include "serialized_object.h"
@@ -101,5 +100,3 @@ public:
     void FromJSON(const JSONItem& json) override;
     JSONItem ToJSON() const override;
 };
-
-#endif // DBEXPLORERSETTINGS_H

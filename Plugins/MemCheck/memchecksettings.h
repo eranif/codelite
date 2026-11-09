@@ -30,8 +30,7 @@
  * @copyright GNU General Public License v2
  */
 
-#ifndef _MEMCHECKSETTINGS_H_
-#define _MEMCHECKSETTINGS_H_
+#pragma once
 
 #include "cl_config.h"
 
@@ -175,5 +174,3 @@ public:
         conf.ReadItem(*this);
     }
 };
-
-#endif

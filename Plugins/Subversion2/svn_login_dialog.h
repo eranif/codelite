@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __svn_login_dialog__
-#define __svn_login_dialog__
+#pragma once
 
 /**
 @file
@@ -43,5 +42,3 @@ public:
     wxString GetUsername() { return m_textCtrlUsername->GetValue(); }
     wxString GetPassword() { return m_textCtrlPassword->GetValue(); }
 };
-
-#endif // __svn_login_dialog__

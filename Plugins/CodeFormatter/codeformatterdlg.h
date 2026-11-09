@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __CODEFORMATTERDLG__
-#define __CODEFORMATTERDLG__
+#pragma once
 
 #include "CodeFormatterManager.hpp"
 #include "FormatterPage.hpp"
@@ -52,5 +51,3 @@ public:
     CodeFormatterDlg(wxWindow* parent, CodeFormatterManager& mgr);
     virtual ~CodeFormatterDlg();
 };
-
-#endif // __CODEFORMATTERDLG__

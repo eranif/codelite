@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __copyrights_proj_sel_dlg__
-#define __copyrights_proj_sel_dlg__
+#pragma once
 
 /**
 @file
@@ -44,5 +43,3 @@ public:
     CopyrightsProjectSelDlg(wxWindow* parent, clCxxWorkspace* wsp);
     void GetProjects(wxArrayString& projects);
 };
-
-#endif // __copyrights_proj_sel_dlg__

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XDEBUGCOMMANDHANDLER_H
-#define XDEBUGCOMMANDHANDLER_H
+#pragma once
 
 #include <map>
 #include <memory>
@@ -51,5 +50,3 @@ public:
     void SetTransactionId(int transactionId) { this->m_transactionId = transactionId; }
     int GetTransactionId() const { return m_transactionId; }
 };
-
-#endif // XDEBUGCOMMANDHANDLER_H

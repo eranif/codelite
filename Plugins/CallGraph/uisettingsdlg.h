@@ -33,8 +33,7 @@
  * Notes:
  **************************************************************/
 
-#ifndef __uisettingsdlg__
-#define __uisettingsdlg__
+#pragma once
 
 #include "confcallgraph.h"
 #include "uisettings.hpp"
@@ -66,5 +65,3 @@ public:
     uisettingsdlg(wxWindow* parent, IManager* mgr); //, CallGraph *plugin );
     virtual ~uisettingsdlg() = default;
 };
-
-#endif

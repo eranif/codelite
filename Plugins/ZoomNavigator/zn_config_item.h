@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ZNCONFIGITEM_H
-#define ZNCONFIGITEM_H
+#pragma once
 
 #include "cl_config.h" // Base class: clConfigItem
 
@@ -52,5 +51,3 @@ public:
     void SetUseScrollbar(bool useScrollbar) { this->m_useScrollbar = useScrollbar; }
     bool IsUseScrollbar() const { return m_useScrollbar; }
 };
-
-#endif // ZNCONFIGITEM_H

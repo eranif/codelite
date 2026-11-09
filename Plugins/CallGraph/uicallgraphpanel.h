@@ -33,8 +33,7 @@
  * Notes:
  **************************************************************/
 
-#ifndef UICALLGRAPHPANEL_H
-#define UICALLGRAPHPANEL_H
+#pragma once
 
 #include "confcallgraph.h"
 #include "lineparser.h"
@@ -81,5 +80,3 @@ protected:
     wxPoint m_startigPoint;
     float m_scale;
 };
-
-#endif // UICALLGRAPHPANEL_H

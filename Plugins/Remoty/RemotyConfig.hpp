@@ -1,5 +1,4 @@
-#ifndef REMOTYCONFIG_HPP
-#define REMOTYCONFIG_HPP
+#pragma once
 
 #include <vector>
 #include <wx/arrstr.h>
@@ -38,5 +37,3 @@ public:
      */
     void SetOpenWorkspaceTypeLocal(bool local);
 };
-
-#endif // REMOTYCONFIG_HPP

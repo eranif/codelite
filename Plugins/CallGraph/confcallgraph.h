@@ -33,8 +33,7 @@
  * Notes:
  **************************************************************/
 
-#ifndef __confcallgraph__
-#define __confcallgraph__
+#pragma once
 
 #include "serialized_object.h"
 
@@ -112,4 +111,3 @@ public:
 
     bool GetHideNamespaces() { return m_boxHideNamespaces; }
 };
-#endif // __confcallgraph__

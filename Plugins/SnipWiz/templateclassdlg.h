@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __templateclassdlg__
-#define __templateclassdlg__
+#pragma once
 
 #include "templateclassbasedlg.hpp"
 
@@ -88,5 +87,3 @@ public:
     const wxString& GetProjectPath() const { return m_projectPath; }
     const wxString& GetVirtualFolder() const { return m_virtualFolder; }
 };
-
-#endif // __templateclassdlg__

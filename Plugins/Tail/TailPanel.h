@@ -1,5 +1,4 @@
-#ifndef TAILPANEL_H
-#define TAILPANEL_H
+#pragma once
 
 #include "TailData.h"
 #include "TailUI.hpp"
@@ -83,4 +82,3 @@ protected:
     void OnFileModified(clFileSystemEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
 };
-#endif // TAILPANEL_H

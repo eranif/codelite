@@ -30,8 +30,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __gitCommitEditor__
-#define __gitCommitEditor__
+#pragma once
 
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
@@ -46,5 +45,3 @@ public:
                     long style = 0);
     void InitStyles();
 };
-
-#endif //__gitCommitEditor__

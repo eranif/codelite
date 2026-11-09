@@ -30,8 +30,7 @@
  * @copyright GNU General Public License v2
  */
 
-#ifndef _VALGRINDPROCESSOR_H_
-#define _VALGRINDPROCESSOR_H_
+#pragma once
 
 #include "imemcheckprocessor.h"
 
@@ -99,5 +98,3 @@ protected:
      */
     MemCheckErrorLocation ProcessLocation(wxXmlDocument& doc, wxXmlNode* locationNode);
 };
-
-#endif // _VALGRINDPROCESSOR_H_

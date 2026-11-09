@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DBCONNECTION_H
-#define DBCONNECTION_H
+#pragma once
 
 #include "IDbAdapter.h"
 #include "wx/wxxmlserializer/XmlSerializer.h"
@@ -54,5 +53,3 @@ protected:
     IDbAdapter* m_pDbAdapter;
     wxString m_serverName;
 };
-
-#endif // DBCONNECTION_H

@@ -33,8 +33,7 @@
  * Notes:
  **************************************************************/
 
-#ifndef _LINEPARSER_H__
-#define _LINEPARSER_H__
+#pragma once
 
 #include <wx/list.h>
 #include <wx/string.h>
@@ -64,5 +63,3 @@ public:
 };
 
 WX_DECLARE_LIST(LineParser, LineParserList);
-
-#endif

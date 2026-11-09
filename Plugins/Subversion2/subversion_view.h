@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __subversion_page__
-#define __subversion_page__
+#pragma once
 
 #include "bitmap_loader.h"
 #include "clFileSystemEvent.h"
@@ -191,5 +190,3 @@ public:
         return !curpath.IsEmpty() && curpath != _("<No repository path is selected>");
     }
 };
-
-#endif // __subversion_page__

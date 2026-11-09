@@ -32,8 +32,7 @@
  * @brief IMemCheckProcessor - parser interface.
  */
 
-#ifndef _IMEMCHECKPROCESSOR_H_
-#define _IMEMCHECKPROCESSOR_H_
+#pragma once
 
 #include "memcheckerror.h"
 
@@ -99,5 +98,3 @@ public:
      */
     virtual bool Process(const wxString& outputLogFileName = wxEmptyString) = 0;
 };
-
-#endif //_IMEMCHECKPROCESSOR_H_

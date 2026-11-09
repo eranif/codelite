@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SQLITETYPE_H
-#define SQLITETYPE_H
+#pragma once
 
 #include "IDbType.h" // Base class: IDbType
 #include "wx/wxxmlserializer/XmlSerializer.h"
@@ -80,5 +79,3 @@ protected:
     bool m_notNull;
     bool m_autoIncrement;
 };
-
-#endif // SQLITETYPE_H

@@ -36,8 +36,7 @@
 
 #include "wxSerialize.h"
 
-#ifndef SWTEMPLATEFILE_H
-#define SWTEMPLATEFILE_H
+#pragma once
 //------------------------------------------------------------
 // base class for one entry
 class swBase : public wxObject
@@ -154,4 +153,3 @@ protected:
     bool m_compress;          // compress flag
     wxArrayString m_keyOrder; // array to sort snippets menu by user (future)
 };
-#endif // SWTEMPLATEFILE_H

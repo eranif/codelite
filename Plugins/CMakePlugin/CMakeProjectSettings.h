@@ -43,8 +43,7 @@
 /*                                                                          */
 /* ************************************************************************ */
 
-#ifndef CMAKE_PROJECT_SETTINGS_HPP_
-#define CMAKE_PROJECT_SETTINGS_HPP_
+#pragma once
 
 /* ************************************************************************ */
 /* INCLUDES                                                                 */
@@ -121,5 +120,3 @@ public:
 using CMakeProjectSettingsMap = std::map<wxString, CMakeProjectSettings>;
 
 /* ************************************************************************ */
-
-#endif // CMAKE_PROJECT_SETTINGS_HPP_

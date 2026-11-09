@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CODEFORMATTER_H
-#define CODEFORMATTER_H
+#pragma once
 
 #include "CodeFormatterManager.hpp"
 #include "CodeLiteRemoteHelper.hpp"
@@ -91,5 +90,3 @@ public:
     void OnFormatFiles(wxCommandEvent& e);
     void OnFormatProject(wxCommandEvent& e);
 };
-
-#endif // CODEFORMATTER_H

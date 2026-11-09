@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __svn_checkout_dialog__
-#define __svn_checkout_dialog__
+#pragma once
 
 /**
 @file
@@ -54,5 +53,3 @@ public:
     wxString GetURL();
     wxString GetTargetDir();
 };
-
-#endif // __svn_checkout_dialog__

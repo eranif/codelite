@@ -30,8 +30,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __gitLogDlg__
-#define __gitLogDlg__
+#pragma once
 
 #include <wx/wx.h>
 
@@ -43,5 +42,3 @@ public:
     GitLogDlg(wxWindow* parent, const wxString title);
     ~GitLogDlg() override = default;
 };
-
-#endif //__gitLogDlg__

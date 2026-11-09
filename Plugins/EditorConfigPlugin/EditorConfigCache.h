@@ -1,5 +1,4 @@
-#ifndef EDITORCONFIGCACHE_H
-#define EDITORCONFIGCACHE_H
+#pragma once
 
 #include "clEditorConfig.h"
 
@@ -35,5 +34,3 @@ public:
      */
     void Clear();
 };
-
-#endif // EDITORCONFIGCACHE_H

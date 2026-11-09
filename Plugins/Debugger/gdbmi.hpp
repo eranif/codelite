@@ -1,5 +1,4 @@
-#ifndef GDBMI_HPP
-#define GDBMI_HPP
+#pragma once
 
 #include <memory>
 #include <unordered_map>
@@ -156,5 +155,3 @@ public:
     void print(Node::ptr_t node, int depth = 0);
 };
 } // namespace gdbmi
-
-#endif // GDBMI_HPP

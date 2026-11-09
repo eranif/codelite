@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WORDCOMPLETIONDICTIONARY_H
-#define WORDCOMPLETIONDICTIONARY_H
+#pragma once
 
 #include "WordCompletionRequestReply.h"
 #include "WordCompletionThread.h"
@@ -62,5 +61,3 @@ public:
      */
     wxStringSet_t GetWords() const;
 };
-
-#endif // WORDCOMPLETIONDICTIONARY_H

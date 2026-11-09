@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __copyrightsconfigdata__
-#define __copyrightsconfigdata__
+#pragma once
 
 #include "serialized_object.h"
 
@@ -54,4 +53,3 @@ public:
     void SetIgnoreString(const wxString& ignoreString) { this->m_ignoreString = ignoreString; }
     const wxString& GetIgnoreString() const { return m_ignoreString; }
 };
-#endif // __copyrightsconfigdata__

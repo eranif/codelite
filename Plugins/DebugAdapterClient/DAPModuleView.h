@@ -1,5 +1,4 @@
-#ifndef DAPMODULEVIEW_H
-#define DAPMODULEVIEW_H
+#pragma once
 
 #include "DAPTerminalCtrlView.h"
 #include "clTerminalViewCtrl.hpp"
@@ -18,4 +17,3 @@ public:
 
     void AddModuleEvent(dap::ModuleEvent* event);
 };
-#endif // DAPMODULEVIEW_H

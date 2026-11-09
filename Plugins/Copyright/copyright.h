@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __Copyright__
-#define __Copyright__
+#pragma once
 
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -53,5 +52,3 @@ public:
     void OnBatchInsertCopyrights(wxCommandEvent& e);
     void OnEditorContextMenu(clContextMenuEvent& event);
 };
-
-#endif // Copyright

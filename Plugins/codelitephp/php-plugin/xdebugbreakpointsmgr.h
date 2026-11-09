@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef XDEBUGBREAKPOINTSMGR_H
-#define XDEBUGBREAKPOINTSMGR_H
+#pragma once
 
 #include "XDebugBreakpoint.h"
 #include "clWorkspaceEvent.hpp"
@@ -64,5 +63,3 @@ public:
     bool GetBreakpoint(const wxString& filename, int line, XDebugBreakpoint& bp) const;
     size_t GetBreakpointsForFile(const wxString& filename, XDebugBreakpoint::List_t& bps) const;
 };
-
-#endif // XDEBUGBREAKPOINTSMGR_H

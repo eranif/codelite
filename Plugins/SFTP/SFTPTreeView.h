@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPTREEVIEW_H
-#define SFTPTREEVIEW_H
+#pragma once
 
 #include "SFTPSessionInfo.h"
 #include "UI.hpp"
@@ -79,4 +78,3 @@ protected:
 protected:
     void OnOpenAccountManager(wxCommandEvent& event);
 };
-#endif // SFTPTREEVIEW_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PHPEVENT_H
-#define PHPEVENT_H
+#pragma once
 
 #include "cl_command_event.h" // Base class: clCommandEvent
 
@@ -54,5 +53,3 @@ wxDECLARE_EVENT(wxEVT_PHP_STACK_TRACE_ITEM_ACTIVATED, PHPEvent);
 wxDECLARE_EVENT(wxEVT_PHP_DELETE_BREAKPOINT, PHPEvent);
 wxDECLARE_EVENT(wxEVT_PHP_DELETE_ALL_BREAKPOINTS, PHPEvent);
 wxDECLARE_EVENT(wxEVT_PHP_BREAKPOINT_ITEM_ACTIVATED, PHPEvent);
-
-#endif // PHPEVENT_H

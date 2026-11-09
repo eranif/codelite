@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __svn_props_dialog__
-#define __svn_props_dialog__
+#pragma once
 
 /**
 @file
@@ -48,5 +47,3 @@ public:
     wxString GetBugMsg() const;
     wxString GetFRMsg() const;
 };
-
-#endif // __svn_props_dialog__

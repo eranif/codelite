@@ -35,8 +35,7 @@
 // License:     see LICENSE for details
 //---------------------------------------------------------------------------
 
-#ifndef _WXSERIALIZE_H_
-#define _WXSERIALIZE_H_
+#pragma once
 
 #include <wx/buffer.h>
 #include <wx/datetime.h>
@@ -1619,5 +1618,3 @@ private:
     // The archive status object
     wxSerializeStatus m_status;
 };
-
-#endif

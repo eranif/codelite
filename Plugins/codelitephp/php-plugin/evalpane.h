@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef EVALPANE_H
-#define EVALPANE_H
+#pragma once
 #include "php_ui.hpp"
 #include "xdebugevent.h"
 
@@ -43,4 +42,3 @@ protected:
     void OnExpressionEvaluate(XDebugEvent& e);
     void OnDBGPCommandEvaluated(XDebugEvent& e);
 };
-#endif // EVALPANE_H

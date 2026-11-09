@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLCOMMANDLINEPARSER_H
-#define CLCOMMANDLINEPARSER_H
+#pragma once
 
 #include <wx/arrstr.h>
 #include <wx/string.h>
@@ -42,5 +41,3 @@ public:
 
     const wxArrayString& ToArray() const { return m_tokens; }
 };
-
-#endif // CLCOMMANDLINEPARSER_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __formbuildsettingsdlg__
-#define __formbuildsettingsdlg__
+#pragma once
 
 /**
 @file
@@ -49,5 +48,3 @@ public:
     /** Constructor */
     FormBuildSettingsDlg(wxWindow* parent, IManager* mgr);
 };
-
-#endif // __formbuildsettingsdlg__

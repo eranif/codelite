@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ZNSETTINGSDLG_H
-#define ZNSETTINGSDLG_H
+#pragma once
 
 #include "zoom_navigator.hpp"
 
@@ -39,4 +38,3 @@ public:
 protected:
     void OnOK(wxCommandEvent& event) override;
 };
-#endif // ZNSETTINGSDLG_H

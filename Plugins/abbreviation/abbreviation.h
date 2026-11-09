@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __abbreviation__
-#define __abbreviation__
+#pragma once
 
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -55,5 +54,3 @@ public:
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
 };
-
-#endif // abbreviation

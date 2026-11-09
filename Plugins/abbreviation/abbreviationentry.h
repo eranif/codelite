@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __abbreviationentry__
-#define __abbreviationentry__
+#pragma once
 
 #include "JSON.h"
 #include "cl_config.h"
@@ -63,5 +62,3 @@ public:
     void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
     const wxStringMap_t& GetEntries() const { return m_entries; }
 };
-
-#endif // __abbreviationentry__

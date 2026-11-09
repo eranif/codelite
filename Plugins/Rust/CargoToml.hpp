@@ -1,5 +1,4 @@
-#ifndef CARGOTOML_HPP
-#define CARGOTOML_HPP
+#pragma once
 
 #include <wx/filename.h>
 
@@ -15,5 +14,3 @@ public:
     void SetName(const wxString& name) { this->m_name = name; }
     const wxString& GetName() const { return m_name; }
 };
-
-#endif // CARGOTOML_HPP

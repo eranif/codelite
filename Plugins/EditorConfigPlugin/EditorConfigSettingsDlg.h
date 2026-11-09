@@ -1,5 +1,4 @@
-#ifndef EDITORCONFIGSETTINGSDLG_H
-#define EDITORCONFIGSETTINGSDLG_H
+#pragma once
 #include "EditorConfigUI.hpp"
 
 class EditorConfigSettingsDlg : public EditorConfigSettingsDlgBase
@@ -10,4 +9,3 @@ public:
 
     bool IsPluginEnabled() const { return m_checkBoxEnable->IsChecked(); }
 };
-#endif // EDITORCONFIGSETTINGSDLG_H

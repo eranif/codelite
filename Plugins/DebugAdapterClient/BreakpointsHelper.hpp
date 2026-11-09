@@ -1,5 +1,4 @@
-#ifndef BREAKPOINTSHELPER_HPP
-#define BREAKPOINTSHELPER_HPP
+#pragma once
 
 #include "DebugSession.hpp"
 #include "cl_command_event.h"
@@ -27,5 +26,3 @@ public:
     /// apply breakpoints. if path is empty, apply all breakpoints, to all the sources
     void ApplyBreakpoints(const wxString& path);
 };
-
-#endif // BREAKPOINTSHELPER_HPP

@@ -1,5 +1,4 @@
-#ifndef DAPTEXTVIEW_H
-#define DAPTEXTVIEW_H
+#pragma once
 
 #include "UI.hpp"
 #include "cl_command_event.h"
@@ -43,5 +42,3 @@ public:
     bool HasBreakpointMarker(int line_number);
     size_t GetBreakpointMarkers(std::vector<int>* lines);
 };
-
-#endif // DAPTEXTVIEW_H

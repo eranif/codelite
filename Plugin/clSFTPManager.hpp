@@ -211,6 +211,13 @@ public:
                           std::function<void(clStatusOr<SFTPAttribute::List_t>)> OnList);
 
     /**
+     * Asynchronously read file and execute callback afterwards. `OnRead` is called on the main thread.
+     */
+    void ReadFileWithCallback(const wxString& remotePath,
+                              const wxString& accountName,
+                              std::function<void(clStatusOr<wxString>)> OnRead);
+
+    /**
      * @brief create new file with a given path
      */
     bool NewFile(const wxString& path, const SSHAccountInfo& accountInfo);

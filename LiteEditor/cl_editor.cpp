@@ -5754,50 +5754,36 @@ void clEditor::OpenURL(wxCommandEvent& event)
     ::wxLaunchDefaultBrowser(url);
 }
 
-void clEditor::ReloadFromDisk(bool keepUndoHistory)
+void clEditor::UpdateViewContent(const wxString& fileContent, bool keepUndoHistory)
 {
-    wxWindowUpdateLocker locker(GetParent());
-    SetReloadingFile(true);
+    if (GetText() == fileContent) {
+        clDEBUG() << "UpdateViewContent: content is the same, only refreshing the file state" << endl;
+        // Keep the "modified on disk" state in sync, and clear the modified flag
+        const bool wasModified = GetModify();
+        m_modifyTime = GetFileLastModifiedTime();
+        if (wasModified) {
+            SetSavePoint();
+        }
 
-    DoCancelCalltip();
-    GetFunctionTip()->Deactivate();
+        if (!keepUndoHistory) {
+            EmptyUndoBuffer();
+            GetCommandsProcessor().Reset();
+        }
 
-    if (m_fileName.GetFullPath().IsEmpty() == true || !m_fileName.FileExists()) {
-        SetEOLMode(GetEOLByOS());
-        SetReloadingFile(false);
+        if (wasModified) {
+            // The modified state changed: notify (this updates the tab title)
+            clCommandEvent e(wxEVT_FILE_LOADED);
+            e.SetFileName(GetRemotePathOrLocal());
+            EventNotifier::Get()->AddPendingEvent(e);
+        }
         return;
     }
 
+    wxWindowUpdateLocker locker(GetParent());
+    SetReloadingFile(true);
     clEditorStateLocker stateLocker(GetCtrl());
 
-    wxString text;
-    bool file_read = false;
-    m_fileBom.Clear();
-
-    {
-        wxBusyCursor bc; // io operation tends to be lengthy
-#if USE_SFTP
-        if (IsRemoteFile()) {
-            wxMemoryBuffer content;
-            if (!clSFTPManager::Get().AwaitReadFile(GetRemotePath(), GetRemoteData()->GetAccountName(), &content)) {
-                wxString message;
-                message << _("Failed to reload remote file: ") << GetRemotePath();
-                clMessageBox(message, "CodeLite", wxICON_WARNING | wxCENTRE | wxOK);
-                return;
-            }
-            text = wxString((const unsigned char*)content.GetData(), wxConvUTF8, content.GetDataLen());
-            file_read = true;
-        }
-#endif
-
-        if (!file_read) {
-            // Read the file we currently support:
-            // BOM, Auto-Detect encoding & User defined encoding
-            ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
-        }
-    }
-
-    SetText(text);
+    SetText(fileContent);
     // clear the modified lines
     m_modifiedLines.clear();
 
@@ -5820,6 +5806,62 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     clCommandEvent e(wxEVT_FILE_LOADED);
     e.SetFileName(GetRemotePathOrLocal());
     EventNotifier::Get()->AddPendingEvent(e);
+}
+
+void clEditor::ReloadFromDisk(bool keepUndoHistory)
+{
+    DoCancelCalltip();
+    GetFunctionTip()->Deactivate();
+
+    if (m_fileName.GetFullPath().IsEmpty() == true || !m_fileName.FileExists()) {
+        SetEOLMode(GetEOLByOS());
+        return;
+    }
+
+    if (!IsRemoteFile()) {
+        // Read the file from the local disk and update the view.
+        wxString text;
+        m_fileBom.Clear();
+
+        wxBusyCursor bc; // io operation tends to be lengthy
+        // Read the file we currently support:
+        // BOM, Auto-Detect encoding & User defined encoding
+        ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
+        UpdateViewContent(text, keepUndoHistory);
+
+    } else {
+        // A remote file: read the content in the background. The view is updated
+        // when the content arrives (wxEVT_FILE_LOADED is sent after the update).
+        m_fileBom.Clear();
+#if USE_SFTP
+        wxString remotePath = GetRemotePath();
+        // The update is skipped if the user edits the editor (or another reload is applied) while we read.
+        // This is on purpose: we never overwrite newer changes with older disk content.
+        auto modificationsCount = GetModificationCount();
+        auto OnRead = [remotePath, modificationsCount, keepUndoHistory](clStatusOr<wxString> content) {
+            // Once we have the content, update the view with the new content.
+            if (!content.ok()) {
+                clWARNING() << "Failed to reload file from remote machine." << content.error_message() << endl;
+                wxString message;
+                message << _("Failed to reload remote file: ") << remotePath << "\n" << content.error_message();
+                clMessageBox(message, "CodeLite", wxICON_WARNING | wxCENTRE | wxOK);
+                return;
+            }
+
+            if (auto* editor = clGetManager()->FindEditor(remotePath); editor != nullptr) {
+                if (editor->GetModificationCount() == modificationsCount)
+                    editor->UpdateViewContent(content.value(), keepUndoHistory);
+                else
+                    clDEBUG() << "Skipped updating the file:" << remotePath
+                              << ". File has changed since reload requested" << endl;
+            } else {
+                clDEBUG() << "Failed to reload file from remote machine. No editor that matches: " << remotePath
+                          << endl;
+            }
+        };
+        clSFTPManager::Get().ReadFileWithCallback(remotePath, GetRemoteData()->GetAccountName(), std::move(OnRead));
+#endif
+    }
 }
 
 void clEditor::PreferencesChanged()

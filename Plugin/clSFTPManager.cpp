@@ -570,6 +570,44 @@ bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUse
     return true;
 }
 
+void clSFTPManager::ReadFileWithCallback(const wxString& remotePath,
+                                         const wxString& accountName,
+                                         std::function<void(clStatusOr<wxString>)> OnRead)
+{
+    clDEBUG() << "Reading file:" << remotePath << "for account:" << accountName << endl;
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    if (!conn) {
+        OnRead(StatusInvalidArgument(wxString::Format("Could not find connection for %s", accountName)));
+        return;
+    }
+    auto func = [remotePath, conn = std::move(conn), OnRead = std::move(OnRead)]() {
+        // read the file content
+        auto buffer = std::make_unique<wxMemoryBuffer>();
+        try {
+            // read the file content
+            auto fileAttr = conn->Read(remotePath, *buffer);
+            wxUnusedVar(fileAttr);
+
+            // Convert to string
+            wxString unicodeString =
+                wxString::FromUTF8(static_cast<const char*>(buffer->GetData()), buffer->GetDataLen());
+            if (unicodeString.empty() && buffer->GetDataLen() > 0) {
+                // invalid UTF-8: do not replace the editor content with an empty string
+                wxString errmsg;
+                errmsg << "Failed to read remote file:" << remotePath << ". Content is not valid UTF-8";
+                clPostToMain(OnRead, StatusIOError(errmsg));
+                return;
+            }
+            clPostToMain(OnRead, std::move(unicodeString));
+        } catch (const clException& e) {
+            wxString errmsg;
+            errmsg << "Failed to read remote file:" << remotePath << "." << e.What();
+            clPostToMain(OnRead, StatusIOError(errmsg));
+        }
+    };
+    m_q.push_back(std::move(func));
+}
+
 void clSFTPManager::ListWithCallback(const wxString& path,
                                      const wxString& accountName,
                                      std::function<void(clStatusOr<SFTPAttribute::List_t>)> OnList)
@@ -1170,7 +1208,6 @@ void clSFTPManager::StatFile(const wxString& remotePath,
                              const wxString& accountName,
                              std::function<void(clStatusOr<Attribute>)> OnAttributes)
 {
-    clDEBUG() << "Getting attributes for file:" << remotePath << "for account:" << accountName << endl;
     auto conn = GetConnectionPtrAddIfMissing(accountName);
     if (!conn) {
         OnAttributes(StatusInvalidArgument(wxString::Format("Could not find connection for %s", accountName)));

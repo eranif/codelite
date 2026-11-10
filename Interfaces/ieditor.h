@@ -167,9 +167,18 @@ public:
 
     /**
      * @brief reload file content from the disk
+     * @note for remote (SFTP) files the reload is asynchronous: this method returns before the editor is updated.
+     * The editor is updated later on the main thread, and wxEVT_FILE_LOADED is sent when the update is done.
+     * The update is skipped if the editor was modified while the file was being read.
      * @param keepUndoHistory
      */
     virtual void ReloadFromDisk(bool keepUndoHistory = false) = 0;
+
+    /**
+     * @brief update the current file's content with 'fileContent'
+     */
+    virtual void UpdateViewContent(const wxString& fileContent, bool keepUndoHistory = false) = 0;
+
     /**
      * @brief save the editor
      */

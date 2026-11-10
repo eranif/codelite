@@ -123,6 +123,8 @@ void clFileSystemWatcher::HandleRemoteFiles()
     for (auto [name, file] : m) {
         m_files.erase(name);
         m_inFlightChecks.insert(std::make_pair(name, file));
+        clTRACE() << "(clFileSystemWatcher) calling 'StatFile' file:" << file.m_filename
+                  << "for account:" << file.m_remoteAccount << endl;
         clSFTPManager::Get().StatFile(
             file.m_filename,
             file.m_remoteAccount,

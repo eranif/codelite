@@ -808,6 +808,7 @@ public:
     void SetEditorText(const wxString& text) override;
     void OpenFile() override;
     void ReloadFromDisk(bool keepUndoHistory = false) override;
+    void UpdateViewContent(const wxString& fileContent, bool keepUndoHistory = false) override;
     void SetCaretAt(long pos) override;
     long GetCurrentPosition() override { return GetCurrentPos(); }
     const wxFileName& GetFileName() const override { return m_fileName; }

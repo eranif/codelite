@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CODELITE_PRECOMPILED_HEADER_RELEASE_H
-#define CODELITE_PRECOMPILED_HEADER_RELEASE_H
+#pragma once
 
 #ifdef __cplusplus
 
@@ -128,4 +127,3 @@
 #endif
 
 #endif // __cplusplus
-#endif // CODELITE_PRECOMPILED_HEADER_RELEASE_H

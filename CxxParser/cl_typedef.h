@@ -1,5 +1,4 @@
-#ifndef TYPEDEF_H
-#define TYPEDEF_H
+#pragma once
 
 #include "variable.h"
 
@@ -41,4 +40,3 @@ public:
 };
 
 using clTypedefList = std::list<clTypedef>;
-#endif // TYPEDEF_H

@@ -1,6 +1,4 @@
-#ifndef __MYPCH_HPP__
-#define __MYPCH_HPP__
+#pragma once
 
 #include <wx/wx.h>
 
-#endif // __MYPCH_HPP__

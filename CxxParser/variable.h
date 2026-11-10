@@ -1,5 +1,4 @@
-#ifndef VARIABLE_H
-#define VARIABLE_H
+#pragma once
 
 #include <list>
 #include <string>
@@ -57,4 +56,3 @@ public:
 };
 
 using VariableList = std::list<Variable>;
-#endif // VARIABLE_H

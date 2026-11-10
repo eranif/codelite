@@ -1,5 +1,4 @@
-#ifndef CLMAKEGENERATORAPP_H
-#define CLMAKEGENERATORAPP_H
+#pragma once
 
 #include <wx/app.h>
 #include <wx/cmdline.h>
@@ -43,5 +42,3 @@ public:
 };
 
 DECLARE_APP(clMakeGeneratorApp)
-
-#endif // CLMAKEGENERATORAPP_H

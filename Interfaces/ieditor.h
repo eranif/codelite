@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef IEDITOR_H
-#define IEDITOR_H
+#pragma once
 
 #include "LSP/basic_types.h"
 #include "browse_record.h"
@@ -657,5 +656,3 @@ public:
      */
     virtual void NotifyTextUpdated() = 0;
 };
-
-#endif // IEDITOR_H

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#pragma once
 
 // Windows headers define it
 #ifdef __WXMSW__
@@ -195,4 +194,3 @@ public:
 using GET_PLUGIN_CREATE_FUNC = IPlugin* (*)(IManager*);
 using GET_PLUGIN_INFO_FUNC = PluginInfo* (*)();
 using GET_PLUGIN_INTERFACE_VERSION_FUNC = int (*)();
-#endif // PLUGIN_H

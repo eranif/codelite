@@ -120,6 +120,12 @@ public:
      */
     void Reset(wxEvtHandler* eventObject = nullptr, size_t flags = 0);
 
+#ifdef __WXGTK__
+    /// GTK only: hiding the box also destroys its tip window (the tip is a child popup of the box, and a parent popup
+    /// must not be hidden before its child)
+    bool Show(bool show = true) override;
+#endif
+
     /**
      * @brief show the completion box
      */

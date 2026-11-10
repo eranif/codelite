@@ -276,7 +276,7 @@ void wxCodeCompletionBox::OnTooltipWindowTimer(wxTimerEvent& event)
             m_displayedTip = docComment;
 
             // Construct a new tip window and display the tip
-            m_tipWindow = new CCBoxTipWindow(GetParent(), docComment, strip_html_tags);
+            m_tipWindow = new CCBoxTipWindow(EventNotifier::Get()->TopFrame(), docComment, strip_html_tags);
             m_tipWindow->PositionRelativeTo(
                 this, m_stc->PointFromPosition(m_stc->GetCurrentPos()), m_stc->GetCurrentPos());
 
@@ -526,6 +526,16 @@ wxCodeCompletionBoxEntry::Ptr_t wxCodeCompletionBox::TagToEntry(TagEntryPtr tag)
     entry->SetSignature(sig);
     return entry;
 }
+
+#ifdef __WXGTK__
+bool wxCodeCompletionBox::Show(bool show)
+{
+    if (!show) {
+        DoDestroyTipWindow();
+    }
+    return wxCodeCompletionBoxBase::Show(show);
+}
+#endif
 
 void wxCodeCompletionBox::DoDestroy() { wxCodeCompletionBoxManager::Get().DestroyCCBox(); }
 

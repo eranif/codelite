@@ -27,9 +27,11 @@
 
 #include "clTabHistory.h"
 
+#include <memory>
 #include <wx/bitmap.h>
 #include <wx/bookctrl.h>
 #include <wx/dataview.h>
+#include <wx/eventfilter.h>
 #include <wx/filename.h>
 #include <wx/popupwin.h>
 #include <wx/timer.h>
@@ -50,6 +52,9 @@ struct TabData {
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOKNAV_SELECTED, wxBookCtrlEvent);
 
+// Implementation detail (defined in the .cpp file)
+class TabSwitcherEventFilter;
+
 /// A popup window (it does not take the activation from the main frame). Create it with `new` and call ShowPopup().
 /// When the user picks a tab, it notifies the frame (wxEVT_BOOKNAV_SELECTED) and destroys itself. It also destroys
 /// itself when it is cancelled (Escape, or a click outside of it)
@@ -66,15 +71,12 @@ protected:
     void OnDismiss() override;
 
     void OnItemActivated(wxDataViewEvent& event);
-    void OnKeyDown(wxKeyEvent& event);
-    void OnKeyUp(wxKeyEvent& event);
     void OnTimer(wxTimerEvent& event);
 
     void SelectNext();
     void SelectPrev();
-
-    void OnHotKeyNext(wxKeyEvent& event);
-    void OnHotKeyPrev(wxKeyEvent& event);
+    /// Cancel the selection (Escape): dismiss the popup without switching the tab
+    void Cancel();
     void FinalizeCtor();
     /// Notify the frame about the chosen tab and dismiss the popup. Only the first call does something
     void NotifyAndClose();
@@ -84,4 +86,6 @@ protected:
     wxTimer m_ctrlKeyTimer;
     bool m_dismissed{false};
     clTabHistory::Ptr_t m_history{nullptr};
+    std::unique_ptr<TabSwitcherEventFilter> m_eventFilter{nullptr};
+    friend class TabSwitcherEventFilter;
 };

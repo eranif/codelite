@@ -45,6 +45,10 @@
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
 
+#ifdef __WXGTK__
+#include <gtk/gtk.h>
+#endif
+
 namespace
 {
 /// mostly needed under linux where the calculate size does not match the actual size required to draw the tooltip
@@ -289,6 +293,19 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, int sta
 {
     // When shown, set the focus back to the editor
     m_editorStartPosition = start_position;
+
+#ifdef __WXGTK__
+    // Wayland: a popup must be a child of the top most popup, or GDK warns ("Tried to map a popup with a non-top most
+    // parent"). The completion box is a popup that is already shown, so make it the parent of the tip.
+    // (wxPopupWindow sets the main frame as the parent)
+    // If the box is not a popup window, nothing is changed
+    GtkWidget* parentWidget = win->GetHandle();
+    GtkWidget* tipWidget = GetHandle();
+    if (parentWidget && tipWidget && GTK_IS_WINDOW(parentWidget) && GTK_IS_WINDOW(tipWidget) &&
+        gtk_window_get_window_type(GTK_WINDOW(parentWidget)) == GTK_WINDOW_POPUP && !gtk_widget_get_mapped(tipWidget)) {
+        gtk_window_set_transient_for(GTK_WINDOW(tipWidget), GTK_WINDOW(parentWidget));
+    }
+#endif
     wxPoint pt = win->GetScreenPosition();
     wxPoint windowPos = pt;
     wxSize ccBoxSize = win->GetSize();

@@ -7,71 +7,13 @@
 
 #include <wx/app.h>
 #include <wx/dynarray.h>
-#include <wx/event.h>
 
 wxDEFINE_EVENT(wxEVT_BOOKNAV_SELECTED, wxBookCtrlEvent);
 
-/// Catches the keys that go to the popup (or to its children) while it is shown
-class TabSwitcherEventFilter : public wxEventFilter
+namespace
 {
-public:
-    explicit TabSwitcherEventFilter(NotebookNavigationDlg* parent)
-        : m_navDlg{parent}
-    {
-        wxEvtHandler::AddFilter(this);
-    }
-
-    ~TabSwitcherEventFilter() override { wxEvtHandler::RemoveFilter(this); }
-
-    int FilterEvent(wxEvent& event) override
-    {
-        const auto type = event.GetEventType();
-        if (type != wxEVT_CHAR_HOOK && type != wxEVT_KEY_UP) {
-            return Event_Skip;
-        }
-
-        // Once the popup is dismissed, it is only waiting to be destroyed: don't swallow keys any more
-        if (m_navDlg->m_dismissed) {
-            return Event_Skip;
-        }
-
-#ifdef __WXGTK__
-        // The popup has the focus. The event object is the window that has the focus. With the generic
-        // wxDataViewCtrl, it is a child of the list control
-        auto* win = wxDynamicCast(event.GetEventObject(), wxWindow);
-        if (win == nullptr || (win != m_navDlg && !m_navDlg->IsDescendant(win))) {
-            return Event_Skip;
-        }
-#endif
-        // MSW / macOS: the popup never takes the focus (on MSW, wxPopupWindow::SetFocus() does nothing unless
-        // wxPU_CONTAINS_CONTROLS is used), the keys go to the window that owns the focus (e.g. the editor). The popup
-        // is transient and modal-like while it is shown, so handle the keys regardless of the focused window
-
-        const auto& keyEvent = static_cast<const wxKeyEvent&>(event);
-        if (type == wxEVT_CHAR_HOOK) {
-            if (keyEvent.GetKeyCode() == WXK_ESCAPE) {
-                m_navDlg->CallAfter(&NotebookNavigationDlg::Cancel);
-                return Event_Processed;
-            }
-            if (keyEvent.GetKeyCode() == WXK_TAB && keyEvent.RawControlDown()) {
-                if (keyEvent.ShiftDown()) {
-                    m_navDlg->CallAfter(&NotebookNavigationDlg::SelectPrev);
-                } else {
-                    m_navDlg->CallAfter(&NotebookNavigationDlg::SelectNext);
-                }
-                return Event_Processed;
-            }
-        } else if (keyEvent.GetKeyCode() == WXK_RAW_CONTROL) {
-            // Ctrl was released while the popup (or one of its children) has the focus: switch to the selected tab.
-            // Let other handlers see the event as well
-            m_navDlg->CallAfter(&NotebookNavigationDlg::NotifyAndClose);
-        }
-        return Event_Skip;
-    }
-
-private:
-    NotebookNavigationDlg* m_navDlg{nullptr};
-};
+NotebookNavigationDlg* m_navDlg{nullptr};
+}
 
 NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clTabHistory::Ptr_t history)
     : wxPopupTransientWindow(parent, wxBORDER_DEFAULT)
@@ -88,23 +30,31 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clTabHistory::Ptr
         _("Icon"), m_dvListCtrl->GetColumnCount(), wxDATAVIEW_CELL_INERT, FromDIP(30), wxALIGN_CENTER);
     m_dvListCtrl->AppendTextColumn(_("Text"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
 
+    m_navDlg = this;
     Initialise();
     FinalizeCtor();
+
 #ifdef __WXGTK__
     // GTK: the popup can be made transparent only before it is shown
     StylePopupWindow(this);
 #endif
-    m_eventFilter = std::make_unique<TabSwitcherEventFilter>(this);
 }
 
 NotebookNavigationDlg::~NotebookNavigationDlg()
 {
-    m_eventFilter.reset();
-
+    m_navDlg = nullptr;
     clDEBUG() << "NotebookNavigationDlg DTor is called" << endl;
     m_ctrlKeyTimer.Stop();
     Unbind(wxEVT_TIMER, &NotebookNavigationDlg::OnTimer, this);
+#if defined(__WXMSW__) || defined(__WXMAC__)
+    UnregisterHotKey(XRCID("tab-next-entry"));
+    UnregisterHotKey(XRCID("tab-prev-entry"));
+    wxTheApp->Unbind(wxEVT_HOTKEY, &NotebookNavigationDlg::OnHotKeyNext, this, XRCID("tab-next-entry"));
+    wxTheApp->Unbind(wxEVT_HOTKEY, &NotebookNavigationDlg::OnHotKeyPrev, this, XRCID("tab-prev-entry"));
+#endif
+    m_dvListCtrl->Unbind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
     m_dvListCtrl->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlg::OnItemActivated, this);
+    m_dvListCtrl->Unbind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
 
     for (int row = 0; row < m_dvListCtrl->GetItemCount(); ++row) {
         TabData* d = (TabData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(row));
@@ -112,6 +62,8 @@ NotebookNavigationDlg::~NotebookNavigationDlg()
     }
     m_dvListCtrl->DeleteAllItems();
 }
+
+NotebookNavigationDlg* NotebookNavigationDlg::GetActive() { return m_navDlg; }
 
 void NotebookNavigationDlg::NotifyAndClose()
 {
@@ -161,13 +113,9 @@ void NotebookNavigationDlg::ShowPopup()
     SetSize(ourRect);
 
     Popup(m_dvListCtrl);
-#ifndef __WXGTK__
     StylePopupWindow(this);
-#endif
 
-    // The popup does not always get the key-up of the Ctrl key (the focus may be elsewhere): poll for it. The key-up
-    // handler of the event filter reacts faster when the focus is in the popup. Both end in NotifyAndClose(), which
-    // runs only once
+    // The popup does not get the key-up of the Ctrl key: poll for it
     m_ctrlKeyTimer.Start(30);
 }
 
@@ -188,17 +136,46 @@ void NotebookNavigationDlg::FinalizeCtor()
     }
 
     SetSize(FromDIP(wxSize(500, 300)));
+
+#if defined(__WXMSW__) || defined(__WXMAC__)
+    RegisterHotKey(XRCID("tab-next-entry"), wxMOD_RAW_CONTROL, WXK_TAB);
+    RegisterHotKey(XRCID("tab-prev-entry"), wxMOD_RAW_CONTROL | wxMOD_SHIFT, WXK_TAB);
+    wxTheApp->Bind(wxEVT_HOTKEY, &NotebookNavigationDlg::OnHotKeyNext, this, XRCID("tab-next-entry"));
+    wxTheApp->Bind(wxEVT_HOTKEY, &NotebookNavigationDlg::OnHotKeyPrev, this, XRCID("tab-prev-entry"));
+#endif
+    m_dvListCtrl->Bind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
+    m_dvListCtrl->Bind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
     m_dvListCtrl->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlg::OnItemActivated, this);
     Bind(wxEVT_TIMER, &NotebookNavigationDlg::OnTimer, this);
 }
 
-void NotebookNavigationDlg::Cancel()
+void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 {
-    if (m_dismissed) {
+    if (event.GetKeyCode() == WXK_ESCAPE) {
+        m_dismissed = true;
+        DismissAndNotify();
         return;
     }
-    m_dismissed = true;
-    DismissAndNotify();
+
+    if ((event.GetKeyCode() == WXK_TAB) && (event.RawControlDown() && event.ShiftDown())) {
+        SelectPrev();
+
+    } else if ((event.GetKeyCode() == WXK_TAB) && event.RawControlDown()) {
+        SelectNext();
+
+    } else {
+        event.Skip();
+    }
+}
+
+void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
+{
+    // if CTRL key is down, dismiss the dialog
+    if (!wxGetKeyState(WXK_RAW_CONTROL)) {
+        NotifyAndClose();
+    } else {
+        event.Skip();
+    }
 }
 
 void NotebookNavigationDlg::OnItemActivated(wxDataViewEvent& event)
@@ -206,6 +183,18 @@ void NotebookNavigationDlg::OnItemActivated(wxDataViewEvent& event)
     event.Skip();
     LOG_IF_TRACE { clDEBUG1() << "NotebookNavigationDlg::OnItemActivated" << endl; }
     NotifyAndClose();
+}
+
+void NotebookNavigationDlg::OnHotKeyNext(wxKeyEvent& event)
+{
+    wxUnusedVar(event);
+    SelectNext();
+}
+
+void NotebookNavigationDlg::OnHotKeyPrev(wxKeyEvent& event)
+{
+    wxUnusedVar(event);
+    SelectPrev();
 }
 
 void NotebookNavigationDlg::SelectNext()

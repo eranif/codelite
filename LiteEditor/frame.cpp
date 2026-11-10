@@ -5861,6 +5861,11 @@ void clMainFrame::ShowNavDialog()
         return;
     }
 
+    if (NotebookNavigationDlg::GetActive()) {
+        NotebookNavigationDlg::GetActive()->SelectNext();
+        return;
+    }
+
     // A popup: it notifies us (wxEVT_BOOKNAV_SELECTED) about the chosen tab and destroys itself
     auto* popup = new NotebookNavigationDlg{this, book->GetHistory()};
     popup->ShowPopup();
@@ -5870,7 +5875,8 @@ void clMainFrame::OnMainBookNavigating(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
-    if (::IsChildOf(wxWindow::FindFocus(), GetMainBook()->GetNotebook())) {
+    if (::IsChildOf(wxWindow::FindFocus(), GetMainBook()->GetNotebook()) ||
+        NotebookNavigationDlg::GetActive() != nullptr) {
         ShowNavDialog();
     }
 }

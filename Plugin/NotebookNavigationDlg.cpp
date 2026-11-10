@@ -30,12 +30,22 @@ public:
             return Event_Skip;
         }
 
-        // The event object is the window that has the focus. With the generic wxDataViewCtrl,
-        // it is a child of the list control
+        // Once the popup is dismissed, it is only waiting to be destroyed: don't swallow keys any more
+        if (m_navDlg->m_dismissed) {
+            return Event_Skip;
+        }
+
+#ifdef __WXGTK__
+        // The popup has the focus. The event object is the window that has the focus. With the generic
+        // wxDataViewCtrl, it is a child of the list control
         auto* win = wxDynamicCast(event.GetEventObject(), wxWindow);
         if (win == nullptr || (win != m_navDlg && !m_navDlg->IsDescendant(win))) {
             return Event_Skip;
         }
+#endif
+        // MSW / macOS: the popup never takes the focus (on MSW, wxPopupWindow::SetFocus() does nothing unless
+        // wxPU_CONTAINS_CONTROLS is used), the keys go to the window that owns the focus (e.g. the editor). The popup
+        // is transient and modal-like while it is shown, so handle the keys regardless of the focused window
 
         const auto& keyEvent = static_cast<const wxKeyEvent&>(event);
         if (type == wxEVT_CHAR_HOOK) {

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DEBUGGER_H
-#define DEBUGGER_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "BreakpointInfoArray.hpp"
@@ -671,5 +670,3 @@ public:
 //-----------------------------------------------------------
 using GET_DBG_CREATE_FUNC = IDebugger* (*)();
 using GET_DBG_INFO_FUNC = const DebuggerInfo* (*)();
-
-#endif // DEBUGGER_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ICONFIGTOOL_H
-#define ICONFIGTOOL_H
+#pragma once
 
 #include "serialized_object.h"
 
@@ -64,5 +63,3 @@ public:
      */
     virtual bool WriteObject(const wxString& name, SerializedObject* obj) = 0;
 };
-
-#endif // ICONFIGTOOL_H

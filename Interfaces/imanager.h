@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef IMANAGER_H
-#define IMANAGER_H
+#pragma once
 
 #include "bitmap_loader.h"
 #include "clStatusBar.h"
@@ -818,5 +817,3 @@ public:
     /// Return the build output text.
     virtual wxString GetBuildOutput() const = 0;
 };
-
-#endif // IMANAGER_H

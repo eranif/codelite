@@ -1,5 +1,5 @@
-#ifndef IMPORTTHEMESDIALOG_H
-#define IMPORTTHEMESDIALOG_H
+#pragma once
+
 #include "wxcrafter.hpp"
 
 class ImportThemesDialog : public ImportThemesDialogBase
@@ -11,4 +11,3 @@ public:
     wxString GetInputDirectory() const;
     wxString GetOutputDirectory() const;
 };
-#endif // IMPORTTHEMESDIALOG_H

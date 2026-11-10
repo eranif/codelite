@@ -1,5 +1,4 @@
-#ifndef EXPRESSION_RESULT_H
-#define EXPRESSION_RESULT_H
+#pragma once
 
 #include <cstdio>
 #include <string>
@@ -36,4 +35,3 @@ public:
     void Print();
     std::string ToString() const;
 };
-#endif // EXPRESSION_RESULT_H

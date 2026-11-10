@@ -1,5 +1,4 @@
-#ifndef CODE_COMPLETION_API_H
-#define CODE_COMPLETION_API_H
+#pragma once
 
 #include "cl_typedef.h"
 #include "expression_result.h"
@@ -47,4 +46,3 @@ public:
     int line_number() const { return cl_scope_lineno; }
     std::string text() const { return cl_scope_text; }
 };
-#endif // CODECOMPLETION_API_H

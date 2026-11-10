@@ -1,5 +1,4 @@
-#ifndef FUNCTION_H
-#define FUNCTION_H
+#pragma once
 
 #include "variable.h"
 
@@ -46,4 +45,3 @@ public:
 };
 
 using FunctionList = std::list<clFunction>;
-#endif // FUNCTION_H

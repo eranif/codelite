@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DEBUGGER_OBSERVER_H
-#define DEBUGGER_OBSERVER_H
+#pragma once
 
 #include "debugger.h"
 #include "tree_node.h"
@@ -285,5 +284,3 @@ public:
         DebuggerUpdate(e);
     }
 };
-
-#endif // DEBUGGER_OBSERVER_H

@@ -1,5 +1,4 @@
-#ifndef IMPORTERFROMXRC_H
-#define IMPORTERFROMXRC_H
+#pragma once
 
 #include "UI/import_dlg.h"
 #include "wxc_widget.h"
@@ -25,5 +24,3 @@ private:
 };
 
 } // namespace ImportFromXrc
-
-#endif // IMPORTERFROMXRC_H

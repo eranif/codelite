@@ -1,5 +1,4 @@
-#ifndef AUIMANAGERWRAPPER_H
-#define AUIMANAGERWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -18,5 +17,3 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     bool IsValidParent() const override { return false; }
 };
-
-#endif // AUIMANAGERWRAPPER_H

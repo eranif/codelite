@@ -1,5 +1,4 @@
-#ifndef CHOICEBOOKWRAPPER_H
-#define CHOICEBOOKWRAPPER_H
+#pragma once
 
 #include "Containers/notebook_base_wrapper.h"
 
@@ -15,5 +14,3 @@ public:
     wxString GetWxClassName() const override;
     wxString GetXRCPageClass() const override;
 };
-
-#endif // CHOICEBOOKWRAPPER_H

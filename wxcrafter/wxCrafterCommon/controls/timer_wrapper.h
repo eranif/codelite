@@ -1,5 +1,4 @@
-#ifndef TIMERWRAPPER_H
-#define TIMERWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -21,5 +20,3 @@ public:
 
     bool IsValidParent() const override { return false; }
 };
-
-#endif // TIMERWRAPPER_H

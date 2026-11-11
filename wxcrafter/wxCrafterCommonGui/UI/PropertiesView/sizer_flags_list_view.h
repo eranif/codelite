@@ -1,5 +1,4 @@
-#ifndef SIZERFLAGSLISTVIEW_H
-#define SIZERFLAGSLISTVIEW_H
+#pragma once
 
 #include <wx/propgrid/propgrid.h> // Base class: wxPropertyGrid
 
@@ -20,5 +19,3 @@ public:
 
     void DoUpdateUI(wxPropertyGrid* pg, wxUpdateUIEvent& event);
 };
-
-#endif // SIZERFLAGSLISTVIEW_H

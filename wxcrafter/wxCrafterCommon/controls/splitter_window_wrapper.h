@@ -1,5 +1,4 @@
-#ifndef SPLITTERWINDOWWRAPPER_H
-#define SPLITTERWINDOWWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -23,5 +22,3 @@ public:
     bool IsSplitVertically() const;
     int GetSashPos() const;
 };
-
-#endif // SPLITTERWINDOWWRAPPER_H

@@ -1,5 +1,4 @@
-#ifndef POPUPWINDOWPREVIEW_H
-#define POPUPWINDOWPREVIEW_H
+#pragma once
 
 #include "popup_window_wrapper.h"
 
@@ -14,5 +13,3 @@ public:
     DECLARE_EVENT_TABLE()
     void OnClosePreviewPreviewPanel(wxCommandEvent& e);
 };
-
-#endif // POPUPWINDOWPREVIEW_H

@@ -1,5 +1,4 @@
-#ifndef IMPORTFROMFB_H
-#define IMPORTFROMFB_H
+#pragma once
 
 #include "wxc_widget.h"
 #include "wxgui_defs.h"
@@ -14,5 +13,3 @@ void ProcessBitmapProperty(const wxString& value,
 wxString GetEventtypeFromHandlerstub(const wxString& stub);
 
 } // namespace ImportFromwxFB
-
-#endif // IMPORTFROMFB_H

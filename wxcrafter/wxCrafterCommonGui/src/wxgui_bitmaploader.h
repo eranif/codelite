@@ -1,5 +1,4 @@
-#ifndef BITMAPLOADER_H
-#define BITMAPLOADER_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -53,5 +52,3 @@ private:
     wxFileName SaveAsTempPng(const wxString& name, const wxSize& size) const;
 };
 } // namespace wxCrafter
-
-#endif // BITMAPLOADER_H

@@ -1,5 +1,4 @@
-#ifndef XYPAIR_H
-#define XYPAIR_H
+#pragma once
 
 #include <wx/string.h>
 
@@ -22,5 +21,3 @@ public:
     bool operator==(const XYPair& xy) const;
     bool operator!=(const XYPair& xy) const;
 };
-
-#endif // XYPAIR_H

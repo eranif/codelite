@@ -7,8 +7,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_MYXH_TREEBK_H_
-#define _WX_MYXH_TREEBK_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -75,5 +74,3 @@ private:
 //</resource>
 
 #endif // wxUSE_XRC && wxUSE_TREEBOOK
-
-#endif // _WX_XH_TREEBK_H_

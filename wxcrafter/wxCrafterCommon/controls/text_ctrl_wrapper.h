@@ -1,5 +1,4 @@
-#ifndef TEXTCTRLWRAPPER_H
-#define TEXTCTRLWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -20,5 +19,3 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     wxcWidget* Clone() const override;
 };
-
-#endif // TEXTCTRLWRAPPER_H

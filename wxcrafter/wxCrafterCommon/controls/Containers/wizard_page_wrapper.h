@@ -1,5 +1,4 @@
-#ifndef WIZARDPAGEWRAPPER_H
-#define WIZARDPAGEWRAPPER_H
+#pragma once
 
 #include "panel_wrapper.h" // Base class: PanelWrapper
 
@@ -20,5 +19,3 @@ public:
 
     static std::function<bool(const wxcWidget* /*page*/)> isActiveWizardPage;
 };
-
-#endif // WIZARDPAGEWRAPPER_H

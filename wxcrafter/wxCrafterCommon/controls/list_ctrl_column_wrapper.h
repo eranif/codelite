@@ -1,5 +1,4 @@
-#ifndef LISTCTRLCOLUMNWRAPPER_H
-#define LISTCTRLCOLUMNWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -22,5 +21,3 @@ public:
      */
     wxString GetRealName() const override { return ""; }
 };
-
-#endif // LISTCTRLCOLUMNWRAPPER_H

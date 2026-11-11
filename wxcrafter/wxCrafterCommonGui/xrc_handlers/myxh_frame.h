@@ -1,5 +1,4 @@
-#ifndef _WX_MYXH_FRAME_H_
-#define _WX_MYXH_FRAME_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -13,5 +12,3 @@ public:
     wxObject* DoCreateResource() override;
     bool CanHandle(wxXmlNode* node) override;
 };
-
-#endif // _WX_MYXH_FRAME_H_

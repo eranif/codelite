@@ -1,5 +1,4 @@
-#ifndef NOTEBOOKWRAPPER_H
-#define NOTEBOOKWRAPPER_H
+#pragma once
 
 #include "notebook_base_wrapper.h" // Base class: NotebookBaseWrapper
 
@@ -14,5 +13,3 @@ public:
     wxString GetWxClassName() const override;
     wxString GetXRCPageClass() const override;
 };
-
-#endif // NOTEBOOKWRAPPER_H

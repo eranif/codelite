@@ -1,5 +1,4 @@
-#ifndef AUIPANEINFOLISTVIEW_H
-#define AUIPANEINFOLISTVIEW_H
+#pragma once
 
 #include "wxc_widget.h"
 
@@ -15,5 +14,3 @@ public:
     void Changed(wxPropertyGrid* pg, wxPropertyGridEvent& e);
     void Construct(wxPropertyGrid* pg, wxcWidget* wb);
 };
-
-#endif // AUIPANEINFOLISTVIEW_H

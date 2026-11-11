@@ -1,5 +1,4 @@
-#ifndef __main_panel__
-#define __main_panel__
+#pragma once
 
 #include "UI/PropertiesView/aui_pane_info_list_view.h"
 #include "UI/PropertiesView/sizer_flags_list_view.h"
@@ -249,5 +248,3 @@ public:
     void OnUpdatePreview(wxCommandEvent& e);
     void OnFindBar(clFindEvent& e);
 };
-
-#endif // __main_panel__

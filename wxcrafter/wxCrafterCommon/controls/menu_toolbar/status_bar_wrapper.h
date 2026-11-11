@@ -1,5 +1,4 @@
-#ifndef STATUSBARWRAPPER_H
-#define STATUSBARWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -21,5 +20,3 @@ public:
 
     wxString DesignerXRC() const;
 };
-
-#endif // STATUSBARWRAPPER_H

@@ -1,5 +1,4 @@
-#ifndef VIRTUALFOLDERPROPERTY_H
-#define VIRTUALFOLDERPROPERTY_H
+#pragma once
 
 #include "property_base.h" // Base class: PropertyBase
 
@@ -18,5 +17,3 @@ public:
     void UnSerialize(const JSONItem& json) override;
     PropertyeType GetType() override { return PT_VIRTUAL_FOLDER_PICKER; }
 };
-
-#endif // VIRTUALFOLDERPROPERTY_H

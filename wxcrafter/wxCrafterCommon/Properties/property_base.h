@@ -1,5 +1,4 @@
-#ifndef PROPERTYBASE_H
-#define PROPERTYBASE_H
+#pragma once
 
 #include "JSON.h"
 
@@ -63,5 +62,3 @@ public:
     virtual JSONItem Serialize() const = 0;
     virtual void UnSerialize(const JSONItem& json) = 0;
 };
-
-#endif // PROPERTYBASE_H

@@ -1,5 +1,4 @@
-#ifndef BITMAPTEXTARRAYPROPERTY_H
-#define BITMAPTEXTARRAYPROPERTY_H
+#pragma once
 
 #include "property_base.h"
 class BitmapTextArrayProperty : public PropertyBase
@@ -17,5 +16,3 @@ public:
     void SetValue(const wxString& value) override;
     void UnSerialize(const JSONItem& json) override;
 };
-
-#endif // BITMAPTEXTARRAYPROPERTY_H

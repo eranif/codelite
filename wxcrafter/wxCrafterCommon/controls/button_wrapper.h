@@ -1,5 +1,4 @@
-#ifndef BUTTONWRAPPER_H
-#define BUTTONWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -25,5 +24,3 @@ public:
 
     wxString GetLabel() const { return PropertyString(PROP_LABEL); }
 };
-
-#endif // BUTTONWRAPPER_H

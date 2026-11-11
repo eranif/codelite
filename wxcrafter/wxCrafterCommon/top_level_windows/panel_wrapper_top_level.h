@@ -1,5 +1,4 @@
-#ifndef TOP_PANELWRAPPER_H
-#define TOP_PANELWRAPPER_H
+#pragma once
 
 #include "top_level_win_wrapper.h"
 #include "wxc_widget.h" // Base class: WrapperBase
@@ -26,5 +25,3 @@ public:
     bool IsTopWindow() const override;
     wxcWidget* Clone() const override { return new PanelWrapperTopLevel(); }
 };
-
-#endif // TOP_PANELWRAPPER_H

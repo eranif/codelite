@@ -1,5 +1,4 @@
-#ifndef FUNCTIONSPARSER_H
-#define FUNCTIONSPARSER_H
+#pragma once
 
 #include "Cxx/cpp_scanner.h"
 #include "wxc_widget.h"
@@ -21,5 +20,3 @@ public:
     const wxcWidget::Map_t& GetAllEvents() const { return m_allEvents; }
     void Parse();
 };
-
-#endif // FUNCTIONSPARSER_H

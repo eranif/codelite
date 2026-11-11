@@ -1,5 +1,4 @@
-#ifndef SIMPLEHTMLLISTBOXWRAPPER_H
-#define SIMPLEHTMLLISTBOXWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h"
 
@@ -15,5 +14,3 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     wxcWidget* Clone() const override { return new SimpleHtmlListBoxWrapper(); }
 };
-
-#endif // SIMPLEHTMLLISTBOXWRAPPER_H

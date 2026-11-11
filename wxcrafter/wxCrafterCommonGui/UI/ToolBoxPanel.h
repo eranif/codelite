@@ -1,5 +1,4 @@
-#ifndef TOOLBOXPANEL_H
-#define TOOLBOXPANEL_H
+#pragma once
 
 #include <wx/aui/auibook.h>
 #include <wx/panel.h>
@@ -27,4 +26,3 @@ protected:
     GUICraftMainPanel* m_mainView;
     wxAuiNotebook* m_notebook = nullptr;
 };
-#endif // TOOLBOXPANEL_H

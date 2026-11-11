@@ -1,5 +1,4 @@
-#ifndef MENUBAR_H
-#define MENUBAR_H
+#pragma once
 
 #include <vector>
 #include <wx/event.h>
@@ -34,5 +33,3 @@ public:
     void OnEraseBG(wxEraseEvent& e);
     void OnLeftDown(wxMouseEvent& e);
 };
-
-#endif // MENUBAR_H

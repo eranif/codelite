@@ -1,5 +1,4 @@
-#ifndef OPENGLCANVAS_H
-#define OPENGLCANVAS_H
+#pragma once
 #include "wxcrafter_gui.hpp"
 
 class OpenGLCanvas : public OpenGLCanvasBase
@@ -13,4 +12,3 @@ protected:
     void OnMove(wxMoveEvent& event) override;
     void OnSize(wxSizeEvent& event) override;
 };
-#endif // OPENGLCANVAS_H

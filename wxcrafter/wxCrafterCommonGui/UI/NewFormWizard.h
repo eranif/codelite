@@ -1,5 +1,4 @@
-#ifndef NEWFORMWIZARD_H
-#define NEWFORMWIZARD_H
+#pragma once
 
 #include "imanager.h"
 #include "wxcrafter_gui.hpp"
@@ -69,4 +68,3 @@ public:
     wxString GetWxcpFile() const;
     wxString GetInheritedClassName() const;
 };
-#endif // NEWFORMWIZARD_H

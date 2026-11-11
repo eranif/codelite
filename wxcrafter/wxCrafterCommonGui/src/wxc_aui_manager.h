@@ -1,5 +1,4 @@
-#ifndef WXCAUIMANAGER_H
-#define WXCAUIMANAGER_H
+#pragma once
 
 #include <map>
 #include <wx/aui/framemanager.h>
@@ -21,5 +20,3 @@ public:
 
     wxAuiManager* Find(wxWindow* win) const;
 };
-
-#endif // WXCAUIMANAGER_H

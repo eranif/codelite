@@ -1,5 +1,4 @@
-#ifndef CHOICEPROPERTY_H
-#define CHOICEPROPERTY_H
+#pragma once
 
 #include "property_base.h"
 
@@ -32,5 +31,3 @@ public:
 
     PropertyeType GetType() override { return PT_CHOICE; }
 };
-
-#endif // CHOICEPROPERTY_H

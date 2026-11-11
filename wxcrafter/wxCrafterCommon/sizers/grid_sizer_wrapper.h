@@ -1,5 +1,4 @@
-#ifndef GRIDSIZERWRAPPER_H
-#define GRIDSIZERWRAPPER_H
+#pragma once
 
 #include "sizer_wrapper_base.h"
 #include "wxc_widget.h"
@@ -23,5 +22,3 @@ public:
     void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
     wxcWidget* Clone() const override { return new GridSizerWrapper(); }
 };
-
-#endif // SIZERWRAPPER_H

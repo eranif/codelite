@@ -1,5 +1,4 @@
-#ifndef MENUBARWRAPPER_H
-#define MENUBARWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -18,5 +17,3 @@ public:
 
     wxString DesignerXRC() const;
 };
-
-#endif // MENUBARWRAPPER_H

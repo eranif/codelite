@@ -1,5 +1,4 @@
-#ifndef FILEPICKERCTRL_H
-#define FILEPICKERCTRL_H
+#pragma once
 
 #include <wx/textctrl.h>
 
@@ -21,5 +20,3 @@ public:
     FilePickerCtrl(wxWindow* parent, const wxString& projectPath, const wxString& value);
     ~FilePickerCtrl() override;
 };
-
-#endif // FILEPICKERCTRL_H

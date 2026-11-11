@@ -1,5 +1,4 @@
-#ifndef IMPORTERFROMFB_H
-#define IMPORTERFROMFB_H
+#pragma once
 
 #include "UI/import_dlg.h"
 #include "wxc_widget.h"
@@ -31,5 +30,3 @@ private:
 };
 
 } // namespace ImportFromwxFB
-
-#endif // IMPORTERFROMFB_H

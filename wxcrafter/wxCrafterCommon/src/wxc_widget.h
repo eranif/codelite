@@ -1,5 +1,4 @@
-#ifndef WRAPPERBASE_H
-#define WRAPPERBASE_H
+#pragma once
 
 #include "JSON.h"
 #include "Properties/property_base.h"
@@ -902,5 +901,3 @@ protected:
     static int m_copyCounter; /// An internal counter that holds a unique string that allows renaming copied items
     static CustomControlTemplateMap_t ms_customControlsUsed;
 };
-
-#endif // WRAPPERBASE_H

@@ -1,5 +1,4 @@
-#ifndef TOOLBAR_H
-#define TOOLBAR_H
+#pragma once
 
 #include <wx/event.h>
 #include <wx/panel.h>
@@ -16,5 +15,3 @@ public:
     void AddToolbar(wxToolBar* tb);
     void OnClick(wxCommandEvent& e);
 };
-
-#endif // TOOLBAR_H

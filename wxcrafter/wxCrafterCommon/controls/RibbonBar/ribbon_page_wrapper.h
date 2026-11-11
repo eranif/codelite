@@ -1,5 +1,4 @@
-#ifndef RIBBONPAGEWRAPPER_H
-#define RIBBONPAGEWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -21,5 +20,3 @@ public:
     void Select(bool b);
     bool IsSelected() const;
 };
-
-#endif // RIBBONPAGEWRAPPER_H

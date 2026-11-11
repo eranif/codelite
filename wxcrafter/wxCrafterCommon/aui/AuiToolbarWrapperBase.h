@@ -1,5 +1,4 @@
-#ifndef AUITOOLBARWRAPPERBASE_H
-#define AUITOOLBARWRAPPERBASE_H
+#pragma once
 
 #include <wx/arrstr.h>
 #include <wx/string.h>
@@ -17,5 +16,3 @@ public:
     wxString CppDtorCode(const wxcWidget* widget) const;
     void BaseGetIncludeFile(wxArrayString& headers) const;
 };
-
-#endif // AUITOOLBARWRAPPERBASE_H

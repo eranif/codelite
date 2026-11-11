@@ -1,5 +1,4 @@
-#ifndef PROPERTIESLISTVIEW_H
-#define PROPERTIESLISTVIEW_H
+#pragma once
 
 #include "wxc_widget.h"
 
@@ -52,5 +51,3 @@ public:
     void Construct(wxcWidget* wb);
     void ConstructProjectSettings();
 };
-
-#endif // PROPERTIESLISTVIEW_H

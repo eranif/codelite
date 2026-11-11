@@ -1,5 +1,4 @@
-#ifndef COLORPROPERTY_H
-#define COLORPROPERTY_H
+#pragma once
 
 #include "property_base.h" // Base class: PropertyBase
 
@@ -20,5 +19,3 @@ public:
     void UnSerialize(const JSONItem& json) override;
     PropertyeType GetType() override { return PT_COLOR_PICKER; }
 };
-
-#endif // COLORPROPERTY_H

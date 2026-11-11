@@ -1,5 +1,4 @@
-#ifndef WXGUI_DEFS_H
-#define WXGUI_DEFS_H
+#pragma once
 
 #include "JSON.h"
 
@@ -297,6 +296,3 @@ struct WxStyleInfo {
         is_set = json.namedObject(wxT("is_set")).toBool();
     }
 };
-/////////////////////////////////////////////////////////////////////////////////////////
-
-#endif // WXGUI_DEFS_H

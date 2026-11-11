@@ -1,5 +1,4 @@
-#ifndef WXRC_H
-#define WXRC_H
+#pragma once
 
 #include "clResult.hpp"
 
@@ -188,4 +187,3 @@ private:
 
     ArrayOfXRCWndClassData aXRCWndClassData;
 };
-#endif

@@ -1,5 +1,4 @@
-#ifndef EVENTSDATABASE_H
-#define EVENTSDATABASE_H
+#pragma once
 
 #include "JSON.h"
 #include "wx_ordered_map.h"
@@ -91,5 +90,3 @@ public:
     MapEvents_t& GetEvents() { return m_events; }
     const MapEvents_t& GetEvents() const { return m_events; }
 };
-
-#endif // EVENTSDATABASE_H

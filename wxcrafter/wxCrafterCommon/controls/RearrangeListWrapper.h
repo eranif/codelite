@@ -1,5 +1,4 @@
-#ifndef REARRANGELISTWRAPPER_H
-#define REARRANGELISTWRAPPER_H
+#pragma once
 
 #include "check_list_box_wrapper.h" // Base class: CheckListBoxWrapper
 
@@ -19,5 +18,3 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     wxcWidget* Clone() const override;
 };
-
-#endif // REARRANGELISTWRAPPER_H

@@ -1,5 +1,4 @@
-#ifndef DESIGNERCONTAINERPANEL_H
-#define DESIGNERCONTAINERPANEL_H
+#pragma once
 
 #include "menu_bar.h"
 #include "tool_bar.h"
@@ -37,5 +36,3 @@ public:
     void SetStatusBar(wxStatusBar* mb);
     void CalcBestSize(int winType);
 };
-
-#endif // DESIGNERCONTAINERPANEL_H

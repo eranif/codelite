@@ -1,5 +1,4 @@
-#ifndef TREEBOOKWRAPPER_H
-#define TREEBOOKWRAPPER_H
+#pragma once
 
 #include "notebook_base_wrapper.h" // Base class: NotebookBaseWrapper
 
@@ -15,5 +14,3 @@ public:
     void GetIncludeFile(wxArrayString& headers) const override;
     wxString GetWxClassName() const override;
 };
-
-#endif // TREEBOOKWRAPPER_H

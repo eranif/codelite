@@ -1,5 +1,4 @@
-#ifndef FONTPROPERTY_H
-#define FONTPROPERTY_H
+#pragma once
 
 #include "property_base.h"
 
@@ -21,5 +20,3 @@ public:
     void UnSerialize(const JSONItem& json) override;
     PropertyeType GetType() override { return PT_FONT_PICKER; }
 };
-
-#endif // FONTPROPERTY_H

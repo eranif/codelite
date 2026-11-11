@@ -1,5 +1,4 @@
-#ifndef SIZERWRAPPERBASE_H
-#define SIZERWRAPPERBASE_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -43,5 +42,3 @@ public:
      */
     bool IsMainSizer() const;
 };
-
-#endif // SIZERWRAPPERBASE_H

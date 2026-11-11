@@ -1,5 +1,4 @@
-#ifndef WXCAUITOOLSTICKINESS_H
-#define WXCAUITOOLSTICKINESS_H
+#pragma once
 
 #include <wx/aui/auibar.h>
 #include <wx/bitmap.h>
@@ -13,5 +12,3 @@ public:
     wxcAuiToolStickiness(wxAuiToolBar* tb, int toolId);
     virtual ~wxcAuiToolStickiness();
 };
-
-#endif // WXCAUITOOLSTICKINESS_H

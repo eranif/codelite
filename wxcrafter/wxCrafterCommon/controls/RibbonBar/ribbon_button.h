@@ -1,5 +1,4 @@
-#ifndef RIBBONBUTTON_H
-#define RIBBONBUTTON_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -96,5 +95,3 @@ public:
     ~RibbonToolDropdown() override = default;
     wxcWidget* Clone() const override { return new RibbonToolDropdown(); }
 };
-
-#endif // RIBBONBUTTON_H

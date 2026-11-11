@@ -1,5 +1,4 @@
-#ifndef __enter_strings_dlg__
-#define __enter_strings_dlg__
+#pragma once
 
 /**
 @file
@@ -18,5 +17,3 @@ public:
     wxString GetValue() const;
     void SetMessage(const wxString& msg);
 };
-
-#endif // __enter_strings_dlg__

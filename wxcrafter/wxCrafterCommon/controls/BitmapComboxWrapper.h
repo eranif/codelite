@@ -1,5 +1,4 @@
-#ifndef BITMAPCOMBOXWRAPPER_H
-#define BITMAPCOMBOXWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -19,5 +18,3 @@ public:
     void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // BITMAPCOMBOXWRAPPER_H

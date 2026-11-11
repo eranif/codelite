@@ -1,5 +1,4 @@
-#ifndef PREVIEWFRAME_H
-#define PREVIEWFRAME_H
+#pragma once
 
 #include "frame_wrapper.h"
 
@@ -14,5 +13,3 @@ public:
 
     void OnClosePreview(wxCommandEvent& e);
 };
-
-#endif // PREVIEWFRAME_H

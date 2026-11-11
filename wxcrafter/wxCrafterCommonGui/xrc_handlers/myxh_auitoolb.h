@@ -8,8 +8,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _MY_WX_XH_AUITOOLB_H_
-#define _MY_WX_XH_AUITOOLB_H_
+#pragma once
 
 #include <wx/aui/auibar.h>
 #include <wx/event.h>
@@ -42,5 +41,3 @@ private:
 
     MenuHandler m_menuHandler;
 };
-
-#endif // _WX_XH_TOOLB_H_

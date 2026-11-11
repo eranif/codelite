@@ -1,5 +1,4 @@
-#ifndef SIZERWRAPPER_H
-#define SIZERWRAPPER_H
+#pragma once
 
 #include "sizer_wrapper_base.h"
 #include "wxc_widget.h" // Base class: WrapperBase
@@ -23,5 +22,3 @@ public:
     void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
     wxcWidget* Clone() const override { return new FlexGridSizerWrapper(); }
 };
-
-#endif // SIZERWRAPPER_H

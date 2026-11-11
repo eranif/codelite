@@ -1,5 +1,4 @@
-#ifndef MULTISTRINGSPROPERTY_H
-#define MULTISTRINGSPROPERTY_H
+#pragma once
 
 #include "property_base.h" // Base class: PropertyBase
 
@@ -25,5 +24,3 @@ public:
     void UnSerialize(const JSONItem& json) override;
     PropertyeType GetType() override { return PT_MULTI_STRING_PICKER; }
 };
-
-#endif // MULTISTRINGSPROPERTY_H

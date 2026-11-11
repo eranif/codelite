@@ -1,5 +1,4 @@
-#ifndef PREVIEWWIZARD_H
-#define PREVIEWWIZARD_H
+#pragma once
 
 #include "wizard_wrapper.h"
 
@@ -18,5 +17,3 @@ public:
 
     void Run();
 };
-
-#endif // PREVIEWWIZARD_H

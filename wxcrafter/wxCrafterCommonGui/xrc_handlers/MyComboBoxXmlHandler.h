@@ -1,5 +1,4 @@
-#ifndef MYCOMBOBOXXMLHANDLER_H
-#define MYCOMBOBOXXMLHANDLER_H
+#pragma once
 
 #include <wx/arrstr.h>
 #include <wx/xrc/xmlreshandler.h> // Base class: wxXmlResourceHandler
@@ -17,5 +16,3 @@ public:
     wxObject* DoCreateResource() override;
     bool CanHandle(wxXmlNode* node) override;
 };
-
-#endif // MYCOMBOBOXXMLHANDLER_H

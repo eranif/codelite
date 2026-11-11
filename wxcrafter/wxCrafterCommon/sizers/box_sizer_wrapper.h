@@ -1,5 +1,4 @@
-#ifndef BOXSIZERWRAPPER_H
-#define BOXSIZERWRAPPER_H
+#pragma once
 
 #include "sizer_wrapper_base.h"
 #include "wxc_widget.h" // Base class: WrapperBase
@@ -22,5 +21,3 @@ public:
 
     void SetOrientation(const wxString& orient);
 };
-
-#endif // BOXSIZERWRAPPER_H

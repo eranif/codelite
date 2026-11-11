@@ -1,5 +1,4 @@
-#ifndef TEXTEDITOR_H
-#define TEXTEDITOR_H
+#pragma once
 #include "wxcrafter.hpp"
 
 extern const wxEventType wxEVT_CMD_TEXT_EDITOR;
@@ -16,4 +15,3 @@ public:
     void SetValue(const wxString& value);
     void MoveTo(const wxRect& rect);
 };
-#endif // TEXTEDITOR_H

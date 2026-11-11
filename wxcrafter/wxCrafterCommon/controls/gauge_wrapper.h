@@ -1,5 +1,4 @@
-#ifndef GAUGEWRAPPER_H
-#define GAUGEWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -20,5 +19,3 @@ public:
     void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // GAUGEWRAPPER_H

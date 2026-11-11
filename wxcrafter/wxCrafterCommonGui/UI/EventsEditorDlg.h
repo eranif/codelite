@@ -1,5 +1,4 @@
-#ifndef EVENTSEDITORDLG_H
-#define EVENTSEDITORDLG_H
+#pragma once
 
 #include "events_database.h"
 #include "wxcrafter.hpp"
@@ -31,4 +30,3 @@ public:
     void Clear();
     void SplitterPositionChanged();
 };
-#endif // EVENTSEDITORDLG_H

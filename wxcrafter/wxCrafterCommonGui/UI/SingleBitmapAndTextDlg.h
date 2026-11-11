@@ -1,5 +1,4 @@
-#ifndef SINGLEBITMAPANDTEXTDLG_H
-#define SINGLEBITMAPANDTEXTDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class SingleBitmapAndTextDlg : public SingleBitmapAndTextDlgBase
@@ -12,4 +11,3 @@ protected:
     void OnOKUI(wxUpdateUIEvent& event) override;
     void OnSelectBitmap(wxCommandEvent& event) override;
 };
-#endif // SINGLEBITMAPANDTEXTDLG_H

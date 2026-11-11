@@ -1,5 +1,4 @@
-#ifndef DUPLICATETLWDLG_H
-#define DUPLICATETLWDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class DuplicateTLWDlg : public DuplicateTLWBaseDlg
@@ -16,4 +15,3 @@ protected:
     void OnFilenameFocus(wxFocusEvent& event) override;
     void OnInheritedNameFocus(wxFocusEvent& event) override;
 };
-#endif // DUPLICATETLWDLG_H

@@ -1,5 +1,4 @@
-#ifndef TOPLEVELWINWRAPPER_H
-#define TOPLEVELWINWRAPPER_H
+#pragma once
 
 #include "wxc_project_metadata.h"
 #include "wxc_widget.h" // Base class: WrapperBase
@@ -79,5 +78,3 @@ public:
      */
     virtual bool IsWxTopLevelWindow() const;
 };
-
-#endif // TOPLEVELWINWRAPPER_H

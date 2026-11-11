@@ -1,5 +1,4 @@
-#ifndef INTPROPERTY_H
-#define INTPROPERTY_H
+#pragma once
 
 #include "property_base.h" // Base class: PropertyBase
 
@@ -29,5 +28,3 @@ public:
     void SetValue(const wxString& value) override;
     void UnSerialize(const JSONItem& json) override;
 };
-
-#endif // INTPROPERTY_H

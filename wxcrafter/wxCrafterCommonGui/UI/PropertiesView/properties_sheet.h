@@ -1,5 +1,4 @@
-#ifndef __properties_sheet__
-#define __properties_sheet__
+#pragma once
 
 #include "gui.hpp"
 #include "wxc_widget.h"
@@ -15,5 +14,3 @@ public:
     void Construct(wxcWidget* wb);
     void ConstructProjectSettings();
 };
-
-#endif // __properties_sheet__

@@ -1,5 +1,4 @@
-#ifndef WXCSETTINGSDLG_H
-#define WXCSETTINGSDLG_H
+#pragma once
 #include "gui.hpp"
 
 class wxcSettingsDlg : public wxcSettingsDlgBase
@@ -16,4 +15,3 @@ private:
     bool m_useTabModeStart = false;
     bool m_useTabModeEnd = false;
 };
-#endif // WXCSETTINGSDLG_H

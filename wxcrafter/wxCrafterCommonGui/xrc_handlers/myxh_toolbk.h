@@ -7,8 +7,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef WXCRAFTER_WX_XH_TOOLBK_H_
-#define WXCRAFTER_WX_XH_TOOLBK_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -30,5 +29,3 @@ private:
 };
 
 #endif // wxUSE_XRC && wxUSE_TOOLBOOK
-
-#endif // _WX_XH_TOOLBK_H_

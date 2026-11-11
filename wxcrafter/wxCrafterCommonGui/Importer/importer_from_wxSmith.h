@@ -1,5 +1,4 @@
-#ifndef IMPORTERFROMSMITH_H
-#define IMPORTERFROMSMITH_H
+#pragma once
 
 #include "UI/import_dlg.h"
 #include "wxc_widget.h"
@@ -31,5 +30,3 @@ protected:
     void GetBookitemContents(const wxXmlNode* node, NotebookPageWrapper* wrapper, int& depth) const;
 };
 } // namespace ImportFromwxSmith
-
-#endif // IMPORTERFROMSMITH_H

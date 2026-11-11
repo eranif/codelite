@@ -1,5 +1,4 @@
-#ifndef STATICTEXTWRAPPER_H
-#define STATICTEXTWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -20,5 +19,3 @@ public:
     void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
     wxcWidget* Clone() const override;
 };
-
-#endif // STATICTEXTWRAPPER_H

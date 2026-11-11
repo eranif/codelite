@@ -7,8 +7,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef MY_WX_XH_NOTBK_H_
-#define MY_WX_XH_NOTBK_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -25,5 +24,3 @@ private:
     bool m_isInside = false;
     wxAuiNotebook* m_notebook = nullptr;
 };
-
-#endif // wxUSE_XRC && wxUSE_NOTEBOOK

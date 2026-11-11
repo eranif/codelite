@@ -1,5 +1,4 @@
-#ifndef RIBBONBUTTONBARWRAPPER_H
-#define RIBBONBUTTONBARWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -17,5 +16,3 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     wxString DoGenerateCppCtorCode_End() const override;
 };
-
-#endif // RIBBONBUTTONBARWRAPPER_H

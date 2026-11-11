@@ -1,5 +1,4 @@
-#ifndef MYDIALOG_H
-#define MYDIALOG_H
+#pragma once
 
 #include <wx/dialog.h>
 
@@ -20,5 +19,3 @@ public:
     }
     ~MyDialog() override;
 };
-
-#endif // MYDIALOG_H

@@ -1,5 +1,4 @@
-#ifndef NOTEBOOKBASEWRAPPER_H
-#define NOTEBOOKBASEWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 class NotebookPageWrapper;
@@ -30,5 +29,3 @@ public:
 
     int GetPageIndex(const NotebookPageWrapper* page) const;
 };
-
-#endif // NOTEBOOKWRAPPER_H

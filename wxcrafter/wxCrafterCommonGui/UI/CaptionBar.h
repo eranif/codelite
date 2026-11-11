@@ -1,5 +1,4 @@
-#ifndef CAPTIONBAR_H
-#define CAPTIONBAR_H
+#pragma once
 
 #include "gui.hpp"
 
@@ -20,4 +19,3 @@ protected:
     void OnEraseBG(wxEraseEvent& event) override;
     void OnPaint(wxPaintEvent& event) override;
 };
-#endif // CAPTIONBAR_H

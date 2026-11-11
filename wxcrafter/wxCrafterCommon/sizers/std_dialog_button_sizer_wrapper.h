@@ -1,5 +1,4 @@
-#ifndef STDDIALOGBUTTONSIZERWRAPPER_H
-#define STDDIALOGBUTTONSIZERWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -21,5 +20,3 @@ public:
 
     bool IsValidParent() const override { return false; }
 };
-
-#endif // STDDIALOGBUTTONSIZERWRAPPER_H

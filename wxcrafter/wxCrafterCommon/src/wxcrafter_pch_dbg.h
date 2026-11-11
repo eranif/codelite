@@ -1,5 +1,4 @@
-#ifndef WXCRAFTER_PCH_DEBUG_H
-#define WXCRAFTER_PCH_DEBUG_H
+#pragma once
 
 #ifdef __WXMSW__
 #include <direct.h>
@@ -42,5 +41,3 @@
 #include <wx/treectrl.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
-
-#endif // WXCRAFTER_PCH_DEBUG_H

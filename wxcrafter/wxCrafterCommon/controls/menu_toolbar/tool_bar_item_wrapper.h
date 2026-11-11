@@ -1,5 +1,4 @@
-#ifndef TOOLBARITEMWRAPPER_H
-#define TOOLBARITEMWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -90,5 +89,3 @@ public:
     wxString CppCtorCode() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // TOOLBARITEMWRAPPER_H

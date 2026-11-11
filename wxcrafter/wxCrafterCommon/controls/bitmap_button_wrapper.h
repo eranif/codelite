@@ -1,5 +1,4 @@
-#ifndef BITMAPBUTTON_H
-#define BITMAPBUTTON_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -22,5 +21,3 @@ public:
 
     wxcWidget* Clone() const override { return new BitmapButtonWrapper(); }
 };
-
-#endif // BITMAPBUTTON_H

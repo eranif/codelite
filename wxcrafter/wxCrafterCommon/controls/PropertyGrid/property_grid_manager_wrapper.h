@@ -1,5 +1,4 @@
-#ifndef PROPERTYGRIDMANAGERWRAPPER_H
-#define PROPERTYGRIDMANAGERWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -16,5 +15,3 @@ public:
     wxString CppCtorCode() const override;
     wxString DoGenerateCppCtorCode_End() const override;
 };
-
-#endif // PROPERTYGRIDMANAGERWRAPPER_H

@@ -1,5 +1,4 @@
-#ifndef MYPANEL_H
-#define MYPANEL_H
+#pragma once
 
 #include <wx/panel.h>
 
@@ -18,5 +17,3 @@ public:
     }
     ~MyPanel() override;
 };
-
-#endif // MYPANEL_H

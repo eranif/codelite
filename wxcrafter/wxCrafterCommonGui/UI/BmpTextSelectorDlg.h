@@ -1,5 +1,4 @@
-#ifndef BMPTEXTSELECTORDLG_H
-#define BMPTEXTSELECTORDLG_H
+#pragma once
 
 #include "wxcrafter.hpp"
 
@@ -25,4 +24,3 @@ protected:
     void OnEdit(wxCommandEvent& event) override;
     void OnNew(wxCommandEvent& event) override;
 };
-#endif // BMPTEXTSELECTORDLG_H

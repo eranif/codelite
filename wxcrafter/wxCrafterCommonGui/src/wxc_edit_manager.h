@@ -1,5 +1,4 @@
-#ifndef WXCEDITMANAGER_H
-#define WXCEDITMANAGER_H
+#pragma once
 
 #include "unredobase.h"
 
@@ -82,5 +81,3 @@ public:
 
     void DoPopulateUnRedoMenu(wxMenu& menu, bool undoing) override;
 };
-
-#endif // WXCEDITMANAGER_H

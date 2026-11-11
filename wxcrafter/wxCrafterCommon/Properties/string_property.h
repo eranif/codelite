@@ -1,5 +1,4 @@
-#ifndef STRINGPROPERTY_H
-#define STRINGPROPERTY_H
+#pragma once
 
 #include "multi_strings_property.h"
 #include "property_base.h" // Base class: PropertyBase
@@ -30,5 +29,3 @@ public:
     JSONItem Serialize() const override;
     void UnSerialize(const JSONItem& json) override;
 };
-
-#endif // STRINGPROPERTY_H

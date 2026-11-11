@@ -1,5 +1,4 @@
-#ifndef STATICBOXSIZERWRAPPER_H
-#define STATICBOXSIZERWRAPPER_H
+#pragma once
 
 #include "sizer_wrapper_base.h" // Base class: SizerWrapperBase
 
@@ -20,5 +19,3 @@ public:
 
     void SetOrientation(const wxString& orient);
 };
-
-#endif // STATICBOXSIZERWRAPPER_H

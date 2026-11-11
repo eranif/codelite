@@ -1,5 +1,4 @@
-#ifndef PANELWRAPPER_H
-#define PANELWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -18,5 +17,3 @@ public:
     wxcWidget* Clone() const override { return new PanelWrapper(); }
     bool IsContainer() const override { return true; }
 };
-
-#endif // PANELWRAPPER_H

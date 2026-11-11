@@ -1,5 +1,4 @@
-#ifndef PREVIEWPANEL_H
-#define PREVIEWPANEL_H
+#pragma once
 
 #include "frame_wrapper.h"
 
@@ -13,5 +12,3 @@ public:
     DECLARE_EVENT_TABLE()
     void OnClosePreviewPreviewPanel(wxCommandEvent& e);
 };
-
-#endif // PREVIEWPANEL_H

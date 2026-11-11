@@ -1,5 +1,4 @@
-#ifndef WIZARDWRAPPER_H
-#define WIZARDWRAPPER_H
+#pragma once
 
 #include "top_level_win_wrapper.h"
 
@@ -25,5 +24,3 @@ public:
 
     wxString GetWxClassName() const override { return wxT("wxWizard"); }
 };
-
-#endif // WIZARDWRAPPER_H

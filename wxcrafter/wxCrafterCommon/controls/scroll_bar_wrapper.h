@@ -1,5 +1,4 @@
-#ifndef SCROLLBARWRAPPER_H
-#define SCROLLBARWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -19,5 +18,3 @@ public:
     void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // SCROLLBARWRAPPER_H

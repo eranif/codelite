@@ -1,5 +1,4 @@
-#ifndef WXCNOTEBOOKCODEHELPER_H
-#define WXCNOTEBOOKCODEHELPER_H
+#pragma once
 
 #include <wx/string.h>
 
@@ -21,5 +20,3 @@ public:
     void Clear();
     wxString& Code();
 };
-
-#endif // WXCNOTEBOOKCODEHELPER_H

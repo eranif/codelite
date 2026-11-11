@@ -1,5 +1,4 @@
-#ifndef MENUWRAPPER_H
-#define MENUWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h"
 
@@ -24,5 +23,3 @@ public:
     ~SubMenuWrapper() override = default;
     wxcWidget* Clone() const override { return new SubMenuWrapper(); }
 };
-
-#endif // MENUWRAPPER_H

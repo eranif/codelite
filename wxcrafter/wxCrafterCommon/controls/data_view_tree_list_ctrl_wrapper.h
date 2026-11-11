@@ -1,5 +1,4 @@
-#ifndef DATAVIEWTREELISTCTRLWRAPPER_H
-#define DATAVIEWTREELISTCTRLWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -22,5 +21,3 @@ public:
     wxString AssociateModelCode() const;
     wxString GetModelName() const;
 };
-
-#endif // DATAVIEWTREELISTCTRLWRAPPER_H

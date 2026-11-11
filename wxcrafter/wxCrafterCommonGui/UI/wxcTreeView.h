@@ -1,5 +1,4 @@
-#ifndef __wxcTreeView__
-#define __wxcTreeView__
+#pragma once
 
 #include "NewFormWizard.h"
 #include "wxcrafter.hpp"
@@ -57,5 +56,3 @@ protected:
     void OnRefreshWxcpFiles(wxCommandEvent& event) override;
     void OnWxcpFileSelected(wxCommandEvent& event) override;
 };
-
-#endif // __wxcTreeView__

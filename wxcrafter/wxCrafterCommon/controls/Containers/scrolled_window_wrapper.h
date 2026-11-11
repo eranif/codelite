@@ -1,5 +1,4 @@
-#ifndef SCROLLEDWINDOWWRAPPER_H
-#define SCROLLEDWINDOWWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h"
 
@@ -19,5 +18,3 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     bool IsContainer() const override { return true; }
 };
-
-#endif // SCROLLEDWINDOWWRAPPER_H

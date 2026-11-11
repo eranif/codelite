@@ -8,8 +8,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_MYXH_RICHTEXT_H_
-#define _WX_MYXH_RICHTEXT_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -24,5 +23,3 @@ public:
 };
 
 #endif // wxUSE_XRC && wxUSE_RICHTEXT
-
-#endif // _WX_XH_RICHTEXT_H_

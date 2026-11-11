@@ -1,5 +1,4 @@
-#ifndef SPLITTERWINDOWPAGE_H
-#define SPLITTERWINDOWPAGE_H
+#pragma once
 
 #include "controls/Containers/panel_wrapper.h" // Base class: PanelWrapper
 
@@ -11,5 +10,3 @@ public:
     wxcWidget* Clone() const override;
     wxString CppCtorCode() const override;
 };
-
-#endif // SPLITTERWINDOWPAGE_H

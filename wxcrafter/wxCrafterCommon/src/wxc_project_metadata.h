@@ -1,5 +1,4 @@
-#ifndef WXCPROJECTMETADATA_H
-#define WXCPROJECTMETADATA_H
+#pragma once
 
 #include "JSON.h"
 #include "wxc_widget.h"
@@ -130,5 +129,3 @@ public:
      */
     void Serialize(const wxcWidget::List_t& topLevelsList, const wxFileName& filename);
 };
-
-#endif // WXCPROJECTMETADATA_H

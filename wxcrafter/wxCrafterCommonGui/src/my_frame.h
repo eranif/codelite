@@ -1,5 +1,4 @@
-#ifndef MYFRAME_H
-#define MYFRAME_H
+#pragma once
 
 #include <wx/frame.h>
 
@@ -19,5 +18,3 @@ public:
     }
     ~MyFrame() override;
 };
-
-#endif // MYFRAME_H

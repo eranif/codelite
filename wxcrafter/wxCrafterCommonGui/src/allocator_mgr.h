@@ -1,5 +1,4 @@
-#ifndef VISUALIZERMGR_H
-#define VISUALIZERMGR_H
+#pragma once
 
 #include "events_database.h"
 #include "wxgui_bitmaploader.h"
@@ -61,5 +60,3 @@ public:
 
     int GetImageId(int controlId) const;
 };
-
-#endif // VISUALIZERMGR_H

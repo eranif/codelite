@@ -1,5 +1,4 @@
-#ifndef GRIDROWWRAPPER_H
-#define GRIDROWWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h"
 
@@ -25,5 +24,3 @@ public:
     wxString GetWxClassName() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // GRIDROWWRAPPER_H

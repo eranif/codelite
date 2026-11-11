@@ -1,5 +1,4 @@
-#ifndef POPUPWINDOWWRAPPER_H
-#define POPUPWINDOWWRAPPER_H
+#pragma once
 
 #include "top_level_win_wrapper.h"
 #include "wxc_widget.h" // Base class: wxcWidget
@@ -40,5 +39,3 @@ protected:
     /// Generate the methods that wxPopupTransientWindow expects its sub classes to override (they call the base class)
     void DoGenerateExtraFunctions(wxString& decl, wxString& impl) const override;
 };
-
-#endif // POPUPWINDOWWRAPPER_H

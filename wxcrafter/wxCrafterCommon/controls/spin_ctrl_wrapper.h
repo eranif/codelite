@@ -1,5 +1,4 @@
-#ifndef SPINCTRLWRAPPER_H
-#define SPINCTRLWRAPPER_H
+#pragma once
 
 #include "spin_wrapper_base.h" // Base class: SpinWrapperBase
 
@@ -17,5 +16,3 @@ public:
     wxString GetWxClassName() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // SPINCTRLWRAPPER_H

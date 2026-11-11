@@ -1,5 +1,4 @@
-#ifndef COMBOXPROPERTY_H
-#define COMBOXPROPERTY_H
+#pragma once
 
 #include "macros.h"
 #include "property_base.h"
@@ -31,5 +30,3 @@ public:
 
     wxArrayString GetOptions() const override { return s_options; }
 };
-
-#endif // COMBOXPROPERTY_H

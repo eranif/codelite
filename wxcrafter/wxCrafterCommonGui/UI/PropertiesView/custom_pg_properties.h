@@ -1,5 +1,4 @@
-#ifndef CUSTOM_PG_PROPS_H
-#define CUSTOM_PG_PROPS_H
+#pragma once
 
 #include "UI/BitmapSelectorDlg.h"
 #include "UI/BmpTextSelectorDlg.h"
@@ -435,5 +434,3 @@ public:
                                   const wxPoint& pos,
                                   const wxSize& size) const override;
 };
-
-#endif // CUSTOM_PG_PROPS_H

@@ -1,5 +1,4 @@
-#ifndef ACTIVITYINDICATORWRAPPER_H
-#define ACTIVITYINDICATORWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -19,5 +18,3 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     wxcWidget* Clone() const override { return new ActivityIndicatorWrapper(); }
 };
-
-#endif // ACTIVITYRINDICATORWRAPPER_H

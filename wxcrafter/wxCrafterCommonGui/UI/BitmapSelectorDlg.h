@@ -1,5 +1,4 @@
-#ifndef BITMAPSELECTORDLG_H
-#define BITMAPSELECTORDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class BitmapSelectorDlg : public BitmapSelectorDlgBase
@@ -17,4 +16,3 @@ protected:
     void OnSelectBitmapUI(wxUpdateUIEvent& event) override;
     void OnUserArtProviderUI(wxUpdateUIEvent& event) override;
 };
-#endif // BITMAPSELECTORDLG_H

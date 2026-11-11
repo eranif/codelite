@@ -1,5 +1,4 @@
-#ifndef AUIPANEINFO_H
-#define AUIPANEINFO_H
+#pragma once
 
 #include "JSON.h"
 
@@ -39,5 +38,3 @@ public:
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON() const;
 };
-
-#endif // AUIPANEINFO_H

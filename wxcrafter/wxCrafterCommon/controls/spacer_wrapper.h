@@ -1,5 +1,4 @@
-#ifndef SPACERWRAPPER_H
-#define SPACERWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -18,5 +17,3 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     bool IsSizer() const override { return true; }
 };
-
-#endif // SPACERWRAPPER_H

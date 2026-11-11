@@ -1,5 +1,4 @@
-#ifndef _WX_MYXH_INFOBAR_H_
-#define _WX_MYXH_INFOBAR_H_
+#pragma once
 
 #include <wx/infobar.h>
 #include <wx/xrc/xmlreshandler.h>
@@ -17,5 +16,3 @@ public:
     wxObject* DoCreateResource() override;
     bool CanHandle(wxXmlNode* node) override;
 };
-
-#endif // _WX_MYXH_INFOBAR_H_

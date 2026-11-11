@@ -1,5 +1,4 @@
-#ifndef _WX_XH_SIMPLEBOOK_H
-#define _WX_XH_SIMPLEBOOK_H
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -16,5 +15,3 @@ private:
     bool m_isInside = false;
     wxSimplebook* m_notebook = nullptr;
 };
-
-#endif //_WX_XH_SIMPLEBOOK_H

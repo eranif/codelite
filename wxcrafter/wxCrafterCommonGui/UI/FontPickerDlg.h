@@ -1,5 +1,4 @@
-#ifndef FONTPICKERDLG_H
-#define FONTPICKERDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class FontPickerDlg : public FontPickerDlgBaseClass
@@ -31,4 +30,3 @@ public:
         return m_fontname;
     }
 };
-#endif // FONTPICKERDLG_H

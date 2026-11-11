@@ -1,5 +1,4 @@
-#ifndef EDITCUSTOMCONTROLDLG_H
-#define EDITCUSTOMCONTROLDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class EditCustomControlDlg : public EditCustomControlDlgBaseClass
@@ -20,4 +19,3 @@ protected:
     void OnSave(wxCommandEvent& event) override;
     void OnSelectControl(wxCommandEvent& event) override;
 };
-#endif // EDITCUSTOMCONTROLDLG_H

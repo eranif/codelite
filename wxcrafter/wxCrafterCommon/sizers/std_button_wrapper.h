@@ -1,5 +1,4 @@
-#ifndef STDBUTTONWRAPPER_H
-#define STDBUTTONWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -21,5 +20,3 @@ public:
     void LoadPropertiesFromXRC(const wxXmlNode* node) override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // STDBUTTONWRAPPER_H

@@ -1,5 +1,4 @@
-#ifndef IMPORTDLG_H
-#define IMPORTDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class ImportDlg : public ImportDlgBaseClass
@@ -40,4 +39,3 @@ protected:
     virtual void OnOKButtonUpdateUI(wxUpdateUIEvent& event);
     void OnBrowse(wxCommandEvent& event) override;
 };
-#endif // IMPORTDLG_H

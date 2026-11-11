@@ -8,8 +8,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_XRC_XH_RIBBON_H_
-#define _WX_XRC_XH_RIBBON_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -42,5 +41,3 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(MyWxRibbonXmlHandler);
 };
-
-#endif // wxUSE_XRC && wxUSE_RIBBON

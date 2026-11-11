@@ -1,5 +1,4 @@
-#ifndef SIMPLEBOOKWRAPPER_H
-#define SIMPLEBOOKWRAPPER_H
+#pragma once
 
 #include "Containers/notebook_base_wrapper.h" // Base class: NotebookBaseWrapper
 
@@ -17,5 +16,3 @@ public:
     wxString GetWxClassName() const override;
     wxString CppCtorCode() const override;
 };
-
-#endif // SIMPLEBOOKWRAPPER_H

@@ -1,5 +1,4 @@
-#ifndef CALENDARCTRLWRAPPER_H
-#define CALENDARCTRLWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
@@ -17,5 +16,3 @@ public:
     wxString GetWxClassName() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // CALENDARCTRLWRAPPER_H

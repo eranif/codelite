@@ -1,5 +1,4 @@
-#ifndef IMPORTFROMXRC_H
-#define IMPORTFROMXRC_H
+#pragma once
 
 #include "wxc_widget.h"
 
@@ -17,5 +16,3 @@ void ProcessNamedNode(wxXmlNode* node,
                       const wxString& name); // Used for auitoolbar dropdown nodes
 
 } // namespace ImportFromXrc
-
-#endif // IMPORTFROMXRC_H

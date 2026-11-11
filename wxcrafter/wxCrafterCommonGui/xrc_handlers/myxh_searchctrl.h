@@ -8,8 +8,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_MYXH_SRCH_H_
-#define _WX_MYXH_SRCH_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -25,5 +24,3 @@ public:
 };
 
 #endif // wxUSE_XRC && wxUSE_SEARCHCTRL
-
-#endif // _WX_XH_SRCH_H_

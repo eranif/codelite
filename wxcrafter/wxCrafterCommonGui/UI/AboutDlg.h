@@ -1,5 +1,4 @@
-#ifndef ABOUTDLG_H
-#define ABOUTDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class wxcAboutDlg : public wxcAboutDlgBaseClass
@@ -11,4 +10,3 @@ public:
 protected:
     void OnSize(wxSizeEvent& event) override;
 };
-#endif // ABOUTDLG_H

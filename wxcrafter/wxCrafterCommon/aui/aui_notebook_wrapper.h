@@ -1,5 +1,4 @@
-#ifndef AUINOTEBOOKWRAPPER_H
-#define AUINOTEBOOKWRAPPER_H
+#pragma once
 
 #include "controls/Containers/notebook_base_wrapper.h" // Base class: NotebookBaseWrapper
 
@@ -15,5 +14,3 @@ public:
     void GetIncludeFile(wxArrayString& headers) const override;
     wxString GetWxClassName() const override;
 };
-
-#endif // AUINOTEBOOKWRAPPER_H

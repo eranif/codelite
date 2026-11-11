@@ -1,5 +1,4 @@
-#ifndef GRIDWRAPPER_H
-#define GRIDWRAPPER_H
+#pragma once
 
 #include "grid_column_wrapper.h"
 #include "grid_row_wrapper.h"
@@ -24,5 +23,3 @@ public:
     wxString GetWxClassName() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // GRIDWRAPPER_H

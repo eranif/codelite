@@ -1,5 +1,4 @@
-#ifndef MEDIACTRL_H
-#define MEDIACTRL_H
+#pragma once
 #include "wxcrafter_gui.hpp"
 
 class MediaCtrl : public MediaCtrlBase
@@ -10,4 +9,3 @@ public:
 
     wxStaticBitmap* Bitmap() const { return m_staticBitmap667; }
 };
-#endif // MEDIACTRL_H

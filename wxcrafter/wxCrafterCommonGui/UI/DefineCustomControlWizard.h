@@ -1,5 +1,4 @@
-#ifndef DEFINECUSTOMCONTROLWIZARD_H
-#define DEFINECUSTOMCONTROLWIZARD_H
+#pragma once
 
 #include "wxc_settings.h"
 #include "wxcrafter.hpp"
@@ -17,4 +16,3 @@ protected:
     void OnNewEvent(wxCommandEvent& event) override;
     void OnPageChanging(wxWizardEvent& event) override;
 };
-#endif // DEFINECUSTOMCONTROLWIZARD_H

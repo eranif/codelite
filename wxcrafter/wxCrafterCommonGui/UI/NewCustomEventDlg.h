@@ -1,5 +1,4 @@
-#ifndef NEWCUSTOMEVENTDLG_H
-#define NEWCUSTOMEVENTDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class NewCustomEventDlg : public NewCustomEventBaseDlg
@@ -12,4 +11,3 @@ public:
 
     wxString GetEventType() const { return m_textCtrlEventType->GetValue().Trim(); }
 };
-#endif // NEWCUSTOMEVENTDLG_H

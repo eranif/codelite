@@ -1,5 +1,4 @@
-#ifndef NOTEBOOKPAGEWRAPPER_H
-#define NOTEBOOKPAGEWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h"
 class NotebookBaseWrapper;
@@ -39,5 +38,3 @@ public:
 
     wxSize GetImageSize() const;
 };
-
-#endif // NOTEBOOKPAGEWRAPPER_H

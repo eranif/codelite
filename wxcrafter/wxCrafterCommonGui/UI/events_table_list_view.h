@@ -1,5 +1,4 @@
-#ifndef EVENTSTABLELISTVIEW_H
-#define EVENTSTABLELISTVIEW_H
+#pragma once
 
 #include "events_database.h"
 #include "wxc_widget.h"
@@ -26,5 +25,3 @@ public:
     void Construct(EventsEditorPane* dlg, wxcWidget* control, const EventsDatabase& events);
     void Save();
 };
-
-#endif // EVENTSTABLELISTVIEW_H

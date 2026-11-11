@@ -1,5 +1,4 @@
-#ifndef TIMERCTRLWRAPPER_H
-#define TIMERCTRLWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -19,5 +18,3 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     wxcWidget* Clone() const override { return new TimePickerCtrlWrapper(); }
 };
-
-#endif // TIMERCTRLWRAPPER_H

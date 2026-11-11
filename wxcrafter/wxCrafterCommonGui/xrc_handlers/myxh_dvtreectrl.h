@@ -1,5 +1,4 @@
-#ifndef _WX_MYXH_DVTREECTRL_H_
-#define _WX_MYXH_DVTREECTRL_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -17,5 +16,3 @@ private:
     wxDataViewTreeCtrl* HandleListCtrl();
     void HandleListCol();
 };
-
-#endif // _WX_MYXH_DVTREECTRL_H_

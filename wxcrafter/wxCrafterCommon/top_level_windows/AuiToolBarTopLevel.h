@@ -1,5 +1,4 @@
-#ifndef AUITOOLBARTOPLEVEL_H
-#define AUITOOLBARTOPLEVEL_H
+#pragma once
 
 #include "AuiToolbarWrapperBase.h"
 #include "top_level_win_wrapper.h"
@@ -27,5 +26,3 @@ public:
     // no base class
     bool WantsSubclass() const override { return true; }
 };
-
-#endif // AUITOOLBARTOPLEVEL_H

@@ -1,5 +1,4 @@
-#ifndef WXCSETTINGS_H
-#define WXCSETTINGS_H
+#pragma once
 
 #include "JSON.h"
 
@@ -141,5 +140,3 @@ public:
     void SetHistory(const wxArrayString& history) { this->m_history = history; }
     const wxArrayString& GetHistory() const { return m_history; }
 };
-
-#endif // WXCSETTINGS_H

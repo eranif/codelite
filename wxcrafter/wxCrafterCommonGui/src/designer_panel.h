@@ -1,5 +1,4 @@
-#ifndef __designer_panel__
-#define __designer_panel__
+#pragma once
 
 #include <map>
 #include <wx/aui/auibook.h>
@@ -85,5 +84,3 @@ public:
     void OnRibbonPageChanged(wxRibbonBarEvent& e);
     void OnSize(wxSizeEvent& event);
 };
-
-#endif // __designer_panel__

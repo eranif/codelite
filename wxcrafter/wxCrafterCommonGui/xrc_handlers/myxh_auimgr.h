@@ -7,8 +7,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_XH_AUI_H_
-#define _WX_XH_AUI_H_
+#pragma once
 
 #include <wx/vector.h>
 #include <wx/xrc/xmlreshandler.h>
@@ -42,5 +41,3 @@ private:
 
     wxDECLARE_DYNAMIC_CLASS(MyWxAuiManagerXmlHandler);
 };
-
-#endif //_WX_XH_AUI_H_

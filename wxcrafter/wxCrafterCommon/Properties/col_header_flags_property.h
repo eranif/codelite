@@ -1,5 +1,4 @@
-#ifndef COLHEADERFLAGSPROPERTY_H
-#define COLHEADERFLAGSPROPERTY_H
+#pragma once
 
 #include "property_base.h" // Base class: PropertyBase
 
@@ -33,5 +32,3 @@ public:
     void SetValue(const wxString& value) override;
     void UnSerialize(const JSONItem& json) override;
 };
-
-#endif // COLHEADERFLAGSPROPERTY_H

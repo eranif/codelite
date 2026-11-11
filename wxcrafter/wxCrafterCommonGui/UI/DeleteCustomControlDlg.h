@@ -1,5 +1,4 @@
-#ifndef DELETECUSTOMCONTROLDLG_H
-#define DELETECUSTOMCONTROLDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class DeleteCustomControlDlg : public DeleteCustomControlDlgBaseClass
@@ -17,4 +16,3 @@ protected:
 
     void DoPopulate();
 };
-#endif // DELETECUSTOMCONTROLDLG_H

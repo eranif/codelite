@@ -1,5 +1,4 @@
-#ifndef _WXGUI_HELPERS_H_
-#define _WXGUI_HELPERS_H_
+#pragma once
 
 #include "macros.h"
 
@@ -273,5 +272,3 @@ void WriteGeneratedOutput(const wxString& baseCpp,
                           std::function<void(const wxFileName&)> onFileSaved,
                           const wxString& bitmapsCode = wxEmptyString);
 } // namespace wxCrafter
-
-#endif // _WXGUI_HELPERS_H_

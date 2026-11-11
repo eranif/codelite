@@ -1,5 +1,4 @@
-#ifndef DATAVIEWLISTCTRLCOLUMN_H
-#define DATAVIEWLISTCTRLCOLUMN_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -22,5 +21,3 @@ public:
      */
     wxString GetRealName() const override { return ""; }
 };
-
-#endif // DATAVIEWLISTCTRLCOLUMN_H

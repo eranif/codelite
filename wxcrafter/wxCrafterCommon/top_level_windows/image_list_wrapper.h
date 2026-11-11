@@ -1,5 +1,4 @@
-#ifndef IMAGELISTWRAPPER_H
-#define IMAGELISTWRAPPER_H
+#pragma once
 
 #include "top_level_win_wrapper.h"
 
@@ -25,5 +24,3 @@ public:
     // no base class
     bool WantsSubclass() const override { return false; }
 };
-
-#endif // IMAGELISTWRAPPER_H

@@ -7,8 +7,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_XH_PROPGRID_H_
-#define _WX_XH_PROPGRID_H_
+#pragma once
 
 #include <wx/propgrid/property.h>
 #include <wx/xrc/xmlreshandler.h>
@@ -34,5 +33,3 @@ private:
     wxPropertyGridManager* m_pgmgr = nullptr;
     wxPGProperty* m_propertyParent = nullptr;
 };
-
-#endif // _WX_XH_PROPGRID_H_

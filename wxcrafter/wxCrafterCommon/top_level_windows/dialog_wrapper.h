@@ -1,5 +1,4 @@
-#ifndef DIALOGWRAPPER_H
-#define DIALOGWRAPPER_H
+#pragma once
 
 #include "top_level_win_wrapper.h" // Base class: TopLevelWinWrapper
 
@@ -24,5 +23,3 @@ public:
     void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // DIALOGWRAPPER_H

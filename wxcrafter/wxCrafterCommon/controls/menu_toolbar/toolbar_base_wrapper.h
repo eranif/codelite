@@ -1,5 +1,4 @@
-#ifndef TOOLBARBASEWRAPPER_H
-#define TOOLBARBASEWRAPPER_H
+#pragma once
 
 #include "AuiToolbarWrapperBase.h"
 #include "wxc_widget.h" // Base class: WrapperBase
@@ -56,5 +55,3 @@ public:
     void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // TOOLBARBASEWRAPPER_H

@@ -8,8 +8,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_MYXH_GRD_H_
-#define _WX_MYXH_GRD_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -24,5 +23,3 @@ public:
     wxObject* DoCreateResource() override;
     bool CanHandle(wxXmlNode* node) override;
 };
-
-#endif // _WX_XH_GRD_H_

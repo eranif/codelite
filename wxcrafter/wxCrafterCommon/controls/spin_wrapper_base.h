@@ -1,5 +1,4 @@
-#ifndef SPINWRAPPERBASE_H
-#define SPINWRAPPERBASE_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -15,5 +14,3 @@ public:
 
     void EnsureSaneValues(wxString& min, wxString& max, int& imin, int& imax, int& val) const;
 };
-
-#endif // SPINWRAPPERBASE_H

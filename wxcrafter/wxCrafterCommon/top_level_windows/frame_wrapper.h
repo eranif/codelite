@@ -1,5 +1,4 @@
-#ifndef FRAMEWRAPPER_H
-#define FRAMEWRAPPER_H
+#pragma once
 
 #include "top_level_win_wrapper.h" // Base class: TopLevelWinWrapper
 
@@ -34,5 +33,3 @@ public:
 
     wxString GetWxClassName() const override;
 };
-
-#endif // FRAMEWRAPPER_H

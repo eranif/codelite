@@ -1,5 +1,4 @@
-#ifndef STYLESSHEETLISTVIEW_H
-#define STYLESSHEETLISTVIEW_H
+#pragma once
 
 #include <wx/propgrid/propgrid.h>
 
@@ -18,5 +17,3 @@ public:
     void Construct(wxPropertyGrid* pg, wxcWidget* wb);
     void Clear(wxPropertyGrid* pg);
 };
-
-#endif // STYLESSHEETLISTVIEW_H

@@ -1,5 +1,4 @@
-#ifndef PREVIEWDIALOG_H
-#define PREVIEWDIALOG_H
+#pragma once
 
 #include "dialog_wrapper.h"
 
@@ -16,5 +15,3 @@ public:
     ~PreviewDialog() override;
     void OnClosePreview(wxCommandEvent& e);
 };
-
-#endif // PREVIEWDIALOG_H

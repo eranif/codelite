@@ -1,5 +1,4 @@
-#ifndef LISTBOOKWRAPPER_H
-#define LISTBOOKWRAPPER_H
+#pragma once
 
 #include "Containers/notebook_base_wrapper.h" // Base class: NotebookBaseWrapper
 
@@ -15,5 +14,3 @@ public:
     wxString GetWxClassName() const override;
     wxString GetXRCPageClass() const override;
 };
-
-#endif // LISTBOOKWRAPPER_H

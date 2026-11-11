@@ -1,5 +1,4 @@
-#ifndef MYREARRANGELISTXMLHANDLER_H
-#define MYREARRANGELISTXMLHANDLER_H
+#pragma once
 
 #include <wx/arrstr.h>
 #include <wx/xrc/xmlreshandler.h>
@@ -18,4 +17,3 @@ public:
     wxObject* DoCreateResource() override;
     bool CanHandle(wxXmlNode* node) override;
 };
-#endif // MYREARRANGELISTXMLHANDLER_H

@@ -1,5 +1,4 @@
-#ifndef WXCBITMAPCODEGENERATOR_H
-#define WXCBITMAPCODEGENERATOR_H
+#pragma once
 
 #include "clResult.hpp"
 #include "macros.h"
@@ -87,5 +86,3 @@ public:
     /// The generated bitmaps source file. Valid after CreateXRC() was called.
     const wxFileName& GetBitmapsCppFile() const { return m_destCPP; }
 };
-
-#endif // WXCBITMAPCODEGENERATOR_H

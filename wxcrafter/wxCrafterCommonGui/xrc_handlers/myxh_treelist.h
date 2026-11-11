@@ -1,5 +1,4 @@
-#ifndef MYXH_TREELIST_H
-#define MYXH_TREELIST_H
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -16,5 +15,3 @@ private:
     wxTreeListCtrl* HandleListCtrl();
     void HandleListCol();
 };
-
-#endif // MYXH_TREELIST_H

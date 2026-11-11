@@ -1,5 +1,4 @@
-#ifndef INFOBARWRAPPER_H
-#define INFOBARWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
@@ -16,5 +15,3 @@ public:
     wxString GetWxClassName() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
-
-#endif // INFOBARWRAPPER_H

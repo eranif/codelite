@@ -1,5 +1,4 @@
-#ifndef RIBBONBARWRAPPER_H
-#define RIBBONBARWRAPPER_H
+#pragma once
 
 #include "wxc_widget.h" // Base class: wxcWidget
 class RibbonPageWrapper;
@@ -21,5 +20,3 @@ public:
     void SetSelection(RibbonPageWrapper* page);
     RibbonPageWrapper* GetSelection() const;
 };
-
-#endif // RIBBONBARWRAPPER_H

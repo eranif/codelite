@@ -8,8 +8,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_MYXH_LISTC_H_
-#define _WX_MYXH_LISTC_H_
+#pragma once
 
 #include <wx/xrc/xmlreshandler.h>
 
@@ -36,5 +35,3 @@ private:
     // which is wxIMAGE_LIST_NORMAL or small if it is wxIMAGE_LIST_SMALL)
     long GetImageIndex(wxListCtrl* listctrl, int which);
 };
-
-#endif // _WX_XH_LISTC_H_

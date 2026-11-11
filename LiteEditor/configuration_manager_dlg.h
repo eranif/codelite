@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __configuration_manager_dlg__
-#define __configuration_manager_dlg__
+#pragma once
 
 #include "ConfigManagerBaseDlg.hpp"
 #include "configuration_mapping.h"
@@ -68,4 +67,3 @@ public:
     ~ConfigurationManagerDlg() override;
 };
 
-#endif // __configuration_manager_dlg__

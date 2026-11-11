@@ -1,5 +1,4 @@
-#ifndef CODELITEIDE_PCH_RELEASE_H
-#define CODELITEIDE_PCH_RELEASE_H
+#pragma once
 
 #ifdef __WXMSW__
 #include <direct.h>
@@ -45,4 +44,3 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
-#endif // WXCRAFTER_PCH_RELEASE_H

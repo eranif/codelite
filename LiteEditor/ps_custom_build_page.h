@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ps_custom_build_page__
-#define __ps_custom_build_page__
+#pragma once
 
 #include "globals.h"
 /**
@@ -78,4 +77,3 @@ protected:
     ProjectSettingsDlg* GetDlg();
 };
 
-#endif // __ps_custom_build_page__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __workspacetab__
-#define __workspacetab__
+#pragma once
 
 #include "cl_command_event.h"
 #include "wxcrafter.hpp"
@@ -113,4 +112,3 @@ public:
      */
     void AddPinnedProject(const wxString& project);
 };
-#endif // __workspacetab__

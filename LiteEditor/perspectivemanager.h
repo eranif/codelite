@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PERSPECTIVEMANAGER_H
-#define PERSPECTIVEMANAGER_H
+#pragma once
 
 #include <unordered_set>
 #include <vector>
@@ -138,4 +137,3 @@ private:
     std::vector<wxString> m_panesHiddenByToggle; // the main panes that ToggleMainPanes() hid
 };
 
-#endif // PERSPECTIVEMANAGER_H

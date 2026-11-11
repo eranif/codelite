@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __stringhighlighterjob__
-#define __stringhighlighterjob__
+#pragma once
 
 #include <vector>
 #include <wx/string.h>
@@ -61,4 +60,3 @@ public:
 public:
     virtual void Process();
 };
-#endif // __stringhighlighterjob__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __breakpointslistctrl__
-#define __breakpointslistctrl__
+#pragma once
 
 #include "clThemedListCtrl.h"
 #include "debugger.h"
@@ -78,4 +77,3 @@ public:
     int GetFileColumn() { return col_file; }
 };
 
-#endif //  __breakpointslistctrl__

@@ -1,5 +1,4 @@
-#ifndef EDITCMPTEMPLATEDIALOG_H
-#define EDITCMPTEMPLATEDIALOG_H
+#pragma once
 #include "compiler_pages.hpp"
 
 class EditCmpTemplateDialog : public EditCmpTemplateDialogBase
@@ -11,4 +10,3 @@ public:
     void SetPattern(const wxString& pattern);
     wxString GetPattern() const;
 };
-#endif // EDITCMPTEMPLATEDIALOG_H

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CONTEXT_MANAGER_H
-#define CONTEXT_MANAGER_H
+#pragma once
 
 #include "context_base.h"
 #include "singleton.h"
@@ -53,4 +52,3 @@ private:
 private:
     std::unordered_map<wxString, ContextBasePtr> m_contextPool;
 };
-#endif // CONTEXT_MANAGER_H

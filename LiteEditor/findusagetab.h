@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef FINDUSAGETAB_H
-#define FINDUSAGETAB_H
+#pragma once
 
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
@@ -94,4 +93,3 @@ protected:
     void DoMatchSelected(int row, wxDataViewEvent& event) { DoMatchSelected(m_dvMatches->RowToItem(row), event); }
 };
 
-#endif // FINDUSAGETAB_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EDITORSETTHINGSBOOKMARKSPANEL__
-#define __EDITORSETTHINGSBOOKMARKSPANEL__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -35,4 +34,3 @@ public:
     ~EditorSettingsBookmarksPanel() override = default;
 };
 
-#endif // __EDITORSETTHINGSBOOKMARKSPANEL__

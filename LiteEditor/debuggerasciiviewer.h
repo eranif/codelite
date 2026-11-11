@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __debuggerasciiviewer__
-#define __debuggerasciiviewer__
+#pragma once
 
 /**
 @file
@@ -51,4 +50,3 @@ public:
     void UpdateView(const wxString& expr, const wxString& value);
 };
 
-#endif // __debuggerasciiviewer__

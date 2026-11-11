@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DebuggerCallstackView_H
-#define DebuggerCallstackView_H
+#pragma once
 
 #include "bitmap_loader.h"
 #include "cl_command_event.h"
@@ -58,4 +57,3 @@ private:
     DebuggerBtImgList m_images;
 };
 
-#endif // DebuggerCallstackView_H

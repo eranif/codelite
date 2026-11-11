@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EDITORSETTINGSCARET__
-#define __EDITORSETTINGSCARET__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -35,4 +34,3 @@ public:
     ~EditorSettingsCaret() override = default;
 };
 
-#endif // __EDITORSETTINGSCARET__

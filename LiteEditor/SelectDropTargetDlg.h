@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SELECTDROPTARGETDLG_H
-#define SELECTDROPTARGETDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 #include <map>
@@ -45,4 +44,3 @@ protected:
     void Initialize();
     void ActivateSelection();
 };
-#endif // SELECTDROPTARGETDLG_H

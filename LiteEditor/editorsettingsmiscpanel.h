@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EDITORSETTINGSMISCPANEL__
-#define __EDITORSETTINGSMISCPANEL__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -40,4 +39,3 @@ public:
     ~EditorSettingsMiscPanel() override = default;
 };
 
-#endif // __EDITORSETTINGSMISCPANEL__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef FILE_VIEW_TREE_H
-#define FILE_VIEW_TREE_H
+#pragma once
 
 #include "VirtualDirectoryColour.h"
 #include "clThemedTreeCtrl.h"
@@ -266,4 +265,3 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-#endif // FILE_VIEW_TREE_H

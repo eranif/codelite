@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __simpletablebase__
-#define __simpletablebase__
+#pragma once
 
 #include "debugger.h"
 #include "debuggerobserver.h"
@@ -129,4 +128,3 @@ public:
     virtual wxString GetItemPath(const wxTreeItemId& item);
 };
 
-#endif //__simpletablebase__

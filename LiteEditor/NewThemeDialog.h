@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef NEWTHEMEDIALOG_H
-#define NEWTHEMEDIALOG_H
+#pragma once
 #include "lexer_configuration.h"
 #include "syntaxhighlightbasedlg.hpp"
 
@@ -47,4 +46,3 @@ protected:
     void OnLexerSelected(wxCommandEvent& event) override;
     void OnOkUI(wxUpdateUIEvent& event) override;
 };
-#endif // NEWTHEMEDIALOG_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editorsettingsterminal__
-#define __editorsettingsterminal__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -35,4 +34,3 @@ public:
     ~EditorSettingsTerminal() override = default;
 };
 
-#endif // __editorsettingsterminal__

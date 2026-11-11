@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CODECOMPLETIONMANAGER_H
-#define CODECOMPLETIONMANAGER_H
+#pragma once
 
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
@@ -70,4 +69,3 @@ public:
     static void Release();
 };
 
-#endif // CODECOMPLETIONMANAGER_H

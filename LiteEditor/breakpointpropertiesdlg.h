@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __breakptpropertiesdlg__
-#define __breakptpropertiesdlg__
+#pragma once
 
 #include "breakpointdlgbase.hpp"
 #include "debugger.h"
@@ -64,4 +63,3 @@ public:
     clDebuggerBreakpoint b; // Used to return the amended settings
 };
 
-#endif // __breakptpropertiesdlg__

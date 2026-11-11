@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERMAINPAGE_H
-#define COMPILERMAINPAGE_H
+#pragma once
 
 #include "compiler.h"
 #include "compiler_pages.hpp"
@@ -190,4 +189,3 @@ protected:
     void OnWarnItemActivated(wxDataViewEvent& event) override;
     void OnWarningPatternSelectedUI(wxUpdateUIEvent& event) override;
 };
-#endif // COMPILERMAINPAGE_H

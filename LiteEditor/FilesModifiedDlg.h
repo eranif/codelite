@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef FILESMODIFIEDDLG_H
-#define FILESMODIFIEDDLG_H
+#pragma once
 #include "filechecklistbase.hpp"
 
 class FilesModifiedDlg : public FilesModifiedDlgBase
@@ -47,4 +46,3 @@ protected:
     void OnChoose(wxCommandEvent& event) override;
     void OnLoad(wxCommandEvent& event) override;
 };
-#endif // FILESMODIFIEDDLG_H

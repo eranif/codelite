@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EDITORSETTINGSFOLDING__
-#define __EDITORSETTINGSFOLDING__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -35,4 +34,3 @@ public:
     ~EditorSettingsFolding() override = default;
 };
 
-#endif // __EDITORSETTINGSFOLDING__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef SHELLTAB_H
-#define SHELLTAB_H
+#pragma once
 
 #include "OutputDebugStringThread.h"
 #include "clToolBar.h"
@@ -112,4 +111,3 @@ public:
     void AppendLine(const wxString& line);
 };
 
-#endif // SHELLTAB_H

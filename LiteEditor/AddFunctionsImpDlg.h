@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ADDFUNCTIONSIMPDLG_H
-#define ADDFUNCTIONSIMPDLG_H
+#pragma once
 
 #include "database/entry.h"
 #include "wxcrafter.hpp"
@@ -53,4 +52,3 @@ protected:
     void OnUncheckAll(wxCommandEvent& event) override;
 };
 
-#endif // ADDFUNCTIONSIMPDLG_H

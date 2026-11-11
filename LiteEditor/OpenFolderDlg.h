@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef OPENFOLDERDLG_H
-#define OPENFOLDERDLG_H
+#pragma once
 #include "wxcrafter.hpp"
 
 class OpenFolderDlg : public OpenFolderDlgBase
@@ -33,4 +32,3 @@ public:
     OpenFolderDlg(wxWindow* parent);
     ~OpenFolderDlg() override = default;
 };
-#endif // OPENFOLDERDLG_H

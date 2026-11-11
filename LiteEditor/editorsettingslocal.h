@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editorsettingslocal__
-#define __editorsettingslocal__
+#pragma once
 
 #include "editorsettingslocalbase.hpp"
 #include "globals.h"
@@ -71,4 +70,3 @@ protected:
     OptionsConfigPtr higherOptions;
     wxXmlNode* node;
 };
-#endif // __editorsettingslocal__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __pluginmgrdlg__
-#define __pluginmgrdlg__
+#pragma once
 
 #include "DataViewTypeHelper.h"
 #include "plugindlgbase.hpp"
@@ -52,4 +51,3 @@ public:
     ~PluginMgrDlg() override = default;
 };
 
-#endif // __pluginmgrdlg__

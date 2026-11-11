@@ -1,5 +1,4 @@
-#ifndef EDITOROPTIONSGENERALGUIDESPANEL_H
-#define EDITOROPTIONSGENERALGUIDESPANEL_H
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -9,4 +8,3 @@ public:
     EditorOptionsGeneralGuidesPanel(wxWindow* parent, OptionsConfigPtr options);
     ~EditorOptionsGeneralGuidesPanel() override = default;
 };
-#endif // EDITOROPTIONSGENERALGUIDESPANEL_H

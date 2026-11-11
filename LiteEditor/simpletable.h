@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __simpletable__
-#define __simpletable__
+#pragma once
 
 #include "cl_command_event.h"
 #include "debuggerobserver.h"
@@ -116,4 +115,3 @@ public:
     void RefreshValues(bool repositionEditor = true);
 };
 
-#endif // __simpletable__

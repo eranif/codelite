@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __new_configuration_dlg__
-#define __new_configuration_dlg__
+#pragma once
 
 #include "new_configuration_dlg_base.hpp"
 
@@ -49,4 +48,3 @@ public:
                         int style = wxDEFAULT_DIALOG_STYLE);
 };
 
-#endif //__new_configuration_dlg__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef MENU_EVENT_HANDLERS_H
-#define MENU_EVENT_HANDLERS_H
+#pragma once
 
 #include <memory>
 #include <wx/event.h>
@@ -212,4 +211,3 @@ public:
     void ProcessUpdateUIEvent(wxWindow* owner, wxUpdateUIEvent& event) override;
 };
 
-#endif // MENU_EVENT_HANDLERS_H

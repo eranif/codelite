@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __filechecklist__
-#define __filechecklist__
+#pragma once
 
 #include "filechecklistbase.hpp"
 
@@ -62,4 +61,3 @@ public:
     const std::vector<std::pair<wxFileName, bool>>& GetFiles() const { return m_files; }
 };
 
-#endif // __filechecklist__

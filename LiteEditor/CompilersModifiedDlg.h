@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERSMODIFIEDDLG_H
-#define COMPILERSMODIFIEDDLG_H
+#pragma once
 
 #include "CompilersFoundDlgBase.hpp"
 #include "macros.h"
@@ -48,4 +47,3 @@ protected:
     void OnValueChanged(wxPropertyGridEvent& event) override;
     void OnOKUI(wxUpdateUIEvent& event) override;
 };
-#endif // COMPILERSMODIFIEDDLG_H

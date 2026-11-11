@@ -1,5 +1,4 @@
-#ifndef BUILDTAB_HPP
-#define BUILDTAB_HPP
+#pragma once
 
 #include "BuildTabView.hpp"
 #include "buildtabsettingsdata.h"
@@ -57,4 +56,3 @@ private:
     BuildTabView* m_viewStc = nullptr;
 };
 
-#endif // BUILDTAB_HPP

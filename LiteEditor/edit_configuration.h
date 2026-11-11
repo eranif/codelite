@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __edit_configuration__
-#define __edit_configuration__
+#pragma once
 
 #include "edit_configuration_base.hpp"
 
@@ -53,4 +52,3 @@ public:
                             int style = wxDEFAULT_DIALOG_STYLE);
 };
 
-#endif //__edit_configuration__

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ps_custom_makefile_rules_page__
-#define __ps_custom_makefile_rules_page__
+#pragma once
 
 /**
 @file
@@ -58,4 +57,3 @@ public:
     void Clear() override;
 };
 
-#endif // __ps_custom_makefile_rules_page__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __breakpointdlg__
-#define __breakpointdlg__
+#pragma once
 
 #include "breakpointdlgbase.hpp"
 #include "breakpointsmgr.h"
@@ -74,4 +73,3 @@ public:
     void Initialize();
 };
 
-#endif // __breakpointdlg__

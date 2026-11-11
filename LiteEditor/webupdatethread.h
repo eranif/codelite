@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __webupdatethread__
-#define __webupdatethread__
+#pragma once
 
 #include "SocketAPI/clSocketClientAsync.h"
 #include "cl_command_event.h"
@@ -100,4 +99,3 @@ public:
     bool IsUserRequest() const { return m_userRequest; }
     void Check();
 };
-#endif // __webupdatethread__

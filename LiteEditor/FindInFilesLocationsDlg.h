@@ -1,5 +1,4 @@
-#ifndef FINDINFILESLOCATIONSDLG_H
-#define FINDINFILESLOCATIONSDLG_H
+#pragma once
 #include "findinfiles_dlg.hpp"
 
 class FindInFilesLocationsDlg : public FindInFilesLocationsDlgBase
@@ -19,4 +18,3 @@ public:
 
     wxArrayString GetLocations() const;
 };
-#endif // FINDINFILESLOCATIONSDLG_H

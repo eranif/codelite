@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __debugcoredumpinfo__
-#define __debugcoredumpinfo__
+#pragma once
 
 #include "codelite_exports.h"
 #include "serialized_object.h"
@@ -60,4 +59,3 @@ protected:
     wxArrayString m_wds;
     int m_selectedDbg;
 };
-#endif // __debugcoredumpinfo__

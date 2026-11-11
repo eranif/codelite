@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __localstable__
-#define __localstable__
+#pragma once
 
 #include "Debugger/debuggersettings.h"
 #include "cl_command_event.h"
@@ -91,4 +90,3 @@ public:
 
     DECLARE_EVENT_TABLE()
 };
-#endif // __localstable__

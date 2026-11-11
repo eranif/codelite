@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef BREAKPOINTS_MANAGER_H
-#define BREAKPOINTS_MANAGER_H
+#pragma once
 
 #include "cl_editor.h"
 #include "debugger.h"
@@ -333,4 +332,3 @@ public:
     void OnMotion(wxMouseEvent& event);
     void OnEndDrag(wxMouseEvent& event);
 };
-#endif // BREAKPOINTS_MANAGER_H

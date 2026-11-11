@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __buildsettingstab__
-#define __buildsettingstab__
+#pragma once
 
 #include "buildsettingstabbase.hpp"
 
@@ -45,4 +44,3 @@ protected:
     void OnChange(wxCommandEvent& event) override;
 };
 
-#endif // __buildsettingstab__

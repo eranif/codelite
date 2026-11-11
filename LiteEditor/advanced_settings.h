@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __advanced_settings__
-#define __advanced_settings__
+#pragma once
 
 #include "CompilerMainPage.h"
 #include "CompilersDetectorManager.h"
@@ -98,4 +97,3 @@ public:
     void OnAutoDetectCompilers(wxButton* btn);
 };
 
-#endif //__advanced_settings__

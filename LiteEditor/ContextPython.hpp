@@ -1,5 +1,4 @@
-#ifndef CONTEXTPYTHON_HPP
-#define CONTEXTPYTHON_HPP
+#pragma once
 
 #include "generic_context.h"
 
@@ -27,4 +26,3 @@ public:
     bool IsAtLineComment() const override;
 };
 
-#endif // CONTEXTPYTHON_HPP

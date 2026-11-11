@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __outputtabwindow__
-#define __outputtabwindow__
+#pragma once
 
 #include "clFindResultsStyler.h"
 
@@ -88,4 +87,3 @@ public:
     wxStyledTextCtrl* GetSci() { return m_sci; }
     virtual void AppendText(const wxString& text, bool toggle_view = true);
 };
-#endif // __outputtabwindow__

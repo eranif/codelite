@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __acceltabledlg__
-#define __acceltabledlg__
+#pragma once
 
 #include "AccelTableBaseDlg.hpp"
 #include "Keyboard/clKeyboardManager.h"
@@ -66,4 +65,3 @@ public:
     ~AccelTableDlg() override = default;
 };
 
-#endif // __acceltabledlg__

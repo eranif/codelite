@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef SIDEBAR_HPP
-#define SIDEBAR_HPP
+#pragma once
 
 // clang-format off
 #include "cl_command_event.h"
@@ -129,4 +128,3 @@ public:
     void AddPage(wxWindow* win, const wxString& bmpname, const wxString& label, bool selected = false);
 };
 
-#endif // SIDEBAR_HPP

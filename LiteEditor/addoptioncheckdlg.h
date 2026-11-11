@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __addoptioncheckdlg__
-#define __addoptioncheckdlg__
+#pragma once
 
 #include "AddOptionCheckDlgBase.hpp"
 #include "compiler.h"
@@ -53,4 +52,3 @@ protected:
     void OnOptionsText(wxCommandEvent& event) override;
 };
 
-#endif // __addoptioncheckdlg__

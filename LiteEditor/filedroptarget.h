@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DROPFILETARGET_H
-#define DROPFILETARGET_H
+#pragma once
 
 #include <wx/dnd.h>
 class FileDropTarget : public wxFileDropTarget
@@ -33,4 +32,3 @@ public:
     ~FileDropTarget() override = default;
     bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames) override;
 };
-#endif // DROPFILETARGET_H

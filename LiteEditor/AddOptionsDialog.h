@@ -1,5 +1,4 @@
-#ifndef ADDOPTIONSDIALOG_H
-#define ADDOPTIONSDIALOG_H
+#pragma once
 #include "AddOptionsDialogBase.hpp"
 
 class AddOptionsDialog : public AddOptionsDialogBase
@@ -9,4 +8,3 @@ public:
     ~AddOptionsDialog() override = default;
     wxString GetValue() const;
 };
-#endif // ADDOPTIONSDIALOG_H

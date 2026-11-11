@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef LITEEDITOR_FRAME_H
-#define LITEEDITOR_FRAME_H
+#pragma once
 
 #include "AsyncProcess/ZombieReaperPOSIX.h"
 #include "EnvironmentVariablesDlg.h"
@@ -713,4 +712,3 @@ private:
     std::unique_ptr<UIHangDetector> m_uiHangDetector;
 };
 
-#endif // LITEEDITOR_FRAME_H

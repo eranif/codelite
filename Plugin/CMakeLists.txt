@@ -9,12 +9,6 @@ project(plugin)
 include("${wxWidgets_USE_FILE}")
 
 wxcrafter_target(
-    PluginAi
-    "${CMAKE_CURRENT_SOURCE_DIR}/ai/ai_UI.wxcp"
-    "ai_UI.cpp"
-    "ai_UI.hpp")
-
-wxcrafter_target(
     PluginCustomControls
     "${CMAKE_CURRENT_SOURCE_DIR}/CustomControls/CustomControls.wxcp"
     "CustomControls.cpp"
@@ -225,7 +219,6 @@ else()
 endif()
 
 add_library(plugin SHARED ${SRCS}
-    ${WXCRAFTER_PluginAi_OUTPUTS}
     ${WXCRAFTER_PluginCustomControls_OUTPUTS}
     ${WXCRAFTER_PluginDebugger_OUTPUTS}
     ${WXCRAFTER_PluginDiff_OUTPUTS}
@@ -265,7 +258,6 @@ target_include_directories(
   plugin
   PUBLIC "${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces"
          "${CL_SRC_ROOT}/Plugin/aui"
-          "${WXCRAFTER_PluginAi_OUTPUTDIR}"
           "${WXCRAFTER_PluginCustomControls_OUTPUTDIR}"
           "${WXCRAFTER_PluginDebugger_OUTPUTDIR}"
           "${WXCRAFTER_PluginDiff_OUTPUTDIR}"

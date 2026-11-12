@@ -30,7 +30,6 @@
 #include "NotebookNavigationDlg.h"
 #include "SecondarySideBar.hpp"
 #include "UIHangDetector.hpp"
-#include "ai/ChatAI.hpp"
 #include "clCaptionBar.hpp"
 #include "clDockingManager.h"
 #include "clInfoBar.h"
@@ -541,18 +540,6 @@ protected:
 
     void OnManagePlugins(wxCommandEvent& e);
     void OnCppContextMenu(wxCommandEvent& e);
-
-    void OnAiPromptEditor(wxCommandEvent& e);
-    void OnAiSystemPrompt(wxCommandEvent& e);
-    void OnAiSettings(wxCommandEvent& e);
-    void OnAiGlobalSettings(wxCommandEvent& e);
-    void OnAiShowChatBox(wxCommandEvent& e);
-    void OnAiConfigureEndpoint(wxCommandEvent& e);
-    void OnAiAddNewMCPServer(wxCommandEvent& e);
-    void OnAiAddNewSseMCPServer(wxCommandEvent& e);
-    void OnAiResetPermissions(wxCommandEvent& e);
-    void OnAiChooseEndpoint(wxCommandEvent& e);
-    void OnAiAvailableUI(wxUpdateUIEvent& e);
 
     void OnConfigureAccelerators(wxCommandEvent& e);
     void OnStartPageEvent(wxCommandEvent& e);

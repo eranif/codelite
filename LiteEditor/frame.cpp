@@ -30,7 +30,6 @@
 #include "BlockTimer.hpp"
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
-#include "CustomControls/PromptEditorDlg.hpp"
 #include "Debugger/DebuggerToolBar.h"
 #include "Debugger/debuggermanager.h"
 #include "FileManager.hpp"
@@ -45,11 +44,6 @@
 #include "WelcomePage.h"
 #include "acceltabledlg.h"
 #include "advanced_settings.h"
-#include "ai/LLMManager.hpp"
-#include "ai/NewLLMEndpointWizard.hpp"
-#include "ai/NewLocalMCPDlg.hpp"
-#include "ai/NewSseMCPDlg.hpp"
-#include "ai/SystemPromptDialog.hpp"
 #include "app.h"
 #include "autoversion.h"
 #include "batchbuilddlg.h"
@@ -571,24 +565,6 @@ EVT_UPDATE_UI(XRCID("debug_core_dump"), clMainFrame::OnQuickDebugUI)
 // Plugins menu
 //-------------------------------------------------------
 EVT_MENU(XRCID("manage_plugins"), clMainFrame::OnManagePlugins)
-
-//-------------------------------------------------------
-// AI menu
-//-------------------------------------------------------
-EVT_MENU(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditor)
-EVT_MENU(XRCID("ai_system_prompt"), clMainFrame::OnAiSystemPrompt)
-EVT_MENU(XRCID("ai_settings"), clMainFrame::OnAiSettings)
-EVT_MENU(XRCID("ai_global_settings"), clMainFrame::OnAiGlobalSettings)
-EVT_MENU(XRCID("ai_show_chat_window"), clMainFrame::OnAiShowChatBox)
-EVT_MENU(XRCID("ai_configure_endpoint"), clMainFrame::OnAiConfigureEndpoint)
-EVT_MENU(XRCID("ai_new_mcp_server"), clMainFrame::OnAiAddNewMCPServer)
-EVT_MENU(XRCID("ai_new_sse_mcp_server"), clMainFrame::OnAiAddNewSseMCPServer)
-EVT_MENU(XRCID("ai_reset_permissions"), clMainFrame::OnAiResetPermissions)
-EVT_MENU(XRCID("ai_change_active_endpoint"), clMainFrame::OnAiChooseEndpoint)
-EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiAvailableUI)
-EVT_UPDATE_UI(XRCID("ai_system_prompt"), clMainFrame::OnAiAvailableUI)
-EVT_UPDATE_UI(XRCID("ai_show_chat_window"), clMainFrame::OnAiAvailableUI)
-EVT_UPDATE_UI(XRCID("ai_change_active_endpoint"), clMainFrame::OnAiAvailableUI)
 
 //-------------------------------------------------------
 // Settings menu
@@ -3425,9 +3401,6 @@ void clMainFrame::CompleteInitialization()
     PluginManager::Get()->Load();
     m_pluginsToolbar->Realize();
 
-    // Initialise an instance of llm::Manager
-    llm::Manager::GetInstance().Initialise();
-
 // Load debuggers (*must* be after the plugins)
 #ifdef __WXMSW__
     wxString plugdir(clStandardPaths::Get().GetPluginsDirectory());
@@ -6116,148 +6089,6 @@ void clMainFrame::OnMainToolBarPlaceTopUI(wxUpdateUIEvent& event) { event.Check(
 void clMainFrame::OnMainToolBarPlaceBottomUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_BOTTOM); }
 void clMainFrame::OnMainToolBarPlaceLeftUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_LEFT); }
 void clMainFrame::OnMainToolBarPlaceRightUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_RIGHT); }
-
-void clMainFrame::OnAiPromptEditor(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    PromptEditorDlg dlg(this);
-    dlg.ShowModal();
-}
-
-void clMainFrame::OnAiSystemPrompt(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    auto& config = llm::Manager::GetInstance().GetConfig();
-
-    SystemPromptDialog dlg(this, config.GetSystemPrompt());
-    if (dlg.ShowModal() == wxID_OK) {
-        wxString value = dlg.GetValue();
-        value.Trim().Trim(false);
-        if (value.empty()) {
-            config.SetSystemPrompts({});
-        } else {
-            config.SetSystemPrompts({value});
-        }
-        config.Save(false);
-        // Apply the change to the active client (if there is one)
-        llm::Manager::GetInstance().UpdateUserSystemPrompt();
-    }
-}
-
-void clMainFrame::OnAiShowChatBox(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    if (llm::Manager::GetInstance().ListEndpoints().IsEmpty()) {
-        // We have no endpoints configured, prompt the user.
-        auto answer = clMessageBox(_("No LLM providers are currently configured. Would you like to set one up now?"),
-                                   "CodeLite",
-                                   wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxICON_QUESTION,
-                                   this);
-        if (answer == wxYES) {
-            OnAiConfigureEndpoint(e);
-            return;
-        }
-        return;
-    }
-    llm::Manager::GetInstance().ShowChatWindow(e.GetString());
-}
-
-void clMainFrame::OnAiChooseEndpoint(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    auto endpoints = llm::Manager::GetInstance().ListEndpoints();
-    if (endpoints.empty()) {
-        // We have no endpoints configured, prompt the user.
-        auto answer = clMessageBox(_("No LLM providers are currently configured. Would you like to set one up now?"),
-                                   "CodeLite",
-                                   wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxICON_QUESTION,
-                                   this);
-        if (answer == wxYES) {
-            OnAiConfigureEndpoint(e);
-            return;
-        }
-        return;
-    }
-
-    int selection = 0;
-    auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
-    if (active_endpoint.has_value()) {
-        selection = endpoints.Index(active_endpoint.value());
-        if (selection == wxNOT_FOUND) {
-            selection = 0;
-        }
-    }
-
-    wxString choice = ::wxGetSingleChoice(_("Choose Endpoint Provider"), "CodeLite", endpoints, selection);
-    if (choice.empty()) {
-        return;
-    }
-    llm::Manager::GetInstance().SetActiveEndpoint(choice);
-}
-
-void clMainFrame::OnAiConfigureEndpoint(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    NewLLMEndpointWizard wizard{this};
-    if (!wizard.RunWizard(wizard.GetFirstPage())) {
-        return;
-    }
-
-    auto endpoint_data = wizard.GetData();
-    llm::Manager::GetInstance().AddNewEndpoint(endpoint_data);
-    llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
-}
-
-void clMainFrame::OnAiResetPermissions(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    wxString message;
-    message << _("This will reset the tool permissions to their default state, requiring confirmation before each "
-                 "invocation.\nContinue?");
-    if (::clMessageBox(message, "CodeLite", wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT | wxCANCEL) != wxYES) {
-        return;
-    }
-    llm::Manager::GetInstance().GetConfig().DeleteAllTrustedTools();
-    llm::Manager::GetInstance().GetConfig().Save(false);
-}
-
-void clMainFrame::OnAiAddNewSseMCPServer(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    NewSseMCPDlg dlg{this};
-    if (dlg.ShowModal() != wxID_OK) {
-        return;
-    }
-
-    llm::Manager::GetInstance().AddNewMcp(dlg.GetData());
-    llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
-}
-
-void clMainFrame::OnAiAddNewMCPServer(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    NewLocalMCPDlg dlg{this};
-    if (dlg.ShowModal() != wxID_OK) {
-        return;
-    }
-
-    llm::Manager::GetInstance().AddNewMcp(dlg.GetData());
-    llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
-}
-
-void clMainFrame::OnAiSettings(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    llm::Manager::GetInstance().OpenSettingsFileInEditor();
-}
-
-void clMainFrame::OnAiGlobalSettings(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    clGetManager()->OpenFile(llm::Config::GetFullPath());
-}
-
-void clMainFrame::OnAiAvailableUI(wxUpdateUIEvent& e) { e.Enable(llm::Manager::GetInstance().IsAvailable()); }
 
 void clMainFrame::OnShowMiniMap(wxCommandEvent& event)
 {

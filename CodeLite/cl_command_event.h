@@ -932,36 +932,3 @@ public:
 
 using clLanguageServerEventFunction = void (wxEvtHandler::*)(clLanguageServerEvent&);
 #define clLanguageServerEventHandler(func) wxEVENT_HANDLER_CAST(clLanguageServerEventFunction, func)
-
-// --------------------------------------------------------------
-// clLLMEvent event
-// --------------------------------------------------------------
-class WXDLLIMPEXP_CL clLLMEvent : public clCommandEvent
-{
-public:
-    clLLMEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    clLLMEvent(const clLLMEvent&) = default;
-    clLLMEvent& operator=(const clLLMEvent&) = delete;
-    ~clLLMEvent() override = default;
-    wxEvent* Clone() const override { return new clLLMEvent(*this); }
-
-    void SetPrompt(const wxString& prompt) { this->m_prompt = prompt; }
-    const wxString& GetPrompt() const { return m_prompt; }
-    void SetResponseRaw(const std::string& response) { SetStringRaw(response); }
-    const std::string& GetResponseRaw() const { return GetStringRaw(); }
-    void SetIsError(bool isError) { this->m_isError = isError; }
-    bool IsError() const { return m_isError; }
-    void SetRequestCancelled(bool request_cancelled) { this->m_request_cancelled = request_cancelled; }
-    bool IsRequestCancelled() const { return m_request_cancelled; }
-    void SetOutputReason(std::optional<assistant::Reason> output_reason) { m_output_reason = output_reason; }
-    std::optional<assistant::Reason> GetOutputReason() const { return m_output_reason; }
-
-protected:
-    wxString m_prompt;
-    bool m_isError{false};
-    bool m_request_cancelled{false};
-    std::optional<assistant::Reason> m_output_reason{std::nullopt};
-};
-
-using clLLMEventFunction = void (wxEvtHandler::*)(clLLMEvent&);
-#define clLLMEventHandler(func) wxEVENT_HANDLER_CAST(clLLMEventFunction, func)

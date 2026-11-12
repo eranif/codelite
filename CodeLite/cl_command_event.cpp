@@ -233,12 +233,3 @@ clLanguageServerEvent::clLanguageServerEvent(wxEventType commandType, int winid)
 }
 
 wxEvent* clLanguageServerEvent::Clone() const { return new clLanguageServerEvent(*this); }
-
-///----------------------------------------------------------------------------------
-/// clLLMEvent
-///----------------------------------------------------------------------------------
-
-clLLMEvent::clLLMEvent(wxEventType commandType, int winid)
-    : clCommandEvent(commandType, winid)
-{
-}

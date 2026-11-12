@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CODELITE_SYMBOL_TREE_H
-#define CODELITE_SYMBOL_TREE_H
+#pragma once
 
 #include "bitmap_loader.h"
 #include "clThemedTreeCtrl.h"
@@ -217,4 +216,3 @@ protected:
 
     void SelectFirstItem();
 };
-#endif // CODELITE_SYMBOL_TREE_H

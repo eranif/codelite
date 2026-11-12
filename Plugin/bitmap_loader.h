@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef BITMAP_LOADER_H
-#define BITMAP_LOADER_H
+#pragma once
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -258,4 +257,3 @@ clLoadSidebarBitmap(const wxString& name, wxWindow* win, wxBitmap* light_theme_b
 
 /// Clear the sidebar bitmaps cache
 void WXDLLIMPEXP_SDK clClearSidebarBitmapCache();
-#endif

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLFUNCTIONTIPWINDOW_H
-#define CLFUNCTIONTIPWINDOW_H
+#pragma once
 
 #include "cl_calltip.h"
 #include "cl_command_event.h"
@@ -93,4 +92,3 @@ public:
     void OnEditoConfigChanged(clCommandEvent& e);
 };
 
-#endif // CLFUNCTIONTIPWINDOW_H

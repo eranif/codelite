@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WXCODECOMPLETIONBOXMANAGER_H
-#define WXCODECOMPLETIONBOXMANAGER_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "wxCodeCompletionBox.h"
@@ -145,4 +144,3 @@ public:
     wxCodeCompletionBox* GetCCWindow() { return m_box; }
 };
 
-#endif // WXCODECOMPLETIONBOXMANAGER_H

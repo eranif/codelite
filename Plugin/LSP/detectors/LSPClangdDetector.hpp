@@ -1,5 +1,4 @@
-#ifndef LSPCLANGDDETECTOR_HPP
-#define LSPCLANGDDETECTOR_HPP
+#pragma once
 
 #include "LSPDetector.hpp"
 #include "codelite_exports.h"
@@ -17,4 +16,3 @@ public:
     ~LSPClangdDetector() override = default;
 };
 
-#endif // LSPCLANGDDETECTOR_HPP

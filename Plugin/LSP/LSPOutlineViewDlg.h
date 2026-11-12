@@ -1,5 +1,4 @@
-#ifndef LSPOUTLINEVIEWDLG_H
-#define LSPOUTLINEVIEWDLG_H
+#pragma once
 
 #include "LSP/basic_types.h"
 #include "codelite_exports.h"
@@ -32,4 +31,3 @@ protected:
     virtual void OnEnter(wxCommandEvent& event);
     virtual void OnTextUpdated(wxCommandEvent& event);
 };
-#endif // LSPOUTLINEVIEWDLG_H

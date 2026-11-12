@@ -1,5 +1,4 @@
-#ifndef LSPRUSTANALYZERDETECTOR_HPP
-#define LSPRUSTANALYZERDETECTOR_HPP
+#pragma once
 
 #include "LSPDetector.hpp"
 #include "codelite_exports.h"
@@ -14,4 +13,3 @@ public:
     ~LSPRustAnalyzerDetector() override = default;
 };
 
-#endif // LSPRUSTANALYZERDETECTOR_HPP

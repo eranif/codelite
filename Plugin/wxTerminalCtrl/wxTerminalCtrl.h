@@ -1,5 +1,4 @@
-#ifndef WXTERMINALCTRL_H
-#define WXTERMINALCTRL_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
@@ -120,4 +119,3 @@ protected:
     friend class clBuiltinTerminalPane;
 };
 
-#endif // WXTERMINALCTRL_H

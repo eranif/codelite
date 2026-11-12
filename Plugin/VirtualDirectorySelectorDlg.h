@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef VIRTUALDIRECTORYSELECTORDLG_H
-#define VIRTUALDIRECTORYSELECTORDLG_H
+#pragma once
 
 #include "VirtualDirectorySelectorBase.hpp"
 #include "bitmap_loader.h"
@@ -71,4 +70,3 @@ public:
     void SetSuggestedName(const wxString& suggestedName) { m_suggestedName = suggestedName; }
 };
 
-#endif // VIRTUALDIRECTORYSELECTORDLG_H

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef ITEMLOCATOR_H
-#define ITEMLOCATOR_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -39,4 +38,3 @@ public:
     static std::optional<wxString> Locate(const wxString& name);
 };
 
-#endif // ITEMLOCATOR_H

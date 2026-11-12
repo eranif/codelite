@@ -1,5 +1,4 @@
-#ifndef CLSTATUSBARMESSAGE_H
-#define CLSTATUSBARMESSAGE_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -15,4 +14,3 @@ public:
     virtual ~clStatusBarMessage();
 };
 
-#endif // CLSTATUSBARMESSAGE_H

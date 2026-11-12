@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef PROJECT_SETTINGS_H
-#define PROJECT_SETTINGS_H
+#pragma once
 
 #include "build_config.h"
 #include "codelite_exports.h"
@@ -149,4 +148,3 @@ public:
 
 using ProjectSettingsPtr = std::shared_ptr<ProjectSettings>;
 
-#endif // PROJECT_SETTINGS_H

@@ -1,5 +1,4 @@
-#ifndef TEXTVIEW_H
-#define TEXTVIEW_H
+#pragma once
 
 #include "clEditorEditEventsHandler.h"
 #include "cl_command_event.h"
@@ -135,4 +134,3 @@ public:
     }
 };
 
-#endif // TEXTVIEW_H

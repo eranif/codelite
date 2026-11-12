@@ -1,5 +1,4 @@
-#ifndef LSPNETWORKSOCKETCLIENT_H
-#define LSPNETWORKSOCKETCLIENT_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "LSPNetwork.h" // Base class: LSPNetwork
@@ -33,4 +32,3 @@ public:
     void Send(const std::string& data) override;
 };
 
-#endif // LSPNETWORKSOCKETCLIENT_H

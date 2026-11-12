@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSESCSSTHEMEIMPORTER_H
-#define ECLIPSESCSSTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 
@@ -38,4 +37,3 @@ public:
     LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
-#endif // ECLIPSESCSSTHEMEIMPORTER_H

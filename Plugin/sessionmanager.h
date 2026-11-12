@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef SESSIONMANAGER_H
-#define SESSIONMANAGER_H
+#pragma once
 
 #include "clFilesCollector.h"
 #include "codelite_events.h"
@@ -169,4 +168,3 @@ private:
     wxFileName GetSessionFileName(const wxString& name, const wxString& suffix = wxT("")) const;
 };
 
-#endif // SESSIONMANAGER_H

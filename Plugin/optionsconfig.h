@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef OPTIONS_CONFIG_H
-#define OPTIONS_CONFIG_H
+#pragma once
 
 #include "clBitset.hpp"
 #include "clEditorConfig.h"
@@ -491,4 +490,3 @@ public:
 
 using OptionsConfigPtr = std::shared_ptr<OptionsConfig>;
 
-#endif // OPTIONS_CONFIG_H

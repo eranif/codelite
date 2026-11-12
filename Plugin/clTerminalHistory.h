@@ -1,5 +1,4 @@
-#ifndef CLTERMINALHISTORY_H
-#define CLTERMINALHISTORY_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -26,4 +25,3 @@ public:
     void SetItems(const wxArrayString& items);
 };
 
-#endif // CLTERMINALHISTORY_H

@@ -1,5 +1,4 @@
-#ifndef CLTABLELINEEDITORDLG_H
-#define CLTABLELINEEDITORDLG_H
+#pragma once
 
 #include "wxcrafter_plugin.hpp"
 
@@ -18,4 +17,3 @@ protected:
     void OnColumnSelected(wxCommandEvent& event) override;
     void DoItemSelected(int index);
 };
-#endif // CLTABLELINEEDITORDLG_H

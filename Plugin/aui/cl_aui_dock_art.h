@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLAUIDOCKART_H
-#define CLAUIDOCKART_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "imanager.h"
@@ -59,4 +58,3 @@ public:
     void DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect) override;
 };
 
-#endif // CLAUIDOCKART_H

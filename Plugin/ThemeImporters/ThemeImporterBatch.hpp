@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSEBATCHTHEMEIMPORTER_H
-#define ECLIPSEBATCHTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
@@ -37,4 +36,3 @@ public:
     ~ThemeImporterBatch() override = default;
 };
 
-#endif // ECLIPSEBATCHTHEMEIMPORTER_H

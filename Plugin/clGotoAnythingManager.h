@@ -1,5 +1,4 @@
-#ifndef CLGOTOANYTHINGMANAGER_H
-#define CLGOTOANYTHINGMANAGER_H
+#pragma once
 
 #include "clGotoEntry.h"
 #include "cl_command_event.h"
@@ -43,4 +42,3 @@ public:
     std::vector<clGotoEntry> GetActions();
 };
 
-#endif // CLGOTOANYTHINGMANAGER_H

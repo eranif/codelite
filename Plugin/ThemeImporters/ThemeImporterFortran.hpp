@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSEFORTRANTHEMEIMPORTER_H
-#define ECLIPSEFORTRANTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
@@ -37,4 +36,3 @@ public:
     ~ThemeImporterFortran() override = default;
 };
 
-#endif // ECLIPSEFORTRANTHEMEIMPORTER_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef TERMINALEMULATORUI_H
-#define TERMINALEMULATORUI_H
+#pragma once
 
 #include <wx/setup.h>
 
@@ -55,4 +54,3 @@ protected:
     void OnProcessOutput(clCommandEvent& e);
 };
 #endif // LIBCODELITE_WITH_UI
-#endif // TERMINALEMULATORUI_H

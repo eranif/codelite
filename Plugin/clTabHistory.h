@@ -1,5 +1,4 @@
-#ifndef CLTABHISTORY_H
-#define CLTABHISTORY_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -64,4 +63,3 @@ public:
     const std::vector<wxWindow*>& GetHistory() const { return m_history; }
 };
 
-#endif // CLTABHISTORY_H

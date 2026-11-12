@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DEBUGGER_MANAGER_H
-#define DEBUGGER_MANAGER_H
+#pragma once
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -147,4 +146,3 @@ public:
     static DebuggerMgr& Get();
     static void Free();
 };
-#endif // DEBUGGER_MANAGER_H

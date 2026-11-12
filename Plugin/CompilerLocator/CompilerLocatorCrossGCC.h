@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERLOCATORCROSSGCC_H
-#define COMPILERLOCATORCROSSGCC_H
+#pragma once
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
 #include "macros.h"
@@ -50,4 +49,3 @@ public:
     CompilerPtr Locate(const wxString& folder) override;
 };
 
-#endif // COMPILERLOCATORCROSSGCC_H

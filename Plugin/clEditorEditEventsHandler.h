@@ -1,5 +1,4 @@
-#ifndef CLEDITOREDITEVENTSHANDLER_H
-#define CLEDITOREDITEVENTSHANDLER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -62,4 +61,3 @@ public:
     using Ptr_t = std::unique_ptr<clEditEventsHandler>;
 };
 
-#endif // CLEDITOREDITEVENTSHANDLER_H

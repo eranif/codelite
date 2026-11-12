@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SSHACCOUNTMANAGERDLG_H
-#define SSHACCOUNTMANAGERDLG_H
+#pragma once
 #if USE_SFTP
 #include "AddSSHAcountDlg.h"
 #include "sftp_ui.hpp"
@@ -52,4 +51,3 @@ protected:
     virtual void OnEditAccount(wxCommandEvent& event);
 };
 #endif // USE_SFTP
-#endif // SSHACCOUNTMANAGERDLG_H

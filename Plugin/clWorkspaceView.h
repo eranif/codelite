@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLWORKSPACEVIEW_H
-#define CLWORKSPACEVIEW_H
+#pragma once
 
 #include "clWorkspaceEvent.hpp"
 #include "codelite_exports.h"
@@ -101,4 +100,3 @@ public:
     std::map<wxString, wxWindow*> GetAllPages() const;
 };
 
-#endif // CLWORKSPACEVIEW_H

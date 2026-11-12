@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLTREECTRLPANELDEFAULTPAGE_H
-#define CLTREECTRLPANELDEFAULTPAGE_H
+#pragma once
 #include "clColours.h"
 #include "cl_command_event.h"
 #include "wxcrafter_plugin.hpp"
@@ -43,4 +42,3 @@ protected:
     void OnPaint(wxPaintEvent& event);
     void OnColoursChanged(clCommandEvent& event);
 };
-#endif // CLTREECTRLPANELDEFAULTPAGE_H

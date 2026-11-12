@@ -1,5 +1,4 @@
-#ifndef COMPILERLOCATORMSYS2CLANG_HPP
-#define COMPILERLOCATORMSYS2CLANG_HPP
+#pragma once
 
 #include "ICompilerLocator.h"
 #include "Platform/MSYS2.hpp"
@@ -52,4 +51,3 @@ public:
     CompilerLocatorMSYS2ClangMingw64();
     ~CompilerLocatorMSYS2ClangMingw64() override = default;
 };
-#endif // CompilerLocatorMSYS2Clang_HPP

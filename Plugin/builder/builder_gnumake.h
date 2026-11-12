@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef BUILDER_GNUMAKE_H
-#define BUILDER_GNUMAKE_H
+#pragma once
 
 #include "builder.h"
 #include "codelite_exports.h"
@@ -128,4 +127,3 @@ private:
     wxString DoGetTargetPrefix(const wxFileName& filename, const wxString& cwd, CompilerPtr cmp);
     wxString DoGetMarkerFileDir(const wxString& projname, const wxString& projectPath = "");
 };
-#endif // BUILDER_GNUMAKE_H

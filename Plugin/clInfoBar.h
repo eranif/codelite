@@ -1,5 +1,4 @@
-#ifndef CLINFOBAR_H
-#define CLINFOBAR_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -22,4 +21,3 @@ public:
                         const std::vector<std::pair<wxWindowID, wxString>>& buttons = {});
 };
 
-#endif // CLINFOBAR_H

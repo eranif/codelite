@@ -1,5 +1,4 @@
-#ifndef CLFILESYSTEMWORKSPACEDLG_H
-#define CLFILESYSTEMWORKSPACEDLG_H
+#pragma once
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clFileSystemWorkspaceDlgBase.hpp"
 #include "codelite_exports.h"
@@ -24,4 +23,3 @@ protected:
     void OnOK(wxCommandEvent& event) override;
     void SelectConfig(const wxString& config);
 };
-#endif // CLFILESYSTEMWORKSPACEDLG_H

@@ -1,5 +1,4 @@
-#ifndef CLEDITORCOLOURISELOCKER_H
-#define CLEDITORCOLOURISELOCKER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -16,4 +15,3 @@ public:
     ~clEditorColouriseLocker();
 };
 
-#endif // CLEDITORCOLOURISELOCKER_H

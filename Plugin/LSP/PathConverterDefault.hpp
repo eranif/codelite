@@ -1,5 +1,4 @@
-#ifndef PATHCONVERTERDEFAULT_HPP
-#define PATHCONVERTERDEFAULT_HPP
+#pragma once
 
 #include "LSP/IPathConverter.hpp"
 #include "codelite_exports.h"
@@ -36,4 +35,3 @@ public:
     ~PathConverterDefault() override = default;
 };
 
-#endif // PATHCONVERTERDEFAULT_HPP

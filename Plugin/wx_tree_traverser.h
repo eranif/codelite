@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WXTREETRAVERSER_H
-#define WXTREETRAVERSER_H
+#pragma once
 
 #include "precompiled_header.h"
 
@@ -57,4 +56,3 @@ public:
     virtual void OnItem(const wxTreeItemId& item);
 };
 
-#endif // WXTREETRAVERSER_H

@@ -1,5 +1,4 @@
-#ifndef BUILDERGNUMAKEMSYS_HPP
-#define BUILDERGNUMAKEMSYS_HPP
+#pragma once
 
 #include "builder_gnumake_default.h"
 
@@ -11,4 +10,3 @@ public:
     ~BuilderGnuMakeMSYS() override = default;
 };
 
-#endif // BUILDERGNUMAKEMSYS_HPP

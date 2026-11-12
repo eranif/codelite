@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __newkeyshortcutdlg__
-#define __newkeyshortcutdlg__
+#pragma once
 
 #include "NewKeyShortcutBaseDlg.hpp"
 #include "clKeyboardManager.h"
@@ -48,4 +47,3 @@ public:
     clKeyboardShortcut GetAccel() const;
 };
 
-#endif // __newkeyshortcutdlg__

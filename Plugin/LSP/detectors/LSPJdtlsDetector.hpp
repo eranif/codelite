@@ -1,5 +1,4 @@
-#ifndef LSPJdtlsDetector_HPP
-#define LSPJdtlsDetector_HPP
+#pragma once
 
 #include "LSPDetector.hpp"
 #include "codelite_exports.h"
@@ -18,4 +17,3 @@ public:
     ~LSPJdtlsDetector() override = default;
 };
 
-#endif // LSPJdtlsDetector_HPP

@@ -1,5 +1,4 @@
-#ifndef CLFSWNEWCONFIGDLG_H
-#define CLFSWNEWCONFIGDLG_H
+#pragma once
 
 #include "clFileSystemWorkspaceDlgBase.hpp"
 #include "codelite_exports.h"
@@ -16,4 +15,3 @@ public:
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
-#endif // CLFSWNEWCONFIGDLG_H

@@ -1,5 +1,4 @@
-#ifndef MSWDARKMODE_HPP
-#define MSWDARKMODE_HPP
+#pragma once
 
 #ifdef __WXMSW__
 #include "codelite_exports.h"
@@ -43,4 +42,3 @@ public:
     void SetDarkMode(wxWindow* win);
 };
 #endif
-#endif // MSWDARKMODE_HPP

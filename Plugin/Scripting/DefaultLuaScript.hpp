@@ -1,3 +1,5 @@
+#pragma once
+
 constexpr auto kDefaultCodeLiteLUA =
     R"#(---@class codelite
 ---@type codelite

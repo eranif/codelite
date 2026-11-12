@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef LEXERCONFMANAGER_H
-#define LEXERCONFMANAGER_H
+#pragma once
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -236,4 +235,3 @@ public:
     bool IsDarkTheme() const;
 };
 
-#endif // LEXERCONFMANAGER_H

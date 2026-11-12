@@ -1,5 +1,4 @@
-#ifndef CLSHELLHELPER_HPP
-#define CLSHELLHELPER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -39,4 +38,3 @@ public:
     size_t GetProcessCreateFlags() const { return m_processCreateFlags; }
 };
 
-#endif // CLSHELLHELPER_HPP

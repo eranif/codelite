@@ -1,5 +1,4 @@
-#ifndef DIFFFOLDERSFRAME_H
-#define DIFFFOLDERSFRAME_H
+#pragma once
 
 #include "DiffUI.hpp"
 #include "bitmap_loader.h"
@@ -137,4 +136,3 @@ protected:
     void OnUpFolder(wxCommandEvent& event);
     void OnUpFolderUI(wxUpdateUIEvent& event);
 };
-#endif // DIFFFOLDERSFRAME_H

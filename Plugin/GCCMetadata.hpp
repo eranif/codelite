@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef GCCMETADATA_H
-#define GCCMETADATA_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "codelite_exports.h"
@@ -72,4 +71,3 @@ public:
     const wxString& GetTarget() const { return m_target; }
     const wxArrayString& GetMacros() const { return m_macros; }
 };
-#endif // GCCMETADATA_H

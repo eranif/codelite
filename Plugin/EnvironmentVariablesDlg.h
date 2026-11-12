@@ -1,5 +1,4 @@
-#ifndef ENVIRONMENTVARIABLESDLG_H
-#define ENVIRONMENTVARIABLESDLG_H
+#pragma once
 
 #include "EnvironmentVariablesDlgBase.hpp"
 #include "clEditorEditEventsHandler.h"
@@ -25,4 +24,3 @@ protected:
     void OnExport(wxCommandEvent& event) override;
     void OnNewSet(wxCommandEvent& event) override;
 };
-#endif // ENVIRONMENTVARIABLESDLG_H

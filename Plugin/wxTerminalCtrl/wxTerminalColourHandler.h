@@ -1,5 +1,4 @@
-#ifndef WXTERMINALCOLOURHANDLER_H
-#define WXTERMINALCOLOURHANDLER_H
+#pragma once
 
 #include "clAnsiEscapeCodeHandler.hpp"
 
@@ -30,4 +29,3 @@ public:
     void Clear();
 };
 
-#endif // WXTERMINALCOLOURHANDLER_H

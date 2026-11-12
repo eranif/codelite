@@ -1,5 +1,4 @@
-#ifndef CLCELLVALUE_H
-#define CLCELLVALUE_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "drawingutils.h"
@@ -110,4 +109,3 @@ public:
     const wxString& GetButtonUnicodeSymbol() const { return m_buttonUnicodeSymbol; }
 };
 
-#endif // CLCELLVALUE_H

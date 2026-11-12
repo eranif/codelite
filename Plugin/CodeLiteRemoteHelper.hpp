@@ -1,5 +1,4 @@
-#ifndef CODELITEREMOTEHELPER_HPP
-#define CODELITEREMOTEHELPER_HPP
+#pragma once
 
 #include "JSON.h"
 #include "clWorkspaceEvent.hpp"
@@ -49,4 +48,3 @@ public:
     wxString ReplaceMacros(const wxString& command) const;
 };
 
-#endif // CODELITEREMOTEHELPER_HPP

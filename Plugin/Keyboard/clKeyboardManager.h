@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef KEYBOARDMANAGER_H
-#define KEYBOARDMANAGER_H
+#pragma once
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -277,4 +276,3 @@ public:
     void UpdateMenuShortcuts(wxMenu& menu);
 };
 
-#endif // KEYBOARDMANAGER_H

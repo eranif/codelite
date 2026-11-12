@@ -1,5 +1,4 @@
-#ifndef CLTHEMEDSPLITTERWINDOW_H
-#define CLTHEMEDSPLITTERWINDOW_H
+#pragma once
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -25,4 +24,3 @@ public:
                 const wxString& name = "splitterWindow");
 };
 
-#endif // CLTHEMEDSPLITTERWINDOW_H

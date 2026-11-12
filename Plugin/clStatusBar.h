@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSTATUSBAR_H
-#define CLSTATUSBAR_H
+#pragma once
 
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
@@ -135,4 +134,3 @@ public:
                                 const wxString& tooltip);
 };
 
-#endif // CLSTATUSBAR_H

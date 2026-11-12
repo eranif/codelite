@@ -1,5 +1,4 @@
-#ifndef CLLOCALEMANAGER_HPP
-#define CLLOCALEMANAGER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -39,4 +38,3 @@ public:
     int GetSystemDefaultLocale() const { return m_system_default_locale; }
 };
 
-#endif // CLLOCALEMANAGER_HPP

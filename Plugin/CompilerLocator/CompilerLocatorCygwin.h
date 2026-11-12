@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERLOCATORCYGWIN_H
-#define COMPILERLOCATORCYGWIN_H
+#pragma once
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
 #include "codelite_exports.h"
@@ -53,4 +52,3 @@ public:
     CompilerPtr Locate(const wxString& folder) override;
 };
 
-#endif // COMPILERLOCATORCYGWIN_H

@@ -1,5 +1,4 @@
-#ifndef CLABOUTDIALOG_H
-#define CLABOUTDIALOG_H
+#pragma once
 
 #include "clAboutDialogBase.hpp"
 #include "codelite_exports.h"
@@ -10,4 +9,3 @@ public:
     clAboutDialog(wxWindow* parent, const wxString& version);
     ~clAboutDialog() override;
 };
-#endif // CLABOUTDIALOG_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __windowattrmanager__
-#define __windowattrmanager__
+#pragma once
 
 #include "codelite_exports.h"
 #include "iconfigtool.h"
@@ -53,4 +52,3 @@ public:
      */
     static void Load(wxTopLevelWindow* win);
 };
-#endif // __windowattrmanager__

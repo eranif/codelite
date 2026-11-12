@@ -1,5 +1,4 @@
-#ifndef CLTREECTRLCOLOURHELPER_H
-#define CLTREECTRLCOLOURHELPER_H
+#pragma once
 
 #include "VirtualDirectoryColour.h"
 #include "clThemedTreeCtrl.h"
@@ -39,4 +38,3 @@ public:
     static wxString GetItemPath(clThemedTreeCtrl* tree, const wxTreeItemId& item);
 };
 
-#endif // CLTREECTRLCOLOURHELPER_H

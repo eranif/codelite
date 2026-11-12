@@ -1,5 +1,4 @@
-#ifndef COMPILECOMMANDSGENERATOR_H
-#define COMPILECOMMANDSGENERATOR_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
@@ -28,4 +27,3 @@ public:
     void GenerateCompileCommands();
 };
 
-#endif // COMPILECOMMANDSGENERATOR_H

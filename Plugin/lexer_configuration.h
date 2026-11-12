@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef LEXER_CONFIGURATION_H
-#define LEXER_CONFIGURATION_H
+#pragma once
 
 #include "JSON.h"
 #include "attribute_style.h"
@@ -282,4 +281,3 @@ public:
     wxTerminalTheme AsTerminalTheme() const;
 };
 
-#endif // LEXER_CONFIGURATION_H

@@ -1,5 +1,4 @@
-#ifndef CLCOMBOBOX_HPP
-#define CLCOMBOBOX_HPP
+#pragma once
 
 #include "wxCustomControls.hpp"
 
@@ -64,4 +63,3 @@ public:
 #include "clComboBoxGeneric.hpp"
 using clComboBox = clComboBoxGeneric;
 #endif
-#endif // CLCOMBOBOX_HPP

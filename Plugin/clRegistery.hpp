@@ -1,5 +1,4 @@
-#ifndef CLREGISTERY_HPP
-#define CLREGISTERY_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -30,4 +29,3 @@ public:
     wxString GetFirstChild();
 };
 
-#endif // CLREGISTERY_HPP

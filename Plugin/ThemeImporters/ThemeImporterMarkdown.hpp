@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSEMARKDOWNTHEMEIMPORTER_H
-#define ECLIPSEMARKDOWNTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 #include "codelite_exports.h"
@@ -45,4 +44,3 @@ public:
     LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
-#endif // ECLIPSECXXTHEMEIMPORTER_H

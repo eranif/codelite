@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPSETTINGS_H
-#define SFTPSETTINGS_H
+#pragma once
 #if USE_SFTP
 
 #include "cl_config.h" // Base class: clConfigItem
@@ -61,4 +60,3 @@ public:
     virtual JSONItem ToJSON() const;
 };
 #endif // USE_SFTP
-#endif // SFTPSETTINGS_H

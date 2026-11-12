@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CCBOXTIPWINDOW_H
-#define CCBOXTIPWINDOW_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -71,4 +70,3 @@ public:
     int GetEditorStartPosition() const { return m_editorStartPosition; }
 };
 
-#endif // CCBOXTIPWINDOW_H

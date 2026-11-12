@@ -1,5 +1,4 @@
-#ifndef LSPNETWORKREMOTESTDIO_HPP
-#define LSPNETWORKREMOTESTDIO_HPP
+#pragma once
 
 #if USE_SFTP
 
@@ -57,4 +56,3 @@ public:
     bool IsConnected() const override;
 };
 #endif // USE_SFTP
-#endif // LSPNETWORKREMOTESTDIO_HPP

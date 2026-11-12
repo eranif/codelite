@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WXCHECKLISTCTRL_H
-#define WXCHECKLISTCTRL_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -111,4 +110,3 @@ public:
 
 extern const wxEventType wxEVT_CMD_CHECKLIST_ITEM_CHECKED;
 
-#endif // WXCHECKLISTCTRL_H

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DEBUGGER_SETTINGS_H
-#define DEBUGGER_SETTINGS_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "serialized_object.h"
@@ -104,4 +103,3 @@ public:
     void SetActive(const wxString& name);
 };
 
-#endif // DEBUGGER_SETTINGS_H

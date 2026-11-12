@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __quickdebuginfo__
-#define __quickdebuginfo__
+#pragma once
 
 #include "codelite_exports.h"
 #include "serialized_object.h"
@@ -88,4 +87,3 @@ public:
     const wxString& GetRemoteWD() const { return m_remoteWD; }
     int GetSelectedDbg() const { return m_selectedDbg; }
 };
-#endif // __quickdebuginfo__

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __opentypevlistctrl__
-#define __opentypevlistctrl__
+#pragma once
 
 #include "codelite_exports.h"
 #include "database/entry.h"
@@ -55,4 +54,3 @@ public:
     TagEntryPtr GetTagAt(long item);
 };
 
-#endif // __opentypevlistctrl__

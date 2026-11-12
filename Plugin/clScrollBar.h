@@ -1,5 +1,4 @@
-#ifndef CLSCROLLBAR_H
-#define CLSCROLLBAR_H
+#pragma once
 
 #include "clColours.h"
 #include "clCustomScrollBar.h"
@@ -35,4 +34,3 @@ public:
     void SetColours(const clColours&) {}
 };
 
-#endif // CLSCROLLBAR_H

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CONSOLEFINDER_H
-#define CONSOLEFINDER_H
+#pragma once
 
 #include "precompiled_header.h"
 
@@ -62,4 +61,3 @@ public:
     const wxString& GetConsoleCommand() const { return m_consoleCommand; }
 };
 
-#endif

@@ -35,8 +35,7 @@
 // it does; (2) that this translation/ modification is accurate; or (3) that
 // this software is "merchantible."  (Language for this disclaimer partially
 // copied from the disclaimer below).
-#ifndef __MD5_H__
-#define __MD5_H__
+#pragma once
 
 /* based on:
 
@@ -128,4 +127,3 @@ private:
     static void II(uint4& a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4 ac);
 };
 
-#endif // __MD5_H__

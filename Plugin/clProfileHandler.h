@@ -1,5 +1,4 @@
-#ifndef CLPROFILEHANDLER_H
-#define CLPROFILEHANDLER_H
+#pragma once
 
 #include "Notebook.h"
 #include "clWorkspaceEvent.hpp"
@@ -35,4 +34,3 @@ public:
     static clProfileHandler& Get();
 };
 
-#endif // CLPROFILEHANDLER_H

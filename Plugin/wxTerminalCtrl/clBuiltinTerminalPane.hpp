@@ -1,5 +1,4 @@
-#ifndef CLBUILTINTERMINALPANE_HPP
-#define CLBUILTINTERMINALPANE_HPP
+#pragma once
 
 #include "Keyboard/clKeyboardManager.h"
 #include "clWorkspaceEvent.hpp"
@@ -251,4 +250,3 @@ private:
     std::optional<std::vector<std::pair<int, clKeyboardShortcut>>> m_frameActions{std::nullopt};
 };
 
-#endif // CLBUILTINTERMINALPANE_HPP

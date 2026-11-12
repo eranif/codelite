@@ -1,5 +1,4 @@
-#ifndef CLTOOLBARSTRETCHABLESPACE_H
-#define CLTOOLBARSTRETCHABLESPACE_H
+#pragma once
 
 #include "clToolBar.h"
 #include "clToolBarButtonBase.h"
@@ -19,4 +18,3 @@ public:
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
 };
-#endif // CLTOOLBARSTRETCHABLESPACE_H

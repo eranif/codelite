@@ -1,5 +1,4 @@
-#ifndef DEBUGGERTOOLBAR_H
-#define DEBUGGERTOOLBAR_H
+#pragma once
 
 #include "clToolBar.h"
 #include "codelite_exports.h"
@@ -36,4 +35,3 @@ public:
     bool Show(bool show = true);
 };
 
-#endif // DEBUGGERTOOLBAR_H

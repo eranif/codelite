@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSEJAVATHEMEIMPORTER_H
-#define ECLIPSEJAVATHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
@@ -37,4 +36,3 @@ public:
     ~ThemeImporterJava() override = default;
 };
 
-#endif // ECLIPSEJAVATHEMEIMPORTER_H

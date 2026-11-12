@@ -30,8 +30,7 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __wxterminalbase__
-#define __wxterminalbase__
+#pragma once
 
 #include <wx/colour.h>
 #include <wx/font.h>
@@ -75,4 +74,3 @@ public:
     virtual ~wxTerminalBase();
 };
 
-#endif //__wxterminalbase__

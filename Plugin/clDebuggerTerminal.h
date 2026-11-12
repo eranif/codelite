@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLDEBUGGERTERMINAL_H
-#define CLDEBUGGERTERMINAL_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -72,4 +71,3 @@ public:
     static wxString MakePidTitle(int pid);
 };
 
-#endif // CLDEBUGGERTERMINAL_H

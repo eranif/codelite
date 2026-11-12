@@ -1,5 +1,4 @@
-#ifndef CLRUSTLOCATOR_HPP
-#define CLRUSTLOCATOR_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -21,4 +20,3 @@ public:
     wxString GetRustTool(const wxString& name) const;
 };
 
-#endif // CLRUSTLOCATOR_HPP

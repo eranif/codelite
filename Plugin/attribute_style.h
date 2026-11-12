@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef ATTRIBUTE_STYLE_H
-#define ATTRIBUTE_STYLE_H
+#pragma once
 
 #include "JSON.h"
 #include "codelite_exports.h"
@@ -147,4 +146,3 @@ private:
     bool m_isItalic{false};
     bool m_isUnderlined{false};
 };
-#endif

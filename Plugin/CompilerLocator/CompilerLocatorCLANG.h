@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERLOCATORCLANG_H
-#define COMPILERLOCATORCLANG_H
+#pragma once
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
 #include "codelite_exports.h"
@@ -53,4 +52,3 @@ protected:
     CompilerPtr AddCompiler(const wxFileName& clang);
 };
 
-#endif // COMPILERLOCATORCLANG_H

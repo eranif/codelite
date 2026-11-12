@@ -1,5 +1,4 @@
-#ifndef ECLIPSEJSONTHEMEIMPORTER_HPP
-#define ECLIPSEJSONTHEMEIMPORTER_HPP
+#pragma once
 
 #include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 #include "codelite_exports.h"
@@ -13,4 +12,3 @@ public:
 public:
     LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
-#endif // ECLIPSEJSONTHEMEIMPORTER_HPP

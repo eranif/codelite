@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef PROJECT_H
-#define PROJECT_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "macros.h"
@@ -832,4 +831,3 @@ public:
  */
 WXDLLIMPEXP_SDK std::list<ProjectPtr> GetProjectTemplateList();
 
-#endif // PROJECT_H

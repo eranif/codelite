@@ -1,5 +1,4 @@
-#ifndef WXTERMINALEVENT_HPP
-#define WXTERMINALEVENT_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -86,4 +85,3 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_DONE, wxTerminalCt
 // Set the terminal title
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_SET_TITLE, wxTerminalCtrlEvent);
 
-#endif // WXTERMINALEVENT_HPP

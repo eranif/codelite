@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef EDITDLG_H
-#define EDITDLG_H
+#pragma once
 
 #include "clEditorEditEventsHandler.h"
 #include "lexer_configuration.h"
@@ -59,4 +58,3 @@ private:
 WXDLLIMPEXP_SDK wxString clGetStringFromUser(const wxString& initialValue,
                                              wxWindow* parent = nullptr,
                                              LexerConf::Ptr_t lexer = nullptr);
-#endif // EDITDLG_H

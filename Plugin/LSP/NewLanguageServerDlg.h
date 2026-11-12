@@ -1,5 +1,4 @@
-#ifndef NEWLANGUAGESERVERDLG_H
-#define NEWLANGUAGESERVERDLG_H
+#pragma once
 
 #include "LanguageServerEntry.h"
 #include "lsp_UI.hpp"
@@ -20,4 +19,3 @@ public:
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
-#endif // NEWLANGUAGESERVERDLG_H

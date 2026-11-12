@@ -1,5 +1,4 @@
-#ifndef CLCUSTOMISETOOLBARDLG_H
-#define CLCUSTOMISETOOLBARDLG_H
+#pragma once
 
 #include "ToolBarUI.hpp"
 #include "clToolBar.h"
@@ -18,4 +17,3 @@ public:
 protected:
     void OnOK(wxCommandEvent& event) override;
 };
-#endif // CLCUSTOMISETOOLBARDLG_H

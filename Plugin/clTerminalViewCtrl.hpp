@@ -1,5 +1,4 @@
-#ifndef CLTERMINALVIEWCTRL_HPP
-#define CLTERMINALVIEWCTRL_HPP
+#pragma once
 
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clDataViewListCtrl.h"
@@ -43,4 +42,3 @@ public:
     void SetDefaultFont(const wxFont& font) override;
 };
 
-#endif // CLTERMINALVIEWCTRL_HPP

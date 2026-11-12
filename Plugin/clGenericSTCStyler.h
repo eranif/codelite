@@ -1,5 +1,4 @@
-#ifndef CLGENERICSTCSTYLER_H
-#define CLGENERICSTCSTYLER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -52,4 +51,3 @@ public:
     void ClearAllStyles();
 };
 
-#endif // CLGENERICSTCSTYLER_H

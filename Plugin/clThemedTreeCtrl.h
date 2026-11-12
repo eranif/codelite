@@ -1,5 +1,4 @@
-#ifndef CLTHEMEDTREECTRL_H
-#define CLTHEMEDTREECTRL_H
+#pragma once
 
 #include "clTreeCtrl.h"
 #include "clTreeKeyboardInput.h"
@@ -27,4 +26,3 @@ public:
                 long style = 0);
 };
 
-#endif // CLTHEMEDTREECTRL_H

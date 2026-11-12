@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WXPNGANIMATION_H
-#define WXPNGANIMATION_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -86,4 +85,3 @@ public:
     bool IsRunning() const { return m_timer && m_timer->IsRunning(); }
 };
 
-#endif // WXPNGANIMATION_H

@@ -1,5 +1,4 @@
-#ifndef LSPPYTHONDETECTOR_HPP
-#define LSPPYTHONDETECTOR_HPP
+#pragma once
 
 #include "LSPDetector.hpp" // Base class: LSPDetector
 #include "codelite_exports.h"
@@ -16,4 +15,3 @@ protected:
     void ConfigurePylsp(const wxString& pylsp);
 };
 
-#endif // LSPPYTHONDETECTOR_HPP

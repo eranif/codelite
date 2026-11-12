@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __custombuildrequest__
-#define __custombuildrequest__
+#pragma once
 
 #include "build_config.h"
 #include "codelite_exports.h"
@@ -54,4 +53,3 @@ public:
     // setters/getters
     const wxString& GetProjectName() const { return m_info.GetProject(); }
 };
-#endif // __custombuildrequest__

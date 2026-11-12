@@ -1,5 +1,4 @@
-#ifndef COMPILERLOCATORRUSTC_HPP
-#define COMPILERLOCATORRUSTC_HPP
+#pragma once
 
 #include "ICompilerLocator.h"
 #include "codelite_exports.h"
@@ -14,4 +13,3 @@ public:
     CompilerPtr Locate(const wxString& folder) override;
 };
 
-#endif // COMPILERLOCATORRUSTC_HPP

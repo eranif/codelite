@@ -1,5 +1,4 @@
-#ifndef VIRTUALDIRECTORYCOLOUR_H
-#define VIRTUALDIRECTORYCOLOUR_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -51,4 +50,3 @@ public:
     static const FolderColour& FindForPath(const FolderColour::List_t& sortedList, const wxString& path);
 };
 
-#endif // VIRTUALDIRECTORYCOLOUR_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef TERMINALEMULATOR_H
-#define TERMINALEMULATOR_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
@@ -84,4 +83,3 @@ public:
     bool ExecuteNoConsole(const wxString& command, const wxString& workingDirectory);
 };
 
-#endif // TERMINALEMULATOR_H

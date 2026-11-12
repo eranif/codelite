@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSEASMTHEMEIMPORTER_H
-#define ECLIPSEASMTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
@@ -37,4 +36,3 @@ public:
     ~ThemeImporterASM() override = default;
 };
 
-#endif // ECLIPSEASMTHEMEIMPORTER_H

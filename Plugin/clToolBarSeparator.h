@@ -1,5 +1,4 @@
-#ifndef CLTOOLBARSEPARATOR_H
-#define CLTOOLBARSEPARATOR_H
+#pragma once
 
 #include "clToolBarButtonBase.h"
 
@@ -14,4 +13,3 @@ public:
 public:
     wxSize CalculateSize(wxDC& dc) const override;
 };
-#endif // CLTOOLBARSEPARATOR_H

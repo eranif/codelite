@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __evnvarlist__
-#define __evnvarlist__
+#pragma once
 
 #include "clEnvironment.hpp"
 #include "codelite_exports.h"
@@ -107,4 +106,3 @@ public:
     void DeSerialize(Archive& arch) override;
     void Serialize(Archive& arch) override;
 };
-#endif // __envvarlist__

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef MACROMANAGER_H
-#define MACROMANAGER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -151,4 +150,3 @@ WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression,
 
 #endif
 
-#endif // MACROMANAGER_H

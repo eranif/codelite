@@ -1,5 +1,4 @@
-#ifndef CLTOOLBARSPACER_H
-#define CLTOOLBARSPACER_H
+#pragma once
 
 #include "clToolBarButtonBase.h"
 
@@ -15,4 +14,3 @@ public:
     wxSize CalculateSize(wxDC& dc) const override;
 };
 
-#endif // CLTOOLBARSPACER_H

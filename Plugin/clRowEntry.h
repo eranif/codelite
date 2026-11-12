@@ -1,5 +1,4 @@
-#ifndef CLTREECTRLNODE_H
-#define CLTREECTRLNODE_H
+#pragma once
 
 #include "clCellValue.h"
 #include "clColours.h"
@@ -254,4 +253,3 @@ public:
     bool IsSorted() const { return HasFlag(kNF_SortItems); }
 };
 
-#endif // CLTREECTRLNODE_H

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef COMPILER_H
-#define COMPILER_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "GCCMetadata.hpp"
@@ -255,4 +254,3 @@ public:
 using CompilerPtr = std::shared_ptr<Compiler>;
 using CompilerPtrVec_t = std::vector<CompilerPtr>;
 
-#endif // COMPILER_H

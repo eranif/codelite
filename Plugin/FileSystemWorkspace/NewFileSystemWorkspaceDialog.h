@@ -1,5 +1,4 @@
-#ifndef NEWFILESYSTEMWORKSPACEDIALOG_H
-#define NEWFILESYSTEMWORKSPACEDIALOG_H
+#pragma once
 
 #include "clFileSystemWorkspaceDlgBase.hpp"
 #include "codelite_exports.h"
@@ -19,4 +18,3 @@ protected:
     virtual void OnDirSelected(wxFileDirPickerEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
-#endif // NEWFILESYSTEMWORKSPACEDIALOG_H

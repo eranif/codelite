@@ -1,5 +1,4 @@
-#ifndef ECLIPSEDOCKERFILETHEMEIMPORTER_H
-#define ECLIPSEDOCKERFILETHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 
@@ -13,4 +12,3 @@ public:
     LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
-#endif // ECLIPSEDOCKERFILETHEMEIMPORTER_H

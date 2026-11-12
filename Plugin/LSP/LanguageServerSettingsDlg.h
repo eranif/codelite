@@ -1,5 +1,4 @@
-#ifndef LANGUAGESERVERSETTINGSDLG_H
-#define LANGUAGESERVERSETTINGSDLG_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "lsp_UI.hpp"
@@ -23,4 +22,3 @@ protected:
     void DoInitialize();
     void DoScan();
 };
-#endif // LANGUAGESERVERSETTINGSDLG_H

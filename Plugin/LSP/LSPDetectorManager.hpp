@@ -1,5 +1,4 @@
-#ifndef LSPDETECTORMANAGER_HPP
-#define LSPDETECTORMANAGER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 #include "detectors/LSPDetector.hpp"
@@ -20,4 +19,3 @@ public:
     size_t Scan(std::vector<LSPDetector::Ptr_t>& matchers);
 };
 
-#endif // LSPDETECTORMANAGER_HPP

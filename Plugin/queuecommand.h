@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __queuecommand__
-#define __queuecommand__
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -69,4 +68,3 @@ public:
     const wxString& GetCustomBuildTarget() const { return m_customBuildTarget; }
 };
 
-#endif // __queuecommand__

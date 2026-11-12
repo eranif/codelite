@@ -1,5 +1,4 @@
-#ifndef CLTOOLBAR_H
-#define CLTOOLBAR_H
+#pragma once
 
 #include "bitmap_loader.h"
 #include "cl_command_event.h"
@@ -325,4 +324,3 @@ using clToolBarNative = clToolBarGeneric;
 #else
 using clToolBar = clToolBarGeneric;
 #endif
-#endif // CLTOOLBAR_H

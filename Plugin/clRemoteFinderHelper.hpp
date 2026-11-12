@@ -1,5 +1,4 @@
-#ifndef CLREMOTEFINDERHELPER_HPP
-#define CLREMOTEFINDERHELPER_HPP
+#pragma once
 
 #include "clCodeLiteRemoteProcess.hpp"
 #include "cl_command_event.h"
@@ -46,4 +45,3 @@ public:
     void NotifySearchCancelled();
 };
 
-#endif // CLREMOTEFINDERHELPER_HPP

@@ -1,5 +1,4 @@
-#ifndef CLREMOTEHOST_HPP
-#define CLREMOTEHOST_HPP
+#pragma once
 
 #if USE_SFTP
 #include "AsyncProcess/asyncprocess.h"
@@ -125,4 +124,3 @@ private:
     void DrainPendingCommands();
 };
 #endif
-#endif // CLREMOTEHOST_HPP

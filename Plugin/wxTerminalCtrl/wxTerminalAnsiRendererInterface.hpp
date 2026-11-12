@@ -1,5 +1,4 @@
-#ifndef WXTERMINALANSIRENDERERINTERFACE_HPP
-#define WXTERMINALANSIRENDERERINTERFACE_HPP
+#pragma once
 
 #include "clResult.hpp"
 #include "codelite_exports.h"
@@ -92,4 +91,3 @@ public:
     const wxString& GetWindowTitle() const { return m_windowTitle; }
 };
 
-#endif // WXTERMINALANSIRENDERERINTERFACE_HPP

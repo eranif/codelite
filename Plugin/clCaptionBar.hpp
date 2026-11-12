@@ -1,5 +1,4 @@
-#ifndef CLCAPTIONBAR_HPP
-#define CLCAPTIONBAR_HPP
+#pragma once
 
 #include "clColours.h"
 #include "codelite_exports.h"
@@ -177,4 +176,3 @@ public:
 };
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CAPTION_ACTION_BUTTON, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CAPTION_MOVE_END, wxCommandEvent);
-#endif // CLCAPTIONBAR_HPP

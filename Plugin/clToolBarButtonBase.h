@@ -1,5 +1,4 @@
-#ifndef CLTOOLBARBUTTONBASE_H
-#define CLTOOLBARBUTTONBASE_H
+#pragma once
 
 #include "clToolBar.h"
 
@@ -146,4 +145,3 @@ public:
         return dynamic_cast<T*>(this);
     }
 };
-#endif // CLTOOLBARBUTTONBASE_H

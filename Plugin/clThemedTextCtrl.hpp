@@ -1,5 +1,4 @@
-#ifndef CLTHEMEDTEXTCTRL_HPP
-#define CLTHEMEDTEXTCTRL_HPP
+#pragma once
 
 #include "clEditorEditEventsHandler.h"
 #include "cl_command_event.h"
@@ -61,4 +60,3 @@ private:
     clEditEventsHandler::Ptr_t m_editEventsHandler;
 };
 
-#endif // CLTHEMEDTEXTCTRL_HPP

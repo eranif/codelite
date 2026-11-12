@@ -37,6 +37,7 @@ nav:
       - CppCheck: plugins/cppcheck.md
       - Subversion: plugins/svn.md
       - wxCrafter: plugins/wxcrafter.md
+      - wxCrafter, wxcgen & AI skill: plugins/wxcgen.md
       - Git: plugins/git.md
       - UnitTest++: plugins/ut.md
       - Remoty: plugins/remoty.md

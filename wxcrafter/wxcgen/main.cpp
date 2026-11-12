@@ -6,6 +6,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "json_utils.h"
+#include "metadata_md.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
@@ -43,6 +44,20 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
      nullptr,
      "verbose",
      "Print the output directories and the generated files",
+     wxCMD_LINE_VAL_NONE,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH,
+     nullptr,
+     "install-skill-local",
+     "Install the wxCrafter AI skill (SKILL.md and a reference of the .wxcp format and of every control) into "
+     "\"<current directory>/.claude/skills/wxcrafter\". No input file is needed",
+     wxCMD_LINE_VAL_NONE,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH,
+     nullptr,
+     "install-skill-global",
+     "Install the wxCrafter AI skill into \"<home directory>/.claude/skills/wxcrafter\", for all projects. "
+     "No input file is needed",
      wxCMD_LINE_VAL_NONE,
      wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_PARAM,
@@ -113,6 +128,36 @@ static void PrintGeneratedFiles(const wxString& projectFile,
     wxPrintf("Base class files:%s\n", wxJoin(baseFiles, ',', '\0').c_str());
     wxPrintf("Subclass output directory:%s\n", subclassDirPath.c_str());
     wxPrintf("Subclass files:%s\n", wxJoin(subclassFiles, ',', '\0').c_str());
+}
+
+// The skill is installed into <base>/.claude/skills/wxcrafter, where <base> is the current directory (local, this
+// project only) or the user home directory (global, all projects). The folder name is the name of the skill.
+static const char* const AI_SKILL_DIR_NAME = "wxcrafter";
+
+// Install the AI skill (SKILL.md + references/*.md) into <base>/.claude/skills/wxcrafter.
+// Print each written file with its size
+static bool InstallAiSkill(const wxString& base)
+{
+    const wxString skillDir = base + wxFILE_SEP_PATH + ".claude" + wxFILE_SEP_PATH + "skills" + wxFILE_SEP_PATH +
+                              AI_SKILL_DIR_NAME;
+
+    bool ok = true;
+    for (const MetadataFile& file : BuildMetadataMarkdown(GIT_REVISION)) {
+        wxFileName fn(skillDir + "/" + file.name); // file.name is '/' separated, wxFileName accepts it on all platforms
+        if (!wxFileName::DirExists(fn.GetPath()) &&
+            !wxFileName::Mkdir(fn.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL)) {
+            wxFprintf(stderr, "wxcgen: cannot create directory: %s\n", fn.GetPath().c_str());
+            ok = false;
+            continue;
+        }
+        if (!FileUtils::WriteFileContent(fn, file.content)) {
+            wxFprintf(stderr, "wxcgen: cannot write file: %s\n", fn.GetFullPath().c_str());
+            ok = false;
+            continue;
+        }
+        wxPrintf("%s (%lu bytes)\n", fn.GetFullPath().c_str(), static_cast<unsigned long>(file.content.ToUTF8().length()));
+    }
+    return ok;
 }
 
 static bool GenerateFromProject(const wxString& filename,
@@ -292,7 +337,13 @@ int wxcgenApp::OnRun()
         "  Base class output directory:<full-path>\n"
         "  Base class files:<comma separated list of files>\n"
         "  Subclass output directory:<full-path>\n"
-        "  Subclass files:<comma separated list of files>\n");
+        "  Subclass files:<comma separated list of files>\n"
+        "\n"
+        "With --install-skill-local, wxcgen installs the wxCrafter AI skill into\n"
+        "<current directory>/.claude/skills/wxcrafter. With --install-skill-global, it installs it into\n"
+        "<home directory>/.claude/skills/wxcrafter. The skill is SKILL.md, plus a references/ folder with the .wxcp\n"
+        "format and every control (its m_type ID, window styles, sizer flags, properties and events).\n"
+        "No input file is needed.\n");
     parser.SetCmdLine(argc, argv);
     if (parser.Parse(/*giveUsage=*/false) != 0) {
         parser.Usage();
@@ -309,7 +360,11 @@ int wxcgenApp::OnRun()
         return 0;
     }
 
-    if (parser.GetParamCount() == 0) {
+    const bool installSkillLocal = parser.Found("install-skill-local");
+    const bool installSkillGlobal = parser.Found("install-skill-global");
+    const bool installSkill = installSkillLocal || installSkillGlobal;
+
+    if (parser.GetParamCount() == 0 && !installSkill) {
         parser.Usage();
         return 1;
     }
@@ -340,6 +395,17 @@ int wxcgenApp::OnRun()
     FileLogger::OpenLog("wxcgen.log", FileLogger::System);
 
     int rc = 0;
+    if (installSkill) {
+        if (installSkillLocal && !InstallAiSkill(wxGetCwd())) {
+            rc = 1;
+        }
+        if (installSkillGlobal && !InstallAiSkill(wxFileName::GetHomeDir())) {
+            rc = 1;
+        }
+        if (parser.GetParamCount() == 0) {
+            return rc;
+        }
+    }
     for (size_t i = 0; i < parser.GetParamCount(); i++) {
         wxString filename = parser.GetParam(i);
         wxFileName fn(filename);

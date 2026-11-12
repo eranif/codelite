@@ -1,5 +1,4 @@
 #pragma once
-#include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "clResult.hpp"
 #include "cl_command_event.h"
 extern "C" {
@@ -141,16 +140,16 @@ public:
     /**
      * @brief Shuts down the CodeLiteLUA subsystem and releases all associated resources.
      *
-     * This method cleans up the Lua state, clears menu items, and destroys the text generation
-     * frame. After calling this method, the CodeLiteLUA instance is reset to an uninitialized
-     * state. This is typically called during plugin shutdown or application termination.
+     * This method cleans up the Lua state and clears menu items. After calling this method, the
+     * CodeLiteLUA instance is reset to an uninitialized state. This is typically called during
+     * plugin shutdown or application termination.
      *
      * @param None
      *
      * @return void - This function does not return a value.
      *
      * @note This method operates on the singleton instance obtained via Get().
-     * @note After shutdown, m_state is set to nullptr and m_textGenerationFrame is destroyed.
+     * @note After shutdown, m_state is set to nullptr.
      *
      * @see Get()
      *
@@ -226,43 +225,6 @@ protected:
      *         no editor is active.
      */
     static std::string editor_selection();
-
-    /**
-     * @brief Initiates a chat session using the given prompt.
-     *
-     * This method creates a menu event that triggers the chat window
-     * within the application and attaches the provided prompt string
-     * to the event.
-     *
-     * @param prompt The initial text to be displayed in the chat input.
-     */
-    static void chat(const std::string& prompt);
-
-    /**
-     * @brief Initiates an LLM text generation process with the given prompt.
-     *
-     * This method checks if a generation is already in progress and displays a warning if so.
-     * Otherwise, it sets the generation flag, initializes the text generation frame for default
-     * preview, and invokes the LLM Manager to show the generation dialog. Upon completion, the
-     * generation flag is reset.
-     *
-     * @param prompt The text prompt to send to the LLM for generation.
-     *
-     * @return void This function does not return a value.
-     *
-     * @note This function displays a modal message box if another generation is already in
-     * progress.
-     * @note The function uses a singleton pattern (Get()) to access the CodeLiteLUA instance.
-     *
-     * @par Example:
-     * @code
-     * CodeLiteLUA::generate("Write a function to sort an array");
-     * @endcode
-     *
-     * @see llm::Manager::ShowTextGenerationDialog()
-     * @see CodeLiteLUA::Get()
-     */
-    static void generate(const std::string& prompt);
 
     /**
      * @brief Retrieves the programming language associated with the currently active editor.
@@ -484,5 +446,4 @@ private:
     lua_State* m_state{nullptr};
     std::unordered_map<std::string, std::vector<LuaMenuItem>> m_menu_items;
     std::unordered_map<std::string, std::vector<int>> m_items_added_to_menu_bar_menus;
-    bool m_generationInProgress{false};
 };

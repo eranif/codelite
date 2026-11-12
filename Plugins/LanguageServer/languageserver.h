@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "LSP/LSPManager.hpp"
 #include "LSP/LanguageServerLogView.h"
 #include "LSP/detectors/LSPDetector.hpp"

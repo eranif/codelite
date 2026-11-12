@@ -28,7 +28,6 @@ public:
 
 protected:
     void OnDirContextMenu(clContextMenuEvent& event);
-    void OnFileContextMenu(clContextMenuEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnOpenFindInFilesMatch(clFindInFilesEvent& event);
     void OnRemoteFileSaved(clCommandEvent& event);

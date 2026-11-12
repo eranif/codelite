@@ -3,10 +3,9 @@
 ---CodeLite Lua Scripting API
 ---
 ---This module provides the CodeLite API for Lua scripting extensions.
----The API is organized into five main categories:
+---The API is organized into four main categories:
 --- - UI Functions: Display message boxes and add custom menu items
 --- - Editor Functions: Access editor content, selections, language types, and file paths
---- - LLM Functions: Integrate with language learning models for chat and code generation
 --- - Logging Functions: Output diagnostic information with multiple severity levels
 --- - String Utilities: Perform text manipulation operations
 ---@class codelite
@@ -26,7 +25,6 @@ MessageType = {
 ---Available menu contexts for add_menu_item
 ---
 ---Context Menus:
---- - "editor_context_menu_llm_generation": AI-powered options in editor
 --- - "editor_tab_right_click": Right-click on editor tab label
 --- - "file_tree_file": Right-click on file in tree view
 --- - "file_tree_folder": Right-click on folder in tree view
@@ -140,31 +138,6 @@ function codelite.editor_text() end
 ---end
 ---```
 function codelite.editor_filepath() end
-
--- ============================================================================
--- LLM Functions
--- ============================================================================
-
----Initiates a chat session using the given prompt.
----This opens the chat window within the application with the provided text as the initial input.
----@param prompt string The initial text to be displayed in the chat input
----
----Example:
----```lua
----codelite.chat("Explain how to use this API")
----```
-function codelite.chat(prompt) end
-
----Initiates an LLM text generation process with the given prompt.
----Displays a warning if a generation is already in progress.
----The function shows a generation dialog and processes the prompt using the LLM Manager.
----@param prompt string The text prompt to send to the LLM for generation
----
----Example:
----```lua
----codelite.generate("Write a function to sort an array")
----```
-function codelite.generate(prompt) end
 
 -- ============================================================================
 -- Logging Functions

@@ -3,7 +3,6 @@
 #include "DefaultLuaScript.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
-#include "ai/LLMManager.hpp"
 #include "codelite_events.h"
 #include "fileextmanager.h"
 #include "globals.h"
@@ -83,8 +82,6 @@ void CodeLiteLUA::Initialise()
             .addFunction("add_menu_item", &CodeLiteLUA::add_menu_item)
             .addFunction("add_menu_separator", &CodeLiteLUA::add_menu_separator)
             .addFunction("editor_selection", &CodeLiteLUA::editor_selection)
-            .addFunction("chat", &CodeLiteLUA::chat)
-            .addFunction("generate", &CodeLiteLUA::generate)
             .addFunction("editor_language", &CodeLiteLUA::editor_language)
             .addFunction("editor_text", &CodeLiteLUA::editor_text)
             .addFunction("editor_filepath", &CodeLiteLUA::editor_filepath)
@@ -280,27 +277,6 @@ CodeLiteLUA::str_replace_all(const std::string& str, const std::string& find_wha
 
     result.append(str, last_pos, std::string::npos);
     return result;
-}
-
-void CodeLiteLUA::generate(const std::string& prompt)
-{
-    if (Get().m_generationInProgress) {
-        ::wxMessageBox(
-            _("Another generation is in progress, try again later"), "CodeLite", wxOK | wxICON_WARNING | wxCENTER);
-        return;
-    }
-
-    Get().m_generationInProgress = true;
-    llm::Manager::GetInstance().ShowTextGenerationDialog(
-        prompt, std::nullopt, PreviewKind::kDefault, []() { CodeLiteLUA::Get().m_generationInProgress = false; });
-}
-
-void CodeLiteLUA::chat(const std::string& prompt)
-{
-    // send an event requesting to initiate a chat
-    wxCommandEvent event_chat{wxEVT_MENU, XRCID("ai_show_chat_window")};
-    event_chat.SetString(wxString::FromUTF8(prompt));
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event_chat);
 }
 
 bool CodeLiteLUA::is_workspace_opened() { return clWorkspaceManager::Get().IsWorkspaceOpened(); }

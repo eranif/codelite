@@ -6,7 +6,6 @@
 #include "FileSystemWorkspace/clFileSystemWorkspaceDlg.h"
 #include "RemotyWorkspace.hpp"
 #include "SFTPClientData.hpp"
-#include "ai/LLMManager.hpp"
 #include "clAuiToolBarArt.h"
 #include "clRemoteFindDialog.h"
 #include "clSFTPManager.hpp"
@@ -62,7 +61,6 @@ RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* work
     GetSizer()->Fit(this);
 
     m_tree->Bind(wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnDirContextMenu, this);
-    m_tree->Bind(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnFileContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &RemotyWorkspaceView::OnFindInFilesShowing, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_OPEN_MATCH, &RemotyWorkspaceView::OnOpenFindInFilesMatch, this);
     EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspaceView::OnRemoteFileSaved, this);
@@ -73,7 +71,6 @@ RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* work
 RemotyWorkspaceView::~RemotyWorkspaceView()
 {
     m_tree->Unbind(wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnDirContextMenu, this);
-    m_tree->Unbind(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnFileContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &RemotyWorkspaceView::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_OPEN_MATCH, &RemotyWorkspaceView::OnOpenFindInFilesMatch, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspaceView::OnRemoteFileSaved, this);
@@ -174,12 +171,6 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
             CallAfter(&RemotyWorkspaceView::DoCloseWorkspace);
         },
         wxID_CLOSE);
-}
-
-void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event)
-{
-    event.Skip();
-    llm::Manager::GetInstance().UpdateFileContextMenu(event);
 }
 
 void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)

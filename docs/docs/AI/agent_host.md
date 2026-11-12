@@ -1,9 +1,5 @@
 # Agent Host: Claude Code, Kiro CLI & OpenCode
 
-!!! Note
-    CodeLite offers two flavours of AI. This page covers **Agent Host**, which runs an existing coding agent in a CodeLite
-    tab. CodeLite also has a built-in assistant, see [Chat AI](chat_ai.md).
-
 **Claude Code: since CodeLite 18.5.0. Kiro CLI, OpenCode and the Agent Host name: since CodeLite 19.0.0.**
 
 The Agent Host plugin runs an existing coding agent inside a dedicated CodeLite tab, so you can work with it right next to your
@@ -61,27 +57,6 @@ Leave a field empty to go back to resolving the executable from the `PATH`.
     On a **remote workspace** (opened via the [Remoty](../plugins/remoty.md) plugin over SSH/SFTP), the plugin always runs the agent
     from the remote host's `PATH`. The configured local executable path is not used in that case.
 
-## Agent System Prompt
-
-Agent Host passes the Chat AI [system prompt](chat_ai.md#system-prompt) to the agent when it starts. Edit it with
-**Chat AI → Edit System Prompt...**.
-
-| Agent | How the prompt is passed |
-|-------|--------------------------|
-| Claude Code | Saved to a `SYSTEM_PROMPT.md` file in CodeLite's settings folder and passed with `--append-system-prompt-file`. |
-| Kiro CLI | Written to `.kiro/steering/SYSTEM_PROMPT.md` in the workspace. |
-| OpenCode | Saved to a `SYSTEM_PROMPT.md` file in the `.codelite` folder of the workspace. CodeLite also writes an `opencode.json` file next to it, which lists the prompt file under `instructions`, and starts OpenCode with the `OPENCODE_CONFIG` environment variable pointing to it. |
-
-If the system prompt is empty, nothing is passed to the agent.
-
-!!! Note
-    For Kiro CLI, the file in your workspace is overwritten each time the agent starts. You may want to add
-    `.kiro/steering/SYSTEM_PROMPT.md` to your `.gitignore`.
-
-!!! Note
-    For OpenCode, the prompt is added to the OpenCode instructions. It does not replace the OpenCode system prompt. On a remote
-    workspace, `OPENCODE_CONFIG` is set only for the local SSH process, so the prompt is not passed to OpenCode unless your SSH
-    account forwards that variable.
 ## Clickable Terminal Output
 
 Inside the agent tab, Ctrl+Left-Click (Cmd+Left-Click on macOS) any word or path that the agent prints to open it inside

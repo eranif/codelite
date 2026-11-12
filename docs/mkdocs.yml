@@ -18,7 +18,6 @@ nav:
       - Hello World: hello_world.md
   - AI In CodeLite:
       - AgentHost Plugin: AI/agent_host.md
-      - Chat AI: AI/chat_ai.md
   - LSP:
       - plugins/lsp.md
   - LUA:

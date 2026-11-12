@@ -6,11 +6,10 @@ This document provides comprehensive API documentation for CodeLite's Lua script
 
 ## API Categories
 
-The CodeLite Lua API is organized into six main categories:
+The CodeLite Lua API is organized into five main categories:
 
 - **UI Functions** — Display message boxes and add custom menu items
 - **Editor Functions** — Access editor content, selections, language types, and file paths
-- **LLM Functions** — Integrate with language learning models for chat and code generation
 - **Logging Functions** — Output diagnostic information with multiple severity levels
 - **String Utilities** — Perform text manipulation operations
 - **Workspace Functions** — Access workspace state and selected files/folders
@@ -114,7 +113,6 @@ The following menu names can be used to specify context menu locations:
 
 | Menu Name | Description |
 |-----------|-------------|
-| `editor_context_menu_llm_generation` | Context menu displayed when right-clicking within an editor and selecting AI-powered options |
 | `editor_tab_right_click` | Context menu displayed when right-clicking on an open editor tab label |
 | `editor_right_click` | Context menu displayed when right-clicking within a C++ file editor |
 | `editor_right_click_default` | Default context menu displayed when right-clicking within any non-C++ file editor |
@@ -273,60 +271,6 @@ local filepath = codelite.editor_filepath()
 if filepath ~= "" then
     codelite.log_system("Editing: " .. filepath)
 end
-```
-
----
-
-## LLM Functions
-
-Functions for integrating with language learning models to enhance development workflows.
-
-### chat
-
-**Signature:**
-
-```lua
-codelite.chat(prompt)
-```
-
-**Description:**
-
-Initiates a chat session using the given prompt. This opens the chat window within the application with the provided text as the initial input.
-
-**Parameters:**
-
-- `prompt` (string): The initial text to be displayed in the chat input
-
-**Example:**
-
-```lua
--- Open chat with a predefined prompt
-codelite.chat("Explain how to use this API")
-```
-
----
-
-### generate
-
-**Signature:**
-
-```lua
-codelite.generate(prompt)
-```
-
-**Description:**
-
-Initiates an LLM text generation process with the given prompt. Displays a warning if a generation is already in progress. The function shows a generation dialog and processes the prompt using the LLM Manager.
-
-**Parameters:**
-
-- `prompt` (string): The text prompt to send to the LLM for generation
-
-**Example:**
-
-```lua
--- Generate code using LLM
-codelite.generate("Write a function to sort an array")
 ```
 
 ---

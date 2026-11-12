@@ -7,13 +7,29 @@
 
 #include <wx/app.h>
 #include <wx/dynarray.h>
+#include <wx/image.h>
 
 wxDEFINE_EVENT(wxEVT_BOOKNAV_SELECTED, wxBookCtrlEvent);
 
 namespace
 {
 NotebookNavigationDlg* m_navDlg{nullptr};
+
+/// The bitmap that a notebook gives for a tab (GetPageBitmap()) is not scaled for the DPI of the screen: it has the
+/// logical size of the icon in pixels. The icons of the files are scaled, so the icon of a tab (an agent, the diff
+/// view) is smaller than the others. Give it the size and the scale factor of `reference`, so all the rows have the
+/// same size
+wxBitmap MatchIconSize(const wxBitmap& bmp, const wxBitmap& reference)
+{
+    if (!bmp.IsOk() || !reference.IsOk() ||
+        (bmp.GetSize() == reference.GetSize() && bmp.GetScaleFactor() == reference.GetScaleFactor())) {
+        return bmp;
+    }
+    wxImage image = bmp.ConvertToImage();
+    image.Rescale(reference.GetWidth(), reference.GetHeight(), wxIMAGE_QUALITY_HIGH);
+    return wxBitmap(image, wxBITMAP_SCREEN_DEPTH, reference.GetScaleFactor());
 }
+} // namespace
 
 NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clTabHistory::Ptr_t history)
     : wxPopupTransientWindow(parent, wxBORDER_DEFAULT)
@@ -286,10 +302,11 @@ void NotebookNavigationDlg::Initialise()
         // A tab that is not a file (e.g. the diff view) shows its own bitmap.
         // For a file, try to match one by file name.
         // If no match is found, fall back to the "placeholder" icon.
-        wxBitmap bmpForFile = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
+        const wxBitmap placeholder = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
+        wxBitmap bmpForFile = placeholder;
         wxString fullname = d->filename.GetFullName();
         if (!d->isFile && d->bmp.IsOk()) {
-            bmpForFile = d->bmp;
+            bmpForFile = MatchIconSize(d->bmp, placeholder);
         } else if (!fullname.empty() && FileExtManager::GetType(fullname) != FileExtManager::TypeOther) {
             bmpForFile = clGetManager()->GetStdIcons()->GetBitmapForFile(d->filename.GetFullName(), false);
         }

@@ -3,11 +3,10 @@
 #include "AgentHostSettgingsDlg.hpp"
 #include "AgentTerminal.hpp"
 #include "ColoursAndFontsManager.h"
-#include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "ReviewBuddy.hpp"
+#include "StringUtils.h"
 #include "TabStatusIcon.hpp"
-#include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "aui/cl_aui_tool_stickness.h"
 #include "bitmap_loader.h"
@@ -399,69 +398,6 @@ void AgentHostPage::StartAgentHost(const AgentInfo& info)
     RestartAgentHost();
 }
 
-std::optional<SystemPromptCli> AgentHostPage::BuildSystemPrompt(const AgentInfo& info)
-{
-    wxBusyCursor bc{};
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace == nullptr)
-        return std::nullopt;
-
-    wxString systemPromptFilePath;
-    SystemPromptCli cli;
-    wxString& systemPromptArgs = cli.args;
-    wxString systemPrompt = llm::Manager::GetInstance().GetConfig().GetSystemPrompt();
-    if (systemPrompt.empty())
-        return std::nullopt;
-
-    switch (info.agent_type) {
-    case AgentType::kClaudeCode: {
-        systemPromptFilePath = FileManager::GetSettingFileFullPath("SYSTEM_PROMPT.md");
-        if (!FileManager::WriteContent(systemPromptFilePath, systemPrompt, true)) {
-            clWARNING() << "Failed to write system prompt file:" << systemPromptFilePath << endl;
-            return std::nullopt;
-        }
-        systemPromptArgs << "--append-system-prompt-file " << StringUtils::WrapWithDoubleQuotes(systemPromptFilePath);
-    } break;
-    case AgentType::kKiroCli: {
-        // Kiro does not support using custom files, we need to use .kiro/steering/SYSTEM_PROMPT.md file.
-        systemPromptFilePath = FileManager::GetFullPath(".kiro/steering/SYSTEM_PROMPT.md");
-        wxString dirpath = systemPromptFilePath.BeforeLast('/');
-        clDEBUG() << "Creating rmeote dir:" << dirpath << endl;
-        FileManager::CreateDir(dirpath);
-        systemPromptArgs.clear();
-    } break;
-    case AgentType::kOpenCode: {
-        // OpenCode has no command line option for this. Point it to a config file that lists the system prompt file
-        // under "instructions", using the OPENCODE_CONFIG environment variable (the file is merged with the other
-        // config files). The prompt file is written below.
-        systemPromptFilePath = FileManager::GetSettingFileFullPath("SYSTEM_PROMPT.md");
-        wxString configFilePath = FileManager::GetSettingFileFullPath("opencode.json");
-
-        // Use forward slashes: it works on all the platforms and needs no escaping inside the JSON string
-        wxString promptPathInJson = systemPromptFilePath;
-        promptPathInJson.Replace("\\", "/");
-        wxString configPathInEnv = configFilePath;
-        configPathInEnv.Replace("\\", "/");
-        cli.env.insert({"OPENCODE_CONFIG", configPathInEnv});
-
-        const wxString configContent = wxString::Format(
-            R"({ "$schema": "https://opencode.ai/config.json", "instructions": ["%s"]})", promptPathInJson);
-        if (!FileManager::WriteContent(configFilePath, configContent, true)) {
-            clWARNING() << "Failed to write OpenCode config file:" << configFilePath << endl;
-            return std::nullopt;
-        }
-    } break;
-    }
-
-    if (!FileManager::WriteContent(systemPromptFilePath, systemPrompt, true)) {
-        clWARNING() << "Failed to write system prompt file:" << systemPromptFilePath << endl;
-        return std::nullopt;
-    }
-    clDEBUG() << "Successfully written system prompt file:" << systemPromptFilePath << endl;
-    clDEBUG() << "Will add the following args to agent CLI:" << systemPromptArgs << endl;
-    return cli;
-}
-
 void AgentHostPage::SetFocus()
 {
     // wxPanel::SetFocus() gives the focus to the last focused child, which is not always the terminal. This is called,
@@ -516,11 +452,6 @@ void AgentHostPage::RestartAgentHost()
     baseCommand.Prepend("\"").Append("\"");
     wxString command_to_run;
 
-    // Append the system prompt args to the base command.
-    auto systemPromptCli = BuildSystemPrompt(m_agentInfo);
-    if (systemPromptCli && !systemPromptCli->args.empty())
-        baseCommand << " " << systemPromptCli->args;
-
     switch (m_agentInfo.agent_type) {
     case AgentType::kClaudeCode:
     case AgentType::kOpenCode:
@@ -535,14 +466,6 @@ void AgentHostPage::RestartAgentHost()
         cd_command << "cd \"" << m_agentInfo.workingDirectory << "\" && ";
         command_to_run.Prepend(cd_command);
     }
-    // The terminal inherits the environment of CodeLite, set the agent variables until it is launched
-    wxStringMap_t envMap;
-    std::unique_ptr<EnvSetter> env;
-    if (systemPromptCli && !systemPromptCli->env.empty()) {
-        envMap = systemPromptCli->env;
-        env = std::make_unique<EnvSetter>(&envMap);
-    }
-
     m_agentTerminal = new AgentTerminal(m_splitter, m_agentInfo.sshAccount, kShellCommand);
     if (GetTerminal() == nullptr) {
         wxDELETE(m_agentTerminal);

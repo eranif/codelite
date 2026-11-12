@@ -41,14 +41,6 @@ struct AgentInfo {
     std::optional<SSHAccountInfo> sshAccount;
 };
 
-/// How to pass the system prompt to an agent
-struct SystemPromptCli {
-    /// Arguments to append to the agent command line
-    wxString args;
-    /// Environment variables to set for the agent process
-    wxStringMap_t env;
-};
-
 class AgentHostPage : public AgentHostPageBase
 {
 public:
@@ -116,7 +108,6 @@ protected:
     /// Run the main frame command `name` (a menu item), with the dialog filled from our selection
     void RunFrameCommand(const char* name);
     void SearchInWorkspace(const wxString& text);
-    std::optional<SystemPromptCli> BuildSystemPrompt(const AgentInfo& info);
 
     // Review Buddy: a second agent that reviews the unpushed work of the main one, in a pane next to it
     /// Can a review buddy be launched from this page? If not, `whyNot` says why.

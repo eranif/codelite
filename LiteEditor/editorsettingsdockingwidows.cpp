@@ -50,8 +50,8 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
                 [this, tab_height_map](const wxString& label, const wxAny& value) {
                     wxString value_str;
                     if (value.GetAs(&value_str)) {
+                        // The notebooks re-measure their tabs when the preferences are saved: no restart is needed
                         m_options->SetNotebookTabHeight(tab_height_map.find(value_str)->second);
-                        m_isRestartRequired = true;
                     }
                 });
 

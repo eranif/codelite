@@ -313,6 +313,18 @@ public:
         art->SetOutlineColour(outlineColour.IsOk()
                                   ? outlineColour
                                   : (lexer->IsDark() ? theme.bg.ChangeLightness(120) : theme.bg.ChangeLightness(80)));
+
+        // The padding of the tabs of GlyphTabArt is fixed: apply the "Tab height" setting by reserving a taller content
+        // height. As clAuiFlatTabArt, every step of the setting adds 2 DIPs to the height of a tab. The default (Short)
+        // is the natural height of the tab, and a tab can not be shorter than that
+        const int extra_height = 2 * (EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() -
+                                      static_cast<int>(OptionsConfig::nbTabHt_Short));
+        if (extra_height > 0) {
+            const wxFont font = clTabRenderer::GetTabFont(false);
+            int text_height = 0;
+            book->GetTextExtent("Xg", nullptr, &text_height, nullptr, nullptr, &font);
+            art->SetReservedIconSize(book->ToDIP(text_height) + extra_height);
+        }
         return art;
     }
 

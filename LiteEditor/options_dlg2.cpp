@@ -81,6 +81,10 @@ void PreferencesDialog::DoSave()
     // Notify plugins about settings changed
     wxCommandEvent event(wxEVT_EDITOR_CONFIG_CHANGED);
     EventNotifier::Get()->ProcessEvent(event);
+
+    // The "settings changed" event applies the settings that need the main frame: the labels of the tabs (the number
+    // of directory parts), the frame title, the captions and so on. It was replaced by the event above by mistake
+    PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
 }
 
 void PreferencesDialog::Initialize()

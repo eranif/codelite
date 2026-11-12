@@ -1,5 +1,4 @@
-#ifndef CLMARKDOWNRENDERER_HPP
-#define CLMARKDOWNRENDERER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 #include "mdparser.hpp"
@@ -26,4 +25,3 @@ public:
     wxSize Render(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect);
 };
 
-#endif // CLMARKDOWNRENDERER_HPP

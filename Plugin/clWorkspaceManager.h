@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLWORKSPACEMANAGER_H
-#define CLWORKSPACEMANAGER_H
+#pragma once
 
 #include "IWorkspace.h"
 #include "clWorkspaceEvent.hpp"
@@ -76,4 +75,3 @@ public:
     /// Open (create if missing) `filepath` and load it into an editor.
     IEditor* OpenFileInEditor(const wxString& filepath, bool createIfMissing = true) override;
 };
-#endif // CLWORKSPACEMANAGER_H

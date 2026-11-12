@@ -1,5 +1,4 @@
-#ifndef LSPNETWORKSOCKET_H
-#define LSPNETWORKSOCKET_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "LSPNetwork.h"
@@ -40,4 +39,3 @@ public:
     ~LSPNetworkSTDIO() override;
 };
 
-#endif // LSPNETWORKSOCKET_H

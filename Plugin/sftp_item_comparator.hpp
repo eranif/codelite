@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPITEMCOMPARATOR_H
-#define SFTPITEMCOMPARATOR_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -90,4 +89,3 @@ public:
     const wxString& GetSymlinkTarget() const { return m_symlinkTarget; }
 };
 
-#endif // SFTPITEMCOMPARATOR_H

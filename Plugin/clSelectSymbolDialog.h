@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSELECTSYMBOLDIALOG_H
-#define CLSELECTSYMBOLDIALOG_H
+#pragma once
 
 #include "clSelectSymbolDialogBase.hpp"
 #include "cl_command_event.h"
@@ -72,4 +71,3 @@ protected:
     void OnItemActivated(wxDataViewEvent& event) override;
     void OnOKUI(wxUpdateUIEvent& event) override;
 };
-#endif // CLSELECTSYMBOLDIALOG_H

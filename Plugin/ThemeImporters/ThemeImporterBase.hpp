@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSETHEMEIMPORTERBASE_H
-#define ECLIPSETHEMEIMPORTERBASE_H
+#pragma once
 
 #include "JSON.h"
 #include "codelite_exports.h"
@@ -306,4 +305,3 @@ public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file) = 0;
 };
 
-#endif // ECLIPSETHEMEIMPORTERBASE_H

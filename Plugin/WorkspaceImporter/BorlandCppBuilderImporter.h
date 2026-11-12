@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef BORLANDCPPBUILDERIMPORTER_H
-#define BORLANDCPPBUILDERIMPORTER_H
+#pragma once
 
 #include "GenericImporter.h"
 
@@ -42,4 +41,3 @@ private:
     wxFileName wsInfo;
 };
 
-#endif // BORLANDCPPBUILDERIMPORTER_H

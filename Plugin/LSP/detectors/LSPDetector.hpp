@@ -1,5 +1,4 @@
-#ifndef LSPDETECTOR_HPP
-#define LSPDETECTOR_HPP
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "LSP/LanguageServerEntry.h"
@@ -56,4 +55,3 @@ public:
     const wxString& GetInitialiseOptions() const { return m_initialiseOptions; }
 };
 
-#endif // LSPDETECTOR_HPP

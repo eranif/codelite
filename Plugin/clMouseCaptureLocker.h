@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLMOUSECAPTURELOCKER_H
-#define CLMOUSECAPTURELOCKER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -47,4 +46,3 @@ public:
     void CaptureMouse(wxWindow* win);
 };
 
-#endif // CLMOUSECAPTURELOCKER_H

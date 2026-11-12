@@ -1,5 +1,4 @@
-#ifndef SWITCHTOWORKSPACEDLG_H
-#define SWITCHTOWORKSPACEDLG_H
+#pragma once
 #include "SwitchToWorkspaceBase.hpp"
 
 class WXDLLIMPEXP_SDK SwitchToWorkspaceDlg : public SwitchToWorkspaceBaseDlg
@@ -13,4 +12,3 @@ protected:
     void OnBrowse(wxCommandEvent& event) override;
     void OnOKUI(wxUpdateUIEvent& event) override;
 };
-#endif // SWITCHTOWORKSPACEDLG_H

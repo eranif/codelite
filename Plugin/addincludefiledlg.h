@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __addincludefiledlg__
-#define __addincludefiledlg__
+#pragma once
 
 #include "addincludefiledlgbase.hpp"
 #include "codelite_exports.h"
@@ -57,4 +56,3 @@ public:
     int GetLine() const { return m_line; }
 };
 
-#endif // __addincludefiledlg__

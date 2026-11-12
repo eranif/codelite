@@ -1,5 +1,4 @@
-#ifndef CLCUSTOMSCROLLBAR_H
-#define CLCUSTOMSCROLLBAR_H
+#pragma once
 
 #include "clColours.h"
 #include "codelite_exports.h"
@@ -82,4 +81,3 @@ public:
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CUSTOM_SCROLL, clScrollEvent);
-#endif // CLCUSTOMSCROLLBAR_H

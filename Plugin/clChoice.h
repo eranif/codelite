@@ -1,5 +1,4 @@
-#ifndef CLCHOICE_H
-#define CLCHOICE_H
+#pragma once
 
 #include "clButtonBase.h" // Base class: clButtonBase
 #include "wxCustomControls.hpp"
@@ -141,4 +140,3 @@ public:
     void Set(const wxArrayString& items);
 };
 #endif
-#endif // CLCHOICE_H

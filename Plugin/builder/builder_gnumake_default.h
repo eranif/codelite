@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef BUILDER_GNUMAKE_DEFAULT_H
-#define BUILDER_GNUMAKE_DEFAULT_H
+#pragma once
 
 #include "builder.h"
 #include "codelite_exports.h"
@@ -138,4 +137,3 @@ private:
     wxString DoGetTargetPrefix(const wxFileName& filename, const wxString& cwd, CompilerPtr cmp);
     wxString GetRelinkMarkerForProject(const wxString& projectName) const;
 };
-#endif // BUILDER_GNUMAKE_DEFAULT_H

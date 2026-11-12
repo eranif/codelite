@@ -1,5 +1,4 @@
-#ifndef CLBACKTICKCACHE_HPP
-#define CLBACKTICKCACHE_HPP
+#pragma once
 
 #include "codelite_exports.h"
 #include "macros.h"
@@ -26,4 +25,3 @@ public:
     wxString GetExpanded(const wxString& command) const;
 };
 
-#endif // CLBACKTICKCACHE_HPP

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef GENERICIMPORTER_H
-#define GENERICIMPORTER_H
+#pragma once
 
 #include <map>
 #include <memory>
@@ -113,4 +112,3 @@ public:
     virtual GenericWorkspacePtr PerformImport() = 0;
 };
 
-#endif // GENERICIMPORTER_H

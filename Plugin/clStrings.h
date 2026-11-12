@@ -1,5 +1,4 @@
-#ifndef CL_STRINGS_H
-#define CL_STRINGS_H
+#pragma once
 
 #define FIND_IN_FILES_WIN _("Search")
 #define BUILD_WIN _("Build")
@@ -17,4 +16,3 @@
 #define PANE_DEBUGGER wxT("Debugger")
 #define PANE_OUTPUT wxT("Output View")
 
-#endif // CL_STRINGS_H

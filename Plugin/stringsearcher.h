@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __stringsearcher__
-#define __stringsearcher__
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -56,4 +55,3 @@ public:
                        int& posInChars,
                        int& matchLenInChars);
 };
-#endif // __stringsearcher__

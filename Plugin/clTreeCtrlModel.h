@@ -1,5 +1,4 @@
-#ifndef CLTREECTRLMODEL_H
-#define CLTREECTRLMODEL_H
+#pragma once
 
 #include "clRowEntry.h"
 #include "codelite_exports.h"
@@ -156,4 +155,3 @@ public:
     void EnableEvents(bool enable) { m_shutdown = !enable; }
 };
 
-#endif // CLTREECTRLMODEL_H

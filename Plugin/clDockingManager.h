@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLDOCKINGMANAGER_H
-#define CLDOCKINGMANAGER_H
+#pragma once
 
 #include "Notebook.h"
 #include "codelite_exports.h"
@@ -41,4 +40,3 @@ public:
     ~clDockingManager() override = default;
 };
 
-#endif // CLDOCKINGMANAGER_H

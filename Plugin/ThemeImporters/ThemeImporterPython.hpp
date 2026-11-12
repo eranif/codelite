@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSEPYTHONTHEMEIMPORTER_H
-#define ECLIPSEPYTHONTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
@@ -37,4 +36,3 @@ public:
     ~ThemeImporterPython() override = default;
 };
 
-#endif // ECLIPSEPYTHONTHEMEIMPORTER_H

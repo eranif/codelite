@@ -1,5 +1,4 @@
-#ifndef CLCONTROLWITHITEMS_H
-#define CLCONTROLWITHITEMS_H
+#pragma once
 
 #include "clColours.h"
 #include "clHeaderBar.h"
@@ -243,4 +242,3 @@ public:
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TREE_SEARCH_TEXT, wxTreeEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TREE_CLEAR_SEARCH, wxTreeEvent);
 
-#endif // CLCONTROLWITHITEMS_H

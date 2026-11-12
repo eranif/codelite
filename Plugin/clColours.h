@@ -1,5 +1,4 @@
-#ifndef CLCOLOURS_H
-#define CLCOLOURS_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "lexer_configuration.h"
@@ -106,4 +105,3 @@ public:
     static wxColour White(bool dark_theme, bool bright = false);
 };
 
-#endif // CLCOLOURS_H

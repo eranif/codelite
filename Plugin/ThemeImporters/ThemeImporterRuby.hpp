@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSERUBYTHEMEIMPORTER_H
-#define ECLIPSERUBYTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
@@ -37,4 +36,3 @@ public:
     ~ThemeImporterRuby() override = default;
 };
 
-#endif // ECLIPSERUBYTHEMEIMPORTER_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSEINITHEMEIMPORTER_H
-#define ECLIPSEINITHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
@@ -38,4 +37,3 @@ public:
     ~ThemeImporterINI() override = default;
 };
 
-#endif // ECLIPSEINITHEMEIMPORTER_H

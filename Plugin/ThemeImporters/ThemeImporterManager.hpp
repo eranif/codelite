@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSETHEMEIMPORTERMANAGER_H
-#define ECLIPSETHEMEIMPORTERMANAGER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
@@ -50,4 +49,3 @@ public:
     wxString Import(const wxString& theme_file);
 };
 
-#endif // ECLIPSETHEMEIMPORTERMANAGER_H

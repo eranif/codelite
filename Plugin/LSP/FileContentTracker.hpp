@@ -1,5 +1,4 @@
-#ifndef FILECONTENTTRACKER_HPP
-#define FILECONTENTTRACKER_HPP
+#pragma once
 
 #include "LSP/basic_types.h"
 #include "codelite_exports.h"
@@ -57,4 +56,3 @@ public:
     void clear() { m_files.clear(); }
 };
 
-#endif // FILECONTENTTRACKER_HPP

@@ -1,5 +1,4 @@
-#ifndef SFTPSESSIONINFO_H
-#define SFTPSESSIONINFO_H
+#pragma once
 
 #if USE_SFTP
 
@@ -62,4 +61,3 @@ public:
 };
 #endif
 
-#endif // SFTPSESSIONINFO_H

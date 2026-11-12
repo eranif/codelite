@@ -1,5 +1,4 @@
-#ifndef CLTHEMEDSTC_HPP
-#define CLTHEMEDSTC_HPP
+#pragma once
 
 #include "clEditorEditEventsHandler.h"
 #include "codelite_exports.h"
@@ -34,4 +33,3 @@ public:
     ~clThemedSTC() override = default;
 };
 
-#endif // CLTHEMEDSTC_HPP

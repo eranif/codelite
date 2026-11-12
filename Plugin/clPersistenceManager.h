@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLPERSISTENCEMANAGER_H
-#define CLPERSISTENCEMANAGER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -46,4 +45,3 @@ public:
     wxConfigBase* GetConfig() const override;
 };
 
-#endif // CLPERSISTENCEMANAGER_H

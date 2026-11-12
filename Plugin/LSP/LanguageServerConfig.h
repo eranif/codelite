@@ -1,5 +1,4 @@
-#ifndef LANGUAGESERVERCONFIG_H
-#define LANGUAGESERVERCONFIG_H
+#pragma once
 
 #include "LanguageServerEntry.h"
 #include "cl_config.h"
@@ -65,4 +64,3 @@ public:
     void RemoveServer(const wxString& name);
 };
 
-#endif // LANGUAGESERVERCONFIG_H

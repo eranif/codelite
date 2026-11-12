@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLRESIZABLETOOLTIP_H
-#define CLRESIZABLETOOLTIP_H
+#pragma once
 
 #include "clResizableTooltipBase.hpp"
 #include "cl_command_event.h"
@@ -67,4 +66,3 @@ protected:
      */
     void OnItemExpanding(wxTreeEvent& event) override;
 };
-#endif // CLRESIZABLETOOLTIP_H

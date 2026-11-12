@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLFILEORFOLDERDROPTARGET_H
-#define CLFILEORFOLDERDROPTARGET_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -49,4 +48,3 @@ public:
     bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames) override;
 };
 
-#endif // CLFILEORFOLDERDROPTARGET_H

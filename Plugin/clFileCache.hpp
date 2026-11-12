@@ -1,5 +1,4 @@
-#ifndef CLFILECACHE_HPP
-#define CLFILECACHE_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -32,4 +31,3 @@ public:
     bool IsEmpty() const { return m_files.empty(); }
 };
 
-#endif // CLFILECACHE_HPP

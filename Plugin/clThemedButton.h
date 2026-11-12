@@ -1,5 +1,4 @@
-#ifndef CLTHEMEDBUTTON_H
-#define CLTHEMEDBUTTON_H
+#pragma once
 
 #include "clButton.h"
 #include "cl_command_event.h"
@@ -41,4 +40,3 @@ public:
     ~clThemedButton() override;
 };
 
-#endif // CLTHEMEDBUTTON_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WXCODECOMPLETIONBOX_H
-#define WXCODECOMPLETIONBOX_H
+#pragma once
 
 #include "LSP/CompletionItem.h"
 #include "database/entry.h"
@@ -196,4 +195,3 @@ protected:
     void DoDestroy();
     void DoShowCompletionBox(const wxSize& control_size);
 };
-#endif // WXCODECOMPLETIONBOX_H

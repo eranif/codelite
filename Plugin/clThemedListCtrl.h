@@ -1,5 +1,4 @@
-#ifndef CLTHEMEDLISTCTRL_H
-#define CLTHEMEDLISTCTRL_H
+#pragma once
 
 #include "clDataViewListCtrl.h"
 #include "clTreeKeyboardInput.h"
@@ -51,4 +50,3 @@ public:
     size_t GetSortedColumn() const { return m_sortedColumn; }
 };
 
-#endif // CLTHEMEDLISTCTRL_H

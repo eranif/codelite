@@ -1,5 +1,4 @@
-#ifndef CLREMOTEFINDDIALOG_H
-#define CLREMOTEFINDDIALOG_H
+#pragma once
 
 #include "clThemedComboBox.hpp"
 #include "codelite_exports.h"
@@ -42,4 +41,3 @@ public:
     bool IsReplaceAction() const { return m_isReplace; }
 };
 
-#endif // CLREMOTEFINDDIALOG_H

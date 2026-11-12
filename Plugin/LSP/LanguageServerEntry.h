@@ -1,5 +1,4 @@
-#ifndef LANGUAGESERVERENTRY_H
-#define LANGUAGESERVERENTRY_H
+#pragma once
 
 #include "LSP/LSPNetwork.h"
 #include "codelite_exports.h"
@@ -80,4 +79,3 @@ public:
     bool IsAutoRestart() const;
 };
 
-#endif // LANGUAGESERVERENTRY_H

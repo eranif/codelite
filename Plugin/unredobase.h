@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef UNREDOBASE_H
-#define UNREDOBASE_H
+#pragma once
 
 #include "clToolBar.h"
 #include "codelite_exports.h"
@@ -163,4 +162,3 @@ protected:
     int m_currentCommand; // The next one to be undone
 };
 
-#endif // UNREDOBASE_H

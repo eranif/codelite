@@ -1,5 +1,4 @@
-#ifndef CLHEADERITEM_H
-#define CLHEADERITEM_H
+#pragma once
 
 #include "clColours.h"
 #include "codelite_exports.h"
@@ -60,4 +59,3 @@ public:
     bool IsAutoResize() const { return m_flags & kHeaderColWidthFitData; }
 };
 
-#endif // CLHEADERITEM_H

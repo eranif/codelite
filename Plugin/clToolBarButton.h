@@ -1,5 +1,4 @@
-#ifndef CLTOOLBARBUTTON_H
-#define CLTOOLBARBUTTON_H
+#pragma once
 
 #include "clToolBarButtonBase.h" // Base class: clToolBarButtonBase
 #include "wxCustomControls.hpp"
@@ -16,4 +15,3 @@ public:
 public:
     wxSize CalculateSize(wxDC& dc) const override;
 };
-#endif // CLTOOLBARBUTTON_H

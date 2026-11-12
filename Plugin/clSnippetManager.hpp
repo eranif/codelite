@@ -1,5 +1,4 @@
-#ifndef CLSNIPPETMANAGER_HPP
-#define CLSNIPPETMANAGER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -23,4 +22,3 @@ public:
     void Insert(wxStyledTextCtrl* ctrl, const wxString& snippet);
 };
 
-#endif // CLSNIPPETMANAGER_HPP

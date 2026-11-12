@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef TERMINALEMULATORFRAME_H
-#define TERMINALEMULATORFRAME_H
+#pragma once
 
 #include "TerminalEmulatorUI.h"
 #include "TerminalEmulatorUIBase.hpp"
@@ -39,4 +38,3 @@ public:
     TerminalEmulatorUI* GetTerminalUI() { return m_terminal; }
 };
 #endif // wxUSE_GUI
-#endif // TERMINALEMULATORFRAME_H

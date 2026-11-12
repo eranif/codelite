@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef COMPILER_ACTION_H
-#define COMPILER_ACTION_H
+#pragma once
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -75,4 +74,3 @@ public:
     void SendStartMsg(const wxString& toolchain);
     void SendEndMsg();
 };
-#endif

@@ -1,5 +1,4 @@
-#ifndef LSPCMAKEDETECTOR_HPP
-#define LSPCMAKEDETECTOR_HPP
+#pragma once
 
 #include "LSPDetector.hpp"
 #include "codelite_exports.h"
@@ -17,4 +16,3 @@ public:
     bool DoLocate() override;
 };
 
-#endif // LSPCMAKEDETECTOR_HPP

@@ -26,8 +26,7 @@
  * Override of builder_gnumake builder to provide a one-step builder (based on gnu makefile)
  * compile srcs directly to exe/lib, no link step
  */
-#ifndef BUILDER_GNUMAKE_ONESTEP_H
-#define BUILDER_GNUMAKE_ONESTEP_H
+#pragma once
 
 #include "builder_gnumake.h"
 #include "codelite_exports.h"
@@ -63,4 +62,3 @@ protected:
 private:
     void CreateTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text);
 };
-#endif // BUILDER_GNUMAKE_ONESTEP_H

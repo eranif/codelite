@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSERUSTTHEMEIMPORTER_H
-#define ECLIPSERUSTTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 
@@ -38,4 +37,3 @@ public:
     LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 
-#endif // ECLIPSERUSTTHEMEIMPORTER_H

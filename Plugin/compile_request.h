@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef COMPILE_REQUEST_H
-#define COMPILE_REQUEST_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "shell_command.h"
@@ -55,4 +54,3 @@ public:
     const wxString& GetProjectName() const { return m_info.GetProject(); }
 };
 
-#endif // COMPILE_REQUEST_H

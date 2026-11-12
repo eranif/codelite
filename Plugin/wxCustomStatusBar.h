@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WXCUSTOMSTATUSBAR_H
-#define WXCUSTOMSTATUSBAR_H
+#pragma once
 
 #include "clSystemSettings.h"
 #include "cl_command_event.h"
@@ -430,4 +429,3 @@ public:
     size_t GetFieldsCount() const { return m_fields.size(); }
 };
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_STATUSBAR_CLICKED, clCommandEvent);
-#endif // WXCUSTOMSTATUSBAR_H

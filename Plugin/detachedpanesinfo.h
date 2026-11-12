@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __detachedpanesinfo__
-#define __detachedpanesinfo__
+#pragma once
 
 #include "codelite_exports.h"
 #include "serialized_object.h"
@@ -52,4 +51,3 @@ public:
     void SetPanes(const wxArrayString& panes) { this->m_panes = panes; }
 };
 
-#endif // __detachedpanesinfo__

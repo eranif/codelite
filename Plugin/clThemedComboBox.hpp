@@ -1,5 +1,4 @@
-#ifndef CLTHEMEDCOMBOBOX_HPP
-#define CLTHEMEDCOMBOBOX_HPP
+#pragma once
 
 #include "clComboBox.hpp"
 
@@ -32,4 +31,3 @@ public:
     ~clThemedComboBox() override;
 };
 
-#endif // CLTHEMEDCOMBOBOX_HPP

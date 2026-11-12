@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLGETTEXTFROMUSERDIALOG_H
-#define CLGETTEXTFROMUSERDIALOG_H
+#pragma once
 #include "wxcrafter_plugin.hpp"
 
 class WXDLLIMPEXP_SDK clGetTextFromUserDialog : public clGetTextFromUserBaseDialog
@@ -39,4 +38,3 @@ public:
 
     wxString GetValue() const { return m_textCtrl->GetValue(); }
 };
-#endif // CLGETTEXTFROMUSERDIALOG_H

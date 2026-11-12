@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSINGLECHOICEDIALOG_H
-#define CLSINGLECHOICEDIALOG_H
+#pragma once
 #include "codelite_exports.h"
 #include "wxcrafter_plugin.hpp"
 
@@ -44,4 +43,3 @@ protected:
     void OnActivated(wxDataViewEvent& event) override;
     void OnOKUI(wxUpdateUIEvent& event) override;
 };
-#endif // CLSINGLECHOICEDIALOG_H

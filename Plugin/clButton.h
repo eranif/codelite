@@ -1,5 +1,4 @@
-#ifndef CLBUTTON_H
-#define CLBUTTON_H
+#pragma once
 
 #include "clButtonBase.h"
 #include "codelite_exports.h"
@@ -27,4 +26,3 @@ public:
     ~clButton() override = default;
 };
 
-#endif // CLBUTTON_H

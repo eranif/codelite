@@ -1,5 +1,4 @@
-#ifndef CLDIFFFRAME_H
-#define CLDIFFFRAME_H
+#pragma once
 
 #include "DiffSideBySidePanel.h"
 #include "codelite_exports.h"
@@ -39,4 +38,3 @@ public:
     static clDiffFrame* Open(const wxFileName& left, const wxFileName& right, bool isTempFile);
 };
 
-#endif // CLDIFFFRAME_H

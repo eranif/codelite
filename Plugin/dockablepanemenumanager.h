@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __dockablepanemenumanager__
-#define __dockablepanemenumanager__
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -60,4 +59,3 @@ public:
     static void HackHidePane(bool commit, wxAuiPaneInfo& pane_info, wxAuiManager* pAui);
 };
 
-#endif // __dockablepanemenumanager__

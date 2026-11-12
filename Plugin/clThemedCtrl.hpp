@@ -1,5 +1,4 @@
-#ifndef CLTHEMEDCTRL_HPP
-#define CLTHEMEDCTRL_HPP
+#pragma once
 
 #include "ColoursAndFontsManager.h"
 #include "clColours.h"
@@ -30,4 +29,3 @@ void ApplyTheme(T* ctrl)
 }
 
 } // namespace cl
-#endif // CLTHEMEDCTRL_HPP

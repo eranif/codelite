@@ -41,8 +41,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _WXMD5_H__
-#define _WXMD5_H__
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -72,4 +71,3 @@ public:
     static wxString GetDigest(const std::string& str);
 };
 
-#endif // _WXMD5_H__

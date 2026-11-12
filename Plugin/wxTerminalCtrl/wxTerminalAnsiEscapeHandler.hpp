@@ -1,5 +1,4 @@
-#ifndef WXTERMINALANSIESCAPEHANDLER_HPP
-#define WXTERMINALANSIESCAPEHANDLER_HPP
+#pragma once
 
 #include "clResult.hpp"
 #include "codelite_exports.h"
@@ -41,4 +40,3 @@ public:
     static const wxColour& GetColour(int colour_number);
 };
 
-#endif // WXTERMINALANSIESCAPEHANDLER_HPP

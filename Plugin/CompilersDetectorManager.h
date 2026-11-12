@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERSDETECTORMANAGER_H
-#define COMPILERSDETECTORMANAGER_H
+#pragma once
 
 #include "ICompilerLocator.h"
 #include "codelite_exports.h"
@@ -66,4 +65,3 @@ public:
     wxString GetRealCXXPath(const CompilerPtr compiler) const;
 };
 
-#endif // COMPILERSDETECTORMANAGER_H

@@ -1,5 +1,4 @@
-#ifndef CLEDITORBAR_H
-#define CLEDITORBAR_H
+#pragma once
 
 #include "LSP/basic_types.h"
 #include "cl_command_event.h"
@@ -96,4 +95,3 @@ protected:
     void OnThemeChanged(clCommandEvent& e);
     void OnUpdate(clCodeCompletionEvent& event);
 };
-#endif // CLEDITORBAR_H

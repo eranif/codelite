@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __overlaytool__
-#define __overlaytool__
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -63,4 +62,3 @@ public:
     wxBitmap CreateBitmap(const wxBitmap& orig, OverlayTool::BmpType type) const;
 };
 
-#endif // __overlaytool__

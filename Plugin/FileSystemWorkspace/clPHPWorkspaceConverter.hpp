@@ -1,5 +1,4 @@
-#ifndef CLPHPWORKSPACECONVERTER_HPP
-#define CLPHPWORKSPACECONVERTER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -34,4 +33,3 @@ public:
     static bool Convert(const wxFileName& file, wxArrayString& warnings, wxFileName& backup, wxString& error);
 };
 
-#endif // CLPHPWORKSPACECONVERTER_HPP

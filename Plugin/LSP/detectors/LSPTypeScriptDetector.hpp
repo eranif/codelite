@@ -1,5 +1,4 @@
-#ifndef LSPTYPESCRIPTDETECTOR_HPP
-#define LSPTYPESCRIPTDETECTOR_HPP
+#pragma once
 
 #include "LSPDetector.hpp" // Base class: LSPDetector
 #include "codelite_exports.h"
@@ -13,4 +12,3 @@ public:
     bool DoLocate() override;
 };
 
-#endif // LSPTYPESCRIPTDETECTOR_HPP

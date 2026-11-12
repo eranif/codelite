@@ -1,5 +1,4 @@
-#ifndef CLTABRENDERERCLASSIC_H
-#define CLTABRENDERERCLASSIC_H
+#pragma once
 
 #include "clTabRenderer.h"
 
@@ -56,4 +55,3 @@ public:
                             const clTabColours& colours,
                             size_t style) override;
 };
-#endif // CLTABRENDERERCLASSIC_H

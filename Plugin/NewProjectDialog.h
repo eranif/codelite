@@ -1,5 +1,4 @@
-#ifndef NEWPROJECTDIALOG_H
-#define NEWPROJECTDIALOG_H
+#pragma once
 
 #include "NewProjectDialogBase.hpp"
 #include "codelite_exports.h"
@@ -37,4 +36,3 @@ public:
 protected:
     void OnOKUI(wxUpdateUIEvent& event) override;
 };
-#endif // NEWPROJECTDIALOG_H

@@ -1,5 +1,4 @@
-#ifndef WORKSPACEHELPER_HPP
-#define WORKSPACEHELPER_HPP
+#pragma once
 
 #include "IWorkspace.h"
 #include "codelite_exports.h"
@@ -19,4 +18,3 @@ public:
     bool WritePrivateFile(IWorkspace* workspace, const wxString& filename, const wxString& content) const;
 };
 
-#endif // WORKSPACEHELPER_HPP

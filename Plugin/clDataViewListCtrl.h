@@ -1,5 +1,4 @@
-#ifndef CLDATAVIEWLISTCTRL_H
-#define CLDATAVIEWLISTCTRL_H
+#pragma once
 
 #include "clCellValue.h"
 #include "clTreeCtrl.h"
@@ -481,4 +480,3 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CHOICE, wxDataViewEvent
 #pragma GCC diagnostic pop
 #endif
 
-#endif // CLDATAVIEWLISTCTRL_H

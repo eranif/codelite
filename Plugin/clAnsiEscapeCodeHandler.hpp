@@ -1,5 +1,4 @@
-#ifndef CLASCIIESCAPCODEHANDLER_HPP
-#define CLASCIIESCAPCODEHANDLER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -133,4 +132,3 @@ public:
     const wxString& GetWindowTitle() const { return m_windowTitle; }
 };
 
-#endif // CLASCIIESCAPCODEHANDLER_HPP

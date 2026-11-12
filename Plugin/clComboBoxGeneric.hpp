@@ -1,5 +1,4 @@
-#ifndef CLCOMBOBOXGENERIC_HPP
-#define CLCOMBOBOXGENERIC_HPP
+#pragma once
 
 #include "clButton.h"
 #include "codelite_exports.h"
@@ -183,4 +182,3 @@ public:
 
     void SelectAll();
 };
-#endif // CLCOMBOBOXGENERIC_HPP

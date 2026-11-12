@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLBOOSTRAPWIZARD_H
-#define CLBOOSTRAPWIZARD_H
+#pragma once
 #include "ICompilerLocator.h"
 #include "clBoostrapWizardBase.hpp"
 #include "codelite_exports.h"
@@ -69,4 +68,3 @@ protected:
     void SetSelectedTheme(const wxString& themeName);
     void DoUpdatePreview(const wxString& themeName);
 };
-#endif // CLBOOSTRAPWIZARD_H

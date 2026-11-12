@@ -1,5 +1,4 @@
-#ifndef LANGUAG_ESERVER_PROTOCOL_H
-#define LANGUAG_ESERVER_PROTOCOL_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "LSP/DocumentSymbolsRequest.hpp"
@@ -359,4 +358,3 @@ public:
     bool IsDocumentLinkSupported() const;
 };
 
-#endif // CLLANGUAGESERVER_H

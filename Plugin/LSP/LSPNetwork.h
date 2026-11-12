@@ -1,5 +1,4 @@
-#ifndef LSPNETWORK_H
-#define LSPNETWORK_H
+#pragma once
 
 #include "LSP/LSPEvent.h"
 #include "LSPStartupInfo.h"
@@ -73,4 +72,3 @@ public:
     virtual bool IsConnected() const = 0;
 };
 
-#endif // LSPNETWORK_H

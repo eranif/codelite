@@ -1,5 +1,4 @@
-#ifndef CLENHANCEDTOOLBAR_HPP
-#define CLENHANCEDTOOLBAR_HPP
+#pragma once
 
 #include "clToolBar.h"
 #include "clToolBarButtonBase.h"
@@ -62,4 +61,3 @@ public:
      */
     void SetButtonAction(wxWindowID buttonId, wxWindowID actionID);
 };
-#endif // CLENHANCEDTOOLBAR_HPP

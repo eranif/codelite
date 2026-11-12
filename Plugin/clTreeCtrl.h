@@ -1,5 +1,4 @@
-#ifndef CLTREECTRL_H
-#define CLTREECTRL_H
+#pragma once
 
 #include "clControlWithItems.h"
 #include "clHeaderBar.h"
@@ -502,4 +501,3 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TREE_ACTIONBUTTON_CLICKED, wxTre
 #pragma GCC diagnostic pop
 #endif
 
-#endif // CLTREECTRL_H

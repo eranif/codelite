@@ -1,5 +1,4 @@
-#ifndef CLASCIIESCAPECOLOURBUILDER_HPP
-#define CLASCIIESCAPECOLOURBUILDER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -57,4 +56,3 @@ public:
     void Clear() { m_internalBuffer.clear(); }
 };
 
-#endif // CLASCIIESCAPECOLOURBUILDER_HPP

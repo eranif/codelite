@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef BUILD_CONFIG_SETTINGS_H
-#define BUILD_CONFIG_SETTINGS_H
+#pragma once
 
 #include "build_system.h"
 #include "builder/builder.h"
@@ -181,4 +180,3 @@ public:
     static void Free();
 };
 
-#endif // BUILD_CONFIG_SETTINGS_H

@@ -1,5 +1,4 @@
-#ifndef CLTABRENDERER_H
-#define CLTABRENDERER_H
+#pragma once
 
 #ifdef WXDLLIMPEXP_SDK
 #undef WXDLLIMPEXP_SDK
@@ -302,4 +301,3 @@ public:
      */
     virtual bool IsVerticalTabSupported() const = 0;
 };
-#endif // CLTABRENDERER_H

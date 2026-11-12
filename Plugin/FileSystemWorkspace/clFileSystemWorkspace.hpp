@@ -1,5 +1,4 @@
-#ifndef CLFILESYSTEMWORKSPACE_HPP
-#define CLFILESYSTEMWORKSPACE_HPP
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "clBacktickCache.hpp"
@@ -206,4 +205,3 @@ public:
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FS_NEW_WORKSPACE_FILE_CREATED, clFileSystemEvent);
-#endif // CLFILESYSTEMWORKSPACE_HPP

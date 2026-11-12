@@ -1,5 +1,4 @@
-#ifndef SELECTFILETYPESDIALOG_HPP
-#define SELECTFILETYPESDIALOG_HPP
+#pragma once
 
 #include "SelectFileTypesDialogBase.hpp"
 #include "codelite_exports.h"
@@ -28,4 +27,3 @@ protected:
     void OnSearch(wxCommandEvent& event) override;
 };
 
-#endif // SELECTFILETYPESDIALOG_HPP

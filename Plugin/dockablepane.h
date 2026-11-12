@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __dockablepane__
-#define __dockablepane__
+#pragma once
 
 #include "Notebook.h"
 #include "codelite_exports.h"
@@ -58,4 +57,3 @@ public:
     wxString GetName() { return m_text; }
     void SetChildNoReparent(wxWindow* child);
 };
-#endif // __dockablepane__

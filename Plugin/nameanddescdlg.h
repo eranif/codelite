@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __nameanddescdlg__
-#define __nameanddescdlg__
+#pragma once
 
 #include "codelite_exports.h"
 #include "nameanddescbasedlg.hpp"
@@ -39,4 +38,3 @@ public:
     wxString GetType() const { return m_choiceType->GetValue(); }
 };
 
-#endif // __nameanddescdlg__

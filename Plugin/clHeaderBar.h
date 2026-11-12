@@ -1,5 +1,4 @@
-#ifndef CLHEADERBAR_H
-#define CLHEADERBAR_H
+#pragma once
 
 #include "clHeaderItem.h"
 #include "codelite_exports.h"
@@ -127,4 +126,3 @@ public:
     void OnMouseLeftUp(wxMouseEvent& event);
 };
 
-#endif // CLHEADERBAR_H

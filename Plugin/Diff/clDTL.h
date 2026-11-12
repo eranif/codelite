@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLDTL_H
-#define CLDTL_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -119,4 +118,3 @@ public:
     std::vector<PatchStep> CreatePatch(const wxString& before, const wxString& after) const;
 };
 
-#endif // CLDTL_H

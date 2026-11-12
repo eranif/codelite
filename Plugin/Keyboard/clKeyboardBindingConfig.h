@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLKEYBOARDBINDINGCONFIG_H
-#define CLKEYBOARDBINDINGCONFIG_H
+#pragma once
 
 #include "clKeyboardManager.h"
 #include "cl_standard_paths.h"
@@ -60,4 +59,3 @@ public:
     const MenuItemDataMap_t& GetBindings() const { return m_bindings; }
 };
 
-#endif // CLKEYBOARDBINDINGCONFIG_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLEDITORSTATELOCKER_H
-#define CLEDITORSTATELOCKER_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "ieditor.h"
@@ -111,4 +110,3 @@ public:
     clEditorActiveLocker();
     ~clEditorActiveLocker();
 };
-#endif // CLEDITORSTATELOCKER_H

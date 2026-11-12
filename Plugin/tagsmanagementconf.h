@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __tagsmanagementconf__
-#define __tagsmanagementconf__
+#pragma once
 
 #include "serialized_object.h"
 
@@ -42,4 +41,3 @@ public:
     void SetFiles(const wxArrayString& files) { this->m_files = files; }
     const wxArrayString& GetFiles() const { return m_files; }
 };
-#endif // __tagsmanagementconf__

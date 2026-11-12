@@ -1,5 +1,4 @@
-#ifndef CLFILESYSTEMWORKSPACEVIEW_HPP
-#define CLFILESYSTEMWORKSPACEVIEW_HPP
+#pragma once
 
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceConfig.hpp"
@@ -58,4 +57,3 @@ public:
 #pragma GCC diagnostic pop
 #endif
 
-#endif // CLFILESYSTEMWORKSPACEVIEW_HPP

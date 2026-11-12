@@ -1,5 +1,4 @@
-#ifndef WXTERMINALANSIRENDERERSTC_HPP
-#define WXTERMINALANSIRENDERERSTC_HPP
+#pragma once
 
 #include "clResult.hpp"
 #include "codelite_exports.h"
@@ -86,4 +85,3 @@ public:
     void EraseCharacter(int n) override;
 };
 
-#endif // WXTERMINALANSIRENDERERSTC_HPP

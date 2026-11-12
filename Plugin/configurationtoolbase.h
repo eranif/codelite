@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __configurationtoolbase__
-#define __configurationtoolbase__
+#pragma once
 
 #include "codelite_exports.h"
 #include "xml/clXmlDocument.hpp"
@@ -48,4 +47,3 @@ public:
 
     virtual wxString GetRootName() = 0;
 };
-#endif // __configurationtoolbase__

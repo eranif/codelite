@@ -1,5 +1,4 @@
-#ifndef CLTOOLBARTOGGLEBUTTON_H
-#define CLTOOLBARTOGGLEBUTTON_H
+#pragma once
 
 #include "clToolBarButton.h"
 
@@ -9,4 +8,3 @@ public:
     clToolBarToggleButton(clToolBarGeneric* parent, wxWindowID id, size_t bitmapId, const wxString& label = "");
     ~clToolBarToggleButton() override = default;
 };
-#endif // CLTOOLBARTOGGLEBUTTON_H

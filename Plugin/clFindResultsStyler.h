@@ -1,5 +1,4 @@
-#ifndef CLFINDRESULTSSTYLER_H
-#define CLFINDRESULTSSTYLER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -76,4 +75,3 @@ public:
     virtual int TestToggle(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e);
 };
 
-#endif // CLFINDRESULTSSTYLER_H

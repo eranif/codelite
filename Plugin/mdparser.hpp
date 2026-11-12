@@ -1,5 +1,4 @@
-#ifndef GDBMI_HPP
-#define GDBMI_HPP
+#pragma once
 
 #include <functional>
 #include <memory>
@@ -180,4 +179,3 @@ public:
 };
 } // namespace mdparser
 
-#endif // GDBMI_HPP

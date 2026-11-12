@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef ASYNC_EXECUTABLE_CMD_H
-#define ASYNC_EXECUTABLE_CMD_H
+#pragma once
 
 #include "cl_process.h"
 #include "codelite_exports.h"
@@ -88,4 +87,3 @@ public:
     DECLARE_EVENT_TABLE()
 };
 
-#endif // ASYNC_EXECUTABLE_CMD_H

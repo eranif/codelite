@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLTABTOGGLERHELPER_H
-#define CLTABTOGGLERHELPER_H
+#pragma once
 
 #include "Notebook.h"
 #include "cl_command_event.h"
@@ -91,4 +90,3 @@ public:
     const wxString& GetWorkspaceTabName() const { return m_workspaceTabName; }
 };
 
-#endif // CLTABTOGGLERHELPER_H

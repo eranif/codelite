@@ -1,5 +1,4 @@
-#ifndef WXTERMINALINPUTCTRL_HPP
-#define WXTERMINALINPUTCTRL_HPP
+#pragma once
 
 #include "clEditorEditEventsHandler.h"
 #include "codelite_events.h"
@@ -85,4 +84,3 @@ public:
     wxStyledTextCtrl* GetCtrl() { return m_ctrl; }
 };
 
-#endif // WXTERMINALINPUTCTRL_HPP

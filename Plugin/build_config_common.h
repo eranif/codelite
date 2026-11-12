@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef BUILD_CONFIGURATION_COMMON_H
-#define BUILD_CONFIGURATION_COMMON_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "configuration_object.h"
@@ -91,4 +90,3 @@ public:
 
 using BuildConfigCommonPtr = std::shared_ptr<BuildConfigCommon>;
 
-#endif // BUILD_CONFIGURATION_COMMON_H

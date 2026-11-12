@@ -1,5 +1,4 @@
-#ifndef CLPATCH_H
-#define CLPATCH_H
+#pragma once
 
 #include "cl_exception.h"
 #include "codelite_exports.h"
@@ -23,4 +22,3 @@ public:
     void Patch(const wxFileName& patchFile, const wxString& workingDirectory = "", const wxString& args = "");
 };
 
-#endif // CLPATCH_H

@@ -1,5 +1,4 @@
-#ifndef CLTABLEWITHPAGINATION_H
-#define CLTABLEWITHPAGINATION_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -64,4 +63,3 @@ public:
     void ShowPage(int nPage);
 };
 
-#endif // CLTABLEWITHPAGINATION_H

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DEBUGGERCONFIGTOOL_H
-#define DEBUGGERCONFIGTOOL_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "configtool.h"
@@ -37,4 +36,3 @@ public:
     ~DebuggerConfigTool() = default;
     static DebuggerConfigTool* Get();
 };
-#endif // DEBUGGERCONFIGTOOL_H

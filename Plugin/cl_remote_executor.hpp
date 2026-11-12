@@ -1,6 +1,5 @@
 #if USE_SFTP
-#ifndef CL_REMOTE_EXECUTOR_HPP
-#define CL_REMOTE_EXECUTOR_HPP
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "clSSHChannel.hpp"
@@ -55,5 +54,4 @@ public:
     /// Returns: the remote channel. The caller should delete it upon completion
     IProcess::Ptr_t try_execute(const clRemoteExecutor::Cmd& cmd);
 };
-#endif // CL_REMOTE_EXECUTOR_HPP
 #endif

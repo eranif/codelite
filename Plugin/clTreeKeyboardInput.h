@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLTREEKEYBOARDINPUT_H
-#define CLTREEKEYBOARDINPUT_H
+#pragma once
 
 #include "clTreeCtrl.h"
 #include "codelite_exports.h"
@@ -49,4 +48,3 @@ public:
     ~clTreeKeyboardInput() override;
 };
 
-#endif // CLTREEKEYBOARDINPUT_H

@@ -1,5 +1,4 @@
-#ifndef FSCONFIGPAGE_H
-#define FSCONFIGPAGE_H
+#pragma once
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clFileSystemWorkspaceDlgBase.hpp"
 
@@ -42,4 +41,3 @@ protected:
     virtual void OnEditTargetUI(wxUpdateUIEvent& event);
     virtual void OnNewTarget(wxCommandEvent& event);
 };
-#endif // FSCONFIGPAGE_H

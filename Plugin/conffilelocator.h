@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __conffilelocator__
-#define __conffilelocator__
+#pragma once
 #include "codelite_exports.h"
 
 #include <wx/string.h>
@@ -54,4 +53,3 @@ private:
     ConfFileLocator() = default;
     virtual ~ConfFileLocator() = default;
 };
-#endif // __conffilelocator__

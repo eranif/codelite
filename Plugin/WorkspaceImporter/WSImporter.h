@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WSIMPORTER_H
-#define WSIMPORTER_H
+#pragma once
 
 #include "GenericImporter.h"
 #include "codelite_exports.h"
@@ -55,4 +54,3 @@ private:
     std::vector<std::shared_ptr<GenericImporter>> importers;
 };
 
-#endif // WSIMPORTER_H

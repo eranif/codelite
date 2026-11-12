@@ -1,5 +1,4 @@
-#ifndef CLEDITORWORDCHARSLOCKER_H
-#define CLEDITORWORDCHARSLOCKER_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -27,4 +26,3 @@ public:
     wxString GetXmlTagAt(int pos, int& startPos, int& endPos) const;
 };
 
-#endif // CLEDITORWORDCHARSLOCKER_H

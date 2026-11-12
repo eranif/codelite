@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __memoryview__
-#define __memoryview__
+#pragma once
 
 #include "codelite_exports.h"
 #include "memoryviewbase.hpp"
@@ -55,4 +54,3 @@ public:
     void SetViewString(const wxString& text);
 };
 
-#endif // __memoryview__

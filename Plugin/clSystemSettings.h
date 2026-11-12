@@ -1,5 +1,4 @@
-#ifndef CLSYSTEMSETTINGS_H
-#define CLSYSTEMSETTINGS_H
+#pragma once
 
 #include "clColours.h"
 #include "cl_command_event.h"
@@ -42,4 +41,3 @@ private:
     static wxColour panel_face;
 };
 
-#endif // CLSYSTEMSETTINGS_H

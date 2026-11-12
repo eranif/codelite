@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef BOOKMARKMANAGER_H
-#define BOOKMARKMANAGER_H
+#pragma once
 
 #include "cl_defs.h"
 #include "codelite_exports.h"
@@ -123,4 +122,3 @@ public:
     wxMenu* CreateBookmarksSubmenu(wxMenu* parentMenu);
 };
 
-#endif // BOOKMARKMANAGER_H

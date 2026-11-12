@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __localoptions__
-#define __localoptions__
+#pragma once
 
 #include "VirtualDirectoryColour.h"
 #include "codelite_exports.h"
@@ -247,4 +246,3 @@ public:
     wxString GetActiveEnvironmentSet();
 };
 
-#endif // __localoptions__

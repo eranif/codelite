@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ICOMPILERLOCATOR_H
-#define ICOMPILERLOCATOR_H
+#pragma once
 
 #include "codelite_exports.h"
 #include "compiler.h"
@@ -90,4 +89,3 @@ public:
     const ICompilerLocator::CompilerVec_t& GetCompilers() const { return m_compilers; }
 };
 
-#endif // ICOMPILERLOCATOR_H

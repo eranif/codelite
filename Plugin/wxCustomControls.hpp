@@ -1,5 +1,4 @@
-#ifndef WXCUSTOMCONTROLS_HPP
-#define WXCUSTOMCONTROLS_HPP
+#pragma once
 
 #ifdef __WXGTK__
 #include "wxCustomControlsGTK.hpp"
@@ -26,4 +25,3 @@ int WXDLLIMPEXP_SDK clMessageBox(const wxString& message,
                                  int x = wxDefaultCoord,
                                  int y = wxDefaultCoord);
 
-#endif // WXCUSTOMCONTROLS_HPP

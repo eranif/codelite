@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLBOOSTRAPWIZARDPAGE_H
-#define CLBOOSTRAPWIZARDPAGE_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -81,4 +80,3 @@ public:
     ~clBoostrapWizardPagePlugins() override = default;
 };
 
-#endif // CLBOOSTRAPWIZARDPAGE_H

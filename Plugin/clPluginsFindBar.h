@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __quickfindbar__
-#define __quickfindbar__
+#pragma once
 
 #include "clEditorEditEventsHandler.h"
 #include "clTerminalHistory.h"
@@ -165,4 +164,3 @@ public:
     virtual bool HasFocus() const;
 };
 
-#endif // __quickfindbar__

@@ -1,5 +1,4 @@
-#ifndef LANGUAGESERVERPAGE_H
-#define LANGUAGESERVERPAGE_H
+#pragma once
 
 #include "LanguageServerEntry.h"
 #include "codelite_exports.h"
@@ -21,4 +20,3 @@ protected:
     void OnCommandUI(wxUpdateUIEvent& event) override;
     void OnSuggestLanguages(wxCommandEvent& event) override;
 };
-#endif // LANGUAGESERVERPAGE_H

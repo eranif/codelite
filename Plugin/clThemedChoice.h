@@ -1,5 +1,4 @@
-#ifndef CLTHEMEDCHOICE_H
-#define CLTHEMEDCHOICE_H
+#pragma once
 
 #include "clChoice.h" // Base class: clChoice
 #include "cl_command_event.h"
@@ -31,4 +30,3 @@ public:
     ~clThemedChoice() override;
 };
 
-#endif // CLTHEMEDCHOICE_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERLOCATORMSVC_H
-#define COMPILERLOCATORMSVC_H
+#pragma once
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
 
@@ -61,4 +60,3 @@ protected:
     void AddLinkerOptions(CompilerPtr compiler);
 };
 
-#endif // COMPILERLOCATORMSVC_H

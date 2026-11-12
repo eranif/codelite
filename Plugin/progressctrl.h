@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __progressctrl__
-#define __progressctrl__
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -60,4 +59,3 @@ public:
     void OnEraseBg(wxEraseEvent& e);
     void OnSize(wxSizeEvent& event);
 };
-#endif // __progressctrl__

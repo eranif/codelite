@@ -1,5 +1,4 @@
-#ifndef CLSTCHELPER_HPP
-#define CLSTCHELPER_HPP
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -52,4 +51,3 @@ public:
     static void CopySettingsFrom(wxStyledTextCtrl* src, wxStyledTextCtrl* target);
 };
 
-#endif // CLSTCHELPER_HPP

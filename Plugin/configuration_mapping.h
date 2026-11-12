@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CONFIGURATION_MAPPING_H
-#define CONFIGURATION_MAPPING_H
+#pragma once
 
 #include "codelite_exports.h"
 
@@ -122,4 +121,3 @@ public:
 
 using BuildMatrixPtr = std::shared_ptr<BuildMatrix>;
 
-#endif // CONFIGURATION_MAPPING_H

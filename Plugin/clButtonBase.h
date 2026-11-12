@@ -1,5 +1,4 @@
-#ifndef CLBUTTONBASE_H
-#define CLBUTTONBASE_H
+#pragma once
 
 #include "clColours.h"
 #include "codelite_exports.h"
@@ -116,4 +115,3 @@ public:
     void ShowMenu(wxMenu& menu, wxPoint* point = nullptr);
 };
 
-#endif // CLBUTTONBASE_H

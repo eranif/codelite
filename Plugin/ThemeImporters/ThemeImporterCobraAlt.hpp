@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSECOBRAALTTHEMEIMPORTER_H
-#define ECLIPSECOBRAALTTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterPython.hpp" // Base class: ThemeImporterPython
 #include "codelite_exports.h"
@@ -36,4 +35,3 @@ public:
     ~ThemeImporterCobraAlt() override = default;
 };
 
-#endif // ECLIPSECOBRAALTTHEMEIMPORTER_H

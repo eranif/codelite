@@ -1,5 +1,4 @@
-#ifndef CLTREENODEVISITOR_H
-#define CLTREENODEVISITOR_H
+#pragma once
 
 #include "clTreeCtrlModel.h"
 
@@ -21,4 +20,3 @@ public:
      */
     void Visit(clRowEntry* item, bool expandedItemsOnly, std::function<bool(clRowEntry*, bool)>& func);
 };
-#endif // CLTREENODEVISITOR_H

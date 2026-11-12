@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef LITEEDITOR_EDITOR_CONFIG_H
-#define LITEEDITOR_EDITOR_CONFIG_H
+#pragma once
 
 #include "cl_config.h"
 #include "codelite_exports.h"
@@ -262,4 +261,3 @@ public:
     static EditorConfig* Get();
     static void Free();
 };
-#endif // LITEEDITOR_EDITOR_CONFIG_H

@@ -1,5 +1,4 @@
-#ifndef LSP_STARTUPINFO_H
-#define LSP_STARTUPINFO_H
+#pragma once
 
 #include "clEnvironment.hpp"
 #include "codelite_exports.h"
@@ -56,4 +55,3 @@ public:
     virtual ~LSPStartupInfo() = default;
     LSPStartupInfo& operator=(const LSPStartupInfo&) = default;
 };
-#endif // LSP_STARTUPINFO_H

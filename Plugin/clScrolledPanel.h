@@ -1,5 +1,4 @@
-#ifndef CLSCROLLEDPANEL_H
-#define CLSCROLLEDPANEL_H
+#pragma once
 
 #include "clCustomScrollBar.h"
 #include "clScrollBar.h"
@@ -170,4 +169,3 @@ public:
     void SetNeverShowScrollBar(wxOrientation d, bool b);
 };
 
-#endif // CLSCROLLEDPANEL_H

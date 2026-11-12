@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef BUILD_CONFIGURATION_H
-#define BUILD_CONFIGURATION_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "build_config_common.h"
@@ -391,4 +390,3 @@ public:
 
 using BuildConfigPtr = std::shared_ptr<BuildConfig>;
 
-#endif // BUILD_CONFIGURATION_H

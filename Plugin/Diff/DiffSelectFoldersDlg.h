@@ -1,5 +1,4 @@
-#ifndef DIFFSELECTFOLDERSDLG_H
-#define DIFFSELECTFOLDERSDLG_H
+#pragma once
 #include "DiffUI.hpp"
 
 class DiffSelectFoldersDlg : public DiffSelectFoldersBaseDlg
@@ -11,4 +10,3 @@ public:
 protected:
     void OnOKUI(wxUpdateUIEvent& event) override;
 };
-#endif // DIFFSELECTFOLDERSDLG_H

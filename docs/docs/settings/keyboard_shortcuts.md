@@ -27,8 +27,7 @@ The table below lists a useful keyboard shortcuts:
  ++ctrl+k++         | If a text is selected in the editor, use this shortcut to find and select another match in the editor (so you will end of with two selections). You can then edit these selections simultaneously
  ++ctrl+shift+k++   | Similar to the above, but select **all** occurrences in the editor instead of doing it incrementally 
  ++ctrl+shift+f++   | Open the find in files dialogue 
- ++ctrl+m++         | Toggle all the panes 
- ++ctrl+f11++       | Toggle the minimal view 
+ ++ctrl+m++         | Toggle the minimal view: hide the side bars and the output pane, or show the panes that were hidden. Double-clicking an editor tab does the same 
  ++ctrl+"`"++       | Toggle the output pane 
 
 !!! Tip

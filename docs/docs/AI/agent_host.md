@@ -34,10 +34,14 @@ A workspace must be open before you can launch an agent. The plugin uses the wor
 
 There are two ways to start a session:
 
-- Click the agent button on the left side bar (the one with the terminal icon), and select the agent from the menu. The menu shows the keyboard shortcut of each agent (if it has one).
-- From the menu bar: `Plugins` &#8594; `Agent Host` &#8594; `Launch Claude Code` (++ctrl+shift+c++), `Launch Kiro Cli` (++ctrl+shift+k++) or `Launch OpenCode` (no default shortcut, you can assign one in the `Keyboard Shortcuts` dialog).
+- Click the agent button on the left side bar (the one with the terminal icon).
+- From the menu bar: `Plugins` &#8594; `Agent Host` &#8594; `Launch an AI Agent...` (++ctrl+shift+c++).
 
-If a tab for that agent is already open, either action switches to it instead of starting a second session. When you click the
+Both open a dialog that lists the agents. It suggests the agent that you used last, or the first one that is installed. Select
+an agent and click `OK`. There is no separate shortcut for each agent, but you can assign shortcuts in the `Keyboard Shortcuts`
+dialog.
+
+If a tab for that agent is already open, the action switches to it instead of starting a second session. When you click the
 tab, the focus moves to its terminal.
 
 Each time you launch an agent, the plugin tries to resume the most recent conversation for the workspace. If there is no
@@ -126,6 +130,14 @@ cache, instead of looking for it on the local disk.
 - The tab's title tracks the title that the agent reports for the current session.
 - The terminal's colors and font follow CodeLite's active editor theme, and update automatically if you switch themes while the
   session is running.
+- The tab shows what the agent does: a spinner while it works, a pulse while it waits for you (**blocked**), and a check mark
+  when it is done. The last two are shown only when the tab is not selected, and they go away when you select it. The tab also
+  shows the spinner while its Review Buddy works.
+- When the agent is blocked and CodeLite is in the background, the taskbar button flashes (the Dock icon bounces on macOS).
+  Nothing is shown during a review, when the agent stops on purpose. When the agent is done, the `Git` view is refreshed, as the
+  agent may have changed files.
+- In the terminal settings, `Notify When Done` turns the tab icons and the attention request off, and `Show Progress Bar` shows or
+  hides the progress bar above the terminal.
 
 **Tip:** you can keep several long-running agent sessions for different workspaces open in separate CodeLite windows. Each
 workspace gets its own tab.

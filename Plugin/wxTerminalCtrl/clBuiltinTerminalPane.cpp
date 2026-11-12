@@ -372,8 +372,15 @@ TerminalHost* clBuiltinTerminalPane::DoCreateTerminal(wxWindow* parent,
                                                       const wxString& shellCommand,
                                                       std::optional<wxString> workingDirectory)
 {
+    // CodeLite comes with multiple tools, we want them in our path as well.
+    wxFileName fn{clStandardPaths::Get().GetExecutablePath()};
+    wxString path;
+    if (::wxGetEnv("PATH", &path)) {
+        path << wxPATH_SEP << fn.GetPath();
+    }
+
     // By default, inherit parent's env.
-    EnvSetter env_setter{};
+    EnvSetter env_setter{"PATH", path};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
 
     wxWindowUpdateLocker locker{this};

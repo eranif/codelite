@@ -27,8 +27,6 @@
 
 #include "ColoursAndFontsManager.h"
 #include "GitDiffOutputParser.h"
-#include "ai/EndpointModelSelector.hpp"
-#include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "clSingleChoiceDialog.h"
 #include "fileutils.h"
@@ -80,19 +78,10 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
                              _("Show commit history"),
                              images->LoadBitmap("history"),
                              _("Show commit history"));
-    m_toolbar->AddSeparator();
-    clAuiToolBarArt::AddTool(m_toolbar,
-                             XRCID("ID_GENERATE"),
-                             _("Generate commit message"),
-                             images->LoadBitmap("wand"),
-                             _("Generate commit message"));
-    m_endpointSelector = std::make_unique<EndpointModelSelector>(m_toolbar);
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnToggleCheckAll, this, XRCID("ID_CHECKALL"));
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnCommitHistory, this, XRCID("ID_HISTORY"));
-    m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnGenerate, this, XRCID("ID_GENERATE"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitCommitDlg::OnGenerateUI, this, XRCID("ID_GENERATE"));
     ::clSetTLWindowBestSizeAndPosition(*this);
     CentreOnParent();
 
@@ -102,10 +91,6 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
         FileUtils::ReadFileContent(temp_commit, content);
         m_stcCommitMessage->SetText(content);
     }
-
-    m_indicatorPanel = new IndicatorPanel(this);
-    m_mainSizer->Add(m_indicatorPanel, wxSizerFlags(0).Expand());
-    m_indicatorPanel->Stop(wxEmptyString);
 
     // set the focus to the text control
     m_stcCommitMessage->CallAfter(&wxStyledTextCtrl::SetFocus);
@@ -136,7 +121,6 @@ GitCommitDlg::~GitCommitDlg()
 /*******************************************************************************/
 void GitCommitDlg::AppendDiff(const wxString& diff)
 {
-    m_rawDiff = diff;
     GitDiffOutputParser diff_parser;
     diff_parser.GetDiffMap(diff, m_diffMap);
     m_dvListCtrlFiles->DeleteAllItems();
@@ -260,70 +244,5 @@ void GitCommitDlg::OnAmendClicked(wxCommandEvent& event)
         if (!m_stashedMessage.empty()) {
             m_stcCommitMessage->SetText(m_stashedMessage);
         }
-    }
-}
-
-void GitCommitDlg::OnGenerate(wxCommandEvent& event)
-{
-    // Create a raw diff from the selected items only.
-    GitDiffOutputParser diff_parser;
-    wxStringMap_t diff_map;
-
-    auto selected_files = GetSelectedFiles();
-    diff_parser.GetDiffMap(m_rawDiff, diff_map);
-
-    wxString raw_diff;
-    std::unordered_set<wxString> files_set{selected_files.begin(), selected_files.end()};
-    if (files_set.empty()) {
-        ::clMessageBox(_("Nothing to commit"));
-        return;
-    }
-    for (const auto& [file, diff] : diff_map) {
-        if (!files_set.contains(file)) {
-            continue;
-        }
-        raw_diff << diff << "\n";
-    }
-
-    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::kPromptGenerateCommitMessage);
-    prompt.Replace("{{context}}", raw_diff);
-
-    m_indicatorPanel->Start(_("Generating commit message..."));
-    m_generationInProgress = m_plugin->GenerateCommitMessage(prompt);
-    if (!m_generationInProgress) {
-        ::clMessageBox(_("Failed to generate commit message"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
-        return;
-    }
-}
-
-void GitCommitDlg::OnGenerateUI(wxUpdateUIEvent& event)
-{
-    event.Enable(llm::Manager::GetInstance().IsAvailable() && !llm::Manager::GetInstance().IsBusy() &&
-                 !m_generationInProgress && !m_rawDiff.empty());
-}
-
-void GitCommitDlg::ClearCommitMessage() { m_stcCommitMessage->ClearAll(); }
-
-void GitCommitDlg::SetCommitMessageGenerationCompleted()
-{
-    m_generationInProgress = false;
-    m_indicatorPanel->Stop(wxEmptyString);
-}
-
-void GitCommitDlg::AppendCommitMessage(const wxString& message)
-{
-    // Update the commit message
-    m_stcCommitMessage->SetInsertionPointEnd();
-    m_stcCommitMessage->AppendText(message);
-    m_stcCommitMessage->ClearSelections();
-    m_stcCommitMessage->EnsureCaretVisible();
-}
-
-void GitCommitDlg::SetIndicatorMessage(const wxString& message)
-{
-    if (m_indicatorPanel->IsRunning()) {
-        m_indicatorPanel->SetMessage(message);
-    } else {
-        m_indicatorPanel->Start(message);
     }
 }

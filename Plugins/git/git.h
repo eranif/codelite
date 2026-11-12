@@ -34,7 +34,6 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
-#include "ai/ResponseCollector.hpp"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clResult.hpp"
 #include "clTabTogglerHelper.h"
@@ -384,7 +383,6 @@ public:
     void OnCommandOutput(clCommandEvent& event);
     void OnCommandEnded(clCommandEvent& event);
 
-    bool GenerateCommitMessage(const wxString& prompt);
     TerminalHost* GetOrCreateGitTerminal();
 
     wxString PrependGitExec(const wxString& args);

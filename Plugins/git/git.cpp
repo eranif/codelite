@@ -38,7 +38,6 @@
 #include "GitView.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "StringUtils.h"
-#include "ai/LLMManager.hpp"
 #include "bitmap_loader.h"
 #include "clEditorBar.h"
 #include "clFileSystemWatcher.h"
@@ -3064,49 +3063,6 @@ void GitPlugin::OnSideBarPageChanged(clCommandEvent& event)
     if (event.GetString() == "Git") {
         DoRefreshView(false);
     }
-}
-
-bool GitPlugin::GenerateCommitMessage(const wxString& prompt)
-{
-    if (m_commitDialog == nullptr || !llm::Manager::GetInstance().IsAvailable()) {
-        return false;
-    }
-
-    m_commitDialog->ClearCommitMessage();
-    auto collector = new llm::ResponseCollector();
-    collector->SetStateChangingCB([this](llm::ChatState state) {
-        if (!wxThread::IsMain()) {
-            clWARNING() << "StateChangingCB called for non main thread!" << endl;
-            return;
-        }
-        CHECK_PTR_RET(m_commitDialog);
-        switch (state) {
-        case llm::ChatState::kThinking:
-            m_commitDialog->SetIndicatorMessage(_("Thinking..."));
-            break;
-        case llm::ChatState::kWorking:
-            m_commitDialog->SetIndicatorMessage(_("Working..."));
-            break;
-        case llm::ChatState::kReady:
-            m_commitDialog->SetIndicatorMessage(_("Ready."));
-            break;
-        }
-    });
-
-    collector->SetStreamCallback([this](const std::string& message, llm::StreamCallbackReason reason) {
-        CHECK_PTR_RET(m_commitDialog);
-        m_commitDialog->AppendCommitMessage(wxString::FromUTF8(message));
-        bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
-        if (is_done) {
-            m_commitDialog->SetCommitMessageGenerationCompleted();
-        }
-    });
-
-    llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
-    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
-    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
-    llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
-    return true;
 }
 
 std::optional<wxString> GitPlugin::CheckForIndexLock() const

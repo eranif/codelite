@@ -32,9 +32,6 @@
 
 #pragma once
 
-#include "CustomControls/IndicatorPanel.hpp"
-#include "ai/EndpointModelSelector.hpp"
-#include "ai/ResponseCollector.hpp"
 #include "clEditorEditEventsHandler.h"
 #include "gitui.hpp"
 #include "macros.h"
@@ -51,11 +48,6 @@ public:
     GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir);
     ~GitCommitDlg() override;
 
-    void AppendCommitMessage(const wxString& message);
-    void ClearCommitMessage();
-    void SetCommitMessageGenerationCompleted();
-    void SetIndicatorMessage(const wxString& mesage);
-
     void AppendDiff(const wxString& diff);
 
     wxArrayString GetSelectedFiles();
@@ -67,8 +59,6 @@ public:
 
 protected:
     void OnAmendClicked(wxCommandEvent& event) override;
-    virtual void OnGenerate(wxCommandEvent& event);
-    virtual void OnGenerateUI(wxUpdateUIEvent& event);
     virtual void OnCommitHistory(wxCommandEvent& event);
     virtual void OnToggleCheckAll(wxCommandEvent& event);
     void OnCommitOK(wxCommandEvent& event) override;
@@ -84,8 +74,4 @@ private:
     wxArrayString m_history;
     wxString m_stashedMessage;
     bool m_dismissedWithOk = false;
-    wxString m_rawDiff;
-    bool m_generationInProgress{false};
-    IndicatorPanel* m_indicatorPanel{nullptr};
-    std::unique_ptr<EndpointModelSelector> m_endpointSelector{nullptr};
 };

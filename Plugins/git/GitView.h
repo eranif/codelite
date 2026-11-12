@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CustomControls/IndicatorPanel.hpp"
-#include "ai/ResponseCollector.hpp"
 #include "bitmap_loader.h"
 #include "clGenericSTCStyler.h"
 #include "clToolBar.h"
@@ -81,7 +80,6 @@ protected:
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
-    virtual void OnAIAvailableUI(wxUpdateUIEvent& event);
 
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);

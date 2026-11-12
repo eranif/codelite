@@ -29,13 +29,9 @@
 #include "CallThrottler.hpp"
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
-#include "GitReleaseNotesGenerationDlg.h"
 #include "GitResetDlg.h"
 #include "MarkdownStyler.hpp"
 #include "StringUtils.h"
-#include "ai/LLMManager.hpp"
-#include "ai/ProgressToken.hpp"
-#include "ai/ResponseCollector.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "aui/cl_aui_tool_stickness.h"
 #include "bitmap_loader.h"
@@ -125,33 +121,6 @@ struct GitFileEntry {
         fullname = rawpath.AfterLast('/');
     }
 };
-
-IEditor* CreateAndOpenTempFile(const wxString& path)
-{
-    // Open a temporary file for the release notes and load it into CodeLite.
-    wxFileName fn{path};
-
-    if (!fn.FileExists()) {
-        // Create
-        fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        if (!FileUtils::WriteFileContent(fn, wxEmptyString)) {
-            return nullptr;
-        }
-    }
-
-    // OpenFile(..) will return the already opened file and it does not create a new one.
-    auto editor = clGetManager()->OpenFile(fn.GetFullPath());
-    CHECK_PTR_RET_NULL(editor);
-
-    editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
-    return editor;
-}
-
-wxString GenerateRandomFile()
-{
-    clTempFile tmpfile{"txt"};
-    return tmpfile.GetFullPath();
-}
 
 void DeleteAllItems(wxDataViewListCtrl* list)
 {
@@ -886,10 +855,4 @@ void GitView::OnOutputViewTabChanged(clCommandEvent& event)
     if (m_git && event.GetString() == GIT_TAB_NAME) {
         m_git->DoRefreshView(false);
     }
-}
-
-void GitView::OnAIAvailableUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_git->IsGitEnabled() && llm::Manager::GetInstance().IsAvailable() &&
-                 !llm::Manager::GetInstance().IsBusy());
 }

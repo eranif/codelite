@@ -77,8 +77,8 @@ public:
         wxColour bullet;         ///< The bullets and the numbers of the lists
         wxColour inlineCode;     ///< The text of an inline code (`code`). A code block uses `text`
         wxColour codeBackground; ///< Code, and the header of a table
-        wxColour border;         ///< Tables, code blocks and horizontal rules
-        wxColour quote;          ///< The bar at the left of a quote
+        wxColour border; ///< Tables and code blocks (a horizontal rule has a colour between text and background)
+        wxColour quote;  ///< The bar at the left of a quote
     };
 
     /// \param ctrl the control to fill. It is not owned

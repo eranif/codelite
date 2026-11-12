@@ -733,12 +733,40 @@ void clRichTextMarkdownRenderer::OnEnterBlock(Block block, const BlockInfo& info
         m_itemTaskChecked = info.taskChecked;
         break;
     case Block::HorizontalRule: {
-        wxRichTextAttr attr = BuildParagraphAttr(false);
-        auto& bottom = attr.GetTextBoxAttr().GetBorder().GetBottom();
-        bottom.SetStyle(wxTEXT_BOX_ATTR_BORDER_SOLID);
-        bottom.SetColour(m_theme.border);
-        bottom.SetWidth(1, wxTEXT_ATTR_UNITS_PIXELS);
-        AddParagraph(attr);
+        if (m_container == nullptr) {
+            break;
+        }
+        // The border of an empty paragraph was not visible, so the rule is a box (as a code block and a table, they
+        // are drawn): a box that is 100% wide, with a border at its top, in a paragraph. That paragraph
+        // has the indent of the list or of the quote, and the spacing after the rule. The spacing after the paragraph
+        // before the rule is the gap above the line. The box has one tiny paragraph, so it is as low as possible
+        wxRichTextAttr holder_attr = BuildParagraphAttr(false);
+        wxRichTextParagraph* holder = AddParagraph(holder_attr);
+        if (holder == nullptr) {
+            break;
+        }
+
+        // The colour is between the text and the background: the colour of the borders (m_theme.border) is too close
+        // to the background to be seen as a line
+        const wxColour colour((m_theme.text.Red() * 3 + m_theme.background.Red() * 7) / 10,
+                              (m_theme.text.Green() * 3 + m_theme.background.Green() * 7) / 10,
+                              (m_theme.text.Blue() * 3 + m_theme.background.Blue() * 7) / 10);
+        auto* box = new wxRichTextBox(holder);
+        wxRichTextAttr box_attr;
+        box_attr.GetTextBoxAttr().GetWidth().SetValue(100, wxTEXT_ATTR_UNITS_PERCENTAGE);
+        auto& top = box_attr.GetTextBoxAttr().GetBorder().GetTop();
+        top.SetStyle(wxTEXT_BOX_ATTR_BORDER_SOLID);
+        top.SetColour(colour);
+        top.SetWidth(std::max(1, m_ctrl->FromDIP(1)), wxTEXT_ATTR_UNITS_PIXELS);
+        box->SetAttributes(box_attr);
+        holder->AppendChild(box);
+
+        // The box needs a paragraph
+        wxRichTextAttr rule_para_attr;
+        rule_para_attr.SetFontSize(1);
+        rule_para_attr.SetParagraphSpacingBefore(0);
+        rule_para_attr.SetParagraphSpacingAfter(0);
+        box->AddParagraph(wxEmptyString, &rule_para_attr);
         break;
     }
     case Block::Heading:

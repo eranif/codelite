@@ -36,8 +36,8 @@ Option | Description
 `-o <dir>`, `--output <dir>` | Output folder of the base classes
 `--verbose` | Print the output folders and the generated files
 `--bitmaps-in-base-class-file` | Generate the bitmaps code inside the base class source file. By default, it is written to its own `*_bitmaps.cpp` file
-`--install-skill-local` | Install the wxCrafter [AI skill](#ai-skill) into `<current directory>/.claude/skills/wxcrafter`. No input file is needed
-`--install-skill-global` | Install the AI skill into `<home directory>/.claude/skills/wxcrafter`, for all projects. No input file is needed
+`--install-skill-local[=<agent>]` | Install the wxCrafter [AI skill](#ai-skill) into the skills folder of an agent, under the current directory. The agent is `claude` (the default), `kiro`, `opencode`, `copilot` or `codex`. No input file is needed
+`--install-skill-global[=<agent>]` | Install the AI skill into the skills folder of an agent, under the home directory, for all projects. No input file is needed
 `-v`, `--version` | Print the version and exit
 `-h`, `--help` | Print the usage and exit
 
@@ -91,25 +91,46 @@ target.
 ## AI skill
 ---
 
-wxCrafter can generate an **AI skill**: a folder that teaches an AI coding agent (such as Claude Code) how to create and
-edit wxCrafter projects. With it, you can ask the agent to add a dialog, a control or an event handler, and it will edit
-the `.wxcp` file and run `wxcgen`, instead of asking you to do it in the designer.
+wxCrafter can generate an **AI skill**: a folder that teaches an AI coding agent how to create and edit wxCrafter
+projects. With it, you can ask the agent to add a dialog, a control or an event handler, and it will edit the `.wxcp`
+file and run `wxcgen`, instead of asking you to do it in the designer. The skill uses the
+[Agent Skills](https://agentskills.io/specification) layout, which these agents share: Claude Code, Kiro CLI, OpenCode,
+GitHub Copilot CLI and Codex.
 
 ### Installing the skill
 
-For Claude Code, `wxcgen` installs the skill where Claude Code looks for it:
+`wxcgen` installs the skill into the folder where the agent looks for skills. Pass the agent as the value of the switch:
+`claude`, `kiro`, `opencode`, `copilot` or `codex`. Without a value, it is `claude`.
 
 ```bash
 # Only for one project: run it at the project root
 cd <project>
-wxcgen --install-skill-local      # <project>/.claude/skills/wxcrafter
+wxcgen --install-skill-local             # Claude Code: <project>/.claude/skills/wxcrafter
+wxcgen --install-skill-local=kiro        # Kiro CLI:    <project>/.kiro/skills/wxcrafter
 
 # For all your projects
-wxcgen --install-skill-global     # ~/.claude/skills/wxcrafter
+wxcgen --install-skill-global            # Claude Code: ~/.claude/skills/wxcrafter
+wxcgen --install-skill-global=opencode   # OpenCode:    ~/.config/opencode/skills/wxcrafter
 ```
 
-Both switches can be used together. Existing files are overwritten, so run the command again after upgrading
-wxCrafter, to refresh the reference.
+The folders are:
+
+Agent | `--install-skill-local` (under the current directory) | `--install-skill-global` (under the home directory)
+------|------------------------------------------------------|----------------------------------------------------
+`claude` (Claude Code) | `.claude/skills/wxcrafter` | `.claude/skills/wxcrafter`
+`kiro` (Kiro CLI) | `.kiro/skills/wxcrafter` | `.kiro/skills/wxcrafter`
+`opencode` (OpenCode) | `.opencode/skills/wxcrafter` | `.config/opencode/skills/wxcrafter`
+`copilot` (GitHub Copilot CLI) | `.github/skills/wxcrafter` | `.copilot/skills/wxcrafter`
+`codex` (Codex) | `.agents/skills/wxcrafter` | `.agents/skills/wxcrafter`
+
+An unknown agent name is an error, and nothing is installed. To install the skill for several agents, run the command once
+for each of them. The local and the global switches can be used together. Existing files are overwritten, so run the
+command again after upgrading wxCrafter, to refresh the reference.
+
+!!! note
+    OpenCode and GitHub Copilot CLI also read the `.claude/skills` folder, and Codex and OpenCode read `.agents/skills`,
+    so one install can be enough if you use more than one of them. Kiro CLI may need the skill to be listed in the
+    resources of your custom agent (`skill://.kiro/skills/*/SKILL.md`).
 
 The installed `wxcrafter` folder contains:
 

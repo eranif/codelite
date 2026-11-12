@@ -540,7 +540,7 @@ to the `.wxcp` file. Subclass files are always written next to the `.wxcp` file.
 `wxcgen` must be installed (it is part of wxCrafter). If it is not available, tell the user instead of editing the
 generated files.
 
-The reference was installed by `wxcgen --install-skill-local` or `wxcgen --install-skill-global`: run the same
+The reference was installed by `wxcgen --install-skill-local[=<agent>]` or `wxcgen --install-skill-global[=<agent>]`: run the same
 command again after upgrading wxCrafter.
 )md";
     return md;

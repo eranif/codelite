@@ -14,9 +14,11 @@
 #include "wxgui_helpers.h"
 
 #include <memory>
+#include <string>
 #include <vector>
 #include <wx/app.h>
 #include <wx/arrstr.h>
+#include <wx/cmdargs.h>
 #include <wx/cmdline.h>
 #include <wx/confbase.h>
 #include <wx/fileconf.h>
@@ -46,19 +48,20 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
      "Print the output directories and the generated files",
      wxCMD_LINE_VAL_NONE,
      wxCMD_LINE_PARAM_OPTIONAL},
-    {wxCMD_LINE_SWITCH,
+    {wxCMD_LINE_OPTION,
      nullptr,
      "install-skill-local",
-     "Install the wxCrafter AI skill (SKILL.md and a reference of the .wxcp format and of every control) into "
-     "\"<current directory>/.claude/skills/wxcrafter\". No input file is needed",
-     wxCMD_LINE_VAL_NONE,
+     "Install the wxCrafter AI skill (SKILL.md and a reference of the .wxcp format and of every control) into the "
+     "skills folder of an agent under the current directory. The value is the agent: "
+     "claude|kiro|opencode|copilot|codex (default: claude). No input file is needed",
+     wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_OPTIONAL},
-    {wxCMD_LINE_SWITCH,
+    {wxCMD_LINE_OPTION,
      nullptr,
      "install-skill-global",
-     "Install the wxCrafter AI skill into \"<home directory>/.claude/skills/wxcrafter\", for all projects. "
-     "No input file is needed",
-     wxCMD_LINE_VAL_NONE,
+     "Install the wxCrafter AI skill into the skills folder of an agent under the home directory, for all projects. "
+     "The value is the agent: claude|kiro|opencode|copilot|codex (default: claude). No input file is needed",
+     wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_PARAM,
      nullptr,
@@ -130,16 +133,76 @@ static void PrintGeneratedFiles(const wxString& projectFile,
     wxPrintf("Subclass files:%s\n", wxJoin(subclassFiles, ',', '\0').c_str());
 }
 
-// The skill is installed into <base>/.claude/skills/wxcrafter, where <base> is the current directory (local, this
-// project only) or the user home directory (global, all projects). The folder name is the name of the skill.
+// The skill is installed into <base>/<skills folder of the agent>/wxcrafter, where <base> is the current directory
+// (local, this project only) or the user home directory (global, all projects). The folder name is the name of the
+// skill. All the agents use the same SKILL.md layout, only the skills folder differs.
 static const char* const AI_SKILL_DIR_NAME = "wxcrafter";
 
-// Install the AI skill (SKILL.md + references/*.md) into <base>/.claude/skills/wxcrafter.
-// Print each written file with its size
-static bool InstallAiSkill(const wxString& base)
+struct SkillTarget {
+    const char* name;      // the value of --install-skill-local / --install-skill-global
+    const char* localDir;  // relative to the current directory
+    const char* globalDir; // relative to the home directory
+};
+
+static const SkillTarget kSkillTargets[] = {
+    {"claude", ".claude/skills", ".claude/skills"},
+    {"kiro", ".kiro/skills", ".kiro/skills"},
+    {"opencode", ".opencode/skills", ".config/opencode/skills"},
+    {"copilot", ".github/skills", ".copilot/skills"},
+    {"codex", ".agents/skills", ".agents/skills"},
+};
+
+// The agent that is used when --install-skill-local / --install-skill-global have no value
+static const char* const DEFAULT_SKILL_TARGET = "claude";
+
+static const SkillTarget* FindSkillTarget(const wxString& name)
 {
-    const wxString skillDir = base + wxFILE_SEP_PATH + ".claude" + wxFILE_SEP_PATH + "skills" + wxFILE_SEP_PATH +
-                              AI_SKILL_DIR_NAME;
+    for (const SkillTarget& target : kSkillTargets) {
+        if (name.CmpNoCase(target.name) == 0) {
+            return &target;
+        }
+    }
+    return nullptr;
+}
+
+static wxString SkillTargetNames(const wxString& separator)
+{
+    wxString names;
+    for (const SkillTarget& target : kSkillTargets) {
+        if (!names.empty()) {
+            names << separator;
+        }
+        names << target.name;
+    }
+    return names;
+}
+
+// --install-skill-local and --install-skill-global take an optional value: "--install-skill-local=kiro".
+// wxCmdLineParser requires a value for an option, so add the default value to a switch that has none.
+// The value can also be the next argument ("--install-skill-local kiro")
+static wxArrayString ExpandSkillSwitches(const wxArrayString& args)
+{
+    wxArrayString expanded;
+    for (size_t i = 0; i < args.size(); ++i) {
+        const wxString& arg = args[i];
+        if (i > 0 && (arg == "--install-skill-local" || arg == "--install-skill-global")) {
+            wxString value = DEFAULT_SKILL_TARGET;
+            if (i + 1 < args.size() && FindSkillTarget(args[i + 1])) {
+                value = args[++i];
+            }
+            expanded.Add(arg + "=" + value);
+        } else {
+            expanded.Add(arg);
+        }
+    }
+    return expanded;
+}
+
+// Install the AI skill (SKILL.md + references/*.md) into <base>/<skillsDir>/wxcrafter.
+// `skillsDir` is '/' separated. Print each written file with its size
+static bool InstallAiSkill(const wxString& base, const wxString& skillsDir)
+{
+    const wxString skillDir = base + wxFILE_SEP_PATH + skillsDir + "/" + AI_SKILL_DIR_NAME;
 
     bool ok = true;
     for (const MetadataFile& file : BuildMetadataMarkdown(GIT_REVISION)) {
@@ -339,12 +402,31 @@ int wxcgenApp::OnRun()
         "  Subclass output directory:<full-path>\n"
         "  Subclass files:<comma separated list of files>\n"
         "\n"
-        "With --install-skill-local, wxcgen installs the wxCrafter AI skill into\n"
-        "<current directory>/.claude/skills/wxcrafter. With --install-skill-global, it installs it into\n"
-        "<home directory>/.claude/skills/wxcrafter. The skill is SKILL.md, plus a references/ folder with the .wxcp\n"
-        "format and every control (its m_type ID, window styles, sizer flags, properties and events).\n"
-        "No input file is needed.\n");
-    parser.SetCmdLine(argc, argv);
+        "With --install-skill-local[=<agent>], wxcgen installs the wxCrafter AI skill into the skills folder of the\n"
+        "agent under the current directory. With --install-skill-global[=<agent>], it installs it under the home\n"
+        "directory. The agent is one of claude (the default), kiro, opencode, copilot and codex:\n"
+        "  claude    .claude/skills            (global: .claude/skills)\n"
+        "  kiro      .kiro/skills              (global: .kiro/skills)\n"
+        "  opencode  .opencode/skills          (global: .config/opencode/skills)\n"
+        "  copilot   .github/skills            (global: .copilot/skills)\n"
+        "  codex     .agents/skills            (global: .agents/skills)\n"
+        "The skill is SKILL.md, plus a references/ folder with the .wxcp format and every control (its m_type ID,\n"
+        "window styles, sizer flags, properties and events). No input file is needed.\n");
+
+    // Give the parser the arguments with the default value added to --install-skill-local/--install-skill-global
+    const wxArrayString expandedArgs = ExpandSkillSwitches(argv.GetArguments());
+    std::vector<std::wstring> argStorage;
+    std::vector<const wchar_t*> argPointers;
+    argStorage.reserve(expandedArgs.size());
+    for (const wxString& arg : expandedArgs) {
+        argStorage.push_back(arg.ToStdWstring());
+    }
+    for (const std::wstring& arg : argStorage) {
+        argPointers.push_back(arg.c_str());
+    }
+    wxCmdLineArgsArray parserArgs;
+    parserArgs.Init(static_cast<int>(argPointers.size()), argPointers.data());
+    parser.SetCmdLine(static_cast<int>(argPointers.size()), parserArgs);
     if (parser.Parse(/*giveUsage=*/false) != 0) {
         parser.Usage();
         return 1;
@@ -360,9 +442,24 @@ int wxcgenApp::OnRun()
         return 0;
     }
 
-    const bool installSkillLocal = parser.Found("install-skill-local");
-    const bool installSkillGlobal = parser.Found("install-skill-global");
+    wxString skillLocalName;
+    wxString skillGlobalName;
+    const bool installSkillLocal = parser.Found("install-skill-local", &skillLocalName);
+    const bool installSkillGlobal = parser.Found("install-skill-global", &skillGlobalName);
     const bool installSkill = installSkillLocal || installSkillGlobal;
+
+    const SkillTarget* skillLocalTarget = nullptr;
+    const SkillTarget* skillGlobalTarget = nullptr;
+    if (installSkillLocal && (skillLocalTarget = FindSkillTarget(skillLocalName)) == nullptr) {
+        wxFprintf(stderr, "wxcgen: unknown agent '%s' (use one of: %s)\n", skillLocalName.c_str(),
+                  SkillTargetNames("|").c_str());
+        return 1;
+    }
+    if (installSkillGlobal && (skillGlobalTarget = FindSkillTarget(skillGlobalName)) == nullptr) {
+        wxFprintf(stderr, "wxcgen: unknown agent '%s' (use one of: %s)\n", skillGlobalName.c_str(),
+                  SkillTargetNames("|").c_str());
+        return 1;
+    }
 
     if (parser.GetParamCount() == 0 && !installSkill) {
         parser.Usage();
@@ -396,10 +493,10 @@ int wxcgenApp::OnRun()
 
     int rc = 0;
     if (installSkill) {
-        if (installSkillLocal && !InstallAiSkill(wxGetCwd())) {
+        if (skillLocalTarget && !InstallAiSkill(wxGetCwd(), skillLocalTarget->localDir)) {
             rc = 1;
         }
-        if (installSkillGlobal && !InstallAiSkill(wxFileName::GetHomeDir())) {
+        if (skillGlobalTarget && !InstallAiSkill(wxFileName::GetHomeDir(), skillGlobalTarget->globalDir)) {
             rc = 1;
         }
         if (parser.GetParamCount() == 0) {

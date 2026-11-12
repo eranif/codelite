@@ -2,56 +2,265 @@
 
 #include "ColoursAndFontsManager.h"
 #include "EditDlg.h"
-#include "clDataViewListCtrl.h"
 #include "clSystemSettings.h"
-#include "clThemedListCtrl.h"
-#include "codelite_events.h"
-#include "event_notifier.h"
+#include "fileextmanager.h"
 #include "globals.h"
 #include "macros.h"
 
+#include <algorithm>
 #include <wx/colordlg.h>
+#include <wx/dc.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
+#include <wx/filename.h>
+#include <wx/menu.h>
 #include <wx/numdlg.h>
+#include <wx/renderer.h>
+#include <wx/settings.h>
+#include <wx/tokenzr.h>
 
 wxDEFINE_EVENT(wxEVT_PROPERTIES_PAGE_MODIFIED, clPropertiesPageEvent);
 wxDEFINE_EVENT(wxEVT_PROPERTIES_PAGE_SAVED, clPropertiesPageEvent);
 wxDEFINE_EVENT(wxEVT_PROPERTIES_PAGE_ACTION_BUTTON, clPropertiesPageEvent);
 
+/// The data of a line. Both cells of the line hold a pointer to it
+struct clPropertiesCell {
+    LineKind kind = LineKind::UNKNOWN;
+    bool is_header = false;
+    wxString label;  // the name of the property
+    wxString text;   // the displayed value (also the current selection of a choice)
+    wxColour colour; // for LineKind::COLOUR
+    bool checked = false;
+};
+
+namespace
+{
+constexpr int kPadding = 4;            // in DIPs
+constexpr int kColourSwatchWidth = 24; // in DIPs
+constexpr int kCellSlack = 16;         // in DIPs: extra room of a column, so its text is not truncated
+constexpr int kFirstChoiceId = wxID_HIGHEST + 1;
+
+/// The width that the value of a line needs, as it is drawn by PropertyRenderer
+int MeasureValueWidth(wxWindow* view, const clPropertiesCell& cell)
+{
+    const int padding = view->FromDIP(kPadding);
+    switch (cell.kind) {
+    case LineKind::CHECKBOX:
+        return wxRendererNative::Get().GetCheckBoxSize(view).x + 2 * padding;
+    case LineKind::COLOUR: {
+        int width = padding + view->FromDIP(kColourSwatchWidth) + 2 * padding;
+        if (cell.colour.IsOk()) {
+            width += view->GetTextExtent(cell.colour.GetAsString(wxC2S_HTML_SYNTAX)).x;
+        }
+        return width + padding;
+    }
+    case LineKind::BUTTON:
+        return view->GetTextExtent(cell.text).x + 6 * padding;
+    case LineKind::UNKNOWN:
+        return 0;
+    default:
+        return view->GetTextExtent(cell.text).x + 2 * padding;
+    }
+}
+
+/// Draws the cells of the page: the name (bold for a header) or the value. A value is drawn according to the kind of
+/// its line: a checkbox, a colour swatch with its HTML code, a push button, or a plain text
+class PropertyRenderer : public wxDataViewCustomRenderer
+{
+public:
+    using ActivateCallback_t = std::function<void(const wxDataViewItem&)>;
+
+    PropertyRenderer(bool is_value_column, ActivateCallback_t on_activate)
+        : wxDataViewCustomRenderer(
+              "void*", is_value_column ? wxDATAVIEW_CELL_ACTIVATABLE : wxDATAVIEW_CELL_INERT, wxALIGN_CENTER_VERTICAL)
+        , m_isValueColumn{is_value_column}
+        , m_onActivate{std::move(on_activate)}
+    {
+    }
+
+    bool SetValue(const wxVariant& value) override
+    {
+        m_cell = static_cast<const clPropertiesCell*>(value.GetVoidPtr());
+        return true;
+    }
+
+    bool GetValue(wxVariant& value) const override
+    {
+        value = static_cast<void*>(const_cast<clPropertiesCell*>(m_cell));
+        return true;
+    }
+
+    wxSize GetSize() const override
+    {
+        wxWindow* view = GetView();
+        if (view == nullptr) {
+            return wxSize(wxDVC_DEFAULT_RENDERER_SIZE, wxDVC_DEFAULT_RENDERER_SIZE);
+        }
+        // All the rows have the same height: it fits a text and a checkbox
+        const int height = std::max(view->GetTextExtent("Tp").y, wxRendererNative::Get().GetCheckBoxSize(view).y) +
+                           view->FromDIP(kPadding);
+        // The renderer draws a text with its own offset and margin, and truncates it ("...") when it does not fit the
+        // column: leave some room
+        int width = 0;
+        if (m_cell != nullptr) {
+            if (m_isValueColumn) {
+                width = MeasureValueWidth(view, *m_cell);
+            } else {
+                // a header is drawn in bold
+                wxFont font = view->GetFont();
+                if (m_cell->is_header) {
+                    font.MakeBold();
+                }
+                view->GetTextExtent(m_cell->label, &width, nullptr, nullptr, nullptr, &font);
+                width += 2 * view->FromDIP(kPadding);
+            }
+        }
+        return wxSize(width + view->FromDIP(kCellSlack), height);
+    }
+
+    bool Render(wxRect rect, wxDC* dc, int state) override
+    {
+        wxWindow* view = GetView();
+        if (m_cell == nullptr || view == nullptr) {
+            return false;
+        }
+
+        // The DC of a native control (macOS) has the default font, not the font of the control
+        wxFont font = view->GetFont();
+        if (!m_isValueColumn && m_cell->is_header) {
+            font.MakeBold();
+        }
+        dc->SetFont(font);
+
+        // A long text must not be drawn outside of its cell
+        wxDCClipper clipper(*dc, rect);
+        const int padding = view->FromDIP(kPadding);
+        if (!m_isValueColumn) {
+            RenderText(m_cell->label, padding, rect, dc, state);
+            return true;
+        }
+
+        switch (m_cell->kind) {
+        case LineKind::CHECKBOX: {
+            const wxSize box = wxRendererNative::Get().GetCheckBoxSize(view);
+            const wxRect box_rect(rect.x + padding, rect.y + (rect.height - box.y) / 2, box.x, box.y);
+            wxRendererNative::Get().DrawCheckBox(view, *dc, box_rect, m_cell->checked ? wxCONTROL_CHECKED : 0);
+            break;
+        }
+        case LineKind::COLOUR: {
+            const int side = rect.height - 2 * padding;
+            const wxRect swatch(
+                rect.x + padding, rect.y + (rect.height - side) / 2, view->FromDIP(kColourSwatchWidth), side);
+            dc->SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+            dc->SetBrush(m_cell->colour.IsOk() ? wxBrush(m_cell->colour) : *wxTRANSPARENT_BRUSH);
+            dc->DrawRectangle(swatch);
+            if (m_cell->colour.IsOk()) {
+                RenderText(m_cell->colour.GetAsString(wxC2S_HTML_SYNTAX), swatch.width + 2 * padding, rect, dc, state);
+            }
+            break;
+        }
+        case LineKind::BUTTON: {
+            const int text_width = view->GetTextExtent(m_cell->text).x;
+            wxRect button_rect(rect.x + padding, rect.y + 1, text_width + 4 * padding, rect.height - 2);
+            wxRendererNative::Get().DrawPushButton(view, *dc, button_rect, 0);
+            RenderText(m_cell->text, 3 * padding, rect, dc, state);
+            break;
+        }
+        case LineKind::UNKNOWN:
+            // a header has no value
+            break;
+        default:
+            RenderText(m_cell->text, padding, rect, dc, state);
+            break;
+        }
+        return true;
+    }
+
+    /// A click, or the Space key
+    bool ActivateCell(const wxRect& cell,
+                      wxDataViewModel* model,
+                      const wxDataViewItem& item,
+                      unsigned int col,
+                      const wxMouseEvent* mouseEvent) override
+    {
+        wxUnusedVar(cell);
+        wxUnusedVar(model);
+        wxUnusedVar(col);
+        wxUnusedVar(mouseEvent);
+        if (!m_isValueColumn || m_cell == nullptr || m_cell->kind == LineKind::UNKNOWN || !m_onActivate) {
+            return false;
+        }
+        m_onActivate(item);
+        return true;
+    }
+
+private:
+    bool m_isValueColumn = false;
+    ActivateCallback_t m_onActivate;
+    const clPropertiesCell* m_cell = nullptr;
+};
+} // namespace
+
 clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_view = new clThemedListCtrl(
-        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER | wxDV_COLUMN_WIDTH_NEVER_SHRINKS);
-
-    // remove the wxTR_ROW_LINES style (this is the underlying style in clTreeCtrl
-    // the controls the zebra line colouring
-    m_view->SetTreeStyle(m_view->GetTreeStyle() & ~wxTR_ROW_LINES);
-
+    m_view = new wxDataViewListCtrl(
+        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER | wxDV_SINGLE | wxDV_ROW_LINES);
+    ::AdjustDataViewAlternateColour(m_view);
     GetSizer()->Add(m_view, wxSizerFlags(1).Expand());
-    m_view->AppendTextColumn(_("Property Name"));
-    m_view->AppendTextColumn(_("Property Value"));
 
-    m_view->Bind(wxEVT_DATAVIEW_ACTION_BUTTON, &clPropertiesPage::OnActionButton, this);
-    m_view->Bind(wxEVT_DATAVIEW_CHOICE, &clPropertiesPage::OnChoice, this);
-    m_view->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &clPropertiesPage::OnValueChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
+    // Both columns hold a pointer to the data of the line, the renderers draw it
+    auto on_activate = [this](const wxDataViewItem& item) { OnActivateItem(item); };
+    m_view->AppendColumn(new wxDataViewColumn(_("Property Name"),
+                                              new PropertyRenderer(false, nullptr),
+                                              0,
+                                              FromDIP(200),
+                                              wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE),
+                         "void*");
+    m_view->AppendColumn(new wxDataViewColumn(_("Property Value"),
+                                              new PropertyRenderer(true, on_activate),
+                                              1,
+                                              FromDIP(200),
+                                              wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE),
+                         "void*");
+
+    // Enter, or a double click
+    m_view->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &clPropertiesPage::OnItemActivated, this);
     GetSizer()->Layout();
 }
 
 clPropertiesPage::~clPropertiesPage()
 {
-    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
-    m_view->Unbind(wxEVT_DATAVIEW_CHOICE, &clPropertiesPage::OnChoice, this);
-    m_view->Unbind(wxEVT_DATAVIEW_ACTION_BUTTON, &clPropertiesPage::OnActionButton, this);
-    m_view->Unbind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &clPropertiesPage::OnValueChanged, this);
-
-    if (m_theme_event_connected) {
-        EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clPropertiesPage::OnThemeChanged, this);
-    }
+    m_view->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &clPropertiesPage::OnItemActivated, this);
     m_view->DeleteAllItems();
+}
+
+size_t clPropertiesPage::AppendRow(const wxString& label, std::unique_ptr<clPropertiesCell> cell, bool is_header)
+{
+    cell->label = label;
+    cell->is_header = is_header;
+
+    // The columns are not resized here: Finalize() does it, after all the rows are added
+    wxVector<wxVariant> cols;
+    cols.push_back(wxVariant(static_cast<void*>(cell.get())));
+    cols.push_back(wxVariant(static_cast<void*>(cell.get())));
+    m_cells.push_back(std::move(cell));
+    m_view->AppendItem(cols);
+    return m_cells.size() - 1;
+}
+
+void clPropertiesPage::SetCellText(size_t line, const wxString& text)
+{
+    if (line >= m_cells.size()) {
+        return;
+    }
+    m_cells[line]->text = text;
+    m_view->GetStore()->RowValueChanged(static_cast<unsigned int>(line), 1);
+    // the user changed the value: the new one may be wider
+    AutoSizeColumns(m_view);
 }
 
 void clPropertiesPage::AddProperty(const wxString& label,
@@ -97,68 +306,46 @@ void clPropertiesPage::AddProperty(const wxString& label,
                                    size_t sel,
                                    clPropertiesPage::Callback_t update_cb)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back(label);
-
-    clDataViewTextWithButton choice(
-        sel < choices.size() ? choices[sel] : wxString(), eCellButtonType::BT_DROPDOWN_ARROW, wxNOT_FOUND);
-    wxVariant v;
-    v << choice;
-    cols.push_back(v);
-    m_view->AppendItem(cols);
+    auto cell = std::make_unique<clPropertiesCell>();
+    cell->kind = LineKind::CHOICE;
+    cell->text = sel < choices.size() ? choices[sel] : wxString();
+    AppendRow(label, std::move(cell));
     UpdateLastLineData(LineKind::CHOICE, choices, std::move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, bool checked, clPropertiesPage::Callback_t update_cb)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back(label);
-
-    clDataViewCheckbox c(checked);
-    wxVariant v;
-    v << c;
-    cols.push_back(v);
-    m_view->AppendItem(cols);
+    auto cell = std::make_unique<clPropertiesCell>();
+    cell->kind = LineKind::CHECKBOX;
+    cell->checked = checked;
+    AppendRow(label, std::move(cell));
     UpdateLastLineData(LineKind::CHECKBOX, checked, std::move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, long value, clPropertiesPage::Callback_t update_cb)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back(label);
-
-    clDataViewTextWithButton c(wxString() << value, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    cols.push_back(v);
-    m_view->AppendItem(cols);
+    auto cell = std::make_unique<clPropertiesCell>();
+    cell->kind = LineKind::INTEGER;
+    cell->text << value;
+    AppendRow(label, std::move(cell));
     UpdateLastLineData(LineKind::INTEGER, value, std::move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, const wxString& value, clPropertiesPage::Callback_t update_cb)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back(label);
-
-    // horizontal 3 dots symbol
-    clDataViewTextWithButton c(value, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    cols.push_back(v);
-    m_view->AppendItem(cols);
+    auto cell = std::make_unique<clPropertiesCell>();
+    cell->kind = LineKind::TEXT_EDIT;
+    cell->text = value;
+    AppendRow(label, std::move(cell));
     UpdateLastLineData(LineKind::TEXT_EDIT, value, std::move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, const wxColour& value, clPropertiesPage::Callback_t update_cb)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back(label);
-
-    clDataViewColour c(value);
-    wxVariant v;
-    v << c;
-    cols.push_back(v);
-    m_view->AppendItem(cols);
+    auto cell = std::make_unique<clPropertiesCell>();
+    cell->kind = LineKind::COLOUR;
+    cell->colour = value;
+    AppendRow(label, std::move(cell));
     UpdateLastLineData(LineKind::COLOUR, value, std::move(update_cb));
 }
 
@@ -166,15 +353,10 @@ void clPropertiesPage::AddPropertyFilePicker(const wxString& label,
                                              const wxString& path,
                                              clPropertiesPage::Callback_t update_cb)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back(label);
-
-    // horizontal 3 dots symbol
-    clDataViewTextWithButton c(path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    cols.push_back(v);
-    m_view->AppendItem(cols);
+    auto cell = std::make_unique<clPropertiesCell>();
+    cell->kind = LineKind::FILE_PICKER;
+    cell->text = path;
+    AppendRow(label, std::move(cell));
     UpdateLastLineData(LineKind::FILE_PICKER, path, std::move(update_cb));
 }
 
@@ -182,15 +364,10 @@ void clPropertiesPage::AddPropertyDirPicker(const wxString& label,
                                             const wxString& path,
                                             clPropertiesPage::Callback_t update_cb)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back(label);
-
-    // horizontal 3 dots symbol
-    clDataViewTextWithButton c(path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    cols.push_back(v);
-    m_view->AppendItem(cols);
+    auto cell = std::make_unique<clPropertiesCell>();
+    cell->kind = LineKind::DIR_PICKER;
+    cell->text = path;
+    AppendRow(label, std::move(cell));
     UpdateLastLineData(LineKind::DIR_PICKER, path, std::move(update_cb));
 }
 
@@ -198,16 +375,11 @@ void clPropertiesPage::AddPropertyLanguagePicker(const wxString& label,
                                                  const wxArrayString& langs,
                                                  clPropertiesPage::Callback_t update_cb)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back(label);
-
-    // horizontal 3 dots symbol
     wxString languages_str = wxJoin(langs, ';');
-    clDataViewTextWithButton c(languages_str, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    cols.push_back(v);
-    m_view->AppendItem(cols);
+    auto cell = std::make_unique<clPropertiesCell>();
+    cell->kind = LineKind::LANGUAGE_PICKER;
+    cell->text = languages_str;
+    AppendRow(label, std::move(cell));
     UpdateLastLineData(LineKind::LANGUAGE_PICKER, languages_str, std::move(update_cb));
 }
 
@@ -215,42 +387,54 @@ void clPropertiesPage::AddPropertyButton(const wxString& label,
                                          const wxString& button_label,
                                          clPropertiesPage::Callback_t update_cb)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back(label);
-
-    // horizontal 3 dots symbol
-    clDataViewButton button(button_label, wxNOT_FOUND);
-    wxVariant v;
-    v << button;
-    cols.push_back(v);
-    m_view->AppendItem(cols);
+    auto cell = std::make_unique<clPropertiesCell>();
+    cell->kind = LineKind::BUTTON;
+    cell->text = button_label;
+    AppendRow(label, std::move(cell));
     UpdateLastLineData(LineKind::BUTTON, nullptr, std::move(update_cb));
 }
 
 void clPropertiesPage::AddHeader(const wxString& label)
 {
-    // keep the header row number
-    m_header_rows.push_back(m_view->GetItemCount());
-
-    auto item = m_view->AppendItem(label);
-    SetHeaderColours(item);
+    // A header has no line data, so it is never activated
+    AppendRow(label, std::make_unique<clPropertiesCell>(), true);
 }
 
-void clPropertiesPage::OnActionButton(wxDataViewEvent& e)
-{
-    auto item = e.GetItem();
-    int row = m_view->ItemToRow(item);
+void clPropertiesPage::OnItemActivated(wxDataViewEvent& event) { OnActivateItem(event.GetItem()); }
 
-    const LineData* data = nullptr;
-    if (!GetLineData(row, &data))
+void clPropertiesPage::OnActivateItem(const wxDataViewItem& item)
+{
+    // A double click activates the item twice (and so does a click followed by Enter): handle one activation at a time
+    if (m_activating) {
         return;
+    }
+
+    const int row = m_view->ItemToRow(item);
+    if (row == wxNOT_FOUND) {
+        return;
+    }
+
+    // The dialogs and the menu are shown after the data view is done with the mouse event
+    m_activating = true;
+    CallAfter([this, row]() {
+        ActivateRow(static_cast<size_t>(row));
+        m_activating = false;
+    });
+}
+
+void clPropertiesPage::ActivateRow(size_t row)
+{
+    const LineData* data = nullptr;
+    if (row >= m_cells.size() || !GetLineData(row, &data)) {
+        return;
+    }
 
     clPropertiesPageEvent event{wxEVT_PROPERTIES_PAGE_ACTION_BUTTON};
-    event.SetItem(item);
+    event.SetItem(m_view->RowToItem(static_cast<int>(row)));
     event.SetEventObject(this);
     event.SetPage(this);
     event.SetLineData(data);
-    event.SetLabel(m_view->GetItemText(item));
+    event.SetLabel(m_cells[row]->label);
     if (GetEventHandler()->ProcessEvent(event)) {
         // Handled by the caller.
         return;
@@ -311,7 +495,17 @@ void clPropertiesPage::OnActionButton(wxDataViewEvent& e)
         DoButtonClicked(row);
         break;
     }
-    case LineKind::CHECKBOX:
+    case LineKind::CHECKBOX: {
+        // toggle the value
+        clPropertiesCell& cell = *m_cells[row];
+        cell.checked = !cell.checked;
+        m_view->GetStore()->RowValueChanged(static_cast<unsigned int>(row), 1);
+        UpdateLineData(row, LineKind::CHECKBOX, cell.checked, nullptr);
+        // call the user callback for this change
+        NotifyChange(row);
+        SetModified();
+        break;
+    }
     case LineKind::UNKNOWN:
     default:
         break;
@@ -325,10 +519,8 @@ void clPropertiesPage::ShowColourPicker(size_t line, const wxColour& colour)
         return;
     }
 
-    clDataViewColour v(c);
-    wxVariant var;
-    var << v;
-    m_view->SetValue(var, line, 1);
+    m_cells[line]->colour = c;
+    m_view->GetStore()->RowValueChanged(static_cast<unsigned int>(line), 1);
     UpdateLineData(line, LineKind::COLOUR, c, nullptr);
     // call the user callback for this change
     NotifyChange(line);
@@ -352,10 +544,7 @@ void clPropertiesPage::ShowTextEditor(size_t line, const wxString& text)
     wxString new_text = dlg.GetText();
 
     // update the cell value
-    clDataViewTextWithButton c(new_text, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    m_view->SetValue(v, line, 1);
+    SetCellText(line, new_text);
     UpdateLineData(line, LineKind::TEXT_EDIT, new_text, nullptr);
     // call the user callback for this change
     NotifyChange(line);
@@ -364,8 +553,43 @@ void clPropertiesPage::ShowTextEditor(size_t line, const wxString& text)
 
 void clPropertiesPage::ShowStringSelectionMenu(size_t line, const wxArrayString& options)
 {
-    m_view->ShowStringSelectionMenu(m_view->RowToItem(line), options, 1);
-    // any change is handled inside the `OnChoice` method
+    const wxString current = m_cells[line]->text;
+
+    wxMenu menu;
+    for (size_t i = 0; i < options.size(); ++i) {
+        wxString label = options[i];
+        label.Replace("&", "&&"); // do not turn a '&' into a mnemonic
+        wxMenuItem* item = menu.AppendRadioItem(kFirstChoiceId + static_cast<int>(i), label);
+        if (options[i] == current) {
+            item->Check();
+        }
+    }
+
+    // show the menu below the value, or at the mouse position
+    wxPoint pos = wxDefaultPosition;
+    const wxRect cell_rect = m_view->GetItemRect(m_view->RowToItem(static_cast<int>(line)), m_view->GetColumn(1));
+    if (!cell_rect.IsEmpty()) {
+        pos = wxPoint(cell_rect.x, cell_rect.y + cell_rect.height);
+    }
+
+    const int selection = m_view->GetPopupMenuSelectionFromUser(menu, pos);
+    if (selection == wxID_NONE) {
+        return;
+    }
+    const size_t index = static_cast<size_t>(selection - kFirstChoiceId);
+    if (index >= options.size() || options[index] == current) {
+        return;
+    }
+
+    // update the view, and call the user callback with the new selection
+    const wxString new_selection = options[index];
+    SetCellText(line, new_selection);
+
+    const LineData* line_data = nullptr;
+    if (GetLineData(line, &line_data) && line_data->callback) {
+        line_data->callback(m_cells[line]->label, wxAny(new_selection));
+    }
+    SetModified();
 }
 
 void clPropertiesPage::ShowFilePicker(size_t line, const wxString& path)
@@ -386,10 +610,7 @@ void clPropertiesPage::ShowFilePicker(size_t line, const wxString& path)
     }
 
     // update the view
-    clDataViewTextWithButton c(new_path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    m_view->SetValue(v, line, 1);
+    SetCellText(line, new_path);
     UpdateLineData(line, LineKind::FILE_PICKER, new_path, nullptr);
     // call the user callback for this change
     NotifyChange(line);
@@ -404,10 +625,7 @@ void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
     }
 
     // update the view
-    clDataViewTextWithButton c(new_path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    m_view->SetValue(v, line, 1);
+    SetCellText(line, new_path);
     UpdateLineData(line, LineKind::DIR_PICKER, new_path, nullptr);
     // call the user callback for this change
     NotifyChange(line);
@@ -424,10 +642,7 @@ void clPropertiesPage::ShowLanguagePicker(size_t line, const wxString& langs)
 
     // update the view
     wxString new_label = wxJoin(selected, ';');
-    clDataViewTextWithButton c(new_label, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    m_view->SetValue(v, line, 1);
+    SetCellText(line, new_label);
     UpdateLineData(line, LineKind::LANGUAGE_PICKER, new_label, nullptr);
     // call the user callback for this change
     NotifyChange(line);
@@ -442,62 +657,17 @@ void clPropertiesPage::DoButtonClicked(size_t line)
 
 void clPropertiesPage::ShowNumberPicker(size_t line, long number)
 {
-    wxString label = m_view->GetItemText(m_view->RowToItem(line));
     wxNumberEntryDialog dlg(
-        wxGetTopLevelParent(this), label, wxEmptyString, _("Choose a number"), number, -10000, 10000);
+        wxGetTopLevelParent(this), m_cells[line]->label, wxEmptyString, _("Choose a number"), number, -10000, 10000);
     if (dlg.ShowModal() != wxID_OK)
         return;
 
     int new_number = dlg.GetValue();
-    clDataViewTextWithButton c(wxString() << new_number, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
-    wxVariant v;
-    v << c;
-    m_view->SetValue(v, line, 1);
+    SetCellText(line, wxString() << new_number);
     UpdateLineData(line, LineKind::INTEGER, new_number, nullptr);
     // call the user callback for this change
     NotifyChange(line);
     SetModified();
-}
-
-void clPropertiesPage::SetHeaderColours(const wxDataViewItem& item)
-{
-    // Notice that we can't use here m_view->GetColours()
-    // since we can't really tell if we tree got the event `wxEVT_SYS_COLOURS_CHANGED` before
-    // we did
-    wxColour baseColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
-    wxColour header_bg_colour;
-    wxColour header_text_colour;
-
-    header_bg_colour = baseColour.ChangeLightness(80);
-    if (DrawingUtils::IsDark(header_bg_colour)) {
-        header_text_colour = "WHITE";
-    } else {
-        header_text_colour = "BLACK";
-    }
-
-    m_view->SetItemBold(item, true);
-    m_view->SetItemBackgroundColour(item, header_bg_colour, 0);
-    m_view->SetItemBackgroundColour(item, header_bg_colour, 1);
-
-    m_view->SetItemTextColour(item, header_text_colour, 0);
-    m_view->SetItemTextColour(item, header_text_colour, 1);
-}
-
-void clPropertiesPage::OnThemeChanged(clCommandEvent& event)
-{
-    event.Skip();
-    for (size_t row : m_header_rows) {
-        wxDataViewItem item = m_view->RowToItem(row);
-        SetHeaderColours(item);
-    }
-    m_view->Refresh();
-}
-
-void clPropertiesPage::OnInitDone(wxCommandEvent& event)
-{
-    event.Skip();
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clPropertiesPage::OnThemeChanged, this);
-    m_theme_event_connected = true;
 }
 
 bool clPropertiesPage::GetLineData(size_t line, const LineData** data) const
@@ -512,33 +682,6 @@ bool clPropertiesPage::GetLineData(size_t line, const LineData** data) const
 
     *data = &(iter->second);
     return true;
-}
-
-void clPropertiesPage::OnChoice(wxDataViewEvent& event)
-{
-    event.Skip();
-    size_t line = m_view->ItemToRow(event.GetItem());
-
-    // Get the user callback and call it with the new value
-    const LineData* line_data = nullptr;
-    if (!GetLineData(line, &line_data))
-        return;
-
-    if (line_data->callback) {
-        line_data->callback(m_view->GetItemText(m_view->RowToItem(line)), event.GetString());
-    }
-    SetModified();
-}
-
-void clPropertiesPage::OnValueChanged(wxDataViewEvent& event)
-{
-    event.Skip();
-    size_t line = m_view->ItemToRow(event.GetItem());
-    UpdateLineData(line, LineKind::CHECKBOX, m_view->IsItemChecked(event.GetItem(), 1), nullptr);
-
-    // call the user callback for this change
-    NotifyChange(line);
-    SetModified();
 }
 
 void clPropertiesPage::SetModified()
@@ -560,23 +703,37 @@ void clPropertiesPage::ClearModified()
 void clPropertiesPage::NotifyChange(size_t line)
 {
     const LineData* line_data = nullptr;
-    if (!GetLineData(line, &line_data))
+    if (line >= m_cells.size() || !GetLineData(line, &line_data))
         return;
 
     if (line_data->callback) {
-        line_data->callback(m_view->GetItemText(m_view->RowToItem(line)), line_data->value);
+        line_data->callback(m_cells[line]->label, line_data->value);
     }
 }
 
-void clPropertiesPage::Finalize() { m_view->Commit(); }
+void clPropertiesPage::Finalize()
+{
+    if (m_frozen) {
+        m_view->Thaw();
+        m_frozen = false;
+    }
+    // All the rows are added: fit the columns to their content
+    AutoSizeColumns(m_view);
+}
 
-void clPropertiesPage::Begin() { m_view->Begin(); }
+void clPropertiesPage::Begin()
+{
+    if (!m_frozen) {
+        m_view->Freeze();
+        m_frozen = true;
+    }
+}
 
 void clPropertiesPage::Clear()
 {
     CHECK_PTR_RET(m_view);
     m_view->DeleteAllItems();
-    m_isModified = false;
-    m_header_rows.clear();
+    m_cells.clear();
     m_lines.clear();
+    m_isModified = false;
 }

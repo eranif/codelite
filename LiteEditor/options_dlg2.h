@@ -38,8 +38,8 @@ public:
 
     bool IsRestartRequired() const
     {
-        for (size_t i = 0; i < m_treeBook->GetPageCount(); ++i) {
-            const OptionsConfigPage* p = dynamic_cast<OptionsConfigPage*>(m_treeBook->GetPage(i));
+        for (size_t i = 0; i < m_notebook->GetPageCount(); ++i) {
+            const OptionsConfigPage* p = dynamic_cast<OptionsConfigPage*>(m_notebook->GetPage(i));
             if (p && p->IsRestartRequired()) {
                 return true;
             }
@@ -57,7 +57,7 @@ protected:
     template <typename T>
     void AddPage(T* ptr, wxString const& caption, bool selected = false)
     {
-        m_treeBook->AddPage(ptr, caption, selected);
+        m_notebook->AddPage(ptr, caption, selected);
     }
 
 private:

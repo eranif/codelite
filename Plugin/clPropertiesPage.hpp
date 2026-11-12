@@ -1,10 +1,10 @@
 #pragma once
 
-#include "clThemedListCtrl.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
 #include <functional>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 #include <wx/any.h>
@@ -33,6 +33,10 @@ struct WXDLLIMPEXP_SDK LineData {
     std::function<void(const wxString&, const wxAny&)> callback = nullptr;
 };
 
+struct clPropertiesCell; // the data of a row (private to clPropertiesPage.cpp)
+
+/// A page of "name | value" properties, shown in a native wxDataViewListCtrl. A value is activated by a click (or by
+/// pressing Enter on its row): a checkbox is toggled, any other value is changed with a menu or a dialog
 class WXDLLIMPEXP_SDK clPropertiesPage : public wxPanel
 {
 public:
@@ -96,17 +100,15 @@ public:
      */
     virtual void Clear();
 
-    clThemedListCtrl* GetView() { return m_view; }
-
     void NotifyChange(size_t line);
 
 protected:
-    void OnActionButton(wxDataViewEvent& e);
-    void OnThemeChanged(clCommandEvent& event);
-    void SetHeaderColours(const wxDataViewItem& item);
-    void OnInitDone(wxCommandEvent& event);
-    void OnChoice(wxDataViewEvent& event);
-    void OnValueChanged(wxDataViewEvent& event);
+    void OnItemActivated(wxDataViewEvent& event);
+
+    /// Called by the renderers when the user activates (clicks) an item
+    void OnActivateItem(const wxDataViewItem& item);
+    /// Do the action of a row: toggle it, or show its menu or dialog
+    void ActivateRow(size_t line);
 
     // Helpers
     void ShowColourPicker(size_t line, const wxColour& colour);
@@ -140,20 +142,26 @@ protected:
     template <typename T>
     void UpdateLastLineData(LineKind kind, const T& data, clPropertiesPage::Callback_t update_cb)
     {
-        if (m_view->IsEmpty()) {
+        if (m_cells.empty()) {
             return;
         }
 
-        size_t line = m_view->GetItemCount() - 1;
+        size_t line = m_cells.size() - 1;
         UpdateLineData(line, kind, data, update_cb);
     }
 
 private:
-    clThemedListCtrl* m_view{nullptr};
-    std::vector<size_t> m_header_rows;
-    bool m_theme_event_connected{false};
+    /// Add a row to the view. Returns its line number
+    size_t AppendRow(const wxString& label, std::unique_ptr<clPropertiesCell> cell, bool is_header = false);
+    /// Change the displayed text of the value of a line and repaint it
+    void SetCellText(size_t line, const wxString& text);
+
+    wxDataViewListCtrl* m_view{nullptr};
+    std::vector<std::unique_ptr<clPropertiesCell>> m_cells; // one for each line
     std::unordered_map<size_t, LineData> m_lines;
     bool m_isModified{false};
+    bool m_activating{false}; // a dialog or a menu of a line is pending or shown
+    bool m_frozen{false};
 };
 
 /// Source control event
@@ -194,4 +202,3 @@ using clPropertiesPageEventFunction = void (wxEvtHandler::*)(clPropertiesPageEve
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_MODIFIED, clPropertiesPageEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_SAVED, clPropertiesPageEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_ACTION_BUTTON, clPropertiesPageEvent);
-

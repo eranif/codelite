@@ -27,6 +27,7 @@
 
 #include "EditorOptionsGeneralEdit.h"
 #include "EditorOptionsGeneralGuidesPanel.h"
+#include "clAuiBook.hpp"
 #include "clTabRendererMinimal.hpp"
 #include "editoroptionsgeneralindentationpanel.h"
 #include "editoroptionsgeneralsavepanel.h"
@@ -51,6 +52,11 @@
 PreferencesDialog::PreferencesDialog(wxWindow* parent)
     : OptionsBaseDlg2(parent)
 {
+    // Do not paint while the pages are added and the dialog is sized and themed (the dialog flickers white otherwise)
+    wxWindowUpdateLocker locker{this};
+
+    // With wxWidgets 3.3 and later this is the GlyphTabArt, which follows the theme
+    clAuiBook::ApplyTabArt(m_notebook);
     Initialize();
     MSWSetWindowDarkTheme(this);
 }
@@ -79,26 +85,33 @@ void PreferencesDialog::DoSave()
 
 void PreferencesDialog::Initialize()
 {
-    Freeze();
     m_options = EditorConfigST::Get()->GetOptions();
 
-    AddPage(new EditorOptionsGeneralGuidesPanel(m_treeBook, m_options), _("Guides"), true);
-    AddPage(new EditorOptionsGeneralEdit(m_treeBook, m_options), _("Edit"), false);
-    AddPage(new EditorOptionsGeneralIndentationPanel(m_treeBook, m_options), _("Indentation"));
-    AddPage(new EditorSettingsCaret(m_treeBook, m_options), _("Caret / Scrolling"));
-    AddPage(new EditorOptionsGeneralSavePanel(m_treeBook, m_options), _("Save Options"));
-    AddPage(new EditorSettingsComments(m_treeBook, m_options), _("Code"));
-    AddPage(new EditorSettingsFolding(m_treeBook, m_options), _("Folding"));
-    AddPage(new EditorSettingsDockingWindows(m_treeBook, m_options), _("Tabs"));
-    AddPage(new EditorSettingsBookmarksPanel(m_treeBook, m_options), _("Bookmarks"));
-    AddPage(new EditorSettingsTerminal(m_treeBook, m_options), _("Terminal"));
-    AddPage(new EditorSettingsMiscPanel(m_treeBook, m_options), _("Misc"));
-    for (size_t i = 0; i < m_treeBook->GetPageCount(); ++i) {
-        OptionsConfigPage* p = dynamic_cast<OptionsConfigPage*>(m_treeBook->GetPage(i));
+    AddPage(new EditorOptionsGeneralGuidesPanel(m_notebook, m_options), _("Guides"), true);
+    AddPage(new EditorOptionsGeneralEdit(m_notebook, m_options), _("Edit"), false);
+    AddPage(new EditorOptionsGeneralIndentationPanel(m_notebook, m_options), _("Indentation"));
+    AddPage(new EditorSettingsCaret(m_notebook, m_options), _("Caret / Scrolling"));
+    AddPage(new EditorOptionsGeneralSavePanel(m_notebook, m_options), _("Save Options"));
+    AddPage(new EditorSettingsComments(m_notebook, m_options), _("Code"));
+    AddPage(new EditorSettingsFolding(m_notebook, m_options), _("Folding"));
+    AddPage(new EditorSettingsDockingWindows(m_notebook, m_options), _("Tabs"));
+    AddPage(new EditorSettingsBookmarksPanel(m_notebook, m_options), _("Bookmarks"));
+    AddPage(new EditorSettingsTerminal(m_notebook, m_options), _("Terminal"));
+    AddPage(new EditorSettingsMiscPanel(m_notebook, m_options), _("Misc"));
+
+    // Size the dialog before the pages fit their columns to their size, so they do not change after the dialog is shown
+    clSetDialogBestSizeAndPosition(*this);
+
+    // The base class restores the selected tab when it creates the notebook, but the pages do not exist yet at that
+    // point: restore it again now. The selection is saved by the persistence manager when the dialog is destroyed
+    if (wxPersistenceManager::Get().Find(m_notebook)) {
+        wxPersistenceManager::Get().Restore(m_notebook);
+    }
+
+    for (size_t i = 0; i < m_notebook->GetPageCount(); ++i) {
+        OptionsConfigPage* p = dynamic_cast<OptionsConfigPage*>(m_notebook->GetPage(i));
         if (p) {
             p->Finalize();
         }
     }
-    Thaw();
-    clSetDialogBestSizeAndPosition(*this);
 }

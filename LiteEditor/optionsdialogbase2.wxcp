@@ -304,12 +304,12 @@
 												}],
 											"m_events":	[],
 											"m_children":	[{
-													"m_type":	4442,
+													"m_type":	4456,
 													"proportion":	1,
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxNB_MULTILINE", "wxBK_DEFAULT"],
+													"m_styles":	["wxAUI_NB_TOP", "wxAUI_NB_SCROLL_BUTTONS", "wxAUI_NB_WINDOWLIST_BUTTON", "wxBK_DEFAULT"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -326,7 +326,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Name:",
-															"m_value":	"m_treeBook"
+															"m_value":	"m_notebook"
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",

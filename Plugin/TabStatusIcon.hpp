@@ -40,6 +40,11 @@ public:
     /// Allow the Blocked and Done icons. The spinner is not affected. The default is true.
     void SetAttentionEnabled(bool enabled) { m_attentionEnabled = enabled; }
 
+    /// The icon that is on the tab when no status icon is shown. When it is set, it is put back as it is when a status
+    /// icon is removed. Without it, the icon is read from the tab (it is resized to the size of the status icons, see
+    /// TabAttentionIcon). It is used the next time that a status icon is shown, not by the one that is shown now.
+    void SetBaseIcon(const wxBitmap& icon) { m_baseIcon = icon; }
+
     /// Has the page been destroyed? Then this object does nothing, and can be deleted.
     bool IsPageGone() const { return m_page == nullptr; }
 
@@ -54,6 +59,7 @@ private:
     // always match the theme
     std::unique_ptr<TabAttentionIcon> m_spinner;
     std::unique_ptr<TabAttentionIcon> m_attention;
+    wxBitmap m_baseIcon;
     wxTerminalProgramState m_state{wxTerminalProgramState::Clear};
     bool m_attentionEnabled{true};
 };

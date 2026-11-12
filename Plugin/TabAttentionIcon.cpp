@@ -1,7 +1,13 @@
 #include "TabAttentionIcon.hpp"
 
-TabAttentionIcon::TabAttentionIcon(
-    clTabIconBook book, wxWindow* page, const std::vector<wxBitmap>& frames, bool dismissOnFocus, int frameIntervalMs)
+#include "globals.h"
+
+TabAttentionIcon::TabAttentionIcon(clTabIconBook book,
+                                   wxWindow* page,
+                                   const std::vector<wxBitmap>& frames,
+                                   bool dismissOnFocus,
+                                   int frameIntervalMs,
+                                   const wxBitmap& restoreIcon)
     : m_book(std::move(book))
     , m_page(page)
     , m_timer(this)
@@ -25,7 +31,9 @@ TabAttentionIcon::TabAttentionIcon(
     if (where == wxNOT_FOUND) {
         return;
     }
-    m_saved = m_book.getBitmap(where);
+    // The bitmap that the book gives is smaller than the icons of the frames on a screen with a scale: the tab would
+    // get a smaller icon back. The frames are scaled for the screen, so use their size
+    m_saved = restoreIcon.IsOk() ? restoreIcon : MatchBitmapSize(m_book.getBitmap(where), m_frames.front());
     m_shown = true;
     ShowFrame(0);
 

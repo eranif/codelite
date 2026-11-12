@@ -443,3 +443,9 @@ WXDLLIMPEXP_SDK void AdjustDataViewAlternateColour(wxDataViewCtrl* ctrl);
 
 /// Adjust all columns to fit their content.
 WXDLLIMPEXP_SDK void AutoSizeColumns(wxDataViewCtrl* ctrl);
+
+/// Give `bmp` the size and the scale factor of `reference`. The bitmap that a notebook gives for a tab
+/// (wxAuiNotebook::GetPageBitmap()) is not scaled for the DPI of the screen, while the bitmaps of the BitmapLoader are:
+/// use the result of the loader as `reference`. `bmp` is returned as it is when it has the size of `reference` already
+/// (or when one of them is not ok)
+WXDLLIMPEXP_SDK wxBitmap MatchBitmapSize(const wxBitmap& bmp, const wxBitmap& reference);

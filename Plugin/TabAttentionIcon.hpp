@@ -55,11 +55,15 @@ public:
     /// @param dismissOnFocus Remove the icon when the page gets the focus. Use false for an icon that shows a state
     ///                       (a spinner) and not a request to the user.
     /// @param frameIntervalMs How long each frame is shown
+    /// @param restoreIcon The icon to put back on the tab when this icon is removed, if the caller knows it. Without
+    ///                    it, the icon is read from the tab. That bitmap is not scaled for the DPI of the screen (see
+    ///                    MatchBitmapSize()), so it is made the size of the frames
     TabAttentionIcon(clTabIconBook book,
                      wxWindow* page,
                      const std::vector<wxBitmap>& frames,
                      bool dismissOnFocus = true,
-                     int frameIntervalMs = kDefaultFrameIntervalMs);
+                     int frameIntervalMs = kDefaultFrameIntervalMs,
+                     const wxBitmap& restoreIcon = wxNullBitmap);
     ~TabAttentionIcon() override;
 
     /// Is the icon on the tab?

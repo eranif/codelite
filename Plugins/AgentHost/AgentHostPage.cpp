@@ -71,6 +71,12 @@ const char* AgentIconName(AgentType agent_type)
     }
     return "claude-code";
 }
+
+/// The icon of an agent, for the current theme
+wxBitmap LoadAgentIcon(AgentType agent_type)
+{
+    return clGetManager()->GetStdIcons()->LoadBitmap(AgentIconName(agent_type));
+}
 } // namespace
 
 #define CHECK_CAN_HANDLE_EVENT(event)              \
@@ -203,6 +209,9 @@ void AgentHostPage::UpdateTabIcon(wxTerminalProgramState state, bool notify)
         }
         m_tabIcon = std::make_unique<TabStatusIcon>(clTabIconBook::From(clGetManager()->GetMainNotebook()), this);
     }
+    // The icon of the agent is put back as it is when a status icon is removed (the tab gives it smaller on a screen
+    // with a scale)
+    m_tabIcon->SetBaseIcon(LoadAgentIcon(m_agentInfo.agent_type));
     m_tabIcon->SetAttentionEnabled(notify);
     m_tabIcon->SetState(state);
 }
@@ -421,9 +430,12 @@ void AgentHostPage::UpdateAgentIcon()
         return;
     }
 
+    const wxBitmap bmp = LoadAgentIcon(m_agentInfo.agent_type);
+
     // A status icon (the spinner, ...) is on the tab now, and it puts back the icon that was there when it was shown.
-    // Do not replace it: the new icon is set when the status icon is gone and a new one is shown
+    // Do not replace it: the new icon is used the next time that a status icon is shown
     if (m_tabIcon) {
+        m_tabIcon->SetBaseIcon(bmp);
         switch (m_tabIcon->GetState()) {
         case wxTerminalProgramState::Working:
         case wxTerminalProgramState::Blocked:
@@ -438,7 +450,6 @@ void AgentHostPage::UpdateAgentIcon()
     if (where == wxNOT_FOUND) {
         return;
     }
-    const wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap(AgentIconName(m_agentInfo.agent_type));
     if (bmp.IsOk()) {
         book.setBitmap(where, bmp);
     }

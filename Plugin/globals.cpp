@@ -51,6 +51,7 @@
 #include <wx/dcscreen.h>
 #include <wx/display.h>
 #include <wx/filename.h>
+#include <wx/image.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>
 #include <wx/regex.h>
@@ -1065,4 +1066,15 @@ void AutoSizeColumns(wxDataViewCtrl* ctrl)
     for (unsigned int i = 0; i < ctrl->GetColumnCount(); ++i) {
         ctrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
     }
+}
+
+wxBitmap MatchBitmapSize(const wxBitmap& bmp, const wxBitmap& reference)
+{
+    if (!bmp.IsOk() || !reference.IsOk() ||
+        (bmp.GetSize() == reference.GetSize() && bmp.GetScaleFactor() == reference.GetScaleFactor())) {
+        return bmp;
+    }
+    wxImage image = bmp.ConvertToImage();
+    image.Rescale(reference.GetWidth(), reference.GetHeight(), wxIMAGE_QUALITY_HIGH);
+    return wxBitmap(image, wxBITMAP_SCREEN_DEPTH, reference.GetScaleFactor());
 }

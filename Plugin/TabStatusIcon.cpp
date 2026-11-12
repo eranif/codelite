@@ -83,7 +83,8 @@ void TabStatusIcon::ShowSpinner()
     if (m_spinner) {
         return; // already spinning
     }
-    m_spinner = std::make_unique<TabAttentionIcon>(m_book, m_page, LoadFrames(kSpinnerName), false, kFrameIntervalMs);
+    m_spinner = std::make_unique<TabAttentionIcon>(
+        m_book, m_page, LoadFrames(kSpinnerName), false, kFrameIntervalMs, m_baseIcon);
 }
 
 void TabStatusIcon::ShowAttention(wxTerminalProgramState state)
@@ -100,7 +101,7 @@ void TabStatusIcon::ShowAttention(wxTerminalProgramState state)
     const std::vector<wxBitmap> frames = state == wxTerminalProgramState::Blocked
                                              ? LoadFrames(kBlockedName)
                                              : std::vector<wxBitmap>{LoadIcon(kDoneName)};
-    m_attention = std::make_unique<TabAttentionIcon>(m_book, m_page, frames, true, kFrameIntervalMs);
+    m_attention = std::make_unique<TabAttentionIcon>(m_book, m_page, frames, true, kFrameIntervalMs, m_baseIcon);
 }
 
 void TabStatusIcon::OnPageDestroyed(wxWindowDestroyEvent& event)

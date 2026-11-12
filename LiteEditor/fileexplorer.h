@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef FILEEXPLORER_H
-#define FILEEXPLORER_H
+#pragma once
 
 #include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
@@ -53,4 +52,3 @@ public:
     void OpenFolder(const wxString& path);
 };
 
-#endif // FILEEXPLORER_H

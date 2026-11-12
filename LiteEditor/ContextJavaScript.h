@@ -22,8 +22,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CONTEXTJAVASCRIPT_H
-#define CONTEXTJAVASCRIPT_H
+#pragma once
 
 #include "context_base.h" // Base class: ContextBase
 
@@ -61,4 +60,3 @@ public:
     bool IsComment(long pos) const;
 };
 
-#endif // CONTEXTJAVASCRIPT_H

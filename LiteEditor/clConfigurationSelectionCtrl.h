@@ -1,5 +1,4 @@
-#ifndef CLCONFIGURATIONSELECTIONCTRL_H
-#define CLCONFIGURATIONSELECTIONCTRL_H
+#pragma once
 
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
@@ -54,4 +53,3 @@ public:
     const wxArrayString& GetProjects() const { return m_projects; }
 };
 
-#endif // CLCONFIGURATIONSELECTIONCTRL_H

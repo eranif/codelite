@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef DEBUGGERPANE_H
-#define DEBUGGERPANE_H
+#pragma once
 
 #include "Notebook.h"
 #include "cl_config.h"
@@ -142,4 +141,3 @@ public:
     void Clear();
     void OnPageChanged(wxBookCtrlEvent& event);
 };
-#endif // DEBUGGERPANE_H

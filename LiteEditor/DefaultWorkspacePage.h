@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DEFAULTWORKSPACEPAGE_H
-#define DEFAULTWORKSPACEPAGE_H
+#pragma once
 
 #include "clColours.h"
 #include "cl_command_event.h"
@@ -43,4 +42,3 @@ public:
     DefaultWorkspacePage(wxWindow* parent);
     ~DefaultWorkspacePage() override;
 };
-#endif // DEFAULTWORKSPACEPAGE_H

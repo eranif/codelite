@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __new_quick_watch_dlg__
-#define __new_quick_watch_dlg__
+#pragma once
 
 /**
 @file
@@ -73,4 +72,3 @@ public:
     void OnCreateVariableObjError(const DebuggerEventData& event);
 };
 
-#endif // __new_quick_watch_dlg__

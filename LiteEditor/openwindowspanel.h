@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __openwindowspanel__
-#define __openwindowspanel__
+#pragma once
 
 #include "cl_command_event.h"
 #include "imanager.h"
@@ -86,4 +85,3 @@ public:
     const wxString& GetCaption() const { return m_caption; }
 };
 
-#endif // __openwindowspanel__

@@ -32,8 +32,7 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _stdwx_h_
-#define _stdwx_h_
+#pragma once
 
 // SYSTEM INCLUDES
 #include <wx/wxprec.h>
@@ -47,4 +46,3 @@
 // APPLICATION INCLUDES
 #include <wx/image.h>
 
-#endif

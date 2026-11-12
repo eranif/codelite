@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __edit_workspace_conf_dlg__
-#define __edit_workspace_conf_dlg__
+#pragma once
 
 #include "edit_workspace_conf_dlg_base.hpp"
 
@@ -55,4 +54,3 @@ public:
                          int style = wxDEFAULT_DIALOG_STYLE);
 };
 
-#endif //__edit_workspace_conf_dlg__

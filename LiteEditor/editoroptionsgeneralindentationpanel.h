@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editoroptionsgeneralindentationpanel__
-#define __editoroptionsgeneralindentationpanel__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -35,4 +34,3 @@ public:
     ~EditorOptionsGeneralIndentationPanel() override = default;
 };
 
-#endif // __editoroptionsgeneralindentationpanel__

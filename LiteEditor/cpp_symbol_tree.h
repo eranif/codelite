@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef LITEEDITOR_CPP_SYMBOL_TREE_H
-#define LITEEDITOR_CPP_SYMBOL_TREE_H
+#pragma once
 
 #include "cl_editor.h"
 #include "stack"
@@ -62,4 +61,3 @@ protected:
     DECLARE_DYNAMIC_CLASS(CppSymbolTree)
 };
 
-#endif // LITEEDITOR_CPP_SYMBOL_TREE_H

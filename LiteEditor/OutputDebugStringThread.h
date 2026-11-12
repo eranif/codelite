@@ -1,5 +1,4 @@
-#ifndef OUTPUTDEBUGSTRINGTHREAD_H
-#define OUTPUTDEBUGSTRINGTHREAD_H
+#pragma once
 
 #include "cl_command_event.h"
 
@@ -54,4 +53,3 @@ public:
     void SetCollecting(bool collecting) { this->m_collecting = collecting; }
 };
 
-#endif // OUTPUTDEBUGSTRINGTHREAD_H

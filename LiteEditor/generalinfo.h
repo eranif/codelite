@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef GENERALINFO_H
-#define GENERALINFO_H
+#pragma once
 
 #include "serialized_object.h"
 
@@ -66,4 +65,3 @@ public:
     const wxRect& GetDefaultRect() const { return m_defaultRect; }
 };
 
-#endif // GENERALINFO_H

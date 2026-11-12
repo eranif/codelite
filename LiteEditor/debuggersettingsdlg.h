@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __debuggersettingsdlg__
-#define __debuggersettingsdlg__
+#pragma once
 
 #include "Debugger/debuggersettings.h"
 #include "debuggersettingsbasedlg.hpp"
@@ -133,4 +132,3 @@ public:
     wxCheckBox* GetCheckBoxMakeActive() { return m_checkBoxMakeActive; }
 };
 
-#endif // __debuggersettingsdlg__

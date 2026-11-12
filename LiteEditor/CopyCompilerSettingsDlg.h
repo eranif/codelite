@@ -1,5 +1,4 @@
-#ifndef COPYCOMPILERSETTINGSDLG_H
-#define COPYCOMPILERSETTINGSDLG_H
+#pragma once
 #include "project_settings_base_dlg.hpp"
 
 class CopyCompilerSettingsDlg : public CopyCompilerSettingsDlgBase
@@ -13,4 +12,3 @@ public:
 
     void GetCopyFrom(wxString& project, wxString& config);
 };
-#endif // COPYCOMPILERSETTINGSDLG_H

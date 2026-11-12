@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef OUTPUT_PANE_H
-#define OUTPUT_PANE_H
+#pragma once
 
 #include "Notebook.h"
 #include "clAuiBook.hpp"
@@ -135,4 +134,3 @@ public:
     clBuiltinTerminalPane* GetBuiltInTerminal() { return m_terminal; }
 };
 
-#endif // OUTPUT_PANE_H

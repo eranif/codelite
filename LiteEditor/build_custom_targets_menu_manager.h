@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef BUILDCUSTOMTARGETSMENUMANAGER_H
-#define BUILDCUSTOMTARGETSMENUMANAGER_H
+#pragma once
 
 #include <map>
 #include <wx/string.h>
@@ -51,4 +50,3 @@ public:
     const wxString& GetProjectName() const { return m_projectName; }
 };
 
-#endif // BUILDCUSTOMTARGETSMENUMANAGER_H

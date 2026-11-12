@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __findresultstab__
-#define __findresultstab__
+#pragma once
 
 #include "FindResultsStatusLine.hpp"
 #include "Notebook.h"
@@ -182,4 +181,3 @@ protected:
     std::vector<int> m_changesForCurrentMatches;
 };
 
-#endif // __findresultstab__

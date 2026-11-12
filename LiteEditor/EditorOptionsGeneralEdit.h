@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef EDITOROPTIONSGENERALEDIT_H
-#define EDITOROPTIONSGENERALEDIT_H
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -34,4 +33,3 @@ public:
     EditorOptionsGeneralEdit(wxWindow* parent, OptionsConfigPtr options);
     ~EditorOptionsGeneralEdit() override = default;
 };
-#endif // EDITOROPTIONSGENERALEDIT_H

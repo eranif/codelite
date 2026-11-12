@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __singleinstancethreadjob__
-#define __singleinstancethreadjob__
+#pragma once
 
 #include "SocketAPI/clSocketServer.h"
 #include "cl_command_event.h"
@@ -87,4 +86,3 @@ public:
     clSingleInstanceThread();
     ~clSingleInstanceThread() override;
 };
-#endif // __singleinstancethreadjob__

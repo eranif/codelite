@@ -21,8 +21,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __contextdiff__
-#define __contextdiff__
+#pragma once
 
 #include "context_base.h"
 class clEditor;
@@ -38,4 +37,3 @@ public:
     std::shared_ptr<ContextBase> NewInstance(clEditor* container) override;
 };
 
-#endif // __contextdiff__

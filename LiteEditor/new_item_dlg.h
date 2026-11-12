@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __new_item_dlg__
-#define __new_item_dlg__
+#pragma once
 
 #include "new_item_base_dlg.hpp"
 
@@ -47,4 +46,3 @@ protected:
     void OnBrowseButton(wxCommandEvent& event) override;
 };
 
-#endif //__new_item_dlg__

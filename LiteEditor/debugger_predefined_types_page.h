@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __debugger_predefined_types_page__
-#define __debugger_predefined_types_page__
+#pragma once
 
 /**
 @file
@@ -59,4 +58,3 @@ public:
     DebuggerPreDefinedTypes GetPreDefinedTypes();
 };
 
-#endif // __debugger_predefined_types_page__

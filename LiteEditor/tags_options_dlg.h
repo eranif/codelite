@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __tags_options_dlg__
-#define __tags_options_dlg__
+#pragma once
 
 #include "clEditorEditEventsHandler.h"
 #include "serialized_object.h"
@@ -60,4 +59,3 @@ public:
     TagsOptionsData& GetData() { return m_data; }
 };
 
-#endif //__tags_options_dlg__

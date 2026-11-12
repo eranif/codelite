@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLPRINTOUT_H
-#define CLPRINTOUT_H
+#pragma once
 
 #include <wx/choice.h>
 #include <wx/gdicmn.h>
@@ -57,4 +56,3 @@ public:
     void GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* selPageTo) override;
 };
 
-#endif // CLPRINTOUT_H

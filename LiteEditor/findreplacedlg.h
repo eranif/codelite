@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef FIND_REPLACE_DLG_H
-#define FIND_REPLACE_DLG_H
+#pragma once
 
 #include "clFilesCollector.h"
 #include "cl_config.h"
@@ -83,4 +82,3 @@ public:
     void SetReplaceStrings(const wxArrayString& replaceStrings) { this->m_replaceString = replaceStrings; }
 };
 
-#endif // FIND_REPLACE_DLG_H

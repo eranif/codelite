@@ -1,5 +1,4 @@
-#ifndef CONTEXTRUST_HPP
-#define CONTEXTRUST_HPP
+#pragma once
 
 #include "generic_context.h"
 class ContextRust : public ContextGeneric
@@ -44,4 +43,3 @@ public:
     bool IsComment(long pos) const;
 };
 
-#endif // CONTEXTRUST_HPP

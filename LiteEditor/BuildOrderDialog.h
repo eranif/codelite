@@ -1,5 +1,4 @@
-#ifndef BUILDORDERDIALOG_H
-#define BUILDORDERDIALOG_H
+#pragma once
 
 #include "buildorderbasepage.hpp"
 
@@ -34,4 +33,3 @@ protected:
     void OnMoveRightUI(wxUpdateUIEvent& event) override;
     void OnMoveUp(wxCommandEvent& event) override;
 };
-#endif // BUILDORDERDIALOG_H

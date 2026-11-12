@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef IMPORTFILESDIALOGNEW_H
-#define IMPORTFILESDIALOGNEW_H
+#pragma once
 
 #include "importfilesdialog_new.hpp"
 #include "macros.h"
@@ -57,4 +56,3 @@ public:
     wxString GetFileMask();
     wxString GetBaseDir();
 };
-#endif // IMPORTFILESDIALOGNEW_H

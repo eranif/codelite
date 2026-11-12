@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editoroptionsgeneralsavepanel__
-#define __editoroptionsgeneralsavepanel__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -35,4 +34,3 @@ public:
     ~EditorOptionsGeneralSavePanel() override = default;
 };
 
-#endif // __editoroptionsgeneralsavepanel__

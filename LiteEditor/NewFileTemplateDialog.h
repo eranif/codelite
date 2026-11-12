@@ -1,5 +1,4 @@
-#ifndef NEWFILETEMPLATEDIALOG_H
-#define NEWFILETEMPLATEDIALOG_H
+#pragma once
 #include "compiler_pages.hpp"
 
 class NewFileTemplateDialog : public NewFileTemplateDialogBase
@@ -16,4 +15,3 @@ public:
     void SetKind(const wxString& k);
     void SetExtension(const wxString& ext);
 };
-#endif // NEWFILETEMPLATEDIALOG_H

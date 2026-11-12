@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __buildtabsettingsdata__
-#define __buildtabsettingsdata__
+#pragma once
 
 #include "serialized_object.h"
 
@@ -69,4 +68,3 @@ public:
     void SetErrorWarningStyle(ErrorsWarningStyle errorWarningStyle) { this->m_errorWarningStyle = errorWarningStyle; }
     ErrorsWarningStyle GetErrorWarningStyle() const { return m_errorWarningStyle; }
 };
-#endif // __buildtabsettingsdata__

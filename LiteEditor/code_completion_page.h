@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CODECOMPLETIONPAGE_H
-#define CODECOMPLETIONPAGE_H
+#pragma once
 
 #include "workspacesettingsbase.hpp" // Base class: CodeCompletionBasePage
 
@@ -52,4 +51,3 @@ public:
     wxString GetIncludePathsAsString() const;
 };
 
-#endif // CODECOMPLETIONPAGE_H

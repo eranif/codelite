@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PROJECTCUSTOMBUILDTARGETDLG_H
-#define PROJECTCUSTOMBUILDTARGETDLG_H
+#pragma once
 
 #include "project_settings_base_dlg.hpp"
 
@@ -49,4 +48,3 @@ public:
 protected:
     void OnEditTargetNameUI(wxUpdateUIEvent& event) override;
 };
-#endif // PROJECTCUSTOMBUILDTARGETDLG_H

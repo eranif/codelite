@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __TREEBOOKNODEBASE__
-#define __TREEBOOKNODEBASE__
+#pragma once
 
 #include "clPropertiesPage.hpp"
 #include "cl_config.h"
@@ -118,4 +117,3 @@ public:
     bool IsRestartRequired() const { return m_isRestartRequired; }
 };
 
-#endif // __TREEBOOKNODEBASE__

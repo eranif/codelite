@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CONTEXT_CPP_H
-#define CONTEXT_CPP_H
+#pragma once
 
 #include "LSP/LSPEvent.h"
 #include "cl_command_event.h"
@@ -142,4 +141,3 @@ private:
     void DoFormatEditor(clEditor* editor);
 };
 
-#endif // CONTEXT_CPP_H

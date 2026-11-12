@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef CONTEXT_BASE_H
-#define CONTEXT_BASE_H
+#pragma once
 
 #include "database/entry.h"
 #include "lexer_configuration.h"
@@ -160,4 +159,3 @@ public:
 };
 
 using ContextBasePtr = std::shared_ptr<ContextBase>;
-#endif // CONTEXT_BASE_H

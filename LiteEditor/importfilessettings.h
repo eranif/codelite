@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __importfilessettings__
-#define __importfilessettings__
+#pragma once
 #include "serialized_object.h"
 
 enum { IFS_INCLUDE_FILES_WO_EXT = 0x00000001 };
@@ -51,4 +50,3 @@ public:
     void SetBaseDir(const wxString& baseDir) { this->m_baseDir = baseDir; }
     const wxString& GetBaseDir() const { return m_baseDir; }
 };
-#endif // __importfilessettings__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef FIND_IN_FILES_DLG_H
-#define FIND_IN_FILES_DLG_H
+#pragma once
 
 #include "findinfiles_dlg.hpp"
 #include "macros.h"
@@ -85,4 +84,3 @@ public:
     int ShowDialog(const wxString& findWhat = wxEmptyString, const wxString& replaceWith = wxEmptyString);
 };
 
-#endif // FIND_IN_FILES_DLG_H

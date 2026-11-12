@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __quickdebugdlg__
-#define __quickdebugdlg__
+#pragma once
 
 #include "quickdebugbase.hpp"
 #include "quickdebuginfo.h"
@@ -52,4 +51,3 @@ public:
     ~QuickDebugDlg() override = default;
 };
 
-#endif // __quickdebugdlg__

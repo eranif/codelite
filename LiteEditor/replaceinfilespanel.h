@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __replaceinfilespanel__
-#define __replaceinfilespanel__
+#pragma once
 
 #include "findresultstab.h"
 
@@ -72,4 +71,3 @@ public:
     void SetStyles(wxStyledTextCtrl* sci) override;
 };
 
-#endif // __replaceinfilespanel__

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLDEBUGGEREDITITEMDLG_H
-#define CLDEBUGGEREDITITEMDLG_H
+#pragma once
 
 #include "newquickwatch.hpp"
 
@@ -37,4 +36,3 @@ public:
     wxString GetValue() const;
     void SetValue(const wxString& value) { m_textCtrl38->ChangeValue(value); }
 };
-#endif // CLDEBUGGEREDITITEMDLG_H

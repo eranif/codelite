@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __dbgcommanddlg__
-#define __dbgcommanddlg__
+#pragma once
 #include "DbgCommandBaseDlg.hpp"
 
 class DbgCommandDlg : public DbgCommandBaseDlg
@@ -42,4 +41,3 @@ public:
     void SetExpression(const wxString& cmd) { m_textCtrlCommand->SetValue(cmd); }
 };
 
-#endif // __dbgcommanddlg__

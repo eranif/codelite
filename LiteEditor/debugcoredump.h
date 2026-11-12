@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DEBUGCOREDUMP_H
-#define DEBUGCOREDUMP_H
+#pragma once
 
 #include "debugcoredumpbase.hpp" // Base class: DebugCoreDumpBase
 
@@ -51,4 +50,3 @@ protected:
     void Initialize();
 };
 
-#endif // DEBUGCOREDUMP_H

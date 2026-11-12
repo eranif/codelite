@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef NEWVIRTUALFOLDERDLG_H
-#define NEWVIRTUALFOLDERDLG_H
+#pragma once
 
 #include "new_virtual_folder.hpp"
 
@@ -48,4 +47,3 @@ protected:
     void OnCreateOnDiskUI(wxUpdateUIEvent& event) override;
     void OnNameUpdated(wxCommandEvent& event) override;
 };
-#endif // NEWVIRTUALFOLDERDLG_H

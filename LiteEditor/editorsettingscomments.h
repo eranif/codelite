@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editorsettingscomments__
-#define __editorsettingscomments__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 #include "commentconfigdata.h"
@@ -38,4 +37,3 @@ public:
     ~EditorSettingsComments() override = default;
 };
 
-#endif // __editorsettingscomments__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __project_settings_dlg__
-#define __project_settings_dlg__
+#pragma once
 
 /**
 @file
@@ -149,4 +148,3 @@ public:
     virtual void OnWorkspaceClosed(clWorkspaceEvent& e);
 };
 
-#endif // __project_settings_dlg__

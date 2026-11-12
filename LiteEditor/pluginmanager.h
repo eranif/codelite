@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef PLUGINMANAGER_H
-#define PLUGINMANAGER_H
+#pragma once
 
 #include "Notebook.h"
 #include "SideBar.hpp"
@@ -281,4 +280,3 @@ public:
     UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
 };
 
-#endif // PLUGINMANAGER_H

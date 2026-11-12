@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef NEWCOMPILERDLG_H
-#define NEWCOMPILERDLG_H
+#pragma once
 #include "compiler_pages.hpp"
 
 class NewCompilerDlg : public NewCompilerDlgBase
@@ -40,4 +39,3 @@ public:
 protected:
     void OnOkUI(wxUpdateUIEvent& event) override;
 };
-#endif // NEWCOMPILERDLG_H

@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ps_general_page__
-#define __ps_general_page__
+#pragma once
 
 #include "globals.h"
 /**
@@ -68,4 +67,3 @@ public:
     wxString GetCompiler() const { return m_pgPropCompiler->GetValueAsString(); }
 };
 
-#endif // __ps_general_page__

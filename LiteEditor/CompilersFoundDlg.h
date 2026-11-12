@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef COMPILERSFOUNDDLG_H
-#define COMPILERSFOUNDDLG_H
+#pragma once
 
 #include "CompilersFoundDlgBase.hpp"
 #include "ICompilerLocator.h"
@@ -49,4 +48,3 @@ public:
      */
     size_t GetSelectedCompilers(ICompilerLocator::CompilerVec_t& compilers);
 };
-#endif // COMPILERSFOUNDDLG_H

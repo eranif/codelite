@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef DEBUGGERDISASSEMBLYTAB_H
-#define DEBUGGERDISASSEMBLYTAB_H
+#pragma once
 
 #include "cl_command_event.h"
 #include "debugger.h"
@@ -85,4 +84,3 @@ public:
     const wxString& GetTitle() const { return m_title; }
     wxArrayString GetRegisterNames() const;
 };
-#endif // DEBUGGERDISASSEMBLYTAB_H

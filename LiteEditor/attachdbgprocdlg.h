@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __attachdbgprocdlg__
-#define __attachdbgprocdlg__
+#pragma once
 
 #include "attachdbgprocbasedlg.hpp"
 
@@ -48,4 +47,3 @@ protected:
     void OnItemActivated(wxDataViewEvent& event) override;
 };
 
-#endif // __attachdbgprocdlg__

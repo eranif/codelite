@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __EDITORSETTINGSDOCKINGWIDOWS__
-#define __EDITORSETTINGSDOCKINGWIDOWS__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 
@@ -35,4 +34,3 @@ public:
     ~EditorSettingsDockingWindows() override = default;
 };
 
-#endif // __EDITORSETTINGSDOCKINGWIDOWS__

@@ -22,8 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __setters_getters_dlg__
-#define __setters_getters_dlg__
+#pragma once
 
 #include "ctags_manager.h"
 #include "manager.h"
@@ -139,4 +138,3 @@ public:
               const wxFileName& file,
               int lineno);
 };
-#endif // __setters_getters_dlg__

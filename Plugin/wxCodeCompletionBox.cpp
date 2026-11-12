@@ -17,16 +17,57 @@
 #include "macros.h"
 #include "wxCodeCompletionBoxManager.h"
 
+#include <algorithm>
 #include <wx/app.h>
+#include <wx/dataview.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/display.h>
 #include <wx/font.h>
+#include <wx/settings.h>
 #include <wx/stc/stc.h>
+#include <wx/wupdlock.h>
 
 const size_t MAX_TOOLTIP_SIZE = 1 << 10; // 1KB
+
+namespace
+{
+/// Move the selection of the list by `delta` rows. It stops at the first and at the last row
+void MoveSelection(wxDataViewListCtrl* list, int delta)
+{
+    const int count = static_cast<int>(list->GetItemCount());
+    if (count == 0) {
+        return;
+    }
+    const int current = list->GetSelectedRow();
+    const int row = current == wxNOT_FOUND ? 0 : std::clamp(current + delta, 0, count - 1);
+    list->SelectRow(row);
+    list->EnsureVisible(list->RowToItem(row));
+}
+
+/// The number of rows that a Page Up and a Page Down move
+int RowsPerPage(wxDataViewListCtrl* list)
+{
+    // Some ports do not know it
+    constexpr int kDefaultRowsPerPage = 10;
+    const int rows = list->GetCountPerPage();
+    return std::max(1, (rows == wxNOT_FOUND ? kDefaultRowsPerPage : rows) - 1);
+}
+
+/// The only column of the list takes the whole width of the control (but the scroll bar)
+void FitColumnToView(wxDataViewListCtrl* list)
+{
+    if (list->GetColumnCount() == 0) {
+        return;
+    }
+    const int width = list->GetClientSize().x - wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, list);
+    if (width > 0) {
+        list->GetColumn(0)->SetWidth(width);
+    }
+}
+} // namespace
 
 wxCodeCompletionBox::BmpVec_t wxCodeCompletionBox::m_defaultBitmaps;
 thread_local bool strip_html_tags = false;
@@ -68,10 +109,16 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_ccFont = ColoursAndFontsManager::Get().GetFixedFont(true);
 
     // m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
-    m_list->SetNativeTheme(false);
-    m_list->SetRendererType(eRendererType::RENDERER_DIRECT2D);
-    m_list->SetColours(colours);
-    m_list->SetDefaultFont(m_ccFont);
+    // The list is a native wxDataViewListCtrl: an icon and a text in one column. It has the colours of the editor
+    m_list->SetBackgroundColour(colours.GetBgColour());
+    m_list->SetForegroundColour(colours.GetItemTextColour());
+    m_list->SetFont(m_ccFont);
+    m_list->AppendIconTextColumn(wxEmptyString, wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_DEFAULT, wxALIGN_LEFT, 0);
+    ::AdjustDataViewAlternateColour(m_list);
+    m_list->Bind(wxEVT_SIZE, [this](wxSizeEvent& event) {
+        event.Skip();
+        FitColumnToView(m_list);
+    });
 
     // Calculate a suitable completion dialog width
     {
@@ -136,14 +183,12 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_bitmaps.push_back(bmpLoader->LoadBitmap("enum")); // 18
 
     InitializeDefaultBitmaps();
-    m_list->SetBitmaps(&m_bitmaps);
 
     m_bmpDown = wxXmlResource::Get()->LoadBitmap("cc-box-down");
     m_bmpDownEnabled = m_bmpDown.ConvertToDisabled();
 
     m_bmpUp = wxXmlResource::Get()->LoadBitmap("cc-box-up");
     m_bmpUpEnabled = m_bmpUp.ConvertToDisabled();
-    m_list->SetSortFunction(nullptr);
     StylePopupWindow(this);
 }
 
@@ -559,17 +604,21 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
 {
     switch (event.GetKeyCode()) {
     case WXK_UP:
-        m_list->LineUp();
+        MoveSelection(m_list, -1);
+        StartTooltipWindowTimer();
         break;
     case WXK_DOWN:
-        m_list->LineDown();
+        MoveSelection(m_list, 1);
+        StartTooltipWindowTimer();
         break;
     case WXK_PAGEDOWN: {
-        m_list->PageDown();
+        MoveSelection(m_list, RowsPerPage(m_list));
+        StartTooltipWindowTimer();
         break;
     }
     case WXK_PAGEUP: {
-        m_list->PageUp();
+        MoveSelection(m_list, -RowsPerPage(m_list));
+        StartTooltipWindowTimer();
         break;
     }
     case WXK_ESCAPE:
@@ -595,14 +644,19 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
     default: {
         int modifier_key = event.GetModifiers();
         wxChar ch = event.GetUnicodeKey();
+        int delta = 0;
         if (modifier_key == wxMOD_CONTROL && ch == 'U') {
-            m_list->PageUp();
+            delta = -RowsPerPage(m_list);
         } else if (modifier_key == wxMOD_CONTROL && ch == 'D') {
-            m_list->PageDown();
+            delta = RowsPerPage(m_list);
         } else if (modifier_key == wxMOD_CONTROL && (ch == 'J' || ch == 'N')) {
-            m_list->LineDown();
+            delta = 1;
         } else if (modifier_key == wxMOD_CONTROL && (ch == 'K' || ch == 'P')) {
-            m_list->LineUp();
+            delta = -1;
+        }
+        if (delta != 0) {
+            MoveSelection(m_list, delta);
+            StartTooltipWindowTimer();
         } else {
             event.Skip();
         }
@@ -810,15 +864,28 @@ void wxCodeCompletionBox::DoPopulateList()
     // Fill the control with the entries
     m_list->DeleteAllItems();
 
-    m_list->Begin();
-    wxVector<wxVariant> cols;
-    for (size_t i = 0; i < m_entries.size(); ++i) {
-        wxCodeCompletionBoxEntry::Ptr_t cc_item = m_entries[i];
-        cols.clear();
-        cols.push_back(::MakeBitmapIndexText(cc_item->GetText(), cc_item->GetImgIndex()));
-        m_list->AppendItem(cols, (wxUIntPtr)i);
+    {
+        wxWindowUpdateLocker locker{m_list};
+        wxVector<wxVariant> cols;
+        for (size_t i = 0; i < m_entries.size(); ++i) {
+            wxCodeCompletionBoxEntry::Ptr_t cc_item = m_entries[i];
+
+            // The icon of the entry: its index in the list of the bitmaps
+            const int img_index = cc_item->GetImgIndex();
+            wxBitmapBundle icon;
+            if (img_index >= 0 && static_cast<size_t>(img_index) < m_bitmaps.size()) {
+                icon = wxBitmapBundle(m_bitmaps[img_index]);
+            }
+
+            wxVariant value;
+            value << wxDataViewIconText(cc_item->GetText(), icon);
+            cols.clear();
+            cols.push_back(value);
+            m_list->AppendItem(cols, (wxUIntPtr)i);
+        }
     }
-    m_list->Commit();
+    FitColumnToView(m_list);
+
     // Select the first item
     if (m_list->GetItemCount()) {
         m_list->Select(m_list->RowToItem(0));

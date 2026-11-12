@@ -9,12 +9,6 @@ project(plugin)
 include("${wxWidgets_USE_FILE}")
 
 wxcrafter_target(
-    PluginCustomControls
-    "${CMAKE_CURRENT_SOURCE_DIR}/CustomControls/CustomControls.wxcp"
-    "CustomControls.cpp"
-    "CustomControls.hpp")
-
-wxcrafter_target(
     PluginDebugger
     "${CMAKE_CURRENT_SOURCE_DIR}/Debugger/memoryviewbase.wxcp"
     "memoryviewbase.cpp"
@@ -219,7 +213,6 @@ else()
 endif()
 
 add_library(plugin SHARED ${SRCS}
-    ${WXCRAFTER_PluginCustomControls_OUTPUTS}
     ${WXCRAFTER_PluginDebugger_OUTPUTS}
     ${WXCRAFTER_PluginDiff_OUTPUTS}
     ${WXCRAFTER_PluginFileSystemWorkspace_OUTPUTS}
@@ -258,7 +251,6 @@ target_include_directories(
   plugin
   PUBLIC "${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces"
          "${CL_SRC_ROOT}/Plugin/aui"
-          "${WXCRAFTER_PluginCustomControls_OUTPUTDIR}"
           "${WXCRAFTER_PluginDebugger_OUTPUTDIR}"
           "${WXCRAFTER_PluginDiff_OUTPUTDIR}"
           "${WXCRAFTER_PluginFileSystemWorkspace_OUTPUTDIR}"

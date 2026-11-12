@@ -57,6 +57,20 @@ wxString WithShortcut(const wxString& text, const char* command)
     const auto shortcut = clKeyboardManager::Get()->GetShortcutForCommand(wxString(command));
     return shortcut.IsOk() ? text + "\n" + shortcut.DisplayString() : text;
 }
+
+/// The name of the icon of an agent (svgs/<theme>/<name>.svg)
+const char* AgentIconName(AgentType agent_type)
+{
+    switch (agent_type) {
+    case AgentType::kClaudeCode:
+        return "claude-code";
+    case AgentType::kKiroCli:
+        return "kiro";
+    case AgentType::kOpenCode:
+        return "opencode";
+    }
+    return "claude-code";
+}
 } // namespace
 
 #define CHECK_CAN_HANDLE_EVENT(event)              \
@@ -395,7 +409,39 @@ void AgentHostPage::OpenText(const wxString& text)
 void AgentHostPage::StartAgentHost(const AgentInfo& info)
 {
     m_agentInfo = info;
+    UpdateAgentIcon();
     RestartAgentHost();
+}
+
+void AgentHostPage::UpdateAgentIcon()
+{
+    // A book that cannot show an icon that is made at run time gives an object that is not ok: no icon then
+    clTabIconBook book = clTabIconBook::From(clGetManager()->GetMainNotebook());
+    if (!book.IsOk()) {
+        return;
+    }
+
+    // A status icon (the spinner, ...) is on the tab now, and it puts back the icon that was there when it was shown.
+    // Do not replace it: the new icon is set when the status icon is gone and a new one is shown
+    if (m_tabIcon) {
+        switch (m_tabIcon->GetState()) {
+        case wxTerminalProgramState::Working:
+        case wxTerminalProgramState::Blocked:
+        case wxTerminalProgramState::Done:
+            return;
+        default:
+            break;
+        }
+    }
+
+    const int where = book.findPage(this);
+    if (where == wxNOT_FOUND) {
+        return;
+    }
+    const wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap(AgentIconName(m_agentInfo.agent_type));
+    if (bmp.IsOk()) {
+        book.setBitmap(where, bmp);
+    }
 }
 
 void AgentHostPage::SetFocus()
@@ -616,6 +662,8 @@ void AgentHostPage::OnBitmapsUpdated(clCommandEvent& event)
 {
     event.Skip();
     BuildToolbar();
+    // The icons of the new theme
+    UpdateAgentIcon();
 }
 
 void AgentHostPage::OnToolRestart(wxCommandEvent& event)

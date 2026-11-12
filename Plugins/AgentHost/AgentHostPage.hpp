@@ -69,6 +69,9 @@ protected:
     /// Show `state` on our tab (see TabStatusIcon), but a spinner while the reviewer works.
     /// @param notify Show the icons that ask for the user (Blocked and Done)
     void UpdateTabIcon(wxTerminalProgramState state, bool notify);
+    /// Put the icon of the agent (Claude Code, Kiro or OpenCode) on our tab. The status icons (see UpdateTabIcon) are
+    /// shown over it, and it comes back when they go
+    void UpdateAgentIcon();
     void OnContextMenu(wxContextMenuEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnOpenResourceShowing(clOpenResourceEvent& event);

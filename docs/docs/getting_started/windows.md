@@ -13,7 +13,7 @@ This page provides instructions for how to setup a functional working environmen
 pacman -Sy git                                  \
            openssh                              \
            mingw-w64-clang-x86_64-toolchain     \
-           mingw-w64-clang-x86_64-python3       \
+           mingw-w64-clang-x86_64-python        \
            mingw-w64-clang-x86_64-cmake         \
            mingw-w64-clang-x86_64-libffi        \
            mingw-w64-clang-x86_64-jq            \

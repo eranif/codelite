@@ -151,7 +151,7 @@ function install_prerequistes_MSW() {
     git \
     openssh \
     mingw-w64-${MSYS_ARCH}-toolchain \
-    mingw-w64-${MSYS_ARCH}-python3 \
+    mingw-w64-${MSYS_ARCH}-python \
     mingw-w64-${MSYS_ARCH}-cmake \
     mingw-w64-${MSYS_ARCH}-libffi \
     mingw-w64-${MSYS_ARCH}-jq \

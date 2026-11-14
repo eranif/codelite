@@ -90,7 +90,7 @@ A wrapper for the `lldb` debugger that implements the Debug Adapter Protocol
 
     ~~~
     pacman -Sy  mingw-w64-clang-x86_64-toolchain \
-                mingw-w64-clang-x86_64-python3 \
+                mingw-w64-clang-x86_64-python \
                 mingw-w64-clang-x86_64-libffi
     ~~~
     - You should now have `lldb-vscode` installed under `/clang64/bin/lldb-vsocde`

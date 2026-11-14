@@ -185,6 +185,10 @@ public:
      */
     JSONItem ToJSON(const wxTreeItemId& fromItem = wxTreeItemId());
     void LoadProject(const wxFileName& fn, const wxString& fileContent, bool lightLoad = false);
+    /// Load the current project file again from the disk. Unsaved changes are discarded (the caller should ask first)
+    /// @return false if no project is loaded, the file could not be read, or its content is not a complete project
+    /// (an error message is shown, and the current project is not changed)
+    bool ReloadProject();
 
     void OnMenu(wxTreeEvent& event);
     void OnShowContextMenu(wxCommandEvent& e);

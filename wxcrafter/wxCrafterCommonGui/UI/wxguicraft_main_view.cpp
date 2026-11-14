@@ -1707,8 +1707,10 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
         fp.Close();
 
         // Notify that this project was saved
+        // Handled at once (not queued): the designer must update its "last known state of the file" before it can see
+        // the modification of the file that we just made
         wxCommandEvent eventSave(wxEVT_WXGUI_PROJECT_SAVED);
-        EventNotifier::Get()->AddPendingEvent(eventSave);
+        EventNotifier::Get()->ProcessEvent(eventSave);
 
     } else {
 
@@ -1798,6 +1800,52 @@ void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
             EventNotifier::Get()->AddPendingEvent(evtProjectLoaded);
         }
     }
+}
+
+bool GUICraftMainPanel::ReloadProject()
+{
+    if (!wxcProjectMetadata::Get().IsLoaded()) {
+        return false;
+    }
+
+    const wxFileName fn{wxcProjectMetadata::Get().GetProjectFile()};
+    wxFFile fp(fn.GetFullPath(), "rb");
+    if (!fp.IsOpened()) {
+        ::wxMessageBox(wxString::Format(_("Could not open file '%s' for reading"), fn.GetFullPath()),
+                       "wxCrafter",
+                       wxICON_ERROR | wxOK | wxCENTER,
+                       wxCrafter::TopFrame());
+        return false;
+    }
+
+    wxString content;
+    fp.ReadAll(&content, wxConvUTF8);
+    fp.Close();
+
+    // LoadProject() clears the current project first. Make sure that the file is complete before that: it may be in
+    // the middle of being written by another tool
+    {
+        JSON json(content);
+        if (!json.isOk() || !json.toElement().hasNamedObject("metadata") ||
+            !json.toElement().hasNamedObject("windows")) {
+            ::wxMessageBox(wxString::Format(_("The file '%s' is empty, incomplete or not a valid wxCrafter project.\n"
+                                              "The current project was not changed."),
+                                            fn.GetFullPath()),
+                           "wxCrafter",
+                           wxICON_ERROR | wxOK | wxCENTER,
+                           wxCrafter::TopFrame());
+            return false;
+        }
+    }
+
+    // Same sequence as in OnOpenProject()
+    LoadProject(fn, content);
+    wxcEditManager::Get().SaveInitialState(CurrentState());
+
+    wxCommandEvent evtProjectLoaded(wxEVT_WXC_PROJECT_LOADED);
+    evtProjectLoaded.SetString(fn.GetFullPath());
+    EventNotifier::Get()->AddPendingEvent(evtProjectLoaded);
+    return true;
 }
 
 void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileContent, bool lightLoad)

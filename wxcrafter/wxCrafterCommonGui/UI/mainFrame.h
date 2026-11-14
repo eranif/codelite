@@ -4,6 +4,7 @@
 #include "UI/import_dlg.h"
 #include "UI/wxcTreeView.h"
 #include "UI/wxguicraft_main_view.h"
+#include "clFileSystemWatcher.h"
 #include "gui.hpp"
 
 #include <wx/fdrepdlg.h>
@@ -22,6 +23,12 @@ protected:
     wxFindReplaceData m_findData;
     bool m_frameRectApplied = false; // The saved geometry was applied when the frame was shown for the first time
     bool m_layoutRestored = false;   // The sash positions were restored (they are saved only after that)
+    clFileSystemWatcher m_fileWatcher; // Watches the project file, only while the designer is visible
+    wxString m_wxcpFile;               // The project file that the stamp below belongs to
+    time_t m_wxcpModTime = 0;          // Modification time and size of the project file, as we last loaded / saved it
+    size_t m_wxcpSize = 0;
+    bool m_promptingReload = false; // A reload message box is open
+    bool m_reloading = false;       // A reload was done, its "project loaded" event is not handled yet
 
 protected:
     void OnFileOpen(wxCommandEvent& event) override;
@@ -67,6 +74,8 @@ protected:
     void OnPreviewUI(wxUpdateUIEvent& event) override;
     virtual void OnClose(wxCommandEvent& event);
     void OnSave(wxCommandEvent& event) override;
+    void OnReload(wxCommandEvent& event) override;
+    void OnReloadUI(wxUpdateUIEvent& event) override;
     virtual void OnProjectModified(wxCommandEvent& e);
     virtual void OnProjectSynched(wxCommandEvent& e);
     virtual void OnProjectLoaded(wxCommandEvent& e);
@@ -74,6 +83,11 @@ protected:
     virtual void OnCodeLiteGotFocus(wxCommandEvent& e);
     virtual void OnCodeEditorSelected(wxCommandEvent& e);
     void OnPageClosing(wxNotifyEvent& e);
+    void OnProjectSaved(wxCommandEvent& e);
+    void OnShowFrame(wxShowEvent& e);
+    void OnIconizeFrame(wxIconizeEvent& e);
+    void OnActivate(wxActivateEvent& e);
+    void OnFileModified(clFileSystemEvent& e);
     void OnBitmapCodeGenerationCompleted(wxCommandEvent& e);
 
 protected:
@@ -81,6 +95,16 @@ protected:
     wxStyledTextCtrl* GetActiveSTC();
     bool DoFindText(wxStyledTextCtrl* stc, const wxFindReplaceData& frd, bool findNext);
     void DoOpenWxcpProject();
+    /// Is the designer visible to the user? (shown, and not minimized)
+    bool IsDesignerVisible() const;
+    /// Watch the active project file while the designer is visible, otherwise stop watching
+    void UpdateFileWatcher();
+    /// Remember the current modification time and size of the project file
+    void RememberProjectFileStamp();
+    /// Load the current project file again from the disk (the caller asks the user first)
+    void DoReloadProject();
+    /// If the project file was modified outside the designer, suggest to reload it
+    void CheckExternalModification();
     void DoCreateRecentMenu(wxMenu& menu, wxArrayString& history, std::shared_ptr<wxString> result);
 
     bool DoCreateVirtualFolder(const wxString& vdFullPath);

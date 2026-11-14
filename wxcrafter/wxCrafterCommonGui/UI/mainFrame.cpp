@@ -20,6 +20,7 @@
 #include "controls/Containers/wizard_page_wrapper.h"
 #include "ctags_manager.h"
 #include "event_notifier.h"
+#include "fileutils.h"
 #include "functions_parser.h"
 #include "imanager.h"
 #include "myxh_auimgr.h"
@@ -332,6 +333,16 @@ MainFrame::MainFrame(wxWindow* parent, IManager* manager)
                                   wxCommandEventHandler(MainFrame::OnBitmapCodeGenerationCompleted),
                                   nullptr,
                                   this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(MainFrame::OnProjectSaved), nullptr, this);
+
+    // Watch the project file only while the designer is visible
+    Bind(wxEVT_SHOW, &MainFrame::OnShowFrame, this);
+    Bind(wxEVT_ICONIZE, &MainFrame::OnIconizeFrame, this);
+    // Check when the designer or the application is activated (changes made while we were in the background)
+    Bind(wxEVT_ACTIVATE, &MainFrame::OnActivate, this);
+    wxTheApp->Bind(wxEVT_ACTIVATE_APP, &MainFrame::OnActivate, this);
+    Bind(wxEVT_FILE_MODIFIED, &MainFrame::OnFileModified, this);
 
     wxTheApp->Connect(
         XRCID("wxc_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSettings), nullptr, this);
@@ -383,6 +394,12 @@ MainFrame::MainFrame(wxWindow* parent, IManager* manager)
 MainFrame::~MainFrame()
 {
     SaveLayout();
+    m_fileWatcher.Clear();
+    if (wxTheApp) {
+        wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &MainFrame::OnActivate, this);
+    }
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(MainFrame::OnProjectSaved), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &MainFrame::OnGoingDown, this);
     EventNotifier::Get()->Disconnect(
         wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED, wxCommandEventHandler(MainFrame::OnProjectModified), nullptr, this);
@@ -517,6 +534,185 @@ void MainFrame::OnProjectLoaded(wxCommandEvent& e)
 {
     e.Skip();
     SetTitle("wxCrafter - " + e.GetString());
+    if (m_reloading) {
+        // A reload took the stamp before it read the file, keep that one
+        m_reloading = false;
+    } else {
+        RememberProjectFileStamp();
+    }
+    UpdateFileWatcher();
+}
+
+void MainFrame::OnProjectSaved(wxCommandEvent& e)
+{
+    e.Skip();
+    // Our own save must not be reported as an external modification. This also handles "Save as" (a new file)
+    RememberProjectFileStamp();
+    UpdateFileWatcher();
+}
+
+void MainFrame::OnReload(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if (!wxcProjectMetadata::Get().IsLoaded()) {
+        return;
+    }
+
+    if (m_promptingReload) {
+        return;
+    }
+
+    if (wxcEditManager::Get().IsDirty()) {
+        // A native message box is not in wxTopLevelWindows: use the flag to block the "modified outside" prompt
+        m_promptingReload = true;
+        const int rc = ::wxMessageBox(_("The project has unsaved changes. They will be lost if you reload it.\n"
+                                        "Reload the project from the disk?"),
+                                      "wxCrafter",
+                                      wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION | wxCENTRE,
+                                      this);
+        m_promptingReload = false;
+        if (rc != wxYES) {
+            return;
+        }
+    }
+
+    DoReloadProject();
+}
+
+void MainFrame::DoReloadProject()
+{
+    // Take the stamp before the file is read: a modification after the read is then reported, and not lost
+    RememberProjectFileStamp();
+    // On success, the "project loaded" event (queued by ReloadProject()) must not take a new stamp
+    m_reloading = m_wxcView->ReloadProject();
+}
+
+void MainFrame::OnReloadUI(wxUpdateUIEvent& event) { event.Enable(wxcProjectMetadata::Get().IsLoaded()); }
+
+bool MainFrame::IsDesignerVisible() const { return IsShownOnScreen() && !IsIconized(); }
+
+void MainFrame::RememberProjectFileStamp()
+{
+    const wxString file = wxcProjectMetadata::Get().GetProjectFile();
+    m_wxcpFile = file;
+    m_wxcpModTime = FileUtils::GetFileModificationTime(file);
+    m_wxcpSize = FileUtils::GetFileSize(wxFileName(file));
+}
+
+void MainFrame::UpdateFileWatcher()
+{
+    m_fileWatcher.Clear();
+    if (!IsDesignerVisible() || !wxcProjectMetadata::Get().IsLoaded()) {
+        return;
+    }
+
+    const wxString file = wxcProjectMetadata::Get().GetProjectFile();
+    if (!wxFileExists(file)) {
+        return;
+    }
+    m_fileWatcher.SetFile(file, this);
+    m_fileWatcher.Start();
+}
+
+namespace
+{
+/// Is there a modal dialog open? (we must not rebuild the project under it)
+bool IsModalDialogOpen()
+{
+    for (wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext()) {
+        const wxDialog* dlg = wxDynamicCast(node->GetData(), wxDialog);
+        if (dlg && dlg->IsShown() && dlg->IsModal()) {
+            return true;
+        }
+    }
+    return false;
+}
+} // namespace
+
+void MainFrame::CheckExternalModification()
+{
+    // Never prompt if the designer is not on the screen, if the application is not the active one, or if a prompt (or
+    // any other modal dialog) is open. We keep the old stamp, so the check is done again when the application is
+    // activated, or when the designer is shown
+    if (m_promptingReload || !IsDesignerVisible() || !wxTheApp || !wxTheApp->IsActive() || IsModalDialogOpen() ||
+        !wxcProjectMetadata::Get().IsLoaded()) {
+        return;
+    }
+
+    const wxString file = wxcProjectMetadata::Get().GetProjectFile();
+    if (!wxFileExists(file)) {
+        return;
+    }
+
+    if (file != m_wxcpFile) {
+        // We have no stamp for this file yet: it was just loaded (the "loaded" event was not handled yet).
+        // This is not an external modification
+        RememberProjectFileStamp();
+        return;
+    }
+
+    const time_t modTime = FileUtils::GetFileModificationTime(file);
+    const size_t size = FileUtils::GetFileSize(wxFileName(file));
+    if (modTime == m_wxcpModTime && size == m_wxcpSize) {
+        return;
+    }
+
+    // Remember the new state, so we ask only once for each modification
+    m_wxcpModTime = modTime;
+    m_wxcpSize = size;
+
+    wxString msg;
+    msg << wxString::Format(_("The file '%s' was modified outside of wxCrafter.\n"), file);
+    if (wxcEditManager::Get().IsDirty()) {
+        msg << _("The project also has unsaved changes. They will be lost if you reload it.\n");
+    }
+    msg << _("Reload the project from the disk?");
+
+    m_promptingReload = true;
+    const int rc = ::wxMessageBox(msg, "wxCrafter", wxYES_NO | wxICON_QUESTION | wxCENTRE, this);
+    m_promptingReload = false;
+
+    // The project may have been closed or replaced while the message box was open
+    if (rc == wxYES && wxcProjectMetadata::Get().IsLoaded() && wxcProjectMetadata::Get().GetProjectFile() == file) {
+        DoReloadProject();
+    }
+
+    // The file may have been modified again while the message box was open (those events were ignored)
+    CallAfter(&MainFrame::CheckExternalModification);
+}
+
+void MainFrame::OnFileModified(clFileSystemEvent& e)
+{
+    e.Skip();
+    CheckExternalModification();
+}
+
+void MainFrame::OnShowFrame(wxShowEvent& e)
+{
+    e.Skip();
+    // Wait until the frame has its final state, then start / stop the watcher. When the designer becomes visible,
+    // also check for changes that were made while it was hidden
+    CallAfter([this]() {
+        UpdateFileWatcher();
+        CheckExternalModification();
+    });
+}
+
+void MainFrame::OnActivate(wxActivateEvent& e)
+{
+    e.Skip();
+    if (e.GetActive()) {
+        CallAfter(&MainFrame::CheckExternalModification);
+    }
+}
+
+void MainFrame::OnIconizeFrame(wxIconizeEvent& e)
+{
+    e.Skip();
+    CallAfter([this]() {
+        UpdateFileWatcher();
+        CheckExternalModification();
+    });
 }
 
 void MainFrame::OnDeleteItem(wxCommandEvent& event)
@@ -893,6 +1089,13 @@ void MainFrame::OnProjectClosed(wxCommandEvent& event)
 {
     event.Skip();
     SetTitle("wxCrafter");
+    // The project may still be loaded if the user cancelled the close, so check after the event was handled
+    CallAfter([this]() {
+        if (!wxcProjectMetadata::Get().IsLoaded()) {
+            m_wxcpFile.clear(); // The stamp is not valid anymore
+        }
+        UpdateFileWatcher();
+    });
 }
 
 void MainFrame::OnSwitchToCodeliteUI(wxUpdateUIEvent& event)

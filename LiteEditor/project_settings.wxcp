@@ -470,11 +470,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_CHOICE_SELECTED",
-                              "m_functionNameAndSignature": "OnConfigurationChanged(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnConfigurationChanged(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -572,11 +570,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "The page selection was changed",
                           "m_eventClass": "wxTreebookEvent",
                           "m_eventName": "wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED",
-                          "m_functionNameAndSignature": "OnPageChanged(wxTreebookEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnPageChanged(wxTreebookEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -813,11 +809,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButtonOK(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButtonOK(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -871,18 +865,14 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButtonApply(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButtonApply(wxCommandEvent& event)"
                     },
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnButtonApplyUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButtonApplyUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -936,11 +926,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButtonCancel(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButtonCancel(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -994,11 +982,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButtonHelp(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButtonHelp(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -1263,11 +1249,9 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                   "m_eventClass": "wxCommandEvent",
                   "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                  "m_functionNameAndSignature": "OnProjectEnabled(wxCommandEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnProjectEnabled(wxCommandEvent& event)"
                 }
               ],
               "m_children": []
@@ -1375,32 +1359,24 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
                   "m_eventClass": "wxPropertyGridEvent",
                   "m_eventName": "wxEVT_PG_CHANGED",
-                  "m_functionNameAndSignature": "OnValueChanged(wxPropertyGridEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnValueChanged(wxPropertyGridEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_UPDATE_UI event",
                   "m_eventClass": "wxUpdateUIEvent",
                   "m_eventName": "wxEVT_UPDATE_UI",
-                  "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked.",
                   "m_eventClass": "wxCommandEvent",
                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)"
                 },
                 {
-                  "m_description": "Respond to wxEVT_PG_CHANGING event, generated when property value is about to be changed by user. Use wxPropertyGridEvent::GetValue() to take a peek at the pending value, and wxPropertyGridEvent::Veto() to prevent change from taking place, if necessary",
                   "m_eventClass": "wxPropertyGridEvent",
                   "m_eventName": "wxEVT_PG_CHANGING",
-                  "m_functionNameAndSignature": "OnValueChanging(wxPropertyGridEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnValueChanging(wxPropertyGridEvent& event)"
                 }
               ],
               "m_children": [
@@ -3456,11 +3432,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_UPDATE_UI event",
           "m_eventClass": "wxUpdateUIEvent",
           "m_eventName": "wxEVT_UPDATE_UI",
-          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)"
         }
       ],
       "m_children": [
@@ -3660,11 +3634,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                      "m_functionNameAndSignature": "OnCompilerNeeded(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnCompilerNeeded(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -3818,18 +3790,14 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnCopyCompilerSettings(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnCopyCompilerSettings(wxCommandEvent& event)"
                     },
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnUpdateUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnUpdateUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -3939,25 +3907,19 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
                   "m_eventClass": "wxPropertyGridEvent",
                   "m_eventName": "wxEVT_PG_CHANGED",
-                  "m_functionNameAndSignature": "OnPropertyChanged(wxPropertyGridEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnPropertyChanged(wxPropertyGridEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_UPDATE_UI event",
                   "m_eventClass": "wxUpdateUIEvent",
                   "m_eventName": "wxEVT_UPDATE_UI",
-                  "m_functionNameAndSignature": "OnUpdateUI(wxUpdateUIEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnUpdateUI(wxUpdateUIEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked.",
                   "m_eventClass": "wxCommandEvent",
                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)"
                 }
               ],
               "m_children": [
@@ -5368,11 +5330,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_UPDATE_UI event",
           "m_eventClass": "wxUpdateUIEvent",
           "m_eventName": "wxEVT_UPDATE_UI",
-          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)"
         }
       ],
       "m_children": [
@@ -5516,18 +5476,14 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                   "m_eventClass": "wxCommandEvent",
                   "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                  "m_functionNameAndSignature": "OnCheckLinkerNeeded(wxCommandEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnCheckLinkerNeeded(wxCommandEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_UPDATE_UI event",
                   "m_eventClass": "wxUpdateUIEvent",
                   "m_eventName": "wxEVT_UPDATE_UI",
-                  "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)"
                 }
               ],
               "m_children": []
@@ -5635,25 +5591,19 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked.",
                   "m_eventClass": "wxCommandEvent",
                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_UPDATE_UI event",
                   "m_eventClass": "wxUpdateUIEvent",
                   "m_eventName": "wxEVT_UPDATE_UI",
-                  "m_functionNameAndSignature": "OnLinkerNotNeededUI(wxUpdateUIEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnLinkerNotNeededUI(wxUpdateUIEvent& event)"
                 },
                 {
-                  "m_description": "Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
                   "m_eventClass": "wxPropertyGridEvent",
                   "m_eventName": "wxEVT_PG_CHANGED",
-                  "m_functionNameAndSignature": "OnPropertyChanged(wxPropertyGridEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnPropertyChanged(wxPropertyGridEvent& event)"
                 }
               ],
               "m_children": [
@@ -6314,11 +6264,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_UPDATE_UI event",
           "m_eventClass": "wxUpdateUIEvent",
           "m_eventName": "wxEVT_UPDATE_UI",
-          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)"
         }
       ],
       "m_children": [
@@ -6757,11 +6705,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -6883,11 +6829,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnBrowseForDebuggerPath(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnBrowseForDebuggerPath(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -7237,11 +7181,9 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                                       "m_eventClass": "wxDataViewEvent",
                                       "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
-                                      "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)"
                                     }
                                   ],
                                   "m_children": [
@@ -7476,11 +7418,9 @@
                                       ],
                                       "m_events": [
                                         {
-                                          "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                                           "m_eventClass": "wxCommandEvent",
                                           "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                                          "m_functionNameAndSignature": "OnAddDebuggerSearchPath(wxCommandEvent& event)",
-                                          "m_noBody": false
+                                          "m_functionNameAndSignature": "OnAddDebuggerSearchPath(wxCommandEvent& event)"
                                         }
                                       ],
                                       "m_children": []
@@ -7605,18 +7545,14 @@
                                       ],
                                       "m_events": [
                                         {
-                                          "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                                           "m_eventClass": "wxCommandEvent",
                                           "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                                          "m_functionNameAndSignature": "OnDeleteDebuggerSearchPath(wxCommandEvent& event)",
-                                          "m_noBody": false
+                                          "m_functionNameAndSignature": "OnDeleteDebuggerSearchPath(wxCommandEvent& event)"
                                         },
                                         {
-                                          "m_description": "Process a wxEVT_UPDATE_UI event",
                                           "m_eventClass": "wxUpdateUIEvent",
                                           "m_eventName": "wxEVT_UPDATE_UI",
-                                          "m_functionNameAndSignature": "OnDeleteDebuggerSearchPathUI(wxUpdateUIEvent& event)",
-                                          "m_noBody": false
+                                          "m_functionNameAndSignature": "OnDeleteDebuggerSearchPathUI(wxUpdateUIEvent& event)"
                                         }
                                       ],
                                       "m_children": []
@@ -8149,11 +8085,9 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Document modified",
                                       "m_eventClass": "wxStyledTextEvent",
                                       "m_eventName": "wxEVT_STC_MODIFIED",
-                                      "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)"
                                     }
                                   ],
                                   "m_children": []
@@ -8685,11 +8619,9 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Document modified",
                                       "m_eventClass": "wxStyledTextEvent",
                                       "m_eventName": "wxEVT_STC_MODIFIED",
-                                      "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)"
                                     }
                                   ],
                                   "m_children": []
@@ -8799,11 +8731,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                          "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -8971,11 +8901,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -9101,18 +9029,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -9216,11 +9140,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -9345,18 +9267,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -9460,18 +9378,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnRemoteDebugUI(wxUpdateUIEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -9601,11 +9515,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_UPDATE_UI event",
           "m_eventClass": "wxUpdateUIEvent",
           "m_eventName": "wxEVT_UPDATE_UI",
-          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)"
         }
       ],
       "m_children": [
@@ -9753,25 +9665,19 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
                   "m_eventClass": "wxPropertyGridEvent",
                   "m_eventName": "wxEVT_PG_CHANGED",
-                  "m_functionNameAndSignature": "OnValueChanged(wxPropertyGridEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnValueChanged(wxPropertyGridEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked.",
                   "m_eventClass": "wxCommandEvent",
                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_UPDATE_UI event",
                   "m_eventClass": "wxUpdateUIEvent",
                   "m_eventName": "wxEVT_UPDATE_UI",
-                  "m_functionNameAndSignature": "OnResourcesEnabledUI(wxUpdateUIEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnResourcesEnabledUI(wxUpdateUIEvent& event)"
                 }
               ],
               "m_children": [
@@ -10325,11 +10231,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_UPDATE_UI event",
           "m_eventClass": "wxUpdateUIEvent",
           "m_eventName": "wxEVT_UPDATE_UI",
-          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)"
         }
       ],
       "m_children": [
@@ -10770,11 +10674,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_CHOICE_SELECTED",
-                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -10980,11 +10882,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_CHOICE_SELECTED",
-                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -11447,11 +11347,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Document modified",
                           "m_eventClass": "wxStyledTextEvent",
                           "m_eventName": "wxEVT_STC_MODIFIED",
-                          "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -11579,11 +11477,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_UPDATE_UI event",
           "m_eventClass": "wxUpdateUIEvent",
           "m_eventName": "wxEVT_UPDATE_UI",
-          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)"
         }
       ],
       "m_children": [
@@ -12160,11 +12056,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Document modified",
                               "m_eventClass": "wxStyledTextEvent",
                               "m_eventName": "wxEVT_STC_MODIFIED",
-                              "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12294,11 +12188,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_UPDATE_UI event",
           "m_eventClass": "wxUpdateUIEvent",
           "m_eventName": "wxEVT_UPDATE_UI",
-          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)"
         }
       ],
       "m_children": [
@@ -12574,18 +12466,14 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                          "m_functionNameAndSignature": "OnCustomBuildEnabled(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnCustomBuildEnabled(wxCommandEvent& event)"
                         },
                         {
-                          "m_description": "Process a wxEVT_UPDATE_UI event",
                           "m_eventClass": "wxUpdateUIEvent",
                           "m_eventName": "wxEVT_UPDATE_UI",
-                          "m_functionNameAndSignature": "OnCustomBuildCBEnabledUI(wxUpdateUIEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnCustomBuildCBEnabledUI(wxUpdateUIEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -12732,11 +12620,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnCustomBuildEnabledUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCustomBuildEnabledUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12860,18 +12746,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnCustomBuildEnabledUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCustomBuildEnabledUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -12996,18 +12878,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnBrowseCustomBuildWD(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnBrowseCustomBuildWD(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnCustomBuildEnabledUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCustomBuildEnabledUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -13150,18 +13028,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                               "m_eventClass": "wxDataViewEvent",
                               "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
-                              "m_functionNameAndSignature": "OnTargetActivated(wxDataViewEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnTargetActivated(wxDataViewEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnEnableTableUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnEnableTableUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": [
@@ -13461,18 +13335,14 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                                   "m_eventClass": "wxCommandEvent",
                                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                                  "m_functionNameAndSignature": "OnNewTarget(wxCommandEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnNewTarget(wxCommandEvent& event)"
                                 },
                                 {
-                                  "m_description": "Process a wxEVT_UPDATE_UI event",
                                   "m_eventClass": "wxUpdateUIEvent",
                                   "m_eventName": "wxEVT_UPDATE_UI",
-                                  "m_functionNameAndSignature": "OnCustomBuildEnabledUI(wxUpdateUIEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnCustomBuildEnabledUI(wxUpdateUIEvent& event)"
                                 }
                               ],
                               "m_children": []
@@ -13596,18 +13466,14 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                                   "m_eventClass": "wxCommandEvent",
                                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                                  "m_functionNameAndSignature": "OnEditTarget(wxCommandEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnEditTarget(wxCommandEvent& event)"
                                 },
                                 {
-                                  "m_description": "Process a wxEVT_UPDATE_UI event",
                                   "m_eventClass": "wxUpdateUIEvent",
                                   "m_eventName": "wxEVT_UPDATE_UI",
-                                  "m_functionNameAndSignature": "OnEditTargetUI(wxUpdateUIEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnEditTargetUI(wxUpdateUIEvent& event)"
                                 }
                               ],
                               "m_children": []
@@ -13731,18 +13597,14 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                                   "m_eventClass": "wxCommandEvent",
                                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                                  "m_functionNameAndSignature": "OnDeleteTarget(wxCommandEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnDeleteTarget(wxCommandEvent& event)"
                                 },
                                 {
-                                  "m_description": "Process a wxEVT_UPDATE_UI event",
                                   "m_eventClass": "wxUpdateUIEvent",
                                   "m_eventName": "wxEVT_UPDATE_UI",
-                                  "m_functionNameAndSignature": "OnDeleteTargetUI(wxUpdateUIEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnDeleteTargetUI(wxUpdateUIEvent& event)"
                                 }
                               ],
                               "m_children": []
@@ -14018,18 +13880,14 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
                   "m_eventClass": "wxPropertyGridEvent",
                   "m_eventName": "wxEVT_PG_CHANGED",
-                  "m_functionNameAndSignature": "OnValueChanged(wxPropertyGridEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnValueChanged(wxPropertyGridEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked.",
                   "m_eventClass": "wxCommandEvent",
                   "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnCustomEditorClicked(wxCommandEvent& event)"
                 }
               ],
               "m_children": [
@@ -15441,11 +15299,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_UPDATE_UI event",
           "m_eventClass": "wxUpdateUIEvent",
           "m_eventName": "wxEVT_UPDATE_UI",
-          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnProjectEnabledUI(wxUpdateUIEvent& event)"
         }
       ],
       "m_children": [
@@ -15786,11 +15642,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -15916,18 +15770,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCmdEvtVModified(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -16031,11 +15881,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -16305,11 +16153,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Document modified",
                               "m_eventClass": "wxStyledTextEvent",
                               "m_eventName": "wxEVT_STC_MODIFIED",
-                              "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnStcEvtVModified(wxStyledTextEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -16462,11 +16308,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnProjectCustomBuildUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -16970,11 +16814,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_UPDATE_UI event",
                       "m_eventClass": "wxUpdateUIEvent",
                       "m_eventName": "wxEVT_UPDATE_UI",
-                      "m_functionNameAndSignature": "OnEditTargetNameUI(wxUpdateUIEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnEditTargetNameUI(wxUpdateUIEvent& event)"
                     }
                   ],
                   "m_children": []

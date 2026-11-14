@@ -166,11 +166,9 @@
       ],
       "m_events": [
         {
-          "m_description": "Process a wxEVT_IDLE event",
           "m_eventClass": "wxIdleEvent",
           "m_eventName": "wxEVT_IDLE",
-          "m_functionNameAndSignature": "OnIdle(wxIdleEvent& event)",
-          "m_noBody": false
+          "m_functionNameAndSignature": "OnIdle(wxIdleEvent& event)"
         }
       ],
       "m_children": [
@@ -343,18 +341,14 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
                   "m_eventClass": "wxKeyEvent",
                   "m_eventName": "wxEVT_KEY_DOWN",
-                  "m_functionNameAndSignature": "OnKeyDown(wxKeyEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnKeyDown(wxKeyEvent& event)"
                 },
                 {
-                  "m_description": "Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
                   "m_eventClass": "wxCommandEvent",
                   "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
-                  "m_functionNameAndSignature": "OnEnter(wxCommandEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnEnter(wxCommandEvent& event)"
                 }
               ],
               "m_children": []
@@ -452,18 +446,14 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Process a wxEVT_KEY_DOWN event (any key has been pressed)",
                   "m_eventClass": "wxKeyEvent",
                   "m_eventName": "wxEVT_KEY_DOWN",
-                  "m_functionNameAndSignature": "OnKeyDown(wxKeyEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnKeyDown(wxKeyEvent& event)"
                 },
                 {
-                  "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
                   "m_eventClass": "wxDataViewEvent",
                   "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
-                  "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)"
                 }
               ],
               "m_children": [

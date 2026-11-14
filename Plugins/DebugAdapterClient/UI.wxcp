@@ -1,16 +1,16 @@
 {
   "metadata": {
-    "m_generatedFilesDir": ".",
-    "m_objCounter": 300,
-    "m_includeFiles": [],
+    "m_GenerateCodeTypes": 1,
+    "m_addHandlers": true,
     "m_bitmapFunction": "wxCrafternz79PnInitBitmapResources",
     "m_bitmapsFile": "UI_lldbdebugger_bitmaps.cpp",
-    "m_GenerateCodeTypes": 1,
-    "m_outputFileName": "UI",
     "m_firstWindowId": 1000,
+    "m_generatedFilesDir": ".",
+    "m_includeFiles": [],
+    "m_objCounter": 300,
+    "m_outputFileName": "UI",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
-    "m_addHandlers": true,
     "m_templateClasses": []
   },
   "windows": [
@@ -1017,18 +1017,14 @@
                                                   ],
                                                   "m_events": [
                                                     {
-                                                      "m_eventName": "wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
                                                       "m_eventClass": "wxDataViewEvent",
-                                                      "m_functionNameAndSignature": "OnThreadIdChanged(wxDataViewEvent& event)",
-                                                      "m_description": "Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event",
-                                                      "m_noBody": false
+                                                      "m_eventName": "wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
+                                                      "m_functionNameAndSignature": "OnThreadIdChanged(wxDataViewEvent& event)"
                                                     },
                                                     {
-                                                      "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
                                                       "m_eventClass": "wxDataViewEvent",
-                                                      "m_functionNameAndSignature": "OnThreadsListMenu(wxDataViewEvent& event)",
-                                                      "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
-                                                      "m_noBody": false
+                                                      "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
+                                                      "m_functionNameAndSignature": "OnThreadsListMenu(wxDataViewEvent& event)"
                                                     }
                                                   ],
                                                   "m_children": [
@@ -1461,11 +1457,9 @@
                                                   ],
                                                   "m_events": [
                                                     {
-                                                      "m_eventName": "wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
                                                       "m_eventClass": "wxDataViewEvent",
-                                                      "m_functionNameAndSignature": "OnFrameChanged(wxDataViewEvent& event)",
-                                                      "m_description": "Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event",
-                                                      "m_noBody": false
+                                                      "m_eventName": "wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
+                                                      "m_functionNameAndSignature": "OnFrameChanged(wxDataViewEvent& event)"
                                                     }
                                                   ],
                                                   "m_children": [
@@ -3134,11 +3128,9 @@
               ],
               "m_events": [
                 {
-                  "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
                   "m_eventClass": "wxDataViewEvent",
-                  "m_functionNameAndSignature": "OnBreakpointsContextMenu(wxDataViewEvent& event)",
-                  "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
-                  "m_noBody": false
+                  "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
+                  "m_functionNameAndSignature": "OnBreakpointsContextMenu(wxDataViewEvent& event)"
                 }
               ],
               "m_children": [

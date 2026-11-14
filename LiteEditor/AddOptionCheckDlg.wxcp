@@ -439,11 +439,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_CHECKLISTBOX_TOGGLED event\nwhen an item in the check list box is checked or unchecked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED",
-                      "m_functionNameAndSignature": "OnOptionToggled(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOptionToggled(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -666,11 +664,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-                      "m_functionNameAndSignature": "OnOptionsText(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnOptionsText(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []

@@ -1038,11 +1038,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                          "m_functionNameAndSignature": "OnRefreshClick(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnRefreshClick(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -1473,39 +1471,29 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_LEFT_DOWN event. The handler of this event should normally call event.Skip() to allow the default processing to take place as otherwise the window under mouse wouldn't get the focus.",
                               "m_eventClass": "wxMouseEvent",
                               "m_eventName": "wxEVT_LEFT_DOWN",
-                              "m_functionNameAndSignature": "OnLeftDown(wxMouseEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnLeftDown(wxMouseEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_LEFT_UP event.",
                               "m_eventClass": "wxMouseEvent",
                               "m_eventName": "wxEVT_LEFT_UP",
-                              "m_functionNameAndSignature": "OnLeftUp(wxMouseEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnLeftUp(wxMouseEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_MOTION event",
                               "m_eventClass": "wxMouseEvent",
                               "m_eventName": "wxEVT_MOTION",
-                              "m_functionNameAndSignature": "OnMouseMove(wxMouseEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnMouseMove(wxMouseEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_MOUSEWHEEL event",
                               "m_eventClass": "wxMouseEvent",
                               "m_eventName": "wxEVT_MOUSEWHEEL",
-                              "m_functionNameAndSignature": "OnMouseWheel(wxMouseEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnMouseWheel(wxMouseEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_PAINT event",
                               "m_eventClass": "wxPaintEvent",
                               "m_eventName": "wxEVT_PAINT",
-                              "m_functionNameAndSignature": "OnPaint(wxPaintEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnPaint(wxPaintEvent& event)"
                             }
                           ],
                           "m_children": [
@@ -1589,11 +1577,9 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Menu item has been clicked",
                                       "m_eventClass": "wxCommandEvent",
                                       "m_eventName": "wxEVT_MENU",
-                                      "m_functionNameAndSignature": "OnSaveCallGraph(wxCommandEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnSaveCallGraph(wxCommandEvent& event)"
                                     }
                                   ],
                                   "m_children": []
@@ -1656,11 +1642,9 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Menu item has been clicked",
                                       "m_eventClass": "wxCommandEvent",
                                       "m_eventName": "wxEVT_MENU",
-                                      "m_functionNameAndSignature": "OnClosePanel(wxCommandEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnClosePanel(wxCommandEvent& event)"
                                     }
                                   ],
                                   "m_children": []
@@ -1782,11 +1766,9 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Menu item has been clicked",
                                       "m_eventClass": "wxCommandEvent",
                                       "m_eventName": "wxEVT_MENU",
-                                      "m_functionNameAndSignature": "OnZoomIn(wxCommandEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnZoomIn(wxCommandEvent& event)"
                                     }
                                   ],
                                   "m_children": []
@@ -1849,11 +1831,9 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Menu item has been clicked",
                                       "m_eventClass": "wxCommandEvent",
                                       "m_eventName": "wxEVT_MENU",
-                                      "m_functionNameAndSignature": "OnZoomOut(wxCommandEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnZoomOut(wxCommandEvent& event)"
                                     }
                                   ],
                                   "m_children": []
@@ -1916,11 +1896,9 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Menu item has been clicked",
                                       "m_eventClass": "wxCommandEvent",
                                       "m_eventName": "wxEVT_MENU",
-                                      "m_functionNameAndSignature": "OnZoom100(wxCommandEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnZoom100(wxCommandEvent& event)"
                                     }
                                   ],
                                   "m_children": []
@@ -1983,11 +1961,9 @@
                                   ],
                                   "m_events": [
                                     {
-                                      "m_description": "Menu item has been clicked",
                                       "m_eventClass": "wxCommandEvent",
                                       "m_eventName": "wxEVT_MENU",
-                                      "m_functionNameAndSignature": "OnZoomOriginal(wxCommandEvent& event)",
-                                      "m_noBody": false
+                                      "m_functionNameAndSignature": "OnZoomOriginal(wxCommandEvent& event)"
                                     }
                                   ],
                                   "m_children": []

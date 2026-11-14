@@ -605,11 +605,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButton_click_select_gprof(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButton_click_select_gprof(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -949,11 +947,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButton_click_select_dot(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButton_click_select_dot(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2059,11 +2055,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                          "m_functionNameAndSignature": "OnCheckName(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnCheckName(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -2369,11 +2363,9 @@
                       ],
                       "m_events": [
                         {
-                          "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
                           "m_eventClass": "wxCommandEvent",
                           "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
-                          "m_functionNameAndSignature": "OnCheckParam(wxCommandEvent& event)",
-                          "m_noBody": false
+                          "m_functionNameAndSignature": "OnCheckParam(wxCommandEvent& event)"
                         }
                       ],
                       "m_children": []
@@ -2850,11 +2842,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButton_click_ok(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButton_click_ok(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -2978,11 +2968,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButton_click_cancel(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButton_click_cancel(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []

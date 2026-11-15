@@ -664,11 +664,9 @@
               ],
               "m_events": [
                 {
-                  "m_description": "Process a wxEVT_COMMAND_LISTBOX_SELECTED event\nwhen an item on the list is selected or the selection changes.",
                   "m_eventClass": "wxCommandEvent",
                   "m_eventName": "wxEVT_COMMAND_LISTBOX_SELECTED",
-                  "m_functionNameAndSignature": "OnFileSelected(wxCommandEvent& event)",
-                  "m_noBody": false
+                  "m_functionNameAndSignature": "OnFileSelected(wxCommandEvent& event)"
                 }
               ],
               "m_children": []

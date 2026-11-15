@@ -437,11 +437,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_CHECKLISTBOX_TOGGLED event\nwhen an item in the check list box is checked or unchecked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_CHECKLISTBOX_TOGGLED",
-                      "m_functionNameAndSignature": "OnItemToggled(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnItemToggled(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -651,18 +649,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnBuild(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnBuild(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnBuildUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnBuildUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -786,18 +780,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnClean(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnClean(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnCleanUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCleanUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -921,11 +911,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnCheckAll(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnCheckAll(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -1049,11 +1037,9 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnUnCheckAll(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnUnCheckAll(wxCommandEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -1222,18 +1208,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnMoveUp(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnMoveUp(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnMoveUpUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnMoveUpUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -1357,18 +1339,14 @@
                           ],
                           "m_events": [
                             {
-                              "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                               "m_eventClass": "wxCommandEvent",
                               "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                              "m_functionNameAndSignature": "OnMoveDown(wxCommandEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnMoveDown(wxCommandEvent& event)"
                             },
                             {
-                              "m_description": "Process a wxEVT_UPDATE_UI event",
                               "m_eventClass": "wxUpdateUIEvent",
                               "m_eventName": "wxEVT_UPDATE_UI",
-                              "m_functionNameAndSignature": "OnMoveDownUI(wxUpdateUIEvent& event)",
-                              "m_noBody": false
+                              "m_functionNameAndSignature": "OnMoveDownUI(wxUpdateUIEvent& event)"
                             }
                           ],
                           "m_children": []
@@ -1633,11 +1611,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnClose(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnClose(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []

@@ -1431,11 +1431,9 @@
                               ],
                               "m_events": [
                                 {
-                                  "m_description": "Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
                                   "m_eventClass": "wxCommandEvent",
                                   "m_eventName": "wxEVT_COMMAND_CHOICE_SELECTED",
-                                  "m_functionNameAndSignature": "OnChoiceChanged(wxCommandEvent& event)",
-                                  "m_noBody": false
+                                  "m_functionNameAndSignature": "OnChoiceChanged(wxCommandEvent& event)"
                                 }
                               ],
                               "m_children": []
@@ -3272,11 +3270,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButtonOK(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButtonOK(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []
@@ -3400,11 +3396,9 @@
                   ],
                   "m_events": [
                     {
-                      "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
                       "m_eventClass": "wxCommandEvent",
                       "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-                      "m_functionNameAndSignature": "OnButtonCancel(wxCommandEvent& event)",
-                      "m_noBody": false
+                      "m_functionNameAndSignature": "OnButtonCancel(wxCommandEvent& event)"
                     }
                   ],
                   "m_children": []

@@ -3,14 +3,15 @@
     "m_GenerateCodeTypes": 4390913,
     "m_addHandlers": true,
     "m_bitmapFunction": "wxCD4B1InitBitmapResources",
-    "m_bitmapsFile": "",
+    "m_bitmapsFile": "newunittestbasedlg_unittestcpp_bitmaps.cpp",
     "m_firstWindowId": 10000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
     "m_objCounter": 0,
     "m_outputFileName": "",
     "m_useEnum": true,
-    "m_useUnderscoreMacro": true
+    "m_useUnderscoreMacro": true,
+    "m_templateClasses": []
   },
   "windows": [
     {

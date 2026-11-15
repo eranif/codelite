@@ -133,7 +133,6 @@
 #include <algorithm>
 #include <wx/regex.h>
 
-size_t wxcWidget::s_objCounter = 0;
 CustomControlTemplateMap_t wxcWidget::ms_customControlsUsed;
 int wxcWidget::m_copyCounter = 0;
 
@@ -2094,12 +2093,89 @@ bool wxcWidget::IsDirectOrIndirectChildOf(const wxcWidget* p) const
     return false;
 }
 
+namespace
+{
+
+void CollectNameCountRec(const wxcWidget& widget, std::map<wxString, std::size_t>& counts)
+{
+    counts[widget.GetName()]++;
+
+    for (auto child : widget.GetChildren()) {
+        if (child) {
+            CollectNameCountRec(*child, counts);
+        }
+    }
+}
+
+std::map<wxString, std::size_t> CollectNameCount(const wxcWidget& widget)
+{
+    std::map<wxString, std::size_t> res;
+
+    CollectNameCountRec(widget, res);
+    return res;
+}
+
+bool IsDigit(wxUniChar c) { return '0' <= c.GetValue() && c.GetValue() <= '9'; }
+
+wxString DigitsTrimed(wxString s)
+{
+    while (!s.IsEmpty() && IsDigit(s.Last().GetValue())) {
+        s.RemoveLast();
+    }
+    return s;
+}
+
+wxString GenerateName(const wxString& originalName, const std::map<wxString, std::size_t>& nameCounts)
+{
+    const wxString baseName = DigitsTrimed(originalName);
+    std::size_t counter = 2;
+    wxString candidate = baseName;
+    while (nameCounts.count(candidate) != 0) {
+        candidate = baseName + StringUtils::wxIntToString(counter);
+        counter++;
+    }
+    return candidate;
+}
+
+void EnsureUniqueNameRec(wxcWidget& widget, std::map<wxString, std::size_t>& nameCounts)
+{
+    auto& count = nameCounts[widget.GetName()];
+    if (count > 1) {
+        widget.SetName(GenerateName(widget.GetName(), nameCounts));
+        --count;
+        nameCounts[widget.GetName()]++;
+    }
+    for (auto child : widget.GetChildren()) {
+        if (child) {
+            EnsureUniqueNameRec(*child, nameCounts);
+        }
+    }
+}
+
+void EnsureUniqueName(wxcWidget& widget)
+{
+    if (auto topLevel = widget.GetTopLevel()) {
+        auto nameCounts = CollectNameCount(*topLevel);
+
+        EnsureUniqueNameRec(widget, nameCounts);
+    }
+}
+} // namespace
+
+void wxcWidget::AddChild(wxcWidget* child)
+{
+    child->SetParent(this);
+    m_children.push_back(child);
+    EnsureUniqueName(*child);
+}
+
 void wxcWidget::InsertBefore(wxcWidget* item, const wxcWidget* insertBefore)
 {
     item->SetParent(this);
     const auto iter = std::ranges::find(m_children, insertBefore);
     if (iter != m_children.end()) {
         m_children.insert(iter, item);
+        EnsureUniqueName(*item);
     }
 }
 
@@ -2109,6 +2185,7 @@ void wxcWidget::InsertAfter(wxcWidget* item, const wxcWidget* insertAfter)
     const auto iter = std::ranges::find(m_children, insertAfter);
     if (iter != m_children.end()) {
         m_children.insert(std::next(iter), item);
+        EnsureUniqueName(*item);
     }
 }
 
@@ -2532,6 +2609,21 @@ void wxcWidget::DoDeepCopy(const wxcWidget& rhs,
 wxString wxcWidget::DoGenerateCppCtorCode_End() const
 {
     return "";
+}
+
+wxString wxcWidget::GenerateName() const
+{
+    const auto* topLevel = GetTopLevel();
+    if (topLevel == nullptr) {
+        return m_namePattern;
+    }
+    auto candidate = m_namePattern;
+    std::size_t counter = 2;
+    while (!topLevel->IsNameUnique(candidate)) {
+        candidate = m_namePattern + StringUtils::wxIntToString(counter);
+        ++counter;
+    }
+    return candidate;
 }
 
 wxString wxcWidget::GetId() const

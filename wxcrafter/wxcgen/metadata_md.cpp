@@ -368,7 +368,6 @@ children in `m_children`, so the file is a tree.
 | Key | Type | Default | Meaning |
 |---|---|---|---|
 | `m_generatedFilesDir` | string | `""` | Output directory of the generated base classes (relative to the `.wxcp` file) |
-| `m_objCounter` | int | `0` | Counter used to generate unique control names (`m_button1`, `m_button2`, ...) |
 | `m_includeFiles` | string array | `[]` | Extra header files, emitted as `#include "<file>"` lines at the top of the generated header |
 | `m_bitmapFunction` | string | `""` | Name of the generated bitmap-initialisation function (generated when empty) |
 | `m_bitmapsFile` | string | `""` | Name of the generated bitmaps source file (generated when empty) |
@@ -438,7 +437,7 @@ from the control's file, including a trailing `:` when there is one. The shapes,
     wxString example;
     example << R"md(```json
 {
-  "metadata": { "m_generatedFilesDir": "", "m_objCounter": 1, "m_GenerateCodeTypes": 1 },
+  "metadata": { "m_generatedFilesDir": "", "m_GenerateCodeTypes": 1 },
   "windows": [
     {
       "m_type": @DIALOG@, "proportion": 0, "border": 5, "gbSpan": "1,1", "gbPosition": "0,0",

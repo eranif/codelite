@@ -13,6 +13,7 @@
 #include <wx/sizer.h>
 #include <wx/toolbar.h>
 #include <wx/tooltip.h>
+#include <wx/wupdlock.h>
 
 wxDEFINE_EVENT(wxEVT_SIDEBAR_SELECTION_CHANGED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, clContextMenuEvent);
@@ -180,6 +181,7 @@ void clSideBarCtrl::ClearAllToolData() { m_toolDataMap.clear(); }
 
 void clSideBarCtrl::PlaceButtons()
 {
+    wxWindowUpdateLocker locker{this};
     GetSizer()->Detach(m_book);
     bool vertical_toolbar = (m_buttonsPosition == wxLEFT || m_buttonsPosition == wxRIGHT);
 

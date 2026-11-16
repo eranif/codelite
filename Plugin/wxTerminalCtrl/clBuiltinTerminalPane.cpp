@@ -715,7 +715,8 @@ void clBuiltinTerminalPane::OnTerminalShortcutCharHook(wxKeyEvent& e)
         return;
     }
 
-    if (ctrlDown && e.GetKeyCode() == '`') {
+    // On macOS the shortcut is "RawCtrl-§" (0xA7)
+    if (ctrlDown && (e.GetKeyCode() == '`' || e.GetKeyCode() == 0xA7)) {
         // "Ctrl-`" is reserved application-wide for toggling the Output Pane; don't let it reach
         // the terminal, which would otherwise send it as a literal backtick character.
         wxCommandEvent event(wxEVT_MENU, XRCID("output_pane"));

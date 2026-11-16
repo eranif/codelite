@@ -1,5 +1,6 @@
 #include "clKeyboardManager.h"
 
+#include "WindowUtils.hpp"
 #include "clKeyboardBindingConfig.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
@@ -136,6 +137,28 @@ void clKeyboardManager::DoGetFrames(wxFrame* parent, clKeyboardManager::FrameLis
     }
 }
 
+#ifdef __WXMAC__
+namespace
+{
+/// wxWidgets ignores accelerators whose key is a non-ASCII character (e.g. "RawCtrl-§"), so the menu item
+/// gets no shortcut. Set the native key equivalent directly. `item`'s label must be final
+void ApplyMacKeyEquivalent(wxMenuItem* item)
+{
+    if (!item->GetItemLabel().Contains("\t")) {
+        return;
+    }
+
+    clKeyboardShortcut shortcut{item->GetItemLabel().AfterFirst('\t')};
+    if (!shortcut.IsOk() || shortcut.GetAlt() || shortcut.GetShift() || shortcut.GetKeyCode().length() != 1 ||
+        shortcut.GetKeyCode()[0].GetValue() < 128) {
+        return;
+    }
+    SetMacMenuKeyEquivalent(
+        item, static_cast<wchar_t>(shortcut.GetKeyCode()[0].GetValue()), shortcut.GetControl() == WXK_RAW_CONTROL);
+}
+} // namespace
+#endif
+
 void clKeyboardManager::DoUpdateMenu(wxMenu* menu, MenuItemDataIntMap_t& accels, std::vector<wxAcceleratorEntry>& table)
 {
     wxMenuItemList items = menu->GetMenuItems();
@@ -158,6 +181,9 @@ void clKeyboardManager::DoUpdateMenu(wxMenu* menu, MenuItemDataIntMap_t& accels,
             // remove the matches entry from the accels map
             accels.erase(where);
         }
+#ifdef __WXMAC__
+        ApplyMacKeyEquivalent(item);
+#endif
 
         wxAcceleratorEntry* a = wxAcceleratorEntry::Create(item->GetItemLabel());
         if (a) {
@@ -567,6 +593,9 @@ void clKeyboardManager::DoFixMenuShortcuts(wxMenu* menu, const MenuItemDataIntMa
         if (!is_same) {
             item->SetItemLabel(text + "\t" + expected.ToString());
         }
+#ifdef __WXMAC__
+        ApplyMacKeyEquivalent(item);
+#endif
     }
 }
 

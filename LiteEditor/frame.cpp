@@ -1186,7 +1186,11 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"next_tab", _("Next tab"), "RawCtrl-Alt-RIGHT"},
                          {"prev_tab", _("Previous tab"), "RawCtrl-Alt-LEFT"},
                          {"full_screen", _("Full Screen...")},
+#ifdef __WXMAC__
+                         {"output_pane", _("Output Pane"), "RawCtrl-§"},
+#else
                          {"output_pane", _("Output Pane"), "Ctrl-`"},
+#endif
                          {"show_terminal_pane", _("Toggle Terminal View"), "F6"},
                          {"workspace_pane", _("Workspace Pane"), "Ctrl-Alt-W"},
                          {"debugger_pane", _("Debugger Pane"), "Ctrl-Alt-D"},

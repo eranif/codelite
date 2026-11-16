@@ -8,6 +8,8 @@
 #include <wx/dcgraph.h>
 #include <wx/graphics.h>
 
+#if wxCHECK_VERSION(3, 3, 0)
+
 namespace
 {
 // In DIPs.
@@ -305,3 +307,5 @@ wxSize clSideBarToolBarArt::GetToolSize(wxReadOnlyDC& dc, wxWindow* wnd, const w
     }
     return size;
 }
+
+#endif // wxCHECK_VERSION(3, 3, 0)

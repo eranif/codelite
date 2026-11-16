@@ -1,6 +1,7 @@
 #include "clSideBarCtrl.hpp"
 
 #include "Keyboard/clKeyboardManager.h"
+#include "aui/clAuiToolBarArt.h"
 #include "aui/clSideBarToolBarArt.hpp"
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
@@ -67,6 +68,16 @@ bool IsWindows11DarkMode()
 #endif
 }
 
+/// The art of the toolbars of the side bar. wxWidgets older than 3.3 do not have the base class of the new art
+wxAuiToolBarArt* CreateSideBarToolBarArt()
+{
+#if wxCHECK_VERSION(3, 3, 0)
+    return new clSideBarToolBarArt();
+#else
+    return new clAuiToolBarArt();
+#endif
+}
+
 wxString BuildActionButtonTooltip(const wxString& tooltip, const wxString& action_name)
 {
     if (action_name.empty()) {
@@ -114,8 +125,8 @@ SideBarToolBarContainer::SideBarToolBarContainer(wxWindow* parent, int orientati
     m_toolbar = new SideBarToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
     m_buttonsBar = new SideBarToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
 #if !USE_NATIVETOOLBAR
-    m_buttonsBar->SetArtProvider(new clSideBarToolBarArt());
-    m_toolbar->SetArtProvider(new clSideBarToolBarArt());
+    m_buttonsBar->SetArtProvider(CreateSideBarToolBarArt());
+    m_toolbar->SetArtProvider(CreateSideBarToolBarArt());
 #endif
     GetSizer()->Add(m_toolbar, wxSizerFlags(1).Expand());
     GetSizer()->Add(m_buttonsBar, wxSizerFlags(0).Expand());
@@ -187,8 +198,11 @@ void clSideBarCtrl::PlaceButtons()
 
     long tb_style = wxAUI_TB_DEFAULT_STYLE;
     if (vertical_toolbar) {
-        // No wxAUI_TB_PLAIN_BACKGROUND: the art draws the gradient of the bar
         tb_style |= wxAUI_TB_VERTICAL;
+#if !wxCHECK_VERSION(3, 3, 0)
+        // The new art draws the gradient of the bar, the old one needs a plain background
+        tb_style |= wxAUI_TB_PLAIN_BACKGROUND;
+#endif
     } else {
         tb_style |= wxAUI_TB_HORIZONTAL;
     }

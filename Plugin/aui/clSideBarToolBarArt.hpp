@@ -3,6 +3,10 @@
 #include "codelite_exports.h"
 
 #include <wx/aui/auibar.h>
+#include <wx/version.h>
+
+// wxAuiGenericToolBarArt and wxReadOnlyDC are in wxWidgets 3.3 and later
+#if wxCHECK_VERSION(3, 3, 0)
 
 /// The look of the tools of the toolbars of the side bars (copied from Kennel). The bar has the colour of the
 /// window, a tool gets a round highlight on hover and while pressed, and a tool that is checked is marked with the
@@ -48,3 +52,5 @@ private:
     Style m_style;
     bool m_large;
 };
+
+#endif // wxCHECK_VERSION(3, 3, 0)

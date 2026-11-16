@@ -8,7 +8,7 @@
    version="1.1"
    id="svg8"
    sodipodi:docname="file-explorer-button.svg"
-   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -30,12 +30,14 @@
      inkscape:zoom="1.09125"
      inkscape:cx="400"
      inkscape:cy="400"
-     inkscape:window-width="3440"
-     inkscape:window-height="1373"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg8" />
+     inkscape:current-layer="svg8"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
   <title
      id="title2">folder</title>
   <g
@@ -48,10 +50,10 @@
     <g
        id="Shape"
        fill="#000000"
-       transform="translate(42.666667, 85.333333)"
+       transform="translate(42.666667,85.333333)"
        style="fill:#b3b3b3">
       <path
-         d="M426.666667,341.333333 L3.55271368e-14,341.333333 L3.55271368e-14,1.42108547e-14 L178.083413,1.42108547e-14 L232.041813,42.6666667 L426.666667,42.6666667 L426.666667,341.333333 Z M42.6666667,298.666667 L384,298.666667 L384,85.3333333 L217.20832,85.3333333 L163.24992,42.6666667 L42.6666667,42.6666667 L42.6666667,298.666667 Z"
+         d="M 426.66667,341.33333 H 0 V 0 h 178.08341 l 53.9584,42.666667 H 426.66667 Z M 42.666667,298.66667 H 384 V 85.333333 H 217.20832 L 163.24992,42.666667 H 42.666667 Z"
          id="path4"
          style="fill:#b3b3b3" />
     </g>

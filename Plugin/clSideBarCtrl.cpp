@@ -1,7 +1,7 @@
 #include "clSideBarCtrl.hpp"
 
 #include "Keyboard/clKeyboardManager.h"
-#include "aui/clAuiToolBarArt.h"
+#include "aui/clSideBarToolBarArt.hpp"
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
 #include "event_notifier.h"
@@ -113,8 +113,8 @@ SideBarToolBarContainer::SideBarToolBarContainer(wxWindow* parent, int orientati
     m_toolbar = new SideBarToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
     m_buttonsBar = new SideBarToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
 #if !USE_NATIVETOOLBAR
-    m_buttonsBar->SetArtProvider(new clAuiToolBarArt());
-    m_toolbar->SetArtProvider(new clAuiToolBarArt());
+    m_buttonsBar->SetArtProvider(new clSideBarToolBarArt());
+    m_toolbar->SetArtProvider(new clSideBarToolBarArt());
 #endif
     GetSizer()->Add(m_toolbar, wxSizerFlags(1).Expand());
     GetSizer()->Add(m_buttonsBar, wxSizerFlags(0).Expand());
@@ -185,8 +185,8 @@ void clSideBarCtrl::PlaceButtons()
 
     long tb_style = wxAUI_TB_DEFAULT_STYLE;
     if (vertical_toolbar) {
+        // No wxAUI_TB_PLAIN_BACKGROUND: the art draws the gradient of the bar
         tb_style |= wxAUI_TB_VERTICAL;
-        tb_style |= wxAUI_TB_PLAIN_BACKGROUND;
     } else {
         tb_style |= wxAUI_TB_HORIZONTAL;
     }

@@ -182,8 +182,8 @@ set(CL_COPY_WX_LIBS 0)
 set(WITH_SFTP 1)
 
 # Create the post_install.cmake script (no append here)
-write_file("${CMAKE_BINARY_DIR}/post_install.cmake"
-           "message(STATUS \"Running post install script\")")
+file(WRITE "${CMAKE_BINARY_DIR}/post_install.cmake"
+     "message(STATUS \"Running post install script\")\n")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations"
 )# Avoid very multiple warnings spam due to deprecated wx methods
@@ -1128,9 +1128,9 @@ endif()
 
 if(MINGW)
   # determine MSYS2 path
-  write_file(${CMAKE_BINARY_DIR}/msys2-environment "export WXWIN=${WXWIN}")
-  write_file(${CMAKE_BINARY_DIR}/msys2-environment
-             "export MSYS2_HOME=${MSYS2_BASE}" APPEND)
+  file(WRITE ${CMAKE_BINARY_DIR}/msys2-environment "export WXWIN=${WXWIN}\n")
+  file(APPEND ${CMAKE_BINARY_DIR}/msys2-environment
+       "export MSYS2_HOME=${MSYS2_BASE}\n")
 
   # install DLLs required by MinGW
   msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/libhunspell-1.7-0.dll

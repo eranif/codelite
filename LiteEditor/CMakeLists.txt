@@ -682,22 +682,23 @@ set(POST_INSTALL_SCRIPT "${CMAKE_BINARY_DIR}/post_install.cmake")
 if(MINGW OR CYGWIN)
     message(STATUS "Generating post_install.cmake script")
     # on MinGW, we do not want to include PluginName.dll.a files
-    write_file(${POST_INSTALL_SCRIPT} "file(GLOB FILES_TO_REMOVE \"${CL_INSTALL_BIN}/plugins/*.a\")")
-    write_file(${POST_INSTALL_SCRIPT} "file(REMOVE \${FILES_TO_REMOVE})" APPEND)
+    file(WRITE ${POST_INSTALL_SCRIPT} "file(GLOB FILES_TO_REMOVE \"${CL_INSTALL_BIN}/plugins/*.a\")\n")
+    file(APPEND ${POST_INSTALL_SCRIPT} "file(REMOVE \${FILES_TO_REMOVE})\n")
 
     # remove libdapcxx.dll.a & libdatabaselayersqlite.dll.a
-    write_file(${POST_INSTALL_SCRIPT} "file(REMOVE \"${CL_INSTALL_BIN}/libdapcxx.dll.a\")" APPEND)
-    write_file(${POST_INSTALL_SCRIPT} "file(REMOVE \"${CL_INSTALL_BIN}/libdatabaselayersqlite.dll.a\")" APPEND)
+    file(APPEND ${POST_INSTALL_SCRIPT} "file(REMOVE \"${CL_INSTALL_BIN}/libdapcxx.dll.a\")\n")
+    file(APPEND ${POST_INSTALL_SCRIPT} "file(REMOVE \"${CL_INSTALL_BIN}/libdatabaselayersqlite.dll.a\")\n")
 
     # include this file
     install(SCRIPT ${POST_INSTALL_SCRIPT})
 elseif(APPLE)
     message(STATUS "Generating post_install.cmake script")
-    write_file(${POST_INSTALL_SCRIPT} "message(STATUS \"Running post install script\")")
-    write_file(
+    file(WRITE ${POST_INSTALL_SCRIPT} "message(STATUS \"Running post install script\")\n")
+    file(
+        APPEND
         ${POST_INSTALL_SCRIPT}
-        "execute_process(COMMAND sh -c \"/usr/bin/python3 ${CL_SRC_ROOT}/scripts/run_install_name_tool.py ${CMAKE_BINARY_DIR}/codelite.app\")"
-        APPEND)
-    write_file(${POST_INSTALL_SCRIPT} "message(STATUS \"Success\")" APPEND)
+        "execute_process(COMMAND sh -c \"/usr/bin/python3 ${CL_SRC_ROOT}/scripts/run_install_name_tool.py ${CMAKE_BINARY_DIR}/codelite.app\")\n"
+        )
+    file(APPEND ${POST_INSTALL_SCRIPT} "message(STATUS \"Success\")\n")
     install(SCRIPT ${POST_INSTALL_SCRIPT})
 endif()

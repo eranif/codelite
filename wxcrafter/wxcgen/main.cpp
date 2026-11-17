@@ -22,6 +22,7 @@
 #include <wx/cmdline.h>
 #include <wx/confbase.h>
 #include <wx/fileconf.h>
+#include <wx/ffile.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/image.h>
@@ -35,6 +36,7 @@ static const wxCmdLineEntryDesc s_cmdDesc[] = {
     {wxCMD_LINE_SWITCH, "v", "version", "Print version and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH, "h", "help", "Print usage and exit", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_OPTION, "o", "output", "Override output directory", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH, "U", nullptr, "Update and save input .wxcp files without generating code", wxCMD_LINE_VAL_NONE, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH,
      nullptr,
      "bitmaps-in-base-class-file",
@@ -223,6 +225,56 @@ static bool InstallAiSkill(const wxString& base, const wxString& skillsDir)
     return ok;
 }
 
+static bool UpdateProject(const wxString& filename, const wxString& fileContent)
+{
+    JSON json(fileContent);
+    if (!json.isOk() || !json.toElement().namedObject("metadata").isObject() ||
+        !json.toElement().namedObject("windows").isArray()) {
+        wxFprintf(stderr, "wxcgen: invalid project file: %s\n", filename.c_str());
+        return false;
+    }
+
+    auto& metadata = wxcProjectMetadata::Get();
+    metadata.SetProjectFile(filename);
+    metadata.FromJSON(json.toElement().namedObject("metadata"));
+    metadata.UpdatePaths();
+
+    JSONItem windows = json.toElement().namedObject("windows");
+    std::vector<std::unique_ptr<wxcWidget>> wrappers;
+    wrappers.reserve(windows.arraySize());
+    wxArrayString customControls;
+    for (int i = 0; i < windows.arraySize(); ++i) {
+        std::unique_ptr<wxcWidget> widget(wxcWidget::CreateFromJSON(windows.arrayItem(i)));
+        if (!widget) {
+            wxFprintf(stderr, "wxcgen: cannot load window in project file: %s\n", filename.c_str());
+            return false;
+        }
+        widget->GetCustomControlsName(customControls);
+        wrappers.emplace_back(std::move(widget));
+    }
+
+    JSON output(JsonType::Object);
+    JSONItem savedMetadata = metadata.ToJSON();
+    metadata.AppendCustomControlsJSON(customControls, savedMetadata);
+    output.toElement().addProperty("metadata", savedMetadata);
+
+    JSONItem savedWindows = JSONItem::createArray();
+    for (auto& widget : wrappers) {
+        widget->FixPaths(metadata.GetProjectPath());
+        JSONItem savedWidget = JSONItem::createObject();
+        widget->Serialize(savedWidget);
+        savedWindows.arrayAppend(std::move(savedWidget));
+    }
+    output.toElement().addProperty("windows", savedWindows);
+
+    wxFFile file(filename, "w+b");
+    if (!file.IsOpened() || !file.Write(output.toElement().format(), wxConvUTF8) || !file.Close()) {
+        wxFprintf(stderr, "wxcgen: cannot save project file: %s\n", filename.c_str());
+        return false;
+    }
+    return true;
+}
+
 static bool GenerateFromProject(const wxString& filename,
                                 const wxString& fileContent,
                                 const wxString& outputDirOverride,
@@ -395,6 +447,7 @@ int wxcgenApp::OnRun()
         "\n"
         "The bitmaps code is written to a separate \"_bitmaps.cpp\" file. With --bitmaps-in-base-class-file,\n"
         "it is generated inside the base class source file instead.\n"
+        "With -U, input .wxcp files are updated and saved without generating any files.\n"
         "\n"
         "With --verbose, wxcgen prints the following lines for each input file after a successful generation:\n"
         "  Base class output directory:<full-path>\n"
@@ -467,6 +520,7 @@ int wxcgenApp::OnRun()
     }
 
     const bool verbose = parser.Found("verbose");
+    const bool update = parser.Found("U");
 
     // The command line decides where the bitmaps code goes, not the wxCrafter user settings (which the settings
     // object loads on creation), so the output is the same on every machine.
@@ -474,7 +528,7 @@ int wxcgenApp::OnRun()
     wxcSettings::Get().EnableFlag(wxcSettings::BITMAPS_IN_BASE_CLASS_FILE, parser.Found("bitmaps-in-base-class-file"));
 
     wxString outputDirStr;
-    if (parser.Found("o", &outputDirStr)) {
+    if (!update && parser.Found("o", &outputDirStr)) {
         wxFileName outputDir(outputDirStr, "");
         outputDir.MakeAbsolute();
         outputDirStr = outputDir.GetPath();
@@ -513,6 +567,13 @@ int wxcgenApp::OnRun()
         if (!FileUtils::ReadFileContent(filename, fileContent)) {
             wxFprintf(stderr, "wxcgen: cannot read file: %s\n", filename.c_str());
             rc = 1;
+            continue;
+        }
+
+        if (update) {
+            if (!UpdateProject(filename, fileContent)) {
+                rc = 1;
+            }
             continue;
         }
 

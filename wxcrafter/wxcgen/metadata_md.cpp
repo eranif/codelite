@@ -530,6 +530,7 @@ XRC). The generated files are overwritten on every run and carry the banner "Do 
 | `-o <dir>` | Output directory of the base classes |
 | `--verbose` | Print the output directories and the generated files |
 | `--bitmaps-in-base-class-file` | Put the bitmaps code in the base class source file (default: its own `_bitmaps.cpp`) |
+| `-U` | Update and save input .wxcp files without generating code |
 | `-v` | Print the version |
 
 Without `-o`, the output directory comes from the environment variable `WXCGEN_FOLDER_MAP=<base_dir>=<target_folder>`

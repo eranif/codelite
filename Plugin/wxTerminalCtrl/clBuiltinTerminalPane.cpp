@@ -2,6 +2,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "CompilerLocator/CompilerLocatorMSVC.h"
+#include "Platform/MSYS2.hpp"
 #include "Platform/Platform.hpp"
 #include "TabStatusIcon.hpp"
 #include "bitmap_loader.h"
@@ -381,9 +382,8 @@ TerminalHost* clBuiltinTerminalPane::DoCreateTerminal(wxWindow* parent,
 
     // By default, inherit parent's env.
 #ifdef __WXMSW__
-    wxString windowsOpenSSH = R"(C:\Windows\System32\OpenSSH)";
-    if (wxFileName::DirExists(windowsOpenSSH)) {
-        path.Prepend(windowsOpenSSH << wxPATH_SEP);
+    if (auto windowsOpenSSH = MSYS2::GetWindowsOpenSSHDir()) {
+        path.Prepend(*windowsOpenSSH + wxPATH_SEP);
     }
 #endif
 

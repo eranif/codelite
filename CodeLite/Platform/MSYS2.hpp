@@ -45,6 +45,12 @@ public:
     WhichWithVersion(const wxString& command, const std::vector<int>& versions, bool useSystemPath = true);
 
     /**
+     * @brief return the folder of the Windows native OpenSSH (e.g. C:\Windows\System32\OpenSSH).
+     * Return `std::nullopt` if it is not installed
+     */
+    static std::optional<wxString> GetWindowsOpenSSHDir();
+
+    /**
      * @brief return environment variable value
      */
     std::optional<wxString> GetPath(bool useSystemPath = true) override;

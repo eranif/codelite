@@ -173,9 +173,8 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
 
     // MSYS/Cygwin SSH binary causes issues with mouse handling, favour the Windows native one.
     // Place it first, before MSYS paths
-    wxString windowsOpenSSH = R"(C:\Windows\System32\OpenSSH)";
-    if (wxFileName::DirExists(windowsOpenSSH)) {
-        paths_to_try.Insert(windowsOpenSSH, 0);
+    if (auto windowsOpenSSH = GetWindowsOpenSSHDir()) {
+        paths_to_try.Insert(*windowsOpenSSH, 0);
     }
 
     // cargo (Windows native path)
@@ -204,15 +203,37 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
     // Finally, add the executable path.
     paths_to_try.push_back(wxFileName{clStandardPaths::Get().GetExecutablePath()}.GetPath());
 
-    // Dedup entries
+    // Dedup entries. Windows paths are not case sensitive, and a trailing separator is not significant.
+    // The key is used for the comparison only, the original string is kept.
     wxArrayString pathArr;
     pathArr.reserve(paths_to_try.size());
 
     std::unordered_set<wxString> uniquePaths;
     for (const auto& path : paths_to_try) {
-        if (uniquePaths.insert(path).second) {
+        wxString key = path.Lower();
+        while (key.length() > 1 && (key.EndsWith("\\") || key.EndsWith("/"))) {
+            key.RemoveLast();
+        }
+        key.Replace("/", "\\");
+        if (uniquePaths.insert(key).second) {
             pathArr.Add(path);
         }
     }
     return ::wxJoin(pathArr, ';');
+}
+
+std::optional<wxString> MSYS2::GetWindowsOpenSSHDir()
+{
+    wxString systemRoot;
+    if (!wxGetEnv("SystemRoot", &systemRoot) || systemRoot.empty()) {
+        return std::nullopt;
+    }
+
+    wxFileName openSSH{systemRoot, wxEmptyString};
+    openSSH.AppendDir("System32");
+    openSSH.AppendDir("OpenSSH");
+    if (!openSSH.DirExists()) {
+        return std::nullopt;
+    }
+    return openSSH.GetPath();
 }

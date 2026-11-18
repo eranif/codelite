@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "m_GenerateCodeTypes": 5,
+    "m_GenerateCodeTypes": 1,
     "m_addHandlers": true,
     "m_bitmapFunction": "wxC9A94InitBitmapResources",
     "m_bitmapsFile": "wxcrafter_bitmaps.cpp",

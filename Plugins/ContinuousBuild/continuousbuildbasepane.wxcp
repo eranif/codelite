@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "m_GenerateCodeTypes": 18446744073691796433,
+    "m_GenerateCodeTypes": 1,
     "m_addHandlers": true,
     "m_bitmapFunction": "wxC47E7InitBitmapResources",
     "m_bitmapsFile": "continuousbuildbasepane_continuousbuild_bitmaps.cpp",

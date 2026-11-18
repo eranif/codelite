@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "m_GenerateCodeTypes": 1986042073,
+    "m_GenerateCodeTypes": 1,
     "m_addHandlers": true,
     "m_bitmapFunction": "wxC8861InitBitmapResources",
     "m_bitmapsFile": "setters_getters_liteeditor_bitmaps.cpp",

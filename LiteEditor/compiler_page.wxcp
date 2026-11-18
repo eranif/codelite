@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "m_GenerateCodeTypes": 5,
+    "m_GenerateCodeTypes": 1,
     "m_addHandlers": true,
     "m_bitmapFunction": "wxCAD0CInitBitmapResources",
     "m_bitmapsFile": "compiler_page_plugin_bitmaps.cpp",

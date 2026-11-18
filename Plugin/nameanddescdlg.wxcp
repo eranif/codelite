@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "m_GenerateCodeTypes": 18446744073695925201,
+    "m_GenerateCodeTypes": 1,
     "m_addHandlers": true,
     "m_bitmapFunction": "wxC934BInitBitmapResources",
     "m_bitmapsFile": "nameanddescdlg_plugin_bitmaps.cpp",

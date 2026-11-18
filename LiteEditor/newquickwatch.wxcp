@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "m_GenerateCodeTypes": 5,
+    "m_GenerateCodeTypes": 1,
     "m_addHandlers": true,
     "m_bitmapFunction": "wxCB786InitBitmapResources",
     "m_bitmapsFile": "newquickwatch_liteeditor_bitmaps.cpp",

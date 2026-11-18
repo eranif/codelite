@@ -75,6 +75,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_READ, clSFTPEvent);
 
 // Failed to read a remote file (e.g. missing file, or no connection).
 // GetAccount() -> the account, GetRemoteFile() -> the file path, GetString() -> the error message
+// GetInt() -> a `StatusCode` value (clResult.hpp): `StatusCode::kNotFound` if the file does not exist
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_READ_ERROR, clSFTPEvent);
 
 // A remote folder was created (or already exists).

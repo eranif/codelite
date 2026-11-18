@@ -16,6 +16,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "libssh/libssh.h"
+#include "libssh/sftp.h"
 #include "macros.h"
 
 #include <condition_variable>
@@ -283,17 +284,18 @@ bool clSFTPManager::DoSyncReadFile(const wxString& remotePath, const wxString& a
 void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink)
 {
     clDEBUG() << "SFTP Manager: reading file (async):" << remotePath << "for account:" << accountName << endl;
-    auto fire_error = [remotePath, accountName, sink](const wxString& error) {
+    auto fire_error = [remotePath, accountName, sink](const wxString& error, StatusCode code) {
         clSFTPEvent event_error{wxEVT_SFTP_FILE_READ_ERROR};
         event_error.SetAccount(accountName);
         event_error.SetRemoteFile(remotePath);
         event_error.SetString(error);
+        event_error.SetInt(static_cast<int>(code));
         sink->QueueEvent(event_error.Clone());
     };
 
     auto conn = GetConnectionPtrAddIfMissing(accountName);
     if (!conn) {
-        fire_error(_("Failed to connect to the remote machine"));
+        fire_error(_("Failed to connect to the remote machine"), StatusCode::kNetError);
         return;
     }
 
@@ -321,7 +323,8 @@ void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& 
         } catch (const clException& e) {
             clERROR() << "Failed to read remote file:" << remotePath << "." << e.What();
             wxString error = e.What();
-            fire_error(error.empty() ? _("Failed to read remote file") : error);
+            fire_error(error.empty() ? _("Failed to read remote file") : error,
+                       e.ErrorCode() == SSH_FX_NO_SUCH_FILE ? StatusCode::kNotFound : StatusCode::kOther);
         }
     };
     m_q.push_back(std::move(read_func));

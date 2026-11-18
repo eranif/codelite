@@ -13,17 +13,27 @@
 
 thread_local wxStringMap_t REMOTE_FILES_CACHE;
 
+wxString WorkspaceHelper::GetPrivateFilePath(const IWorkspace* workspace, const wxString& filename) const
+{
+    wxFileName filepath = workspace->GetFileName();
+    filepath.AppendDir(".codelite");
+    filepath.SetFullName(filename);
+
+    if (!workspace->IsRemote()) {
+        return filepath.GetFullPath();
+    }
+
+    wxString remote_file_path = filepath.GetFullPath(wxPATH_UNIX);
+    remote_file_path.Replace("\\", "/");
+    return remote_file_path;
+}
+
 bool WorkspaceHelper::ReadPrivateFile(IWorkspace* workspace, const wxString& filename, wxString* content) const
 {
     if (workspace) {
         if (workspace->IsRemote()) {
             // Check the cache first
-            wxFileName filepath = workspace->GetFileName();
-            filepath.AppendDir(".codelite");
-            filepath.SetFullName(filename);
-
-            wxString remote_file_path = filepath.GetFullPath(wxPATH_UNIX);
-            remote_file_path.Replace("\\", "/");
+            const wxString remote_file_path = GetPrivateFilePath(workspace, filename);
             wxString file_content;
             if (REMOTE_FILES_CACHE.count(remote_file_path) == 0) {
                 // a lengthy operation
@@ -47,9 +57,7 @@ bool WorkspaceHelper::ReadPrivateFile(IWorkspace* workspace, const wxString& fil
             return true;
         } else {
             // local workspace
-            wxFileName filepath = workspace->GetFileName();
-            filepath.AppendDir(".codelite");
-            filepath.SetFullName(filename);
+            const wxFileName filepath{GetPrivateFilePath(workspace, filename)};
             return FileUtils::ReadFileContent(filepath, *content);
         }
     } else {
@@ -66,12 +74,7 @@ bool WorkspaceHelper::WritePrivateFile(IWorkspace* workspace, const wxString& fi
     if (workspace) {
         if (workspace->IsRemote()) {
             // Check the cache first
-            wxFileName filepath = workspace->GetFileName();
-            filepath.AppendDir(".codelite");
-            filepath.SetFullName(filename);
-
-            wxString remote_file_path = filepath.GetFullPath(wxPATH_UNIX);
-            remote_file_path.Replace("\\", "/");
+            const wxString remote_file_path = GetPrivateFilePath(workspace, filename);
             wxString file_content;
 
             clDEBUG() << "Writing file:" << remote_file_path << endl;
@@ -96,9 +99,7 @@ bool WorkspaceHelper::WritePrivateFile(IWorkspace* workspace, const wxString& fi
             return true;
         } else {
             // local workspace
-            wxFileName filepath = workspace->GetFileName();
-            filepath.AppendDir(".codelite");
-            filepath.SetFullName(filename);
+            const wxFileName filepath{GetPrivateFilePath(workspace, filename)};
             if (FileUtils::WriteFileContent(filepath, content)) {
                 return true;
             }

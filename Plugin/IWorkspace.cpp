@@ -96,12 +96,12 @@ IWorkspace::IWorkspace()
     Bind(wxEVT_SFTP_FILE_READ_ERROR, &IWorkspace::OnConfigFileReadError, this);
 }
 
-void IWorkspace::ParseConfig(const wxString& content)
+bool IWorkspace::ParseConfig(const wxString& content)
 {
     const auto json = nlohmann::json::parse(content.ToStdString(wxConvUTF8), nullptr, false);
     if (json.is_discarded() || !json.is_object()) {
         clWARNING() << "Invalid workspace config file:" << kConfigFileName << endl;
-        return;
+        return false;
     }
 
     for (const auto& [category, values] : json.items()) {
@@ -116,6 +116,14 @@ void IWorkspace::ParseConfig(const wxString& content)
             }
         }
     }
+    return true;
+}
+
+void IWorkspace::ClearConfig()
+{
+    m_config.clear();
+    m_pendingConfigPath.clear();
+    m_configState = ConfigState::kNotLoaded;
 }
 
 void IWorkspace::NotifyConfigEvent(wxEventType type, const wxString& error)
@@ -129,27 +137,41 @@ void IWorkspace::NotifyConfigEvent(wxEventType type, const wxString& error)
 
 void IWorkspace::LoadConfig()
 {
-    m_config.clear();
-    m_pendingConfigPath.clear();
+    ClearConfig();
 
+    WorkspaceHelper helper;
+    const wxString config_path = helper.GetPrivateFilePath(this, kConfigFileName);
     if (IsRemote()) {
 #if USE_SFTP
         // read the file asynchronously, the result is handled by OnConfigFileRead / OnConfigFileReadError
-        m_pendingConfigPath = GetFileName().BeforeLast('/') + "/.codelite/" + kConfigFileName;
+        m_configState = ConfigState::kLoading;
+        m_pendingConfigPath = config_path;
         clSFTPManager::Get().AsyncReadFile(m_pendingConfigPath, GetSshAccount(), this);
 #else
+        m_configState = ConfigState::kFailed;
         NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, _("SFTP is not supported in this build"));
 #endif
         return;
     }
 
-    wxString content;
-    if (WorkspaceHelper{}.ReadPrivateFile(this, kConfigFileName, &content)) {
-        ParseConfig(content);
-    } else {
-        clDEBUG() << "Workspace config file:" << kConfigFileName << "could not be read (missing?)" << endl;
+    // A missing file is not an error: the workspace never saved its config
+    if (!wxFileName::FileExists(config_path)) {
+        m_configState = ConfigState::kLoaded;
+        NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, wxEmptyString);
+        return;
     }
-    NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, wxEmptyString);
+
+    wxString content;
+    if (!helper.ReadPrivateFile(this, kConfigFileName, &content)) {
+        m_configState = ConfigState::kFailed;
+        NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, _("Failed to read file: ") + config_path);
+    } else if (!ParseConfig(content)) {
+        m_configState = ConfigState::kFailed;
+        NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, _("Invalid configuration file: ") + config_path);
+    } else {
+        m_configState = ConfigState::kLoaded;
+        NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, wxEmptyString);
+    }
 }
 
 void IWorkspace::OnConfigFileRead(clSFTPEvent& event)
@@ -159,9 +181,15 @@ void IWorkspace::OnConfigFileRead(clSFTPEvent& event)
         return;
     }
 
+    const wxString config_path = m_pendingConfigPath;
     m_pendingConfigPath.clear();
-    ParseConfig(event.GetContent());
-    NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, wxEmptyString);
+    if (ParseConfig(event.GetContent())) {
+        m_configState = ConfigState::kLoaded;
+        NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, wxEmptyString);
+    } else {
+        m_configState = ConfigState::kFailed;
+        NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, _("Invalid configuration file: ") + config_path);
+    }
 }
 
 void IWorkspace::OnConfigFileReadError(clSFTPEvent& event)
@@ -171,16 +199,33 @@ void IWorkspace::OnConfigFileReadError(clSFTPEvent& event)
         return;
     }
 
-    // a missing file is expected for a workspace that never saved its config: keep the configuration empty
     clDEBUG() << "Failed to read workspace config file:" << m_pendingConfigPath << "." << event.GetString() << endl;
     m_pendingConfigPath.clear();
-    NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, event.GetString());
+
+    // A missing file is not an error (same as for a local workspace): the workspace never saved its config
+    if (event.GetInt() == static_cast<int>(StatusCode::kNotFound)) {
+        m_configState = ConfigState::kLoaded;
+        NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, wxEmptyString);
+    } else {
+        m_configState = ConfigState::kFailed;
+        NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_LOADED, event.GetString());
+    }
 }
 
 clStatus IWorkspace::SaveConfig()
 {
+    clStatus status;
     if (GetFileName().empty()) {
-        auto status = StatusInvalidArgument("Workspace is not opened");
+        status = StatusInvalidArgument("Workspace is not opened");
+    } else if (m_configState == ConfigState::kLoading) {
+        status = StatusResourceBusy("The workspace configuration is still loading");
+    } else if (m_configState != ConfigState::kLoaded) {
+        // saving now could delete values that exist in the file
+        status = StatusInvalidArgument("The workspace configuration was not loaded");
+    }
+
+    if (!status.ok()) {
+        clWARNING() << "Workspace config is not saved." << status.message() << endl;
         NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_SAVED, status.message());
         return status;
     }
@@ -195,7 +240,7 @@ clStatus IWorkspace::SaveConfig()
     }
 
     if (!WorkspaceHelper{}.WritePrivateFile(this, kConfigFileName, wxString::FromUTF8(root.dump(2)))) {
-        auto status = StatusIOError(wxString() << "Failed to write file: " << kConfigFileName);
+        status = StatusIOError(wxString() << "Failed to write file: " << kConfigFileName);
         NotifyConfigEvent(wxEVT_WORKSPACE_CONFIG_SAVED, status.message());
         return status;
     }

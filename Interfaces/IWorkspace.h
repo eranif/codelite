@@ -31,10 +31,12 @@
 #include "codelite_exports.h"
 
 #include <concepts>
+#include <limits>
 #include <list>
 #include <map>
 #include <optional>
 #include <type_traits>
+#include <utility>
 #include <variant>
 #include <vector>
 #include <wx/event.h>
@@ -78,10 +80,21 @@ private:
     /// path of the remote config file while an async load is in progress (empty otherwise)
     wxString m_pendingConfigPath;
 
+    /// The state of the config file. `SaveConfig()` writes the whole in-memory config, so it is allowed only when the
+    /// file content is known (`kLoaded`), otherwise values that are in the file could be lost
+    enum class ConfigState {
+        kNotLoaded, // `LoadConfig()` was not called
+        kLoading,   // an async load is in progress
+        kLoaded,    // loaded, or the file does not exist
+        kFailed,    // the file could not be read, or it is not valid
+    };
+    ConfigState m_configState = ConfigState::kNotLoaded;
+
     const ConfigValue* FindConfigValue(const wxString& name, const wxString& category) const;
     void StoreConfigValue(const wxString& name, const wxString& category, ConfigValue value);
-    /// parse the config file content. Values that were set while loading are not overridden
-    void ParseConfig(const wxString& content);
+    /// parse the config file content. Values that were set while loading are not overridden.
+    /// Return false if the content is not a valid config file
+    bool ParseConfig(const wxString& content);
     /// queue `type` on this object and on the EventNotifier
     void NotifyConfigEvent(wxEventType type, const wxString& error);
     void OnConfigFileRead(clSFTPEvent& event);
@@ -247,12 +260,17 @@ public:
                 [&default_value](const auto& v) -> T {
                     using U = std::decay_t<decltype(v)>;
                     if constexpr (std::is_arithmetic_v<U>) {
-                        if constexpr (std::is_unsigned_v<T> && std::is_signed_v<U>) {
-                            if (v < 0) {
-                                return default_value;
-                            }
+                        // return `default_value` if the value does not fit into `T`
+                        if constexpr (std::is_floating_point_v<T>) {
+                            return static_cast<T>(v);
+                        } else if constexpr (std::is_floating_point_v<U>) {
+                            // a NaN fails both comparisons
+                            constexpr double lowest = static_cast<double>(std::numeric_limits<T>::lowest());
+                            constexpr double highest = static_cast<double>(std::numeric_limits<T>::max());
+                            return (v > lowest - 1.0 && v < highest + 1.0) ? static_cast<T>(v) : default_value;
+                        } else {
+                            return std::in_range<T>(v) ? static_cast<T>(v) : default_value;
                         }
-                        return static_cast<T>(v);
                     } else {
                         return default_value;
                     }
@@ -266,7 +284,9 @@ public:
 
     /**
      * @brief discard the in-memory configuration and load it from the workspace `.codelite` folder.
-     * A missing (or invalid) file results in an empty configuration.
+     * A missing file results in an empty configuration (this is not an error). If the file could not be read, or it is
+     * not a valid JSON, the event contains the error message and `SaveConfig()` fails until the next successful load,
+     * so the file is not overwritten.
      * For a remote workspace the file is read asynchronously: this method returns immediately.
      * In both cases `wxEVT_WORKSPACE_CONFIG_LOADED` is fired (on this object and on the EventNotifier) when the
      * load is completed, and the values should be read only after it.
@@ -275,7 +295,14 @@ public:
     virtual void LoadConfig();
 
     /**
-     * @brief write the configuration to the workspace `.codelite` folder
+     * @brief discard the in-memory configuration and cancel a pending load. Call it when the workspace is closed
+     */
+    void ClearConfig();
+
+    /**
+     * @brief write the configuration to the workspace `.codelite` folder.
+     * Fails (and does not touch the file) if the configuration was not loaded yet, a load is in progress, or the load
+     * failed
      * @event wxEVT_WORKSPACE_CONFIG_SAVED fired (on this object and on the EventNotifier) on success and on failure
      */
     virtual clStatus SaveConfig();

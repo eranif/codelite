@@ -34,6 +34,10 @@ void clWorkspaceManager::RegisterWorkspace(IWorkspace* workspace) { m_workspaces
 void clWorkspaceManager::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
+    if (m_workspace != nullptr) {
+        // drop the config (and a pending async load) of the closed workspace
+        m_workspace->ClearConfig();
+    }
     SetWorkspace(nullptr);
 }
 

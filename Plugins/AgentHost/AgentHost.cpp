@@ -12,7 +12,13 @@
 #include <wx/choicdlg.h>
 
 // The resource ID of the "Launch an AI Agent..." menu item: the tooltip of the side bar button shows its shortcut
-static const char* kLaunchAgentAction = "launch_agent";
+namespace
+{
+const char* kLaunchAgentAction = "launch_agent";
+const wxString kAgentWorkingDirectory = "WorkingDirectory";
+const wxString kAgentHostLastAgent = "LastAgent";
+const wxString kCategoryAgentHost = "AgentHost";
+} // namespace
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new AgentHost(manager); }
@@ -97,6 +103,9 @@ void AgentHost::UnPlug() {}
 
 void AgentHost::ShowAgentsDialog()
 {
+    auto* workspace = clWorkspaceManager::Get().GetWorkspace();
+    CHECK_PTR_RET(workspace);
+
     const struct {
         wxString label;
         AgentType type;
@@ -107,7 +116,7 @@ void AgentHost::ShowAgentsDialog()
     };
 
     // Suggest the agent that the user launched last. If there is none, suggest the first agent that is installed.
-    const int lastAgent = clConfig::Get().Read(kAgentHostLastAgent, -1);
+    const int lastAgent = workspace->GetConfigValue(kAgentHostLastAgent, kCategoryAgentHost, wxNOT_FOUND);
     int suggested = -1;
     wxArrayString choices;
     for (size_t i = 0; i < std::size(agents); ++i) {
@@ -123,17 +132,22 @@ void AgentHost::ShowAgentsDialog()
         choices.Add(label);
     }
 
-    auto* workspace = clWorkspaceManager::Get().GetWorkspace();
-    CHECK_PTR_RET(workspace);
-
-    wxString workingDirectory = workspace->GetDir();
+    wxString workingDirectory =
+        workspace->GetConfigValue(kAgentWorkingDirectory, kCategoryAgentHost, workspace->GetDir());
     LaunchAIAgentDlg dlg(EventNotifier::Get()->TopFrame(), choices, suggested, workingDirectory);
     if (dlg.ShowModal() != wxID_OK || dlg.GetAgent() == wxNOT_FOUND) {
         return;
     }
-
     const auto type = agents[dlg.GetAgent()].type;
-    clConfig::Get().Write(kAgentHostLastAgent, static_cast<int>(type));
+
+    // Store the workspace settings.
+    workspace->SetConfigValue(kAgentWorkingDirectory, kCategoryAgentHost, dlg.GetWorkingDirectory());
+    workspace->SetConfigValue(kAgentHostLastAgent, kCategoryAgentHost, static_cast<int>(type));
+    auto result = workspace->SaveConfig();
+    if (!result.ok()) {
+        clWARNING() << "Failed to save workspace config file." << result.message() << endl;
+    }
+
     ShowAgentTerminal(type, dlg.GetWorkingDirectory());
 }
 

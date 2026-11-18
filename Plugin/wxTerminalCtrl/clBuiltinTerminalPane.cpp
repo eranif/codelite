@@ -380,6 +380,13 @@ TerminalHost* clBuiltinTerminalPane::DoCreateTerminal(wxWindow* parent,
     }
 
     // By default, inherit parent's env.
+#ifdef __WXMSW__
+    wxString windowsOpenSSH = R"(C:\Windows\System32\OpenSSH)";
+    if (wxFileName::DirExists(windowsOpenSSH)) {
+        path.Prepend(windowsOpenSSH << wxPATH_SEP);
+    }
+#endif
+
     EnvSetter env_setter{"PATH", path};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
 

@@ -3,6 +3,7 @@
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 
+#include <unordered_set>
 #include <wx/arrstr.h>
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
@@ -170,6 +171,13 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
         }
     }
 
+    // MSYS/Cygwin SSH binary causes issues with mouse handling, favour the Windows native one.
+    // Place it first, before MSYS paths
+    wxString windowsOpenSSH = R"(C:\Windows\System32\OpenSSH)";
+    if (wxFileName::DirExists(windowsOpenSSH)) {
+        paths_to_try.Insert(windowsOpenSSH, 0);
+    }
+
     // cargo (Windows native path)
     // e.g. C:\Users\user\.cargo\bin
     static const wxString kWindowsUsersBaseDir = R"(C:\Users)";
@@ -195,5 +203,16 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
 
     // Finally, add the executable path.
     paths_to_try.push_back(wxFileName{clStandardPaths::Get().GetExecutablePath()}.GetPath());
-    return ::wxJoin(paths_to_try, ';');
+
+    // Dedup entries
+    wxArrayString pathArr;
+    pathArr.reserve(paths_to_try.size());
+
+    std::unordered_set<wxString> uniquePaths;
+    for (const auto& path : paths_to_try) {
+        if (uniquePaths.insert(path).second) {
+            pathArr.Add(path);
+        }
+    }
+    return ::wxJoin(pathArr, ';');
 }

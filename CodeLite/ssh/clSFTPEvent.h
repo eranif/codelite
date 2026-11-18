@@ -73,6 +73,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_SESSION_OPENED, clSFTPEvent)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_SESSION_CLOSED, clSFTPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_READ, clSFTPEvent);
 
+// Failed to read a remote file (e.g. missing file, or no connection).
+// GetAccount() -> the account, GetRemoteFile() -> the file path, GetString() -> the error message
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_READ_ERROR, clSFTPEvent);
+
 // A remote folder was created (or already exists).
 // GetAccount() -> the account, GetRemoteFile() -> the folder path
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_NEW_FOLDER_COMPLETED, clSFTPEvent);

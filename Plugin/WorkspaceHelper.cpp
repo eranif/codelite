@@ -80,8 +80,13 @@ bool WorkspaceHelper::WritePrivateFile(IWorkspace* workspace, const wxString& fi
             wxBusyCursor bc;
 #if USE_SFTP
             if (!clSFTPManager::Get().AwaitWriteFile(content, remote_file_path, workspace->GetSshAccount())) {
-                clDEBUG() << "Failed to write file:" << remote_file_path << endl;
-                return false;
+                // the `.codelite` folder might be missing, try to create it and write again
+                auto account = SSHAccountInfo::LoadAccount(workspace->GetSshAccount());
+                clSFTPManager::Get().NewFolder(remote_file_path.BeforeLast('/'), account);
+                if (!clSFTPManager::Get().AwaitWriteFile(content, remote_file_path, workspace->GetSshAccount())) {
+                    clDEBUG() << "Failed to write file:" << remote_file_path << endl;
+                    return false;
+                }
             }
 #endif
             // update the cache
@@ -94,6 +99,11 @@ bool WorkspaceHelper::WritePrivateFile(IWorkspace* workspace, const wxString& fi
             wxFileName filepath = workspace->GetFileName();
             filepath.AppendDir(".codelite");
             filepath.SetFullName(filename);
+            if (FileUtils::WriteFileContent(filepath, content)) {
+                return true;
+            }
+            // the `.codelite` folder might be missing, try to create it and write again
+            wxFileName::Mkdir(filepath.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
             return FileUtils::WriteFileContent(filepath, content);
         }
     } else {

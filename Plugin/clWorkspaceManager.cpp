@@ -11,6 +11,7 @@ clWorkspaceManager::clWorkspaceManager()
     : m_workspace(nullptr)
 {
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceManager::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clWorkspaceManager::OnWorkspaceLoaded, this);
 }
 
 clWorkspaceManager::~clWorkspaceManager()
@@ -19,6 +20,7 @@ clWorkspaceManager::~clWorkspaceManager()
         wxDELETE(workspace);
     }
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceManager::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clWorkspaceManager::OnWorkspaceLoaded, this);
 }
 
 clWorkspaceManager& clWorkspaceManager::Get()
@@ -33,6 +35,15 @@ void clWorkspaceManager::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     SetWorkspace(nullptr);
+}
+
+void clWorkspaceManager::OnWorkspaceLoaded(clWorkspaceEvent& e)
+{
+    e.Skip();
+    if (m_workspace != nullptr) {
+        // for a remote workspace this is async: wait for `wxEVT_WORKSPACE_CONFIG_LOADED`
+        m_workspace->LoadConfig();
+    }
 }
 
 wxArrayString clWorkspaceManager::GetAllWorkspaces() const

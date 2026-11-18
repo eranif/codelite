@@ -41,6 +41,8 @@ protected:
     ~clWorkspaceManager() override;
 
     void OnWorkspaceClosed(clWorkspaceEvent& e);
+    /// load the workspace configuration (see `IWorkspace::LoadConfig()`)
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
 
 public:
     static clWorkspaceManager& Get();

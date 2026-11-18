@@ -283,10 +283,21 @@ bool clSFTPManager::DoSyncReadFile(const wxString& remotePath, const wxString& a
 void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink)
 {
     clDEBUG() << "SFTP Manager: reading file (async):" << remotePath << "for account:" << accountName << endl;
-    auto conn = GetConnectionPtrAddIfMissing(accountName);
-    CHECK_PTR_RET(conn);
+    auto fire_error = [remotePath, accountName, sink](const wxString& error) {
+        clSFTPEvent event_error{wxEVT_SFTP_FILE_READ_ERROR};
+        event_error.SetAccount(accountName);
+        event_error.SetRemoteFile(remotePath);
+        event_error.SetString(error);
+        sink->QueueEvent(event_error.Clone());
+    };
 
-    auto read_func = [remotePath, conn, accountName, sink]() {
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    if (!conn) {
+        fire_error(_("Failed to connect to the remote machine"));
+        return;
+    }
+
+    auto read_func = [remotePath, conn, accountName, sink, fire_error]() {
         // build the local file path
         SFTPAttribute::Ptr_t fileAttr;
         try {
@@ -296,7 +307,11 @@ void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& 
             wxUnusedVar(fileAttr);
 
             // convert to string and fire an event
-            wxString content((const char*)buffer.GetData(), buffer.GetDataLen());
+            wxString content = wxString::FromUTF8((const char*)buffer.GetData(), buffer.GetDataLen());
+            if (content.empty() && buffer.GetDataLen() > 0) {
+                // not a valid UTF-8, use the default conversion
+                content = wxString((const char*)buffer.GetData(), buffer.GetDataLen());
+            }
             clSFTPEvent event_read{wxEVT_SFTP_FILE_READ};
             event_read.SetAccount(accountName);
             event_read.SetRemoteFile(remotePath);
@@ -305,6 +320,8 @@ void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& 
 
         } catch (const clException& e) {
             clERROR() << "Failed to read remote file:" << remotePath << "." << e.What();
+            wxString error = e.What();
+            fire_error(error.empty() ? _("Failed to read remote file") : error);
         }
     };
     m_q.push_back(std::move(read_func));

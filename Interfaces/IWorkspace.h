@@ -26,30 +26,72 @@
 #pragma once
 
 #include "AsyncProcess/asyncprocess.h"
+#include "clResult.hpp"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
 
+#include <concepts>
 #include <list>
+#include <map>
 #include <optional>
+#include <type_traits>
+#include <variant>
+#include <vector>
 #include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/string.h>
 
 class IEditor;
+class clSFTPEvent;
+
+/// Fired when `IWorkspace::LoadConfig()` completes. For a remote workspace the load is async, so use this event to
+/// know when the configuration is ready. The event is sent to the workspace object and to the `EventNotifier`
+/// GetEventObject() is the workspace. GetString() is empty on success, otherwise it contains the error message
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_WORKSPACE_CONFIG_LOADED, clCommandEvent);
+
+/// Fired when `IWorkspace::SaveConfig()` completes. The event is sent to the workspace object and to the
+/// `EventNotifier`
+/// GetEventObject() is the workspace. GetString() is empty on success, otherwise it contains the error message
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_WORKSPACE_CONFIG_SAVED, clCommandEvent);
+
+/// The value types that can be stored in the workspace configuration
+template <typename T>
+concept WorkspaceConfigType = std::same_as<T, int> || std::same_as<T, size_t> || std::same_as<T, wxString> ||
+                              std::same_as<T, std::vector<wxString>> || std::same_as<T, double>;
 
 /**
  * @class IWorkspace
  * @brief an interface representing the workspace concept of CodeLite
  * Each plugin that wants to implement a workspace must implement this interface
  */
-class IWorkspace : public wxEvtHandler
+class WXDLLIMPEXP_SDK IWorkspace : public wxEvtHandler
 {
+public:
+    using ConfigValue = std::variant<int, size_t, wxString, std::vector<wxString>, double>;
+
 protected:
     wxString m_workspaceType;
+
+private:
+    /// category -> (name -> value)
+    std::map<wxString, std::map<wxString, ConfigValue>> m_config;
+    /// path of the remote config file while an async load is in progress (empty otherwise)
+    wxString m_pendingConfigPath;
+
+    const ConfigValue* FindConfigValue(const wxString& name, const wxString& category) const;
+    void StoreConfigValue(const wxString& name, const wxString& category, ConfigValue value);
+    /// parse the config file content. Values that were set while loading are not overridden
+    void ParseConfig(const wxString& content);
+    /// queue `type` on this object and on the EventNotifier
+    void NotifyConfigEvent(wxEventType type, const wxString& error);
+    void OnConfigFileRead(clSFTPEvent& event);
+    void OnConfigFileReadError(clSFTPEvent& event);
 
 public:
     using List_t = std::list<IWorkspace*>;
 
 public:
-    IWorkspace() = default;
+    IWorkspace();
     ~IWorkspace() override = default;
 
     /**
@@ -169,4 +211,72 @@ public:
         void Add(const wxArrayString& args) { argv.insert(argv.end(), args.begin(), args.end()); }
     };
     virtual std::optional<CommandResult> GetCommand(bool for_debug = false) const { return std::nullopt; }
+
+    /// Workspace configuration
+    /// -----------------------
+    /// Per workspace settings that are NOT saved into the workspace file. They are stored in the file
+    /// `WORKSPACE_DIR/.codelite/workspace-config.json`, for both local and remote workspaces.
+    /// The values are kept in memory until `SaveConfig()` is called.
+
+    /**
+     * @brief set a configuration value (in memory). Call `SaveConfig()` to persist it
+     * @param name the value name
+     * @param category the category (group) of the value
+     */
+    template <WorkspaceConfigType T>
+    void SetConfigValue(const wxString& name, const wxString& category, T value)
+    {
+        StoreConfigValue(name, category, ConfigValue{std::in_place_type<T>, std::move(value)});
+    }
+
+    /**
+     * @brief get a configuration value
+     * @param default_value returned if the value is missing, or its type does not match `T`.
+     * Numeric values (`int`, `size_t`, `double`) can be read as any numeric type
+     */
+    template <WorkspaceConfigType T>
+    T GetConfigValue(const wxString& name, const wxString& category, T default_value = T{}) const
+    {
+        const ConfigValue* value = FindConfigValue(name, category);
+        if (value == nullptr) {
+            return default_value;
+        }
+
+        if constexpr (std::is_arithmetic_v<T>) {
+            return std::visit(
+                [&default_value](const auto& v) -> T {
+                    using U = std::decay_t<decltype(v)>;
+                    if constexpr (std::is_arithmetic_v<U>) {
+                        if constexpr (std::is_unsigned_v<T> && std::is_signed_v<U>) {
+                            if (v < 0) {
+                                return default_value;
+                            }
+                        }
+                        return static_cast<T>(v);
+                    } else {
+                        return default_value;
+                    }
+                },
+                *value);
+        } else {
+            const T* typed = std::get_if<T>(value);
+            return typed ? *typed : default_value;
+        }
+    }
+
+    /**
+     * @brief discard the in-memory configuration and load it from the workspace `.codelite` folder.
+     * A missing (or invalid) file results in an empty configuration.
+     * For a remote workspace the file is read asynchronously: this method returns immediately.
+     * In both cases `wxEVT_WORKSPACE_CONFIG_LOADED` is fired (on this object and on the EventNotifier) when the
+     * load is completed, and the values should be read only after it.
+     * @event wxEVT_WORKSPACE_CONFIG_LOADED
+     */
+    virtual void LoadConfig();
+
+    /**
+     * @brief write the configuration to the workspace `.codelite` folder
+     * @event wxEVT_WORKSPACE_CONFIG_SAVED fired (on this object and on the EventNotifier) on success and on failure
+     */
+    virtual clStatus SaveConfig();
 };

@@ -103,6 +103,8 @@ public:
      * @param remotePath file path on the remote machine
      * @param accountName the account name to use
      * @param sink callback object for completion
+     * @event wxEVT_SFTP_FILE_READ fired on success, GetContent() contains the file content
+     * @event wxEVT_SFTP_FILE_READ_ERROR fired on failure, GetString() contains the error message
      */
     void AsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink);
 

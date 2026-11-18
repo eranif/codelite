@@ -8,12 +8,11 @@ High:
 - [x] Find references: include line number if possible.
 - [ ] BUG: Markdown renderer, fails to render "task" (empty checkbox) if it is followed by code tags (inline like `code`)
 - [ ] BUG: Markdown renderer, renders "checked task" incorrectly (checkbox with "V" inside it) if it is followed by code tags (inline like `code`) - it consumes some of the codetag background
-- [ ] Change the way `Find References` gather entries. We should have 2 lists: left will hold the files, while the right will contain the matches.
+- [x] Change the way `Find References` gather entries. We should have 2 lists: left will hold the files, while the right will contain the matches.
 
 Medium:
 -----
 
-- [ ] AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
 - [ ] Terminal: when changing a terminal theme, apply it to newly opened terminals only.
 - [ ] Terminal: remember, on per terminal type, the last theme used for it.
 - [ ] wxCrafter: we should be able to provide relative path for the generated files

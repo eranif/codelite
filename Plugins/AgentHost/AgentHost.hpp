@@ -28,6 +28,8 @@
 #include "AgentHostPage.hpp"
 #include "plugin.h"
 
+#include <optional>
+
 class wxTerminalEvent;
 
 class AgentHost : public IPlugin
@@ -52,7 +54,7 @@ public:
 
 protected:
     void OnSettings(wxCommandEvent& event);
-    void ShowAgentTerminal(AgentType agent_type);
+    void ShowAgentTerminal(AgentType agent_type, const wxString& workingDirectory = wxEmptyString);
     void OnPageClosing(wxNotifyEvent& event);
     /// The keyboard shortcuts changed: show the new one in the tooltip of the side bar button
     void OnShortcutsUpdated(clCommandEvent& event);

@@ -2,6 +2,7 @@
 
 #include "AgentHostSettgingsDlg.hpp"
 #include "Keyboard/clKeyboardManager.h"
+#include "LaunchAIAgentDlg.hpp"
 #include "Platform/Platform.hpp"
 #include "clSideBarCtrl.hpp"
 #include "globals.h"
@@ -122,18 +123,18 @@ void AgentHost::ShowAgentsDialog()
         choices.Add(label);
     }
 
-    wxSingleChoiceDialog dlg(EventNotifier::Get()->TopFrame(),
-                             _("Select the agent to launch for the current workspace"),
-                             _("Launch an AI Agent"),
-                             choices);
-    dlg.SetSelection(suggested == -1 ? 0 : suggested);
-    if (dlg.ShowModal() != wxID_OK) {
+    auto* workspace = clWorkspaceManager::Get().GetWorkspace();
+    CHECK_PTR_RET(workspace);
+
+    wxString workingDirectory = workspace->GetDir();
+    LaunchAIAgentDlg dlg(EventNotifier::Get()->TopFrame(), choices, suggested, workingDirectory);
+    if (dlg.ShowModal() != wxID_OK || dlg.GetAgent() == wxNOT_FOUND) {
         return;
     }
 
-    const auto type = agents[dlg.GetSelection()].type;
+    const auto type = agents[dlg.GetAgent()].type;
     clConfig::Get().Write(kAgentHostLastAgent, static_cast<int>(type));
-    ShowAgentTerminal(type);
+    ShowAgentTerminal(type, dlg.GetWorkingDirectory());
 }
 
 void AgentHost::OnSettings(wxCommandEvent& event)
@@ -204,7 +205,7 @@ std::optional<AgentExecutable> ResolveAgentExecutable(AgentType agent_type, bool
     };
 }
 
-void AgentHost::ShowAgentTerminal(AgentType agent_type)
+void AgentHost::ShowAgentTerminal(AgentType agent_type, const wxString& workingDirectory)
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace == nullptr) {
@@ -259,7 +260,8 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type)
     agentPage->StartAgentHost(AgentInfo{
         .agent_type = agent_type,
         .executable = result->executable,
-        .workingDirectory = clWorkspaceManager::Get().GetWorkspace()->GetDir(),
+        .workingDirectory =
+            workingDirectory.empty() ? clWorkspaceManager::Get().GetWorkspace()->GetDir() : workingDirectory,
         .sshAccount = result->sshAccount,
     });
 }

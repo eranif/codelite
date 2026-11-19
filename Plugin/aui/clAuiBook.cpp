@@ -316,9 +316,10 @@ public:
 
         // The "Tab height" setting is the space above and below the label of a tab. As clAuiFlatTabArt, every step of
         // the setting adds 1 DIP at each side. The default setting (Short) gives the default padding of GlyphTabArt: 6
-        // DIPs, and 10 on GTK
+        // DIPs
 #ifdef __WXGTK__
-        constexpr int kPaddingBase = 8;
+        // The default of GlyphTabArt on GTK (10 DIPs) makes the tabs too tall: Short gives 4 DIPs
+        constexpr int kPaddingBase = 2;
 #else
         constexpr int kPaddingBase = 4;
 #endif

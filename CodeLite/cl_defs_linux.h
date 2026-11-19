@@ -5,8 +5,8 @@
 //-------------------
 // Linux macros
 //-------------------
-#define CL_USE_NATIVEBOOK 1
-#define MAINBOOK_AUIBOOK 0
+#define CL_USE_NATIVEBOOK 0
+#define MAINBOOK_AUIBOOK 1
 #define USE_NATIVETOOLBAR 1
 
 #ifndef PLUGINS_DIR

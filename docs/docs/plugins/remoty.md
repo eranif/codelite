@@ -30,7 +30,7 @@ the local machine
 ## Open an existing workspace
 ---
 
-* From the main menu bar: `File` &#8594; `Open` &#8594; `Open Workspace`
+* From the main menu bar: `File` &#8594; `Open Workspace...`
 * In the `Switch to workspace` dialog that opened, click on the **bottom** `Browse` button (from the `Remote workspace` line)
 * Select the workspace file on the remote machine
 * Click `OK`

@@ -26,7 +26,7 @@
 !!! important
     This plugins only work with the [default C++ workspace][2]
     
-- From the menu, go to `Workspace` &#8594; `New Project` and select project category to `UnitTest++`
+- From the menu, go to `File` &#8594; `Projects` &#8594; `New Project` and select project category to `UnitTest++`
 - Fill in the project details and click `OK`. 
  
 A new project with a new file is created with a single `main.cpp` file. This file is heavily documented with examples on how manually to add tests

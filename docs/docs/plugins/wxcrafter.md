@@ -10,7 +10,7 @@ for some information on wxWidgets. In this tutorial, we will create a simple wxD
 ## Hello World
 ---
 
-- Create an empty workspace from `File` &#8594; `New` &#8594; `New Workspace`
+- Create an empty workspace from `File` &#8594; `New Workspace...`
 - Select `C++`
 - Set the workspace path and name and click `Ok`
 - Right click on the workspace and select `New` &#8594; `New Project`

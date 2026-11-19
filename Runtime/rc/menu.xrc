@@ -45,17 +45,8 @@
     <object class="wxMenu" name="file_tool_or_menuitem">
       <label>&amp;File</label>
       <style>wxMENU_TEAROFF</style>
-      <object class="wxMenu" name="wxID_ANY">
-        <label>&amp;New</label>
-        <object class="wxMenuItem" name="new_file">
-          <label>&amp;New Empty File</label>
-        </object>
-        <object class="wxMenuItem" name="file_new_workspace">
-          <label>New &amp;Workspace</label>
-        </object>
-        <object class="wxMenuItem" name="file_new_project">
-          <label>New &amp;Project</label>
-        </object>
+      <object class="wxMenuItem" name="new_file">
+        <label>&amp;New Empty File</label>
       </object>
       <object class="wxMenu" name="wxID_ANY">
         <label>&amp;Open</label>
@@ -64,10 +55,6 @@
         </object>
         <object class="wxMenuItem" name="open_folder">
           <label>&amp;Open Folder...</label>
-        </object>
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="file_switch_to_workspace">
-          <label>Open &amp;Workspace...</label>
         </object>
       </object>
       <object class="wxMenuItem" name="refresh_file">
@@ -84,6 +71,44 @@
         <label>Save all files</label>
       </object>
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+      <object class="wxMenuItem" name="close_file">
+        <label>&amp;Close</label>
+      </object>
+      <object class="wxMenuItem" name="wxID_CLOSE_ALL">
+        <label>Close All</label>
+      </object>
+      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+      <object class="wxMenuItem" name="new_workspace">
+        <label>N&amp;ew Workspace...</label>
+      </object>
+      <object class="wxMenuItem" name="switch_to_workspace">
+        <label>Open Wor&amp;kspace...</label>
+      </object>
+      <object class="wxMenuItem" name="import_from_msvs">
+        <label>&amp;Import other IDEs solution/workspace files...</label>
+      </object>
+      <object class="wxMenuItem" name="close_workspace">
+        <label>C&amp;lose Workspace</label>
+      </object>
+      <object class="wxMenuItem" name="reload_workspace">
+        <label>Reloa&amp;d Workspace</label>
+      </object>
+      <object class="wxMenu" name="wxID_ANY">
+        <label>&amp;Projects</label>
+        <object class="wxMenuItem" name="new_project">
+          <label>New &amp;Project</label>
+        </object>
+        <object class="wxMenuItem" name="add_project">
+          <label>&amp;Add an existing project</label>
+        </object>
+        <object class="wxMenuItem" name="project_properties">
+          <label>&amp;Open Active Project Settings...</label>
+        </object>
+        <object class="wxMenuItem" name="set_active_project">
+          <label>&amp;Select Active Project...</label>
+        </object>
+      </object>
+      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
       <object class="wxMenuItem" name="duplicate_tab">
         <label>Duplicate Tab...</label>
       </object>
@@ -93,16 +118,6 @@
       </object>
       <object class="wxMenuItem" name="wxID_PRINT">
         <label>Print...</label>
-      </object>
-      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-      <object class="wxMenuItem" name="close_file">
-        <label>&amp;Close</label>
-      </object>
-      <object class="wxMenuItem" name="wxID_CLOSE_ALL">
-        <label>Close All</label>
-      </object>
-      <object class="wxMenuItem" name="file_close_workspace">
-        <label>Close Workspace</label>
       </object>
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
       <object class="wxMenu" name="recent_files">
@@ -485,40 +500,6 @@
       </object>
       <!-- An ID range for bookmark types. 15 is overkill, but future-proof... -->
       <ids-range name="BookmarkTypes" size="15"/>
-    </object>
-    <!-- Workspace Menu -->
-    <object class="wxMenu" name="project_menu">
-      <label>&amp;Workspace</label>
-      <style>wxMENU_TEAROFF</style>
-      <object class="wxMenuItem" name="new_workspace">
-        <label>&amp;New Workspace...</label>
-      </object>
-      <object class="wxMenuItem" name="switch_to_workspace">
-        <label>&amp;Open Workspace...</label>
-      </object>
-      <object class="wxMenuItem" name="close_workspace">
-        <label>&amp;Close Workspace</label>
-      </object>
-      <object class="wxMenuItem" name="reload_workspace">
-        <label>&amp;Reload Workspace</label>
-      </object>
-      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-      <object class="wxMenuItem" name="import_from_msvs">
-        <label>&amp;Import other IDEs solution/workspace files...</label>
-      </object>
-      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-      <object class="wxMenuItem" name="new_project">
-        <label>New &amp;Project</label>
-      </object>
-      <object class="wxMenuItem" name="add_project">
-        <label>&amp;Add an existing project</label>
-      </object>
-      <object class="wxMenuItem" name="project_properties">
-        <label>&amp;Open Active Project Settings...</label>
-      </object>
-      <object class="wxMenuItem" name="set_active_project">
-        <label>&amp;Select Active Project...</label>
-      </object>
     </object>
     <object class="wxMenu" name="build_menu">
       <label>&amp;Build</label>

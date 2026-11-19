@@ -21,9 +21,9 @@ The setup wizard allows you configure the following:
 ## `hello world` program
 ---
 
-1. Create an empty workspace: `File` &#8594; `New` &#8594; `New workspace` and select `C++`
+1. Create an empty workspace: `File` &#8594; `New Workspace...` and select `C++`
 2. On the next dialog, fill the `Workspace path` and `Workspace Name` properties
-3. Add a new project to the workspace: `File` &#8594; `New` &#8594; `New project`
+3. Add a new project to the workspace: `File` &#8594; `Projects` &#8594; `New Project`
 4. Fill the dialog similar to the values shown below (your compiler name is probably different than the one shown on the below screenshot)
 
 ![New Project Dialog](img/hello_world/new_project.png)

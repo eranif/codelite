@@ -20,7 +20,7 @@ In its core, the `Rust` plugin is a fancy wrapper around the [File System Worksp
 
 Similar to any other Workspace:
 
-- From the main menu bar, choose `File` &#8594; `New` &#8594; `New workspace`
+- From the main menu bar, choose `File` &#8594; `New Workspace...`
 - Choose the `Rust` workspace
 - Choose the folder for the workspace.
 - Give the workspace a name (`rust` recommendations are to use `snake_case` naming conventions)

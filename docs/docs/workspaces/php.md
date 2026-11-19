@@ -6,7 +6,7 @@ PHP code is edited in a [File System Workspace][4]. The PHP language server ([`p
 ## Set up
 ---
 
-- Create a File System Workspace for the folder with your code: `File` &#8594; `New` &#8594; `New workspace` and select `File System Workspace`
+- Create a File System Workspace for the folder with your code: `File` &#8594; `New Workspace...` and select `File System Workspace`
 - Install and enable `phpantom_lsp`, see [Language Server Plugin][8]
 - To debug, select `XDebug` as the debugger in the workspace settings, see [XDebug][1]
 

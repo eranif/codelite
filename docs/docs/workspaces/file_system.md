@@ -13,7 +13,7 @@ Also, any action on any folder in the tree view is applied to the file system (e
 ## Set up
 ---
 
-- From the `File` menu, select `New` &#8594; `New workspace`
+- From the `File` menu, select `New Workspace...`
 - Choose `File System Workspace`
 - Select the folder containing your code and give the workspace a name
 

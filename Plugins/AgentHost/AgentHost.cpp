@@ -155,14 +155,7 @@ void AgentHost::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     AgentHostSettgingsDlg dlg{EventNotifier::Get()->TopFrame()};
-    if (dlg.ShowModal() == wxID_OK) {
-        clConfig::Get().Write(kAgentHostClaudeCodeExecutable, dlg.GetClaudeCodeExecutable());
-        clConfig::Get().Write(kAgentHostKiroCliExecutable, dlg.GetKiroCliExecutable());
-        clConfig::Get().Write(kAgentHostOpenCodeExecutable, dlg.GetOpenCodeExecutable());
-        clConfig::Get().Write(kAgentHostClaudeCodeReviewArgs, dlg.GetClaudeCodeReviewArgs());
-        clConfig::Get().Write(kAgentHostKiroCliReviewArgs, dlg.GetKiroCliReviewArgs());
-        clConfig::Get().Write(kAgentHostOpenCodeReviewArgs, dlg.GetOpenCodeReviewArgs());
-    }
+    dlg.ShowModal();
 }
 
 std::optional<AgentExecutable> ResolveAgentExecutable(AgentType agent_type, bool warn)
@@ -176,18 +169,22 @@ std::optional<AgentExecutable> ResolveAgentExecutable(AgentType agent_type, bool
 
     wxString defaultExec;
     wxString configParam;
+    wxString argsParam;
     switch (agent_type) {
     case AgentType::kClaudeCode:
         defaultExec = "claude";
         configParam = kAgentHostClaudeCodeExecutable;
+        argsParam = kAgentHostClaudeCodeArgs;
         break;
     case AgentType::kKiroCli:
         defaultExec = "kiro-cli";
         configParam = kAgentHostKiroCliExecutable;
+        argsParam = kAgentHostKiroCliArgs;
         break;
     case AgentType::kOpenCode:
         defaultExec = "opencode";
         configParam = kAgentHostOpenCodeExecutable;
+        argsParam = kAgentHostOpenCodeArgs;
         break;
     }
     if (workspace->IsRemote()) {
@@ -213,8 +210,12 @@ std::optional<AgentExecutable> ResolveAgentExecutable(AgentType agent_type, bool
         }
     }
 
+    wxString args = clConfig::Get().Read(argsParam, wxString{});
+    args.Trim().Trim(false);
+
     return AgentExecutable{
         .executable = tool_executable.value(),
+        .args = args,
         .sshAccount = sshAccount,
     };
 }
@@ -274,6 +275,7 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type, const wxString& workingD
     agentPage->StartAgentHost(AgentInfo{
         .agent_type = agent_type,
         .executable = result->executable,
+        .args = result->args,
         .workingDirectory =
             workingDirectory.empty() ? clWorkspaceManager::Get().GetWorkspace()->GetDir() : workingDirectory,
         .sshAccount = result->sshAccount,

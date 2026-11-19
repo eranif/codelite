@@ -507,6 +507,9 @@ void AgentHostPage::RestartAgentHost()
     // Remember the label given to the tab, the blink code needs it.
     wxString baseCommand = m_agentInfo.executable;
     baseCommand.Prepend("\"").Append("\"");
+    if (!m_agentInfo.args.empty()) {
+        baseCommand << " " << m_agentInfo.args;
+    }
     wxString command_to_run;
 
     switch (m_agentInfo.agent_type) {

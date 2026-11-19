@@ -26,6 +26,8 @@ enum class AgentType {
 /// The executable of an agent and, for a remote workspace, the SSH account it runs on
 struct AgentExecutable {
     wxString executable;
+    /// The user's extra arguments for the agent (from the settings). Shell text: the user does the quoting
+    wxString args;
     std::optional<SSHAccountInfo> sshAccount;
 };
 
@@ -37,6 +39,8 @@ std::optional<AgentExecutable> ResolveAgentExecutable(AgentType agent_type, bool
 struct AgentInfo {
     AgentType agent_type;
     wxString executable;
+    /// The user's extra arguments for the agent (from the settings). Shell text: the user does the quoting
+    wxString args;
     wxString workingDirectory;
     std::optional<SSHAccountInfo> sshAccount;
 };

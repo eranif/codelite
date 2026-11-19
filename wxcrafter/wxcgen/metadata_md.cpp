@@ -503,17 +503,22 @@ XRC). The generated files are overwritten on every run and carry the banner "Do 
 
 **Change the `.wxcp` file, then regenerate. Never edit the generated files.**
 
+**Always pass `--bitmaps-in-base-class-file` to `wxcgen`.** The build generates the code with this option, so the
+bitmaps code is inside the base class source file. Without it, `wxcgen` writes the bitmaps code to a separate
+`_bitmaps.cpp` file that the build does not use, and the base class source file no longer matches the build.
+
 ## Workflow
 
-1. Find the `.wxcp` file and the files generated from it: `wxcgen --verbose <file>.wxcp` prints the output
-   directories and the generated files (base class files and subclass files).
+1. Find the `.wxcp` file and the files generated from it: `wxcgen --bitmaps-in-base-class-file --verbose
+   <file>.wxcp` prints the output directories and the generated files (base class files and subclass files). This is
+   not a dry run: it also generates the code.
 2. Read `references/index.md`, then `references/format.md` (the JSON layout and the load semantics: read it before
    writing any JSON). Then read `references/common.md` and only the category files of the controls you use.
    Everything is in the reference: the `m_type` ID, styles, sizer flags, property labels, defaults and events.
 3. Edit the `.wxcp` file with the smallest possible change. Keep its formatting and indentation. To add a control,
    copy a sibling widget of the same type and adjust it, rather than writing one from scratch. Names (`Name:`) must be
    unique inside the top-level window.
-4. Run `wxcgen --verbose <file>.wxcp`. It must exit with 0. The reference tells you what each value means; if
+4. Run `wxcgen --bitmaps-in-base-class-file --verbose <file>.wxcp`. It must exit with 0. The reference tells you what each value means; if
    `wxcgen` fails or silently drops a widget, re-check `m_type` and the `m_label` spelling.
 5. Review the diff: the `.wxcp` file must only contain the intended change, and the generated files must change
    accordingly.
@@ -523,13 +528,13 @@ XRC). The generated files are overwritten on every run and carry the banner "Do 
 
 ## wxcgen
 
-`wxcgen [options] <file>.wxcp...`
+`wxcgen --bitmaps-in-base-class-file [options] <file>.wxcp...`
 
 | Option | Meaning |
 |---|---|
 | `-o <dir>` | Output directory of the base classes |
 | `--verbose` | Print the output directories and the generated files |
-| `--bitmaps-in-base-class-file` | Put the bitmaps code in the base class source file (default: its own `_bitmaps.cpp`) |
+| `--bitmaps-in-base-class-file` | Put the bitmaps code in the base class source file (default: its own `_bitmaps.cpp`). Always pass it |
 | `-U` | Update and save input .wxcp files without generating code |
 | `-v` | Print the version |
 

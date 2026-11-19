@@ -169,6 +169,11 @@ enum {
     ID_WXACTIVITYINDICATOR,           // 4523
     ID_WXTIMEPICKERCTRL,              // 4524
     ID_WXPOPUPTRANSIENTWINDOW,        // 4525
+    ID_WXWRAPSIZER,                   // 4526
+    ID_WXSPINCTRLDOUBLE,              // 4527
+    ID_WXEDITABLELISTBOX,             // 4528
+    ID_WXHTMLLISTBOX,                 // 4529
+    ID_WXVLISTBOX,                    // 4530
     // ADD_NEW_CONTROL
     ID_LAST_CONTROL
 };

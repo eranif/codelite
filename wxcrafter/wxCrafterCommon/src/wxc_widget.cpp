@@ -70,6 +70,7 @@
 #include "date_picker_ctrl.h"
 #include "dialog_wrapper.h"
 #include "dir_picker_ctrl_wrapper.h"
+#include "editable_list_box_wrapper.h"
 #include "file_picker_ctrl_wrapper.h"
 #include "flexgridsizer_wrapper.h"
 #include "font_picker_ctrl_wrapper.h"
@@ -79,6 +80,7 @@
 #include "gl_canvas_wrapper.h"
 #include "grid_bag_sizer_wrapper.h"
 #include "grid_sizer_wrapper.h"
+#include "html_list_box_wrapper.h"
 #include "html_window_wrapper.h"
 #include "hyper_link_ctrl_wrapper.h"
 #include "image_list_wrapper.h"
@@ -100,6 +102,7 @@
 #include "slider_wrapper.h"
 #include "spacer_wrapper.h"
 #include "spin_button_wrapper.h"
+#include "spin_ctrl_double_wrapper.h"
 #include "spin_ctrl_wrapper.h"
 #include "splitter_window_page.h"
 #include "splitter_window_wrapper.h"
@@ -117,8 +120,10 @@
 #include "tree_ctrl_wrapper.h"
 #include "tree_list_ctrl_column_wrapper.h"
 #include "tree_list_ctrl_wrapper.h"
+#include "vlistbox_wrapper.h"
 #include "web_view_wrapper.h"
 #include "wizard_wrapper.h"
+#include "wrap_sizer_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_settings.h"
 #include "wxgui_defs.h"
@@ -1887,6 +1892,10 @@ void wxcWidget::SetParent(wxcWidget* parent)
     case ID_WXSIMPLEHTMLLISTBOX:
     case ID_WXACTIVITYINDICATOR:
     case ID_WXTIMEPICKERCTRL:
+    case ID_WXSPINCTRLDOUBLE:
+    case ID_WXEDITABLELISTBOX:
+    case ID_WXHTMLLISTBOX:
+    case ID_WXVLISTBOX:
         return TYPE_CONTROL;
 
     case ID_WXGRID:
@@ -2036,6 +2045,7 @@ void wxcWidget::SetParent(wxcWidget* parent)
     case ID_WXSTATICBOXSIZER:
     case ID_WXGRIDSIZER:
     case ID_WXGRIDBAGSIZER:
+    case ID_WXWRAPSIZER:
         return TYPE_SIZER;
 
     case ID_WXPANEL:
@@ -2820,6 +2830,11 @@ std::pair<const int, std::unique_ptr<wxcWidget> (*)()> Entry()
         Entry<SimpleHtmlListBoxWrapper>(),
         Entry<ActivityIndicatorWrapper>(),
         Entry<TimePickerCtrlWrapper>(),
+        Entry<WrapSizerWrapper>(),
+        Entry<SpinCtrlDoubleWrapper>(),
+        Entry<EditableListBoxWrapper>(),
+        Entry<HtmlListBoxWrapper>(),
+        Entry<VListBoxWrapper>(),
     };
 
     if (auto it = factory.find(id); it != factory.end()) {
@@ -3033,6 +3048,16 @@ std::pair<const int, std::unique_ptr<wxcWidget> (*)()> Entry()
         return ID_WXACTIVITYINDICATOR;
     if (classname == wxT("wxTimePickerCtrl"))
         return ID_WXTIMEPICKERCTRL;
+    if (classname == wxT("wxWrapSizer"))
+        return ID_WXWRAPSIZER;
+    if (classname == wxT("wxSpinCtrlDouble"))
+        return ID_WXSPINCTRLDOUBLE;
+    if (classname == wxT("wxEditableListBox"))
+        return ID_WXEDITABLELISTBOX;
+    if (classname == wxT("wxHtmlListBox"))
+        return ID_WXHTMLLISTBOX;
+    if (classname == wxT("wxVListBox"))
+        return ID_WXVLISTBOX;
     return wxNOT_FOUND;
 }
 

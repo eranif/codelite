@@ -61,6 +61,7 @@
 #include "date_picker_ctrl.h"
 #include "dialog_wrapper.h"
 #include "dir_picker_ctrl_wrapper.h"
+#include "editable_list_box_wrapper.h"
 #include "file_picker_ctrl_wrapper.h"
 #include "flexgridsizer_wrapper.h"
 #include "font_picker_ctrl_wrapper.h"
@@ -71,6 +72,7 @@
 #include "globals.h"
 #include "grid_bag_sizer_wrapper.h"
 #include "grid_sizer_wrapper.h"
+#include "html_list_box_wrapper.h"
 #include "html_window_wrapper.h"
 #include "hyper_link_ctrl_wrapper.h"
 #include "image_list_wrapper.h"
@@ -92,6 +94,7 @@
 #include "slider_wrapper.h"
 #include "spacer_wrapper.h"
 #include "spin_button_wrapper.h"
+#include "spin_ctrl_double_wrapper.h"
 #include "spin_ctrl_wrapper.h"
 #include "splitter_window_page.h"
 #include "splitter_window_wrapper.h"
@@ -109,8 +112,10 @@
 #include "tree_ctrl_wrapper.h"
 #include "tree_list_ctrl_column_wrapper.h"
 #include "tree_list_ctrl_wrapper.h"
+#include "vlistbox_wrapper.h"
 #include "web_view_wrapper.h"
 #include "wizard_wrapper.h"
+#include "wrap_sizer_wrapper.h"
 #include "wxc_widget.h"
 #include "wxgui_bitmaploader.h"
 
@@ -270,6 +275,11 @@ Allocator::Allocator()
     Register(new SimpleHtmlListBoxWrapper(), "wxhtmllistbox");
     Register(new ActivityIndicatorWrapper(), "wxactivityindicator");
     Register(new TimePickerCtrlWrapper(), "wxtimepickerctrl");
+    Register(new WrapSizerWrapper(), "wxwrapsizer");
+    Register(new SpinCtrlDoubleWrapper(), "wxspinctrldouble");
+    Register(new EditableListBoxWrapper(), "wxeditablelistbox");
+    Register(new HtmlListBoxWrapper(), "wxhtmllistbox");
+    Register(new VListBoxWrapper(), "wxvlistbox");
 
     // ADD_NEW_CONTROL
     DoLinkAll();

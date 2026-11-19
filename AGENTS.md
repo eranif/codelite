@@ -15,6 +15,12 @@
 
 ## Build & Tooling Notes
 - CodeLite uses CMake. To build, run from root folder: `./build.sh`
+- **Windows:** `build.sh` must run inside the MSYS2 **CLANG64** environment (it needs `clang++`, `cmake`, `bison` and `MSYSTEM=CLANG64`). The Bash tool of an agent is Git Bash, which is not enough: it has no clang64 tools, and `/home` is a different folder there. Start MSYS2's own bash as a login shell instead:
+  ```
+  MSYSTEM=CLANG64 CHERE_INVOKING=1 /c/msys64/usr/bin/bash.exe -l -c "cd /home/eran/devl/codelite && ./build.sh"
+  ```
+  Use `./build.sh --cmake` to force the configure step, for example after adding or removing source files (the `CMakeLists.txt` files use `GLOB_RECURSE`). Redirect the output to a log file, and read the exit code of the command, not only the "completed" notice of a background task.
+- Always build with `./build.sh` (and its options). Do not run `cmake`, `make` or `mingw32-make` by hand, and do not use the `wxcrafter` target of `build.sh` unless the user asks for it.
 - Keep `compile_commands.json` in sync by regenerating the build directory before running linters or language tooling.
 - After generating a code, use `clang-format -i <source-file>` to keep it formatted properly.
 

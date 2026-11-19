@@ -94,6 +94,7 @@ enum {
     ID_CHANGE_SIZER_FLEXGRIDSIZER,
     ID_CHANGE_SIZER_GRIDSIZER,
     ID_CHANGE_SIZER_GRIDBAGSIZER,
+    ID_CHANGE_SIZER_WRAPSIZER,
     ID_CHANGE_SIZER_LAST
 };
 
@@ -105,6 +106,7 @@ enum {
     ID_INSERT_INTO_SIZER_FLEXGRIDSIZER,
     ID_INSERT_INTO_SIZER_GRIDSIZER,
     ID_INSERT_INTO_SIZER_GRIDBAGSIZER,
+    ID_INSERT_INTO_SIZER_WRAPSIZER,
     ID_INSERT_INTO_SIZER_LAST
 };
 
@@ -308,6 +310,7 @@ FLAGS_t DoGetValidMenus(const wxcWidget* item)
     case ID_WXSTATICBOXSIZER:
     case ID_WXGRIDSIZER:
     case ID_WXGRIDBAGSIZER:
+    case ID_WXWRAPSIZER:
         return MT_SIZERS_TYPE | MT_SIZERS | MT_CONTROLS | MT_CONTAINERS | MT_COMMON_MENU | MT_EDIT |
                MT_INSERT_INTO_SIZER;
     case ID_WXPROPERTYGRIDMANAGER:
@@ -402,6 +405,7 @@ wxMenu* CreateControlsMenu()
     MENU_ENTRY_PTR(ID_WXTOGGLEBUTTON, wxT("wxToggleButton"), wxT("wxtogglebutton"));
     MENU_ENTRY_PTR(ID_WXBITMAPTOGGLEBUTTON, wxT("wxBitmapToggleButton"), wxT("wxbitmaptogglebutton"));
     MENU_ENTRY_PTR(ID_WXSPINCTRL, wxT("wxSpinCtrl"), wxT("wxspinctrl"));
+    MENU_ENTRY_PTR(ID_WXSPINCTRLDOUBLE, wxT("wxSpinCtrlDouble"), wxT("wxspinctrldouble"));
     MENU_ENTRY_PTR(ID_WXSPINBUTTON, wxT("wxSpinButton"), wxT("wxspinbutton"));
     MENU_ENTRY_PTR(ID_WXHYPERLINK, wxT("wxHyperlinkCtrl"), wxT("wxhyperlink"));
     MENU_ENTRY_PTR(ID_WXCOMMANDLINKBUTTON, wxT("wxCommandLinkButton"), wxT("wxcommandlinkbutton"));
@@ -430,6 +434,9 @@ wxMenu* CreateControlsMenu()
 
     MENU_ENTRY_PTR(ID_WXLISTBOX, wxT("wxListBox"), wxT("wxlistbox"));
     MENU_ENTRY_PTR(ID_WXSIMPLEHTMLLISTBOX, wxT("wxSimpleHtmlListBox"), wxT("wxhtmllistbox"));
+    MENU_ENTRY_PTR(ID_WXHTMLLISTBOX, wxT("wxHtmlListBox"), wxT("wxhtmllistbox"));
+    MENU_ENTRY_PTR(ID_WXVLISTBOX, wxT("wxVListBox"), wxT("wxvlistbox"));
+    MENU_ENTRY_PTR(ID_WXEDITABLELISTBOX, wxT("wxEditableListBox"), wxT("wxeditablelistbox"));
     MENU_ENTRY_PTR(ID_WXCHECKLISTBOX, wxT("wxCheckListBox"), wxT("wxchecklistbox"));
     MENU_ENTRY_PTR(ID_WXREARRANGELIST, wxT("wxRearrangeList"), wxT("wxrearrangelist"));
     MENU_ENTRY_PTR(ID_WXLISTCTRL, wxT("wxListCtrl"), wxT("wxlistctrl"));
@@ -478,6 +485,7 @@ wxMenu* CreateInsertIntoSizerMenu()
     MENU_ENTRY_PTR(ID_INSERT_INTO_SIZER_FLEXGRIDSIZER, "wxFlexGridSizer", "wxflexgridsizer");
     MENU_ENTRY_PTR(ID_INSERT_INTO_SIZER_GRIDSIZER, "wxGridSizer", "wxgridsizer");
     MENU_ENTRY_PTR(ID_INSERT_INTO_SIZER_GRIDBAGSIZER, "wxGridBagSizer", "wxgridbagsizer");
+    MENU_ENTRY_PTR(ID_INSERT_INTO_SIZER_WRAPSIZER, "wxWrapSizer", "wxwrapsizer");
     return menu;
 }
 
@@ -491,6 +499,7 @@ wxMenu* CreateSizerTypeMenu()
     MENU_ENTRY_PTR(ID_CHANGE_SIZER_FLEXGRIDSIZER, "wxFlexGridSizer", "wxflexgridsizer");
     MENU_ENTRY_PTR(ID_CHANGE_SIZER_GRIDSIZER, "wxGridSizer", "wxgridsizer");
     MENU_ENTRY_PTR(ID_CHANGE_SIZER_GRIDBAGSIZER, "wxGridBagSizer", "wxgridbagsizer");
+    MENU_ENTRY_PTR(ID_CHANGE_SIZER_WRAPSIZER, "wxWrapSizer", "wxwrapsizer");
     return menu;
 }
 
@@ -504,6 +513,7 @@ wxMenu* CreateSizersMenu()
     MENU_ENTRY_PTR(ID_WXFLEXGRIDSIZER, wxT("wxFlexGridSizer"), wxT("wxflexgridsizer"));
     MENU_ENTRY_PTR(ID_WXGRIDSIZER, wxT("wxGridSizer"), wxT("wxgridsizer"));
     MENU_ENTRY_PTR(ID_WXGRIDBAGSIZER, wxT("wxGridBagSizer"), wxT("wxgridbagsizer"));
+    MENU_ENTRY_PTR(ID_WXWRAPSIZER, wxT("wxWrapSizer"), wxT("wxwrapsizer"));
     MENU_SEPARATOR_PTR();
     MENU_ENTRY_PTR(ID_WXSTDDLGBUTTONSIZER, wxT("wxStdDialogButtonSizer"), wxT("stddlgbuttonsizer"));
     MENU_ENTRY_PTR(ID_WXSTDBUTTON, _("Standard wxButton"), wxT("wxbutton"));
@@ -3639,6 +3649,10 @@ void GUICraftMainPanel::DoChangeOrInsertIntoSizer(int id)
     case ID_CHANGE_SIZER_STATICBOXSIZER:
     case ID_INSERT_INTO_SIZER_STATICBOXSIZER:
         widgetType = ID_WXSTATICBOXSIZER;
+        break;
+    case ID_CHANGE_SIZER_WRAPSIZER:
+    case ID_INSERT_INTO_SIZER_WRAPSIZER:
+        widgetType = ID_WXWRAPSIZER;
         break;
     }
 

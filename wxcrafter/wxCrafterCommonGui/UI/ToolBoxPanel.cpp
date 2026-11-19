@@ -61,6 +61,7 @@ const std::vector<ToolBoxPage>& GetToolBoxPages()
                 {ID_WXSTATICBOXSIZER, "wxstaticboxsizer", wxTRANSLATE("wxStaticBoxSizer")},
                 {ID_WXGRIDSIZER, "wxgridsizer", wxTRANSLATE("wxGridSizer")},
                 {ID_WXGRIDBAGSIZER, "wxgridbagsizer", wxTRANSLATE("wxGridBagSizer")},
+                {ID_WXWRAPSIZER, "wxwrapsizer", wxTRANSLATE("wxWrapSizer")},
                 {ID_WXSTDDLGBUTTONSIZER, "stddlgbuttonsizer", wxTRANSLATE("wxStdDialogButtonSizer")},
                 {ID_WXSTDBUTTON, "wxbutton", wxTRANSLATE("A standard wxButton that can be placed in side a wxStdDialogButtonSizer class")},
             }},
@@ -105,6 +106,7 @@ const std::vector<ToolBoxPage>& GetToolBoxPages()
                 {ID_WXTOGGLEBUTTON, "wxtogglebutton", wxTRANSLATE("wxToggleButton")},
                 {ID_WXSPINBUTTON, "wxspinbutton", wxTRANSLATE("wxSpinButton")},
                 {ID_WXSPINCTRL, "wxspinctrl", wxTRANSLATE("wxSpinCtrl")},
+                {ID_WXSPINCTRLDOUBLE, "wxspinctrldouble", wxTRANSLATE("wxSpinCtrlDouble")},
                 {ID_WXBITMAPTOGGLEBUTTON, "wxbitmaptogglebutton", wxTRANSLATE("wxBitmapToggleButton")},
             }},
             {2, true, {
@@ -129,6 +131,9 @@ const std::vector<ToolBoxPage>& GetToolBoxPages()
             {3, true, {
                 {ID_WXLISTBOX, "wxlistbox", wxTRANSLATE("wxListBox")},
                 {ID_WXSIMPLEHTMLLISTBOX, "wxhtmllistbox", wxTRANSLATE("wxSimpleHtmlListBox")},
+                {ID_WXHTMLLISTBOX, "wxhtmllistbox", wxTRANSLATE("wxHtmlListBox")},
+                {ID_WXVLISTBOX, "wxvlistbox", wxTRANSLATE("wxVListBox")},
+                {ID_WXEDITABLELISTBOX, "wxeditablelistbox", wxTRANSLATE("wxEditableListBox")},
                 {ID_WXCHECKLISTBOX, "wxchecklistbox", wxTRANSLATE("wxCheckListBox")},
                 {ID_WXREARRANGELIST, "wxrearrangelist", wxTRANSLATE("wxRearrangeList")},
                 {ID_WXLISTCTRL, "wxlistctrl", wxTRANSLATE("wxListCtrl")},

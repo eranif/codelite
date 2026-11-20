@@ -37,7 +37,7 @@ struct AgentExecutable {
 std::optional<AgentExecutable> ResolveAgentExecutable(AgentType agent_type, bool warn = true);
 
 struct AgentInfo {
-    AgentType agent_type;
+    AgentType agent_type{AgentType::kClaudeCode};
     wxString executable;
     /// The user's extra arguments for the agent (from the settings). Shell text: the user does the quoting
     wxString args;
@@ -57,6 +57,7 @@ public:
 
     /// Pass the focus to the main agent's terminal (if it was created)
     void SetFocus() override;
+    const AgentInfo& GetInfo() const { return m_agentInfo; }
 
 protected:
     void OnFocus(wxFocusEvent& event) override;

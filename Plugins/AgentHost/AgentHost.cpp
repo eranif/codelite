@@ -8,7 +8,7 @@
 #include "globals.h"
 #include "open_resource_dialog.h"
 
-#include <iterator>
+#include <vector>
 #include <wx/choicdlg.h>
 
 // The resource ID of the "Launch an AI Agent..." menu item: the tooltip of the side bar button shows its shortcut
@@ -18,6 +18,23 @@ const char* kLaunchAgentAction = "launch_agent";
 const wxString kAgentWorkingDirectory = "WorkingDirectory";
 const wxString kAgentHostLastAgent = "LastAgent";
 const wxString kCategoryAgentHost = "AgentHost";
+
+wxString GetNameFromType(AgentType type)
+{
+    wxString agent_name;
+    switch (type) {
+    case AgentType::kClaudeCode:
+        agent_name = _("Claude Code");
+        break;
+    case AgentType::kKiroCli:
+        agent_name = _("Kiro CLI");
+        break;
+    case AgentType::kOpenCode:
+        agent_name = _("OpenCode");
+        break;
+    }
+    return agent_name;
+}
 } // namespace
 
 // Define the plugin entry point
@@ -41,16 +58,12 @@ AgentHost::AgentHost(IManager* manager)
     m_showAgentsDialog = std::make_shared<std::function<void()>>([this]() { CallAfter(&AgentHost::ShowAgentsDialog); });
     m_mgr->GetLeftSideBarCtrl()->AddActionButton(
         "claude-code", _("Launch an AI Agent for the Current Workspace"), kLaunchAgentAction, m_showAgentsDialog);
-    EventNotifier::Get()->Bind(wxEVT_NOTIFY_PAGE_CLOSING, &AgentHost::OnPageClosing, this);
-    EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &AgentHost::OnAllPagesClosed, this);
     EventNotifier::Get()->Bind(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &AgentHost::OnShortcutsUpdated, this);
 }
 
 AgentHost::~AgentHost()
 {
     EventNotifier::Get()->Unbind(wxEVT_KEYBOARD_SHORTCUTS_UPDATED, &AgentHost::OnShortcutsUpdated, this);
-    EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &AgentHost::OnPageClosing, this);
-    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &AgentHost::OnAllPagesClosed, this);
 }
 
 void AgentHost::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -104,29 +117,29 @@ void AgentHost::UnPlug() {}
 void AgentHost::ShowAgentsDialog()
 {
     auto* workspace = clWorkspaceManager::Get().GetWorkspace();
-    CHECK_PTR_RET(workspace);
+    if (workspace == nullptr) {
+        wxMessageBox(_("Launching an AI agent requires a workspace"), "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
+        return;
+    }
 
-    const struct {
-        wxString label;
-        AgentType type;
-    } agents[] = {
-        {_("Claude Code"), AgentType::kClaudeCode},
-        {_("Kiro CLI"), AgentType::kKiroCli},
-        {_("OpenCode"), AgentType::kOpenCode},
+    std::vector<AgentType> agents{
+        AgentType::kClaudeCode,
+        AgentType::kKiroCli,
+        AgentType::kOpenCode,
     };
 
-    // Suggest the agent that the user launched last. If there is none, suggest the first agent that is installed.
-    const int lastAgent = workspace->GetConfigValue(kAgentHostLastAgent, kCategoryAgentHost, wxNOT_FOUND);
-    int suggested = -1;
+    // Suggest the agent that the user launched last (if it is installed and not running). If there is none, suggest the
+    // first agent that is installed and not running.
+    const int lastAgentUsed = workspace->GetConfigValue(kAgentHostLastAgent, kCategoryAgentHost, wxNOT_FOUND);
+    int suggested{wxNOT_FOUND};
     wxArrayString choices;
-    for (size_t i = 0; i < std::size(agents); ++i) {
-        const auto& agent = agents[i];
-        wxString label = agent.label;
-        if (m_pages.count(agent.type) != 0) {
+    for (size_t i = 0; i < agents.size(); ++i) {
+        wxString label = GetNameFromType(agents[i]);
+        if (FindByType(agents[i]) != nullptr) {
             label << " (" << _("running") << ")";
-        } else if (!ResolveAgentExecutable(agent.type, false)) {
+        } else if (!ResolveAgentExecutable(agents[i], false)) {
             label << " (" << _("not found") << ")";
-        } else if (suggested == -1 || lastAgent == static_cast<int>(agent.type)) {
+        } else if (suggested == wxNOT_FOUND || lastAgentUsed == static_cast<int>(agents[i])) {
             suggested = static_cast<int>(i);
         }
         choices.Add(label);
@@ -138,7 +151,7 @@ void AgentHost::ShowAgentsDialog()
     if (dlg.ShowModal() != wxID_OK || dlg.GetAgent() == wxNOT_FOUND) {
         return;
     }
-    const auto type = agents[dlg.GetAgent()].type;
+    const auto type = agents[dlg.GetAgent()];
 
     // Store the workspace settings.
     workspace->SetConfigValue(kAgentWorkingDirectory, kCategoryAgentHost, dlg.GetWorkingDirectory());
@@ -224,27 +237,15 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type, const wxString& workingD
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace == nullptr) {
-        wxString agent_name;
-        switch (agent_type) {
-        case AgentType::kClaudeCode:
-            agent_name = "Claude Code";
-            break;
-        case AgentType::kKiroCli:
-            agent_name = "Kiro CLI";
-            break;
-        case AgentType::kOpenCode:
-            agent_name = "OpenCode";
-            break;
-        }
-        wxMessageBox(wxString::Format(_("Launching %s requires a workspace"), agent_name),
+        wxMessageBox(wxString::Format(_("Launching %s requires a workspace"), GetNameFromType(agent_type)),
                      "CodeLite",
                      wxICON_WARNING | wxOK | wxOK_DEFAULT);
         return;
     }
 
-    auto iter = m_pages.find(agent_type);
-    if (iter != m_pages.end()) {
-        if (!clGetManager()->SelectPage(iter->second)) {
+    auto* agent_page = FindByType(agent_type);
+    if (agent_page) {
+        if (!clGetManager()->SelectPage(agent_page)) {
             clWARNING() << "Could not select agent page!" << endl;
         }
         return;
@@ -258,20 +259,7 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type, const wxString& workingD
 
     // Define the working directory & the ssh account (if a remote workspace)
     auto agentPage = new AgentHostPage(clGetManager()->GetMainNotebook());
-    CHECK_PTR_RET(agentPage);
-
-    m_pages[agent_type] = agentPage;
-    switch (agent_type) {
-    case AgentType::kClaudeCode:
-        clGetManager()->GetMainNotebook()->AddPage(agentPage, _("Claude Code"), true);
-        break;
-    case AgentType::kKiroCli:
-        clGetManager()->GetMainNotebook()->AddPage(agentPage, _("Kiro"), true);
-        break;
-    case AgentType::kOpenCode:
-        clGetManager()->GetMainNotebook()->AddPage(agentPage, _("OpenCode"), true);
-        break;
-    }
+    clGetManager()->GetMainNotebook()->AddPage(agentPage, GetNameFromType(agent_type), true);
     agentPage->StartAgentHost(AgentInfo{
         .agent_type = agent_type,
         .executable = result->executable,
@@ -280,26 +268,6 @@ void AgentHost::ShowAgentTerminal(AgentType agent_type, const wxString& workingD
             workingDirectory.empty() ? clWorkspaceManager::Get().GetWorkspace()->GetDir() : workingDirectory,
         .sshAccount = result->sshAccount,
     });
-}
-
-void AgentHost::OnPageClosing(wxNotifyEvent& event)
-{
-    const wxWindow* win = reinterpret_cast<wxWindow*>(event.GetClientData());
-    if (win) {
-        for (const auto& [agent_type, agent_page] : m_pages) {
-            if (win == agent_page) {
-                m_pages.erase(agent_type);
-                return;
-            }
-        }
-    }
-    event.Skip();
-}
-
-void AgentHost::OnAllPagesClosed(wxCommandEvent& event)
-{
-    m_pages.clear();
-    event.Skip();
 }
 
 void AgentHost::OnShortcutsUpdated(clCommandEvent& event)
@@ -332,4 +300,16 @@ void AgentHost::OnShowOpenCode(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     ShowAgentTerminal(AgentType::kOpenCode);
+}
+
+AgentHostPage* AgentHost::FindByType(AgentType type) const
+{
+    auto* book = clGetManager()->GetMainNotebook();
+    for (size_t i = 0; i < book->GetPageCount(); ++i) {
+        if (auto* page = dynamic_cast<AgentHostPage*>(book->GetPage(i));
+            page != nullptr && page->GetInfo().agent_type == type) {
+            return page;
+        }
+    }
+    return nullptr;
 }

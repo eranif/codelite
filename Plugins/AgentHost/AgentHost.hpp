@@ -55,18 +55,16 @@ public:
 protected:
     void OnSettings(wxCommandEvent& event);
     void ShowAgentTerminal(AgentType agent_type, const wxString& workingDirectory = wxEmptyString);
-    void OnPageClosing(wxNotifyEvent& event);
     /// The keyboard shortcuts changed: show the new one in the tooltip of the side bar button
     void OnShortcutsUpdated(clCommandEvent& event);
     void OnLaunchAgent(wxCommandEvent& event);
     void OnShowClaudeCode(wxCommandEvent& event);
     void OnShowKiroCli(wxCommandEvent& event);
     void OnShowOpenCode(wxCommandEvent& event);
-    void OnAllPagesClosed(wxCommandEvent& event);
     /// Ask the user which agent to launch. The suggested agent (the last one launched, or the first one installed) is
     /// selected.
     void ShowAgentsDialog();
-
-    std::unordered_map<AgentType, AgentHostPage*> m_pages;
+    /// The page of the running agent `type` in the main book, or nullptr if it is not running
+    AgentHostPage* FindByType(AgentType type) const;
     std::shared_ptr<std::function<void()>> m_showAgentsDialog;
 };

@@ -84,14 +84,14 @@
       <object class="wxMenuItem" name="switch_to_workspace">
         <label>Open Wor&amp;kspace...</label>
       </object>
-      <object class="wxMenuItem" name="import_from_msvs">
-        <label>&amp;Import other IDEs solution/workspace files...</label>
-      </object>
       <object class="wxMenuItem" name="close_workspace">
         <label>C&amp;lose Workspace</label>
       </object>
       <object class="wxMenuItem" name="reload_workspace">
         <label>Reloa&amp;d Workspace</label>
+      </object>
+      <object class="wxMenuItem" name="import_from_msvs">
+        <label>&amp;Import other IDEs solution/workspace files...</label>
       </object>
       <object class="wxMenu" name="wxID_ANY">
         <label>&amp;Projects</label>

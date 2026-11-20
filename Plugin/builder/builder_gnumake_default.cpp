@@ -1878,7 +1878,7 @@ Builder::OptimalBuildConfig BuilderGnuMake::GetOptimalBuildConfig(const wxString
 {
     OptimalBuildConfig conf;
     conf.command = "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
-    conf.workingDirectory = "$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib";
+    conf.workingDirectory = "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin";
 
     if (projectType == PROJECT_TYPE_STATIC_LIBRARY || projectType == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         conf.outputFile << "lib";

@@ -16,6 +16,9 @@ struct TabOutlineColour {
 
 constexpr const char* kDefaultTabOutlineKey = "default";
 
+/// The name of the "annoying dialog answer" that tells if we ask which shell to launch (0 or none: ask, 1: do not ask)
+const wxString kAskForShellAnswer = "TerminalChooseShell";
+
 const std::vector<TabOutlineColour>& GetTabOutlineColours()
 {
     static const std::vector<TabOutlineColour> colours = {
@@ -94,6 +97,8 @@ TerminalSettings::TerminalSettings(bool optimizedDrawings,
 {
 }
 
+bool TerminalSettings::IsAskForShell() { return clConfig::Get().GetAnnoyingDlgAnswer(kAskForShellAnswer, 0) == 0; }
+
 TerminalSettings TerminalSettings::Load()
 {
     TerminalSettings settings{
@@ -104,6 +109,7 @@ TerminalSettings TerminalSettings::Load()
         clConfig::Get().Read("terminal/notify_when_done", true),
         clConfig::Get().Read("terminal/tab_outline_colour", wxString{kDefaultTabOutlineKey}),
     };
+    settings.m_askForShell = IsAskForShell();
     return settings;
 }
 
@@ -111,6 +117,8 @@ void TerminalSettings::Save()
 {
     clConfig::Get().Write("terminal/optimized_drawings", m_optimizedDrawings);
     clConfig::Get().Write("terminal/last_used_shell", m_defaultShell);
+    // Stored as an "annoying dialog answer", so "Reset annoying dialogs answers" (Preferences) clears it
+    clConfig::Get().SetAnnoyingDlgAnswer(kAskForShellAnswer, m_askForShell ? 0 : 1);
     clConfig::Get().Write("terminal/scroll_back_lines", m_scrollBackLines);
     clConfig::Get().Write("terminal/show_progress_bar", m_showProgressBar);
     clConfig::Get().Write("terminal/notify_when_done", m_notifyWhenDone);
@@ -137,6 +145,7 @@ TerminalSettingsDlg::TerminalSettingsDlg(wxWindow* parent, const std::vector<std
     m_spinCtrlScrollBackLines->SetValue(m_settings.m_scrollBackLines);
     m_checkBoxShowProgressBar->SetValue(m_settings.m_showProgressBar);
     m_checkBoxNotifyWhenDone->SetValue(m_settings.m_notifyWhenDone);
+    m_checkBoxAskForShell->SetValue(m_settings.m_askForShell);
 
     for (const auto& entry : GetTabOutlineColours()) {
         m_choiceOutlineColour->Append(entry.label);
@@ -192,6 +201,7 @@ TerminalSettings TerminalSettingsDlg::GetSettings() const
     } else {
         settings.m_tabOutlineColour = m_settings.m_tabOutlineColour;
     }
+    settings.m_askForShell = m_checkBoxAskForShell->IsChecked();
     settings.m_defaultShell = kTerminalCommand;
     int selection = m_choiceShell->GetSelection();
     if (selection != wxNOT_FOUND) {

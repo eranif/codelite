@@ -147,6 +147,9 @@ public:
     /**
      * @brief Let the user choose a shell. If only one shell is available, return it without asking.
      *
+     * The dialog has a "Remember my choice and don't ask me again" checkbox. When the user checked it, the next calls
+     * return the default shell without asking (as long as it is available).
+     *
      * The chosen shell is saved as the default for the next time.
      *
      * @return The command of the shell, or std::nullopt if there is no shell or the user cancelled
@@ -249,4 +252,3 @@ private:
     TerminalSettings m_terminalSettings;
     std::optional<std::vector<std::pair<int, clKeyboardShortcut>>> m_frameActions{std::nullopt};
 };
-

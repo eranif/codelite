@@ -18,6 +18,8 @@ struct WXDLLIMPEXP_SDK TerminalSettings {
                      const wxString& tabOutlineColour);
     bool m_optimizedDrawings{false};
     wxString m_defaultShell{wxEmptyString};
+    /// Ask which shell to launch every time. False: launch `m_defaultShell` without asking
+    bool m_askForShell{true};
     int m_scrollBackLines{5000};
     /// Show the progress bar above the terminal
     bool m_showProgressBar{true};
@@ -26,6 +28,9 @@ struct WXDLLIMPEXP_SDK TerminalSettings {
     /// The theme colour of the outline of the current tab (the key, see GetTabOutlineColourOf())
     wxString m_tabOutlineColour{"default"};
 
+    /// Read only `m_askForShell` from the configuration (it can be reset from outside, see "Reset annoying dialogs
+    /// answers")
+    static bool IsAskForShell();
     static TerminalSettings Load();
     void Save();
 };

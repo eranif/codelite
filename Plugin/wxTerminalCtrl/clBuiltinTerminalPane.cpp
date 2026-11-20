@@ -20,6 +20,7 @@
 #include "macros.h"
 #include "ssh/ssh_account_info.h"
 #include "terminal_view.h"
+#include "wxTerminalCtrl/ChooseShellDlg.hpp"
 #include "wxTerminalCtrl/TerminalSettingsDlg.hpp"
 
 #include <filesystem>
@@ -572,15 +573,26 @@ std::optional<wxString> clBuiltinTerminalPane::PromptForTerminal()
         shells.Add(cmd);
 
     int initialSelection =
-        m_terminalSettings.m_defaultShell.empty() ? 0 : shells.Index(m_terminalSettings.m_defaultShell);
+        m_terminalSettings.m_defaultShell.empty() ? wxNOT_FOUND : shells.Index(m_terminalSettings.m_defaultShell);
+
+    // The answer can be reset ("Reset annoying dialogs answers"): read it again
+    m_terminalSettings.m_askForShell = TerminalSettings::IsAskForShell();
+
+    // The user chose "remember and don't ask me again": launch the default shell (if it is still available)
+    if (!m_terminalSettings.m_askForShell && initialSelection != wxNOT_FOUND) {
+        return m_terminalSettings.m_defaultShell;
+    }
+
     if (initialSelection == wxNOT_FOUND)
         initialSelection = 0;
-    wxString selection =
-        ::wxGetSingleChoice(_("Available Shells"), _("Choose a shell to Launch"), shells, initialSelection);
-    if (selection.empty())
+
+    ChooseShellDlg dlg(EventNotifier::Get()->TopFrame(), shells, initialSelection);
+    if (dlg.ShowModal() != wxID_OK || dlg.GetSelection() == wxNOT_FOUND)
         return std::nullopt;
-    const wxString shellCommand = terminals[shells.Index(selection)].second;
+
+    const wxString shellCommand = terminals[dlg.GetSelection()].second;
     m_terminalSettings.m_defaultShell = shellCommand;
+    m_terminalSettings.m_askForShell = !dlg.IsRemember();
     m_terminalSettings.Save();
     return shellCommand;
 }

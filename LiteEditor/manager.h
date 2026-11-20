@@ -39,6 +39,7 @@
 
 #include <list>
 #include <map>
+#include <optional>
 #include <wx/event.h>
 
 class clEditor;
@@ -409,16 +410,44 @@ public:
     void SetProjectGlobalSettings(const wxString& projectName, BuildConfigCommonPtr settings);
 
     /**
-     * @brief return the project execution command as it appears in the project settings
+     * @brief the command that runs a project, with all the macros expanded
+     */
+    struct ProjectExecCmd {
+        /// the program to run: an absolute, normalized path (on Windows, ".exe" is added when needed)
+        wxString cmd;
+        /// the program arguments, macros expanded
+        wxString cmdArgs;
+        /// the working directory: an absolute path
+        wxString wd;
+        /// true if the program is a GUI program (it does not need a terminal)
+        bool isGuiApp{false};
+    };
+
+    /**
+     * @brief build the command that runs the project from the project settings (command, arguments and working
+     * directory). Macros are expanded using the current environment, so call it after applying the project
+     * environment (see EnvSetter)
+     * @param projectName the project name
+     * @return the execution command, or std::nullopt if the project (or its build configuration) does not exist
+     */
+    std::optional<ProjectExecCmd> GetProjectExeCmd(const wxString& projectName);
+
+    /**
+     * @brief return the shell command line that runs the project, as it appears in the project settings
      * @param projectName
-     * @param wd the working directory that the command should be running from
+     * @param wd [output] the working directory that the command should be running from
      * @param considerPauseWhenExecuting when set to true (default) CodeLite will take into consideration the value set
      * in the project
      * settings 'Pause when execution ends'
      * @return project execution command or wxEmptyString if the project does not exist
      */
     wxString
-    GetProjectExecutionCommand(const wxString& projectName, wxString& wd, bool considerPauseWhenExecuting = true);
+    GetProjectExeCmdForShell(const wxString& projectName, wxString& wd, bool considerPauseWhenExecuting = true);
+
+    /**
+     * @brief same as above, but use an execution command that was already built by GetProjectExeCmd()
+     */
+    wxString GetProjectExeCmdForShell(const ProjectExecCmd& exeCmd, bool considerPauseWhenExecuting = true);
 
     //--------------------------- Top Level Pane Management -----------------------------
 public:
@@ -645,4 +674,3 @@ protected:
 };
 
 using ManagerST = Singleton<Manager>;
-

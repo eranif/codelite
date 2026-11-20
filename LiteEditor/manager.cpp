@@ -1340,41 +1340,42 @@ void Manager::SetProjectGlobalSettings(const wxString& projectName, BuildConfigC
     proj->SetGlobalSettings(settings);
 }
 
-wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxString& wd, bool considerPauseWhenExecuting)
+std::optional<Manager::ProjectExecCmd> Manager::GetProjectExeCmd(const wxString& projectName)
 {
     ProjectPtr proj = GetProject(projectName);
     if (!proj) {
-        clWARNING() << "Manager::GetProjectExecutionCommand(): could not find project:" << projectName;
-        return wxEmptyString;
+        clWARNING() << "Manager::GetProjectExeCmd(): could not find project:" << projectName;
+        return std::nullopt;
     }
 
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
     if (!bldConf) {
-        clWARNING() << "Manager::GetProjectExecutionCommand(): failed to find project "
+        clWARNING() << "Manager::GetProjectExeCmd(): failed to find project "
                        "configuration for project:"
                     << projectName;
-        return wxEmptyString;
+        return std::nullopt;
     }
 
     wxString projectPath = proj->GetFileName().GetPath();
 
     // expand variables
-    wxString cmd = bldConf->GetCommand();
-    cmd = MacroManager::Instance()->Expand(cmd, nullptr, projectName);
-
-    wxString cmdArgs = bldConf->GetCommandArguments();
-    cmdArgs = MacroManager::Instance()->Expand(cmdArgs, nullptr, projectName);
+    ProjectExecCmd result;
+    result.isGuiApp = bldConf->IsGUIProgram();
+    result.cmd = bldConf->GetCommand();
+    result.cmd = MacroManager::Instance()->Expand(result.cmd, nullptr, projectName);
+    result.cmdArgs = bldConf->GetCommandArguments();
+    result.cmdArgs = MacroManager::Instance()->Expand(result.cmdArgs, nullptr, projectName);
 
     // Execute command & cmdArgs
-    wd = bldConf->GetWorkingDirectory();
-    wd = MacroManager::Instance()->Expand(wd, nullptr, projectName);
+    result.wd = bldConf->GetWorkingDirectory();
+    result.wd = MacroManager::Instance()->Expand(result.wd, nullptr, projectName);
 
-    wxFileName workingDir(wd, "");
+    wxFileName workingDir(result.wd, "");
     if (workingDir.IsRelative()) {
         workingDir.MakeAbsolute(projectPath);
     }
 
-    wxFileName fileExe(cmd);
+    wxFileName fileExe(result.cmd);
     if (fileExe.IsRelative()) {
         fileExe.MakeAbsolute(workingDir.GetPath());
     }
@@ -1390,17 +1391,31 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
         }
     }
 #endif
-    wd = workingDir.GetPath();
-    cmd = fileExe.GetFullPath();
+    result.wd = workingDir.GetPath();
+    result.cmd = fileExe.GetFullPath();
+    return result;
+}
 
-    clDEBUG() << "Command to execute:" << cmd;
-    clDEBUG() << "Working directory:" << wd;
+wxString Manager::GetProjectExeCmdForShell(const wxString& projectName, wxString& wd, bool considerPauseWhenExecuting)
+{
+    auto result = GetProjectExeCmd(projectName);
+    if (!result) {
+        return wxEmptyString;
+    }
+    wd = result->wd;
+    return GetProjectExeCmdForShell(*result, considerPauseWhenExecuting);
+}
+
+wxString Manager::GetProjectExeCmdForShell(const ProjectExecCmd& exeCmd, bool considerPauseWhenExecuting)
+{
+    clDEBUG() << "Command to execute:" << exeCmd.cmd;
+    clDEBUG() << "Working directory:" << exeCmd.wd;
 
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
-    console->SetWorkingDirectory(wd);
-    console->SetCommand(cmd, cmdArgs);
+    console->SetWorkingDirectory(exeCmd.wd);
+    console->SetCommand(exeCmd.cmd, exeCmd.cmdArgs);
     console->SetWaitWhenDone(considerPauseWhenExecuting);
-    console->SetTerminalNeeded(!bldConf->IsGUIProgram());
+    console->SetTerminalNeeded(!exeCmd.isGuiApp);
     return console->PrepareCommand();
 }
 
@@ -1519,14 +1534,17 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     wxString wd;
 
     // we call it here once for the 'wd'
-    wxString execLine;
     ProjectPtr proj;
-
     {
         EnvSetter env1(nullptr, nullptr, projectName, wxEmptyString);
-        execLine = GetProjectExecutionCommand(projectName, wd, true);
+        auto firstCmd = GetProjectExeCmd(projectName);
+        if (!firstCmd) {
+            return;
+        }
+        wd = firstCmd->wd;
         proj = GetProject(projectName);
     }
+    CHECK_PTR_RET(proj);
 
     DirSaver ds;
 
@@ -1550,19 +1568,21 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     //- no redirection of the stdin/out
     wxString configName;
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-    if (bldConf) {
-        configName = bldConf->GetName();
-    }
+    CHECK_PTR_RET(bldConf);
+    configName = bldConf->GetName();
     EnvSetter env{nullptr, nullptr, projectName, configName};
 
-    wxString dummy;
-    execLine = GetProjectExecutionCommand(projectName, dummy, false);
-    wxUnusedVar(dummy);
+    // call it again here to get the actual execution command - we do it here since
+    // the environment has been applied. All the lines below are derived from this one result
+    auto exeCmd = GetProjectExeCmd(projectName);
+    if (!exeCmd) {
+        wxMessageBox(_("Failed to build command to execute"), "CodeLite", wxICON_WARNING | wxOK);
+        return;
+    }
+    wxString execLine = GetProjectExeCmdForShell(*exeCmd, false);
     clEnvList_t env_list;
     bldConf->GetCompiler()->CreatePathEnv(&env_list);
 
-    // call it again here to get the actual exection line - we do it here since
-    // the environment has been applied
     if (bldConf->IsGUIProgram()) {
         m_programProcess = ::CreateAsyncProcess(this, execLine, IProcessCreateDefault, wd, &env_list);
         if (m_programProcess) {
@@ -1573,8 +1593,6 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     } else {
         // Use a built-in terminal for this purpose
         EnvSetter compiler_env{&env_list};
-        auto arr = StringUtils::BuildCommandArrayFromString(execLine);
-        wxString terminal_title = arr.empty() ? wxString{} : arr[0];
         clDEBUG() << "Running program  :" << execLine << endl;
         clDEBUG() << "Working directory:" << wd << endl;
 #ifdef __WXMSW__
@@ -1590,10 +1608,24 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
             execLine);
         ::wxExecute(full_command);
 #else
-        auto* manager = clGetManager()->GetTerminalManager();
-        auto terminal = manager->AddTerminal(manager->GetDefaultShell(), wd, std::nullopt, terminal_title);
-        CHECK_PTR_RET(terminal);
-        terminal->GetCtrl()->SendCommand(execLine);
+        auto* terminalManager = clGetManager()->GetTerminalManager();
+        wxString fullcmd = StringUtils::WrapWithDoubleQuotes(exeCmd->cmd);
+        if (!exeCmd->cmdArgs.empty()) {
+            fullcmd << " " << exeCmd->cmdArgs;
+        }
+
+        clDEBUG() << "Starting program inside a terminal:" << endl;
+        clDEBUG() << "  Shell:" << terminalManager->GetDefaultShell() << endl;
+        clDEBUG() << "  Working directory:" << wd << endl;
+        clDEBUG() << "  Title:" << exeCmd->cmd << endl;
+        clDEBUG() << "  Command:" << fullcmd << endl;
+        auto* terminal =
+            terminalManager->AddTerminal(terminalManager->GetDefaultShell(), wd, std::nullopt, exeCmd->cmd);
+        if (terminal == nullptr) {
+            wxMessageBox(_("Failed to start Terminal!"), "CodeLite", wxICON_WARNING | wxOK);
+            return;
+        }
+        terminal->GetCtrl()->SendCommand(fullcmd);
         terminal->GetCtrl()->CallAfter(&wxWindow::SetFocus);
 #endif
     }

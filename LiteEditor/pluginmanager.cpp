@@ -422,9 +422,11 @@ wxAuiManager* PluginManager::GetDockingManager() { return m_dockingManager; }
 
 EnvironmentConfig* PluginManager::GetEnv() { return EnvironmentConfig::Instance(); }
 
+// The plugin API name (IManager::GetProjectExecutionCommand) is kept for compatibility with the plugins. It maps to
+// Manager::GetProjectExeCmdForShell()
 wxString PluginManager::GetProjectExecutionCommand(const wxString& projectName, wxString& wd)
 {
-    return ManagerST::Get()->GetProjectExecutionCommand(projectName, wd, false);
+    return ManagerST::Get()->GetProjectExeCmdForShell(projectName, wd, false);
 }
 
 wxApp* PluginManager::GetTheApp() { return wxTheApp; }

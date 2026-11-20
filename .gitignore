@@ -37,3 +37,5 @@ LiteEditor/autoversion.h
 *.lock
 .wxcrafter-environment
 .claude/
+# Created by codelite-generate-themes (it uses the output folder as its user data dir)
+Runtime/lexers/config/

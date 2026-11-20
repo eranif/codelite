@@ -7,7 +7,7 @@
     "m_firstWindowId": 8000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 672,
+    "m_objCounter": 673,
     "m_outputFileName": "wxcrafter",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -3016,14 +3016,13 @@
                               "m_events": [],
                               "m_children": [
                                 {
-                                  "m_type": 4461,
+                                  "m_type": 4463,
                                   "proportion": 0,
-                                  "border": 2,
+                                  "border": 5,
                                   "gbSpan": "1,1",
                                   "gbPosition": "0,0",
                                   "m_styles": [
-                                    "wxTB_NODIVIDER",
-                                    "wxTB_FLAT"
+                                    "wxAUI_TB_DEFAULT_STYLE"
                                   ],
                                   "m_sizerFlags": [
                                     "wxEXPAND"
@@ -3042,7 +3041,7 @@
                                     {
                                       "type": "string",
                                       "m_label": "Name:",
-                                      "m_value": "m_toolbar580"
+                                      "m_value": "m_auibar"
                                     },
                                     {
                                       "type": "string",
@@ -3058,31 +3057,6 @@
                                       "type": "string",
                                       "m_label": "Margins:",
                                       "m_value": "-1,-1"
-                                    },
-                                    {
-                                      "type": "string",
-                                      "m_label": "Padding:",
-                                      "m_value": "1"
-                                    },
-                                    {
-                                      "type": "string",
-                                      "m_label": "Separator Size:",
-                                      "m_value": "5"
-                                    },
-                                    {
-                                      "type": "string",
-                                      "m_label": "Class Name:",
-                                      "m_value": "clToolBar"
-                                    },
-                                    {
-                                      "type": "string",
-                                      "m_label": "Include File:",
-                                      "m_value": "clToolBar.h"
-                                    },
-                                    {
-                                      "type": "string",
-                                      "m_label": "Style:",
-                                      "m_value": ""
                                     }
                                   ],
                                   "m_events": [],

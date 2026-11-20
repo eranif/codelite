@@ -1466,7 +1466,8 @@ void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
         mgr.ShowSideBar(true, focusWin, true, true);
         return;
     }
-    mgr.ShowSideBar(true, focusWin, false, false);
+    // Already visible: keep it open and only select the requested tab
+    mgr.ShowSideBar(true, focusWin, true, false);
 }
 
 void Manager::ShowSecondarySideBarPane(wxString focusWin, bool commit)

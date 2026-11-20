@@ -27,6 +27,7 @@
 #include "cl_command_event.h"
 #include "wxcrafter.hpp"
 
+#include <wx/aui/auibar.h>
 #include <wx/panel.h>
 
 class clWorkspaceView;
@@ -89,7 +90,7 @@ protected:
     void OnProgramStopped(clExecuteEvent& event);
     void OnBuildActiveProject(wxCommandEvent& event);
     void OnExecuteNoDebug(wxCommandEvent& event);
-    void OnBuildActiveProjectDropdown(wxCommandEvent& event);
+    void OnBuildActiveProjectDropdown(wxAuiToolBarEvent& event);
 
 public:
     WorkspaceTab(wxWindow* parent, const wxString& caption);

@@ -26,8 +26,8 @@
 
 #include "DefaultWorkspacePage.h"
 #include "SideBar.hpp"
+#include "aui/clAuiToolBarArt.h"
 #include "clFileOrFolderDropTarget.h"
-#include "clToolBarButtonBase.h"
 #include "clTreeCtrlPanel.h"
 #include "clWorkspaceView.h"
 #include "configuration_manager_dlg.h"
@@ -109,19 +109,19 @@ WorkspaceTab::~WorkspaceTab()
     EventNotifier::Get()->Unbind(wxEVT_PROGRAM_STARTED, &WorkspaceTab::OnProgramStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_PROGRAM_TERMINATED, &WorkspaceTab::OnProgramStopped, this);
 
-    m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnCollapseAll, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
-    m_toolbar580->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnCollapseAllUI, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
-    m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnLinkEditor, this, XRCID("ID_TOOL_LINK_EDITOR"));
-    m_toolbar580->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnLinkEditorUI, this, XRCID("ID_TOOL_LINK_EDITOR"));
-    m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnProjectSettings, this, XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
-    m_toolbar580->Unbind(
+    m_auibar->Unbind(wxEVT_TOOL, &WorkspaceTab::OnCollapseAll, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
+    m_auibar->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnCollapseAllUI, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
+    m_auibar->Unbind(wxEVT_TOOL, &WorkspaceTab::OnLinkEditor, this, XRCID("ID_TOOL_LINK_EDITOR"));
+    m_auibar->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnLinkEditorUI, this, XRCID("ID_TOOL_LINK_EDITOR"));
+    m_auibar->Unbind(wxEVT_TOOL, &WorkspaceTab::OnProjectSettings, this, XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
+    m_auibar->Unbind(
         wxEVT_UPDATE_UI, &WorkspaceTab::OnProjectSettingsUI, this, XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
-    m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnGoHome, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
-    m_toolbar580->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnGoHomeUI, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
+    m_auibar->Unbind(wxEVT_TOOL, &WorkspaceTab::OnGoHome, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
+    m_auibar->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnGoHomeUI, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
 
-    m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnBuildActiveProject, this, XRCID("ID_BUILD_PROJECT"));
-    m_toolbar580->Unbind(
-        wxEVT_TOOL_DROPDOWN, &WorkspaceTab::OnBuildActiveProjectDropdown, this, XRCID("ID_BUILD_PROJECT"));
+    m_auibar->Unbind(wxEVT_TOOL, &WorkspaceTab::OnBuildActiveProject, this, XRCID("ID_BUILD_PROJECT"));
+    m_auibar->Unbind(
+        wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &WorkspaceTab::OnBuildActiveProjectDropdown, this, XRCID("ID_BUILD_PROJECT"));
 }
 
 void WorkspaceTab::CreateGUIControls()
@@ -136,15 +136,19 @@ void WorkspaceTab::CreateGUIControls()
     m_view->AddPage(new DefaultWorkspacePage(m_simpleBook), _("Default"));
     m_view->SelectPage(_("Default"));
     m_view->SetDefaultPage(_("Default"));
-    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
-    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), images->Add("link_editor"), "", wxITEM_CHECK);
-    m_toolbar580->AddTool(XRCID("ID_TOOL_COLLAPSE_ALL"), _("Collapse All"), images->Add("fold"));
-    m_toolbar580->AddTool(XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"), _("Goto Active Project"), images->Add("home"));
-    m_toolbar580->AddTool(XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"),
-                          _("Open selected project settings. If there is no project selected, open the parent project "
-                            "of the selected item in the tree"),
-                          images->Add("cog"));
-    m_toolbar580->Realize();
+    auto images = clGetManager()->GetStdIcons();
+    clAuiToolBarArt::AddTool(
+        m_auibar, XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), images->LoadBitmap("link_editor"), "", wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(m_auibar, XRCID("ID_TOOL_COLLAPSE_ALL"), _("Collapse All"), images->LoadBitmap("fold"));
+    clAuiToolBarArt::AddTool(
+        m_auibar, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"), _("Goto Active Project"), images->LoadBitmap("home"));
+    clAuiToolBarArt::AddTool(m_auibar,
+                             XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"),
+                             _("Project Settings"),
+                             images->LoadBitmap("cog"),
+                             _("Open selected project settings. If there is no project selected, open the parent "
+                               "project of the selected item in the tree"));
+    m_auibar->Realize();
 }
 
 void WorkspaceTab::FreezeThaw(bool freeze /*=true*/)
@@ -192,23 +196,22 @@ void WorkspaceTab::ConnectEvents()
                       wxUpdateUIEventHandler(WorkspaceTab::OnProjectSettingsUI),
                       nullptr,
                       this);
-    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnCollapseAll, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
-    m_toolbar580->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnCollapseAllUI, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
-    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnLinkEditor, this, XRCID("ID_TOOL_LINK_EDITOR"));
-    m_toolbar580->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnLinkEditorUI, this, XRCID("ID_TOOL_LINK_EDITOR"));
-    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnProjectSettings, this, XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
-    m_toolbar580->Bind(
-        wxEVT_UPDATE_UI, &WorkspaceTab::OnProjectSettingsUI, this, XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
-    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnGoHome, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
-    m_toolbar580->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnGoHomeUI, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
+    m_auibar->Bind(wxEVT_TOOL, &WorkspaceTab::OnCollapseAll, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnCollapseAllUI, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
+    m_auibar->Bind(wxEVT_TOOL, &WorkspaceTab::OnLinkEditor, this, XRCID("ID_TOOL_LINK_EDITOR"));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnLinkEditorUI, this, XRCID("ID_TOOL_LINK_EDITOR"));
+    m_auibar->Bind(wxEVT_TOOL, &WorkspaceTab::OnProjectSettings, this, XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnProjectSettingsUI, this, XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
+    m_auibar->Bind(wxEVT_TOOL, &WorkspaceTab::OnGoHome, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
+    m_auibar->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnGoHomeUI, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &WorkspaceTab::OnBuildStarted, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &WorkspaceTab::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_PROGRAM_STARTED, &WorkspaceTab::OnProgramStarted, this);
     EventNotifier::Get()->Bind(wxEVT_PROGRAM_TERMINATED, &WorkspaceTab::OnProgramStopped, this);
-    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnExecuteNoDebug, this, XRCID("ID_EXECUTE_NO_DEBUG"));
-    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnBuildActiveProject, this, XRCID("ID_BUILD_PROJECT"));
-    m_toolbar580->Bind(
-        wxEVT_TOOL_DROPDOWN, &WorkspaceTab::OnBuildActiveProjectDropdown, this, XRCID("ID_BUILD_PROJECT"));
+    m_auibar->Bind(wxEVT_TOOL, &WorkspaceTab::OnExecuteNoDebug, this, XRCID("ID_EXECUTE_NO_DEBUG"));
+    m_auibar->Bind(wxEVT_TOOL, &WorkspaceTab::OnBuildActiveProject, this, XRCID("ID_BUILD_PROJECT"));
+    m_auibar->Bind(
+        wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &WorkspaceTab::OnBuildActiveProjectDropdown, this, XRCID("ID_BUILD_PROJECT"));
 }
 
 void WorkspaceTab::OnLinkEditor(wxCommandEvent& e)
@@ -571,11 +574,11 @@ void WorkspaceTab::OnBuildActiveProject(wxCommandEvent& event)
     wxUnusedVar(event);
     if (m_buildInProgress) {
         wxCommandEvent stopEvent(wxEVT_TOOL, XRCID("stop_active_project_build"));
-        stopEvent.SetEventObject(m_toolbar580);
+        stopEvent.SetEventObject(this);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(stopEvent);
     } else {
         wxCommandEvent buildEvent(wxEVT_TOOL, XRCID("build_active_project"));
-        buildEvent.SetEventObject(m_toolbar580);
+        buildEvent.SetEventObject(this);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(buildEvent);
     }
 }
@@ -585,23 +588,23 @@ void WorkspaceTab::OnExecuteNoDebug(wxCommandEvent& event)
     wxUnusedVar(event);
     if (!m_runInProgress) {
         wxCommandEvent runEvent(wxEVT_TOOL, XRCID("execute_no_debug"));
-        runEvent.SetEventObject(m_toolbar580);
+        runEvent.SetEventObject(this);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(runEvent);
     } else {
         wxCommandEvent stopEvent(wxEVT_TOOL, XRCID("stop_executed_program"));
-        stopEvent.SetEventObject(m_toolbar580);
+        stopEvent.SetEventObject(this);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(stopEvent);
     }
 }
 
-void WorkspaceTab::OnBuildActiveProjectDropdown(wxCommandEvent& event)
+void WorkspaceTab::OnBuildActiveProjectDropdown(wxAuiToolBarEvent& event)
 {
     wxUnusedVar(event);
     // we don't allow showing the dropdown during build process
     if (m_buildInProgress) {
         return;
     }
-    clMainFrame::Get()->ShowBuildMenu(m_toolbar580, XRCID("ID_BUILD_PROJECT"));
+    clMainFrame::Get()->ShowBuildMenu(m_auibar, XRCID("ID_BUILD_PROJECT"));
 }
 
 void WorkspaceTab::OnProgramStarted(clExecuteEvent& event)

@@ -1583,6 +1583,17 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     clEnvList_t env_list;
     bldConf->GetCompiler()->CreatePathEnv(&env_list);
 
+    if (!wxDirExists(wd)) {
+        wxMessageBox(wxString::Format(_("Unable to run the program: the working directory does not exist.\n\n"
+                                        "Directory: %s\n\n"
+                                        "Update it under Project Settings > General > Execution > Working Directory, "
+                                        "then try again."),
+                                      wd),
+                     "CodeLite",
+                     wxICON_WARNING | wxOK);
+        return;
+    }
+
     if (bldConf->IsGUIProgram()) {
         m_programProcess = ::CreateAsyncProcess(this, execLine, IProcessCreateDefault, wd, &env_list);
         if (m_programProcess) {

@@ -31,7 +31,6 @@
 #include "configuration_mapping.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
-#include "envvarlist.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -537,24 +536,12 @@ void BuilderGNUMakeClassic::GenerateMakefile(ProjectPtr proj,
     CreateConfigsVariables(proj, bldConf, text);
 
     //----------------------------------------------------------
-    // copy environment variables to the makefile
-    // We put them after the 'hard-coded' ones
+    // The environment variables are put after the 'hard-coded' ones
     // so user will be able to override any of the default
-    // variables by defining its own
+    // variables by defining its own. They are inserted here once the
+    // makefile is complete, so we know which variables it uses.
     //----------------------------------------------------------
-    EnvVarList vars;
-    EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-    EnvMap varMap = vars.GetVariables(wxT(""), true, proj->GetName(), bldConf->GetName());
-
-    text << wxT("##") << wxT("\n");
-    text << wxT("## User defined environment variables") << wxT("\n");
-    text << wxT("##") << wxT("\n");
-
-    for (size_t i = 0; i < varMap.GetCount(); i++) {
-        wxString name, value;
-        varMap.Get(i, name, value);
-        text << name << wxT(":=") << value << wxT("") << wxT("\n");
-    }
+    const size_t envVarsPos = text.length();
 
     CreateListMacros(proj, confToBuild, text); // list of srcs and list of objects
 
@@ -584,6 +571,8 @@ void BuilderGNUMakeClassic::GenerateMakefile(ProjectPtr proj,
     //-----------------------------------------------------------
     CreateFileTargets(proj, confToBuild, text);
     CreateCleanTargets(proj, confToBuild, text);
+
+    text.insert(envVarsPos, CreateMakefileEnvVarsSection(text, proj->GetName(), bldConf->GetName(), ":="));
 
     // dump the content to a file
     wxFFile output;

@@ -27,6 +27,8 @@
 #include "codelite_exports.h"
 
 #include <memory>
+#include <utility>
+#include <vector>
 #include <wx/event.h>
 #include <wx/string.h>
 
@@ -56,6 +58,42 @@ public:
      * spaces from the string, and replacing any space character with underscore.
      */
     static wxString NormalizeConfigName(const wxString& confgName);
+
+    /// A list of environment variables (name, value), in order. The same name can appear more than once
+    using EnvVarEntries = std::vector<std::pair<wxString, wxString>>;
+
+    /**
+     * @brief convert the variable references of an environment variable value to the makefile syntax.
+     * `$NAME`, `${NAME}` and `%NAME%` become `$(NAME)` (these are the forms that CodeLite accepts, see
+     * MacroManager::FindVariable). For example, in a makefile `$PATH` means `$(P)` followed by "ATH".
+     * `$(NAME)` and `$$` are not changed. A `%NAME%` name must not start with a digit, so percent-encoded text (for
+     * example `a%20b%20c`) is not changed.
+     */
+    static wxString ToMakefileVariableRefs(const wxString& value);
+
+    /**
+     * @brief return the "User defined environment variables" section of a makefile, for the environment variables of
+     * `project` and `config` (global, workspace and project variables).
+     * CodeLite sets all the environment variables before it runs the makefile, so the makefile only needs them when it
+     * runs outside CodeLite. To reduce the risk of leaking secrets (API keys, tokens...) into the makefile, only these
+     * variables are written: PATH, the ones whose name appears in `makefile` as a whole word, and the ones whose name
+     * appears in the value of a written variable. Values that are expanded elsewhere (for example in the pre / post
+     * build commands) are not affected.
+     * @param makefile the makefile content (without this section)
+     * @param project the project name
+     * @param config the build configuration name
+     * @param assign the assignment operator (":=" for GNU make, "=" for NMake)
+     */
+    static wxString CreateMakefileEnvVarsSection(const wxString& makefile,
+                                                 const wxString& project,
+                                                 const wxString& config,
+                                                 const wxString& assign);
+
+    /**
+     * @brief the same as above, for a given list of variables
+     */
+    static wxString
+    CreateMakefileEnvVarsSection(const wxString& makefile, const EnvVarEntries& variables, const wxString& assign);
 
     /**
      * \return the builder name
@@ -195,4 +233,3 @@ public:
 };
 
 using BuilderPtr = std::shared_ptr<Builder>;
-

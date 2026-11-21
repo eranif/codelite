@@ -78,6 +78,13 @@ You can set variables in two ways:
 - Use a [pre-defined environment variables set](../../settings/environment_variables/#using-pre-defined-set)
 - Manually set them for [using the same syntax as explained here](../../settings/environment_variables/#setting-global-environment-variables)
 
+!!! Note
+    CodeLite sets all the environment variables before it runs the build. The generated makefiles (for running the
+    build outside of CodeLite) contain only `PATH` and the variables that the makefile uses (for example
+    `$(WXWIN)` in the include paths), so variables that the makefile does not use (for example API keys) are not
+    written to them. A tool that reads a variable from the environment, which the makefile does not mention, gets
+    the value from your shell when you run the makefile outside of CodeLite.
+
 ### Linker
 ---
 

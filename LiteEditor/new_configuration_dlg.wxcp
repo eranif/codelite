@@ -7,7 +7,6 @@
     "m_firstWindowId": 10000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 0,
     "m_outputFileName": "new_configuration_dlg_base",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

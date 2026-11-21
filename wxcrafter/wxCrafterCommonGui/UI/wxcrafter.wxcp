@@ -7,7 +7,6 @@
     "m_firstWindowId": 1000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 432,
     "m_outputFileName": "wxcrafter",
     "m_useEnum": false,
     "m_useUnderscoreMacro": true,
@@ -8590,7 +8589,7 @@
                     {
                       "type": "string",
                       "m_label": "Name:",
-                      "m_value": "Spacer"
+                      "m_value": "Spacer2"
                     },
                     {
                       "type": "string",
@@ -9087,7 +9086,7 @@
                 {
                   "type": "string",
                   "m_label": "Name:",
-                  "m_value": "Spacer"
+                  "m_value": "Spacer3"
                 },
                 {
                   "type": "string",

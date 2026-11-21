@@ -7,7 +7,6 @@
     "m_firstWindowId": 1000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 96,
     "m_outputFileName": "subversion2_ui",
     "m_useEnum": false,
     "m_useUnderscoreMacro": true,
@@ -1241,7 +1240,7 @@
                                             {
                                               "type": "string",
                                               "m_label": "Name:",
-                                              "m_value": "Path"
+                                              "m_value": "Path2"
                                             },
                                             {
                                               "type": "string",

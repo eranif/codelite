@@ -7,7 +7,6 @@
     "m_firstWindowId": 8000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 690,
     "m_outputFileName": "memcheckui",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -4936,7 +4935,7 @@
                                                 {
                                                   "type": "string",
                                                   "m_label": "Name:",
-                                                  "m_value": "Label"
+                                                  "m_value": "Label2"
                                                 },
                                                 {
                                                   "type": "string",

@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "WordCompletionSettings.h"
     ],
-    "m_objCounter": 18,
     "m_outputFileName": "UI",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

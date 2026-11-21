@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 12,
     "m_outputFileName": "clSelectSymbolDialogBase",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

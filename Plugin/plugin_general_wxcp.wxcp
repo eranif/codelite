@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 5,
     "m_outputFileName": "plugin_general_wxcp",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

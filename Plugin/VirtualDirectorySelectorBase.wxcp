@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "\"codelite_exports.h\""
     ],
-    "m_objCounter": 1,
     "m_outputFileName": "VirtualDirectorySelectorBase",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

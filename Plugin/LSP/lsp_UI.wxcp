@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 225,
     "m_outputFileName": "lsp_UI",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

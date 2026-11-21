@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 6,
     "m_outputFileName": "nameanddescbasedlg",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

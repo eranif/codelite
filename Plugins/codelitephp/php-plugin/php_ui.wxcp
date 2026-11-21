@@ -7,7 +7,6 @@
     "m_firstWindowId": 8000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 758,
     "m_outputFileName": "php_ui",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -4520,7 +4519,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Name:",
-                                  "m_value": "#"
+                                  "m_value": "#2"
                                 },
                                 {
                                   "type": "string",
@@ -4586,7 +4585,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Name:",
-                                  "m_value": "File"
+                                  "m_value": "File2"
                                 },
                                 {
                                   "type": "string",
@@ -4652,7 +4651,7 @@
                                 {
                                   "type": "string",
                                   "m_label": "Name:",
-                                  "m_value": "Line"
+                                  "m_value": "Line2"
                                 },
                                 {
                                   "type": "string",

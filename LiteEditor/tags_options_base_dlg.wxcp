@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "tags_options_data.h"
     ],
-    "m_objCounter": 134,
     "m_outputFileName": "tags_options_base_dlg",
     "m_useEnum": false,
     "m_useUnderscoreMacro": true,

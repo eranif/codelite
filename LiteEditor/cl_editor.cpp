@@ -5552,7 +5552,10 @@ void clEditor::ToggleLineComment(const wxString& commentSymbol, int commentStyle
             if (firstCommentPos != wxNOT_FOUND) {
                 if (GetStyleAt(firstCommentPos) == commentStyle) {
                     SetAnchor(firstCommentPos);
-                    SetCurrentPos(PositionAfter(PositionAfter(firstCommentPos)));
+                    for (std::size_t i = 0; i != commentSymbol.size(); ++i) {
+                        firstCommentPos = PositionAfter(firstCommentPos);
+                    }
+                    SetCurrentPos(firstCommentPos);
                     DeleteBackNotLine();
                 }
             }

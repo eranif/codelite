@@ -28,7 +28,7 @@
 namespace
 {
 constexpr const char* LEXERS_VERSION_STRING = "LexersVersion";
-constexpr int LEXERS_VERSION = 10;
+constexpr int LEXERS_VERSION = 11;
 } // namespace
 
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
@@ -434,6 +434,8 @@ std::optional<LexerConf::Ptr_t> ColoursAndFontsManager::GetLexerForFileType(File
         return GetLexer("xml");
     case FileExtManager::TypePython:
         return GetLexer("python");
+    case FileExtManager::TypePerl:
+        return GetLexer("perl");
     case FileExtManager::TypeRuby:
         return GetLexer("ruby");
     case FileExtManager::TypeRust:

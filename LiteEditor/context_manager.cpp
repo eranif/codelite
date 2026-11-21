@@ -67,7 +67,12 @@ ContextBasePtr ContextManager::NewContext(clEditor* parent, const wxString& lexe
     lex_name.MakeLower();
     auto iter = m_contextPool.find(lex_name);
     if (iter == m_contextPool.end()) {
-        return m_contextPool["text"]->NewInstance(parent);
+        // The pool is built once, on first use. A lexer that was loaded after that (for example: "Restore defaults"
+        // reloads the lexers, or an imported theme adds a new language) is not in the pool yet: add it now
+        if (ColoursAndFontsManager::Get().GetAllLexersNames().Index(lex_name, false) == wxNOT_FOUND) {
+            return m_contextPool["text"]->NewInstance(parent);
+        }
+        iter = m_contextPool.insert({lex_name, std::make_shared<ContextGeneric>(lex_name)}).first;
     }
 
     return iter->second->NewInstance(parent);

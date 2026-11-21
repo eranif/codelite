@@ -105,6 +105,7 @@ public:
         TypeLast,
         TypeTypeScript,
         TypeCSharp,
+        TypePerl,
     };
 
 public:

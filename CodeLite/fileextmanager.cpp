@@ -201,6 +201,8 @@ void FileExtManager::Init()
         m_map["diff"] = TypeDiff;
 
         m_map["rb"] = TypeRuby;
+        m_map["pl"] = TypePerl;
+        m_map["pm"] = TypePerl;
         m_map["md"] = TypeMarkdown;
         m_map["dart"] = TypeDart;
         m_map["cs"] = TypeCSharp;
@@ -224,6 +226,7 @@ void FileExtManager::Init()
                                    TypeWorkspacePHP}});
         m_language_bundle.insert({"Rust", {TypeRust}});
         m_language_bundle.insert({"Ruby", {TypeRuby}});
+        m_language_bundle.insert({"Perl", {TypePerl}});
         m_language_bundle.insert({"sh", {TypeShellScript}});
         m_language_bundle.insert({"Java", {TypeJava}});
         m_language_bundle.insert({"Javascript", {TypeJS}});
@@ -248,6 +251,7 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher("#[ \t]*!(.*?)sh", TypeShellScript));
         m_matchers.push_back(Matcher("#[ \t]*!(.*?)python", TypePython));
         m_matchers.push_back(Matcher("#[ \t]*!(.*?)ruby", TypeRuby));
+        m_matchers.push_back(Matcher("#[ \t]*!(.*?)perl", TypePerl));
         m_matchers.push_back(Matcher("#[ \t]*!(.*?)node", TypeJS));
         m_matchers.push_back(Matcher("<?xml", TypeXml, false));
         m_matchers.push_back(Matcher("<?php", TypePhp, false));

@@ -547,8 +547,12 @@ wxRichTextParagraph* clRichTextMarkdownRenderer::EnsureParagraph()
         m_headingPara = m_para;
     }
     if (m_para != nullptr && first_in_item && m_itemTask) {
-        // The check box of a task item: it takes the place of the bullet, so it has the colour of the bullets
-        wxRichTextAttr check_box_attr = BuildCharAttr();
+        // The check box of a task item: it takes the place of the bullet, so it has the colour of the bullets.
+        // Draw it with the base font and no background: the inline state of the text that starts the item must
+        // not change it (a code span would give it the monospace font, which has no check box glyph, and the
+        // code background)
+        wxRichTextAttr check_box_attr;
+        check_box_attr.SetFont(m_theme.font);
         check_box_attr.SetTextColour(m_theme.bullet);
         AppendText(m_itemTaskChecked ? wxString::FromUTF8("\xE2\x98\x91 ") : wxString::FromUTF8("\xE2\x98\x90 "),
                    check_box_attr);

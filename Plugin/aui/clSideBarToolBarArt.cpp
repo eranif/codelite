@@ -85,7 +85,7 @@ void DrawRounded(wxDC& dc,
 void DrawSunkCircle(wxDC& dc, const wxRect& rect, const wxColour& bar, bool deeper)
 {
     const wxColour fill = bar.ChangeLightness(IsDark() ? (deeper ? 72 : 80) : (deeper ? 80 : 88));
-    const wxColour ring = fill.ChangeLightness(125);
+    const wxColour ring = fill.ChangeLightness(IsDark() ? 125 : 75);
     DrawRounded(dc, rect, std::min(rect.width, rect.height) / 2.0, fill, ring, 1.0);
 }
 

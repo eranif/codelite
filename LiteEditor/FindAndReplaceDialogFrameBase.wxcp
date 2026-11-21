@@ -293,11 +293,6 @@
                 "wxTAB_TRAVERSAL"
               ],
               "m_sizerFlags": [
-                "wxALL",
-                "wxLEFT",
-                "wxRIGHT",
-                "wxTOP",
-                "wxBOTTOM",
                 "wxEXPAND"
               ],
               "m_properties": [

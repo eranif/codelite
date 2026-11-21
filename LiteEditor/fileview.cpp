@@ -3100,7 +3100,8 @@ void FileViewTree::ExcludeFileFromBuildUI(const wxTreeItemId& item, bool exclude
 
     if (exclude) {
         m_excludeBuildFiles.insert({filename, item});
-        SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+        const bool isDark = clSystemSettings::Get().IsDark();
+        SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour().ChangeLightness(isDark ? 40 : 170));
     } else {
         m_excludeBuildFiles.erase(filename);
         SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour());

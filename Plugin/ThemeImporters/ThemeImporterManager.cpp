@@ -22,6 +22,7 @@
 #include "ThemeImporterLUA.hpp"
 #include "ThemeImporterMakefile.hpp"
 #include "ThemeImporterMarkdown.hpp"
+#include "ThemeImporterMeson.hpp"
 #include "ThemeImporterPHP.hpp"
 #include "ThemeImporterPerl.hpp"
 #include "ThemeImporterPython.hpp"
@@ -67,6 +68,7 @@ ThemeImporterManager::ThemeImporterManager()
     m_importers.push_back(std::make_unique<ThemeImporterYAML>());
     m_importers.push_back(std::make_unique<ThemeImporterRuby>());
     m_importers.push_back(std::make_unique<ThemeImporterPerl>());
+    m_importers.push_back(std::make_unique<ThemeImporterMeson>());
     m_importers.push_back(std::make_unique<ThemeImporterMarkdown>());
     m_importers.push_back(std::make_unique<ThemeImporterRust>());
     m_importers.push_back(std::make_unique<ThemeImporterJson>());

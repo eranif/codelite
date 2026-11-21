@@ -29,6 +29,19 @@ namespace
 {
 constexpr const char* LEXERS_VERSION_STRING = "LexersVersion";
 constexpr int LEXERS_VERSION = 11;
+/// The stamp (size + modification time) of the install lexers.json that was last merged into the user's copy
+constexpr const char* LEXERS_INSTALL_STAMP_STRING = "LexersInstallStamp";
+
+/// A stamp that changes when the file changes (a new install or a rebuild). Empty if the file does not exist
+wxString GetFileStamp(const wxFileName& path)
+{
+    if (!path.FileExists()) {
+        return wxEmptyString;
+    }
+    wxString stamp;
+    stamp << path.GetSize().ToString() << ":" << static_cast<long long>(FileUtils::GetFileModificationTime(path));
+    return stamp;
+}
 } // namespace
 
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
@@ -692,6 +705,7 @@ void ColoursAndFontsManager::LoadLexersFromFile()
     clINFO() << "Loading lexers. System file:" << fnInstallLexers << endl;
     clINFO() << "Loading lexers. Local file:" << fnUserLexers << endl;
 
+    bool loadedInstallLexers = false;
     if (m_lexersVersion < LEXERS_VERSION || !fnUserLexers.FileExists()) {
         clINFO() << "Loading default lexers. CodeLite expected version:" << LEXERS_VERSION
                  << ". Current version found in configuration file:" << m_lexersVersion << endl;
@@ -699,12 +713,28 @@ void ColoursAndFontsManager::LoadLexersFromFile()
         // merge the lexers (or the user file does not exist)
         LoadJSON(fnInstallLexers);
         Save();
+        loadedInstallLexers = true;
     }
 
     // Load the user settings
     if (fnUserLexers.FileExists()) {
         // Any duplicate lexer found here, will override the default lexer
         LoadJSON(fnUserLexers);
+    }
+
+    // When the install lexers.json changed (a new install or a rebuild), add the lexers that the user's copy does not
+    // have yet (a new language or a new theme). This way, new lexers are available without bumping LEXERS_VERSION.
+    // The install file is only parsed when it changed
+    const wxString installStamp = GetFileStamp(fnInstallLexers);
+    if (!installStamp.empty() && clConfig::Get().Read(LEXERS_INSTALL_STAMP_STRING, wxString()) != installStamp) {
+        if (!loadedInstallLexers) {
+            size_t count = AddMissingLexers(fnInstallLexers);
+            clINFO() << "Added" << count << "new lexers from:" << fnInstallLexers << endl;
+            if (count > 0) {
+                Save();
+            }
+        }
+        clConfig::Get().Write(LEXERS_INSTALL_STAMP_STRING, installStamp);
     }
 
     clINFO() << "Success" << endl;
@@ -854,6 +884,35 @@ void ColoursAndFontsManager::LoadJSON(const wxFileName& path)
         DoAddLexer(json);
     }
     clDEBUG() << "==> Success  <==" << endl;
+}
+
+size_t ColoursAndFontsManager::AddMissingLexers(const wxFileName& path)
+{
+    if (!path.FileExists()) {
+        return 0;
+    }
+
+    // The lexers that are already loaded: "language\ntheme" (lower case)
+    wxStringSet_t loaded;
+    for (const auto& lexer : m_allLexers) {
+        loaded.insert(lexer->GetName().Lower() + "\n" + lexer->GetThemeName().Lower());
+    }
+
+    JSON root(path);
+    auto vec = root.toElement().GetAsVector();
+
+    size_t count = 0;
+    for (const auto& json : vec) {
+        wxString key = json["Name"].toString().Lower() + "\n" + json["Theme"].toString().Lower();
+        if (loaded.count(key)) {
+            continue;
+        }
+        if (DoAddLexer(json)) {
+            loaded.insert(key);
+            ++count;
+        }
+    }
+    return count;
 }
 
 LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)

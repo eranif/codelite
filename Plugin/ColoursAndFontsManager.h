@@ -69,6 +69,9 @@ private:
     void Clear();
     wxFileName GetConfigFile() const;
     void LoadJSON(const wxFileName& path);
+    /// Add the lexers (language + theme) from `path` that are not loaded yet. The loaded lexers are not changed.
+    /// Return the number of lexers that were added
+    size_t AddMissingLexers(const wxFileName& path);
     void LoadDb(const wxFileName& path);
     bool IsBackupRequired() const;
     void BackupUserOldJsonFileIfNeeded();
@@ -234,4 +237,3 @@ public:
      */
     bool IsDarkTheme() const;
 };
-

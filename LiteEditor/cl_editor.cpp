@@ -928,8 +928,10 @@ void clEditor::SetProperties()
     }
 
     // Set the highlight colour for the folding
+    const wxColour& foldHighlightColour =
+        lexer->IsDark() ? options->GetFoldHighlightColourDark() : options->GetFoldHighlightColourLight();
     for (int i = wxSTC_MARKNUM_FOLDEREND; i <= wxSTC_MARKNUM_FOLDEROPEN; ++i) {
-        MarkerSetBackgroundSelected(i, lexer->IsDark() ? wxColour("YELLOW") : wxColour("RED"));
+        MarkerSetBackgroundSelected(i, foldHighlightColour);
     }
 
     // Bookmark

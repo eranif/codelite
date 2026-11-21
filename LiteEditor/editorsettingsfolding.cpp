@@ -49,4 +49,10 @@ EditorSettingsFolding::EditorSettingsFolding(wxWindow* parent, OptionsConfigPtr 
     AddProperty(_("Highlight active fold block"),
                 m_options->IsHighlightFoldWhenActive(),
                 UPDATE_BOOL_CB(SetHighlightFoldWhenActive));
+    AddProperty(_("Highlight colour (dark theme)"),
+                m_options->GetFoldHighlightColourDark(),
+                UPDATE_COLOUR_CB(SetFoldHighlightColourDark));
+    AddProperty(_("Highlight colour (light theme)"),
+                m_options->GetFoldHighlightColourLight(),
+                UPDATE_COLOUR_CB(SetFoldHighlightColourLight));
 }

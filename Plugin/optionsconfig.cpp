@@ -223,6 +223,10 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         }
         m_debuggerMarkerLine = XmlUtils::ReadString(
             node, wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+        m_foldHighlightColourDark = XmlUtils::ReadString(
+            node, wxT("FoldHighlightColourDark"), m_foldHighlightColourDark.GetAsString(wxC2S_HTML_SYNTAX));
+        m_foldHighlightColourLight = XmlUtils::ReadString(
+            node, wxT("FoldHighlightColourLight"), m_foldHighlightColourLight.GetAsString(wxC2S_HTML_SYNTAX));
         m_indentedComments = XmlUtils::ReadBool(node, wxT("IndentedComments"), m_indentedComments);
 
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include
@@ -320,6 +324,8 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("m_useLocale"), BoolToString(m_useLocale));
     n->AddAttribute(wxT("m_trimOnlyModifiedLines"), BoolToString(m_trimOnlyModifiedLines));
     n->AddAttribute(wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+    n->AddAttribute(wxT("FoldHighlightColourDark"), m_foldHighlightColourDark.GetAsString(wxC2S_HTML_SYNTAX));
+    n->AddAttribute(wxT("FoldHighlightColourLight"), m_foldHighlightColourLight.GetAsString(wxC2S_HTML_SYNTAX));
     n->AddAttribute(wxT("OutputTabsDirection"), wxString() << (int)m_outputTabsDirection);
     n->AddAttribute(wxT("SidebarButtonsPosition"), wxString() << (int)m_workspaceTabsDirection);
     n->AddAttribute(wxT("IndentedComments"), BoolToString(m_indentedComments));

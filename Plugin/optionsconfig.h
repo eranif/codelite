@@ -152,6 +152,8 @@ protected:
     bool m_trimOnlyModifiedLines;
     clBitset m_options;
     wxColour m_debuggerMarkerLine;
+    wxColour m_foldHighlightColourDark{"YELLOW"};
+    wxColour m_foldHighlightColourLight{"RED"};
     wxDirection m_workspaceTabsDirection; // Up/Down/Left/Right
     wxDirection m_outputTabsDirection;    // Up/Down
     bool m_indentedComments;
@@ -454,6 +456,12 @@ public:
 
     void SetDebuggerMarkerLine(const wxColour& debuggerMarkerLine) { this->m_debuggerMarkerLine = debuggerMarkerLine; }
     const wxColour& GetDebuggerMarkerLine() const { return m_debuggerMarkerLine; }
+
+    /// The colour of the active fold block highlight, for dark and light themes
+    void SetFoldHighlightColourDark(const wxColour& colour) { m_foldHighlightColourDark = colour; }
+    const wxColour& GetFoldHighlightColourDark() const { return m_foldHighlightColourDark; }
+    void SetFoldHighlightColourLight(const wxColour& colour) { m_foldHighlightColourLight = colour; }
+    const wxColour& GetFoldHighlightColourLight() const { return m_foldHighlightColourLight; }
 
     void SetShowDockingWindowCaption(bool show) { EnableOption(Opt_HideDockingWindowCaption, !show); }
     void SetEnsureCaptionsVisible(bool b) { EnableOption(Opt_EnsureCaptionsVisible, b); }

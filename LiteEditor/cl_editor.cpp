@@ -2121,7 +2121,7 @@ wxString clEditor::PreviousWord(int pos, int& foundPos)
     return wxT("");
 }
 
-wxChar clEditor::PreviousChar(const int& pos, int& foundPos, bool wantWhitespace)
+wxChar clEditor::PreviousChar(int pos, int& foundPos, bool wantWhitespace)
 {
     wxChar ch = 0;
     long curpos = PositionBefore(pos);
@@ -2153,7 +2153,7 @@ wxChar clEditor::PreviousChar(const int& pos, int& foundPos, bool wantWhitespace
     return ch;
 }
 
-wxChar clEditor::NextChar(const int& pos, int& foundPos)
+wxChar clEditor::NextChar(int pos, int& foundPos)
 {
     wxChar ch = 0;
     long nextpos = pos;
@@ -2175,7 +2175,7 @@ wxChar clEditor::NextChar(const int& pos, int& foundPos)
     return ch;
 }
 
-int clEditor::FindString(const wxString& str, int flags, const bool down, long pos)
+int clEditor::FindString(const wxString& str, int flags, bool down, long pos)
 {
     // initialize direction
     if (down) {

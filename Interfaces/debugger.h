@@ -487,11 +487,11 @@ public:
     /**
      * \brief Enable or Disable a breakpoint
      */
-    virtual bool SetEnabledState(double bid, const bool enable) = 0;
+    virtual bool SetEnabledState(double bid, bool enable) = 0;
     /**
      * \brief Set this breakpoint's Ignore count
      */
-    virtual bool SetIgnoreLevel(double bid, const int ignorecount) = 0;
+    virtual bool SetIgnoreLevel(double bid, int ignorecount) = 0;
     /**
      * \brief Set this breakpoint's condition
      */

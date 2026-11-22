@@ -113,8 +113,8 @@ public:
     bool Run(const wxString& args, const wxString& comm) override;
     bool Stop() override;
     bool Break(const clDebuggerBreakpoint& bp) override;
-    bool SetEnabledState(double bid, const bool enable) override;
-    bool SetIgnoreLevel(double bid, const int ignorecount) override;
+    bool SetEnabledState(double bid, bool enable) override;
+    bool SetIgnoreLevel(double bid, int ignorecount) override;
     bool SetCondition(const clDebuggerBreakpoint& bp) override;
     bool SetCommands(const clDebuggerBreakpoint& bp) override;
     bool RemoveBreak(double bid) override;

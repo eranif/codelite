@@ -51,8 +51,8 @@ public:
     const wxString& GetCscopeExe() const { return m_cscopeFilepath; }
     void SetScanScope(const wxString& scanScope) { this->m_scanScope = scanScope; }
     const wxString& GetScanScope() const { return m_scanScope; }
-    void SetRebuildDbOption(const bool rebuild) { this->m_rebuildDb = rebuild; }
+    void SetRebuildDbOption(bool rebuild) { this->m_rebuildDb = rebuild; }
     bool GetRebuildOption() const { return m_rebuildDb; }
-    void SetBuildRevertedIndexOption(const bool revertedIndex) { this->m_buildRevertedIndex = revertedIndex; }
+    void SetBuildRevertedIndexOption(bool revertedIndex) { this->m_buildRevertedIndex = revertedIndex; }
     bool GetBuildRevertedIndexOption() const { return m_buildRevertedIndex; }
 };

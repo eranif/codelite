@@ -570,7 +570,7 @@ public:
     // Internal implementation for various debugger events
     //---------------------------------------------------
 
-    void UpdateAddLine(const wxString& line, const bool OnlyIfLoggingOn = false);
+    void UpdateAddLine(const wxString& line, bool OnlyIfLoggingOn = false);
     void UpdateGotControl(const DebuggerEventData& e);
     void UpdateLostControl();
     void UpdateRemoteTargetConnected(const wxString& line);

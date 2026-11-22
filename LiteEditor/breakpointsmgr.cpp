@@ -835,7 +835,7 @@ bool BreakptMgr::CanThisBreakpointBeUpdated(const clDebuggerBreakpoint& a, const
     return (temp == b);
 }
 
-bool BreakptMgr::SetBPIgnoreCount(double bid, const int ignorecount)
+bool BreakptMgr::SetBPIgnoreCount(double bid, int ignorecount)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if (dbgr && dbgr->IsRunning()) {
@@ -883,7 +883,7 @@ bool BreakptMgr::SetBPConditon(const clDebuggerBreakpoint& bp)
     return false;
 }
 
-bool BreakptMgr::SetBPEnabledState(double bid, const bool enable)
+bool BreakptMgr::SetBPEnabledState(double bid, bool enable)
 {
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if (dbgr && dbgr->IsRunning()) {

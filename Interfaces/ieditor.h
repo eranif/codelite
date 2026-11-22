@@ -466,7 +466,7 @@ public:
      * @param wantWhitespace set to false if whitespace chars should be skipped
      * @return return the matched char or 0 if at the start of document
      */
-    virtual wxChar PreviousChar(const int& pos, int& foundPos, bool wantWhitespace) = 0;
+    virtual wxChar PreviousChar(int pos, int& foundPos, bool wantWhitespace) = 0;
 
     /**
      * @brief The minimum position returned is 0 and the maximum is the last position in the document

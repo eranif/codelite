@@ -2477,26 +2477,28 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
         menu.Append(item);
         menu.AppendSeparator();
     }
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
 
-    item = new wxMenuItem(&menu, XRCID("build_project"), _("Build"), _("Build project"));
-    item->SetBitmap(bmpBuild);
-    menu.Append(item);
+    if (bldConf && bldConf->IsProjectEnabled() && (bldConf->IsCompilerRequired() || bldConf->IsLinkerRequired())) {
+        item = new wxMenuItem(&menu, XRCID("build_project"), _("Build"), _("Build project"));
+        item->SetBitmap(bmpBuild);
+        menu.Append(item);
 
-    item = new wxMenuItem(&menu, XRCID("rebuild_project"), _("Rebuild"), _("Rebuild project"));
-    menu.Append(item);
+        item = new wxMenuItem(&menu, XRCID("rebuild_project"), _("Rebuild"), _("Rebuild project"));
+        menu.Append(item);
 
-    item = new wxMenuItem(&menu, XRCID("clean_project"), _("Clean"), _("Clean project"));
-    item->SetBitmap(bmpClean);
-    menu.Append(item);
+        item = new wxMenuItem(&menu, XRCID("clean_project"), _("Clean"), _("Clean project"));
+        item->SetBitmap(bmpClean);
+        menu.Append(item);
 
-    item = new wxMenuItem(&menu, XRCID("stop_build"), _("Stop Build"), _("Stop Build"));
-    menu.Append(item);
+        item = new wxMenuItem(&menu, XRCID("stop_build"), _("Stop Build"), _("Stop Build"));
+        menu.Append(item);
 
+        menu.AppendSeparator();
+    }
     // Custom build targets
     // Add custom project targets
-    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
     if (bldConf && bldConf->IsCustomBuild() && !bldConf->GetCustomTargets().empty()) {
-        menu.AppendSeparator();
         wxMenuItem* item = nullptr;
         // append the custom build targets
         const BuildConfig::StringMap_t& targets = bldConf->GetCustomTargets();
@@ -2513,22 +2515,25 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
                 menu.Append(item);
             }
         }
+        menu.AppendSeparator();
     }
 
-    menu.AppendSeparator();
+    if (bldConf && bldConf->IsProjectEnabled() && (bldConf->IsCompilerRequired() || bldConf->IsLinkerRequired()))
+    {
+        wxMenu* projectOnly = new wxMenu();
+        projectOnly->Append(XRCID("build_project_only"), _("Build"));
+        projectOnly->Append(XRCID("clean_project_only"), _("Clean"));
+        projectOnly->Append(XRCID("rebuild_project_only"), _("Rebuild"));
 
-    wxMenu* projectOnly = new wxMenu();
-    projectOnly->Append(XRCID("build_project_only"), _("Build"));
-    projectOnly->Append(XRCID("clean_project_only"), _("Clean"));
-    projectOnly->Append(XRCID("rebuild_project_only"), _("Rebuild"));
+        menu.Append(wxID_ANY, _("Project Only"), projectOnly);
+        menu.AppendSeparator();
 
-    menu.Append(wxID_ANY, _("Project Only"), projectOnly);
-    menu.AppendSeparator();
+        item = new wxMenuItem(&menu, XRCID("build_order"), _("Build Order..."), _("Build Order..."));
+        item->SetBitmap(bmpSort);
+        menu.Append(item);
 
-    item = new wxMenuItem(&menu, XRCID("build_order"), _("Build Order..."), _("Build Order..."));
-    item->SetBitmap(bmpSort);
-    menu.Append(item);
-    menu.AppendSeparator();
+        menu.AppendSeparator();
+    }
 
     item = new wxMenuItem(
         &menu, XRCID("cxx_fileview_open_file_explorer"), _("Open Containing Folder"), _("Open Containing Folder"));

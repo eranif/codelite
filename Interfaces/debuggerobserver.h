@@ -164,7 +164,7 @@ public:
      * @brief tells the observer to add line to the log view
      * @param line message to log
      */
-    void UpdateAddLine(const wxString& line, const bool OnlyIfLoggingOn = false)
+    void UpdateAddLine(const wxString& line, bool OnlyIfLoggingOn = false)
     {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_ADD_LINE;
@@ -177,7 +177,7 @@ public:
      * @brief notify the caller of the added breakpoint's debugger_id
      * @param the breakpoint's ids: internal and debugger
      */
-    void UpdateBpAdded(const int internal_id, const int debugger_id)
+    void UpdateBpAdded(int internal_id, int debugger_id)
     {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_BP_ADDED;

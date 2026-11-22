@@ -2262,7 +2262,7 @@ void Manager::DbgSetThread(long threadId)
 
 // Event handlers from the debugger
 
-void Manager::UpdateAddLine(const wxString& line, const bool OnlyIfLoggingOn /*=false*/)
+void Manager::UpdateAddLine(const wxString& line, bool OnlyIfLoggingOn /*=false*/)
 {
     // There are a few messages that are only worth displaying if full logging is enabled
     if (OnlyIfLoggingOn) {

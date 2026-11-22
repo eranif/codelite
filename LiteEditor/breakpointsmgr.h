@@ -79,12 +79,12 @@ protected:
     /**
      * Ignore this bp
      */
-    bool SetBPIgnoreCount(double bid, const int ignorecount);
+    bool SetBPIgnoreCount(double bid, int ignorecount);
 
     /**
      * Enable or Disable this breakpoint
      */
-    bool SetBPEnabledState(double bid, const bool enable);
+    bool SetBPEnabledState(double bid, bool enable);
 
     /**
      * Set this breakpoint's condition to that in bp.condition

@@ -432,10 +432,7 @@ public:
     int GetCaretBlinkPeriod() const { return m_caretBlinkPeriod; }
     int GetCaretWidth() const { return m_caretWidth; }
 
-    void SetCopyLineEmptySelection(const bool copyLineEmptySelection)
-    {
-        m_copyLineEmptySelection = copyLineEmptySelection;
-    }
+    void SetCopyLineEmptySelection(bool copyLineEmptySelection) { m_copyLineEmptySelection = copyLineEmptySelection; }
     bool GetCopyLineEmptySelection() const { return m_copyLineEmptySelection; }
 
     void SetProgramConsoleCommand(const wxString& programConsoleCommand)

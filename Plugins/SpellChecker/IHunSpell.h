@@ -55,7 +55,7 @@ class IEditor;
 class StringHashOptionalCase
 {
 public:
-    StringHashOptionalCase(const bool isCaseSensitive = true)
+    StringHashOptionalCase(bool isCaseSensitive = true)
         : m_isCaseSensitive(isCaseSensitive)
     {
     }
@@ -76,7 +76,7 @@ private:
 class StringCompareOptionalCase
 {
 public:
-    StringCompareOptionalCase(const bool isCaseSensitive = true)
+    StringCompareOptionalCase(bool isCaseSensitive = true)
         : m_isCaseSensitive(isCaseSensitive)
     {
     }
@@ -125,10 +125,10 @@ public:
     void SetDictionary(const wxString& dictionary) { m_dictionary = dictionary; }
     /// returns the current dictionary base filename
     const wxString& GetDictionary() const { return m_dictionary; }
-    void SetCaseSensitiveUserDictionary(const bool caseSensitiveUserDictionary);
+    void SetCaseSensitiveUserDictionary(bool caseSensitiveUserDictionary);
     /// gets whether user dictionary and ignored words are case sensitive
     bool GetCaseSensitiveUserDictionary() const { return m_caseSensitiveUserDictionary; }
-    void SetIgnoreSymbolsInTagsDatabase(const bool ignoreSymbolsInTagsDatabase)
+    void SetIgnoreSymbolsInTagsDatabase(bool ignoreSymbolsInTagsDatabase)
     {
         m_ignoreSymbolsInTagsDatabase = ignoreSymbolsInTagsDatabase;
     }

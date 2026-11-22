@@ -556,7 +556,7 @@ void IHunSpell::EnableScannerType(int type, bool state)
         m_scanners &= ~type;
 }
 // ------------------------------------------------------------
-void IHunSpell::SetCaseSensitiveUserDictionary(const bool caseSensitiveUserDictionary)
+void IHunSpell::SetCaseSensitiveUserDictionary(bool caseSensitiveUserDictionary)
 {
     if (caseSensitiveUserDictionary != m_caseSensitiveUserDictionary) {
         m_caseSensitiveUserDictionary = caseSensitiveUserDictionary;

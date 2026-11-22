@@ -577,7 +577,7 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
     return WriteCommand(gdbCommand, dbgCommandHandler);
 }
 
-bool DbgGdb::SetIgnoreLevel(double bid, const int ignorecount)
+bool DbgGdb::SetIgnoreLevel(double bid, int ignorecount)
 {
     if (bid == -1) { // Sanity check
         return false;
@@ -588,7 +588,7 @@ bool DbgGdb::SetIgnoreLevel(double bid, const int ignorecount)
     return WriteCommand(command, nullptr);
 }
 
-bool DbgGdb::SetEnabledState(double bid, const bool enable)
+bool DbgGdb::SetEnabledState(double bid, bool enable)
 {
     if (bid == -1) { // Sanity check
         return false;

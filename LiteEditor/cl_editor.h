@@ -562,9 +562,9 @@ public:
     // Util function
     int SafeGetChar(int pos);
     wxString PreviousWord(int pos, int& foundPos);
-    wxChar NextChar(const int& pos, int& foundPos);
+    wxChar NextChar(int pos, int& foundPos);
 
-    int FindString(const wxString& str, int flags, const bool down, long pos);
+    int FindString(const wxString& str, int flags, bool down, long pos);
 
     /**
      * @brief find the current selection and select without removing the current selection
@@ -919,7 +919,7 @@ public:
      */
     void ShowCalltip(clCallTipPtr tip) override;
 
-    wxChar PreviousChar(const int& pos, int& foundPos, bool wantWhitespace = false) override;
+    wxChar PreviousChar(int pos, int& foundPos, bool wantWhitespace = false) override;
     int PositionAfterPos(int pos) override;
     int PositionBeforePos(int pos) override;
     int GetCharAtPos(int pos) override;

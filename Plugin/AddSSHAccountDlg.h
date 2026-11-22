@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2013 by Eran Ifrah
-// file name            : AddSSHAcountDlg.h
+// file name            : AddSSHAccountDlg.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -30,20 +30,20 @@
 #include "sftp_ui.hpp"
 #include "ssh/ssh_account_info.h"
 
-class WXDLLIMPEXP_SDK AddSSHAcountDlg : public AddSSHAcountDlgBase
+class WXDLLIMPEXP_SDK AddSSHAccountDlg : public AddSSHAccountDlgBase
 {
 public:
-    AddSSHAcountDlg(wxWindow* parent);
-    AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account);
-    virtual ~AddSSHAcountDlg();
+    explicit AddSSHAccountDlg(wxWindow* parent);
+    AddSSHAccountDlg(wxWindow* parent, const SSHAccountInfo& account);
+    ~AddSSHAccountDlg() override = default;
 
 public:
     void GetAccountInfo(SSHAccountInfo& info);
 
 protected:
-    virtual void OnHomeFolderUpdated(wxCommandEvent& event);
-    virtual void OnTestConnectionUI(wxUpdateUIEvent& event);
-    virtual void OnTestConnection(wxCommandEvent& event);
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnHomeFolderUpdated(wxCommandEvent& event) override;
+    void OnTestConnectionUI(wxUpdateUIEvent& event) override;
+    void OnTestConnection(wxCommandEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
 };
 #endif // USE_SFTP

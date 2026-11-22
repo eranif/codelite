@@ -25,7 +25,7 @@
 
 #pragma once
 #if USE_SFTP
-#include "AddSSHAcountDlg.h"
+#include "AddSSHAccountDlg.h"
 #include "sftp_ui.hpp"
 
 class WXDLLIMPEXP_SDK SSHAccountManagerDlg : public SSHAccountManagerDlgBase

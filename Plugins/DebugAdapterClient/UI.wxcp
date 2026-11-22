@@ -7,7 +7,6 @@
     "m_firstWindowId": 1000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 300,
     "m_outputFileName": "UI",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -1475,7 +1474,7 @@
                                                         {
                                                           "type": "string",
                                                           "m_label": "Name:",
-                                                          "m_value": "ID"
+                                                          "m_value": "ID2"
                                                         },
                                                         {
                                                           "type": "string",
@@ -1541,7 +1540,7 @@
                                                         {
                                                           "type": "string",
                                                           "m_label": "Name:",
-                                                          "m_value": "Name"
+                                                          "m_value": "Name2"
                                                         },
                                                         {
                                                           "type": "string",

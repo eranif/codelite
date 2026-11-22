@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "\"codelite_exports.h\""
     ],
-    "m_objCounter": 236,
     "m_outputFileName": "sftp_ui",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

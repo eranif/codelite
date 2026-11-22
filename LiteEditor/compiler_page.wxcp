@@ -7,7 +7,6 @@
     "m_firstWindowId": 8500,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 317,
     "m_outputFileName": "compiler_pages",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -9919,7 +9918,7 @@
                                                 {
                                                   "type": "string",
                                                   "m_label": "Name:",
-                                                  "m_value": "Template"
+                                                  "m_value": "Template2"
                                                 },
                                                 {
                                                   "type": "string",

@@ -20,7 +20,6 @@ class wxcProjectMetadata
 protected:
     wxString m_projectFile;
     wxString m_bitmapsFile;
-    size_t m_objCounter;
     wxString m_generatedFilesDir;
     wxArrayString m_includeFiles;
     wxFileName m_generatedHeader;  // Derived class
@@ -98,10 +97,8 @@ public:
     wxFileName BaseHeaderFile() const;
     wxString GetGeneratedFilesDir() const;
     void SetProjectFile(const wxString& filename);
-    void SetObjCounter(size_t objCounter) { this->m_objCounter = objCounter; }
     const wxString& GetProjectFile() const { return m_projectFile; }
     wxFileName GetProjectFileName() const { return wxFileName(m_projectFile); }
-    size_t GetObjCounter() const { return m_objCounter; }
 
     void SetUseUnderscoreMacro(bool useUnderscoreMacro) { this->m_useUnderscoreMacro = useUnderscoreMacro; }
     bool IsUseUnderscoreMacro() const { return m_useUnderscoreMacro; }

@@ -560,12 +560,7 @@ public:
     }
 
     void ClearSizerFlags() { DoClearFlags(m_sizerFlags); }
-    wxString GenerateName() const
-    {
-        wxString n;
-        n << m_namePattern << ++s_objCounter;
-        return n;
-    }
+    wxString GenerateName() const;
 
     void SetId(const wxString& id) { DoSetPropertyStringValue(PROP_WINDOW_ID, id); }
 
@@ -622,11 +617,7 @@ public:
     bool HasStatusBar() const;
 
     void RemoveChild(wxcWidget* child);
-    void AddChild(wxcWidget* child)
-    {
-        child->SetParent(this);
-        m_children.push_back(child);
-    }
+    void AddChild(wxcWidget* child);
 
     void InsertBefore(wxcWidget* item, const wxcWidget* insertBefore);
     void InsertAfter(wxcWidget* item, const wxcWidget* insertAfter);
@@ -687,8 +678,6 @@ public:
     {
         ms_customControlsUsed = customControlsUsed;
     }
-    static size_t GetObjCounter() { return s_objCounter; }
-    static void SetObjCounter(size_t counter) { s_objCounter = counter; }
 
     static int SizerFakeValue(int realValue);
 
@@ -902,7 +891,6 @@ protected:
     AuiPaneInfo m_auiPaneInfo;
     wxString m_preprocessorCondition;
 
-    static size_t s_objCounter;
     static int m_copyCounter; /// An internal counter that holds a unique string that allows renaming copied items
     static CustomControlTemplateMap_t ms_customControlsUsed;
 };

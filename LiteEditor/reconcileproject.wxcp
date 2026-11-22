@@ -7,7 +7,6 @@
     "m_firstWindowId": 1000,
     "m_generatedFilesDir": ".",
     "m_includeFiles": [],
-    "m_objCounter": 298,
     "m_outputFileName": "reconcileprojectbase",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,
@@ -7015,7 +7014,7 @@
                     {
                       "type": "string",
                       "m_label": "Name:",
-                      "m_value": "Spacer158"
+                      "m_value": "Spacer"
                     },
                     {
                       "type": "string",

@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 45,
     "m_outputFileName": "wxCodeCompletionBoxBase",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

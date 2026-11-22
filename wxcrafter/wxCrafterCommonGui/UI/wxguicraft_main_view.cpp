@@ -1696,7 +1696,6 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
 
         wxcProjectMetadata::Get().SetProjectFile(path);
     }
-    wxcProjectMetadata::Get().SetObjCounter(wxcWidget::GetObjCounter());
 
     JSON root(JsonType::Object);
 
@@ -1908,7 +1907,6 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
     wxString rootText = project_file.IsOk() ? project_file.GetFullPath() : _("wxCrafter Project");
 
     m_treeControls->SetItemText(m_treeControls->GetRootItem(), rootText);
-    wxcWidget::SetObjCounter(wxcProjectMetadata::Get().GetObjCounter());
 
     // Expand the top level root item
     if (rootItem.IsOk() && m_treeControls->ItemHasChildren(rootItem)) {
@@ -3221,9 +3219,6 @@ State::Ptr_t GUICraftMainPanel::CurrentState()
     if (wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
         wxcProjectMetadata::Get().GenerateBitmapFunctionName();
     }
-
-    // Update the counter info; this will otherwise be wrong after e.g. a duplication
-    wxcProjectMetadata::Get().SetObjCounter(wxcWidget::GetObjCounter());
 
     JSONItem metadata = wxcProjectMetadata::Get().ToJSON();
     wxcProjectMetadata::Get().AppendCustomControlsJSON(GetCustomControlsUsed(), metadata);

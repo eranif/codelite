@@ -9,8 +9,7 @@ const wxEventType wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED = wxNewEventType();
 const wxEventType wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED = wxNewEventType();
 
 wxcProjectMetadata::wxcProjectMetadata()
-    : m_objCounter(0)
-    , m_useHpp(true)
+    : m_useHpp(true)
     , m_firstWindowId(10000)
     , m_useEnum(true)
     , m_useUnderscoreMacro(true)
@@ -22,7 +21,6 @@ wxcProjectMetadata::wxcProjectMetadata()
 
 void wxcProjectMetadata::FromJSON(const JSONItem& json)
 {
-    m_objCounter = json.namedObject("m_objCounter").toInt();
     m_generatedFilesDir = json.namedObject("m_generatedFilesDir").toString();
     m_includeFiles = json.namedObject("m_includeFiles").toArrayString();
     m_bitmapFunction = json.namedObject("m_bitmapFunction").toString();
@@ -53,7 +51,6 @@ JSONItem wxcProjectMetadata::ToJSON()
 {
     UpdatePaths();
     return nlohmann::json{{"m_generatedFilesDir", m_generatedFilesDir.ToStdString(wxConvUTF8)},
-                          {"m_objCounter", m_objCounter},
                           {"m_includeFiles", JsonUtils::ToJson(m_includeFiles)},
                           {"m_bitmapFunction", m_bitmapFunction.ToStdString(wxConvUTF8)},
                           {"m_bitmapsFile", m_bitmapsFile.ToStdString(wxConvUTF8)},

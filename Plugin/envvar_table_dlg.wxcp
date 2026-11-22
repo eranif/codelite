@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 16,
     "m_outputFileName": "EnvironmentVariablesDlgBase",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

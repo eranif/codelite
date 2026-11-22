@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "\"wxc_widget.h\""
     ],
-    "m_objCounter": 701,
     "m_outputFileName": "wxcrafter_gui",
     "m_useEnum": false,
     "m_useUnderscoreMacro": true,

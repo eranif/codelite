@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 0,
     "m_outputFileName": "renamefilebasedlg",
     "m_useEnum": true,
     "m_useUnderscoreMacro": true,

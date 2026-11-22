@@ -9,7 +9,6 @@
     "m_includeFiles": [
       "codelite_exports.h"
     ],
-    "m_objCounter": 41,
     "m_outputFileName": "NewKeyShortcutBaseDlg",
     "m_useEnum": true,
     "m_useUnderscoreMacro": false,

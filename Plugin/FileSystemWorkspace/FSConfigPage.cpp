@@ -70,7 +70,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_choiceCompiler->Append(compilers);
     m_choiceCompiler->SetStringSelection(m_config->GetCompiler());
 
-    DoUpdateSSHAcounts();
+    DoUpdateSSHAccounts();
 
     m_checkBoxEnableRemote->SetValue(config->IsRemoteTargetEnabled());
     m_checkBoxSyncOnSave->SetValue(config->IsSyncOnSave());
@@ -238,12 +238,12 @@ void FSConfigPage::OnSSHAccountChoice(wxCommandEvent& event)
     if (s == OPEN_SSH_ACCOUNT_MANAGER) {
         SSHAccountManagerDlg dlg(GetParent());
         dlg.ShowModal();
-        CallAfter(&FSConfigPage::DoUpdateSSHAcounts);
+        CallAfter(&FSConfigPage::DoUpdateSSHAccounts);
     }
 #endif
 }
 
-void FSConfigPage::DoUpdateSSHAcounts()
+void FSConfigPage::DoUpdateSSHAccounts()
 {
 #if USE_SFTP
     if (!m_enableRemotePage) {

@@ -14,7 +14,7 @@ struct DebugSession {
     clEnvList_t environment;
     bool need_to_set_breakpoints = false;
     bool debug_over_ssh = false;
-    SSHAccountInfo ssh_acount;
+    SSHAccountInfo ssh_account;
     DapEntry dap_server;
     int m_pid = wxNOT_FOUND; // when attaching to process, this holds the process ID
 
@@ -23,7 +23,7 @@ struct DebugSession {
         need_to_set_breakpoints = false;
         working_directory.clear();
         debug_over_ssh = false;
-        ssh_acount = {};
+        ssh_account = {};
         command.clear();
         environment.clear();
         dap_server = {};

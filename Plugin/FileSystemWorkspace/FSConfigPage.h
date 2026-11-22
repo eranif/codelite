@@ -21,7 +21,7 @@ protected:
 
 protected:
     void DoTargetActivated();
-    void DoUpdateSSHAcounts();
+    void DoUpdateSSHAccounts();
 
 public:
     FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config, bool enableRemotePage = true);

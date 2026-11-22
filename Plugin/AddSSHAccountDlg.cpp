@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 Eran Ifrah
-// file name            : AddSSHAcountDlg.cpp
+// file name            : AddSSHAccountDlg.cpp
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,7 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "AddSSHAcountDlg.h"
+#include "AddSSHAccountDlg.h"
 
 #include <wx/tokenzr.h>
 #if USE_SFTP
@@ -34,15 +34,15 @@
 
 #include <wx/msgdlg.h>
 
-AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent)
-    : AddSSHAcountDlgBase(parent)
+AddSSHAccountDlg::AddSSHAccountDlg(wxWindow* parent)
+    : AddSSHAccountDlgBase(parent)
 {
-    SetName("AddSSHAcountDlg");
+    SetName("AddSSHAccountDlg");
     WindowAttrManager::Load(this);
 }
 
-AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account)
-    : AddSSHAcountDlgBase(parent)
+AddSSHAccountDlg::AddSSHAccountDlg(wxWindow* parent, const SSHAccountInfo& account)
+    : AddSSHAccountDlgBase(parent)
 {
     m_textCtrlHost->ChangeValue(account.GetHost());
     m_textCtrlPassword->ChangeValue(account.GetPassword());
@@ -57,13 +57,11 @@ AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account
     if (!m_textCtrlPassword->IsEmpty()) {
         m_choicebookLogin->SetSelection(1);
     }
-    SetName("AddSSHAcountDlg");
+    SetName("AddSSHAccountDlg");
     WindowAttrManager::Load(this);
 }
 
-AddSSHAcountDlg::~AddSSHAcountDlg() {}
-
-void AddSSHAcountDlg::OnOKUI(wxUpdateUIEvent& event)
+void AddSSHAccountDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     wxString homeFolder = m_textCtrlHomeFolder->GetValue();
     bool homeFolderValid = (homeFolder.IsEmpty() || (homeFolder.StartsWith("/")));
@@ -72,7 +70,7 @@ void AddSSHAcountDlg::OnOKUI(wxUpdateUIEvent& event)
                  homeFolderValid);
 }
 
-void AddSSHAcountDlg::GetAccountInfo(SSHAccountInfo& info)
+void AddSSHAccountDlg::GetAccountInfo(SSHAccountInfo& info)
 {
     info.SetHost(m_textCtrlHost->GetValue());
     info.SetPassword(m_textCtrlPassword->GetValue());
@@ -96,7 +94,7 @@ void AddSSHAcountDlg::GetAccountInfo(SSHAccountInfo& info)
     info.SetKeyFile(key_info);
 }
 
-void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
+void AddSSHAccountDlg::OnTestConnection(wxCommandEvent& event)
 {
     SSHAccountInfo account;
     GetAccountInfo(account);
@@ -121,12 +119,12 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
         ::wxMessageBox(e.What(), "SSH", wxICON_WARNING | wxOK, this);
     }
 }
-void AddSSHAcountDlg::OnTestConnectionUI(wxUpdateUIEvent& event)
+void AddSSHAccountDlg::OnTestConnectionUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty());
 }
 
-void AddSSHAcountDlg::OnHomeFolderUpdated(wxCommandEvent& event)
+void AddSSHAccountDlg::OnHomeFolderUpdated(wxCommandEvent& event)
 {
     wxString homeFolder = m_textCtrlHomeFolder->GetValue();
     if (!homeFolder.StartsWith("/")) {

@@ -1330,7 +1330,7 @@
         {
           "type": "string",
           "m_label": "Name:",
-          "m_value": "AddSSHAcountDlgBase"
+          "m_value": "AddSSHAccountDlgBase"
         },
         {
           "type": "multi-string",
@@ -1411,12 +1411,12 @@
         {
           "type": "string",
           "m_label": "Inherited Class",
-          "m_value": "AddSSHAcountDlg"
+          "m_value": "AddSSHAccountDlg"
         },
         {
           "type": "string",
           "m_label": "File:",
-          "m_value": "AddSSHAcountDlg"
+          "m_value": "AddSSHAccountDlg"
         },
         {
           "type": "string",

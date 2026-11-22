@@ -1083,7 +1083,7 @@ bool DebugAdapterClient::StartSocketDap()
                                  IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell | IProcessNoPty,
                                  wxEmptyString,
                                  &env_list,
-                                 m_session.ssh_acount.GetAccountName())));
+                                 m_session.ssh_account.GetAccountName())));
     } else {
         // launch local process
         EnvSetter env; // apply CodeLite env variables
@@ -1117,7 +1117,7 @@ dap::Transport* DebugAdapterClient::StartStdioDap()
                                  IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell | IProcessNoPty,
                                  wxEmptyString,
                                  &env_list,
-                                 m_session.ssh_acount.GetAccountName())));
+                                 m_session.ssh_account.GetAccountName())));
     } else {
         // launch local process
         EnvSetter env; // apply CodeLite env variables
@@ -1165,8 +1165,8 @@ bool DebugAdapterClient::InitialiseSession(const DapEntry& dap_server,
 
 #if USE_SFTP
     if (m_session.debug_over_ssh) {
-        m_session.ssh_acount = SSHAccountInfo::LoadAccount(ssh_account);
-        if (m_session.ssh_acount.GetAccountName().empty()) {
+        m_session.ssh_account = SSHAccountInfo::LoadAccount(ssh_account);
+        if (m_session.ssh_account.GetAccountName().empty()) {
             DAP_ERROR() << "failed to load ssh account:" << ssh_account << endl;
             m_session.Clear();
             return false;

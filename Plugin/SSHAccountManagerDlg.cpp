@@ -26,7 +26,7 @@
 #include "SSHAccountManagerDlg.h"
 #if USE_SFTP
 
-#include "AddSSHAcountDlg.h"
+#include "AddSSHAccountDlg.h"
 #include "globals.h"
 #include "sftp_settings.h"
 #include "ssh/ssh_account_info.h"
@@ -65,7 +65,7 @@ SSHAccountManagerDlg::~SSHAccountManagerDlg()
 
 void SSHAccountManagerDlg::OnAddAccount(wxCommandEvent& event)
 {
-    AddSSHAcountDlg dlg(this);
+    AddSSHAccountDlg dlg(this);
     if (dlg.ShowModal() == wxID_OK) {
         SSHAccountInfo account;
         dlg.GetAccountInfo(account);
@@ -135,7 +135,7 @@ void SSHAccountManagerDlg::DoEditAccount(const wxDataViewItem& item)
 {
     SSHAccountInfo* account = (SSHAccountInfo*)(m_dvListCtrl->GetItemData(item));
     if (account) {
-        AddSSHAcountDlg dlg(this, *account);
+        AddSSHAccountDlg dlg(this, *account);
         if (dlg.ShowModal() == wxID_OK) {
             // update the user info
             dlg.GetAccountInfo(*account);

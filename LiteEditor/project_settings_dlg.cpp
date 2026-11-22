@@ -97,11 +97,11 @@ void ProjectSettingsDlg::BuildTree()
     m_treebook->AddPage(new PSDebuggerPage(m_treebook, this), _("Debugger"));
     m_treebook->AddPage(new PSResourcesPage(m_treebook, this), _("Resources"));
 
-    m_treebook->AddPage(0, _("Pre / Post Build Commands"));
+    m_treebook->AddPage(nullptr, _("Pre / Post Build Commands"));
     m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, true, this), _("Pre Build"));
     m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, false, this), _("Post Build"));
 
-    m_treebook->AddPage(0, _("Customize"));
+    m_treebook->AddPage(nullptr, _("Customize"));
     m_treebook->AddSubPage(new PSCustomBuildPage(m_treebook, m_projectName, this), _("Custom Build"));
     m_treebook->AddSubPage(new PSCustomMakefileRulesPage(m_treebook, this), _("Custom Makefile Rules"));
 

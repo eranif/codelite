@@ -1,5 +1,7 @@
 #include <doctest.h>
 
+#include <utility>
+
 // clang-format off
 #include "MarkdownStyler.hpp"
 // clang-format on
@@ -260,4 +262,58 @@ TEST_CASE("MarkdownStyler OnStyle handles nested diff content inside a fenced bl
     const size_t closing_fence_pos = text.rfind("```");
     REQUIRE(closing_fence_pos != wxString::npos);
     CHECK(accessor.m_styles[closing_fence_pos] == kBacktick);
+}
+
+TEST_CASE("MarkdownStyler OnStyle styles check marks and crosses")
+{
+    MarkdownStyler styler{nullptr};
+
+    // The accessor works on UTF-8 bytes: every byte of a mark must get the mark style
+    const std::vector<std::pair<std::string, int>> marks = {
+        {"\xE2\x9C\x93", kCheckMarkSymbol},     // ✓ U+2713
+        {"\xE2\x9C\x94", kCheckMarkSymbol},     // ✔ U+2714
+        {"\xE2\x9C\x85", kCheckMarkSymbol},     // ✅ U+2705
+        {"\xE2\x98\x91", kCheckMarkSymbol},     // ☑ U+2611
+        {"\xF0\x9F\x97\xB8", kCheckMarkSymbol}, // 🗸 U+1F5F8
+        {"\xE2\x9C\x95", kErrorSymbol},         // ✕ U+2715
+        {"\xE2\x9C\x96", kErrorSymbol},         // ✖ U+2716
+        {"\xE2\x9C\x97", kErrorSymbol},         // ✗ U+2717
+        {"\xE2\x9C\x98", kErrorSymbol},         // ✘ U+2718
+        {"\xE2\x9D\x8C", kErrorSymbol},         // ❌ U+274C
+        {"\xE2\x9D\x8E", kErrorSymbol},         // ❎ U+274E
+    };
+
+    std::string bytes;
+    for (const auto& mark : marks) {
+        bytes += mark.first;
+        bytes += '\n';
+    }
+    // A mark followed by the variation selector U+FE0F: all the bytes get the mark style
+    const std::string with_vs16 = "\xE2\x9D\x8C\xEF\xB8\x8F"; // ❌ U+274C + VS16
+    bytes += with_vs16;
+    bytes += '\n';
+    bytes += "plain text";
+
+    MockAccessor accessor{wxString::From8BitData(bytes.data(), bytes.size())};
+    styler.OnStyle(accessor);
+    REQUIRE(accessor.m_styles.size() == bytes.size());
+
+    size_t pos = 0;
+    for (const auto& mark : marks) {
+        for (size_t i = 0; i < mark.first.size(); ++i) {
+            CHECK(accessor.m_styles[pos + i] == mark.second);
+        }
+        // The new line after a mark keeps the default style
+        CHECK(accessor.m_styles[pos + mark.first.size()] == kDefault);
+        pos += mark.first.size() + 1;
+    }
+
+    for (size_t i = 0; i < with_vs16.size(); ++i) {
+        CHECK(accessor.m_styles[pos + i] == kErrorSymbol);
+    }
+    pos += with_vs16.size() + 1;
+
+    for (size_t i = pos; i < bytes.size(); ++i) {
+        CHECK(accessor.m_styles[i] == kDefault);
+    }
 }

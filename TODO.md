@@ -35,5 +35,5 @@ Low
 - [ ] Add progress bar table for LSP progress messages (currently we only print messages in the LOG view)
 - [ ] MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
 - [ ] Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
-- [ ] MarkdownStyler: ensure that all types of checkmarks are coloured in green (same for `x` symbols)
+- [x] MarkdownStyler: ensure that all types of checkmarks are coloured in green (same for `x` symbols)
 

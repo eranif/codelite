@@ -104,6 +104,10 @@ public:
 
 protected:
     void OnItemActivated(wxDataViewEvent& event);
+#ifdef __WXMAC__
+    /// macOS: the native control activates a custom cell only on a double click. Activate a value on a single click
+    void OnViewLeftUp(wxMouseEvent& event);
+#endif
 
     /// Called by the renderers when the user activates (clicks) an item
     void OnActivateItem(const wxDataViewItem& item);

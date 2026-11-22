@@ -229,12 +229,19 @@ clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
 
     // Enter, or a double click
     m_view->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &clPropertiesPage::OnItemActivated, this);
+#ifdef __WXMAC__
+    // A single click. wx sends it after the native control is done with the click (the selection is updated)
+    m_view->Bind(wxEVT_LEFT_UP, &clPropertiesPage::OnViewLeftUp, this);
+#endif
     GetSizer()->Layout();
 }
 
 clPropertiesPage::~clPropertiesPage()
 {
     m_view->Unbind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &clPropertiesPage::OnItemActivated, this);
+#ifdef __WXMAC__
+    m_view->Unbind(wxEVT_LEFT_UP, &clPropertiesPage::OnViewLeftUp, this);
+#endif
     m_view->DeleteAllItems();
 }
 
@@ -401,6 +408,23 @@ void clPropertiesPage::AddHeader(const wxString& label)
 }
 
 void clPropertiesPage::OnItemActivated(wxDataViewEvent& event) { OnActivateItem(event.GetItem()); }
+
+#ifdef __WXMAC__
+void clPropertiesPage::OnViewLeftUp(wxMouseEvent& event)
+{
+    event.Skip();
+
+    // Only a click on the value column activates the row (the same as ActivateCell() of the generic control)
+    wxDataViewItem item;
+    wxDataViewColumn* column = nullptr;
+    m_view->HitTest(event.GetPosition(), item, column);
+    if (!item.IsOk() || column == nullptr || column->GetModelColumn() != 1) {
+        return;
+    }
+    // The second click of a double click is also a double click activation: OnActivateItem() handles one at a time
+    OnActivateItem(item);
+}
+#endif
 
 void clPropertiesPage::OnActivateItem(const wxDataViewItem& item)
 {

@@ -61,6 +61,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
     SetTool("AS", "as"); // Assembler, default to as
 
     m_fileTypes.clear();
+    std::optional<bool> generateDependenciesFile{std::nullopt};
     if (node) {
         m_name = XmlUtils::ReadString(node, wxT("Name"));
         m_compilerFamily = XmlUtils::ReadString(node, "CompilerFamily");
@@ -72,13 +73,8 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
         m_isDefault = XmlUtils::ReadBool(node, "IsDefault");
 
-        if (!node->HasAttribute(wxT("GenerateDependenciesFiles"))) {
-            if (m_name == wxT("gnu g++") || m_name == wxT("gnu gcc")) {
-                m_generateDependenciesFile = true;
-            } else
-                m_generateDependenciesFile = false;
-        } else {
-            m_generateDependenciesFile = XmlUtils::ReadBool(node, wxT("GenerateDependenciesFiles"));
+        if (node->HasAttribute(wxT("GenerateDependenciesFiles"))) {
+            generateDependenciesFile = XmlUtils::ReadBool(node, wxT("GenerateDependenciesFiles"));
         }
 
         if (!node->HasAttribute(wxT("ReadObjectsListFromFile"))) {
@@ -196,8 +192,12 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
             SetTool("AS", "as");
         }
 
+        // Could not find value for "GenerateDependenciesFile", use the default base on the tool.
+        bool isGnuCompatibleCompiler = IsGnuCompatibleCompiler();
+        m_generateDependenciesFile = generateDependenciesFile.value_or(isGnuCompatibleCompiler);
+
         // For backward compatibility, if the compiler / linker options are empty - add them
-        if (IsGnuCompatibleCompiler()) {
+        if (isGnuCompatibleCompiler) {
             AddDefaultGnuCompilerOptions();
             AddDefaultGnuLinkerOptions();
             AddDefaultGnuCompilerLinkerOptions();
@@ -270,7 +270,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         m_globalIncludePath = wxEmptyString;
         m_globalLibPath = wxEmptyString;
         m_pathVariable = wxEmptyString;
-        m_generateDependenciesFile = false;
+        m_generateDependenciesFile = true;
         m_readObjectFilesFromList = true;
         m_objectNameIdenticalToFileName = false;
     }
@@ -583,14 +583,20 @@ void Compiler::AddCompilerLinkerOption(const wxString& name, const wxString& des
     m_linkerOptions.insert(std::make_pair(name, option));
 }
 
+namespace
+{
+bool IsGnuCompatible(const wxString& tool)
+{
+    auto toolLowercase = tool.Lower();
+    clDEBUG() << "Calling IsGnuCompatible for tool:" << toolLowercase << endl;
+    return toolLowercase.Contains("gcc") || toolLowercase.Contains("clang") || toolLowercase.Contains("cc") ||
+           toolLowercase.Contains("mingw");
+}
+} // namespace
+
 bool Compiler::IsGnuCompatibleCompiler() const
 {
-    static wxStringSet_t gnu_compilers = {COMPILER_FAMILY_CLANG,
-                                          COMPILER_FAMILY_MINGW,
-                                          COMPILER_FAMILY_GCC,
-                                          COMPILER_FAMILY_CYGWIN,
-                                          COMPILER_FAMILY_MSYS2};
-    return !m_compilerFamily.IsEmpty() && gnu_compilers.count(m_compilerFamily);
+    return IsGnuCompatible(GetTool("CXX")) || IsGnuCompatible(GetTool("CC"));
 }
 
 void Compiler::AddDefaultGnuCompilerOptions()

@@ -115,7 +115,7 @@ protected:
     wxString m_globalIncludePath;
     wxString m_globalLibPath;
     wxString m_pathVariable;
-    bool m_generateDependenciesFile;
+    bool m_generateDependenciesFile{true};
     bool m_readObjectFilesFromList;
     bool m_objectNameIdenticalToFileName;
     wxString m_compilerFamily;
@@ -253,4 +253,3 @@ public:
 
 using CompilerPtr = std::shared_ptr<Compiler>;
 using CompilerPtrVec_t = std::vector<CompilerPtr>;
-

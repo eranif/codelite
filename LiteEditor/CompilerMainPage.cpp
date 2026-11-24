@@ -698,8 +698,8 @@ void CompilerMainPage::InitializeAdvancePage()
     m_textObjectExtension->ChangeValue("");
     m_textDependExtension->ChangeValue("");
     m_textPreprocessExtension->ChangeValue("");
-    m_checkBoxGenerateDependenciesFiles->Enable(false);
-    m_checkBoxGenerateDependenciesFiles->SetValue(false);
+    m_checkBoxGenerateDependenciesFiles->Enable(true);
+    m_checkBoxGenerateDependenciesFiles->SetValue(true);
     m_textCtrlGlobalIncludePath->ChangeValue("");
     m_textCtrlGlobalLibPath->ChangeValue("");
     m_checkBoxObjectNameSameAsFileName->SetValue(false);

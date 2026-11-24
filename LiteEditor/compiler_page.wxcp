@@ -12637,7 +12637,7 @@
                                         {
                                           "type": "bool",
                                           "m_label": "Value:",
-                                          "m_value": false
+                                          "m_value": true
                                         }
                                       ],
                                       "m_events": [

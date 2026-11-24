@@ -495,6 +495,11 @@ void MainBook::DoRestoreSession(const SessionEntry& session)
                 }
             };
             auto editor = OpenFileAsync(ti.GetFileName(), std::move(cb));
+            if (editor && ti.IsReadOnly()) {
+                // The file is already loaded: lock it now, so that the tab shows the lock icon also before the user
+                // visits it
+                MarkEditorReadOnly(editor, true);
+            }
             if (sel == i) {
                 active_editor = editor;
             }
@@ -1712,6 +1717,7 @@ void MainBook::CreateSession(SessionEntry& session)
         std::vector<int> folds;
         editors[i]->StoreCollapsedFoldsToArray(folds);
         oTabInfo.SetCollapsedFolds(folds);
+        oTabInfo.SetReadOnly(!editors[i]->IsEditable());
 
         vTabInfoArr.push_back(oTabInfo);
     }

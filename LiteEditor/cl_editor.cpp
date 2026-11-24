@@ -5816,7 +5816,11 @@ void clEditor::UpdateViewContent(const wxString& fileContent, bool keepUndoHisto
     SetReloadingFile(true);
     clEditorStateLocker stateLocker(GetCtrl());
 
+    // Scintilla ignores SetText() on a read-only editor: unlock it for the reload, then lock it again
+    const bool readOnly = GetReadOnly();
+    SetReadOnly(false);
     SetText(fileContent);
+    SetReadOnly(readOnly);
     // clear the modified lines
     m_modifiedLines.clear();
 

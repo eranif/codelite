@@ -54,6 +54,7 @@ class WXDLLIMPEXP_CL TabInfo : public SerializedObject
     int m_currentLine;
     wxArrayString m_bookmarks;
     std::vector<int> m_folds;
+    bool m_readOnly = false;
 
 public:
     // setters
@@ -62,12 +63,14 @@ public:
     void SetCurrentLine(int _currentLine) { this->m_currentLine = _currentLine; }
     void SetBookmarks(const wxArrayString& _bookmarks) { this->m_bookmarks = _bookmarks; }
     void SetCollapsedFolds(const std::vector<int>& folds) { m_folds = folds; }
+    void SetReadOnly(bool readOnly) { m_readOnly = readOnly; }
     // getters
     const wxString& GetFileName() const { return this->m_fileName; }
     int GetFirstVisibleLine() const { return this->m_firstVisibleLine; }
     int GetCurrentLine() const { return this->m_currentLine; }
     const wxArrayString& GetBookmarks() const { return this->m_bookmarks; }
     const std::vector<int>& GetCollapsedFolds() const { return m_folds; }
+    bool IsReadOnly() const { return m_readOnly; }
 
     TabInfo();
     ~TabInfo() override = default;

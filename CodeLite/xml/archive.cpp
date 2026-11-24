@@ -51,6 +51,7 @@ void TabInfo::DeSerialize(Archive& arch)
     arch.Read(wxT("CurrentLine"), m_currentLine);
     arch.Read(wxT("Bookmarks"), m_bookmarks);
     arch.Read(wxT("CollapsedFolds"), m_folds);
+    arch.Read(wxT("ReadOnly"), m_readOnly);
 }
 
 void TabInfo::Serialize(Archive& arch)
@@ -60,6 +61,7 @@ void TabInfo::Serialize(Archive& arch)
     arch.Write(wxT("CurrentLine"), m_currentLine);
     arch.Write(wxT("Bookmarks"), m_bookmarks);
     arch.Write(wxT("CollapsedFolds"), m_folds);
+    arch.Write(wxT("ReadOnly"), m_readOnly);
 }
 
 // class Archive

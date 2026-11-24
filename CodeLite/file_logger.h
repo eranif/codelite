@@ -95,6 +95,12 @@ public:
      */
     static void OpenLog(const wxString& fullName, int verbosity);
 
+    /**
+     * @brief when true, the log is printed to stdout and not to the log file
+     */
+    static void SetLogToStdout(bool b) { m_logToStdout = b; }
+    static bool IsLogToStdout() { return m_logToStdout; }
+
     FileLogger& operator<<(FileLoggerFunction f)
     {
         Flush();
@@ -274,6 +280,7 @@ protected:
 
     static int m_globalLogVerbosity;
     static wxString m_logfile;
+    static bool m_logToStdout;
     int m_logEntryVerbosity;
     FILE* m_fp = nullptr;
     wxString m_buffer;

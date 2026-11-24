@@ -29,12 +29,14 @@
 
 #include <chrono>
 #include <iostream>
+#include <mutex>
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/log.h>
 
 int FileLogger::m_globalLogVerbosity = FileLogger::Error;
 wxString FileLogger::m_logfile;
+bool FileLogger::m_logToStdout = false;
 std::unordered_map<wxThreadIdType, wxString> FileLogger::m_threads;
 wxCriticalSection FileLogger::m_cs;
 
@@ -150,8 +152,10 @@ void FileLogger::Flush()
     }
 
     wxLogNull noLog;
-    if (m_logfile.empty() || !wxFileName::FileExists(m_logfile)) {
-        // Use stdout
+    if (m_logToStdout || m_logfile.empty() || !wxFileName::FileExists(m_logfile)) {
+        // Use stdout. Many threads write to the log: lock, so that their lines do not mix
+        static std::mutex stdout_mutex;
+        std::lock_guard lock{stdout_mutex};
         std::cout << m_buffer.ToStdString(wxConvUTF8) << std::endl;
     } else {
         wxFFile fp(m_logfile, "a+");

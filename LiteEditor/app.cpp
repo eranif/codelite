@@ -89,6 +89,7 @@
 
 #ifdef __WXMSW__
 #include <DbgHelp.h>
+#include <io.h>
 #include <time.h>
 #include <wx/msw/registry.h> //registry keys
 
@@ -263,6 +264,37 @@ wxString MacGetBasePath()
 }
 #endif
 
+#ifdef __WXMSW__
+/// CodeLite is a GUI application: when it starts from cmd.exe or PowerShell, it has no stdout. In this case, write to
+/// the console of the parent process. A terminal that gives CodeLite a pipe (for example, MSYS2) needs nothing.
+static void AttachToParentConsole()
+{
+    HANDLE handle = ::GetStdHandle(STD_OUTPUT_HANDLE);
+    if (handle != nullptr && handle != INVALID_HANDLE_VALUE) {
+        return;
+    }
+
+    if (::AttachConsole(ATTACH_PARENT_PROCESS)) {
+        FILE* fp = ::freopen("CONOUT$", "w", stdout);
+        wxUnusedVar(fp);
+        std::cout.clear();
+    }
+}
+
+/// Return true if stdout writes to a console, and not to a pipe or a file
+static bool IsStdoutConsole()
+{
+    // A GUI application without stdout has a negative file descriptor: _get_osfhandle() must not see it, because it
+    // calls the invalid parameter handler
+    int fd = ::_fileno(stdout);
+    if (fd < 0) {
+        return false;
+    }
+    HANDLE handle = reinterpret_cast<HANDLE>(::_get_osfhandle(fd));
+    return handle != INVALID_HANDLE_VALUE && ::GetFileType(handle) == FILE_TYPE_CHAR;
+}
+#endif
+
 ///////////////////////////////////////////////////////////////////
 
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
@@ -318,8 +350,14 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
      wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_OPTION,
      "L",
-     "loglevel",
+     "log-level",
      "Set the log level (error, warning, info, debug, trace). Overrides the configured level",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH,
+     nullptr,
+     "stdout",
+     "Print the log to stdout and not to the log file",
      wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_PARAM,
@@ -716,6 +754,12 @@ bool CodeLiteApp::OnInit()
         // the command line takes precedence over the configured level
         log_level = FileLogger::GetVerbosityAsNumber(log_level_str);
     }
+    if (m_parser.Found("stdout")) {
+#ifdef __WXMSW__
+        AttachToParentConsole();
+#endif
+        FileLogger::SetLogToStdout(true);
+    }
     FileLogger::OpenLog("codelite.log", log_level);
     clDEBUG() << "Starting codelite..." << endl;
 
@@ -723,7 +767,10 @@ bool CodeLiteApp::OnInit()
     LoadBundledFonts();
 
 #ifdef __WXMSW__
-    if (FreeConsole()) {
+    if (FileLogger::IsLogToStdout() && IsStdoutConsole()) {
+        // The log is written to the console: FreeConsole() would stop it
+        clSYSTEM() << "--stdout: CodeLite stays attached to the console" << endl;
+    } else if (FreeConsole()) {
         clDEBUG() << "Successfully detached from console" << endl;
     }
 #endif
@@ -876,7 +923,8 @@ bool CodeLiteApp::OnInit()
     }
 
 #if defined(__WXGTK__) || defined(__WXMAC__)
-    bool redirect = clConfig::Get().Read(kConfigRedirectLogOutput, true);
+    // With --stdout, the log goes to stdout: do not redirect it to a file
+    bool redirect = clConfig::Get().Read(kConfigRedirectLogOutput, true) && !FileLogger::IsLogToStdout();
     if (redirect) {
         // Redirect stdout/error to a file
         wxFileName stdout_err(clStandardPaths::Get().GetUserDataDir(), "codelite-stdout-stderr.log");

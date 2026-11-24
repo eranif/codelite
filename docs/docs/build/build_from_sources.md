@@ -80,11 +80,12 @@ git submodule update --init --recursive
 .build-release/bin/codelite
 ```
 
-- To write more details to the log file (`~/.codelite/logs/codelite.log`), use `--loglevel` (`error`, `warning`,
-  `info`, `debug` or `trace`):
+- To write more details to the log file (`~/.codelite/logs/codelite.log`), use `--log-level` (`error`, `warning`,
+  `info`, `debug` or `trace`). To print the log to the terminal and not to the log file, add `--stdout`:
 
 ```bash
-.build-release/bin/codelite --loglevel info
+.build-release/bin/codelite --log-level=info
+.build-release/bin/codelite --log-level=debug --stdout
 ```
 
 - To uninstall CodeLite:

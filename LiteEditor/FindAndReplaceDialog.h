@@ -204,6 +204,11 @@ protected:
     void ShowMenuForFindCtrl();
     void ShowMenuForReplaceCtrl();
 
+    /// Add the "Find what" text to the history, and save the history
+    void UpdateFindHistory();
+    /// Add the "Replace with" text to the history, and save the history
+    void UpdateReplaceHistory();
+
 public:
     FindAndReplaceDialog(wxWindow* parent, wxWindowID id = wxID_ANY);
     ~FindAndReplaceDialog() override;

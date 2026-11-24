@@ -354,9 +354,6 @@ void FindAndReplaceDialog::OnEnter(wxCommandEvent& e)
 {
     e.Skip(false);
 
-    wxString find_what = m_textCtrlFind->GetValue();
-    m_findHistory.Add(find_what);
-
     bool shift = wxGetKeyState(WXK_SHIFT);
     size_t find_flags = shift ? FIND_PREV : FIND_DEFAULT;
     find_flags |= FIND_GOTOLINE;
@@ -380,13 +377,13 @@ void FindAndReplaceDialog::OnReplace(wxCommandEvent& event)
         TargetRange result = DoFind(FIND_DEFAULT, {m_sci->GetSelectionStart(), m_sci->GetSelectionEnd()});
         if (result.IsOk()) {
             // the selected text is a match, replace it
-            wxString replace_with = m_textCtrlReplace->GetValue();
             int len = DoReplace(result);
             if (len != wxNOT_FOUND) {
                 CenterLine(m_sci, result.start_pos, result.start_pos + len);
                 m_sci->SetFocus();
                 start_pos = result.start_pos + len;
-                m_replaceHistory.Add(replace_with);
+                UpdateFindHistory();
+                UpdateReplaceHistory();
             } else {
                 // should not happen...
                 return;
@@ -763,7 +760,11 @@ wxString FindAndReplaceDialog::DoGetSelectedText()
 }
 
 size_t FindAndReplaceDialog::DoGetSearchFlags() const { return m_searchFlags; }
-void FindAndReplaceDialog::OnFindAll(wxCommandEvent& e) { DoSelectAll(); }
+void FindAndReplaceDialog::OnFindAll(wxCommandEvent& e)
+{
+    UpdateFindHistory();
+    DoSelectAll();
+}
 
 void FindAndReplaceDialog::DoSetCaretAtEndOfText() { m_textCtrlFind->SetInsertionPointEnd(); }
 
@@ -839,6 +840,9 @@ void FindAndReplaceDialog::DoReplaceAll(bool selectionOnly)
         }
     }
     m_sci->EndUndoAction();
+
+    UpdateFindHistory();
+    UpdateReplaceHistory();
 
     double ms = sw.Time();
     clDEBUG() << "Replace all took:" << (ms / 1000.0) << "seconds" << endl;
@@ -1119,6 +1123,12 @@ TargetRange FindAndReplaceDialog::DoFindWithMessage(size_t find_flags, const Tar
 
 TargetRange FindAndReplaceDialog::DoFindWithWrap(size_t find_flags, const TargetRange& target)
 {
+    if (!(find_flags & FIND_INCREMENT)) {
+        // A search that the user asked for (Enter, the buttons, Find Next / Previous). Not a search while typing: this
+        // would add each partial word to the history
+        UpdateFindHistory();
+    }
+
     auto res = DoFindWithMessage(find_flags, target);
     if (!res.IsOk()) {
         // reached end or start of the document
@@ -1214,11 +1224,37 @@ void FindAndReplaceDialog::ShowMenuForFindCtrl()
                 wxUnusedVar(event);
                 m_textCtrlFind->SetValue(word);
                 m_textCtrlFind->SetInsertionPointEnd();
+                // LRU: the last used item goes to the top of the list
+                UpdateFindHistory();
             },
             resource_id);
     }
 
     TextCtrlShowMenu(m_textCtrlFind, menu);
+}
+
+void FindAndReplaceDialog::UpdateFindHistory()
+{
+    const wxString find_what = m_textCtrlFind->GetValue();
+    if (find_what.Strip(wxString::both).IsEmpty() ||
+        (!m_findHistory.m_commands.empty() && m_findHistory.m_commands[0] == find_what)) {
+        // Nothing to add, or already the first item: do not save the configuration again
+        return;
+    }
+    m_findHistory.Add(find_what);
+    clConfig::Get().SetQuickFindSearchItems(m_findHistory.m_commands);
+}
+
+void FindAndReplaceDialog::UpdateReplaceHistory()
+{
+    // An empty "Replace with" is a valid replacement, but there is nothing to remember
+    const wxString replace_with = m_textCtrlReplace->GetValue();
+    if (replace_with.Strip(wxString::both).IsEmpty() ||
+        (!m_replaceHistory.m_commands.empty() && m_replaceHistory.m_commands[0] == replace_with)) {
+        return;
+    }
+    m_replaceHistory.Add(replace_with);
+    clConfig::Get().SetQuickFindReplaceItems(m_replaceHistory.m_commands);
 }
 
 void FindAndReplaceDialog::ShowMenuForReplaceCtrl()
@@ -1237,6 +1273,8 @@ void FindAndReplaceDialog::ShowMenuForReplaceCtrl()
                 wxUnusedVar(event);
                 m_textCtrlReplace->SetValue(word);
                 m_textCtrlReplace->SetInsertionPointEnd();
+                // LRU: the last used item goes to the top of the list
+                UpdateReplaceHistory();
             },
             resource_id);
     }

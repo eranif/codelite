@@ -52,7 +52,8 @@ wxArrayString clTerminalHistory::GetItems() const
 void clTerminalHistory::SetItems(const wxArrayString& items)
 {
     m_history.clear();
-    for (size_t i = 0; i < items.GetCount(); ++i) {
-        Add(items.Item(i));
+    // Add() places each item at the top: add the items from the last to the first, to keep their order
+    for (size_t i = items.GetCount(); i > 0; --i) {
+        Add(items.Item(i - 1));
     }
 }

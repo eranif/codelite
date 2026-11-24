@@ -24,7 +24,7 @@ public:
             return false;
         }
         for (size_t i = 0; i < chars.size(); ++i) {
-            if (static_cast<unsigned char>(m_text[m_pos + i]) != static_cast<unsigned char>(chars[i])) {
+            if (ByteAt(m_pos + i) != chars[i]) {
                 return false;
             }
         }
@@ -36,7 +36,7 @@ public:
         for (size_t i = m_pos + from; i + chars.size() <= m_text.length(); ++i) {
             bool match = true;
             for (size_t j = 0; j < chars.size(); ++j) {
-                if (static_cast<unsigned char>(m_text[i + j]) != static_cast<unsigned char>(chars[j])) {
+                if (ByteAt(i + j) != chars[j]) {
                     match = false;
                     break;
                 }
@@ -87,13 +87,17 @@ public:
     std::vector<int> m_styles;
 
 protected:
-    int GetCurrentCharAsInt() const override { return CanNext() ? static_cast<unsigned char>(m_text[m_pos]) : 0; }
+    int GetCurrentCharAsInt() const override { return CanNext() ? ByteAt(m_pos) : 0; }
     int GetCharAtAsInt(size_t at) const override
     {
-        return (m_pos + at < m_text.length()) ? static_cast<unsigned char>(m_text[m_pos + at]) : 0;
+        return (m_pos + at < m_text.length()) ? ByteAt(m_pos + at) : 0;
     }
 
 private:
+    // The byte at `i`, without a locale conversion. The text is built with From8BitData(),
+    // so every character holds one byte (0-255).
+    int ByteAt(size_t i) const { return static_cast<int>(m_text[i].GetValue()); }
+
     wxString m_text;
     mutable size_t m_pos{0};
 };

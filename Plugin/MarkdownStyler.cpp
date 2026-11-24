@@ -512,7 +512,7 @@ wxString MarkdownStyler::GetUrlFromPosition(int pos)
         }
     }
 
-    for (int i = pos - 1; pos >= start_pos; --i) {
+    for (int i = pos - 1; i >= start_pos; --i) {
         if (m_ctrl->GetStyleAt(i) == MarkdownStyles::kUrl) {
             prefix.Prepend(static_cast<wxChar>(m_ctrl->GetCharAt(i)));
         } else {

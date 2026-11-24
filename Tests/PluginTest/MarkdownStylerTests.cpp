@@ -18,7 +18,7 @@ public:
 
     wxString GetSubstr(size_t count) const override { return m_text.Mid(m_pos, count); }
 
-    bool StartsWith(std::vector<int> chars) const override
+    bool StartsWith(const std::vector<int>& chars) const override
     {
         if (m_pos + chars.size() > m_text.length()) {
             return false;
@@ -275,30 +275,53 @@ TEST_CASE("MarkdownStyler OnStyle styles check marks and crosses")
         {"\xE2\x9C\x85", kCheckMarkSymbol},     // ✅ U+2705
         {"\xE2\x98\x91", kCheckMarkSymbol},     // ☑ U+2611
         {"\xF0\x9F\x97\xB8", kCheckMarkSymbol}, // 🗸 U+1F5F8
+        {"\xF0\x9F\x97\xB9", kCheckMarkSymbol}, // 🗹 U+1F5F9
+        {"\xE2\x98\x92", kErrorSymbol},         // ☒ U+2612
         {"\xE2\x9C\x95", kErrorSymbol},         // ✕ U+2715
         {"\xE2\x9C\x96", kErrorSymbol},         // ✖ U+2716
         {"\xE2\x9C\x97", kErrorSymbol},         // ✗ U+2717
         {"\xE2\x9C\x98", kErrorSymbol},         // ✘ U+2718
         {"\xE2\x9D\x8C", kErrorSymbol},         // ❌ U+274C
         {"\xE2\x9D\x8E", kErrorSymbol},         // ❎ U+274E
+        {"\xE2\xAE\xBD", kErrorSymbol},         // ⮽ U+2BBD
+        {"\xF0\x9F\x97\x99", kErrorSymbol},     // 🗙 U+1F5D9
+        {"\xF0\x9F\x97\xB4", kErrorSymbol},     // 🗴 U+1F5F4
+        {"\xF0\x9F\x97\xB5", kErrorSymbol},     // 🗵 U+1F5F5
+        {"\xF0\x9F\x97\xB6", kErrorSymbol},     // 🗶 U+1F5F6
+        {"\xF0\x9F\x97\xB7", kErrorSymbol},     // 🗷 U+1F5F7
     };
 
     std::string bytes;
+    // A mark in the middle of a line of text
+    bytes += "a \xE2\x9C\x93 b\n"; // "a ✓ b"
     for (const auto& mark : marks) {
         bytes += mark.first;
         bytes += '\n';
     }
     // A mark followed by the variation selector U+FE0F: all the bytes get the mark style
-    const std::string with_vs16 = "\xE2\x9D\x8C\xEF\xB8\x8F"; // ❌ U+274C + VS16
-    bytes += with_vs16;
+    const std::string check_vs16 = "\xE2\x9C\x94\xEF\xB8\x8F"; // ✔ U+2714 + VS16
+    const std::string cross_vs16 = "\xE2\x9D\x8C\xEF\xB8\x8F"; // ❌ U+274C + VS16
+    bytes += check_vs16;
     bytes += '\n';
-    bytes += "plain text";
+    bytes += cross_vs16;
+    bytes += '\n';
+    bytes += "plain text\n";
+    // A mark at the very end of the buffer (no new line after it)
+    bytes += "\xE2\x9C\x94"; // ✔ U+2714
 
     MockAccessor accessor{wxString::From8BitData(bytes.data(), bytes.size())};
     styler.OnStyle(accessor);
     REQUIRE(accessor.m_styles.size() == bytes.size());
 
+    // "a ✓ b\n": the letters and spaces are default, the 3 bytes of the mark are a check mark
     size_t pos = 0;
+    const std::vector<int> mid_line = {kDefault, kDefault, kCheckMarkSymbol, kCheckMarkSymbol,
+                                       kCheckMarkSymbol, kDefault, kDefault, kDefault};
+    for (size_t i = 0; i < mid_line.size(); ++i) {
+        CHECK(accessor.m_styles[pos + i] == mid_line[i]);
+    }
+    pos += mid_line.size();
+
     for (const auto& mark : marks) {
         for (size_t i = 0; i < mark.first.size(); ++i) {
             CHECK(accessor.m_styles[pos + i] == mark.second);
@@ -308,12 +331,22 @@ TEST_CASE("MarkdownStyler OnStyle styles check marks and crosses")
         pos += mark.first.size() + 1;
     }
 
-    for (size_t i = 0; i < with_vs16.size(); ++i) {
+    for (size_t i = 0; i < check_vs16.size(); ++i) {
+        CHECK(accessor.m_styles[pos + i] == kCheckMarkSymbol);
+    }
+    pos += check_vs16.size() + 1;
+    for (size_t i = 0; i < cross_vs16.size(); ++i) {
         CHECK(accessor.m_styles[pos + i] == kErrorSymbol);
     }
-    pos += with_vs16.size() + 1;
+    pos += cross_vs16.size() + 1;
 
-    for (size_t i = pos; i < bytes.size(); ++i) {
-        CHECK(accessor.m_styles[i] == kDefault);
+    for (size_t i = 0; i < 11; ++i) { // "plain text\n"
+        CHECK(accessor.m_styles[pos + i] == kDefault);
     }
+    pos += 11;
+
+    // The last mark has no new line after it
+    CHECK(accessor.m_styles[pos] == kCheckMarkSymbol);
+    CHECK(accessor.m_styles[pos + 1] == kCheckMarkSymbol);
+    CHECK(accessor.m_styles[pos + 2] == kCheckMarkSymbol);
 }

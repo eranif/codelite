@@ -19,7 +19,7 @@ public:
     virtual ~AccessorBase() = default;
 
     virtual wxString GetSubstr(size_t count) const = 0;
-    virtual bool StartsWith(std::vector<int> chars) const = 0;
+    virtual bool StartsWith(const std::vector<int>& chars) const = 0;
     virtual int Contains(std::vector<int> chars, size_t from = 0) const = 0;
 
     template <typename T>
@@ -77,14 +77,27 @@ public:
     }
 
     /**
-     * @brief Returns whether the current position matches the location of the given character sequence.
+     * @brief Returns whether the bytes at the current position equal the given character sequence.
      *
-     * Compares the result of Contains(chars) with the current position and returns true only when they are equal.
+     * Checks only the next `chars.size()` bytes. This is called for every character of the document, so it
+     * must not scan the rest of the document (Contains() does).
      *
      * @param chars std::vector<int> The character sequence to compare against.
-     * @return bool True if Contains(chars) equals GetPosition(), otherwise false.
+     * @return bool True if the next `chars.size()` bytes equal `chars`, otherwise false.
      */
-    bool StartsWith(std::vector<int> chars) const override { return Contains(chars) == GetPosition(); }
+    bool StartsWith(const std::vector<int>& chars) const override
+    {
+        if (chars.empty() || !CanPeek(chars.size())) {
+            return false;
+        }
+        const int curpos = GetPosition();
+        for (size_t i = 0; i < chars.size(); ++i) {
+            if (m_ctrl->GetCharAt(curpos + static_cast<int>(i)) != chars[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /// Starting from `from` check if the `chars` sequence exists
     int Contains(std::vector<int> chars, size_t from = 0) const override

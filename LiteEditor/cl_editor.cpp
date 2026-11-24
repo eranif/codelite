@@ -83,6 +83,7 @@
 #include "wxCodeCompletionBoxManager.h"
 
 #include <algorithm>
+#include <optional>
 #include <wx/dataobj.h>
 #include <wx/display.h>
 #include <wx/ffile.h>
@@ -131,6 +132,30 @@ std::map<wxString, int> clEditor::ms_bookmarkShapes;
 bool clEditor::m_ccShowPrivateMembers = true;
 bool clEditor::m_ccShowItemsComments = true;
 bool clEditor::m_ccInitialized = false;
+
+namespace
+{
+/// The last zoom level that the user set. All the editors use it, also the editors that open later.
+/// It is read from the configuration on first use: clConfig is not ready when the statics are initialised
+std::optional<int> ms_zoomFactor{std::nullopt};
+
+int GetGlobalZoomFactor()
+{
+    if (!ms_zoomFactor.has_value()) {
+        ms_zoomFactor = clConfig::Get().Read(kConfigEditorZoom, 0);
+    }
+    return ms_zoomFactor.value();
+}
+
+void SetGlobalZoomFactor(int zoom_factor)
+{
+    if (GetGlobalZoomFactor() == zoom_factor) {
+        return;
+    }
+    ms_zoomFactor = zoom_factor;
+    clConfig::Get().Write(kConfigEditorZoom, zoom_factor);
+}
+} // namespace
 
 // This is needed for wxWidgets < 3.1
 #ifndef wxSTC_MARK_BOOKMARK
@@ -554,6 +579,9 @@ clEditor::clEditor(wxWindow* parent)
          this,
          XRCID("BookmarkTypes[start]"),
          XRCID("BookmarkTypes[end]"));
+
+    // Use the same zoom level as the other editors
+    SetZoomFactor(GetGlobalZoomFactor());
 
     // Notify that this instance is being instantiated
     clCommandEvent initEvent(wxEVT_EDITOR_INITIALIZING);
@@ -6004,6 +6032,7 @@ void clEditor::OnZoom(wxStyledTextEvent& event)
 
     // User triggered this zoom
     int curzoom = GetZoom();
+    SetGlobalZoomFactor(curzoom);
 
     auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors();
 

@@ -67,6 +67,7 @@ public:
 #define kConfigBuildAutoScroll "build-auto-scroll"
 #define kConfigCreateVirtualFoldersOnDisk "CreateVirtualFoldersOnDisk"
 #define kConfigLogVerbosity "LogVerbosity"
+#define kConfigEditorZoom "EditorZoom"
 #define kConfigRedirectLogOutput "RedirectLogOutput"
 #define kConfigSingleInstance "SingleInstance"
 #define kConfigCheckForNewVersion "CheckForNewVersion"

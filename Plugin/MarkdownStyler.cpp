@@ -4,6 +4,8 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
+#include <vector>
 #include <wx/settings.h>
 
 namespace
@@ -267,6 +269,53 @@ inline bool IsValidUrlChar(wxChar c)
     default:
         return false;
     }
+}
+
+/// Check marks (green) and crosses (red): the style and the UTF-8 bytes of the symbol.
+/// All the marks start with the byte 226 (U+26xx, U+27xx, U+2BBD) or 240 (U+1F5xx)
+const std::pair<int, std::vector<int>> kMarkSymbols[] = {
+    {MarkdownStyles::kCheckMarkSymbol, {226, 156, 147}},      // ✓ U+2713
+    {MarkdownStyles::kCheckMarkSymbol, {226, 156, 148}},      // ✔ U+2714
+    {MarkdownStyles::kCheckMarkSymbol, {226, 156, 133}},      // ✅ U+2705
+    {MarkdownStyles::kCheckMarkSymbol, {226, 152, 145}},      // ☑ U+2611
+    {MarkdownStyles::kCheckMarkSymbol, {240, 159, 151, 184}}, // 🗸 U+1F5F8
+    {MarkdownStyles::kCheckMarkSymbol, {240, 159, 151, 185}}, // 🗹 U+1F5F9
+    {MarkdownStyles::kErrorSymbol, {226, 152, 146}},          // ☒ U+2612
+    {MarkdownStyles::kErrorSymbol, {226, 156, 149}},          // ✕ U+2715
+    {MarkdownStyles::kErrorSymbol, {226, 156, 150}},          // ✖ U+2716
+    {MarkdownStyles::kErrorSymbol, {226, 156, 151}},          // ✗ U+2717
+    {MarkdownStyles::kErrorSymbol, {226, 156, 152}},          // ✘ U+2718
+    {MarkdownStyles::kErrorSymbol, {226, 157, 140}},          // ❌ U+274C
+    {MarkdownStyles::kErrorSymbol, {226, 157, 142}},          // ❎ U+274E
+    {MarkdownStyles::kErrorSymbol, {226, 174, 189}},          // ⮽ U+2BBD
+    {MarkdownStyles::kErrorSymbol, {240, 159, 151, 153}},     // 🗙 U+1F5D9
+    {MarkdownStyles::kErrorSymbol, {240, 159, 151, 180}},     // 🗴 U+1F5F4
+    {MarkdownStyles::kErrorSymbol, {240, 159, 151, 181}},     // 🗵 U+1F5F5
+    {MarkdownStyles::kErrorSymbol, {240, 159, 151, 182}},     // 🗶 U+1F5F6
+    {MarkdownStyles::kErrorSymbol, {240, 159, 151, 183}},     // 🗷 U+1F5F7
+};
+
+/// Style a check mark or a cross at the current position. A mark can be followed by the
+/// variation selector U+FE0F (the bytes EF B8 8F), it gets the same style.
+/// Returns false if the current position is not a mark
+bool StyleMark(AccessorBase& accessor)
+{
+    // All the marks start with the byte 226 or 240, so most characters stop here
+    const int first_byte = accessor.GetCurrentChar<int>();
+    if (first_byte != 226 && first_byte != 240) {
+        return false;
+    }
+    for (const auto& mark : kMarkSymbols) {
+        if (!accessor.StartsWith(mark.second)) {
+            continue;
+        }
+        accessor.SetStyle(mark.first, mark.second.size());
+        if (accessor.StartsWith({239, 184, 143})) {
+            accessor.SetStyle(mark.first, 3);
+        }
+        return true;
+    }
+    return false;
 }
 
 } // namespace
@@ -792,21 +841,14 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 break;
             }
 
-            // Checkmark ✔
-            if (accessor.StartsWith({226, 156, 148})) {
-                accessor.SetStyle(MarkdownStyles::kCheckMarkSymbol, 3);
-                break;
-            }
-
-            if (accessor.StartsWith({226, 157, 140, 239, 184, 143}) || accessor.StartsWith({226, 157, 140})) {
-                accessor.SetStyle(
-                    MarkdownStyles::kErrorSymbol, accessor.StartsWith({226, 157, 140, 239, 184, 143}) ? 6 : 3);
+            // Check marks and crosses
+            if (StyleMark(accessor)) {
                 break;
             }
 
             // ⟪y/n/t⟫
-            if (int keyboard_key_start = accessor.Contains({226, 159, 170});
-                keyboard_key_start == accessor.GetPosition()) {
+            if (accessor.StartsWith({226, 159, 170})) {
+                const int keyboard_key_start = accessor.GetPosition();
                 // search for the closing brace.
                 int keyboard_key_end = accessor.Contains({226, 159, 171});
                 if (keyboard_key_end != wxNOT_FOUND && keyboard_key_end - keyboard_key_start >= 3) {

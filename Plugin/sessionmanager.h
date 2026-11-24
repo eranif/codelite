@@ -123,6 +123,10 @@ struct WXDLLIMPEXP_SDK FindInFilesSession {
     /// construct from a json file
     bool From(const wxString& content);
 
+    /// Put `value` at the top of `history` (the last used item comes first). Remove its other copies and the empty
+    /// items, and keep at most 15 items. An empty `value` is not added.
+    static void AddToHistory(wxArrayString& history, const wxString& value);
+
     /// save to file
     wxString Save() const;
 };
@@ -167,4 +171,3 @@ public:
 private:
     wxFileName GetSessionFileName(const wxString& name, const wxString& suffix = wxT("")) const;
 };
-

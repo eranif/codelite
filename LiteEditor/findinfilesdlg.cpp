@@ -183,7 +183,11 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     CenterOnParent();
 }
 
-FindInFilesDialog::~FindInFilesDialog() { SaveFindReplaceData(); }
+FindInFilesDialog::~FindInFilesDialog()
+{
+    // A search already saved the history: only save the settings (for example, after a Cancel)
+    SaveFindReplaceData(false);
+}
 
 void FindInFilesDialog::DoSearchReplace()
 {
@@ -192,7 +196,7 @@ void FindInFilesDialog::DoSearchReplace()
     data.SetOwner(m_handler ? m_handler : clMainFrame::Get()->GetOutputPane()->GetReplaceResultsTab());
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
-    SaveFindReplaceData();
+    SaveFindReplaceData(true, true);
     EndModal(wxID_OK);
 }
 
@@ -205,7 +209,7 @@ void FindInFilesDialog::DoSearch()
     // check to see if we require to save the files
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
-    SaveFindReplaceData();
+    SaveFindReplaceData(true, false);
     EndModal(wxID_OK);
 }
 
@@ -566,22 +570,7 @@ wxArrayString FindInFilesDialog::GetPathsAsArray() const
     return arr;
 }
 
-namespace
-{
-wxArrayString GetComboBoxStrings(wxComboBox* cb)
-{
-    wxArrayString arr = cb->GetStrings();
-    wxString value = cb->GetValue();
-    int loc = arr.Index(value);
-    if (loc != wxNOT_FOUND) {
-        arr.RemoveAt(loc);
-    }
-    arr.Insert(value, 0);
-    return arr;
-}
-} // namespace
-
-void FindInFilesDialog::SaveFindReplaceData()
+void FindInFilesDialog::SaveFindReplaceData(bool updateHistory, bool isReplace)
 {
     if (m_presetSearch && !m_userChangedRegexManually) {
         // restore the regex value
@@ -589,28 +578,34 @@ void FindInFilesDialog::SaveFindReplaceData()
     }
 
     m_data.flags = GetSearchFlags();
-    m_data.find_what_array = StringUtils::AppendAndMakeUnique(m_findString->GetStrings(), m_findString->GetValue());
-    m_data.find_what = m_findString->GetValue();
 
-    m_data.replace_with_array =
-        StringUtils::AppendAndMakeUnique(m_replaceString->GetStrings(), m_replaceString->GetValue());
-    m_data.replace_with = m_replaceString->GetValue();
+    // The history changes only when a search runs, not when the dialog is cancelled. The lists start from the items of
+    // the combo boxes, because the user can clear them
+    if (updateHistory) {
+        m_data.find_what_array = m_findString->GetStrings();
+        FindInFilesSession::AddToHistory(m_data.find_what_array, m_findString->GetValue());
+        m_data.find_what = m_findString->GetValue();
+
+        // A "Find" does not use the "Replace with" text
+        if (isReplace) {
+            m_data.replace_with_array = m_replaceString->GetStrings();
+            FindInFilesSession::AddToHistory(m_data.replace_with_array, m_replaceString->GetValue());
+            m_data.replace_with = m_replaceString->GetValue();
+        }
+
+        m_data.files_array = m_fileTypes->GetStrings();
+        FindInFilesSession::AddToHistory(m_data.files_array, m_fileTypes->GetValue());
+        m_data.files = m_fileTypes->GetValue();
+
+        // store the "Where"
+        if (!m_transient) {
+            m_data.where_array = m_comboBoxWhere->GetStrings();
+            FindInFilesSession::AddToHistory(m_data.where_array, m_comboBoxWhere->GetValue());
+            m_data.where = m_comboBoxWhere->GetValue();
+        }
+    }
 
     m_data.encoding = m_comboBoxEncoding->GetStringSelection();
-
-    wxArrayString masks = GetComboBoxStrings(m_fileTypes);
-    wxString value = m_fileTypes->GetValue();
-
-    m_data.files = value;
-    m_data.files_array = masks;
-
-    // store the "Where"
-    if (!m_transient) {
-        wxArrayString where_arr =
-            StringUtils::AppendAndMakeUnique(m_comboBoxWhere->GetStrings(), m_comboBoxWhere->GetValue());
-        m_data.where_array = where_arr;
-        m_data.where = m_comboBoxWhere->GetValue();
-    }
 
     size_t search_flags = clFilesScanner::SF_DEFAULT;
     if (m_checkBoxFollowSymlinks->IsChecked()) {

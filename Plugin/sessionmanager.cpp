@@ -41,6 +41,26 @@
 #include <wx/sstream.h>
 
 /// Find in files entries
+void FindInFilesSession::AddToHistory(wxArrayString& history, const wxString& value)
+{
+    constexpr size_t kMaxHistorySize = 15;
+
+    wxArrayString result;
+    if (!value.Strip(wxString::both).empty()) {
+        result.Add(value);
+    }
+    for (const auto& item : history) {
+        // Older versions saved empty items: remove them
+        if (item != value && !item.Strip(wxString::both).empty()) {
+            result.Add(item);
+        }
+    }
+    if (result.size() > kMaxHistorySize) {
+        result.resize(kMaxHistorySize);
+    }
+    history = std::move(result);
+}
+
 bool FindInFilesSession::From(const wxString& content)
 {
     JSON root{content};

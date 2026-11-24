@@ -2,7 +2,6 @@
 
 #include "ColoursAndFontsManager.h"
 #include "JSON.h"
-#include "StringUtils.h"
 #include "clThemedTextCtrl.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_config.h"
@@ -77,16 +76,28 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
 
 clRemoteFindDialog::~clRemoteFindDialog()
 {
-    m_data.find_what_array =
-        StringUtils::AppendAndMakeUnique(m_comboBoxFindWhat->GetStrings(), m_comboBoxFindWhat->GetValue());
-    m_data.find_what = m_comboBoxFindWhat->GetValue();
-    m_data.replace_with_array =
-        StringUtils::AppendAndMakeUnique(m_comboBoxReplaceWith->GetStrings(), m_comboBoxReplaceWith->GetValue());
-    m_data.replace_with = m_comboBoxReplaceWith->GetValue();
-    m_data.where_array = StringUtils::AppendAndMakeUnique(m_comboBoxWhere->GetStrings(), m_comboBoxWhere->GetValue());
-    m_data.where = m_comboBoxWhere->GetValue();
-    m_data.files_array = StringUtils::AppendAndMakeUnique(m_comboBoxTypes->GetStrings(), m_comboBoxTypes->GetValue());
-    m_data.files = m_comboBoxTypes->GetValue();
+    // The history changes only when a search runs (OnFind() / OnReplace()), not when the dialog is cancelled
+    if (GetReturnCode() == wxID_OK) {
+        m_data.find_what_array = m_comboBoxFindWhat->GetStrings();
+        FindInFilesSession::AddToHistory(m_data.find_what_array, m_comboBoxFindWhat->GetValue());
+        m_data.find_what = m_comboBoxFindWhat->GetValue();
+
+        // A "Find" does not use the "Replace with" text
+        if (m_isReplace) {
+            m_data.replace_with_array = m_comboBoxReplaceWith->GetStrings();
+            FindInFilesSession::AddToHistory(m_data.replace_with_array, m_comboBoxReplaceWith->GetValue());
+            m_data.replace_with = m_comboBoxReplaceWith->GetValue();
+        }
+
+        m_data.where_array = m_comboBoxWhere->GetStrings();
+        FindInFilesSession::AddToHistory(m_data.where_array, m_comboBoxWhere->GetValue());
+        m_data.where = m_comboBoxWhere->GetValue();
+
+        m_data.files_array = m_comboBoxTypes->GetStrings();
+        FindInFilesSession::AddToHistory(m_data.files_array, m_comboBoxTypes->GetValue());
+        m_data.files = m_comboBoxTypes->GetValue();
+    }
+
     m_data.flags = 0;
     if (m_checkBoxCase->IsChecked()) {
         m_data.flags |= wxFRD_MATCHCASE;

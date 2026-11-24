@@ -74,7 +74,9 @@ protected:
 
     void OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event);
     size_t GetSearchFlags();
-    void SaveFindReplaceData();
+    /// Save the session. With `updateHistory`, also add the values of the combo boxes to their history: only for a
+    /// search, or a replace when `isReplace` is true
+    void SaveFindReplaceData(bool updateHistory, bool isReplace = false);
 
 public:
     FindInFilesDialog(wxWindow* parent, wxWindow* handler = nullptr);
@@ -83,4 +85,3 @@ public:
     void SetFileMask(const wxString& mask);
     int ShowDialog(const wxString& findWhat = wxEmptyString, const wxString& replaceWith = wxEmptyString);
 };
-

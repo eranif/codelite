@@ -85,6 +85,12 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
         m_viewStc->ScrollToEnd();
     }
 
+    if (!e.GetString().empty()) {
+        // A note from the code that started the build (see QueueCommand::SetNote)
+        m_viewStc->Add(WrapLineInColour("> " + e.GetString() + "\n", AnsiColours::Cyan()));
+        m_viewStc->ScrollToEnd();
+    }
+
     // notify the plugins that the build had started
     clBuildEvent build_started_event(wxEVT_BUILD_STARTED);
     build_started_event.SetProjectName(e.GetProjectName());

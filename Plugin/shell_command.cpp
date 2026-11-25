@@ -65,6 +65,8 @@ void ShellCommand::SendStartMsg(const wxString& toolchain)
     start_event.SetConfigurationName(m_info.GetConfiguration());
     start_event.SetFlag(clBuildEvent::kCustomProject, m_info.GetKind() == QueueCommand::kCustomBuild);
     start_event.SetToolchain(toolchain);
+    // The build log shows this note after it is cleared
+    start_event.SetString(m_info.GetNote());
     start_event.SetFlag(
         clBuildEvent::kClean,
         m_info.GetKind() == QueueCommand::kClean ||

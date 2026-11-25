@@ -2759,6 +2759,26 @@ void clMainFrame::OnCleanProjectUI(wxUpdateUIEvent& event)
     event.Enable(enable);
 }
 
+namespace
+{
+/// Ask the user if to build before we run or debug. If the user saved the answer "build" earlier, the dialog does not
+/// show: in this case, add a note to the build command, so the build log tells the user how to change the answer.
+wxStandardID PromptForBuildBefore(QueueCommand& buildCommand,
+                                  const wxString& message,
+                                  const wxString& dlgId,
+                                  const wxString& yesLabel,
+                                  const wxString& noLabel)
+{
+    const bool answerSaved = clConfig::Get().GetAnnoyingDlgAnswer(dlgId, wxNOT_FOUND) != wxNOT_FOUND;
+    wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(message, dlgId, yesLabel, noLabel, _("Cancel"));
+    if (answerSaved && res == wxID_YES) {
+        buildCommand.SetNote(_("Building first, because you selected \"Remember my answer\". To be asked again, "
+                               "use: Settings > Preferences > Misc > Reset annoying dialogs answers"));
+    }
+    return res;
+}
+} // namespace
+
 void clMainFrame::ExecuteNoDebug(bool promptToBuild)
 {
     // Sanity
@@ -2786,19 +2806,18 @@ void clMainFrame::ExecuteNoDebug(bool promptToBuild)
     // Prepare the commands to execute
     QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
     if (promptToBuild) {
-        wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(
-            _("Would you like to build the active project\nbefore executing it?"),
-            "PromptForBuildBeforeExecute",
-            _("Build and Execute"),
-            _("Execute"),
-            _("Cancel"));
+        QueueCommand buildCommand(QueueCommand::kBuild);
+        wxStandardID res = PromptForBuildBefore(buildCommand,
+                                                _("Would you like to build the active project\nbefore executing it?"),
+                                                "PromptForBuildBeforeExecute",
+                                                _("Build and Execute"),
+                                                _("Execute"));
         if (res == wxID_CANCEL) {
             return;
         }
 
         // If "YES" is selected, push a build request to the queue
         if (res == wxID_YES) {
-            QueueCommand buildCommand(QueueCommand::kBuild);
             ManagerST::Get()->PushQueueCommand(buildCommand);
             commandExecute.SetCheckBuildSuccess(true); // execute only if build was successful
         }
@@ -3132,16 +3151,15 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
         // Debugger is not running, but workspace is opened -> start debug session
         QueueCommand dbgCmd(QueueCommand::kDebug);
 
-        wxStandardID res =
-            ::PromptForYesNoCancelDialogWithCheckbox(_("Would you like to build the project before debugging it?"),
-                                                     "BuildBeforeDebug",
-                                                     _("Build and Debug"),
-                                                     _("Debug"),
-                                                     _("Cancel"));
+        QueueCommand bldCmd(QueueCommand::kBuild);
+        wxStandardID res = PromptForBuildBefore(bldCmd,
+                                                _("Would you like to build the project before debugging it?"),
+                                                "BuildBeforeDebug",
+                                                _("Build and Debug"),
+                                                _("Debug"));
         // Don't do anything if "X" is pressed
         if (res != wxID_CANCEL) {
             if (res == wxID_YES) {
-                QueueCommand bldCmd(QueueCommand::kBuild);
                 ManagerST::Get()->PushQueueCommand(bldCmd);
                 dbgCmd.SetCheckBuildSuccess(true);
             }

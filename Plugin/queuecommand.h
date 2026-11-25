@@ -38,6 +38,7 @@ class WXDLLIMPEXP_SDK QueueCommand
     bool m_cleanLog;
     bool m_checkBuildSuccess;
     wxString m_customBuildTarget;
+    wxString m_note;
 
 public:
     // Command's kind
@@ -66,5 +67,7 @@ public:
     bool GetCheckBuildSuccess() const { return m_checkBuildSuccess; }
     void SetCustomBuildTarget(const wxString& customBuildTarget) { this->m_customBuildTarget = customBuildTarget; }
     const wxString& GetCustomBuildTarget() const { return m_customBuildTarget; }
+    /// A note that the build log shows when this build starts
+    void SetNote(const wxString& note) { this->m_note = note; }
+    const wxString& GetNote() const { return m_note; }
 };
-

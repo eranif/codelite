@@ -78,6 +78,14 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_READ, clSFTPEvent);
 // GetInt() -> a `StatusCode` value (clResult.hpp): `StatusCode::kNotFound` if the file does not exist
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_READ_ERROR, clSFTPEvent);
 
+// A remote file was downloaded (clSFTPManager::AsyncDownload). Fired on the EventNotifier.
+// GetAccount() -> the account, GetRemoteFile() -> the remote file path, GetLocalFile() -> the local copy
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_DOWNLOADED, clSFTPEvent);
+
+// Failed to download a remote file (clSFTPManager::AsyncDownload). Fired on the EventNotifier.
+// GetAccount() -> the account, GetRemoteFile() -> the remote file path, GetString() -> the error message
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_FILE_DOWNLOAD_ERROR, clSFTPEvent);
+
 // A remote folder was created (or already exists).
 // GetAccount() -> the account, GetRemoteFile() -> the folder path
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SFTP_NEW_FOLDER_COMPLETED, clSFTPEvent);

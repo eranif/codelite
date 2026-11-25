@@ -25,6 +25,7 @@
 
 class IEditor;
 class SFTPClientData;
+class clSFTPEvent;
 
 using ReadOutput_t = std::tuple<std::string, std::string, int>;
 class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
@@ -72,6 +73,17 @@ public:
      */
     wxFileName
     Download(const wxString& path, const wxString& accountName, const wxString& localFileName = wxEmptyString);
+
+    /**
+     * @brief download a remote file into the local SFTP download folder (the same place `OpenFile()` uses), but do
+     * not open it in an editor. This function is async: the download runs in the worker thread. If the local copy
+     * has the same checksum as the remote file, the file is not downloaded again
+     * @param path file path on the remote machine
+     * @param accountName the account name to use
+     * @event wxEVT_SFTP_FILE_DOWNLOADED fired on the EventNotifier on success, GetLocalFile() is the local copy
+     * @event wxEVT_SFTP_FILE_DOWNLOAD_ERROR fired on the EventNotifier on failure, GetString() is the error message
+     */
+    void AsyncDownload(const wxString& path, const wxString& accountName);
 
     /**
      * @brief save file remotely. this function is async
@@ -351,6 +363,7 @@ protected:
     void StopWorkerThread();
     void OnSaveCompleted(clCommandEvent& e);
     void OnSaveError(clCommandEvent& e);
+    void OnAsyncDownloadDone(clSFTPEvent& e);
     void DoAsyncSaveFile(const wxString& localPath,
                          const wxString& remotePath,
                          const wxString& accountName,

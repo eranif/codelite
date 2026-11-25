@@ -787,6 +787,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, 
 // Call event.Skip(false) to instruct CodeLite to skip the default session-save
 // action (this is useful if the session is managed by an external plugin)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SAVE_SESSION_NEEDED, clCommandEvent);
+
+// Event: clCommandEvent
+// Sent on startup, when CodeLite restores the last session. event.GetString() is the name of the last session
+// Call event.Skip(false) to instruct CodeLite to skip the default session-restore action (this is useful if the
+// session is managed by an external plugin, for example: a remote workspace)
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_RESTORE_SESSION_NEEDED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SESSION_LOADING, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SESSION_LOADED, clCommandEvent);
 

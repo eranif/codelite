@@ -2013,6 +2013,13 @@ void clMainFrame::OnClose(wxCloseEvent& event)
 
 void clMainFrame::LoadSession(const wxString& sessionName)
 {
+    // Let the plugin process this first (e.g. the last session is of a remote workspace)
+    clCommandEvent eventRestoreSession(wxEVT_RESTORE_SESSION_NEEDED);
+    eventRestoreSession.SetString(sessionName);
+    if (EventNotifier::Get()->ProcessEvent(eventRestoreSession)) {
+        return;
+    }
+
     SessionEntry session;
     if (SessionManager::Get().GetSession(sessionName, session)) {
         wxString wspFile = session.GetWorkspaceName();

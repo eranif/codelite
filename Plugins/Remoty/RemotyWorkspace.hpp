@@ -13,11 +13,13 @@
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "ieditor.h"
+#include "serialized_object.h"
 #include "ssh/ssh_account_info.h"
 
 #include <deque>
 #include <functional>
 #include <optional>
+#include <unordered_map>
 #include <wx/arrstr.h>
 #include <wx/event.h>
 
@@ -59,6 +61,11 @@ private:
     wxString m_listLspOutput;
     wxStringSet_t m_replaceInFilesModifiedFiles;
     std::optional<int> m_indentWidth{std::nullopt};
+
+    /// Session restore: the remote files that are still downloading (remote path -> the tab to restore)
+    std::unordered_map<wxString, TabInfo> m_sessionPendingFiles;
+    /// Session restore: the remote path of the tab to select once all the files are open
+    wxString m_sessionActiveFile;
 
 public:
     RemotyWorkspace();
@@ -218,6 +225,19 @@ protected:
     wxString CreateEnvScriptContent() const;
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
 
+    /// Session: the name (a local path) that SessionManager uses to place the session file of a remote workspace
+    static wxString MakeSessionName(const SSHAccountInfo& account, const wxString& remote_workspace_file);
+    /// Session: the session name of the current workspace
+    wxString GetSessionName() const;
+    /// On startup: if the last session is of a remote workspace, open that workspace
+    void OnRestoreSession(clCommandEvent& event);
+    /// Session: save the remote files that are open in the editors
+    void SaveSession();
     void RestoreSession();
+    /// Session restore: called when we do not wait for any file any more
+    void DoSessionRestoreCompleted();
+    void OnSaveSession(clCommandEvent& event);
+    void OnSessionFileDownloaded(clSFTPEvent& event);
+    void OnSessionFileDownloadError(clSFTPEvent& event);
     void SetFocusToActiveEditor();
 };

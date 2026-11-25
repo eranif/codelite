@@ -246,6 +246,8 @@ bool SessionManager::Save(const wxString& name,
         return false;
     }
     const wxFileName& sessionFileName = GetSessionFileName(name, suffix);
+    // The ".codelite" folder may not exist yet: create it, or we can not write the file
+    sessionFileName.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     return FileUtils::WriteFileContent(sessionFileName, content);
 }
 

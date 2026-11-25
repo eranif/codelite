@@ -53,6 +53,8 @@ clSFTPManager::clSFTPManager()
     Bind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
     Bind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &clSFTPManager::OnSaveCompleted, this);
     Bind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &clSFTPManager::OnSaveError, this);
+    Bind(wxEVT_SFTP_FILE_DOWNLOADED, &clSFTPManager::OnAsyncDownloadDone, this);
+    Bind(wxEVT_SFTP_FILE_DOWNLOAD_ERROR, &clSFTPManager::OnAsyncDownloadDone, this);
     StartWorkerThread();
 }
 
@@ -72,6 +74,8 @@ clSFTPManager::~clSFTPManager()
     }
     Unbind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &clSFTPManager::OnSaveCompleted, this);
     Unbind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &clSFTPManager::OnSaveError, this);
+    Unbind(wxEVT_SFTP_FILE_DOWNLOADED, &clSFTPManager::OnAsyncDownloadDone, this);
+    Unbind(wxEVT_SFTP_FILE_DOWNLOAD_ERROR, &clSFTPManager::OnAsyncDownloadDone, this);
 }
 
 clSFTPManager& clSFTPManager::Get()
@@ -916,6 +920,91 @@ wxFileName clSFTPManager::Download(const wxString& path, const wxString& account
         return local_file;
     }
     return {};
+}
+
+void clSFTPManager::AsyncDownload(const wxString& path, const wxString& accountName)
+{
+    clDEBUG() << "SFTP Manager: downloading file (async):" << path << "for account:" << accountName << endl;
+
+    // The worker thread sends the result to us (see OnAsyncDownloadDone), and we send it to the EventNotifier
+    auto fire_error = [this, path, accountName](const wxString& error) {
+        clSFTPEvent event_error{wxEVT_SFTP_FILE_DOWNLOAD_ERROR};
+        event_error.SetAccount(accountName);
+        event_error.SetRemoteFile(path);
+        event_error.SetString(error);
+        QueueEvent(event_error.Clone());
+    };
+
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    if (!conn) {
+        fire_error(_("Failed to connect to the remote machine"));
+        return;
+    }
+
+    // Build the local path (and create its folder) here, in the main thread
+    const SSHAccountInfo account = GetConnectionPair(accountName).first;
+    const wxString local_path = clSFTP::GetLocalFileName(account, path, true).GetFullPath();
+
+    auto download_func = [this, path, local_path, accountName, conn, fire_error]() {
+        try {
+            // If we already have a local copy with the same checksum, do not download it again
+            bool use_local_copy = false;
+            if (wxFileName::FileExists(local_path)) {
+                try {
+                    size_t remote_checksum = 0;
+                    size_t local_checksum = 0;
+                    use_local_copy = conn->GetChecksum(path, &remote_checksum) &&
+                                     FileUtils::GetChecksum(local_path, &local_checksum) &&
+                                     remote_checksum == local_checksum;
+                } catch (...) {
+                    // No checksum: download the file
+                    use_local_copy = false;
+                }
+            }
+
+            if (!use_local_copy) {
+                wxMemoryBuffer buffer;
+                conn->Read(path, buffer);
+
+                wxLogNull no_log;
+                wxFFile fp(local_path, "w+b");
+                if (!fp.IsOpened() || fp.Write(buffer.GetData(), buffer.GetDataLen()) != buffer.GetDataLen()) {
+                    fire_error(_("Failed to write the local file: ") + local_path);
+                    return;
+                }
+            }
+
+            clSFTPEvent event_done{wxEVT_SFTP_FILE_DOWNLOADED};
+            event_done.SetAccount(accountName);
+            event_done.SetRemoteFile(path);
+            event_done.SetLocalFile(local_path);
+            QueueEvent(event_done.Clone());
+
+        } catch (const clException& e) {
+            clERROR() << "Failed to download remote file:" << path << "." << e.What() << endl;
+            wxString error = e.What();
+            fire_error(error.empty() ? _("Failed to download remote file") : error);
+        } catch (...) {
+            clERROR() << "Failed to download remote file:" << path << ". Unknown error" << endl;
+            fire_error(_("Failed to download remote file"));
+        }
+    };
+    m_q.push_back(std::move(download_func));
+}
+
+void clSFTPManager::OnAsyncDownloadDone(clSFTPEvent& e)
+{
+    if (e.GetEventType() == wxEVT_SFTP_FILE_DOWNLOADED) {
+        // mark this file as ours (like DoSyncDownload does)
+        saved_file info;
+        info.account_name = e.GetAccount();
+        info.local_path = e.GetLocalFile();
+        info.remote_path = e.GetRemoteFile();
+        m_downloadedFileToAccount.insert({info.local_path, info});
+    }
+
+    // Tell everyone about it
+    EventNotifier::Get()->AddPendingEvent(e);
 }
 
 void clSFTPManager::AsyncWriteFile(const wxString& content,

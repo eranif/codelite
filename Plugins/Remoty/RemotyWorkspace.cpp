@@ -31,6 +31,7 @@
 #include "macros.h"
 #include "open_resource_dialog.h"
 #include "sample_codelite_remote_json.cpp"
+#include "sessionmanager.h"
 #include "shell_command.h"
 #include "wxCustomControls.hpp"
 
@@ -131,6 +132,10 @@ void RemotyWorkspace::BindEvents()
 
     EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspace::OnSftpSaveSuccess, this);
     EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &RemotyWorkspace::OnSftpSaveError, this);
+    EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &RemotyWorkspace::OnSaveSession, this);
+    EventNotifier::Get()->Bind(wxEVT_RESTORE_SESSION_NEEDED, &RemotyWorkspace::OnRestoreSession, this);
+    EventNotifier::Get()->Bind(wxEVT_SFTP_FILE_DOWNLOADED, &RemotyWorkspace::OnSessionFileDownloaded, this);
+    EventNotifier::Get()->Bind(wxEVT_SFTP_FILE_DOWNLOAD_ERROR, &RemotyWorkspace::OnSessionFileDownloadError, this);
     EventNotifier::Get()->Bind(wxEVT_CL_FRAME_TITLE, &RemotyWorkspace::OnFrameTitle, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CREATE_NEW, &RemotyWorkspace::OnCreateNew, this);
 
@@ -176,6 +181,10 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_FILE_FIND_MATCHING_PAIR, &RemotyWorkspace::OnFindSwapped, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspace::OnSftpSaveSuccess, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &RemotyWorkspace::OnSftpSaveError, this);
+    EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &RemotyWorkspace::OnSaveSession, this);
+    EventNotifier::Get()->Unbind(wxEVT_RESTORE_SESSION_NEEDED, &RemotyWorkspace::OnRestoreSession, this);
+    EventNotifier::Get()->Unbind(wxEVT_SFTP_FILE_DOWNLOADED, &RemotyWorkspace::OnSessionFileDownloaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_SFTP_FILE_DOWNLOAD_ERROR, &RemotyWorkspace::OnSessionFileDownloadError, this);
 
     Unbind(wxEVT_TERMINAL_EXIT, &RemotyWorkspace::OnExecProcessTerminated, this);
     EventNotifier::Get()->Unbind(wxEVT_OPEN_RESOURCE_FILE_SELECTED, &RemotyWorkspace::OnOpenResourceFile, this);
@@ -260,6 +269,14 @@ void RemotyWorkspace::DoClose(bool notify)
         clDEBUG() << "Remoty: DoClose() -> not opened..." << endl;
         return;
     }
+
+    // Store the open files, before we close them. When CodeLite exits (notify is false), the editors are already
+    // closed: the session was saved earlier, in OnSaveSession()
+    if (notify) {
+        SaveSession();
+    }
+    m_sessionPendingFiles.clear();
+    m_sessionActiveFile.clear();
 
     m_view->CloseWorkspace();
     m_settings.Save(m_localWorkspaceFile, m_localUserWorkspaceFile);
@@ -1169,13 +1186,209 @@ void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)
     }
 }
 
+wxString RemotyWorkspace::MakeSessionName(const SSHAccountInfo& account, const wxString& remote_workspace_file)
+{
+    // "<user data>/Remoty/Sessions/<host>/<remote workspace path>". This path is different for each host and remote
+    // workspace. SessionManager places the session file in the ".codelite" folder next to it.
+    // Note: do not use the SFTP download folder: it is deleted when CodeLite exits
+    wxFileName remote_file(remote_workspace_file, wxPATH_UNIX);
+    wxFileName session_name(clStandardPaths::Get().GetUserDataDir(), remote_file.GetFullName());
+    session_name.AppendDir("Remoty");
+    session_name.AppendDir("Sessions");
+    if (!account.GetHost().empty()) {
+        session_name.AppendDir(account.GetHost());
+    }
+    for (const auto& dir : remote_file.GetDirs()) {
+        session_name.AppendDir(dir);
+    }
+    return session_name.GetFullPath();
+}
+
+wxString RemotyWorkspace::GetSessionName() const { return MakeSessionName(m_account, m_remoteWorkspaceFile); }
+
+void RemotyWorkspace::OnRestoreSession(clCommandEvent& event)
+{
+    event.Skip();
+
+    // Was the last session our remote workspace?
+    auto last_workspace = RemotyConfig().GetLastWorkspace();
+    if (last_workspace.account.empty() || last_workspace.path.empty()) {
+        return;
+    }
+
+    auto account = SSHAccountInfo::LoadAccount(last_workspace.account);
+    if (account.GetAccountName().empty() || MakeSessionName(account, last_workspace.path) != event.GetString()) {
+        return;
+    }
+
+    // Our session: open the workspace (this also restores its files)
+    event.Skip(false);
+    clDEBUG() << "Remoty: restoring last session, opening remote workspace:" << last_workspace.path << endl;
+    CallAfter(&RemotyWorkspace::OpenWorkspace, last_workspace.path, last_workspace.account);
+}
+
+void RemotyWorkspace::SaveSession()
+{
+    if (!IsOpened() || m_remoteWorkspaceFile.empty()) {
+        return;
+    }
+
+    if (!m_sessionPendingFiles.empty()) {
+        // The session is still loading: the editors show only part of it. Keep the saved session as it is
+        clDEBUG() << "Remoty: session is still loading, not saving it" << endl;
+        return;
+    }
+
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    auto active_editor = clGetManager()->GetActiveEditor();
+
+    const wxString session_name = GetSessionName();
+    SessionEntry session;
+    session.SetWorkspaceName(session_name);
+    session.SetSelectedTab(0);
+
+    std::vector<TabInfo> tabs;
+    for (auto editor : editors) {
+        // Keep only the remote files of this workspace
+        auto client_data = dynamic_cast<SFTPClientData*>(editor->GetClientData("sftp"));
+        if (!client_data || client_data->GetAccountName() != m_account.GetAccountName()) {
+            continue;
+        }
+
+        if (editor == active_editor) {
+            session.SetSelectedTab(static_cast<int>(tabs.size()));
+        }
+
+        auto ctrl = editor->GetCtrl();
+        TabInfo tab;
+        tab.SetFileName(client_data->GetRemotePath());
+        tab.SetFirstVisibleLine(ctrl->GetFirstVisibleLine());
+        tab.SetCurrentLine(ctrl->GetCurrentLine());
+        tabs.push_back(tab);
+    }
+    session.SetTabInfoArr(tabs);
+
+    if (!SessionManager::Get().Save(session_name, session)) {
+        clWARNING() << "Remoty: failed to save session for:" << session_name << endl;
+        return;
+    }
+    clDEBUG() << "Remoty: saved session with" << tabs.size() << "files for:" << session_name << endl;
+}
+
+void RemotyWorkspace::OnSaveSession(clCommandEvent& event)
+{
+    event.Skip();
+    if (IsOpened()) {
+        // Our session: CodeLite does not need to save its default session
+        event.Skip(false);
+        SaveSession();
+    }
+}
+
 void RemotyWorkspace::RestoreSession()
 {
-    clCommandEvent event_loading{wxEVT_SESSION_LOADING};
-    EventNotifier::Get()->AddPendingEvent(event_loading);
+    if (!IsOpened()) {
+        return;
+    }
 
-    // TODO:
-    // Do the actual session loading here
+    m_sessionPendingFiles.clear();
+    m_sessionActiveFile.clear();
+
+    // Like CodeLite does for a local workspace: this session is now the "last session". If CodeLite exits while this
+    // workspace is open, the next start opens it again (see OnRestoreSession)
+    const wxString session_name = GetSessionName();
+    SessionManager::Get().SetLastSession(session_name);
+    RemotyConfig().SetLastWorkspace({m_account.GetAccountName(), m_remoteWorkspaceFile});
+
+    SessionEntry session;
+    SessionManager::Get().GetSession(session_name, session);
+    const auto& tabs = session.GetTabInfoArr();
+    clDEBUG() << "Remoty: restoring session with" << tabs.size() << "files" << endl;
+
+    clCommandEvent event_loading{wxEVT_SESSION_LOADING};
+    EventNotifier::Get()->ProcessEvent(event_loading);
+
+    // Download the files in the background. The files are opened when they are downloaded, see
+    // OnSessionFileDownloaded()
+    for (size_t i = 0; i < tabs.size(); ++i) {
+        const auto& tab = tabs[i];
+        if (tab.GetFileName().empty() || !m_sessionPendingFiles.insert({tab.GetFileName(), tab}).second) {
+            continue;
+        }
+        if (static_cast<int>(i) == session.GetSelectedTab()) {
+            m_sessionActiveFile = tab.GetFileName();
+        }
+        clSFTPManager::Get().AsyncDownload(tab.GetFileName(), m_account.GetAccountName());
+    }
+
+    if (m_sessionPendingFiles.empty()) {
+        DoSessionRestoreCompleted();
+    }
+}
+
+void RemotyWorkspace::OnSessionFileDownloaded(clSFTPEvent& event)
+{
+    event.Skip();
+    if (!IsOpened() || event.GetAccount() != m_account.GetAccountName()) {
+        return;
+    }
+
+    auto iter = m_sessionPendingFiles.find(event.GetRemoteFile());
+    if (iter == m_sessionPendingFiles.end()) {
+        // Not a file from our session
+        return;
+    }
+
+    TabInfo tab = iter->second;
+    m_sessionPendingFiles.erase(iter);
+
+    auto editor = clGetManager()->OpenRemoteFile(event.GetLocalFile(), event.GetRemoteFile(), event.GetAccount());
+    if (editor) {
+        auto ctrl = editor->GetCtrl();
+        ctrl->SetFirstVisibleLine(tab.GetFirstVisibleLine());
+        editor->SetCaretAt(ctrl->PositionFromLine(tab.GetCurrentLine()));
+    }
+
+    if (m_sessionPendingFiles.empty()) {
+        DoSessionRestoreCompleted();
+    }
+}
+
+void RemotyWorkspace::OnSessionFileDownloadError(clSFTPEvent& event)
+{
+    event.Skip();
+    if (!IsOpened() || event.GetAccount() != m_account.GetAccountName()) {
+        return;
+    }
+
+    if (m_sessionPendingFiles.erase(event.GetRemoteFile()) == 0) {
+        // Not a file from our session
+        return;
+    }
+
+    clWARNING() << "Remoty: could not restore file:" << event.GetRemoteFile() << "." << event.GetString() << endl;
+    if (m_sessionPendingFiles.empty()) {
+        DoSessionRestoreCompleted();
+    }
+}
+
+void RemotyWorkspace::DoSessionRestoreCompleted()
+{
+    // Select the tab that was active when the session was saved
+    if (!m_sessionActiveFile.empty()) {
+        IEditor::List_t editors;
+        clGetManager()->GetAllEditors(editors);
+        for (auto editor : editors) {
+            auto client_data = dynamic_cast<SFTPClientData*>(editor->GetClientData("sftp"));
+            if (client_data && client_data->GetAccountName() == m_account.GetAccountName() &&
+                client_data->GetRemotePath() == m_sessionActiveFile) {
+                clGetManager()->SelectPage(editor->GetCtrl());
+                break;
+            }
+        }
+        m_sessionActiveFile.clear();
+    }
 
     clCommandEvent event_loaded{wxEVT_SESSION_LOADED};
     EventNotifier::Get()->AddPendingEvent(event_loaded);

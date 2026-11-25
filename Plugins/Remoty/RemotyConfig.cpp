@@ -10,6 +10,8 @@ namespace
 size_t MAX_ITEMS = 15;
 const wxString REMOTY_RECENT_WORKSPACES = "remoty/recent_remote_workspaces";
 const wxString REMOTY_OPEN_WORKSPACE_TYPE = "remoty/open_workspace_type";
+const wxString REMOTY_LAST_WORKSPACE_ACCOUNT = "remoty/last_workspace/account";
+const wxString REMOTY_LAST_WORKSPACE_PATH = "remoty/last_workspace/path";
 } // namespace
 
 std::vector<RemoteWorkspaceInfo> RemotyConfig::GetRecentWorkspaces() const
@@ -70,3 +72,17 @@ void RemotyConfig::UpdateRecentWorkspaces(const RemoteWorkspaceInfo& workspaceIn
 bool RemotyConfig::IsOpenWorkspaceTypeLocal() const { return clConfig::Get().Read(REMOTY_OPEN_WORKSPACE_TYPE, true); }
 
 void RemotyConfig::SetOpenWorkspaceTypeLocal(bool local) { clConfig::Get().Write(REMOTY_OPEN_WORKSPACE_TYPE, local); }
+
+RemoteWorkspaceInfo RemotyConfig::GetLastWorkspace() const
+{
+    RemoteWorkspaceInfo info;
+    info.account = clConfig::Get().Read(REMOTY_LAST_WORKSPACE_ACCOUNT, wxString());
+    info.path = clConfig::Get().Read(REMOTY_LAST_WORKSPACE_PATH, wxString());
+    return info;
+}
+
+void RemotyConfig::SetLastWorkspace(const RemoteWorkspaceInfo& workspaceInfo)
+{
+    clConfig::Get().Write(REMOTY_LAST_WORKSPACE_ACCOUNT, workspaceInfo.account);
+    clConfig::Get().Write(REMOTY_LAST_WORKSPACE_PATH, workspaceInfo.path);
+}

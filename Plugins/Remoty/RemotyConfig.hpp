@@ -36,4 +36,10 @@ public:
      * @brief store the last preference entered by the user in the "Open Workspace" dialog
      */
     void SetOpenWorkspaceTypeLocal(bool local);
+
+    /**
+     * @brief the last remote workspace that was opened (used to open it again when CodeLite restores the last session)
+     */
+    RemoteWorkspaceInfo GetLastWorkspace() const;
+    void SetLastWorkspace(const RemoteWorkspaceInfo& workspaceInfo);
 };

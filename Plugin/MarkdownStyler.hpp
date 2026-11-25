@@ -5,6 +5,9 @@
 #include "codelite_exports.h"
 
 #include <stack>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 #include <wx/event.h>
 #include <wx/stc/stc.h>
 
@@ -76,30 +79,61 @@ public:
     void Reset() override;
     wxString GetUrlFromPosition(int pos);
 
+    /// Style all the text of the accessor, starting with the default state
     void OnStyle(AccessorBase& accessor);
     void OnHostspotClicked(wxStyledTextEvent& event);
 
+protected:
+    /// Line by line styling (see clSTCContainerStylerBase). Only a fenced code block continues on the next line, so
+    /// the state of a line is the fence and the language of the code block.
+    void RestoreLineState(int state) override;
+    void StyleLine(AccessorBase& accessor) override;
+    int SaveLineState() override;
+
 private:
+    /// The language of a fenced code block, with the values that styling needs. They are computed once for each tag.
+    struct CodeBlockLanguage {
+        wxString name; // the normalised name, e.g. "c++"
+        const std::unordered_set<wxString>* keywords{nullptr};
+        bool is_plain_text{true};
+        bool is_diff{false};
+        bool is_rust{false};
+        bool cpp_comments{false};
+        bool hash_comments{false};
+    };
+
+    /// Style until the end of the text of the accessor, starting with the current state
+    void StyleRange(AccessorBase& accessor);
+
     /**
      * @brief Style code block content with syntax highlighting
      * @param accessor The text accessor
-     * @param language The language tag (e.g., "c++", "python", "javascript")
+     * @param language The language of the code block
      */
-    void StyleCodeBlockContent(AccessorBase& accessor, const wxString& language);
+    void StyleCodeBlockContent(AccessorBase& accessor, const CodeBlockLanguage& language);
     bool StyleDiffPatchCommentInCodeBlock(AccessorBase& accessor);
 
     /**
      * @brief Check if a word is a keyword for the given language
      */
-    bool IsKeyword(const wxString& word, const wxString& language) const;
+    bool IsKeyword(const wxString& word, const CodeBlockLanguage& language) const;
 
     /**
      * @brief Check if a character is an operator
      */
     bool IsOperator(wxChar ch) const;
 
+    /// Return the id of the language of a code block tag (0 when there is no tag). The line state holds this id.
+    int GetLanguageId(const wxString& tag);
+    const CodeBlockLanguage& GetCurrentLanguage() const;
+    /// The tag of the fence line (e.g. "cpp" in "```cpp") is complete
+    void EndCodeBlockTag();
+
     std::stack<MarkdownState> m_states;
-    wxString m_currentCodeBlockLanguage;
+    wxString m_currentCodeBlockLanguage; // the tag, while it is read
+    int m_currentLanguageId{0};
+    std::vector<CodeBlockLanguage> m_languages; // the language with the id `N` is at index `N - 1`
+    std::unordered_map<wxString, int> m_languageIds;
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_MARKDOWN_LINK_CLICKED, clCommandEvent);

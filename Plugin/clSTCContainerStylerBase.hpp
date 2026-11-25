@@ -4,7 +4,10 @@
 #include "codelite_exports.h"
 #include "file_logger.h"
 
+#include <algorithm>
 #include <functional>
+#include <string_view>
+#include <vector>
 #include <wx/event.h>
 #include <wx/stc/stc.h>
 
@@ -48,6 +51,29 @@ public:
     virtual bool CanPeek(size_t count) const = 0;
 
     virtual bool HasReachedEnd() const = 0;
+
+    /// Return true if the bytes at the current position are `str` (ASCII). Unlike `GetSubstr(n) == str`, it does not
+    /// create a string. A subclass can do it faster.
+    virtual bool Matches(std::string_view str) const
+    {
+        for (size_t i = 0; i < str.size(); ++i) {
+            if (GetCharAtAsInt(i) != static_cast<unsigned char>(str[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// Return the number of bytes, from the current position, for which `pred(byte)` is true. It stops at the end of
+    /// the text. A subclass can do it faster.
+    virtual size_t CountWhile(bool (*pred)(int)) const
+    {
+        size_t count = 0;
+        while (CanPeek(count + 1) && pred(GetCharAtAsInt(count))) {
+            ++count;
+        }
+        return count;
+    }
 
 protected:
     virtual int GetCurrentCharAsInt() const = 0;
@@ -267,6 +293,33 @@ public:
     bool HasReachedEnd() const override { return m_ctrl->GetEndStyled() >= m_ctrl->GetLastPosition(); }
     bool CanNext() const override { return !HasReachedEnd(); }
 
+    /// Byte positions: GetCharAtAsInt() counts in characters, but SetStyle() counts in bytes
+    bool Matches(std::string_view str) const override
+    {
+        if (!CanPeek(str.size())) {
+            return false;
+        }
+        const int curpos = GetPosition();
+        for (size_t i = 0; i < str.size(); ++i) {
+            if (static_cast<unsigned char>(m_ctrl->GetCharAt(curpos + static_cast<int>(i))) !=
+                static_cast<unsigned char>(str[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    size_t CountWhile(bool (*pred)(int)) const override
+    {
+        const int curpos = GetPosition();
+        const int last_pos = m_ctrl->GetLastPosition();
+        int pos = curpos;
+        while (pos < last_pos && pred(static_cast<unsigned char>(m_ctrl->GetCharAt(pos)))) {
+            ++pos;
+        }
+        return static_cast<size_t>(pos - curpos);
+    }
+
 private:
     wxString GetSubStringUntilNewLine(size_t from)
     {
@@ -277,6 +330,149 @@ private:
     }
 
     wxStyledTextCtrl* m_ctrl{nullptr};
+};
+
+/// An accessor for one line of text, held in memory as UTF-8 bytes.
+///
+/// It reads the text that was copied from the control once, and collects the styles in a vector, so the styler
+/// does not call the control for each byte. All the positions it accepts are byte offsets. It never reads or
+/// styles past the end of the line: the style of a line depends only on its text and on the state at its start.
+class WXDLLIMPEXP_SDK clSTCLineAccessor : public AccessorBase
+{
+public:
+    /// `line` is the text of the line, with its EOL. `doc_offset` is the document position of its first byte.
+    /// The styles are added to `styles`, one for each byte.
+    clSTCLineAccessor(std::string_view line, int doc_offset, std::vector<char>& styles)
+        : m_line(line)
+        , m_offset(doc_offset)
+        , m_styles(styles)
+    {
+        while (m_firstNonBlank < m_line.size() && (m_line[m_firstNonBlank] == ' ' || m_line[m_firstNonBlank] == '\t')) {
+            ++m_firstNonBlank;
+        }
+    }
+
+    wxString GetSubstr(size_t count) const override
+    {
+        return wxString::FromUTF8(m_line.data() + m_pos, std::min(count, m_line.size() - m_pos));
+    }
+
+    bool StartsWith(const std::vector<int>& chars) const override
+    {
+        if (chars.empty() || !CanPeek(chars.size())) {
+            return false;
+        }
+        for (size_t i = 0; i < chars.size(); ++i) {
+            if (ByteAt(m_pos + i) != chars[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// Search `chars` from the current position + `from`, until the end of the line. Returns its document position,
+    /// or wxNOT_FOUND.
+    int Contains(std::vector<int> chars, size_t from = 0) const override
+    {
+        if (chars.empty()) {
+            return wxNOT_FOUND;
+        }
+        for (size_t pos = m_pos + from; pos + chars.size() <= m_line.size(); ++pos) {
+            bool matches = true;
+            for (size_t i = 0; i < chars.size(); ++i) {
+                if (ByteAt(pos + i) != chars[i]) {
+                    matches = false;
+                    break;
+                }
+            }
+            if (matches) {
+                return m_offset + static_cast<int>(pos);
+            }
+        }
+        return wxNOT_FOUND;
+    }
+
+    bool IsEofInNSteps(size_t n = 0) const override { return m_pos + n > m_line.size(); }
+    int GetPosition() const override { return m_offset + static_cast<int>(m_pos); }
+
+    wxString GetWordAtCurrentPosition() const override
+    {
+        auto is_word_char = [](char ch) { return wxIsalnum(static_cast<unsigned char>(ch)) || ch == '_'; };
+        size_t start = m_pos;
+        while (start > 0 && is_word_char(m_line[start - 1])) {
+            --start;
+        }
+        size_t end = m_pos;
+        while (end < m_line.size() && is_word_char(m_line[end])) {
+            ++end;
+        }
+        return wxString::FromUTF8(m_line.data() + start, end - start);
+    }
+
+    /// The accessor always starts at the start of a line
+    bool IsAtLineStart() const override { return m_pos == 0; }
+    bool IsAtLineStartIgnoringWhitespace() const override { return m_pos <= m_firstNonBlank; }
+
+    void SetStyle(int style, size_t count) override
+    {
+        const size_t n = std::min(count, m_line.size() - m_pos);
+        m_styles.insert(m_styles.end(), n, static_cast<char>(style));
+        m_pos += n;
+    }
+
+    /// Style until the EOL (not included), like wxStyledTextCtrl::GetLineEndPosition()
+    void SetStyleUntilEndOfLine(int style) override
+    {
+        size_t end = m_pos;
+        while (end < m_line.size() && m_line[end] != '\n' && m_line[end] != '\r') {
+            ++end;
+        }
+        SetStyle(style, end - m_pos);
+    }
+
+    bool CurrentLineContains(size_t from, const char* str) override
+    {
+        const size_t start = std::min(m_pos + from, m_line.size());
+        return m_line.substr(start).find(str) != std::string_view::npos;
+    }
+
+    bool CurrentLineContains(size_t from, const wxString& str) override
+    {
+        const auto utf8 = str.utf8_str();
+        return CurrentLineContains(from, utf8.data());
+    }
+
+    bool CanNext() const override { return m_pos < m_line.size(); }
+    bool CanNextFromPos(size_t pos) const override
+    {
+        return static_cast<int>(pos) < m_offset + static_cast<int>(m_line.size());
+    }
+    bool CanPeek(size_t count) const override { return m_pos + count <= m_line.size(); }
+    bool HasReachedEnd() const override { return m_pos >= m_line.size(); }
+
+    bool Matches(std::string_view str) const override { return m_line.compare(m_pos, str.size(), str) == 0; }
+
+    size_t CountWhile(bool (*pred)(int)) const override
+    {
+        size_t end = m_pos;
+        while (end < m_line.size() && pred(static_cast<unsigned char>(m_line[end]))) {
+            ++end;
+        }
+        return end - m_pos;
+    }
+
+protected:
+    int GetCurrentCharAsInt() const override { return CanNext() ? ByteAt(m_pos) : 0; }
+    int GetCharAtAsInt(size_t at) const override { return (m_pos + at < m_line.size()) ? ByteAt(m_pos + at) : 0; }
+
+private:
+    int ByteAt(size_t i) const { return static_cast<unsigned char>(m_line[i]); }
+
+    std::string_view m_line;
+    int m_offset{0};
+    size_t m_pos{0};
+    size_t m_firstNonBlank{0}; // the first byte that is not a space or a tab
+    std::vector<char>& m_styles;
 };
 
 class WXDLLIMPEXP_SDK clSTCContainerStylerBase : public wxEvtHandler
@@ -295,10 +491,35 @@ public:
 
     void StyleText(bool full_document = false);
 
+    /// Line by line styling: style `text`, which starts at the start of a line and holds whole lines, as UTF-8 bytes.
+    /// `start_state` is the state at the end of the line before the text (0 for the first line of the document).
+    /// `on_line_end(line_index, state)` is called with the state at the end of each line of `text`.
+    /// Returns the styles, one for each byte of `text`. It does not use the control.
+    std::vector<char> StyleLines(std::string_view text,
+                                 int doc_offset,
+                                 int start_state,
+                                 const std::function<void(size_t, int)>& on_line_end);
+
 protected:
+    /// Line by line styling, see EnableLineStyling().
+    /// Set the state of the styler from a value that SaveLineState() returned.
+    virtual void RestoreLineState(int state) { wxUnusedVar(state); }
+    /// Style one line: the accessor holds only this line
+    virtual void StyleLine(AccessorBase& accessor) { wxUnusedVar(accessor); }
+    /// Called at the end of each line: return the state that the next line starts with. Scintilla keeps it for each
+    /// line, so styling can restart at the start of any line.
+    virtual int SaveLineState() { return 0; }
+
+    /// Style the text when Scintilla asks for it (wxEVT_STC_STYLENEEDED), line by line, with the methods above.
+    /// Only the lines from the first one that is not styled up to the requested position are styled. This is what
+    /// makes the styler work while the user types, or while text is appended to the control.
+    void EnableLineStyling();
+    void OnStyleNeeded(wxStyledTextEvent& event);
+
     void OnThemChanged(wxCommandEvent& event);
     void InitInternal();
 
     wxStyledTextCtrl* m_ctrl{nullptr};
     std::function<void(AccessorBase& styles)> m_on_style_callback{nullptr};
+    bool m_lineStylingEnabled{false};
 };

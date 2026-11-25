@@ -325,9 +325,11 @@ wxDEFINE_EVENT(wxEVT_MARKDOWN_LINK_CLICKED, clCommandEvent);
 MarkdownStyler::MarkdownStyler(wxStyledTextCtrl* ctrl)
     : clSTCContainerStylerBase(ctrl)
 {
+    m_states.push(MarkdownState::kDefault);
     if (m_ctrl) {
         InitInternal(); // Will call the pure virtual method "InitStyles"
         m_ctrl->Bind(wxEVT_STC_HOTSPOT_CLICK, &MarkdownStyler::OnHostspotClicked, this);
+        EnableLineStyling();
     }
 }
 
@@ -346,7 +348,130 @@ void MarkdownStyler::OnHostspotClicked(wxStyledTextEvent& event)
     AddPendingEvent(event_markdown_url);
 }
 
-void MarkdownStyler::Reset() {}
+void MarkdownStyler::Reset() { RestoreLineState(0); }
+
+namespace
+{
+// The line state: bits 0-1 are the fence of the code block (0: none, 1: ```, 2: ````, 3: `````), the bits from 8
+// are the id of its language
+constexpr int kFenceMask = 0x3;
+constexpr int kLanguageShift = 8;
+} // namespace
+
+void MarkdownStyler::RestoreLineState(int state)
+{
+    m_states = {};
+    m_states.push(MarkdownState::kDefault);
+    m_currentCodeBlockLanguage.clear();
+    m_currentLanguageId = 0;
+
+    switch (state & kFenceMask) {
+    case 1:
+        m_states.push(MarkdownState::kCodeBlock3);
+        break;
+    case 2:
+        m_states.push(MarkdownState::kCodeBlock4);
+        break;
+    case 3:
+        m_states.push(MarkdownState::kCodeBlock5);
+        break;
+    default:
+        return;
+    }
+
+    const int language_id = state >> kLanguageShift;
+    if (language_id > 0 && language_id <= static_cast<int>(m_languages.size())) {
+        m_currentLanguageId = language_id;
+    }
+}
+
+void MarkdownStyler::StyleLine(AccessorBase& accessor) { StyleRange(accessor); }
+
+int MarkdownStyler::SaveLineState()
+{
+    // Only a fenced code block continues on the next line: end all the other states
+    while (!m_states.empty()) {
+        const MarkdownState state = m_states.top();
+        if (state == MarkdownState::kDefault || state == MarkdownState::kCodeBlock3 ||
+            state == MarkdownState::kCodeBlock4 || state == MarkdownState::kCodeBlock5) {
+            break;
+        }
+        if (state == MarkdownState::kCodeBlockTag) {
+            // A fence line without an EOL (the last line of the document)
+            EndCodeBlockTag();
+        }
+        m_states.pop();
+    }
+
+    if (m_states.empty()) {
+        m_states.push(MarkdownState::kDefault);
+    }
+
+    int fence = 0;
+    switch (m_states.top()) {
+    case MarkdownState::kCodeBlock3:
+        fence = 1;
+        break;
+    case MarkdownState::kCodeBlock4:
+        fence = 2;
+        break;
+    case MarkdownState::kCodeBlock5:
+        fence = 3;
+        break;
+    default:
+        return 0;
+    }
+    return fence | (m_currentLanguageId << kLanguageShift);
+}
+
+int MarkdownStyler::GetLanguageId(const wxString& tag)
+{
+    const wxString trimmed = tag.Strip(wxString::both);
+    if (trimmed.empty()) {
+        return 0;
+    }
+
+    auto iter = m_languageIds.find(trimmed);
+    if (iter != m_languageIds.end()) {
+        return iter->second;
+    }
+
+    CodeBlockLanguage language;
+    language.name = NormalizeLanguage(trimmed);
+    const wxString& name = language.name;
+    auto keywords = g_languageKeywords.find(name);
+    if (keywords != g_languageKeywords.end()) {
+        language.keywords = &keywords->second;
+    }
+    language.is_plain_text = name.empty() || name == "text";
+    language.is_diff = name == "diff" || name == "patch";
+    language.is_rust = name == "rust";
+    language.cpp_comments = name == "c++" || name == "c" || name == "java" || name == "javascript" || name == "rust" ||
+                            name == "go" || name == "php";
+    language.hash_comments = name == "cmake" || name == "sh" || name == "bash" || name == "zsh" || name == "docker" ||
+                             name == "makefile" || name == "php" || name == "python" || name == "ruby";
+
+    m_languages.push_back(std::move(language));
+    const int id = static_cast<int>(m_languages.size());
+    m_languageIds.insert({trimmed, id});
+    return id;
+}
+
+const MarkdownStyler::CodeBlockLanguage& MarkdownStyler::GetCurrentLanguage() const
+{
+    // No tag: the code block is plain text
+    static const CodeBlockLanguage kNoLanguage;
+    if (m_currentLanguageId <= 0 || m_currentLanguageId > static_cast<int>(m_languages.size())) {
+        return kNoLanguage;
+    }
+    return m_languages[m_currentLanguageId - 1];
+}
+
+void MarkdownStyler::EndCodeBlockTag()
+{
+    m_currentLanguageId = GetLanguageId(m_currentCodeBlockLanguage);
+    m_currentCodeBlockLanguage.clear();
+}
 
 void MarkdownStyler::InitStyles()
 {
@@ -522,14 +647,9 @@ wxString MarkdownStyler::GetUrlFromPosition(int pos)
     return prefix + suffix;
 }
 
-bool MarkdownStyler::IsKeyword(const wxString& word, const wxString& language) const
+bool MarkdownStyler::IsKeyword(const wxString& word, const CodeBlockLanguage& language) const
 {
-    wxString normalizedLang = NormalizeLanguage(language);
-    auto it = g_languageKeywords.find(normalizedLang);
-    if (it == g_languageKeywords.end()) {
-        return false;
-    }
-    return it->second.find(word) != it->second.end();
+    return language.keywords != nullptr && language.keywords->count(word) > 0;
 }
 
 bool MarkdownStyler::IsOperator(wxChar ch) const
@@ -558,16 +678,32 @@ bool MarkdownStyler::IsOperator(wxChar ch) const
 
 namespace
 {
+/// Return true if the byte cannot start a markdown construct in the default state: it gets the default style.
+/// Keep it in sync with the checks of the default state in MarkdownStyler::StyleRange()
+bool IsPlainTextByte(int byte)
+{
+    switch (byte) {
+    case '#':
+    case '-':
+    case '*':
+    case '_':
+    case '`':
+    case 'h': // http:// and https://
+    case 226: // the first byte of ❰ (actor), ⟪ (keyboard key) and of most check marks and crosses
+    case 240: // the first byte of the other check marks and crosses
+        return false;
+    default:
+        return byte < '0' || byte > '9'; // a numbered list item
+    }
+}
+
+bool IsNotLineFeed(int byte) { return byte != '\n'; }
+bool IsSpaceOrTab(int byte) { return byte == ' ' || byte == '\t'; }
+bool IsWordByte(int byte) { return ::wxIsalnum(static_cast<wxChar>(byte)) || byte == '_'; }
+
 void StyleToEndOfLine(AccessorBase& accessor, int style, bool include_lf)
 {
-    size_t count{0};
-    while (true) {
-        if (accessor.IsEofInNSteps(count) || accessor.GetCharAt<int>(count) == '\n') {
-            break;
-        }
-        ++count;
-    }
-
+    const size_t count = accessor.CountWhile(IsNotLineFeed);
     if (count > 0) {
         // Style the entire range in one call.
         accessor.SetStyle(style, count);
@@ -579,19 +715,16 @@ void StyleToEndOfLine(AccessorBase& accessor, int style, bool include_lf)
 }
 } // namespace
 
-void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxString& language)
+void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const CodeBlockLanguage& language)
 {
-    // Normalize language for consistency
-    wxString normalizedLang = NormalizeLanguage(language);
-
     // If no language is provided or explicitly set to "text", don't attempt to highlight keywords/operators, etc.
-    if (normalizedLang.IsEmpty() || normalizedLang == "text") {
+    if (language.is_plain_text) {
         StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockText, true);
         return;
     }
 
     // Handle diff syntax specially
-    if (normalizedLang == "diff" || normalizedLang == "patch") {
+    if (language.is_diff) {
         wxChar ch = accessor.GetCurrentChar<wxChar>();
 
         // Check if we're at the start of a line for diff-specific line markers
@@ -599,7 +732,7 @@ void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxStrin
             // Lines starting with '+'
             if (ch == '+') {
                 // Check for '+++' (file marker)
-                if (accessor.GetSubstr(3) == "+++") {
+                if (accessor.Matches("+++")) {
                     // Style the entire line as keyword
                     StyleToEndOfLine(accessor, MarkdownStyles::kDiffHeader, true);
                 } else {
@@ -611,7 +744,7 @@ void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxStrin
             // Lines starting with '-'
             else if (ch == '-') {
                 // Check for '---' (file marker)
-                if (accessor.GetSubstr(3) == "---") {
+                if (accessor.Matches("---")) {
                     // Style the entire line as keyword
                     StyleToEndOfLine(accessor, MarkdownStyles::kDiffHeader, true);
                 } else {
@@ -621,8 +754,8 @@ void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxStrin
                 return;
             }
             // Lines starting with '@@' or starting with 'diff', 'index', etc.
-            else if ((ch == '@' && accessor.GetCharAt<wxChar>(1) == '@') || accessor.GetSubstr(4) == "diff" ||
-                     accessor.GetSubstr(5) == "index") {
+            else if ((ch == '@' && accessor.GetCharAt<wxChar>(1) == '@') || accessor.Matches("diff") ||
+                     accessor.Matches("index")) {
                 // Style the entire line as keyword
                 StyleToEndOfLine(accessor, MarkdownStyles::kDiffHeader, true);
                 return;
@@ -639,14 +772,8 @@ void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxStrin
 
     // Handle C++ style comments (//) for languages that support them
     // Most C-family and many modern languages use this style
-    bool supportsCppComments = (normalizedLang == "c++" || normalizedLang == "c" || normalizedLang == "java" ||
-                                normalizedLang == "javascript" || normalizedLang == "rust" || normalizedLang == "go" ||
-                                normalizedLang == "php");
-
-    bool supportsHashComments =
-        (normalizedLang == "cmake" || normalizedLang == "sh" || normalizedLang == "bash" || normalizedLang == "zsh" ||
-         normalizedLang == "docker" || normalizedLang == "makefile" || normalizedLang == "php" ||
-         normalizedLang == "python" || normalizedLang == "ruby");
+    const bool supportsCppComments = language.cpp_comments;
+    const bool supportsHashComments = language.hash_comments;
 
     if (supportsCppComments && accessor.GetCurrentChar<wxChar>() == '/' && accessor.GetCharAt<wxChar>(1) == '/') {
         // Style the entire line as a comment
@@ -661,6 +788,12 @@ void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxStrin
     }
 
     wxChar ch = accessor.GetCurrentChar<wxChar>();
+
+    // Spaces and tabs (for example, the indentation): style them at once
+    if (const size_t blank_count = accessor.CountWhile(IsSpaceOrTab); blank_count > 0) {
+        accessor.SetStyle(MarkdownStyles::kCodeBlockText, blank_count);
+        return;
+    }
 
     // Handle strings (double quotes)
     if (ch == '"') {
@@ -741,22 +874,11 @@ void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxStrin
 
     // Handle identifiers (keywords and functions)
     if (::wxIsalpha(ch) || ch == '_') {
-        wxString word;
-        word << ch;
-        int count = 1;
-
-        while (accessor.CanPeek(count)) {
-            wxChar next = accessor.GetCharAt<wxChar>(count);
-            if (::wxIsalnum(next) || next == '_') {
-                word << next;
-                count++;
-            } else {
-                break;
-            }
-        }
+        // The first byte is a word byte too, so the count is at least 1
+        int count = static_cast<int>(accessor.CountWhile(IsWordByte));
 
         // Check if it's a Rust macro (identifier followed by '!')
-        if (language == "rust" || language == "rs") {
+        if (language.is_rust) {
             bool isMacro = false;
             int peek = count;
             while (accessor.CanPeek(peek)) {
@@ -778,8 +900,8 @@ void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxStrin
             }
         }
 
-        // Check if it's a keyword
-        if (IsKeyword(word, language)) {
+        // Check if it's a keyword. Create the word only when the language has keywords
+        if (language.keywords != nullptr && IsKeyword(accessor.GetSubstr(count), language)) {
             accessor.SetStyle(MarkdownStyles::kCodeBlockKeyword, count);
             return;
         }
@@ -813,13 +935,25 @@ void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxStrin
 
 void MarkdownStyler::OnStyle(AccessorBase& accessor)
 {
-    m_states.push(MarkdownState::kDefault);
+    RestoreLineState(0);
+    StyleRange(accessor);
+}
+
+void MarkdownStyler::StyleRange(AccessorBase& accessor)
+{
     while (accessor.CanNext() && !m_states.empty()) {
         MarkdownState current_state = m_states.top();
         wxChar ch = accessor.GetCurrentChar<wxChar>();
+        const int position_before = accessor.GetPosition();
 
         switch (current_state) {
         case MarkdownState::kDefault:
+            // Most of the text is plain: style it at once, up to the next byte that can start a construct
+            if (const size_t plain_count = accessor.CountWhile(IsPlainTextByte); plain_count > 0) {
+                accessor.SetStyle(MarkdownStyles::kDefault, plain_count);
+                break;
+            }
+
             // we support up to 99 bullets.
             if (::wxIsdigit(ch) && accessor.IsAtLineStartIgnoringWhitespace()) {
                 if (::wxIsdigit(accessor.GetCharAt<wxChar>(1)) && accessor.GetCharAt<wxChar>(2) == '.') {
@@ -834,7 +968,8 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
             }
 
             // Check for actor: ❰ACTOR_NAME❱
-            if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.StartsWith({226, 157, 176}) &&
+            // Check the first byte before StartsWith(), which creates a vector
+            if (ch == 226 && accessor.StartsWith({226, 157, 176}) && accessor.IsAtLineStartIgnoringWhitespace() &&
                 accessor.Contains({226, 157, 177}) != wxNOT_FOUND) {
                 accessor.SetStyleUntilEndOfLine(MarkdownStyles::kActor);
                 accessor.SetStyle(MarkdownStyles::kDefault, 1);
@@ -847,7 +982,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
             }
 
             // ⟪y/n/t⟫
-            if (accessor.StartsWith({226, 159, 170})) {
+            if (ch == 226 && accessor.StartsWith({226, 159, 170})) {
                 const int keyboard_key_start = accessor.GetPosition();
                 // search for the closing brace.
                 int keyboard_key_end = accessor.Contains({226, 159, 171});
@@ -873,10 +1008,10 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
             // not a number, run the switch statement.
             switch (ch) {
             case 'h':
-                if (accessor.GetSubstr(7) == "http://") {
+                if (accessor.Matches("http://")) {
                     accessor.SetStyle(MarkdownStyles::kUrl, 7);
                     m_states.push(MarkdownState::kUrl);
-                } else if (accessor.GetSubstr(8) == "https://") {
+                } else if (accessor.Matches("https://")) {
                     accessor.SetStyle(MarkdownStyles::kUrl, 8);
                     m_states.push(MarkdownState::kUrl);
                 } else {
@@ -885,15 +1020,15 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 break;
             case '#':
                 if (accessor.IsAtLineStartIgnoringWhitespace()) {
-                    if (accessor.GetSubstr(6) == "######") {
+                    if (accessor.Matches("######")) {
                         accessor.SetStyle(MarkdownStyles::kHeader6, 6);
-                    } else if (accessor.GetSubstr(5) == "#####") {
+                    } else if (accessor.Matches("#####")) {
                         accessor.SetStyle(MarkdownStyles::kHeader5, 5);
-                    } else if (accessor.GetSubstr(4) == "####") {
+                    } else if (accessor.Matches("####")) {
                         accessor.SetStyle(MarkdownStyles::kHeader4, 4);
-                    } else if (accessor.GetSubstr(3) == "###") {
+                    } else if (accessor.Matches("###")) {
                         accessor.SetStyle(MarkdownStyles::kHeader3, 3);
-                    } else if (accessor.GetSubstr(2) == "##") {
+                    } else if (accessor.Matches("##")) {
                         accessor.SetStyle(MarkdownStyles::kHeader2, 2);
                     } else {
                         accessor.SetStyle(MarkdownStyles::kHeader1, 1);
@@ -911,7 +1046,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 }
                 break;
             case '*':
-                if (accessor.GetSubstr(2) == "**" && accessor.CurrentLineContains(2, "**")) {
+                if (accessor.Matches("**") && accessor.CurrentLineContains(2, "**")) {
                     accessor.SetStyle(MarkdownStyles::kStrong2Tag, 2);
                     m_states.push(MarkdownState::kStrong2Text);
                 } else {
@@ -919,7 +1054,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 }
                 break;
             case '_':
-                if (accessor.GetSubstr(2) == "__" && accessor.CurrentLineContains(2, "__")) {
+                if (accessor.Matches("__") && accessor.CurrentLineContains(2, "__")) {
                     accessor.SetStyle(MarkdownStyles::kEmphasis2Tag, 2);
                     m_states.push(MarkdownState::kEmphasis2Text);
                 } else {
@@ -927,27 +1062,34 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 }
                 break;
             case '`':
-                if (accessor.GetSubstr(3) == "```") {
-                    // code block
-                    accessor.SetStyle(MarkdownStyles::kBacktick, 3);
-                    m_currentCodeBlockLanguage.Clear();
-                    m_states.push(MarkdownState::kCodeBlock3);
-                    m_states.push(MarkdownState::kCodeBlockTag);
-                } else if (accessor.GetSubstr(4) == "````") {
-                    // code block
-                    accessor.SetStyle(MarkdownStyles::kBacktick, 4);
-                    m_currentCodeBlockLanguage.Clear();
-                    m_states.push(MarkdownState::kCodeBlock4);
-                    m_states.push(MarkdownState::kCodeBlockTag);
-                } else if (accessor.GetSubstr(5) == "`````") {
+                // The longest fence first: "````" also starts with "```"
+                if (accessor.Matches("`````")) {
                     // code block
                     accessor.SetStyle(MarkdownStyles::kBacktick, 5);
                     m_currentCodeBlockLanguage.Clear();
+                    m_currentLanguageId = 0;
                     m_states.push(MarkdownState::kCodeBlock5);
                     m_states.push(MarkdownState::kCodeBlockTag);
-                } else {
+                } else if (accessor.Matches("````")) {
+                    // code block
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 4);
+                    m_currentCodeBlockLanguage.Clear();
+                    m_currentLanguageId = 0;
+                    m_states.push(MarkdownState::kCodeBlock4);
+                    m_states.push(MarkdownState::kCodeBlockTag);
+                } else if (accessor.Matches("```")) {
+                    // code block
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 3);
+                    m_currentCodeBlockLanguage.Clear();
+                    m_currentLanguageId = 0;
+                    m_states.push(MarkdownState::kCodeBlock3);
+                    m_states.push(MarkdownState::kCodeBlockTag);
+                } else if (accessor.CurrentLineContains(1, "`")) {
+                    // An inline code span ends on the same line
                     accessor.SetStyle(MarkdownStyles::kBacktick, 1);
                     m_states.push(MarkdownState::kCodeWord);
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 }
                 break;
             default:
@@ -967,6 +1109,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
             switch (ch) {
             case '\n':
                 accessor.SetStyle(MarkdownStyles::kCodeBlockTag, 1);
+                EndCodeBlockTag();
                 m_states.pop();
                 break;
             default:
@@ -978,48 +1121,51 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
         case MarkdownState::kCodeBlock3:
             switch (ch) {
             case '`':
-                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.GetSubstr(3) == "```") {
+                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.Matches("```")) {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 3);
                     m_currentCodeBlockLanguage.Clear();
+                    m_currentLanguageId = 0;
                     m_states.pop();
                 } else {
-                    StyleCodeBlockContent(accessor, m_currentCodeBlockLanguage);
+                    StyleCodeBlockContent(accessor, GetCurrentLanguage());
                 }
                 break;
             default:
-                StyleCodeBlockContent(accessor, m_currentCodeBlockLanguage);
+                StyleCodeBlockContent(accessor, GetCurrentLanguage());
                 break;
             }
             break;
         case MarkdownState::kCodeBlock4:
             switch (ch) {
             case '`':
-                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.GetSubstr(4) == "````") {
+                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.Matches("````")) {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 4);
                     m_currentCodeBlockLanguage.Clear();
+                    m_currentLanguageId = 0;
                     m_states.pop();
                 } else {
-                    StyleCodeBlockContent(accessor, m_currentCodeBlockLanguage);
+                    StyleCodeBlockContent(accessor, GetCurrentLanguage());
                 }
                 break;
             default:
-                StyleCodeBlockContent(accessor, m_currentCodeBlockLanguage);
+                StyleCodeBlockContent(accessor, GetCurrentLanguage());
                 break;
             }
             break;
         case MarkdownState::kCodeBlock5:
             switch (ch) {
             case '`':
-                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.GetSubstr(5) == "`````") {
+                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.Matches("`````")) {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 5);
                     m_currentCodeBlockLanguage.Clear();
+                    m_currentLanguageId = 0;
                     m_states.pop();
                 } else {
-                    StyleCodeBlockContent(accessor, m_currentCodeBlockLanguage);
+                    StyleCodeBlockContent(accessor, GetCurrentLanguage());
                 }
                 break;
             default:
-                StyleCodeBlockContent(accessor, m_currentCodeBlockLanguage);
+                StyleCodeBlockContent(accessor, GetCurrentLanguage());
                 break;
             }
             break;
@@ -1030,7 +1176,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 m_states.pop();
                 break;
             default:
-                StyleCodeBlockContent(accessor, m_currentCodeBlockLanguage);
+                StyleCodeBlockContent(accessor, GetCurrentLanguage());
                 break;
             }
             break;
@@ -1038,6 +1184,11 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
             switch (ch) {
             case '`':
                 accessor.SetStyle(MarkdownStyles::kBacktick, 1);
+                m_states.pop();
+                break;
+            case '\n':
+                // An inline code span does not continue on the next line
+                accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 m_states.pop();
                 break;
             default:
@@ -1049,7 +1200,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
             switch (ch) {
             case '`':
                 // we support backticks in header text.
-                if (accessor.GetCharAt<wxChar>(1) != '`') {
+                if (accessor.GetCharAt<wxChar>(1) != '`' && accessor.CurrentLineContains(1, "`")) {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 1);
                     m_states.push(MarkdownState::kCodeWord);
                 } else {
@@ -1068,7 +1219,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
         case MarkdownState::kStrong2Text:
             switch (ch) {
             case '*':
-                if (accessor.GetSubstr(2) == "**") {
+                if (accessor.Matches("**")) {
                     accessor.SetStyle(MarkdownStyles::kStrong2Tag, 2);
                     m_states.pop();
                 } else {
@@ -1083,7 +1234,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
         case MarkdownState::kEmphasis2Text:
             switch (ch) {
             case '_':
-                if (accessor.GetSubstr(2) == "__") {
+                if (accessor.Matches("__")) {
                     accessor.SetStyle(MarkdownStyles::kEmphasis2Tag, 2);
                     m_states.pop();
                 } else {
@@ -1095,6 +1246,11 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 break;
             }
             break;
+        }
+
+        if (accessor.GetPosition() == position_before) {
+            // Each step must style at least one byte, or the loop never ends
+            accessor.SetStyle(MarkdownStyles::kDefault, 1);
         }
     }
 }

@@ -1,6 +1,10 @@
 #include <doctest.h>
 
+#include <algorithm>
+#include <string>
+#include <string_view>
 #include <utility>
+#include <vector>
 
 // clang-format off
 #include "MarkdownStyler.hpp"
@@ -88,10 +92,7 @@ public:
 
 protected:
     int GetCurrentCharAsInt() const override { return CanNext() ? ByteAt(m_pos) : 0; }
-    int GetCharAtAsInt(size_t at) const override
-    {
-        return (m_pos + at < m_text.length()) ? ByteAt(m_pos + at) : 0;
-    }
+    int GetCharAtAsInt(size_t at) const override { return (m_pos + at < m_text.length()) ? ByteAt(m_pos + at) : 0; }
 
 private:
     // The byte at `i`, without a locale conversion. The text is built with From8BitData(),
@@ -319,8 +320,8 @@ TEST_CASE("MarkdownStyler OnStyle styles check marks and crosses")
 
     // "a ✓ b\n": the letters and spaces are default, the 3 bytes of the mark are a check mark
     size_t pos = 0;
-    const std::vector<int> mid_line = {kDefault, kDefault, kCheckMarkSymbol, kCheckMarkSymbol,
-                                       kCheckMarkSymbol, kDefault, kDefault, kDefault};
+    const std::vector<int> mid_line = {
+        kDefault, kDefault, kCheckMarkSymbol, kCheckMarkSymbol, kCheckMarkSymbol, kDefault, kDefault, kDefault};
     for (size_t i = 0; i < mid_line.size(); ++i) {
         CHECK(accessor.m_styles[pos + i] == mid_line[i]);
     }
@@ -353,4 +354,183 @@ TEST_CASE("MarkdownStyler OnStyle styles check marks and crosses")
     CHECK(accessor.m_styles[pos] == kCheckMarkSymbol);
     CHECK(accessor.m_styles[pos + 1] == kCheckMarkSymbol);
     CHECK(accessor.m_styles[pos + 2] == kCheckMarkSymbol);
+}
+
+namespace
+{
+/// Line by line styling: the styles, and the state at the end of each line
+struct LineStylingResult {
+    std::vector<char> styles;
+    std::vector<int> states;
+};
+
+LineStylingResult StyleLines(MarkdownStyler& styler, std::string_view text, int doc_offset, int start_state)
+{
+    LineStylingResult result;
+    result.styles = styler.StyleLines(
+        text, doc_offset, start_state, [&result](size_t, int state) { result.states.push_back(state); });
+    return result;
+}
+
+/// The offset of the start of each line of `text` (the text has only "\n" or "\r\n" EOLs)
+std::vector<size_t> GetLineStarts(std::string_view text)
+{
+    std::vector<size_t> starts{0};
+    for (size_t i = 0; i < text.size(); ++i) {
+        if (text[i] == '\n' && i + 1 < text.size()) {
+            starts.push_back(i + 1);
+        }
+    }
+    return starts;
+}
+
+const std::string kLineStylingSample = "# Title with `code`\n"
+                                       "Some **strong** text, a `code span` and https://example.com/a?b=1\n"
+                                       "An open ` backtick\n"
+                                       "- item\n"
+                                       "12. numbered\n"
+                                       "```cpp\n"
+                                       "int main() { return 0; } // comment\n"
+                                       "\n"
+                                       "# not a header inside the code\n"
+                                       "```\n"
+                                       "````python\r\n"
+                                       "def foo(): return \"str\"\r\n"
+                                       "````\r\n"
+                                       "```patch\n"
+                                       "--- a/file.md\n"
+                                       "+++ b/file.md\n"
+                                       "+added\n"
+                                       "-removed\n"
+                                       "```\n"
+                                       "\xE2\x9C\x94 done \xE2\x9D\x8C failed\n"
+                                       "```rust\n"
+                                       "println!(\"no EOL at the end\")";
+} // namespace
+
+TEST_CASE("MarkdownStyler line styling styles each byte")
+{
+    MarkdownStyler styler{nullptr};
+    const auto result = StyleLines(styler, kLineStylingSample, 0, 0);
+    CHECK(result.styles.size() == kLineStylingSample.size());
+    CHECK(result.states.size() == GetLineStarts(kLineStylingSample).size());
+}
+
+TEST_CASE("MarkdownStyler line styling restarts at any line with the saved state")
+{
+    // This is what Scintilla does: after an edit, styling restarts at the line of the edit, with the state that
+    // was saved at the end of the line before it. The result must be the same as styling all the text at once.
+    MarkdownStyler styler{nullptr};
+    const std::string_view text{kLineStylingSample};
+    const auto full = StyleLines(styler, text, 0, 0);
+    const auto line_starts = GetLineStarts(text);
+    REQUIRE(full.states.size() == line_starts.size());
+
+    for (size_t line = 1; line < line_starts.size(); ++line) {
+        CAPTURE(line);
+        const size_t offset = line_starts[line];
+        const auto tail = StyleLines(styler, text.substr(offset), static_cast<int>(offset), full.states[line - 1]);
+        REQUIRE(tail.styles.size() == text.size() - offset);
+        CHECK(std::equal(tail.styles.begin(), tail.styles.end(), full.styles.begin() + offset));
+        CHECK(std::equal(tail.states.begin(), tail.states.end(), full.states.begin() + line));
+    }
+}
+
+TEST_CASE("MarkdownStyler line styling of text that is appended in parts")
+{
+    // Text that arrives in parts (e.g. a streamed reply): each new part is styled from the start of its first line
+    MarkdownStyler styler{nullptr};
+    const std::string_view text{kLineStylingSample};
+    const auto full = StyleLines(styler, text, 0, 0);
+    const auto line_starts = GetLineStarts(text);
+
+    std::vector<char> styles;
+    int state = 0;
+    for (size_t line = 0; line < line_starts.size(); line += 3) {
+        const size_t start = line_starts[line];
+        const size_t end = (line + 3 < line_starts.size()) ? line_starts[line + 3] : text.size();
+        const auto part = StyleLines(styler, text.substr(start, end - start), static_cast<int>(start), state);
+        styles.insert(styles.end(), part.styles.begin(), part.styles.end());
+        REQUIRE(!part.states.empty());
+        state = part.states.back();
+    }
+    CHECK(styles == full.styles);
+}
+
+TEST_CASE("MarkdownStyler line styling keeps the state of a fenced code block")
+{
+    MarkdownStyler styler{nullptr};
+    const std::string text = "```cpp\n"
+                             "int x;\n"
+                             "```\n"
+                             "after\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.states.size() == 4);
+    CHECK(result.states[0] != 0); // inside the code block
+    CHECK(result.states[1] == result.states[0]);
+    CHECK(result.states[2] == 0); // the block is closed
+    CHECK(result.states[3] == 0);
+
+    // The keyword uses the language of the fence
+    CHECK(result.styles[text.find("int")] == kCodeBlockKeyword);
+    CHECK(result.styles[text.find("after")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling reads the language of a fence with a CRLF EOL")
+{
+    MarkdownStyler styler{nullptr};
+    const std::string text = "```cpp\r\n"
+                             "int x;\r\n"
+                             "```\r\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.styles.size() == text.size());
+    CHECK(result.styles[text.find("int")] == kCodeBlockKeyword);
+}
+
+TEST_CASE("MarkdownStyler line styling does not continue an inline code span on the next line")
+{
+    MarkdownStyler styler{nullptr};
+    const std::string text = "a ` open\n"
+                             "next `code` line\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.styles.size() == text.size());
+    // An open backtick without a closing one is not a code span
+    CHECK(result.styles[text.find("`")] == kDefault);
+    CHECK(result.styles[text.find("open")] == kDefault);
+    CHECK(result.states[0] == 0);
+    // A closed code span on the next line
+    const size_t code_pos = text.find("`code`");
+    CHECK(result.styles[code_pos] == kBacktick);
+    CHECK(result.styles[code_pos + 1] == kCodeWord);
+    CHECK(result.styles[code_pos + 5] == kBacktick);
+    CHECK(result.styles[text.find("next")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling styles strong text")
+{
+    // The line accessor finds the closing tag on the line (MockAccessor does not)
+    MarkdownStyler styler{nullptr};
+    const std::string text = "a **strong** b\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    const size_t pos = text.find("**strong**");
+    CHECK(result.styles[pos] == kStrong2Tag);
+    CHECK(result.styles[pos + 2] == kStrong2Text);
+    CHECK(result.styles[pos + 8] == kStrong2Tag);
+    CHECK(result.styles[text.find(" b")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling reads the language of a longer fence")
+{
+    // "````" also starts with "```": the longest fence must win, or the tag is "`python"
+    MarkdownStyler styler{nullptr};
+    const std::string text = "````python\n"
+                             "def foo(): pass\n"
+                             "````\n"
+                             "after\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.states.size() == 4);
+    CHECK((result.states[0] & 0x3) == 2); // a "````" fence
+    CHECK(result.styles[text.find("def")] == kCodeBlockKeyword);
+    CHECK(result.states[2] == 0);
+    CHECK(result.styles[text.find("after")] == kDefault);
 }

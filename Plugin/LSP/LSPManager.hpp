@@ -307,7 +307,6 @@ protected:
     void OnDocumentLinks(LSPEvent& event);
     void OnGoinDown(clCommandEvent& event);
 
-    void OnFindSymbol(wxCommandEvent& event);
     void OnRenameSymbol(wxCommandEvent& event);
     void OnFindReferences(wxCommandEvent& event);
     void OnCodeActions(wxCommandEvent& event);

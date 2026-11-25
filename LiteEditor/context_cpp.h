@@ -36,7 +36,6 @@ class RefactorSource;
 class ContextCpp : public ContextBase
 {
 protected:
-    void OnShowCodeNavMenu(clCodeCompletionEvent& e);
     void OnCodeCompleteFiles(clCodeCompletionEvent& event);
     void OnSymbolDeclarationFound(LSPEvent& event);
 
@@ -140,4 +139,3 @@ private:
      */
     void DoFormatEditor(clEditor* editor);
 };
-

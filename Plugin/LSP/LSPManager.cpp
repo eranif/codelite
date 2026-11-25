@@ -170,7 +170,6 @@ Manager::Manager()
     Bind(wxEVT_LSP_DOCUMENT_LINKS, &Manager::OnDocumentLinks, this);
 
     // Global accelerators
-    wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindSymbol, this, XRCID("lsp_find_symbol"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindReferences, this, XRCID("lsp_find_references"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnRenameSymbol, this, XRCID("lsp_rename_symbol"));
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnCodeActions, this, XRCID("lsp_code_actions"));
@@ -2108,14 +2107,6 @@ void Manager::OnGoinDown(clCommandEvent& event)
         m_quick_outline_dlg = nullptr;
     }
     m_remoteHelper.reset();
-}
-
-void Manager::OnFindSymbol(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-    FindSymbol(editor);
 }
 
 void Manager::OnRenameSymbol(wxCommandEvent& event)

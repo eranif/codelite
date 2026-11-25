@@ -161,8 +161,6 @@ ContextCpp::ContextCpp(clEditor* container)
 {
     Initialize();
     SetName("c++");
-    EventNotifier::Get()->Connect(
-        wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), nullptr, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclarationFound, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
 }
@@ -170,17 +168,11 @@ ContextCpp::ContextCpp(clEditor* container)
 ContextCpp::ContextCpp()
     : ContextBase("c++")
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), nullptr, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclarationFound, this);
 }
 
-ContextCpp::~ContextCpp()
-{
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), nullptr, this);
-}
+ContextCpp::~ContextCpp() = default;
 
 std::shared_ptr<ContextBase> ContextCpp::NewInstance(clEditor* container)
 {
@@ -1890,20 +1882,6 @@ bool ContextCpp::IsAtLineComment() const
     int pos = PositionBeforeCurrent();
     int cur_style = GetCtrl().GetStyleAt(pos);
     return cur_style == wxSTC_C_COMMENTLINE || cur_style == wxSTC_C_COMMENTLINEDOC;
-}
-
-void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
-{
-    clEditor* editor = &GetCtrl();
-    if (editor->GetFileName().GetFullPath() != e.GetFileName()) {
-        e.Skip();
-        return;
-    }
-
-    wxMenu menu(_("Find Symbol"));
-    menu.Append(XRCID("find_decl"), _("Go to Declaration"));
-    menu.Append(XRCID("find_impl"), _("Go to Implementation"));
-    editor->PopupMenu(&menu);
 }
 
 wxMenu* ContextCpp::GetMenu()

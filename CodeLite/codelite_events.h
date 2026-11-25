@@ -551,10 +551,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PROJECT_TREEITEM_CLICKED, wxComma
 // user has deleted all the breakpoints using the "Breakpoints" table
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED, wxCommandEvent);
 
-// User right click while holding the code-navigation modifier key (default to Shift)
-// send a clCodeCompletionEvent
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEvent);
-
 // Event type: clCommandEvent
 // User requested to reload the workspace
 // simply avoid calling event.Skip() to indicate to CodeLite that this event

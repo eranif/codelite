@@ -229,7 +229,8 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     if (add_rename_symbol) {
         menu->Prepend(XRCID("lsp_rename_symbol"), _("Rename symbol"));
     }
-    menu->Prepend(XRCID("lsp_find_symbol"), _("Find symbol"));
+    // The same command as Search > Find Symbol: one command, one keyboard shortcut
+    menu->Prepend(XRCID("goto_definition"), _("Find Symbol"));
 
     if (link.has_value()) {
         // name the file, or the web page

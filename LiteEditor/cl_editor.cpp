@@ -519,7 +519,6 @@ clEditor::clEditor(wxWindow* parent)
     Bind(wxEVT_KEY_DOWN, &clEditor::OnKeyDown, this);
     Bind(wxEVT_KEY_UP, &clEditor::OnKeyUp, this);
     Bind(wxEVT_LEFT_DOWN, &clEditor::OnLeftDown, this);
-    Bind(wxEVT_RIGHT_DOWN, &clEditor::OnRightDown, this);
     Bind(wxEVT_MOTION, &clEditor::OnMotion, this);
     Bind(wxEVT_MOUSEWHEEL, &clEditor::OnMouseWheel, this);
     Bind(wxEVT_LEFT_UP, &clEditor::OnLeftUp, this);
@@ -3507,27 +3506,6 @@ void clEditor::OnFocusLost(wxFocusEvent& event)
 
     clCommandEvent focus_lost{wxEVT_STC_LOST_FOCUS};
     EventNotifier::Get()->AddPendingEvent(focus_lost);
-}
-
-void clEditor::OnRightDown(wxMouseEvent& event)
-{
-    int mod = GetCodeNavModifier();
-    if (event.GetModifiers() == mod && mod != wxMOD_NONE) {
-        ClearSelections();
-        long pos = PositionFromPointClose(event.GetX(), event.GetY());
-        if (pos != wxNOT_FOUND) {
-            DoSetCaretAt(pos);
-        }
-
-        clCodeCompletionEvent event(wxEVT_CC_SHOW_QUICK_NAV_MENU);
-        event.SetPosition(pos);
-        event.SetInsideCommentOrString(m_context->IsCommentOrString(pos));
-        event.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
-        EventNotifier::Get()->AddPendingEvent(event);
-
-    } else {
-        event.Skip();
-    }
 }
 
 void clEditor::OnMotion(wxMouseEvent& event)

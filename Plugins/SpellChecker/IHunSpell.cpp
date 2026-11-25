@@ -39,9 +39,9 @@
 #include <wx/wx.h>
 #endif
 
-#include "IHunSpell.h"
-
 #include "CorrectSpellingDlg.h"
+#include "IHunSpell.h"
+#include "MarkdownStyler.hpp"
 #include "StringUtils.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -72,6 +72,8 @@ std::unordered_map<int, std::unordered_set<int>> ALLOWED_STYLES_STRINGS = {
     {wxSTC_LEX_JSON, {wxSTC_JSON_STRING, wxSTC_JSON_STRINGEOL}},
     {wxSTC_LEX_LUA, {wxSTC_LUA_STRING, wxSTC_LUA_LITERALSTRING, wxSTC_LUA_STRINGEOL}},
     {wxSTC_LEX_MARKDOWN, {wxSTC_MARKDOWN_DEFAULT}},
+    // Markdown files in the editor use MarkdownStyler, a container lexer
+    {wxSTC_LEX_CONTAINER, {MarkdownStyles::kDefault}},
     {wxSTC_LEX_HTML,
      {
          wxSTC_H_DOUBLESTRING,
@@ -130,6 +132,8 @@ std::unordered_map<int, std::unordered_set<int>> ALLOWED_STYLES_COMMENTS = {
     {wxSTC_LEX_LUA, {wxSTC_LUA_COMMENT, wxSTC_LUA_COMMENTLINE, wxSTC_LUA_COMMENTDOC}},
     {wxSTC_LEX_MAKEFILE, {wxSTC_MAKE_COMMENT}},
     {wxSTC_LEX_MARKDOWN, {wxSTC_MARKDOWN_DEFAULT}},
+    // Markdown files in the editor use MarkdownStyler, a container lexer
+    {wxSTC_LEX_CONTAINER, {MarkdownStyles::kDefault}},
     {wxSTC_LEX_HTML,
      {
          wxSTC_H_COMMENT,

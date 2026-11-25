@@ -26,6 +26,10 @@
 
 #include "context_base.h"
 
+#include <memory>
+
+class MarkdownStyler;
+
 class clEditor;
 
 /**
@@ -43,21 +47,18 @@ class clEditor;
  */
 class ContextGeneric : public ContextBase
 {
+    /// Markdown files are styled by MarkdownStyler (a container lexer), and not by wxSTC_LEX_MARKDOWN
+    std::unique_ptr<MarkdownStyler> m_markdownStyler;
+
 public:
     //---------------------------------------
     // ctors-dtor
     //---------------------------------------
+    // The constructors and the destructor are in the .cpp file, where MarkdownStyler is a complete type
     ContextGeneric(clEditor* container, const wxString& name);
-    ContextGeneric()
-        : ContextBase(wxT("Text"))
-    {
-    }
-    explicit ContextGeneric(const wxString& name)
-        : ContextBase(name)
-    {
-    }
-
-    ~ContextGeneric() override = default;
+    ContextGeneric();
+    explicit ContextGeneric(const wxString& name);
+    ~ContextGeneric() override;
     std::shared_ptr<ContextBase> NewInstance(clEditor* container) override;
 
     //---------------------------------------

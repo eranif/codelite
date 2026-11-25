@@ -25,6 +25,7 @@
 #include "generic_context.h"
 
 #include "ColoursAndFontsManager.h"
+#include "MarkdownStyler.hpp"
 #include "clEditorColouriseLocker.h"
 #include "clEditorWordCharsLocker.h"
 #include "cl_editor.h"
@@ -36,6 +37,18 @@ ContextGeneric::ContextGeneric(clEditor* container, const wxString& name)
     SetName(name);
     ApplySettings();
 }
+
+ContextGeneric::ContextGeneric()
+    : ContextBase(wxT("Text"))
+{
+}
+
+ContextGeneric::ContextGeneric(const wxString& name)
+    : ContextBase(name)
+{
+}
+
+ContextGeneric::~ContextGeneric() = default;
 
 std::shared_ptr<ContextBase> ContextGeneric::NewInstance(clEditor* container)
 {
@@ -66,6 +79,15 @@ void ContextGeneric::ApplySettings()
         rCtrl.SetLexer(wxSTC_LEX_NULL);
     }
     DoApplySettings(lexPtr);
+
+    if (lexPtr && lexPtr->GetName() == "markdown") {
+        // Replace wxSTC_LEX_MARKDOWN with MarkdownStyler. It styles line by line, only the lines that changed and
+        // are visible. The lexer was just applied again, so create the styler again: it sets the container lexer
+        // and its styles, and styles the text again from the start.
+        m_markdownStyler = std::make_unique<MarkdownStyler>(&rCtrl);
+    } else {
+        m_markdownStyler.reset();
+    }
 }
 
 void ContextGeneric::ProcessIdleActions()

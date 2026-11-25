@@ -410,7 +410,7 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetBold(MarkdownStyles::kHeader1, true);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kHeader2, header_2.GetFgColour());
-    m_ctrl->StyleSetBold(MarkdownStyles::kHeader1, true);
+    m_ctrl->StyleSetBold(MarkdownStyles::kHeader2, true);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kHeaderText, default_fg);
     m_ctrl->StyleSetBold(MarkdownStyles::kHeaderText, true);

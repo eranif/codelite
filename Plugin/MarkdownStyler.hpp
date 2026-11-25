@@ -5,6 +5,7 @@
 #include "codelite_exports.h"
 
 #include <stack>
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -129,9 +130,23 @@ private:
     /// The tag of the fence line (e.g. "cpp" in "```cpp") is complete
     void EndCodeBlockTag();
 
+    /// At the start of a line of a code block: if the line is the closing `fence` (it can be indented), style it, end
+    /// the code block and return true
+    bool StyleClosingFence(AccessorBase& accessor, std::string_view fence);
+
+    /// Style a line that is indented by 4 columns or more as an indented code block, if the rules allow it. Return
+    /// true if it did
+    bool StyleIndentedCodeLine(AccessorBase& accessor, size_t indent_columns, bool is_blank);
+    bool IsInFencedCodeBlock() const;
+
     std::stack<MarkdownState> m_states;
     wxString m_currentCodeBlockLanguage; // the tag, while it is read
     int m_currentLanguageId{0};
+
+    // For the indented code blocks (line by line styling only)
+    bool m_prevLineBlank{false};
+    bool m_prevLineIndentedCode{false};
+    bool m_inList{false};                       // an indented line in a list continues the list item, it is not code
     std::vector<CodeBlockLanguage> m_languages; // the language with the id `N` is at index `N - 1`
     std::unordered_map<wxString, int> m_languageIds;
 };

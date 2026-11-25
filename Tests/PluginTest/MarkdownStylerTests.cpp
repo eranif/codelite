@@ -372,6 +372,9 @@ LineStylingResult StyleLines(MarkdownStyler& styler, std::string_view text, int 
     return result;
 }
 
+/// The fence of the code block in a line state (0: not in a code block)
+int GetFence(int state) { return state & 0x3; }
+
 /// The offset of the start of each line of `text` (the text has only "\n" or "\r\n" EOLs)
 std::vector<size_t> GetLineStarts(std::string_view text)
 {
@@ -404,6 +407,14 @@ const std::string kLineStylingSample = "# Title with `code`\n"
                                        "-removed\n"
                                        "```\n"
                                        "\xE2\x9C\x94 done \xE2\x9D\x8C failed\n"
+                                       "\n"
+                                       "    indented code\n"
+                                       "\n"
+                                       "    more indented code\n"
+                                       "- list item\n"
+                                       "\n"
+                                       "    the list item continues\n"
+                                       "text\n"
                                        "```rust\n"
                                        "println!(\"no EOL at the end\")";
 } // namespace
@@ -533,4 +544,154 @@ TEST_CASE("MarkdownStyler line styling reads the language of a longer fence")
     CHECK(result.styles[text.find("def")] == kCodeBlockKeyword);
     CHECK(result.states[2] == 0);
     CHECK(result.styles[text.find("after")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling closes an indented fence of a code block without a language")
+{
+    // A code block in a list item: the fences are indented
+    MarkdownStyler styler{nullptr};
+    const std::string text = "1. Run this:\n"
+                             "   ```\n"
+                             "   make install\n"
+                             "   ```\n"
+                             "after\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.states.size() == 5);
+    // The list item sets the "in a list" bit of the state: check only the fence
+    CHECK(GetFence(result.states[0]) == 0);
+    CHECK(GetFence(result.states[1]) != 0); // the block is open
+    CHECK(GetFence(result.states[2]) != 0);
+    CHECK(GetFence(result.states[3]) == 0); // the indented fence closes it
+    CHECK(result.states[4] == 0);           // "after" ends the list
+
+    CHECK(result.styles[text.find("make")] == kCodeBlockText);
+    const size_t closing_pos = text.find("   ```\nafter");
+    CHECK(result.styles[closing_pos] == kDefault); // the indentation
+    CHECK(result.styles[closing_pos + 3] == kBacktick);
+    CHECK(result.styles[closing_pos + 5] == kBacktick);
+    CHECK(result.styles[text.find("after")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling closes an indented fence of a code block with a language")
+{
+    MarkdownStyler styler{nullptr};
+    const std::string text = "  ```cpp\n"
+                             "  int x;\n"
+                             "  ```\n"
+                             "after\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.states.size() == 4);
+    CHECK(result.states[0] != 0);
+    CHECK(result.styles[text.find("int")] == kCodeBlockKeyword);
+    CHECK(result.states[2] == 0);
+    CHECK(result.styles[text.find("after")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling does not close a diff block on an indented fence")
+{
+    // In a diff, " ```" is a context line (a fence of the markdown file in the diff), not the closing fence
+    MarkdownStyler styler{nullptr};
+    const std::string text = "```diff\n"
+                             " ```\n"
+                             "+added\n"
+                             "```\n"
+                             "after\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.states.size() == 5);
+    CHECK(result.states[1] != 0); // still in the diff block
+    CHECK(result.styles[text.find("+added")] == kDiffAdd);
+    CHECK(result.states[3] == 0); // the fence at the start of the line closes it
+    CHECK(result.styles[text.find("after")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling opens a fence only at the start of a line")
+{
+    MarkdownStyler styler{nullptr};
+    const std::string text = "text ```x\n"
+                             "next\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.states.size() == 2);
+    CHECK(result.states[0] == 0);
+    CHECK(result.styles[text.find("next")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling closes a code block with a longer fence")
+{
+    MarkdownStyler styler{nullptr};
+    const std::string text = "```\n"
+                             "code\n"
+                             "````\n"
+                             "after\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.states.size() == 4);
+    CHECK(result.states[2] == 0);
+    const size_t closing_pos = text.find("````");
+    for (size_t i = 0; i < 4; ++i) {
+        CHECK(result.styles[closing_pos + i] == kBacktick);
+    }
+    CHECK(result.styles[text.find("after")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling styles an indented code block")
+{
+    MarkdownStyler styler{nullptr};
+    const std::string text = "Some text:\n"
+                             "\n"
+                             "    int main() {\n"
+                             "        return 0;\n"
+                             "\n"
+                             "    }\n"
+                             "\n"
+                             "More text\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    REQUIRE(result.styles.size() == text.size());
+
+    // All the bytes of the code lines (with the indentation and the EOL) have the code block style
+    const size_t code_start = text.find("    int");
+    const size_t code_end = text.find("More") - 1; // the blank line before "More"
+    for (size_t pos = code_start; pos < code_end; ++pos) {
+        if (text[pos] == '\n' && text[pos - 1] == '\n') {
+            continue; // the blank line in the block
+        }
+        CAPTURE(pos);
+        CHECK(result.styles[pos] == kCodeBlockText);
+    }
+    CHECK(result.styles[text.find("Some")] == kDefault);
+    CHECK(result.styles[text.find("More")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling does not continue a paragraph as an indented code block")
+{
+    // An indented line just after a paragraph (no blank line) continues the paragraph
+    MarkdownStyler styler{nullptr};
+    const std::string text = "Some text\n"
+                             "    continued\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    CHECK(result.styles[text.find("continued")] == kDefault);
+}
+
+TEST_CASE("MarkdownStyler line styling continues a list item and not an indented code block")
+{
+    MarkdownStyler styler{nullptr};
+    const std::string text = "- item\n"
+                             "\n"
+                             "    more of the item\n"
+                             "\n"
+                             "text ends the list\n"
+                             "\n"
+                             "    code\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    CHECK(result.styles[text.find("more")] == kDefault);
+    CHECK(result.styles[text.find("code")] == kCodeBlockText);
+}
+
+TEST_CASE("MarkdownStyler line styling styles an indented code block with a tab")
+{
+    MarkdownStyler styler{nullptr};
+    const std::string text = "text\n"
+                             "\n"
+                             "\tcode\n";
+    const auto result = StyleLines(styler, text, 0, 0);
+    CHECK(result.styles[text.find("\tcode")] == kCodeBlockText);
+    CHECK(result.styles[text.find("code")] == kCodeBlockText);
 }

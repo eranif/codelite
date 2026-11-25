@@ -352,9 +352,13 @@ void MarkdownStyler::Reset() { RestoreLineState(0); }
 
 namespace
 {
-// The line state: bits 0-1 are the fence of the code block (0: none, 1: ```, 2: ````, 3: `````), the bits from 8
-// are the id of its language
+// The line state: bits 0-1 are the fence of the code block (0: none, 1: ```, 2: ````, 3: `````), bits 2-4 are about
+// the line itself (for the indented code blocks), and the bits from 8 are the id of the language of the code block.
+// A line after text has the state 0.
 constexpr int kFenceMask = 0x3;
+constexpr int kLineBlank = 1 << 2;
+constexpr int kLineIndentedCode = 1 << 3;
+constexpr int kLineInList = 1 << 4;
 constexpr int kLanguageShift = 8;
 } // namespace
 
@@ -364,6 +368,9 @@ void MarkdownStyler::RestoreLineState(int state)
     m_states.push(MarkdownState::kDefault);
     m_currentCodeBlockLanguage.clear();
     m_currentLanguageId = 0;
+    m_prevLineBlank = (state & kLineBlank) != 0;
+    m_prevLineIndentedCode = (state & kLineIndentedCode) != 0;
+    m_inList = (state & kLineInList) != 0;
 
     switch (state & kFenceMask) {
     case 1:
@@ -385,8 +392,6 @@ void MarkdownStyler::RestoreLineState(int state)
     }
 }
 
-void MarkdownStyler::StyleLine(AccessorBase& accessor) { StyleRange(accessor); }
-
 int MarkdownStyler::SaveLineState()
 {
     // Only a fenced code block continues on the next line: end all the other states
@@ -407,6 +412,17 @@ int MarkdownStyler::SaveLineState()
         m_states.push(MarkdownState::kDefault);
     }
 
+    int state = 0;
+    if (m_prevLineBlank) {
+        state |= kLineBlank;
+    }
+    if (m_prevLineIndentedCode) {
+        state |= kLineIndentedCode;
+    }
+    if (m_inList) {
+        state |= kLineInList;
+    }
+
     int fence = 0;
     switch (m_states.top()) {
     case MarkdownState::kCodeBlock3:
@@ -419,9 +435,19 @@ int MarkdownStyler::SaveLineState()
         fence = 3;
         break;
     default:
-        return 0;
+        return state;
     }
-    return fence | (m_currentLanguageId << kLanguageShift);
+    return state | fence | (m_currentLanguageId << kLanguageShift);
+}
+
+bool MarkdownStyler::IsInFencedCodeBlock() const
+{
+    if (m_states.empty()) {
+        return false;
+    }
+    const MarkdownState state = m_states.top();
+    return state == MarkdownState::kCodeBlock3 || state == MarkdownState::kCodeBlock4 ||
+           state == MarkdownState::kCodeBlock5;
 }
 
 int MarkdownStyler::GetLanguageId(const wxString& tag)
@@ -522,8 +548,14 @@ void MarkdownStyler::InitStyles()
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kHorizontalLine, block_comment.GetFgColour());
 
-    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockTag, default_bg);
-    m_ctrl->StyleSetForeground(MarkdownStyles::kBacktick, default_bg);
+    // The tags (` and ```, and the language of a code block) are dimmed, not hidden: the user can see and edit them.
+    // The colour is halfway between the text and the background, so it works with any theme.
+    auto halfway = [](unsigned char a, unsigned char b) { return static_cast<unsigned char>((a + b) / 2); };
+    const wxColour dimmed_fg{halfway(default_fg.Red(), default_bg.Red()),
+                             halfway(default_fg.Green(), default_bg.Green()),
+                             halfway(default_fg.Blue(), default_bg.Blue())};
+    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockTag, dimmed_fg);
+    m_ctrl->StyleSetForeground(MarkdownStyles::kBacktick, dimmed_fg);
 
     m_ctrl->StyleSetEOLFilled(MarkdownStyles::kCodeBlockText, true);
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockText, code_bg);
@@ -699,6 +731,7 @@ bool IsPlainTextByte(int byte)
 
 bool IsNotLineFeed(int byte) { return byte != '\n'; }
 bool IsSpaceOrTab(int byte) { return byte == ' ' || byte == '\t'; }
+bool IsBacktick(int byte) { return byte == '`'; }
 bool IsWordByte(int byte) { return ::wxIsalnum(static_cast<wxChar>(byte)) || byte == '_'; }
 
 void StyleToEndOfLine(AccessorBase& accessor, int style, bool include_lf)
@@ -714,6 +747,95 @@ void StyleToEndOfLine(AccessorBase& accessor, int style, bool include_lf)
     }
 }
 } // namespace
+
+bool MarkdownStyler::StyleClosingFence(AccessorBase& accessor, std::string_view fence)
+{
+    if (!accessor.IsAtLineStart()) {
+        return false;
+    }
+
+    // The closing fence can be indented, like the opening one (e.g. in a list item). But in a diff, a line that
+    // starts with a space is a context line (e.g. a fence of a markdown file in the diff): there, the closing fence
+    // must be at the start of the line
+    const size_t indent = GetCurrentLanguage().is_diff ? 0 : accessor.CountWhile(IsSpaceOrTab);
+    if (!accessor.Matches(fence, indent)) {
+        return false;
+    }
+
+    accessor.SetStyle(MarkdownStyles::kDefault, indent);
+    // The closing fence can be longer than the opening one
+    accessor.SetStyle(MarkdownStyles::kBacktick, accessor.CountWhile(IsBacktick));
+    m_currentCodeBlockLanguage.Clear();
+    m_currentLanguageId = 0;
+    m_states.pop();
+    return true;
+}
+
+namespace
+{
+/// Return true if a list item starts at `offset`: "- ", "* ", "+ ", "1. " or "1) "
+bool StartsListItem(const AccessorBase& accessor, size_t offset)
+{
+    auto is_blank = [](int ch) { return ch == ' ' || ch == '\t'; };
+    const int ch = accessor.GetCharAt<int>(offset);
+    if (ch == '-' || ch == '*' || ch == '+') {
+        return is_blank(accessor.GetCharAt<int>(offset + 1));
+    }
+
+    size_t end = offset;
+    while (end - offset < 9 && accessor.GetCharAt<int>(end) >= '0' && accessor.GetCharAt<int>(end) <= '9') {
+        ++end;
+    }
+    if (end == offset) {
+        return false;
+    }
+    const int delimiter = accessor.GetCharAt<int>(end);
+    return (delimiter == '.' || delimiter == ')') && is_blank(accessor.GetCharAt<int>(end + 1));
+}
+} // namespace
+
+void MarkdownStyler::StyleLine(AccessorBase& accessor)
+{
+    // The indentation of the line, in columns: a tab moves to the next multiple of 4
+    const size_t indent = accessor.CountWhile(IsSpaceOrTab);
+    size_t columns = 0;
+    for (size_t i = 0; i < indent; ++i) {
+        columns = accessor.GetCharAt<int>(i) == '\t' ? (columns / 4 + 1) * 4 : columns + 1;
+    }
+    const int first_char = accessor.GetCharAt<int>(indent);
+    const bool is_blank = !accessor.CanPeek(indent + 1) || first_char == '\n' || first_char == '\r';
+    const bool in_fence = IsInFencedCodeBlock();
+    const bool starts_list_item = !is_blank && StartsListItem(accessor, indent);
+
+    const bool is_indented_code = !in_fence && StyleIndentedCodeLine(accessor, columns, is_blank);
+    if (!is_indented_code) {
+        StyleRange(accessor);
+    }
+
+    // The flags for the next line
+    if (is_blank) {
+        // A blank line does not end an indented code block or a list
+        m_prevLineBlank = true;
+        return;
+    }
+    m_prevLineBlank = false;
+    m_prevLineIndentedCode = is_indented_code;
+    if (!in_fence && !is_indented_code) {
+        // A list ends at a line that is not indented and is not a list item
+        m_inList = starts_list_item || (m_inList && columns > 0);
+    }
+}
+
+bool MarkdownStyler::StyleIndentedCodeLine(AccessorBase& accessor, size_t indent_columns, bool is_blank)
+{
+    // CommonMark: a line indented by 4 columns or more, after a blank line or after another line of the block (an
+    // indented code block cannot continue a paragraph). In a list, an indented line continues the list item.
+    if (is_blank || indent_columns < 4 || m_inList || !(m_prevLineBlank || m_prevLineIndentedCode)) {
+        return false;
+    }
+    StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockText, true);
+    return true;
+}
 
 void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const CodeBlockLanguage& language)
 {
@@ -1062,22 +1184,23 @@ void MarkdownStyler::StyleRange(AccessorBase& accessor)
                 }
                 break;
             case '`':
-                // The longest fence first: "````" also starts with "```"
-                if (accessor.Matches("`````")) {
+                // A fence opens a code block only at the start of a line (after spaces, e.g. in a list item). The
+                // longest fence first: "````" also starts with "```"
+                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.Matches("`````")) {
                     // code block
                     accessor.SetStyle(MarkdownStyles::kBacktick, 5);
                     m_currentCodeBlockLanguage.Clear();
                     m_currentLanguageId = 0;
                     m_states.push(MarkdownState::kCodeBlock5);
                     m_states.push(MarkdownState::kCodeBlockTag);
-                } else if (accessor.Matches("````")) {
+                } else if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.Matches("````")) {
                     // code block
                     accessor.SetStyle(MarkdownStyles::kBacktick, 4);
                     m_currentCodeBlockLanguage.Clear();
                     m_currentLanguageId = 0;
                     m_states.push(MarkdownState::kCodeBlock4);
                     m_states.push(MarkdownState::kCodeBlockTag);
-                } else if (accessor.Matches("```")) {
+                } else if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.Matches("```")) {
                     // code block
                     accessor.SetStyle(MarkdownStyles::kBacktick, 3);
                     m_currentCodeBlockLanguage.Clear();
@@ -1119,54 +1242,18 @@ void MarkdownStyler::StyleRange(AccessorBase& accessor)
             }
             break;
         case MarkdownState::kCodeBlock3:
-            switch (ch) {
-            case '`':
-                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.Matches("```")) {
-                    accessor.SetStyle(MarkdownStyles::kBacktick, 3);
-                    m_currentCodeBlockLanguage.Clear();
-                    m_currentLanguageId = 0;
-                    m_states.pop();
-                } else {
-                    StyleCodeBlockContent(accessor, GetCurrentLanguage());
-                }
-                break;
-            default:
+            if (!StyleClosingFence(accessor, "```")) {
                 StyleCodeBlockContent(accessor, GetCurrentLanguage());
-                break;
             }
             break;
         case MarkdownState::kCodeBlock4:
-            switch (ch) {
-            case '`':
-                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.Matches("````")) {
-                    accessor.SetStyle(MarkdownStyles::kBacktick, 4);
-                    m_currentCodeBlockLanguage.Clear();
-                    m_currentLanguageId = 0;
-                    m_states.pop();
-                } else {
-                    StyleCodeBlockContent(accessor, GetCurrentLanguage());
-                }
-                break;
-            default:
+            if (!StyleClosingFence(accessor, "````")) {
                 StyleCodeBlockContent(accessor, GetCurrentLanguage());
-                break;
             }
             break;
         case MarkdownState::kCodeBlock5:
-            switch (ch) {
-            case '`':
-                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.Matches("`````")) {
-                    accessor.SetStyle(MarkdownStyles::kBacktick, 5);
-                    m_currentCodeBlockLanguage.Clear();
-                    m_currentLanguageId = 0;
-                    m_states.pop();
-                } else {
-                    StyleCodeBlockContent(accessor, GetCurrentLanguage());
-                }
-                break;
-            default:
+            if (!StyleClosingFence(accessor, "`````")) {
                 StyleCodeBlockContent(accessor, GetCurrentLanguage());
-                break;
             }
             break;
         case MarkdownState::kCodeBlockContent:

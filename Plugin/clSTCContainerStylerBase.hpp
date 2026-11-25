@@ -52,12 +52,12 @@ public:
 
     virtual bool HasReachedEnd() const = 0;
 
-    /// Return true if the bytes at the current position are `str` (ASCII). Unlike `GetSubstr(n) == str`, it does not
-    /// create a string. A subclass can do it faster.
-    virtual bool Matches(std::string_view str) const
+    /// Return true if the bytes at the current position + `offset` are `str` (ASCII). Unlike `GetSubstr(n) == str`, it
+    /// does not create a string. A subclass can do it faster.
+    virtual bool Matches(std::string_view str, size_t offset = 0) const
     {
         for (size_t i = 0; i < str.size(); ++i) {
-            if (GetCharAtAsInt(i) != static_cast<unsigned char>(str[i])) {
+            if (GetCharAtAsInt(offset + i) != static_cast<unsigned char>(str[i])) {
                 return false;
             }
         }
@@ -294,12 +294,12 @@ public:
     bool CanNext() const override { return !HasReachedEnd(); }
 
     /// Byte positions: GetCharAtAsInt() counts in characters, but SetStyle() counts in bytes
-    bool Matches(std::string_view str) const override
+    bool Matches(std::string_view str, size_t offset = 0) const override
     {
-        if (!CanPeek(str.size())) {
+        if (!CanPeek(offset + str.size())) {
             return false;
         }
-        const int curpos = GetPosition();
+        const int curpos = GetPosition() + static_cast<int>(offset);
         for (size_t i = 0; i < str.size(); ++i) {
             if (static_cast<unsigned char>(m_ctrl->GetCharAt(curpos + static_cast<int>(i))) !=
                 static_cast<unsigned char>(str[i])) {
@@ -450,7 +450,11 @@ public:
     bool CanPeek(size_t count) const override { return m_pos + count <= m_line.size(); }
     bool HasReachedEnd() const override { return m_pos >= m_line.size(); }
 
-    bool Matches(std::string_view str) const override { return m_line.compare(m_pos, str.size(), str) == 0; }
+    bool Matches(std::string_view str, size_t offset = 0) const override
+    {
+        const size_t start = m_pos + offset;
+        return start <= m_line.size() && m_line.compare(start, str.size(), str) == 0;
+    }
 
     size_t CountWhile(bool (*pred)(int)) const override
     {

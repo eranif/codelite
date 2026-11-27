@@ -695,3 +695,40 @@ TEST_CASE("MarkdownStyler line styling styles an indented code block with a tab"
     CHECK(result.styles[text.find("\tcode")] == kCodeBlockText);
     CHECK(result.styles[text.find("code")] == kCodeBlockText);
 }
+
+TEST_CASE("MarkdownStyler styles star, plus and tab-indented bullet markers as list items")
+{
+    // Like '-', '*' and '+' start a bullet list item when a blank follows, and the
+    // blank after the marker can be a tab. StartsListItem() already tracks all of
+    // them as list items.
+    MarkdownStyler styler{nullptr};
+
+    const wxString text = "* star item\n"
+                          "+ plus item\n"
+                          "-\ttabbed item\n"
+                          "**strong** text\n"
+                          "a * b + c\n";
+
+    MockAccessor accessor{text};
+    styler.OnStyle(accessor);
+
+    REQUIRE(accessor.m_styles.size() == text.length());
+
+    CHECK(accessor.m_styles[text.find("* star")] == kListItem);
+    CHECK(accessor.m_styles[text.find("* star") + 1] == kListItem);
+    CHECK(accessor.m_styles[text.find("+ plus")] == kListItem);
+    CHECK(accessor.m_styles[text.find("+ plus") + 1] == kListItem);
+    CHECK(accessor.m_styles[text.find("-\ttabbed")] == kListItem);
+    CHECK(accessor.m_styles[text.find("-\ttabbed") + 1] == kListItem);
+
+    // '**' at the start of a line is not a bullet. The mock cannot open a strong
+    // span (CurrentLineContains is always false), so both bytes keep the default style.
+    const size_t strong_pos = text.find("**strong**");
+    CHECK(accessor.m_styles[strong_pos] == kDefault);
+    CHECK(accessor.m_styles[strong_pos] != kListItem);
+
+    // Operators in the middle of a line keep the default style
+    const size_t mid_pos = text.find("a * b + c");
+    CHECK(accessor.m_styles[mid_pos + 2] == kDefault);
+    CHECK(accessor.m_styles[mid_pos + 6] == kDefault);
+}

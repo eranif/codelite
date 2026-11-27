@@ -718,6 +718,7 @@ bool IsPlainTextByte(int byte)
     case '#':
     case '-':
     case '*':
+    case '+':
     case '_':
     case '`':
     case 'h': // http:// and https://
@@ -1161,16 +1162,26 @@ void MarkdownStyler::StyleRange(AccessorBase& accessor)
                 }
                 break;
             case '-':
-                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.GetCharAt<wxChar>(1) == ' ') {
+                if (accessor.IsAtLineStartIgnoringWhitespace() && IsSpaceOrTab(accessor.GetCharAt<int>(1))) {
                     accessor.SetStyle(MarkdownStyles::kListItem, 2);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 }
                 break;
             case '*':
-                if (accessor.Matches("**") && accessor.CurrentLineContains(2, "**")) {
+                // A single '*' followed by a blank at the start of a line is a bullet list item, like '-'
+                if (accessor.IsAtLineStartIgnoringWhitespace() && IsSpaceOrTab(accessor.GetCharAt<int>(1))) {
+                    accessor.SetStyle(MarkdownStyles::kListItem, 2);
+                } else if (accessor.Matches("**") && accessor.CurrentLineContains(2, "**")) {
                     accessor.SetStyle(MarkdownStyles::kStrong2Tag, 2);
                     m_states.push(MarkdownState::kStrong2Text);
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kDefault, 1);
+                }
+                break;
+            case '+':
+                if (accessor.IsAtLineStartIgnoringWhitespace() && IsSpaceOrTab(accessor.GetCharAt<int>(1))) {
+                    accessor.SetStyle(MarkdownStyles::kListItem, 2);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 }

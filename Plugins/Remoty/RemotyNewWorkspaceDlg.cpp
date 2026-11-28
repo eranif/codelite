@@ -15,7 +15,7 @@ RemotyNewWorkspaceDlg::~RemotyNewWorkspaceDlg() {}
 
 void RemotyNewWorkspaceDlg::OnBrowse(wxCommandEvent& event)
 {
-    auto result = ::clRemoteFileSelector(_("Seelct a folder"));
+    auto result = ::clRemoteFileSelector(_("Select a folder"));
     if (result.first.empty() || result.second.empty()) {
         return;
     }
